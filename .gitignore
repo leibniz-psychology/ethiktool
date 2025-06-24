@@ -35,6 +35,11 @@
 /web/bundles/
 /web/uploads/
 
+###< symfony/webpack-encore-bundle ###
+/.idea/*
+.idea/*
+.idea
+
 # PHPUnit
 /app/phpunit.xml
 /phpunit.xml
