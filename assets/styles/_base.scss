@@ -1,0 +1,60 @@
+html {
+  @apply w-full h-full;
+}
+
+body {
+  @apply w-full h-[99%];
+}
+
+input[type="password"],
+input[type="text"],
+input[type="email"],
+input[type='date'],
+textarea {
+  @apply p-2 bg-white border placeholder-mono-500 border-mono-500;
+
+  &:disabled {
+    @apply bg-mono-200;
+  }
+}
+
+*:focus {
+  @apply shadow-sm outline-none ring;
+}
+
+a[href*="//"]:not([href*="https://leibniz-psychology.org"], .no-linkout)
+{
+  @apply linkExternal;
+}
+
+.linkExternal::after {
+  position: relative;
+  top: 0.125rem;
+  display: inline-block;
+  overflow: hidden;
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0.2em;
+  /* prettier-ignore */
+  background:
+          url("../images/link-out.svg"
+          param(--color theme("colors.mono.900")))
+left center no-repeat;
+  content: "(external link)";
+  text-indent: 1rem;
+  white-space: nowrap;
+}
+
+.linkExternal:hover::after {
+  /* prettier-ignore */
+  background:
+          url("../images/link-out.svg"
+          param(--color
+          theme("colors.blue.500")))
+  left center no-repeat;
+}
+
+.previewSmall a::after {
+  background-size: 60% !important;
+  vertical-align: text-bottom;
+}

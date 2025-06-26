@@ -1,0 +1,321 @@
+{% macro startForm(form) %}
+    {# Sets the start tag for a form. Input arguments:
+       form: Form to be started
+    #}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'style': 'display: grid'}|merge(addTarget('base','form')),'name': random()}) }} {# random hash to prevent Firefox from caching inputs when the page is manually reloaded #}
+{% endmacro %}
+
+{% macro renderButtons(form, arguments = {}) %}
+    {# Renders a set of buttons with eventually a heading above. If a heading is added, the label inside the heading get associated with the submitDummy to avoid the browser warning that the label is not associated with a form field. It is assumed that the buttons are rendered within a grid layout. Input arguments:
+        form:        form that gets rendered
+        Input arguments in the 'arguments' array:
+        noHeading:   if provided, no heading is added. May only be provided if neither of the following three arguments are provided.
+        hint:        if provided, an array of one or two elements:
+                        0: translation key for a hint that is placed below the heading. Will be suffixed by 'headingHint'
+                        1: if provided, translation parameters
+        hintButtons: if provided, an array of two, three, four, or five elements for a hint that is placed below the buttons:
+                        0: array of one or two elements: the translation key for the hint and optionally translation parameters
+                        1: if provided, id of the div surrounding the hint
+                        2: if provided, visibility of the surrounding div
+                        3: if provided, the hint will be displayed in normal style
+        target:      if provided, ID of a button which will be passed as a 'disableLoad' target to the base controller. Currently only used once in votes
+        contTarget:  if provided, an array of three elements: ID of a button which will be passed as a target to the stimulus controller, stimulus controller and target name
+        text:        if provided, an array of one or two elements for a text field which will be placed below the buttons and the hint:
+                        0: text field
+                        1: if provided, arguments for the addTextfield() call
+        icons:       if provided, an associative array. Keys: element names. Values: text for an icon that is placed after the respective option
+        stimVisible: if provided, an array that is passed as the parameter to a the 'setVisibility' stimulus action
+        stim:        if provided, an array of two or three elements (may only be provided if stimVisible is not provided):
+                        0: name of stimulus controller
+                        1: stimulus action that is called if any of the buttons is clicked
+                        2: if provided, parameters that are passed to the stimulus action
+        addDiv:     if provided, a surrounding div with class mt-8 is added. If the passed array is not empty, the first element contains the id for the div and the second element the style
+    #}
+    {% set formName, target, contTargetArray, textfield, iconArray, stimVisible, stim, isAddDiv = form.vars.name, arguments.target ?? '', arguments.contTarget ?? [''], arguments.text ?? [], arguments.icons ?? {}, arguments.stimVisible ?? [], arguments.stim ?? [], arguments.addDiv is defined %}
+    {% set contTarget, hint, hintButtons, iconKeys, addDivArray = contTargetArray[0], arguments.hint ?? [''], arguments.hintButtons ?? ['',[''],1], iconArray|keys, isAddDiv ? arguments.addDiv : [] %}
+    {% set hintKey, hintText, divID, divStyle = hint[0], hintButtons[0], addDivArray[0] ?? '', addDivArray[1] ?? '' %}
+    {% if isAddDiv %}
+        <div class="mt-8" {% if divID is not same as '' %} id="{{ divID }}" {% endif %} {% if divStyle is not same as '' %} style="{{ divStyle }}" {% endif %}>
+    {% endif %}
+    {% if arguments.noHeading is not defined %}
+        <div class="MetaData-Title">{{ form_label(form,null,{'label_attr': {'for': 'submitDummy'}, 'label_html': true}) }}</div>
+    {% endif %}
+    {% set isHint = hintKey is not same as '' %}
+    {% if isHint %}
+        {{ _self.addHint(hintKey~'headingHint',{'params': hint[1] ?? {}}) }}
+    {% endif %}
+    <div class="MetaData-Widget {% if isHint %} mt-2 {% endif %}">
+        <div style="width: fit-content"
+                {% if stimVisible is not same as [] %} {{ stimulus_action('base','setVisibility','change',stimVisible) }} {% endif %}
+                {% if stim is not same as [] %} {{ stimulus_action(stim[0],stim[1],'change',stim[2] ?? {}) }} {% endif %}>
+            {% for widget in form %}
+                {% set widgetName = formName~widget.vars.value %}
+                {% set isIcon = widgetName in iconKeys %}
+                <div class="grid" style="grid-template-columns: minmax(min-content,max-content) {% if isIcon %} min-content {% endif %}; {% if loop.index>1 %} {{ topMarginButtons }} {% endif %}">
+                    {{ form_widget(widget,{'attr': addClass('RadioButton-Input')|merge(widgetName is same as target ? addDisableTarget() : {})|merge(widgetName is same as contTarget ? addTarget(contTargetArray[1],contTargetArray[2]) : {})}) }}
+                    {{ form_label(widget,null,{'label_html': true, 'label_attr': {'class': 'RadioButton-Label minAutoGrid'}}) }}
+                      {% if isIcon %}
+                        {{ _self.addIcon(iconArray[widgetName]) }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% if hintText is not same as '' %}
+        {{ _self.addHint(hintText[0],{'id': hintButtons[1] ?? '', 'params': hintText[1] ?? {}, 'visible': hintButtons[2] ?? true}|merge(hintButtons[3] is defined ? {'hintStyle': ''} : {})) }}
+    {% endif %}
+    {% if textfield is not same as [] %}
+        {{ _self.addTextfield(textfield[0],textfield[1] ?? {}) }}
+    {% endif %}
+    {% if isAddDiv %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro addCheckboxGroup(form, names, arguments = {}) %}
+    {# Creates a group of checkboxes. The last option can have a text field that gets visible if the corresponding checkbox is selected. Additionally, an icon can be added to each label. Input arguments:
+       form:      widget that holds the checkboxes
+       names:     names of the widgets
+       Input arguments in the 'arguments' array:
+       other:       if provided, IDs of buttons whose selection sets the visibility of a text field. The IDs of the text fields must be the IDs of the buttons suffixed by 'Text'.
+       icons:       if provided, an array with three to five arrays of the same size for icons that are added to individual buttons:
+                      0: the IDs of buttons where icons are added
+                      1: keys: IDs of buttons where the icons are added, values: translation keys for the icons.
+                      2: keys: IDs of buttons where the icons are added, values: text colors of the icons.
+                      3: IDs of buttons whose icons should be colored red.
+                      4: keys: IDs of buttons where the icons are added, values: stimulus controller where the icons will be passed to as a target. The target name will be the button ID followed by 'Icon'.
+       targets:     if provided, an array of IDs. Each widget in this array will be passed as a 'disableLoad' target to the base controller.
+       contTargets: if provided, an associative array. Keys: IDs of buttons, values: arrays of two elements: stimulus controller and target name
+       addDiv:      if provided, the group is surrounded by a div. The value is an array of one to three elements:
+                      0: ID of the div
+                      1: style of the div
+                      2: classes for the div. The class 'MetaData-Widget' is additionally added
+    #}
+    {% set other, icons, targets, contTargets, addDiv = arguments.other ?? [], arguments.icons ?? [{},{},{},{}], arguments.targets ?? [], arguments.contTargets ?? {}, arguments.addDiv ?? [] %}
+    {% set iconIDs, iconTexts, iconTextColors, iconColors, iconTargets, isAddDiv = icons[0], icons[1], icons[2], icons[3] ?? [], icons[4] ?? {}, addDiv is not same as [] %}
+    {% set iconTargetKeys, divID, divStyle = iconTargets|keys, addDiv[0] ?? '', addDiv[1] ?? '' %}
+    {% if isAddDiv %}
+        <div {% if divID is not same as '' %} id="{{ divID }}" {% endif %} class="MetaData-Widget {{ addDiv[2] ?? '' }}" {% if divStyle is not same as '' %} style="{{ divStyle }}" {% endif %}>
+    {% endif %}
+    {% for widget in names %}
+        {% set curWidget = form[widget] %}
+        {% set id = curWidget.vars.name %}
+        {% set isOther, isIcon = id in other, id in iconIDs %}
+        <div class="grid" style="grid-template-columns: repeat({{ isIcon ? 2 : 1 }},minmax(min-content,max-content)) max-content {% if loop.index>1 %}; {{ topMarginButtons }} {% endif %}" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[[id],[id~'Text']]]}) }} {% endif %}>
+            {{ _self.addCheckbox(curWidget, {'disable': id in targets, 'target': contTargets[id] ?? []}) }}
+            {% if isIcon %}
+                <div id="{{ id~'Icon' }}">{{ _self.addIcon(iconTexts[id]|trans,iconTextColors[id],true,id in iconTargetKeys ? [iconTargets[id],id~'Icon'] : [],id in iconColors) }}</div>
+            {% endif %}
+        </div>
+        {% if isOther %}
+            <div class="MetaData-Widget mb-1">
+                {{ form_widget(form[id~'Text'],{'id': form[id~'Text'].vars.name, 'attr': {'style': boolToDisplay(form[id].vars.checked)}}) }}
+            </div>
+        {% endif %}
+    {% endfor %}
+    {% if isAddDiv %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro addCountableTextfield(form, maxChars, arguments = {}) %}
+    {# Creates a textarea including a hint above and a character count next to the textarea. The macro must be called within a div with class grid container. The textarea and the div showing the character count are passed as targets to the base controller. Below the textarea a div is added for highlighting the text if it exceeds maxChars. Input arguments:
+        form:      textarea
+        maxChars:  maximum number of characters before the remaining text get colored red
+        Input arguments in the 'arguments' array:
+        hint:          array of either one or two elements:
+                       0: array of one or two elements: translation key for a hint above the text fields and optionally translation parameters
+                       1: if provided, the hint will be displayed in normal style
+        divHeight:     if provided, the height of the div. Defaults to the global twig variable textHeight
+        visible:       if provided, visibility of the textarea.
+        template:      if provided, form element for a checkbox for using a template. Will be placed above the character count
+        templateClass: if provided and template is also provided, the template widget will be wrapped in a MetaData-Widget class
+        transfer:      if provided, an array of two elements: the array for adding the symbol for showing that the input is transferred to some automatically created PDFs and the addressee
+        stim:          if provided, an array of two or three elements:
+                        0: name of stimulus controller
+                        1: stimulus action that is called if the checkbox is clicked
+                        2: if provided, parameters that are passed to the stimulus action
+        noHeading: if provided, no heading will be added
+    #}
+    {% set isVisible, hintArray, isTemplate, transfer, stim = boolToDisplay(arguments.visible ?? true,1), arguments.hint ?? [''], arguments.template is defined, arguments.transfer ?? [], arguments.stim ?? [] %}
+    {% set hintText, vars, isTransfer = hintArray[0], form.vars, transfer is not same as [] %}
+    {% set name, isTemplateClass = vars.name, arguments.templateClass is defined %}
+    {% if arguments.noHeading is not defined %}
+        <div class="MetaData-Title">{{ form_label(form) }}</div>
+    {% endif %}
+    {% if hintText is not same as '' %}
+        {{ _self.addHint(hintText[0],{'params': hintText[1] ?? {}}|merge(hintArray[1] is defined ? {'hintStyle': true} : {})) }}
+    {% endif %}
+    <div class="grid" style="grid-template-columns: auto {% if isTransfer %}min-content{% endif %} min-content">
+        <div class="MetaData-Widget" id="{{ name~'Div' }}" style="padding-top: 0; grid-row: span {{ isTemplate ? 2 : 1 }}; grid-column: 1; height: {{ arguments.divHeight ?? textHeight }}; {{ isVisible }} {% if isTransfer %}; padding-right: 0 {% endif %}">
+            {% set style = 'grid-area: 1 / 1; height: 99%' %}
+            <div class="border" style="background-color: white; white-space: pre-wrap; overflow-y: auto; word-break: break-word; {{ style }}"></div>
+            {{ form_widget(form,{'attr': {'style': 'background-color: transparent; padding: 0; '~style}|merge(addTarget('base','countableText'))}) }}
+        </div>
+        {% if isTransfer %}
+            <div id="{{ name~'PDF' }}" style="padding-right: 0.5rem; {{ isVisible }}">{{ _self.addPDFhint(transfer[0],transfer[1]) }}</div>
+        {% endif %}
+        <div class="borderLight" id="{{ name~'Count' }}" style="height: min-content; width: min-content; margin-right: 0.3em; grid-area: {{ isTemplate ? 2 : 1 }} / {{ isTransfer ? 3 : 2 }}; {{ isVisible }}; {% if isTemplateClass %} margin-left: 1.5rem; {% endif %}">
+            <div>{{ 'multiple.charCount'|trans }}</div>
+            {% set text = vars.value %}
+            <div style="justify-self: center" data-max-chars="{{ maxChars }}" {{ stimulus_target('base','charCount') }}>{{ text|trim|length-text|split('\n')|length+1 }}</div> {# color is set on load #}
+            <div style="justify-self: center">
+                {{ _self.addIcon('multiple.charCountHint'|trans) }}
+            </div>
+        </div>
+        {% if isTemplate %}
+            {% set template = arguments.template %}
+            <div {% if isTemplateClass %} class="MetaData-Widget" {% endif %} {% if stim is not same as [] %} {{ stimulus_action(stim[0],stim[1],'change',stim[2] ?? {}) }} {% endif %}>
+                {{ _self.addCheckbox(template, {'style': 'white-space: nowrap'}) }}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro addCheckbox(widget, arguments = {}) %}
+    {# Adds a checkbox. Input arguments:
+        widget:  checkbox
+        Optional input arguments in the 'arguments' array:
+        disable: if true, the checkbox gets disabled
+        style:   if provided, style attributes for the label
+        target:  if provided, an array of two elements: stimulus controller and target name
+    #}
+    {% set name, target = {'id': widget.vars.name}, arguments.target ?? [] %}
+    {{ form_widget(widget,(name|merge({'attr': checkInput|merge((arguments.disable ?? false) ? addDisableTarget() : {})|merge(target is not same as [] ? addTarget(target[0],target[1]) : [])}))) }}
+    {{ form_label(widget,null,name|merge({'label_attr': checkLabel|merge({'style': 'width: fit-content; '~(arguments.style ?? '')})})) }}
+{% endmacro %}
+
+{% macro addHeading(translationKey, arguments = {}) %}
+    {# Adds an h3 tag and zillaSlab as font type. Input arguments:
+       translationKey: label text that gets translated
+       Optional input arguments in the 'arguments' array:
+       headingHint:    array of one or two elements:
+                       0: array of one or two elements: translation key for a hint that is placed in the div below the heading and optionally translation parameters
+                       1: if provided, the hint will be displayed in normal style
+       params:         parameters for the translation
+    #}
+    {% set headingHint = arguments.headingHint ?? [] %}
+    <h2 class="MetaData-Title"><label for="submitDummy">{{ translationKey|trans(arguments.params ?? {})|raw }}</label></h2>
+    {% if headingHint is not same as {} %}
+        {% set headingText = headingHint[0] %}
+        {{ _self.addHint(headingText[0],{'params': headingText[1] ?? {}}|merge(headingHint[1] is defined ? {'hintStyle': true} : {})) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro addTextfield(form, arguments = {}) %}
+    {# Adds a textfield. If the form has a placeholder, it is set above the textfield. Input argument:
+        form:              element that gets rendered. The id of the surrounding div is the the id of the text field suffixed by 'Div'
+        Input arguments in the 'arguments' array:
+        attributes:        if provided, attributes for the form_widget() call
+        hint:              if provided, translation key for a hint that is set above the textfield. May only be used if the widget has no 'placeholder' attribute
+        textHintParams:    if provided, translation parameters for the hint that is set above the textfield
+        textHintID:        if provided, id of the div surrounding the hint that is set above the textfield
+        visibility:        if provided, visibility of the surrounding div
+        fontStyle:         if provided, the hint will be displayed in normal style
+        transfer:          if provided, an array of two elements: the array for adding the symbol for showing that the input is transferred to some automatically created PDFs and the addressee
+        target:            if provided, the textfield will be passed as a 'disableLoad' target to the base controller.
+        contTarget:        if provided, an array of two elements: stimulus controller and target name to be passed to the controller
+    #}
+    {% set vars = form.vars %}
+    {% set name, transfer, attr, contTargetArray = vars.name, arguments.transfer ?? {}, vars.attr, arguments.contTarget ?? [''] %}
+    {% set isTransfer, textHint, contTarget = transfer is not same as {}, attr.placeholder is defined and attr.placeholder is not same as '' ? attr.placeholder : (arguments.hint ?? ''), contTargetArray[0] %}
+    <div id="{{ name~'Div' }}" class="mt-4" style="{{ boolToDisplay(arguments.visibility ?? true) }}; margin-bottom: 0.5em">
+        {% if textHint is not same as '' %}
+            {{ _self.addHint(textHint,{'params': arguments.textHintParams ?? {}, 'id': arguments.textHintID ?? ''}|merge(arguments.fontStyle is defined ? {'hintStyle': true} : {})) }}
+        {% endif %}
+        <div class="MetaData-Widget grid" style="grid-template-columns: auto {% if isTransfer %}min-content{% endif %}">{{ form_widget(form,{'id': name, 'attr': (arguments.attributes ?? {})|merge({'placeholder': '', 'class': 'MetaData-TextInput'})|merge(arguments.target is defined ? addDisableTarget() : {})|merge(contTarget is not same as '' ? addTarget(contTarget,contTargetArray[1]) : {})}) }} {# remove placeholder if any #}
+            {% if isTransfer %}
+                {{ _self.addPDFhint(transfer[0],transfer[1]) }}
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro addHint(text, arguments = {}) %}
+    {# Adds a div with a span-tag. Input arguments:
+        text:      translation key for the text to be added
+        Input arguments in the 'arguments' array:
+        params:    if provided, parameters for the translation
+        target:    if provided, an array of two elements: name of stimulus controller and target name
+        id:        if provided, if of the surrounding div
+        visible:   if provided, visibility of the surounding div
+        hintStyle: if provided, the hint will be displayed in normal font style and size, otherwise in 'smaller' and italic
+    #}
+    {% set target, id = arguments.target ?? [], arguments.id ?? ''  %}
+    <div {% if id is not same as '' %} id="{{ id }}" {% endif %} class="MetaData-Label" style="{{ boolToDisplay(arguments.visible ?? true) }}" data-base-target="hint" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1])}} {% endif %}>
+        <span {% if arguments.hintStyle is not defined %} class="hint" {% endif %} style="white-space: normal">{{ text|trans(arguments.params ?? {})|raw }}</span>
+    </div>
+{% endmacro %}
+
+{% macro addPDFhint(transfer, addressee = '') %}
+    {# Adds a a pdf-icon showing that the input is transferred to a pdf. Input arguments:
+        transfer:  an array of either one or two elements:
+             0: type of pdf where the input is transferred to. If not equal to 'info', it will be the loan receipt
+             1: if provided, type of information pdf. If neither 'pre' nor 'deceit', it will be post
+        addressee: if provided (i.e., not an empty string), addressee for a sentence is added that the wording should be addressed to the addressee
+    #}
+    {% if transfer[0] is not same as '' %}
+        <span class="pdfInfo Label-Info" style="height: fit-content; white-space: initial; width: fit-content; margin-left: 0.3em"><span style="font-weight: 400">{{ 'multiple.inputHint'|trans({'type': transfer[0]}|merge(transfer[1] is defined ? {'infoType': transfer[1]} : {}))~(addressee is not same as '' ? ' '~'multiple.wording'|trans({'addressee': ('projectdetails.addressee.thirdParties.'~addressee)|trans})) }}</span></span>
+    {% endif %}
+{% endmacro %}
+
+{% macro addSubmitButtons(pageButtons = true, disablePrevious = false, undoButton = true) %}
+    {# Adds the submit buttons. It is assumed that they are placed most left. Input arguments:
+        pageButtons:     if true, buttons for the previous and next page are created (currently only false in complete form)
+        disablePrevious: true if the button for the previous page should be disabled, false otherwise (currently only false in landing for application data)
+        undoButton:      if true, the button for undo is created (currently only false in landing for application data)
+    #}
+    {% set style = 'margin-right: 0.5em' %}
+    <div class="mt-8 mb-2 MetaData-Widget grid" style="; grid-template-columns: repeat(3,auto)">  {# names of the buttons must be the same as in ControllerAbstract #}
+        {% if pageButtons %}
+            <button type="submit" class="Button_primary_go" name="previousPage" id="navPreviousPage" style="{{ style }}" {% if disablePrevious %} disabled {% else %} {{ stimulus_action('base','setDummySubmit','click')}} {% endif %}>{{ include('images/arrow-left.svg') }}{{ 'buttons.previousPage'|trans }}</button>
+        {% endif %}
+        <button type="submit" class="Button_primary_go" name="backToMain" id="navBackToMain" style="{{ style }}; grid-column: {{ pageButtons ? 2 : 1 }}" {{ stimulus_action('base','setDummySubmit','click')}}>{{ 'buttons.backToMain'|trans }}</button>
+        {% if pageButtons %}
+            <div class="flex"><button type="submit" class="Button_primary_go" name="nextPage" id="navNextPage" style="{{ style }}" {{ stimulus_action('base','setDummySubmit','click')}}>
+                    {{ 'buttons.nextPage'|trans }}{{ include('images/arrow-right.svg') }}</button>
+            </div>
+        {% endif %}
+        {% set style = style~'; margin-top: 0.3rem; grid-row: 2' %}
+        {{ _self.addSaveButton(style) }}
+        {% if undoButton %}
+            <button type="submit" class="Button_primary_act" name="undo" style="{{ style }}" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target('base','undo')}} disabled>{{ 'buttons.undo'|trans }}</button>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro addSaveButton(style = '', disabled = false) %}
+    {# Adds the button for downloading the xml-file. Input arguments:
+        style:    style of the buttons
+        disabled: if true, the button gets disabled
+    #}
+    <button type="button" class="Button_primary_act" name="save" {% if style is not same as '' %} style="{{ style }}" {% endif %} {% if disabled %} disabled {% else %} {{ stimulus_target('base','download','click') }} {% endif %}>{{ _self.addButtonIcon('buttons.save','save') }}</button>
+{% endmacro %}
+
+{% macro addIcon(text, color = 'black', visible = true, target = [], redIcon = false) %}
+    {# Adds an information icon. Input arguments:
+       text:    text of the icon which can contain html
+       color:   text color
+       visible: boolean whether the icon should be visible
+       target:  array of two elements: name of stimulus controller and target name
+       redIcon: if true, the icon will be colored red, otherwise black
+    #}
+    <i class="Label-Info {% if redIcon %} Label-Info-red {% endif %}" style="{{ boolToDisplay(visible,1) }}; white-space: initial; width: fit-content" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: {{ color }}">{{ text|raw|nl2br }}</span></i>
+{% endmacro %}
+
+{% macro addPreview(ids = {}, isComplete = false, firstPage = []) %}
+    {# Adds the pdf preview. Input arguments:
+        ids:        if the participation documents for only a part of the variants should be created, the level IDs
+        isComplete: if true, the complete proposal should be created
+        firstPage:  if isComplete is true, the content of the first page of the complete proposal
+    #}
+    {{ render(controller('App\\Controller\\PDF\\'~(isComplete ? 'CompletePDF' : 'Application')~'Controller::createPDF',{'request': app.request}|merge(ids is not same as {} ? {'routeIDs': ids} : {})|merge(isComplete ? {'additional': firstPage} : {}))) }}
+{% endmacro %}
+
+{% macro addButtonIcon(text,icon) %}
+    {# Adds the content of a button which consists of text and an icon. Input arguments:
+        text: translation key for the text
+        icon: name of the icon to be added
+    #}
+    <span class="flex column-gap-2">{{ (text)|trans }}{{ include('images/'~icon~'.svg') }}</span>
+{% endmacro %}

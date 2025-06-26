@@ -1,0 +1,128 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+{% block content %}
+    {% set translationPrefix, completeFormController = 'completeForm.', 'Main--completeForm' %}
+    <div {{ stimulus_controller(completeFormController) }}>
+        {# consent #}
+        {% set titlesPrefix, classes = translationPrefix~'titles.', 'MetaData-Label mt-4' %}
+        <div>
+            {{ formRender.addHeading(titlesPrefix~'consent') }}
+            {{ _self.addBorderText(consentContent) }}
+            <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setSubmitButton','change') }}>{{ formRender.addCheckbox(content.consent, {'target': [completeFormController,'consent']}) }}</div>
+            <div class="{{ classes }}">{{ consentHint|raw }}</div>
+            <div class="{{ classes }}">{{ (translationPrefix~'consent.notes')|trans(committeeArray) }}</div>
+            {{ formRender.addTextfield(content.consentText) }}
+        </div>
+        {# bias #}
+        <div class="mt-8">
+            {{ formRender.addHeading(titlesPrefix~'bias') }}
+            <div class="MetaData-Label">{{ biasTitle|raw }}</div>
+            <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setBias','input') }}>
+                {% for bias in biasTypes %}
+                    <div {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>{{ formRender.addCheckbox(content[bias], {'target': [completeFormController,bias]}) }}</div>
+                    {% if bias is same as 'participate' %}
+                        <div class="MetaData-Label" {{ stimulus_target(completeFormController,'participateHint') }}>{{ (translationPrefix~'bias.hint')|trans }}</div>
+                    {% endif %}
+                    {% set description = content[bias~'Description'] ?? '' %}
+                    {% if description is not same as '' %}
+                        {{ formRender.addTextfield(description,{'attributes': {'style': 'margin-bottom: 1.5rem'}}) }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {# consent further #}
+        <div class="mt-8">
+            {{ formRender.addHeading(titlesPrefix~'consentFurther') }}
+            {{ _self.addBorderText(consentFurtherText) }}
+            <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setSubmitButton','change') }}>{{ formRender.addCheckbox(content.consentFurther, {'target': [completeFormController,'consentFurther']}) }}</div>
+        </div>
+        {% set isLoadFailure = pdfFilename is not same as '' %}
+        <div>
+            {# pdf #}
+            {% if pdf is not same as [] %}
+                <div class="mt-8">
+                    {{ formRender.addHeading(titlesPrefix~'pdf') }}
+                    <div class="MetaData-Label">{{ (translationPrefix~'pdf.text')|trans }}</div>
+                    {% if pdf.votes is defined %}
+                        {{ _self.addPDF(content.votes,completeFormController) }}
+                    {% endif %}
+                    {% if pdf.projectdetails is defined %}
+                        <div class="mt-2">{{ _self.addLevelPDF(content,pdf.projectdetails,names,isMultiple,'study',{'study': 0, 'group': 0, 'measureTimePoint': 0},completeFormController) }}</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+            {# buttons #}
+            {% set tempPrefix, failureName = 'multiple.loadMessage.', 'pdfFailure' %}
+            <div class="MetaData-Widget mt-8" {% if isLoadFailure %} {{ stimulus_action('base','showModal','load@window',{'target': failureName}) }} {% endif %}>
+                    <div {{ stimulus_target(completeFormController,'finishText') }}>{{ finishText|raw }}</div>
+                <div><button class="Button_primary_act" type="button" name="finish" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target(completeFormController,'finish') }}>{{ formRender.addButtonIcon(translationPrefix~'finish.title','pdf') }}</button></div>
+            </div>
+            {{ include('components/infoModal.html.twig',{'modalID': 'pdfLoad', 'prefix': tempPrefix~'failure.', 'params': {'type': 'pdf'}, 'targetName': 'pdfModal'}) }}
+            {% if isLoadFailure %}
+                {{ include('components/infoModal.html.twig',{'modalID': failureName, 'prefix': tempPrefix~'customPDF.', 'params': {'filename': pdfFilename}}) }}
+            {% endif %}
+        </div> {# div with stimulus controller #}
+        {{ formRender.addSubmitButtons(false,false,false) }}
+    </div> {# entire form including stimulus controller #}
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview({},true,firstPage) }}
+{% endblock %}
+
+{% macro addLevelPDF(content,pdf,names,isMultiple,level,ids,stimCont) %}
+    {# Adds the pdf buttons for projectdetails. Input arguments:
+        content:    form elements
+        pdf:        array indicating which PDFs should be added
+        names:      names of the levels
+        isMultiple: bool array indicating if multiple elements of the level exist
+        level:      name of the current level
+        ids:        array with keys 'study', 'group', and 'measureTimePoint' indicating the current IDs
+        stimCont:   stimulus controller
+    #}
+    {% set isStudy, isMeasureTimePoint = level is same as 'study', level is same as 'measureTimePoint' %}
+    <div class="MetaData-Widget">
+    {% for key, value in pdf %}
+        {% if key matches '/^\\d+$/' %} {# level #}
+            {% set isCurMultiple = isMultiple[level] %}
+            {% if isCurMultiple %}
+                {% set curKey = names[key] ?? [] %}
+                {% set curName = curKey[0] ?? '' %}
+                {{ (('projectdetails.headings.'~level)|trans)~' '~(key+1)~(not isMeasureTimePoint and isCurMultiple and curName is not same as '' ? ' ('~curName~')')~':' }}
+            {% endif %}
+            {{ _self.addLevelPDF(content,value,curKey[1] ?? [],isMultiple, isStudy ? 'group' : (isMeasureTimePoint ? 'pdf' : 'measureTimePoint'),ids|merge({(level): key}),stimCont) }}
+        {% else %} {# PDFs to be added #}
+            {{ _self.addPDF(content[key~ids['study']~'_'~ids['group']~'_'~ids['measureTimePoint']],stimCont) }}
+        {% endif %}
+    {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro addPDF(form,stimCont) %}
+    {# Adds a pdf button. Input arguments:
+        form:     form to be rendered
+        stimCont: stimulus controller
+    #}
+    {% set id, fitWidth = form.vars.name, 'width: fit-content;' %}
+    <div class="MetaData-Widget mb-4">
+        <div class="borderLight" style="{{ fitWidth }}">
+            {{ form_label(form,null,{'id': id}) }}
+            <div class="MetaData-Widget flex">
+                <label class="Upload my-1" for="{{ id }}" style="{{ fitWidth }}">{{ 'completeForm.pdf.upload'|trans }}</label>
+                <div style="display: none">{{ form_widget(form,{'id': id, 'attr': {'accept': 'application/pdf', 'style': fitWidth}|merge(addTarget(stimCont,'pdf'))}) }}</div>
+                <div class="mx-1 my-1" id="{{ id~'filename' }}"></div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro addBorderText(text) %}
+    {# Adds text with a border. Input argument:
+        text: text to be displayed
+    #}
+    <div class="MetaData-Widget">
+        <div class="bg-mono-200" style="background-clip: content-box">
+            {{ text|raw|nl2br }}
+        </div>
+    </div>
+{% endmacro %}

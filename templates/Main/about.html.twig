@@ -1,0 +1,13 @@
+{% extends 'threeColumns.html.twig' %}
+
+{% block title %}
+    {{ 'header.about'|trans }}
+{% endblock %}
+{% block pageTitle %}
+    <h2 class="MetaDataGroup-Title">{{ 'pages.main.about'|trans }}</h2>
+{% endblock %}
+
+{% block content %}
+    <div class="MetaData-Label">{{ 'about'|trans|raw|nl2br }}</div>
+    <div class="MetaData-Widget mt-8 mb-2"><button type="button" class="Button_primary_go" style="margin-top: 0.5rem" onclick="window.location.href='{{ path('app_main') }}'">{{ 'buttons.backToMain'|trans }}</button></div>
+{% endblock %}

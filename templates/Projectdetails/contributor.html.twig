@@ -1,0 +1,23 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block content %}
+    {% set translationPrefix = 'projectdetails.pages.contributor.' %}
+    <div>
+        <div class="MetaData-Label">{{ (translationPrefix~'title')|trans }}</div>
+        {% for task, contributor in tasks %}
+            <div class="mt-8">
+                <div class="MetaData-Title">{{ ('contributors.tasks.'~task)|trans }}{% if task in tasksMandatory %} {{ 'projectdetails.pages.contributor.mandatory'|trans }}{% endif %}:</div>
+                {% if contributor is not empty %}{{ formRender.addCheckboxGroup(content,contributor|keys,{'addDiv': ['','max-width: 40rem']}) }}
+                {% else %}
+                    <div class="MetaData-Label">{{ (translationPrefix~'selected')|trans }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {{ formRender.addSubmitButtons() }}
+    </div> {# entire form #}
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview([studyID,groupID,measureID]) }}
+{% endblock %}

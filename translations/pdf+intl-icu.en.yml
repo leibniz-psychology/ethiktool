@@ -1,0 +1,1178 @@
+# text that is used only in PDFs. Templates that may be used are still in the 'messages' file
+# In case of committeeType, 'other' is the default that is shown if the test committee is chosen.
+# Where possible, translations from the messages-files are used. If equivalent/similar wordings are used here, the keys are the same as in the messages-files.
+heading: >-
+  Proposal to {committeeAcc}
+
+header: |
+  Generated with Ethiktool version {toolVersion}
+  <a class="no-linkout" href="https://ethiktool.org/" target="_blank">https://ethiktool.org/</a>
+  most recent modification of the ethics proposal:
+
+filenames:
+  singleDocs: 'singleDocs'
+  application: 'proposal'
+  participation: 'participantDocuments'
+  completeForm: 'completeApplication'
+
+dateFormat: >-
+  Y-m-d{noTime, select,
+         true  {}
+         other { H:i:s}}
+
+documentHint: >-
+  Wording is identical to the study information sheet and is therefore addressed to the {participants, select,
+                                                                                                    true  {participants}
+                                                                                                    other {}} {children, select,
+                                                                                                                true  {{participants, select,
+                                                                                                                          true  {and/or }
+                                                                                                                          other {}} legal guardians}
+                                                                                                                other {{wards, select,
+                                                                                                                          true {{isParticipantsChildren, select,
+                                                                                                                                  true  {and/or }
+                                                                                                                                  other {}} legal guardians}
+                                                                                                                          other {}}}}
+noBox: '[not applicable]'
+
+or: ' or '
+
+paragraphHeadings:
+  methods: 'Methods'
+  burdens: 'Burdens and risks'
+  criteria: 'Conditions of participation'
+  processing: 'Data processing'
+
+boxHeadings: # key: heading of the box. keySub: sub heading inside the box if additional inputs may be necessary
+  coreData:
+    projectTitle: 'Title of the research project'
+    projectTitleSub: 'Title for participant documents:'
+    support: 'Consulting and support services used for this research project'
+    funding: 'Funding source(s)'
+    conflict: 'Is there a conflict of interest for any of the project contributors due to personal interests or due to interests of third parties?'
+    conflictSub: >-
+      {conflictChosen, select,
+        0     {Description and handling of the conflict of interest:}
+        1     {Explanation how conflicts of interest are ruled out:}
+        other {}}
+    participantDescription: 'The conflicts of interest are disclosed in the study information sheet as follows:'
+    projectDates: 'Planned duration of the project'
+  contributors: 'Further contributors'
+  contributorsTasks: 'Project role of contributors'
+  summary: 'Summary of the research project'
+  votes:
+    otherVote: 'Has this research project been reviewed by another ethics committee before?'
+    instVote: 'Has a similar research project been reviewed by {committeeDat} before?'
+  medicine:
+    medicine: 'Is medical, pharmaceutical or other research planned that may have to be assessed in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG), or other legal requirements?'
+    physician: 'Are physicians amongst the project contributors?'
+  projectdetails:
+    hint: >-
+      The entries in this field {noBox, select,
+                                    true  {would be made}
+                                    other {were made}} on {numPages, plural,
+                                                          =1    {page “{inputPage}“}
+                                                          other {pages “participant information“ and “participant informationII“}} {noBox, select,
+                                                                                                                        true  {.}
+                                                                                                                        other {.}}
+    study: 'study '
+    studyAll: 'all studies'
+    group: 'group '
+    groupAll: 'all groups'
+    measureTimePoint: 'time point '
+    measureTimePointAll: 'all time points'
+    overview: 'Overview of the studies, groups and time points'
+    examinedPeople: 'Which group(s) shall be investigated?'
+    examinedPeopleSub: 'Description of the group(s):'
+    sampleSize: 'How many participants shall be included in the respective time points?'
+    sampleSizeSub: 'Further information on the sample size:'
+    sampleSizePlan: 'How was the sample size calculated?'
+    recruitment: 'How are participants recruited?'
+    recruitmentSub: 'Further details on recruitment:'
+    measures: 'Which data collection methods are used to acquire data from participants?'
+    measuresSub: 'Description of the methods:'
+    interventions: 'Which specific measures/interventions are participants exposed to as part of the study?'
+    interventionsSub: 'Description of the measures/interventions:'
+    otherSources: 'Will data from other sources be added?'
+    feedback: 'Do participants receive feedback on their individual test results?'
+    feedbackSub: 'Description of type and framing of feedback:'
+    loan: 'Are devices (e.g., mobile phone, tablet, sensor kit) handed out to the participants?'
+    procedure: 'The procedure is described in the study information sheet as follows:'
+    duration: 'Duration'
+    location: 'Location'
+    burdens: 'Which burdens will participants be exposed to that go beyond the level commonly encountered in everyday life?'
+    burdensSub: >-
+      {burdens, select,
+        true  {Description of the burdens}
+        other {}} {noBurdens, select,
+                    true  {{burdens, select,
+                              true {resp. }
+                              other {}} justification why no burden exceeding the level commonly encountered in everyday life is expected.}
+                    other {}}:
+    burdensCompensation: 'Are precautionary measures or compensations planned for the burdens mentioned above?'
+    risks: 'Which potential dangers or risks does participation involve?'
+    risksSub: 'Description of the risks:'
+    risksCompensation: 'Are precautionary measures or compensations planned for the risks mentioned above?'
+    burdensRisksContributors: 'Are project contributors or uninvolved third parties exposed to burdens or risks that exceed the level to be expected in everyday life?'
+    burdensRisksContributorsSub: 'Description of burdens/risks:'
+    burdensRisksContributorsCompensation: 'Are precautionary measures or compensations planned for the burdens/risks mentioned above?'
+    burdensRisksDescription: >- # if both questions are not answered yet, both will be named
+      The {burdens, select,
+            true  {burdens /}
+            other {}} {risks, select,
+                        true  {risks /}
+                        other {}} disadvantages are described in the study information sheet as follows:
+    finding: 'Might the applied data collection methods reveal clinically relevant (incidental) findings in individual participants?'
+    findingSub: 'How are incidental findings handled?'
+    criteria: 'What are the inclusion and exclusion criteria for participation in the study?'
+    criteriaSub: 'Participation in the study is not possible if ...'
+    attendance: 'Are the legal guardians present during data collection?'
+    # empty lines to have consistent line numbers in both language files
+
+
+
+
+
+
+
+
+    information: 'Is information about participating in a study given in advance?'
+    preContent: 'How complete is the information regarding the aims, content and methods of the study?'
+    preComplete: 'Will there be a debriefing (i.e., will full information be provided later)?'
+    preCompleteSub: 'Format of debriefing information:'
+    post: 'Will information about participating in a study be given after-the-fact?'
+    voluntary: 'Is participation voluntary?'
+    voluntarySub: 'Justification on when and why voluntariness is not guaranteed:'
+    voluntaryYes: 'How is voluntary participation in the study ensured despite the special circumstances (closed group / dependent relationship)?'
+    closed: 'Are the data collected in a closed group?'
+    consent: >-
+      How is consent {isAssent, select,
+                        true  {or assent, respectively,}
+                        other {}} given to the {isPre, select,
+                                                  true  {study participation and the}
+                                                  other {}} data processing?
+    consentSub: >-
+      Justification for missing {anyConsentNo, select,
+                                  true  {consent}
+                                  other {}} {anyAssentNo, select,
+                                              true  {{anyConsentNo, select,
+                                                        true  {respectively}
+                                                        other {}} assent}
+                                              other {}}:
+    compensation: 'Which compensation do participants receive?'
+    compensationSub: 'Compensation in case of withdrawal from participation:'
+    furtherDescription: 'Other remarks regarding the compensation'
+    terminateCons: 'Is withdrawal from participation possible at any time and without disadvantages?'
+    terminateConsSub: 'Justification and, if applicable, description of disadvantages in case of withdrawal from participation:'
+    presence: 'Are project contributors present during data collection?'
+    terminateCriteria: 'Which circumstances lead to an early termination of data collection by the project contributors?'
+    processing: 'Description of data processing'
+    create: 'Generation of data privacy statement'
+    responsibility: 'Who carries the responsibility for processing the personal data according to EU-GDPR?'
+    transferOutside: 'Are personal data transmitted to third parties outside of the EEA (“third-country transfer“)?'
+    dataOnline: 'Are IP addresses registered within the online data collection?'
+    dataOnlineSub: 'How are IP addresses processed?'
+    marking: 'How are the research data labelled?'
+    markingSub: 'Justification for labelling the data with participants'' names:'
+    dataReuse: 'Are the research data shared with others for re-use?'
+    dataReuseSelf: 'Are the research data employed for re-use by the project contributors?'
+    dataReuseHow: 'How and with whom are the research data shared for re-use?'
+
+boxSubHeadings:
+  projectdetails:
+    terminateCriteria: 'This does not affect the participants'' or their legal guardians'' right to withdraw from participation at any time on their own request.'
+
+answer: >-
+  {chosen, select,
+    0     {yes}
+    1     {no}
+    other {}}
+
+addressee: >- # other is participants
+  {addressee, select,
+    children {{isParticipants, select,
+                true  {children}
+                other {legal guardians}}}
+    wards    {{isParticipants, select,
+                true  {supervised individuals}
+                other {legal guardians}}}
+    other    {participants}}
+
+addresseePrefix: >-
+  {isParticipants, select,
+    true  { | Participants: }
+    other {{addressee, select,
+              children {Legal guardians: }
+              wards    {Legal guardians: }
+              other    {}}}}
+
+# application
+coreData:
+  appType:
+    title: 'Type of proposal: '
+    types:
+      new: >-
+        new proposal {committeeType, select,
+                        EUB {}
+                        other {({newType, select,
+                                short {short proposal}
+                                main  {full proposal}
+                                other {}})}}
+      extended: 'amendment of an already approved proposal'
+      resubmission: 'resubmission of a proposal after revision'
+      short: ' (short proposal)'
+      main: ' (full proposal)'
+  guidelines: 'The vote shall refer to an ethics assessment according to the following guidelines:'
+  applicant:
+    name: 'Name'
+    professorship: 'Research group'
+    qualification: ' (The research project is exclusively carried out within the scope an own qualification work (Bachelor/Master/PhD thesis)'
+  projectDates:
+    start: 'From: '
+    end: 'To: '
+    next: 'as soon as possible '
+    started: 'Data collection has already started. '
+    startedDescription: |
+      
+      
+      Justification why the ethics proposal could not be submitted before the start of data collection:
+
+summary: 'Summary of the research project'
+
+votes:
+  otherVote:
+    committee: >-
+
+
+      Committee at the time:
+    result: |
+      
+      Result of review at the time: {result, select,
+                                    positive {positive vote
+      
+                                              Why is a new ethics review necessary?}
+                                    negative {negative vote
+      
+                                              What were the reasons provided by the other ethics committee?}
+                                    noVote   {no vote: research project was judged as not requiring in-depth ethics review
+      
+                                              Why is a new ethics review necessary?}
+                                    other    {}}
+  instVote:
+    reference: >-
+      
+      
+      Reference number:
+    description: |
+      
+      
+      {type, select,
+         resubmission {Relative to the original proposal, the following changes were made:}
+         other        {The main similarities and differences compared to the previous proposal are as follows:}}
+
+medicine:
+  medicine: |
+    
+    
+    Description:
+  physician: >-
+    
+    
+    In your opinion, why is {committeeNom} responsible despite its non-medical constitution?
+    
+    {result, select,
+      0     {The involved physicians can make use of an exception to the compulsory professional and ethical counselling by a medical ethics committee: }
+      other {}}
+
+contributors:
+  title: '(Further) contributors'
+  tasks:
+    leader: 'PI/project lead'
+    research: 'scientific contribution'
+    experiment: 'data collection'
+    contact: 'contact person'
+    data: 'data responsibility'
+    other: 'other role'
+
+projectdetails:
+  overview:
+    study: >-
+      one study {isStudyName, select,
+                  true  {({studyName})}
+                  other {}}
+    group: >-
+      one group {isGroupName, select,
+                  true  {({groupName})}
+                  other {}}
+    measureTimePoints: 'one time point'
+  groups:
+    examined:
+      title: >-
+        {number, plural,
+          =0    {}
+          =1    {}
+          other {; each}} between the ages of  {limits, select,
+                                            noUpperLimit {at least {minAge, plural,
+                                                                        =1    {1 year}
+                                                                        other {# years}}}
+                                            sameLimit    {{minAge, plural,
+                                                            =1    {1 year}
+                                                            other {# years}}}
+                                            other        {{minAge, number} and {maxAge, plural,
+                                                                                  =1    {1 year}
+                                                                                  other {# years}}}}.
+      types:
+        healthy: 'healthy individuals'
+        physical: 'individuals with physical illnesses or impairments'
+        mental: 'individuals with mental illnesses or impairments'
+        medical: 'individuals in medical or psychotherapeutic treatment'
+        institutional: 'institutionalised individuals'
+        wards: 'individuals incapable of giving consent'
+        vulnerable: 'individuals in particularly vulnerable (life) situations'
+        dependent: 'individuals in a dependent relationship to project contributors'
+        otherPeople: 'other groups'
+    closed:
+      closedLecture: 'as part of a university course'
+      school: 'in class (at school)'
+      closedOther: 'other group ({description})'
+    recruitment:
+      mailing: 'university mailing lists'
+      flyer: 'posters and flyers'
+      lecture: 'invitations in own university courses'
+      lectureOther: 'invitations in university courses led by non-project contributors'
+      media: 'social media'
+      news: 'newspaper announcements'
+      database: 'database(s)'
+      external: 'external recruiting service(s)'
+      multiplier: 'dissemination via multipliers'
+      recruitmentOther: 'other ways of recruitment'
+  information:
+    type: >-
+      {chosen, select,
+        0     {Yes - }
+        1     {No - }
+        other {}} {description, select,
+                    written     {in writing}
+                    writtenOral {in writing with oral explanation}
+                    oral        {orally}
+                    other       {{description}}}
+    preContent: >-
+      {chosen, select,
+        complete {The {addressee} are fully informed.}
+        partial  {At least one core piece of information is not mentioned, that is, the {addressee} are informed incompletely.}
+        deceit   {At least one core piece of information is wrong, that is, the {addressee} are deliberately deceived.}
+        other    {}}
+  measures:
+    measuresTypes:
+      measuresObservation: 'observation of participant behaviour by a project contributor'
+      measuresVideo: 'recordings or pictures (audio/video/photo)'
+      measuresSurvey: 'surveys (e.g., interviews, questionnaires)'
+      measuresInstrumental: 'instrumental measurements'
+      otherMeasures: 'other data collection method(s)'
+    interventionsTypes:
+      noIntervention: 'no specific intervention/measure, only incidental data'
+      interventionsSurvey: 'questions are being asked'
+      feedback: 'feedback to participants'
+      everyday: 'deliberate induction of everyday situations'
+      stimulus: 'presentation of stimuli'
+      tasks: 'task demands'
+      stimulation: 'electric/magnetic stimulation'
+      psychological: 'psychological intervention'
+      physical: 'physical strain'
+      therapy: '(therapeutic) physical treatment measures'
+      medical: 'administration of substances'
+      invasive: 'invasive interventions'
+      other: 'other measure(s)'
+    survey: >-
+      Details on questionnaires are described under data collection in the previous field {numInterventions, plural,
+                                                                                                          =1    {, no intervention/measures in a strict sense}
+                                                                                                          other {}}.
+    duration: >-
+      The total duration of {multiple, select,
+                                  true  {today''s}
+                                  other {}} investigation usually is about {total, select,
+                                                                                        1     {1 minute}
+                                                                                        other {{total} minutes}}{breaks, select,
+                                                                                                                  0     {.}
+                                                                                                                  other {, thereof {measureTime, select,
+                                                                                                                                    1     {1 minute}
+                                                                                                                                    other {{measureTime} minutes}} for data collection and {breaks, select,
+              1     {1 minute}
+              other {{breaks} minutes}} for preparation and follow-up time as well as breaks.}}
+    location: >-
+      The study {information, select,
+                          post  {took place}
+                          other {takes place}} {location, select,
+                                            intern {at facilities {committeeLocationGen}, namely {description}}
+                                            extern {at facilities of external cooperators, namely {description}}
+                                            online {online, using the platform {description}}
+                                            other  {{description}}}
+  burdensRisks:
+    burdens:
+      noBurdens: 'no burdens'
+      physical: 'physical burden'
+      mental: 'cognitive burden'
+      emotional: 'psychological or emotional burden'
+      sensitive: 'intimate contents'
+      otherBurdens: 'other stress/burden factors'
+    risks:
+      noRisks: 'no risks'
+      risksPhysical: 'physical discomfort'
+      risksIntegrity: 'threat to physical integrity'
+      risksMental: 'cognitive exhaustion'
+      risksEmotional: 'psychological or emotional impairment'
+      risksSocial: 'social, economic or political risks'
+      otherRisks: 'other risks'
+    finding: >- # other is participants
+      {chosen, select,
+        always  {The {addressee, select,
+                        children {legal guardians}
+                        wards    {legal guardians}
+                        other    {participants}} are informed of any (incidental) findings that occur. (notification mandatory)}
+        consent {The {addressee, select,
+                        children {legal guardians}
+                        wards    {legal guardians}
+                        other    {participants}} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)}
+        other   {}}
+  consent:
+    voluntary: >-
+      {chosen, select,
+        yes           {yes}
+        no            {no}
+        notApplicable {not applicable: The {addressee} are not informed in advance that {participant} are participating in a study.}
+        other         {}}
+    consent: >-
+      {chosen, select,
+        written       {in writing}
+        digital       {electronically}
+        oral          {orally with written documentation by a project contributor}
+        no            {no {addresseeType, select,
+                            participants {consent}
+                            other        {assent}} is given}
+        notApplicable {not applicable: The {addressee} are not informed in advance or after-the-fact that {participant} are participating in a study.}
+        other         {in the following way: {otherDescription}}}
+  compensation:
+    start: >- # other is participants
+      For participating, {addressee, select,
+              children {your child {number, plural,
+                                     =0    {receives }
+                                     =1    {receives }
+                                     other {can choose to receive }}}
+              wards    {the individual under your supervision {number, plural,
+                                                                 =0    {receives }
+                                                                 =1    {receives }
+                                                                 other {can choose to receive }}}
+              other    {you {number, plural,
+                               =0    {receive }
+                               =1    {receive }
+                               other {can choose to receive }}}}
+    types:
+      noCompensation: 'no compensation'
+      money: >-
+        a {additional, select,
+                flat  {fixed amount of }
+                other {}}financial compensation of {description}€{additional, select,
+                                                                    flat  {}
+                                                                    other { per hour}}
+      hours: >-
+        {additional, select,
+          flat  {{hoursValue}}
+          other {}} participation {amount, plural,
+                                    =1    {hour}
+                                    other {hours}} (course credit eligible for: {description})
+      lottery: 'the opportunity to take part in a raffle ({description})'
+      voucher: 'a monetary compensation in form of a voucher ({description})'
+      compensationOther: 'the following compensation: {description}'
+    namely: ', namely '
+    laterEnd: # awarding. other is participants in select
+      title: 'This requires the following information: '
+      code: >-
+        {addressee, select,
+          children {your child's code}
+          wards    {the code of the individual under your supervision}
+          other    {your code}} (see below).
+      name: >-
+        {addressee, select,
+          children {your child's name}
+          wards    {the name of the individual under your supervision}
+          other    {your name}}.
+  dataPrivacy:
+    create: >- # other is not yet answered
+      {type, select,
+        tool          {The data privacy statement was generated within the Ethiktool.}
+        noTool        {Due to the characteristics of data processing (according to the selections on the “data privacy“ page), the data privacy statement could not be generated with the Ethiktool. Therefore, the data privacy statement was generated separately (i.e., outside of the Ethiktool).}
+        separate      {The data privacy statement was generated separately (i.e., outside of the Ethiktool). {verification, select,
+                                                                          verified   {It has been checked and approved by the responsible data protection authorities.}
+                                                                          unverified {It has not yet been approved by the responsible data protection authorities.}
+                                                                          other      {}}}
+        anonymous     {According to the judgment of the responsible data protection authorities, the study includes only anonymous data. A data privacy statement is not necessary.}
+        separateLater {Aspects of data processing will be sorted out in detail at a later point in time. A separately generated data privacy statement will then be checked by the responsible data protection authorities.}
+        notApplicable {not applicable: The {addressee} are not informed in advance or after-the-fact that {participant} are participating in a study.}
+        other         {}}
+    marking: # all other marking options are in 'participation'
+      no: 'The research data are not individually labelled.'
+      other: 'The data research are labelled, but none of the options provided by the Ethiktool fully applies to the procedures in the study.'
+
+# participation
+participation:
+  projectTitleHeader:
+    start: '<a href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Research project</a> “'
+    end: '{projectTitle}“'
+  oral: 'The information on the study will be given orally. It is in line with the written information provided here.'
+  headings:
+    goals: 'Introduction and aims of the study'
+    conflict: 'Potential conflicts of interest by the project contributors'
+    procedure: 'Study procedure'
+    finding: 'Incidental findings'
+    compensation: 'Compensation'
+    proCon: 'Advantages and disadvantages of participation'
+    criteria: 'Inclusion and exclusion criteria'
+    voluntary: 'Voluntariness and withdrawal'
+    dataPrivacy: 'Data protection and data use'
+    contact: 'Contact persons for questions'
+  noInformation: >-
+    The Ethiktool did not generate a study information sheet {numLevels, plural,
+                        =0    {}
+                        other {for}} {levelNames} for the {addressee, select,
+                                                                                        children {legal guardians}
+                                                                                        wards    {legal guardians}
+                                                                                        other    {participants}} because the {addressee, select,
+      children {legal guardians}
+      wards    {legal guardians}
+      other    {participants}} are not informed in advance that {addressee, select,
+                                                                              children {their children}
+                                                                              wards    {the individuals under their supervision}
+                                                                              other    {they}} are participating in a study (see field 38 of the application form), nor are they informed after-the-fact that {addressee, select,
+      children {their children}
+      wards    {the supervised individuals}
+      other    {they}} participated in a study (see field 41 of the application form).
+  projectTitle:
+  title: >-
+    {information, select,
+      post  {Study information sheet}
+      other {Study information sheet}}
+  intro:
+    leader:
+      title: '<b>Project lead:</b>'
+      text: 'The overall responsibility for this study lies with {leader}.'
+    contributors: 'The following persons are also involved in the study: {contributors}.'
+    funding: >-
+      {isQualiFunding, select,
+        true  {The study is conducted as part of a qualification thesis and has no separate funding.}
+        other {The study is funded by {funding}.}}
+  procedure: 'Procedure'
+  compensation:
+    start: >-
+      {isMoneyHours, select,
+        true  {The exact amount of {isMoney, select,
+                                      true  {compensated}
+                                      other {}} {isHours, select,
+                                                  true  {{isMoney, select,
+                                                            true  {resp.}
+                                                            other {}} certified}
+                                                  other {}} hours depends on the actual duration of the investigation.}
+        other {}}
+    terminate: >-
+      {terminateCons, select,
+         true  {In this case}
+         other {In case of withdrawal}}, {compensation, select,
+                                            complete {the compensation is granted in full.}
+                                            partial  {the compensation is granted partially.}
+                                            nothing  {{terminateCons, select,
+                                                           true  {however}
+                                                           other {moreover}}, {addressee, select,
+                                                                                children {your child }
+                                                                                wards    {the individual under your supervision }
+                                                                                other    {you }} will not receive a compensation. The reasons for this are as follows: {description}.}
+                                            other    {{description}}}
+  proCon:
+    pro: 'Advantages'
+    con: >-
+      Disadvantages{isBurdensRisks, select,
+                  true  {, and risks}
+                  other {}}
+  criteria:
+    include: >- # other is participant
+      {type, select,
+        children {Your child}
+        wards    {The individual under your supervision}
+        other    {You}} can participate in the study if
+    finding: 'you agree to us informing you of any unusual test results (incidental finding)'
+    exclude: 'Participation in the study is not possible if'
+  voluntary:
+    pre: >-
+      {terminateCons, select,
+        true  {{addressee, select,
+                  children {Your child''s participation is {isVoluntary, select,
+                                                              false {not}
+                                                              other {}} voluntary. {attendance, select,
+                                                                                      true  {{isVoluntary, select,
+                                                                                                false {However, you}
+                                                                                                other {You}} and your child}
+                                                                                      other {{isVoluntary, select,
+                                                                                                false {However, your}
+                                                                                                other {Your}} child}} can withdraw from participation in this study at any time without giving any reason and without disadvantages.}
+                  wards    {Participation of the individual under your supervision is {isVoluntary, select,
+                                                                                        false {not}
+                                                                                        other {}} voluntary. {attendance, select,
+                                                                                                  true  {{isVoluntary, select,
+                                                                                                            false {However, you}
+                                                                                                            other {You}} and the individual under your supervision}
+                                                                                                  other {{isVoluntary, select,
+                                                                                                            false {However, the}
+                                                                                                            other {The}} individual under your supervision}} can withdraw from participation in this study at any time without giving any reason and without disadvantages.}
+                  other    {Your participation is {isVoluntary, select,
+                                                    false {not}
+                                                    other {}} voluntary. {isVoluntary, select,
+                                                                            false {However, you}
+                                                                            other {You}} can withdraw from participation in this study at any time without giving any reason and without disadvantages.}}}
+        other {{addressee, select,
+                  children {Your child's participation is {isVoluntary, select,
+                                                            false {not}
+                                                            other {}} voluntary. {isVoluntary, select,
+                                                                                    false {Moreover}
+                                                                                    other {However}}, once the investigation started, {attendance, select,
+                                                                          true  {you and your child}
+                                                                          other {your child}} cannot withdraw from participation without any disadvantages.}
+                  wards    {Participation of the individual under your supervision is {isVoluntary, select,
+                                                                                        false {not}
+                                                                                        other {}} voluntary. {isVoluntary, select,
+                                                                                                        false {Moreover}
+                                                                                                        other {However}}, once the investigation started, {attendance, select,
+                                                                          true  {you and the individual under your supervision}
+                                                                          other {the individual under your supervision}} cannot withdraw from participation without any disadvantages.}
+                  other    {Your participation is {isVoluntary, select,
+                                                    false {not}
+                                                    other {}} voluntary. {isVoluntary, select,
+                                                                            false {Moreover}
+                                                                            other {However}}, once the investigation started, you cannot withdraw from participation without any disadvantages.}} {description}}}
+    post: >-
+      We have not informed you in advance that
+      {addressee, select,
+        children {your child is participating in a scientific study. The reasons for this are as follows: {description}. Therefore, we were unable to ask you and your child for voluntary consent or assent to study participation in advance. {isConsent, select,
+                                true  {However, you and your child now have the opportunity to freely decide whether we may use the data collected from your child.}
+                                other {}}      }
+        wards    {the individual under your supervision is participating in a scientific study. The reasons for this are as follows: {description}. Therefore, we were unable to ask you and the individual under your supervision for voluntary consent or assent to study participation in advance. {isConsent, select,
+                                true  {However, you and the individual under your supervision now have the opportunity to freely decide whether we may use the data collected from the individual under your supervision.}
+                                other {}}}
+        other    {you are participating in a scientific study. The reasons for this are as follows: {description}. Therefore, we were unable to ask you for voluntary consent to study participation in advance. {isConsent, select,
+                                true  {However, you now have the opportunity to freely decide whether we may use the data collected from you.}
+                                other {}}}}
+    terminateParticipants: >-
+      In case of withdrawal, {type, select,
+                                remove        {all collected data will be deleted immediately and will not be included in the analysis.}
+                                removePartial {the data collected up to that point will be used for the analysis.}
+                                other         {the collected data will be handled as follows: {description}}}
+  dataPrivacy:
+    otherSources: 'Moreover, the following data from other sources will be added: {description} '
+    personal: 'As part of this study, personal data will be collected and processed. {otherSources} Handling of the personal data is described in detail in the attached annex on data processing.'
+    personalMaybe: 'Processing of personal data is not intended in this study, but it cannot be entirely excluded that the combination of collected data with additional knowledge might allow for identifying individual persons. {otherSources} Therefore, handling of the potentially person-related data is described in detail in the attached annex on data processing.'
+    noTool: 'As part of this study, data will be collected and processed. {otherSources} Handling of the data is described in detail in the attached data privacy statement.'
+    marking: # types-keys are copied from messages. Examples are removed and addressee is added where applicable
+      start: 'As part of this study, data will be collected and processed. {otherSources} {codeMarking} '
+      codeMarking: >- # other is by name in type-select and participants in addressee-select. Also used in privacy document
+           The research data are {isSecond, select,
+                        true  {additionally}
+                        other {}} labelled with {type, select,
+                                                  external {a code assigned outside of the project, namely {description} }
+                                                  internal {an internal code in the project. }
+                                                  other    {{addressee, select,
+                                                              children {your child's name.}
+                                                              wards    {the name of the individual under your supervision.}
+                                                              other    {your name.}}}}
+      external:
+        types:
+          anonymous: 'The code itself does not allow inference on specific persons. The mapping of codes to personally identifying information is possible only for the institution or body that assigned the code originally. Information on the handling of personal data is available there.'
+          list: 'The mapping of codes to personally identifying information is possible for project contributors via an allocation list. The allocation list is stored separately from all other data.'
+          generation: 'No data are stored that allow direct inference on specific persons. However, the structure of the code could enable the identification of individual persons by project contributors with little additional knowledge.'
+      internal: # other is participants #
+        pattern: >-
+          The code is generated following a pre-specified scheme by {addressee, select,
+                                                                      children {your child or}
+                                                                      wards    {the individual under your supervision or}
+                                                                      other    {}} you.
+        own: >-
+          The code is freely chosen by {addressee, select,
+                                          children {your child or}
+                                          wards    {the individual under your supervision or}
+                                          other    {}} you.
+        contributors: 'The code is assigned by the project contributors.'
+        types:
+          pattern:
+            anonymous: 'There is no further documentation that relates the code with personally identifying information. Identification is possible only for persons with knowledge about all constituent parts of the code.'
+            generation: 'No data are stored that allow direct inference on specific persons. However, the structure of the code could enable the identification of individual persons by project contributors with little additional knowledge.'
+            list: 'The mapping of codes to personally identifying information is possible for project contributors via an allocation list. The allocation list is stored separately from all other data.'
+          own:
+            anonymous: 'There is no further documentation that relates the code with personally identifying information. Identification is possible only for persons who know the code.'
+            list: 'The mapping of codes to personally identifying information is possible for project contributors via an allocation list. The allocation list is stored separately from all other data.'
+          contributors:
+            anonymous: >-
+              There is no further documentation that relates the code with personally identifying information. The code is retained exclusively by {addressee, select,
+                  children {your child or}
+                  wards    {the individual under your supervision or}
+                  other    {}} you. Identification is possible only for persons who know the code.
+            list: 'The mapping of codes to personally identifying information is possible for project contributors via an allocation list. The allocation list is stored separately from all other data.'
+            marking: 'The code is only used for labelling datasets, it does not enable the identification of individual persons.'
+            generation: 'No data are stored that allow direct inference on specific persons. However, the structure of the code could enable the identification of individual persons by project contributors with little additional knowledge.'
+    markingPersonal:
+      personal:
+        anonymous: 'Part of the research data could, however, allow for direct identification. Due to being linked with each other, all collected research data are thus person-related.'
+        codePersonal: '{codePersonal} Moreover, part of the research data could allow for direct identification.'
+      personalMaybe:
+        anonymous: 'However, although the research data themselves are not directly person-related, it cannot be entirely excluded that the combination of parts of the research data with additional knowledge might allow for identifying individual persons. Due to being linked with each other, all collected research data are thus person-related.'
+        codePersonal: '{codePersonal} Moreover, though the research data themselves are not directly person-related, it cannot be entirely excluded that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.'
+        no: 'The research data themselves are not directly person-related, but it cannot be entirely excluded that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.'
+      personalNo:
+        external: 'For use within this study, the research data are anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
+        internal: 'For the project contributors, the research data are anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
+        no: >-
+          In that process, {addressee, select,
+                              children {your child and}
+                              wards    {the individual under your supervision and}
+                              other    {}} you remain anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.
+        codePersonal: '{codePersonal} '
+      codePersonal: >- # for the {codePersonal} placeholder above
+        Due {isName, select,
+                    true  {to labelling with names}
+                    other {}} {isList, select,
+                                true  {{isName, select,
+                                          true  {and}
+                                          other {}} to the allocation list}
+                                other {}} {isGeneration, select,
+                                            true  {{isNameList, select,
+                                                      true  {and}
+                                                      other {}} to the structure of the code}
+                                            other {}}, all collected research data are person-related.
+    codeCompensation: # must be the same logic as the marking key above. types-keys are copied from messages. Exampled are removed and addressee is added where applicable
+      codeMarking: >- # other is internal
+        The compensation is issued with {type, select,
+                                          external {a code assigned outside of the project, namely {description}}
+                                          other    {an internal code in the project.}}
+      external:
+        types:
+          anonymous: 'The code itself does not allow inference on specific persons. The mapping of codes to personally identifying information is possible only for the institution or body that assigned the code originally. Information on the handling of personal data is available there.'
+          generation: 'No data are stored that allow direct inference on specific persons. However, the structure of the code could enable the identification of individual persons by project contributors with little additional knowledge.'
+      internal: # other is participants
+        pattern: >-
+          The code is generated following a pre-specified scheme by {addressee, select,
+                                                                      children {your child or}
+                                                                      wards    {the individual under your supervision or}
+                                                                      other    {}} you.
+        own: >-
+          The code is freely chosen by {addressee, select,
+                                          children {your child or}
+                                          wards    {the individual under your supervision or}
+                                          other    {}} you. There is no further documentation that relates the code with personally identifying information. Identification is possible only for persons who know the code.
+        contributors: 'The code is assigned by the project contributors.'
+        types:
+          pattern:
+            anonymous: 'There is no further documentation that relates the code with personally identifying information. Identification is possible only for persons who know the code.'
+            generation: 'No data are stored that allow direct inference on specific persons. However, the structure of the code could enable the identification of individual persons by project contributors with little additional knowledge.'
+          contributors:
+            anonymous: >-
+              There is no further documentation that relates the code with personally identifying information. The code is retained exclusively by {addressee, select,
+                  children {your child or}
+                  wards    {the individual under your supervision or}
+                  other    {}} you. Identification is possible only for persons who know the code.
+            generation: 'No data are stored that allow direct inference on specific persons. However, the structure of the code could enable the identification of individual persons by project contributors with little additional knowledge.'
+    dataReuseSelf:
+      yes: >-
+        After completion of the study, the {personal, select,
+                                                immediately {anonymized research data}
+                                                marking     {anonymized research data}
+                                                keep        {anonymized research data}
+                                                noTool      {research data}
+                                                purpose     {anonymized research data}
+                                                personal    {person-related research data}
+                                                other       {anonymous research data}} are stored for own re-use, e.g., for further analyses. Purpose, scope and extent of potential re-use are not foreseeable at this point.
+      yesEnd: >-
+        Furthermore, the {personal, select,
+                            immediately {anonymized research data}
+                            marking     {anonymized research data}
+                            keep        {anonymized research data}
+                            noTool      {research data}
+                            purpose     {anonymized research data}
+                            other       {anonymous research data}} can be stored for documentation purposes without limitation.
+      no: >-
+        After completion of the study, the {personal, select,
+                                                immediately {anonymized research data}
+                                                marking     {anonymized research data}
+                                                keep        {anonymized research data}
+                                                noTool      {research data}
+                                                purpose     {anonymized research data}
+                                                other       {anonymous research data}} can be stored for documentation purposes without limitation.
+    dataReuseHow:
+      reuse: ' Purpose, scope and extent of potential re-use are not foreseeable at this point.'
+      public: ' The research data are published in a way that does not allow for identifying individual persons at any point in time.'
+      guidelines: ' In making the data available, the study follows current codes of practice by the DFG on assuring good scientific practice.'
+  contact: 'If you have any questions about the study, please contact: {contributors}.'
+
+# data privacy
+dataPrivacy:
+  title: 'Annex on data processing'
+  intro: |
+    Information on processing personal data within the {numStudies, plural,
+                                                         =1    {study “{projectTitle}“}
+                                                         other {research project “{projectTitle}“, study {studyID}}} (version of {curDate}).
+    With this data privacy statement, {committeeLocation} fulfills its obligation to provide information according to article 13 and 14 of the European Union's General Data Protection regulation (EU-GDPR).
+    Please refer to the definitions in article 4 EU-GDPR with respect to the terms used herein, such as “personal data“, “processing“, “data controller“, “third party“ etc.
+  contact:
+    title: 'Contact data'
+    responsible:
+      title: 'Responsible institution:'
+      text: >-
+        {committeeType, select,
+          TUC  {Technische Universität Chemnitz
+                Straße der Nationen 62
+                09111 Chemnitz
+                Web: https://www.tu-chemnitz.de}
+          EUB  {Universität Bielefeld
+                Universitätsstraße 25
+                D-33615 Bielefeld
+                Web: https://www.uni-bielefeld.de}
+          other {Testinstitution
+                 Teststraße 123
+                 D-12345 Teststadt
+                 Web: https://www.test-institution.de}}
+    infos:
+      name: 'Name: '
+      eMail: 'E-mail: '
+      phone: 'Phone number: '
+    data: 'Responsible project contributors:'
+    representative:
+      title: 'Data protection officer:'
+      text: >-
+        The data protection officer can be reached via regular mail at the address of the responsible institution.
+
+        {committeeType, select,
+          TUC   {Tel.: +49 371 531-12030
+                 E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
+          EUB   {Tel.: +49 521 106-5225
+                 E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
+          other {Tel.: +49 xxxx xxxxx
+                 E-Mail: datenschutz@test-institution.de}}
+  basis:
+    title: 'Lawfulness of data processing'
+    text: >-
+      The legal basis for processing the specified personal data is given by {isDataSpecial, select,
+                                                                                                    true  {explicit}
+                                                                                                    other {}} consent according to article 6(1) lit. a) EU-GDPR{isDataSpecial, select,
+                                                                      true  {, in conjunction with article 9(2) lit. a) EU-GDPR}
+                                                                      other {}}.
+  processing:
+    title: 'Processed personal data and purposes'
+    start: "Within the study, personal data are processed for the following purposes:\n\n"
+    purposeStart: 'For '
+    dataResearch:
+      types: # same as in messages, but without the examples and without the two 'other' types
+        demographic: 'Sociodemographic data'
+        observation: 'Behaviour-observational data'
+        survey: 'Survey data'
+        audio: 'Audio recordings'
+        photo: 'Photos'
+        video: 'Video recordings'
+        instrumental: 'Instrumental measurements'
+        ip: 'IP address'
+        ethnic: 'Ethnic origin'
+        political: 'Political opinions, religious or philosophical beliefs'
+        union: 'Trade union membership'
+        sexual: 'Data concerning sex life or sexual orientation'
+        brainStructure: 'Structural brain images'
+        biometric: 'Biometric data'
+        health: 'Health data (e.g., EEG or ECG data, diagnoses)'
+        genetic: 'Genetic data'
+        hair: 'Hair samples'
+        saliva: 'Saliva samples'
+        bloodSample: 'Blood samples'
+      dataSpecial: >-
+        {isDataResearch, select,
+          true  {This includes the}
+          other {The}} following special categories of personal data:
+    purposeTypes:
+      dataPersonal: ' answering the research question'
+      compensation: ' issuing the compensation'
+      relatable: ' individual traceability'
+      contact: ' contacting for data collection'
+      contactResult: ' contacting for result transmission'
+      technical: ' technical support/quality assurance'
+    purposeTypesGen:
+      compensation: 'issuing the compensation'
+      relatable: 'individual traceability'
+      contact: 'contacting for data collection'
+      contactResult: 'contacting for result transmission'
+      technical: 'technical support/quality assurance'
+    list: ' The allocation list contains the following data: '
+    end:
+      start: 'These personal data are collected for the purposes of the processing described herein and used within the study {committeeLocationGen} specified above. '
+      startNoUse: 'These personal data are collected exclusively for the purposes of the processing described herein and only used within the study {committeeLocationGen} specified above.'
+      dataReuseHow: ' The personal research data are additionally made available to others for re-use, as outlined in section 6.'
+      dataReuseSelf: ' The personal research data are additionally employed for own re-use with different purposes.'
+    otherSources: 'Part of the processed data are not collected within this study, but retrieved from other sources. This is specified in the study information sheet.'
+  transfer: # other is participants
+    title: 'Data transfer'
+    access:
+      start: 'Only the following persons/entities have access to the personal data for {purpose}:'
+      types: 
+        contributors: 'All project contributors {committeeLocationGen}'
+        contributorsPart: 'Individual project contributors {committeeLocationGen}: {description}'
+        institution: 'The following non-project contributors {committeeLocationGen}: {description}'
+        contributorsOther: 'Project contributors from collaborating institutions {description}'
+        accessExternal: 'external service providers'
+        dataService: 'external software/data services'
+    orderProcessingKnown:
+      known: 'We employ external data processors that process personal data for {purpose} on our behalf. With these data processors, we have made contracts according to article 28 EU-GDPR to ensure data protection. '
+      unknown: >-
+        {isKnown, select,
+          true  {Beyond that, access}
+          other {Access}} to personal data for {purpose} is granted to external data processors. This will {isKnown, select,
+                                          true  {also}
+                                          other {}} be based on a contract according to article 28 EU-GDPR. These data processors are obliged to treat personal data confidentially and process them only according to our instructions.
+    transferOutside: 'We generally do not transmit personal data to third parties outside of the EEA.'
+  anonymization:
+    title: 'Data anonymization and storage/deletion'
+    dataResearchNo: 'The research data are not anonymized.'
+  storage: 'The original data are deleted immediately after applying the anonymization technique, thus in all probability {description}'
+  personalKeep: # wie in messages, aber bei "start" ohne Satzende
+    types: # also used for consent if consent is optional
+      documentation: 'for quality assurance/documentation'
+      reuse: 'for re-use in further research projects'
+      teaching: 'for use in teaching'
+      demonstration: 'for exemplary demonstration'
+  markingRemove: # start of sentence: 'The link of the research data with personal data for the purpose of {purpose} is removed '
+    markingRemoveImmediately: 'immediately after the purpose is fulfilled, thus in all probability {description} '
+    markingRemoveLater: 'at a later point in time, namely {description} '
+  personalRemove: # start of sentence: 'The personal data that are processed for {purpose} are '
+    immediately: 'deleted immediately after the purpose is fulfilled, thus in all probability {description} '
+    keep: 'not deleted. {description}'
+    keepFurther: 'deleted by the project contributors immediately after the purpose is fulfilled. Other bodies store the data for a longer period of time following legal retention periods (e.g., payment verifications).'
+  public:
+    title: 'Data publication/access'
+    start: 'The communication of results, such as in a scientific publication or presentation, is based only on general/summarizing analyses or - if single cases are mentioned - in a form that does not allow for inference on specific persons. '
+    reuseTypes:
+      class0: ' made publicly available.'
+      class1: ' made available to others under certain usage conditions.'
+      class2: ' made available to others under individualized usage contracts.'
+      class3: ' made available to others under strict data-protection restrictions following an individual contract.'
+    end: >-
+      {optional, select,
+        true  {, if you agreed to that{isTeaching, select,
+                                        true  {,}
+                                        other {}}}
+        other {}}
+    demonstration: >-
+      An exception to this is the presentation of research data by which {addressee, select,
+            children {your child may be recognized}
+            wards    {the individual under your supervision may be recognized}
+            other    {you may be recognized}} in exemplary demonstrations{optional, select,
+                                                                                      true  {, if you agreed to that}
+                                                                                      other {}}.
+    teaching: >-
+      {isReuse, select,
+        true  { and }
+        other {}} shared with students in the context of teaching{optional, select,
+                                                                              true  {, if you agreed to that}
+                                                                              other {}}
+    dataReuseHow: 'The research data as originally collected are'
+  revocation:
+    title: 'Withdrawal after consent'
+    text: |
+      You have the right to withdraw your consent at any time. Withdrawal of consent does not affect the lawfulness of processing based on consent up to this point (article 7(3) EU-GDPR).
+      For exercising the withdrawal, you may contact the responsible project contributors (see section 1).
+  rights:
+    title: 'Your further rights as a data subject or legal guardian'
+    text: >-
+      As a data subject{addressee, select,
+                                          children {or legal guardian}
+                                          wards    {or legal guardian}
+                                          other    {}}, you can assert the following rights:
+
+      • the right to request whether and which personal data are processed (article 15 EU-GDPR);
+
+      • the right to obtain rectification or completion of personal data (article 16 EU-GDPR);
+
+      • the right to obtain erasure of personal data (article 17 DSG-GVO);
+
+      • the right to restrict the processing of personal data (article 18 EU-GDPR);
+
+      • the right to receive the personal data (data portability, article 20 EU-GDPR).
+
+      You can exercise these rights by contacting the responsible project contributors (see section 1). Please note that exercising the specified rights is possible only until the time point of anonymization or deletion (see section 5). 
+   
+      
+      Further objections or potential complaints can also be placed with the data protection officer {committeeLocationGen} specified in section 1.
+
+
+      Furthermore, you can assert the right to file a complaint with the supervisory data protection authority (article 77 EU-GDPR). The responsible person in the case {committeeLocationGen} is:
+
+      {committeeType, select,
+        TUC   {Sächsische Datenschutz- und Transparenzbeauftragte
+               Postfach 11 01 32
+               01330 Dresden
+               Tel.: +49 351 85471-101
+               E-Mail: post@sdtb.sachsen.de}
+        EUB   {Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
+               Kavalleriestraße 2-4
+               40213 Düsseldorf
+               Tel.: +49 211/384 24-0
+               E-Mail: poststelle@ldi.nrw.de}
+        other {}}
+    textEnd: "\n\nIf you have any questions on data processing within this study, please contact the responsible project contributors (see section 1)."
+
+# complete post information
+completePost:
+  title: 'Debriefing supplement'
+  oral: 'The debriefing is given orally. It is in line with the written information provided here.'
+  intro: >-
+    Thank you for {addressee, select,
+                      children {your child''s participation}
+                      wards    {participation of the individual under your supervision}
+                      other    {participating}} in our study within the research project entitled “{projectTitle}“. We would like to give you some more information about our study now.
+  goals: 'As you already know, the study investigates '
+  infoBefore: >-
+    Before or during participation, you {addressee, select,
+                                                      children {and your child}
+                                                      wards    {and the individual under your supervision}
+                                                      other    {}} were given the following information:
+  infoAfter: 'We would now like to inform you that '
+  explain: 'We sincerely hope you will accept us withholding this information and providing full information only now. This was necessary because '
+  end: >-
+    Furthermore, we ask you {addressee, select,
+                                  children {and your child}
+                                  wards    {and the individual under your supervision}
+                                  other    {}} to keep this information confidential so that it does not influence subsequent participants. Thank you very much!
+  contributors: "If you have any further questions, please contact the following project contributors:\n"
+  confirm:
+    title: 'Do you still consent to the use of the data?'
+    yes: >-
+      Yes, I consent to the use of {addressee, select,
+                                              children {the data of my child.}
+                                              wards    {the data of the individual under my supervision.}
+                                              other    {my data.}}
+    no: >-
+      No, I withdraw from my consent to the use of {addressee, select,
+                                                              children {the data of my child.}
+                                                              wards    {the data of the individual under my supervision.}
+                                                              other    {my data.}}
+
+# consent for participation
+consent:
+  title: >-
+    {information, select,
+      post  {After-the-fact declaration of consent to data processing}
+      other {Consent to study participation and data processing}}
+  start: >-
+    I have {informationType, select,
+              oral  {received}
+              other {read}} and understood the information about {information, select,
+                                                                    post  {}
+                                                                    other {participation in}} the study within the research project entitled “{projectTitle}“ {isPersonal, select,
+                                                                                                        true  {and the annex on data processing}
+                                                                                                        other {}}. I have been sufficiently informed and had the opportunity to ask questions.
+    
+    I am aware that {information, select,
+                            post  {the consent on usage {addressee, select,
+                                                         children {of my child''s data is voluntary and that my child and I will not experience any disadvantages if I do not give my consent.}
+                                                         wards    {of the data from the individual under my supervision is voluntary and that the individual under my supervision and I will not experience any disadvantages if I do not give my consent.}
+                                                         other    {of my data is voluntary and that I will not experience any disadvantages if I do not give my consent.}}}
+                            other {{addressee, select,
+                                     children {participation of my child in the study is {isVoluntary, select,
+                                                              false {not voluntary, but}
+                                                              other {voluntary and}} that my child and I will not experience any disadvantages if I do not give my consent.}
+                                     wards    {participation of the individual under my supervision in the study is {isVoluntary, select,
+                                                              false {not voluntary, but}
+                                                              other {voluntary and}} that the individual under my supervision and I will not experience any disadvantages if I do not give my consent.}
+                                     other    {my participation in the study is voluntary and that I will not experience any disadvantages if I do not give my consent.}} {terminateCons, select,
+            true  {I am further aware that withdrawal from participation is possible at any time and without disadvantages.}
+            other {}}}}
+  # added empty lines to have same line numbers in all translation files.
+
+  personal: >-
+    {isPersonal, select,
+          true  {I was informed that personal data {information, select,
+                                                      post  {were}
+                                                      other {are}} collected{isDataSpecial, select,
+                          true  {, including the following special categories of personal data: {dataSpecial}.
+                                 Their processing is described in the attached annex on data processing. I explicitly extend my consent to the processing of special categories of personal data.}
+                          other {.}} I can withdraw my consent to the processing of personal data fully or partially at any time. Withdrawal of consent does not require giving reasons and does not lead to any disadvantages. The matter of withdrawn consent is addressed immediately. Withdrawal of consent does not affect the legitimacy of processing up to this point. To express the withdrawal of consent, I can contact {contributors}. Further details are settled in the attached annex on data processing.}
+          other {}}
+  copy: >-
+    I have received a copy of {informationType, select,
+                                oral  {{isPersonal, select,
+                                          true  {the annex on data processing and}
+                                          other {}}}
+                                other {the {information, select,
+                                              post  {study information sheet}
+                                              other {study information sheet}}{isPersonal, select,
+                                                                                true  {, the annex on data processing}
+                                                                                other {}} and }} this consent form.
+  confirm: >-
+    I hereby consent to the {information, select,
+                              post  {use of {addressee, select,
+                                                      children {the data of my child}
+                                                      wards    {the data of the individual under my supervision}
+                                                      other    {my data}}.}
+                              other {study participation {isPersonal, select,
+                                                            true  {{addressee, select,
+                                                                      children {of my child}
+                                                                      wards    {of the individual under my supervision}
+                                                                      other    {}} and the processing of personal data}
+                                                            other {and the processing of {addressee, select,
+                                                                                        children {the data of my child}
+                                                                                        wards    {the data of the individual under my supervision}
+                                                                                        other    {my data}}}}.}} {addressee, select,
+            children {I hereby declare to give consent on behalf of all legal guardians.}
+            other    {}}
+  finding: 'If the investigation points towards an unusual test result (incidental finding), I agree to being told about this for me to possibly seek further diagnostic assessment. I was informed that knowing about a disease could lead to difficulties in contracting insurance for resulting adversities.'
+  personalKeepConsent: 'I agree to the storage and use of personal research data {type}.'
+  name: 'Name in block letters:'
+  digital: 'Note: Consent is given by clicking on a corresponding button.'
+  oral: 'Note: Consent is documented by a project contributor.'
+  end: 'We thank you for your participation!'
+
+# signature
+signature:
+  location: 'Place, date'
+  signature: >-
+    signature {addressee, select,
+                    children {legal guardian}
+                    wards    {legal guardian}
+                    other    {}}
+  loanReceipt:
+    receipt: 'Borrower'
+    return: 'Staff member'
+
+# loan receipt
+loanReceipt:
+  title: 'confirmation sheet for loaned device(s)'
+  contact:
+    name: 'First and last name:'
+    eMail: 'E-mail:'
+    further: 'Further contact details if necessary: '
+  device: 'Name of the device'
+  period: 'Loan period'
+  return:
+    title: 'Return:'
+    text: 'The above-mentioned device(s)/accessories were returned today in faultless condition.'
+
+# complete form
+completeForm:
+  consent: 'Declaration on the proposal to {committeeAcc}'
+  further:
+    title: 'Additional information on the proposal to {committeeAcc}'
+    messages: >-
+      Further notifications to {committeeAcc}: {messages, select,
+                                                      true  {}
+                                                      other {none.}}
+
+metadata:
+  title: 'Ethics proposal'
+  author: 'ZPID/TU Chemnitz'
+  version: 'Ethiktool version {toolVersion}'
+  keywords: |
+    Generated by Ethiktool version {toolVersion}; no modification must be made to the PDF file before submission to the ethics committee.
+    
+    Generation time: {createTime}
+
+# alternative texts for logo
+logo:
+  TUC: 'Logo of Chemnitz University of Technology'
+  EUB: 'Logo of Bielefeld University'

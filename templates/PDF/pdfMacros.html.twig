@@ -1,0 +1,111 @@
+{% macro addDateSign(type = '') %}
+    {# Adds the location, date, and sign part of a consent. Input arguments:
+        type: translation key for person that should sign. Will be added after the "sign" word
+    #}
+{% endmacro %}
+
+{% macro addHeader(committeeType, projectTitle, leader, levelNames, savePDF, isComplete, style = '') %}
+    {# Adds a header. Input arguments:
+        committeeType:   committee type
+        projectTitle:    project title
+        leader:          array containing the  project leaders
+        levelNames:     string containing the level IDs
+        savePDF:         if true, the pdf will be saved on disk
+        isComplete:      if true, for the date, only the date will be added, otherwise the time will also be added
+        style:           additional style attributes for the img-tag of the logo
+    #}
+    {% set tempPrefix = 'participation.projectTitleHeader.' %}
+    <div style="page-break-inside: avoid; margin-bottom: 0.5em">
+        <div style="display: flex">
+            {{ _self.addLogo(committeeType,style) }}
+            {# project leader #}
+            <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-top: 0.25rem; text-align: right; margin-right: 0.5em; width: {{ committeeType is not same as 'testCommittee' ? '80%' : '100%' }}">
+                <div>{{ 'contributors.tasks.leader'|trans([],'messages')~':' }}</div>
+                {% for curLeader in leader %}
+                    <div >{{ curLeader }}</div>
+                {% endfor %}
+                {# project title #}
+                <div {% if not savePDF %} class="previewSmall" {% endif %} style="word-break: break-word; margin-top: 0.25rem">
+                    {{ ((tempPrefix~'start')|trans([],'pdf'))|raw }}{{ (tempPrefix~'end')|trans({'projectTitle': projectTitle},'pdf')~levelNames }}
+                </div>
+                {{ _self.addDate(savePDF,isComplete) }}
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro addLogoDate(committeeType, savePDF, toolVersion = '', isComplete = false, style = '') %}
+    {# Adds a header containing only the logo, the current time, and eventually the tool version. Input arguments:
+        committeeType: committee type
+        savePDF:       if true, the pdf will be saved on disk
+        toolVersion:    if not an empty string, the tool version will be added above the date
+        isComplete:    if true, for the date, only the date will be added, otherwise the time will also be added
+        style:         additional style attributes for the img-tag of the logo
+    #}
+    <div style="display: flex">
+    {{ _self.addLogo(committeeType,style) }}
+    {{ _self.addDate(savePDF,isComplete,'text-align: end; margin: 0.5em 0 0.5em 0.5em; width: 80%',toolVersion) }}
+    </div>
+{% endmacro %}
+
+{% macro addLogo(committeeType, style = '') %}
+    {# Adds the logo. Input arguments:
+        committeeType: committee type
+        style:         additional style attributes for the img-tag
+    #}
+    {% set isTestCommittee = committeeType is same as 'testCommittee' %}
+    <div class="logo" style="background: inherit;{{ style }}; width: 20%; {% if isTestCommittee %} margin: 0 {% endif %}" title="{{ ('logo.'~committeeType)|trans([],'pdf') }}">{{ include('images/logos/'~committeeType~(isTestCommittee ? '_'~app.request.locale)~'.svg') }}</div>
+{#    <div class="logo" style="background: inherit;{{ style }}; width: 20%; {% if committeeType is same as 'testCommittee' %} margin: 0 {% endif %}" title="{{ ('logo.'~committeeType)|trans([],'pdf') }}">{{ include('images/logos/'~committeeType~'.svg') }}</div>#}
+{% endmacro %}
+
+{% macro addDate(savePDF, isComplete, style, toolVersion = '') %}
+    {# Adds the current time. Input argument:
+        savePDF:    if true, the pdf will be saved on disk
+        isComplete: if true, only the date will be added, otherwise the time will also be added
+        style:      style for the surrounding div
+        addVersion: if not an empty string, the tool version is added above the date
+    #}
+    <div {% if not savePDF %} class="previewSmall" {% endif %} {% if style is not same as '' %} style="{{ style }}" {% endif %}>
+        {% if toolVersion is not same as '' %}
+            {{ 'header'|trans({'toolVersion': toolVersion},'pdf')|raw|nl2br }}
+        {% endif %}
+        {{ 'now'|date('dateFormat'|trans({'noTime': boolToString(isComplete)},'pdf')) }}
+    </div>
+{% endmacro %}
+
+{% macro addHeading(heading, savePDF) %}
+    {# Adds a main heading. Input arguments:
+        headingKey: translated heading
+        savePDF:    if true, the pdf will be saved on disk
+    #}
+    <div class="pdfHeadingCenter pdfHeadingMain {% if not savePDF %}previewXLarge{% endif %}" style="page-break-inside: avoid">{{ heading|raw }}</div>
+{% endmacro %}
+
+{% macro addSignature(savePDF, addressee = '') %}
+    {# Adds the location, date and signature line. Input arguments:
+        savePDF:   if true, the pdf wil be saved on disk
+        addressee: translation key for the addressee to be added after the signature
+    #}
+    {% set style, textPreview = 'width: 30%; border-top: 1px solid black', not savePDF ? 'previewSmall' %}
+    <div style="margin-top: 100px; display: flex">
+        <div style="{{ style }}">
+            <i class="{{ textPreview }}">{{ 'signature.location'|trans([],'pdf') }}</i>
+        </div>
+        <div style="{{ style }}; margin-left: 200px">
+            <i class="{{ textPreview }}">{{ 'signature.signature'|trans({'addressee': addressee},'pdf') }}</i>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro addLine() %}
+    {# Adds a horizontal dashed line indicating a page break in the preview. #}
+    <div class="mb-2 pdfMargin" style="width: 100%; border-bottom: 1px dashed black"></div>
+{% endmacro %}
+
+{% macro addCheckbox(checked, savePDF) %}
+    {# Creates a checkbox. Input arguments:
+        id:      id of the checkbox. Only used for avoiding browser warnings
+        savePDF: if true, the pdf will be saved on disk
+    #}
+    <div class="checkboxPDF {% if not savePDF %} checkSmall {% endif %}">{% if checked %} {{ include('images/checkmark.svg') }} {% endif %}</div>
+{% endmacro %}

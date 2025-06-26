@@ -1,0 +1,13 @@
+{% apply inline_css(source('@styles/pdf.css')) %}
+<!DOCTYPE html>
+    {% set locale = app.request.locale %}
+<html lang="{{ locale }}">
+    <head>
+        <meta charset="UTF-8">
+        <title>PDF</title>
+    </head>
+    <div class="pdfDocument {% if isCommitteeBeta and savePDF %} demo demo_{{ locale }} {% endif %}">
+        {% block pdfBody %}{% endblock %}
+    </div>
+</html>
+{% endapply %}

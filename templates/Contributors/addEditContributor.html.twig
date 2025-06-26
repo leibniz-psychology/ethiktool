@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block body %}
+    {% set contributorsController, positionOtherText, infosPrefix = 'Contributors--contributors', content.positionOtherText, 'multiple.infos.' %}
+    <div>
+        {# infos #}
+        <div class="MetaData-Widget MetaData-Widget_collection grid gap-x-4 align-items-center" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
+            {% for widget in infos %}
+                {% set isPosition, isProfessorship, isInstitution, curWidget = widget is same as 'position', widget is same as 'professorship', widget is same as 'institution', content[widget] %}
+                {% set isIcon = isProfessorship or isInstitution %}
+                <div class="grid" style="justify-content: end; {% if isIcon %} grid-template-columns: auto min-content; {% else %} text-align: end;{% endif %}" {% if isInstitution or widget is same as 'phone' %} {{ stimulus_target(contributorsController,widget~'Label') }} {% endif %}>
+                    {{ (infosPrefix~widget)|trans~':' }}
+                    {% if isIcon %}
+                        {{ formRender.addIcon((infosPrefix~widget~'Hint')|trans, 'black', isProfessorship ? content.position.vars.value in ['student','phd'] : true, isProfessorship ? [contributorsController,'professorshipIcon'] : []) }}
+                    {% endif %}
+                </div>
+                <div data-action="input->{{ contributorsController }}#setSubmitButton {% if isPosition %}input->{{ contributorsController }}#setTasks{% endif %}">
+                    {{ form_widget(curWidget,{'id': widget, 'attr': (isPosition ? addTarget(contributorsController, widget) : {})|merge(isPosition ? addClass('Button_dropdown') : {})}) }}
+                </div>
+                {% set col2 = 'grid-column: 2;' %}
+                {% if isPosition %}
+                    <div style="{{ col2 }}" {{ stimulus_action(contributorsController,'setSubmitButton','input') }}>
+                        {{ form_widget(positionOtherText,addTargetArray(contributorsController,'positionOther')) }}
+                    </div>
+                {% elseif widget in ['name','phone','eMail'] %}
+                    <div style="{{ col2 }} display: none" class="errorStyle" {{ stimulus_target(contributorsController,widget~'Error') }}>
+                        {{ ('contributors.errors.'~widget)|trans }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {# tasks #}
+        {% set translationPrefix, span2 = 'contributors.tasks.', 'grid-column: span 2' %}
+        {% set hintPrefix = translationPrefix~'hints.' %}
+        <div class="mt-4">
+            <div class="MetaData-Label">{{ (translationPrefix~'title')|trans }}</div>
+            {{ formRender.addHint(hintPrefix~'position',{'target': [contributorsController,'taskHint']}) }}
+            <div class="MetaData-Widget">
+                <div {{ stimulus_action(contributorsController,'setTasks','change') }}>
+                    {% for widget in tasks %}
+                        {% set curWidget = content[widget] %}
+                        {% set params, addIcon = {'id': curWidget.vars.name, checkInput}, widget in tasksMandatory %}
+                        <div class="flex" {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}> {# no addCheckbox because of additional attributes #}
+                        {{ form_widget(curWidget,params|merge({'attr': checkInput|merge(widget is same as 'other' ? addTarget(contributorsController,'taskOther') : {})})) }}
+                        {{ form_label(curWidget,null, params|merge({'label_attr': checkLabel|merge({'style': 'vertical-align: unset'})})) }}
+                        {% if addIcon %}
+                            <div>{{ formRender.addIcon((hintPrefix~'mandatory')|trans~(widget is same as 'data' ? (hintPrefix~'responsibility')|trans)) }}</div>
+                        {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="MetaData-Widget mb-1" {{ stimulus_action(contributorsController,'setSubmitButton','input') }}>
+                        {{ form_widget(content[otherDescription],addTargetArray(contributorsController,'taskOtherDescription')) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {# entire form including top grid container #}
+{% endblock %}

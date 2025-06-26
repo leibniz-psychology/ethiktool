@@ -1,0 +1,13 @@
+{#  used for showing information to the user #}
+{% set params = params ?? [] %}
+<div class="modal fade" id="{{ modalID }}" tabindex="-1" aria-labelledby="{{ modalID~'Label' }}" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" {% if targetName is defined %} {{ stimulus_target(targetCont ?? 'base',targetName) }} {% endif %}>
+    <div class="modal-dialog modal-content" {% if modalWidth is defined %} style="max-width: 760px" {% endif %}>
+        <div class="modal-header">
+            <h5 class="modal-title">{{ (prefix~'title')|trans(params) }}</h5>
+        </div>
+        <div class="modal-body" style="white-space: normal">{{ (prefix~'text')|trans(params)|raw|nl2br }}</div>
+        <div class="modal-footer">
+            <button type="button" class="Button_primary_go Button_standalone" data-bs-dismiss="modal">{{ 'multiple.confirm'|trans }}</button>
+        </div>
+    </div>
+</div>

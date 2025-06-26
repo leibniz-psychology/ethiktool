@@ -1,0 +1,27 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% set hintPrefix = 'newForm.hints.' %}
+{% block pageTitle %}
+    <h2 class="MetaDataGroup-Title">{{ 'pages.newForm'|trans }}</h2>
+{% endblock %}
+{% block content %}
+    {% set newFormController, fileName, committee = 'Main--newForm', content.fileName, content.committee %}
+    {% set span2, gridCenter, marginRight = 'grid-column: span 2;', 'minAutoGrid align-items-center', 'margin-right: 0.5em;' %}
+    <div class="MetaData-Widget">
+        <div class="grid align-items-center px-2" style="grid-template-columns: repeat(2,min-content) auto" {{ stimulus_controller(newFormController) }}>
+            <div class="flex" style="justify-self: end; {{ marginRight }}">{{ form_label(fileName) }}:</div>
+            <div class="minAutoGrid align-items-center" style="{{ span2 }} margin: 0">
+                <div {{ stimulus_action(newFormController,'setButton','input') }}>{{ form_widget(fileName,{'attr': {'style': dropdownWidth}|merge(addTarget(newFormController,'fileName'))}) }}</div>
+                <div class="MetaData-Label">{{ (hintPrefix~'filename')|trans }}</div>
+            </div>
+            <div style="grid-column: 1; {{ marginRight }}">{{ form_label(committee) }}</div>
+            <div {{ stimulus_action(newFormController,'setButton','change') }} style="{{ dropdownWidth }}">{{ form_widget(committee,{'attr': addClass('Button_dropdown')|merge(addTarget(newFormController,'committee'))|merge({'style': 'text-overflow: ellipsis'})}) }}</div>
+            <div class="MetaData-Label">{{ (hintPrefix~'committee')|trans }}</div>
+            <div class="grid mt-8 mb-2" style="{{ span2 }} grid-template-columns: repeat(2,minmax(min-content,max-content))">
+                <button style="{{ marginRight }}" class="Button_primary_go" type="submit" name="newFormSubmit" {{ stimulus_target(newFormController,'save') }}>{{ 'newForm.buttons.save'|trans }}</button>
+                <button style="{{ marginRight }}" class="Button_primary_go" type="submit" name="backToMain">{{ 'newForm.buttons.cancel'|trans }}</button>
+            </div>
+        </div> {# form including stimulus controller #}
+    </div>
+{% endblock %}

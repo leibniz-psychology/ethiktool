@@ -1,0 +1,14 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block content %}
+    <div>
+        {{ formRender.addHeading('summary.heading',{'headingHint': [['summary.headingHint'],true]}) }}
+        <div class="mt-4">{{ formRender.addCountableTextfield(content.summary, maxChars, {'divHeight': '20em', 'hint': [['summary.textHint']], 'noHeading': true}) }}</div>
+    </div>
+    {{ formRender.addSubmitButtons() }}
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview() }}
+{% endblock %}

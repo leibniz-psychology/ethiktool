@@ -1,0 +1,20 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block content %}
+    <div>
+        {{ formRender.addHeading(('projectdetails.pages.informationIII.title'),{'params': {'addressee': addressee}}) }}
+        {% for id in widgetIDs %}
+            {% set widget = content[id] %}
+            <div class="mt-4">
+                <div class="MetaData-Label" style="margin-bottom: -1rem">{{ form_label(widget,null,{'id': widget.vars.name}) }}</div>
+                {{ formRender.addTextfield(widget,{'attributes': {'style': 'height: '~textHeight}, 'transfer': [['info','deceit'],addresseeType]}) }}
+            </div>
+        {% endfor %}
+        {{ formRender.addSubmitButtons() }}
+    </div>
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview([studyID,groupID,measureID]) }}
+{% endblock %}

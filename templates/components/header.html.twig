@@ -1,0 +1,48 @@
+{% set logoSize, maxWidth, flexRowClasses, request, curLocale = 'height: 100px; width: 100px;', 'max-width: 1600px;', 'flex flex-row', app.request, request.getLocale() %}
+{% set background, flexClasses = 'background: linear-gradient(to right,#240d46 0%,#2b2171 100%);', flexRowClasses~' flex-nowrap' %}
+{% set headerModals, infoModal = ['aboutUs','aboutTool','technicalHints','termsOfUse','contactModal'], 'components/infoModal.html.twig' %}
+<div class="bg-white relative z-20">
+    <div class="mx-auto" style="{{ maxWidth }}">
+        <div class="{{ flexClasses }} justify-between" style="max-width: 1600px">
+            <div class="{{ flexClasses }}" style="width: 20%; padding-right: 2.5rem; margin-top: 0.5rem">
+                <a href="{{ 'https://leibniz-psychology.org/'~(curLocale is same as 'en' ? 'en' : '') }}" rel="noreferrer" target="_blank" style="{{ logoSize }}">
+                    <div class="mt-[15px] lg:ml-0" title="{{ 'header.ZPID'|trans }}">{{ include('images/logos/header_ZPID.svg') }}</div>
+                </a>
+                <a class="no-linkout" href="{{ 'https://tu-chemnitz.de/index.html' }}" rel="noreferrer" target="_blank" style="{{ logoSize }}">
+                    <div class="mt-[15px] lg:ml-0" title="{{ 'header.TUC'|trans }}">{{ include('images/logos/header_TUC.svg') }}</div>
+                </a>
+            </div>
+            <div class="lg:flex flex-col justify-between align-self-center">
+                <div class="{{ flexRowClasses }} justify-end gap-3">
+                    {% for modal in headerModals %}
+                        {% set title = (modal~'.title')|trans %}
+                        <a href="" data-bs-toggle="modal" data-bs-target="#{{ modal }}" title="{{ title }}">{{ title }}</a>
+                    {% endfor %}
+                    <span style="margin-left: 8px" class="{{ flexRowClasses }} gap-1">
+                        {% for locale in appLocales %}
+                            <a id="{{ locale }}" {{ stimulus_target('base','language') }} {% if locale is same as curLocale %} class="font-bold text-secondary" {% endif %}
+                               href="{{ path(request.attributes.get('_route'),request.get('_route_params')) }}">{{ locale|upper }}</a>
+                        {% endfor %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <header style="{{ background}} height: 150px">
+        <div class="HeaderBackground" style="height: 150px">
+            <div style="width: fit-content">
+                <a href="/{{ curLocale }}" class="block mx-auto sm:w-full font-serif text-5xl text-white whitespace-nowrap">
+                    <span class="font-semibold font-serif">{{ 'main.title'|trans }}</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    <div style="{{ background }} height: 48px">
+        <div class="{{ flexRowClasses }} mx-auto bg-white flex-wrap pl-5 py-3" style="{{ maxWidth }} height: 48px">
+        </div>
+    </div>
+</div>
+{# modals #}
+{% for modal in headerModals %}
+    {{ include(infoModal,{'modalID': modal, 'prefix': modal~'.', 'params': committeeParams, 'modalWidth': true}) }}
+{% endfor %}

@@ -1,0 +1,27 @@
+@font-face {
+    font-family: 'montserrat-regular';
+    font-weight: 400;
+    font-style: normal;
+    src: url('/assets/fonts/montserrat/Montserrat-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'montserrat-medium';
+    font-weight: 400;
+    font-style: normal;
+    src: url('/assets/fonts/montserrat/Montserrat-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'zillaSlab-regular';
+    font-weight: 400;
+    font-style: normal;
+    src: url('/assets/fonts/zillaSlab/ZillaSlab-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'zillaSlab-medium';
+    font-weight: 400;
+    font-style: normal;
+    src: url('/assets/fonts/zillaSlab/ZillaSlab-Medium.ttf');
+}

@@ -1,0 +1,18 @@
+{% extends 'threeColumns.html.twig' %}
+
+{% set title = 'pages.main.title'|trans %}
+{% block title %}
+{{ 'pages.tabName'|trans~title }}
+{% endblock %}
+{% block pageTitle %}
+    <h2 class="MetaDataGroup-Title">{{ 'pages.main.pageTitle'|trans }}</h2>
+{% endblock %}
+{% block content %}
+    {% set isErrorOrXml = error is not same as '' %} {# either the xml-file could not be loaded, was updated, or an error occurred during saveDocumentAndRedirect #}
+    <div class="MetaData-Label mb-2" {% if isErrorOrXml %} {{ stimulus_action('base','showModal','load@window',{'target': error}) }} {% endif %}>
+        {{ ('main.text'~(committeeParams.committeeType not in ['noCommittee',''] ? '' : 'NoCommittee'))|trans(committeeParams)|raw|nl2br }}
+    </div>
+    {% if isErrorOrXml %}
+        {{ include('components/infoModal.html.twig',{'modalID': error, 'prefix': 'multiple.loadMessage.'~error~'.', 'params': params}) }}
+    {% endif %}
+{% endblock %}

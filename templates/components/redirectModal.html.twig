@@ -1,0 +1,20 @@
+{#  used for asking the user if they want to go to another page #}
+{% set isMiddleButton, params, stim = middleButton is defined, params ?? [], stim ?? ['base','setDummySubmit',{'url': link}] %}
+{% set stimCont, stimAction, stimParams = stim[0], stim[1], stim[2] ?? {} %}
+<div class="modal fade" id="{{ modalID }}" tabindex="-1" aria-labelledby="redirectModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" {% if redirectTarget is defined %} {{ stimulus_target(targetCont,redirectTarget) }} {% endif %}>
+    <div class="modal-dialog modal-content" {% if isMiddleButton %} style="max-width: 40rem" {% endif %}>
+        <div class="modal-header">
+            <h5 class="modal-title">{{ (prefix~'title')|trans(params) }}</h5>
+        </div>
+        <div class="modal-body" style="white-space: normal" {% if modalBodyTarget is defined %} {{ stimulus_target(modalBodyTarget[0],modalBodyTarget[1]) }} {% endif %}>
+            {{ (prefix~'content')|trans(params)|raw }}
+        </div>
+        <div class="modal-footer">
+            <a class="Button_primary_go Button_standalone" id="{{ modalID~'Button' }}" href="{{ path(link) }}" {{ stimulus_action(stimCont,stimAction,'click',stimParams|merge(submitParams ?? {})) }}>{{ (leftButton is defined ? leftButton : 'buttons.yes')|trans }}</a>
+            {% if isMiddleButton %}
+                <a class="Button_primary_go Button_standalone" id="{{ modalID~'ButtonMiddle' }}" href="{{ path(link) }}" {{ stimulus_action(stimCont,stimAction,'click',stimParams) }}>{{ (middleButton)|trans }}</a>
+            {% endif %}
+            <button type="button" class="Button_primary_act Button_standalone" data-bs-dismiss="modal" {% if stimNo is defined %} {{ stimulus_action(stimNo[0],stimNo[1],'click',stimNo[2] ?? {}) }} {% endif %}>{{ (rightButton is defined ? rightButton : 'buttons.no')|trans }}</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+{% extends 'PDF/basePDF.html.twig' %}
+{% import 'PDF/pdfMacros.html.twig' as pdfMacros %}
+{% trans_default_domain 'pdf' %}
+{% set textPreview, style, bottomMargin = not savePDF ? 'previewSmall', 'text-align: justify; line-height: 1.5;', 'margin-bottom: 1.5rem;' %}
+{% set topMargin = style~' margin-top: 0.25rem;' %}
+{% block pdfBody %}
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
+    {% endif %}
+    {% if information is not same as 'pre' and information is not same as 'post' %} {# no 'not in' because information may equal 'noPost' #}
+        <div class="{{ textPreview }} mt-8">{{ 'participation.noInformation'|trans(parameters) }}</div>
+    {% else %}
+        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete,not savePDF ? 'max-height: 20px') }}
+        {{ pdfMacros.addHeading(participationHeading,savePDF) }}
+        {% if isOral %}
+            <div class="pdfOral {{ textPreview }}">{{ oralHint|raw }}</div>
+        {% endif %}
+        {# introduction #}
+        <div style="{{ bottomMargin }}">
+            <div class="{{ textPreview }}" style="{{ style }}">{{ intro[0] }}</div>
+            <div class="{{ textPreview }}" style="{{ topMargin }}">{{ leaderHeading|raw }} {{ intro[1] }}</div>
+            {% for text in intro|slice(2) %}
+                <div class="{{ textPreview }}" style="{{ topMargin }}">{{ text }}</div>
+            {% endfor %}
+        </div>
+        {% for heading, curContent in content %}
+            {# set the height of the heading div to cover one more line to avoid page-break immediately after the heading #}
+            <div class="{{ textPreview }}" style="font-weight: bold; {{ noPageBreakFirstLine }}">{{ heading|raw }}</div>
+            {% set noPageBreak = curContent[1] %}
+            {% for paragraph in curContent[0] %}
+                {% if paragraph[0] is not same as '' %} {# subheading of sub-paragraph #}
+                    <div class="{{ textPreview }}" {% if not noPageBreak %} style="{{ noPageBreakFirstLine }}" {% endif %}>{{ paragraph[0]|raw|nl2br }}</div>
+                {% endif %}
+                <div class="{{ textPreview }}" style="{{ bottomMargin~style }} {% if noPageBreak %} page-break-inside: avoid {% endif %}">{{ paragraph[1]|nl2br }}</div>
+            {% endfor %}
+        {% endfor %}
+        {# consent if information is (partly) written #}
+    {% endif %}
+{% endblock %}

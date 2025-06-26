@@ -1,0 +1,40 @@
+{% extends 'PDF/basePDF.html.twig' %}
+{% import 'PDF/pdfMacros.html.twig' as pdfMacros %}
+{% trans_default_domain 'pdf' %}
+{% block pdfBody %}
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
+    {% endif %}
+    {% set textPreview = not savePDF ? 'previewSmall' %}
+    <div class="pdfDocument">
+        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
+        <div class="pdfHeadingCenter pdfHeadingMain {% if not savePDF %}previewXLarge{% endif %}">{{ completePostHeading|raw }}</div>
+        {% if isOral %}
+            <div class="pdfOral {{ textPreview }}">{{ oralHint|raw }}</div>
+        {% endif %}
+        {% set classes = 'textJustify '~textPreview %}
+        {% for paragraph in content %}
+            <div class="{{ classes }}">
+                {{ paragraph[0]|nl2br }}
+                {{ paragraph[1]|nl2br }}
+            </div>
+        {% endfor %}
+        {# contributors #}
+        {% for contributor in contributors %}
+            <div class="{{ classes }} noPageBreak">{{ (contributor~"\n")|nl2br }}</div>
+        {% endfor %}
+        {# confirm #}
+        {% set tempPrefix, classes, addresseeParam = 'completePost.confirm.', 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : ''), {'addressee': addressee} %}
+        <div class="{{ textPreview }} noPageBreak" style="margin-top: 1.5rem">
+            <table>
+                <tr><td colspan="2" style="font-weight: bold">{{ (tempPrefix~'title')|trans }}</td></tr>
+                {% for answer in ['yes','no'] %}
+                    <tr style="line-height: 1.5">
+                        <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5rem; margin-right: 0.375rem"></div></td>
+                        <td>{{ (tempPrefix~answer)|trans(addresseeParam) }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

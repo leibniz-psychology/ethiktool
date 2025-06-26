@@ -1,0 +1,193 @@
+/* PDFs */
+* {
+    line-height: 1.5;
+}
+
+.pdfBox {
+    page-break-inside: avoid;
+    margin-bottom: 2em;
+    margin-left: 0.1em;
+}
+
+.boxOuter {
+    background-color: lightgrey;
+    display: flex;
+}
+
+.boxOuterNA {
+    background-color: #eeeeee;
+    display: flex;
+}
+
+.boxInner {
+    border: 1px solid lightgrey;
+    text-align: justify;
+    min-height: 1em;
+    padding: 0.5em 0.2em;
+    margin-right: 0;
+    margin-left: 0;
+    word-break: break-word;
+}
+
+.boxInnerNA {
+    border: 1px solid #eeeeee;
+    padding: 0.5em 0.2em;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.colorNA {
+    color: #dddddd;
+}
+
+.pdfDocument {
+    font-family: montserrat-regular, sans-serif;
+    padding-right: 0.1em;
+    page-break-after: always;
+}
+
+.pdfMargin {
+    margin-top: 50px;
+}
+
+.pdfMarginSave {
+    margin-top: 100px;
+}
+
+.demo {
+    background-size: contain;
+    background-repeat: repeat-y;
+    background-position: center;
+}
+
+.demo_de {
+    background-image: url("../build/images/demo_de.svg");
+}
+
+.demo_en {
+    background-image: url("../build/images/demo_en.svg");
+}
+
+.pdfOral {
+    color: red;
+    margin-bottom: 1em;
+}
+
+.pdfHeadingCenter {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-family: zillaSlab-medium, sans-serif;
+}
+
+.pdfHeadingMain {
+    border: 2px dashed black;
+    font-size: xx-large;
+    font-weight: bold;
+    margin-bottom: 1em;
+}
+
+.pdfHeadingNumber {
+    margin-left: 0.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    font-family: zillaSlab-medium, sans-serif;
+}
+
+.pdfHeading {
+    font-family: zillaSlab-medium, sans-serif;
+    margin: 0.5em;
+}
+
+.pdfHeading a, .pdfHeadingCenter a, .previewSmall a, div a {
+    font-family: inherit;
+    text-decoration: none;
+    color: inherit;
+}
+
+i.pdfHeading {
+    font-family: zillaSlab-medium, sans-serif;
+    font-weight: normal;
+    font-size: small;
+}
+
+.logoPreview {
+    max-width: 50px;
+    height: fit-content;
+    margin: 1em;
+}
+
+.logo {
+    max-width: 20%;
+    margin: 1em;
+}
+
+.previewXLarge {
+    font-size: medium;
+}
+
+.previewSmall {
+    font-size: x-small !important;
+}
+
+.alignRight {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+}
+
+.textJustify {
+    text-align: justify;
+    margin-bottom: 2em;
+}
+
+.noPageBreak {
+    page-break-inside: avoid;
+    margin: 0;
+}
+
+.tableWidth tr {
+    height: 25px;
+}
+
+.tableWidthPreview tr {
+    height: 20px;
+}
+
+.tableWidth td, .tableWidthPreview td {
+    border: 1px solid black;
+    width: 50%;
+}
+
+tr {
+    word-break: keep-all;
+}
+
+/* Checkboxes. As there are no pseudo-elements possible in the downloaded pdf, checkboxes will be div-elements. These classes are only used once in pdfMacros. */
+
+.checkboxPDF {
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 225px 15px/15px 225px;
+    margin-right: 0.5rem;
+}
+
+.checkSmall {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+/* Radiobuttons. Same as for checkboxes, but only used once in participation consent. */
+.radiobuttonPDF {
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 9999px;
+    margin-right: 0.5rem;
+}
+
+.radioSmall {
+    width: 0.75rem;
+    height: 0.75rem;
+}

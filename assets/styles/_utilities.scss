@@ -1,0 +1,46 @@
+[x-cloak] {
+  display: none !important;
+}
+
+.HeaderBackground {
+  @apply mx-auto bg-right bg-no-repeat sm:px-10 py-5 sm:py-11;
+  background-image: url("../images/header_cyan.jpg");
+  background-color: #0097c6;
+  max-width: 1600px;
+}
+
+.Label-Info {
+  &:not(.pdfInfo)::before {
+    @apply p-2 mr-1 mt-0.5 border rounded-3xl;
+
+    align-self: baseline;
+    /* prettier-ignore */
+    background:
+            url("../images/mdi_information-variant.svg")
+            left center no-repeat theme("colors.zpid-purple.50");
+    content: "";
+  }
+
+  &.Label-Info-red::before {
+    background-color: red !important;
+  }
+}
+
+.Label-Info, .Label-Info-red {
+  & span {
+    display: none;
+  }
+
+  &:hover span {
+    @apply border;
+    display: block;
+    position: absolute;
+    background-color: white;
+    max-width: 55em;
+    z-index: 1; /* above other info icons */
+  }
+}
+
+.template {
+  @apply bg-mono-100;
+}

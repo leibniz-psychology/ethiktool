@@ -1,0 +1,28 @@
+//.Modal-Overlay {
+//  @apply fixed inset-0 z-40 bg-black bg-opacity-50;
+//}
+
+.modal-dialog {
+  @apply relative flex flex-col max-w-lg mx-auto mt-20 bg-white border-0 rounded-lg shadow-lg;
+}
+
+.modal-header {
+  @apply flex items-start justify-between p-5 border-b border-gray-200 border-solid rounded-t;
+}
+
+.modal-title {
+  @apply text-xl font-semibold;
+  font-weight: 500;
+}
+
+.modal-backdrop {
+  margin-left: 0;
+}
+
+.modal-body {
+  @apply flex-auto p-6;
+}
+
+.modal-footer {
+  @apply flex items-center justify-end p-6 border-t border-gray-200 border-solid rounded-b;
+}

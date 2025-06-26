@@ -1,0 +1,33 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    secret: '%env(APP_SECRET)%'
+    #csrf_protection: true
+    http_method_override: false
+    handle_all_throwables: true
+
+    # Enables session support. Note that the session will ONLY be started if you read or write from it.
+    # Remove or comment this section to explicitly disable session support.
+    session:
+        handler_id: null
+        cookie_secure: auto
+        cookie_samesite: lax
+        storage_factory_id: session.storage.factory.native
+        enabled: true
+        cookie_httponly: true
+        gc_probability: 1              # 1 von 1000 Requests
+        gc_divisor: 1000               # statt 100 (war 1%)
+        gc_maxlifetime: 86400          # 24 Stunden statt 24 Minuten
+        cookie_lifetime: 86400         # Cookie lebt 24 Stunden
+        save_path: /tmp/sessions
+        metadata_update_threshold: 0
+
+    #esi: true
+    #fragments: true
+    php_errors:
+        log: true
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

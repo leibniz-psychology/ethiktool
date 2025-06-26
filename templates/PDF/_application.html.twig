@@ -1,0 +1,157 @@
+{% extends 'PDF/basePDF.html.twig' %}
+{% import 'PDF/pdfMacros.html.twig' as pdfMacros %}
+{% trans_default_domain 'pdf' %}
+{% block pdfBody %}
+    <div style="margin: 0">
+    {% set boxNumber, headingCenter, guidelinesText, innerClasses = 1, 'pdfHeadingCenter'~(not savePDF ? ' previewXLarge'), guidelines[1], 'boxInner'~(not savePDF ? ' previewSmall') %}
+    {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
+    <h2 class="{{ headingCenter }}"><u style="font-family: inherit">{{ heading }}</u></h2>
+    {# application type #}
+    <h3 class="{{ headingCenter }}" style="white-space: pre">{{ appType|raw }}</h3>
+    {# guidelines #}
+    {% if guidelinesText is not same as '' %}
+        <h4 class="{{ headingCenter }}" style="margin-bottom: 0">{{ guidelines[0]|raw }}</h4>
+        <div class="pdfHeadingCenter {% if not savePDF %} previewSmall {% endif %}" style="margin-bottom: 1em; font-family: montserrat-regular, sans-serif">{{ guidelinesText }}</div>
+    {% endif %}
+    {# project title #}
+    {{ _self.addBox(boxContent[0],boxNumber,savePDF) }}
+    {% set boxNumber = boxNumber+1 %}
+    {# applicant and supervisor #}
+    <div class="pdfBox">
+        {{ _self.addHeading(boxNumber,applicantInfos.applicant.name,savePDF) }}
+        <div class="{{ innerClasses }}">
+            {% for type, infos in applicantInfos %}
+                {% if type is same as 'supervisor' %}
+                    <div style="margin-top: 2em"><u>{{ applicantInfos.supervisor.name }}:</u></div>
+                {% endif %}
+                {% for label, content in infos.infos %}
+                    <div style="display: flex">
+                        <div style="justify-content: flex-end; display: flex; min-width: {{ applicantWidth }}em">{{ label }}:</div>
+                        <div style="margin-left: 1em">{{ content }}</div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+    {# contributors infos #}
+    {% set boxNumber = boxNumber+1 %}
+    {{ _self.addBox(contributorsInfos,boxNumber,savePDF) }}
+    {# contributors tasks #}
+    {% set boxNumber = boxNumber+1 %}
+    <div class="pdfBox">
+        {{ _self.addHeading(boxNumber,contributorsHeading,savePDF) }}
+        <div class="{{ innerClasses }}">
+            <table {% if not savePDF %} style="font-size: 0.5rem" {% endif %}>
+                <tr>
+                    <td style="padding-right: 1.5em; text-align: start">{{ 'multiple.infos.name'|trans([],'messages') }}</td>
+                    {% for task in tasks %}
+                        <td style="margin-right: 5em; width: 1em; padding-right: 1.5em; text-align: start">{{ ('contributors.tasks.'~task)|trans|raw }}</td>
+                    {% endfor %}
+                </tr>
+                {% for contributor in contributorsTasks %}
+                    {% set curTasks = contributor['tasks'] %}
+                    {% if contributor['hasTasks'] %}  {# contributor has at least one task  #}
+                        <tr>
+                            <td>{{ contributor['name'] }}</td>
+                            {% for curTask, value in curTasks %}
+                                {% set isOther = curTask is same as 'other' %}
+                                <td {% if isOther %} style="word-break: break-word" {% endif %}>
+                                    {% if not isOther %}
+                                        {{ pdfMacros.addCheckbox(value,savePDF) }}
+                                    {% else %}
+                                        {{ value }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% set boxNumber = boxNumber+1 %}
+    {# further boxes #}
+    {% for box in boxContent|slice(1) %} {# first entry is project title #}
+        {% set heading = box['heading'] %}
+        {% if heading is not same as levelHeading %}
+            {{ _self.addBox(box,boxNumber,savePDF) }}
+        {% else %}  {# overview of level names  #}
+            <div class="pdfBox">
+                {{ _self.addHeading(boxNumber,levelHeading,savePDF,'') }}
+                <div class="boxInner {% if not savePDF %} previewSmall {% endif %}">
+                    {% if box['content'] is not same as '' %}
+                        {{ _self.addLevelNames(levelNames) }}
+                    {% else %} {# each level only exists once #}
+                        {{ levelNames }}
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+        {% set boxNumber = boxNumber+1 %}
+    {% endfor %}
+    </div>
+{% endblock %}
+
+{% macro addBox(boxContent, boxNumber, savePDF) %}
+    {# Creates a box with a heading and content. Input arguments:
+        boxContent:    key-value object with two to five keys:
+                        heading:     heading of the box
+                        subHeading: if provided, italic subheading which will be placed in parentheses after the heading
+                        content:     content of the box
+                        subContent:  if provided, content of the second half of the box
+                        paragraph:   if provided, a paragraph heading will be added before the box
+        boxNumber:     number to be added to the heading
+        savePDF:       if true, the pdf will be saved on disk
+    #}
+    {% set isParagraph, content = boxContent['paragraph'] is defined, boxContent['content'] %}
+    {% set isNotApplicable = content is same as 'noBox'|trans %}
+    {% if isParagraph %}
+        <div class="noPageBreak">
+        <h1 class="pdfHeadingCenter {% if not savePDF %} previewXLarge {% endif %}" style="margin-bottom: 1.25em; border-bottom: 1px solid black; border-top: 1px solid black; page-break-inside: avoid; page-break-after: avoid{% if savePDF %};font-size: xx-large{% endif %}">{{ boxContent['paragraph'] }}</h1>
+    {% endif %}
+    <div class="pdfBox {% if isNotApplicable %}colorNA{% endif %}" {% if isParagraph %} style="page-break-before: avoid"{% endif %}>
+        {{ _self.addHeading(boxNumber, boxContent['heading'], savePDF, boxContent['subHeading'] ?? '', isNotApplicable, boxContent['inputPage'] ?? '') }}
+        <div class="{{ isNotApplicable ? 'boxInnerNA' : 'boxInner'}} {% if not savePDF %} previewSmall {% endif %}">
+            {{ content|nl2br }}
+            {% set subContent = boxContent['subContent'] ?? '' %}
+            {% if subContent is not same as '' %}
+                <div>{{ subContent|nl2br }}</div>
+            {% endif %}
+        </div>
+    </div>
+    {% if isParagraph %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro addHeading(boxNumber, heading, savePDF, subHeading = '', notApplicable = false, inputPage = '') %}
+    {# Adds a heading. Input arguments:
+        boxNumber:     number of the box
+        heading:       text for the heading
+        savePDF:       if true, the pdf will be saved on disk
+        subHeading:    if provided, subHeading to be added
+        notApplicable: if true, the heading is greyed out
+        inputPage:     if provided, a span-tag will be added indicating the page where the input was made, by hovering over the heading
+    #}
+    {% set isInputPage = not savePDF and inputPage is not same as '' %}
+    <div class="{{ notApplicable ? 'boxOuterNA' : 'boxOuter' }} {% if isInputPage %}inputPage{% endif %}">
+        <h3 class="pdfHeadingNumber {% if not savePDF %}previewXLarge{% endif %} {% if notApplicable %}colorNA{% endif %}">{{ boxNumber }}.</h3>
+        <h3 class="pdfHeading {% if not savePDF %}previewXLarge {% endif %} {% if notApplicable %}colorNA{% endif %} {% if isInputPage %}inputPageHeading{% endif %}">{{ heading|raw }}{% if subHeading is not same as '' %}<i class="pdfHeading {% if not savePDF %} previewSmall {% endif %}">({{ subHeading }})</i>{% endif %}</h3>
+        {% if isInputPage %}<span>{{ inputPage }} {% endif %}</span>
+    </div>
+{% endmacro %}
+
+{% macro addLevelNames(levelNames) %}
+    {# Adds the content for the level Names box. Input argument:
+        levelNames: array with level names
+    #}
+    {% for level in levelNames %}
+        <div style="margin: 0">{{ level[0] }}
+            {% if level[1] is defined %}
+                <div style="margin-left: {{ level[1] ? 4 : 2 }}em"> {# double indentation if multiple studies exist and multiple groups exist in other studies, but not in this one #}
+                    {{ _self.addLevelNames(level[2]) }}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endmacro %}

@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block body %}
+    {% set isPreview, request, submitDummy = pageTitle is not same as '', app.request, content.submitDummy %}
+    {% set fitWidth, classes = 'width: fit-content;', 'border rounded-lg shadow-sm' %}
+    <div {{ stimulus_controller('base',
+        {'route': request.get('_route'),
+            'routeParams': request.get('_route_params'),
+            'preview': preview ?? 0}) }} style="padding-bottom: 3rem">
+        {{ include('components/header.html.twig',committeeParams) }}
+        {{ formRender.startForm(content) }} {# every controller needs to pass the data as 'content' #}
+        <div style="display: none">{{ form_widget(submitDummy,addTargetArray('base','submitDummy')|merge({'id': submitDummy.vars.name})) }}</div> {#  id needed for dummy label #}
+        <div style="display: none">{{ form_widget(content.loadInput,addTargetArray('base','loadInput')|merge({'id': content.loadInput.vars.name})) }}</div>
+        <div class="bg-white flex flex-row flex-nowrap mx-auto gap-x-4 justify-content-center bg-white" style="max-width: 1600px">
+            {# sidebar #}
+            {# surrounding div is added in template because sidebar is sticky, but has a modal #}
+            {{ render(controller('App\\Controller\\NavigationController::showNavigation', {'request': request})) }}
+            {{ include('components/infoModal.html.twig',{'modalID': 'xmlLoad', 'targetName': 'xmlModal', 'prefix': 'multiple.loadMessage.failure.', 'params': {'type': 'xml'}}) }}
+            {# content #}
+            <div class="{{ classes }} bg-mono-50" style="width: {{ isPreview ? '45%' : '80%' }}; height: fit-content" id="content" {{ stimulus_target('base','content') }}>
+                {% block groupMeasureTitle %}
+                    {% if multipleStudyGroupMeasure is defined %}
+                        {% set landingPath, params, topClasses = path('app_landing'), {'page': 'Projectdetails', 'url': 'app_landing'}, 'flex mt-2' %}
+                        <div style="margin: 0">
+                            {% set routeIDs, topMargin = {'studyID': studyID}, 'margin-top: 0.5em;' %}
+                            {% set isMultipleStudies, isMultipleGroups = multipleStudyGroupMeasure[0], multipleStudyGroupMeasure[1] %}
+                            <a class="flex" style="{{ fitWidth }}" href="{{ landingPath }}" {{ stimulus_action('base','setDummySubmit','click', params|merge({'route-i-ds': routeIDs})) }}>
+                                {{ 'projectdetails.headings.study'|trans }} {{ isMultipleStudies ? studyID }} {{ studyName is not same as '' ? (isMultipleStudies ? '('~studyName~')' : studyName) }}
+                            </a>
+                            {% set routeIDs = routeIDs|merge({'groupID': groupID}) %}
+                            <a class="{{ topClasses }}" style="{{ fitWidth }}" href="{{ landingPath }}" {{ stimulus_action('base','setDummySubmit','click', params|merge({'route-i-ds': routeIDs})) }}>
+                                {{ 'projectdetails.headings.group'|trans }} {{ isMultipleGroups ? groupID}} {{ groupName is not same as '' ? (isMultipleGroups ? '('~groupName~')' : groupName) }}
+                            </a>
+                            {% set routeIDs = routeIDs|merge({'measureID': measureID}) %}
+                            <a class="{{ topClasses }}" style="{{ fitWidth }}" href="{{ landingPath }}" {{ stimulus_action('base','setDummySubmit','click',params|merge({'route-i-ds': routeIDs})) }}>
+                                {{ 'projectdetails.headings.measureTimePoint'|trans }}{% if multipleStudyGroupMeasure[2] %} {{ measureID }} {% endif %}
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endblock %}
+                {% block pageTitle %}
+                    {% if not ('landing' in pageTitle) %}
+                        <h2 class="MetaDataGroup-Title">{{ pageTitle|trans }}</h2> {# variable is set in base if not defined #}
+                    {% endif %}
+                {% endblock %}
+                {% block content %}
+                {% endblock %}
+                {{ form_end(content) }}
+            </div>
+            {% if isPreview %}
+                <div style="width: 35%">
+                    {% set classes = classes~' scrollbar scrollbar-thumb-gray-400 scrollbar-thin scrollbar-track-gray-100 overflow-y-auto' %}
+                    <div class="sticky top-0" style="max-width: 211mm">
+                        {# error messages #}
+                        {% if not ('completeForm' in pageTitle or 'checkDoc' in pageTitle) %} {# complete form is the only page with preview, but without error messages #}
+                            <div class="{{ classes }} mb-2" id="checkDoc" style="height: min-content; max-height: 150px; word-break: break-word" {{ stimulus_target('base','checkDoc') }}>
+                                {{ (pageErrors)|raw|nl2br }}
+                            </div>
+                        {% endif %}
+                        {# help/preview #}
+                        <div class="{{ classes }} overflow-hidden bg-white max-h-[calc(100vh)]" id="preview" {{ stimulus_target('base','preview') }}>
+                            {% block preview %}
+                            {% endblock %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div> {# div including stimulus controller #}
+    <footer id="page-footer" class="mt-auto">
+        {{ render(path('footer')) }}
+    </footer>
+{% endblock %}

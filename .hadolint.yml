@@ -1,0 +1,8 @@
+# Hadolint configuration file
+
+# configure ignore rules
+# see https://github.com/hadolint/hadolint#rules for a list of available rules.
+ignored:
+  - DL3008
+  - DL3018
+failure-threshold: error

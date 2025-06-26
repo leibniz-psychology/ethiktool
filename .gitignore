@@ -55,3 +55,9 @@
 
 # Embedded web-server pid file
 /.web-server-pid
+
+# other
+secret.y?ml
+secret.*.y?ml
+/templates/images/logos
+/public/

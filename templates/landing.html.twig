@@ -1,0 +1,119 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% set isStudy, isGroup, isMeasure = id[0] is not null, id[1] is not null, id[2] is not null %} {# true if overview. If any is not null, all lower indices are also not null #}
+{% set prefix = 'landing.'~page~'.'~(isMeasure ? 'measure' : (isGroup ? 'group' : (isStudy ? 'study' : 'overview')))~'.' %}
+{% block title %}
+    {{ 'pages.tabName'|trans~('pages.landing')|trans~(prefix~'title')|trans~(isMeasure and isMultiple[2] ? id[2]+1 : (isGroup and isMultiple[1] ? id[1]+1 : (isStudy and isMultiple[0] ? id[0]+1 : ''))) }}
+{% endblock %}
+{% block content %}
+    {% set isProjectdetailsLanding, headingsPrefix = page is same as 'projectdetails' and not isMeasure, 'projectdetails.headings.' %}
+    <div {{ stimulus_controller('landing',{
+        'names': names|json_encode}) }}>
+        <h2 class="MetaDataGroup-Title">{{ pageTitle|trans }} {{ ('pages.'~page~'.title')|trans }}</h2>
+        {# indices and names of current level(s) #}
+        {% if isStudy %}
+            {% set multipleStudies, multipleGroups, isStudyName, isGroupName = isMultiple[0], isMultiple[1], studyName is not same as '', groupName is not same as '' %}
+            <div class="MetaData-Title" style="word-break: break-word">
+                {{ (headingsPrefix~'study')|trans }}
+                {% if multipleStudies %}{{ id[0]+1 }} {% if isStudyName %}({% endif %}{% endif %}{{ studyName }}{% if multipleStudies and isStudyName %}){% endif %}
+                {% if isGroup %}
+                    {{ '/ '~(headingsPrefix~'group')|trans }}
+                    {% if multipleGroups %}{{ id[1]+1 }} {% if isGroupName %}({% endif %}{% endif %}{{ groupName }}{% if multipleGroups and isGroupName %}){% endif %}
+                    {% if isMeasure %}
+                        {{ '/ '~(headingsPrefix~'measureTimePoint')|trans }}
+                        {% if isMultiple[2] %}
+                            {{ id[2]+1 }}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+        {# description of page part one #}
+        <div class="MetaData-Label">
+            {{ (prefix~'start')|trans|raw }}
+        </div>
+        {# variable for creating, editing, removing, i.e., after manipulation redirect to same page #}
+        {% set landingRouteIDs, modalID = isStudy ? {'studyID': id[0]+1}|merge(isGroup ? {'groupID': id[1]+1}|merge(isMeasure ? {'measureID': id[2]+1} : {}) : {}) : {}, 'removeModal' %}
+        <div class="MetaData-Widget">
+            {% set manipulatePrefix, landingIndex, width = 'landing.manipulate.', 0, 'width: 15em' %} {# either all pages or no page links to landing #}
+            {% set minWidth, manipulate, editPrefix = {'style': width}, manipulatePrefix~'manipulate', manipulatePrefix~'edit.' %}
+            {% for route in menu %}
+                {% set routeIDs, curRoute = route.routeIDs ?? {}, route.route %}
+                {% set isCurRoute = curRoute is not same as '' %}
+                {% set href, dummyParam = isCurRoute ? path(curRoute,routeIDs), {'route-i-ds': routeIDs, 'url': curRoute}|merge(curRoute is same as 'app_landing' ? {'page': page|capitalize} : {}) %}
+                <a {% if isCurRoute %}
+                    class="block {% if isProjectdetailsLanding %} StudyNav-SubNavItem Button_navigation justify-content-start {% if loop.index0 is same as 0 or isProjectdetailsLanding and not isMeasure %} mt-4 {% endif %} {% endif %}"
+                    href="{{ href }}"
+                    {{ stimulus_action('base','setDummySubmit','click',dummyParam) }}
+                {% endif %}
+                        style="line-height: 2; word-break: break-word; width: fit-content; {% if not isCurRoute %} display: block; {% endif %}"> {# do not set display as class to have correct color #}
+                    {{ route.label|nl2br }}
+                </a>
+                {% if isProjectdetailsLanding and not isGroup %}
+                    <div class="mt-1 mb-4" style="display: none; width: fit-content" {{ stimulus_target('landing','edit') }}> {# text field and submit button for changing name #}
+                        <div {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setButtons','input') }}>
+                            {{ form_widget(content['editText'~landingIndex],{'attr': minWidth|merge({'value': names[landingIndex]})|merge(addTarget('landing','name'))}) }}
+                        </div>
+                        <button type="submit" class="Button_primary_act align-self-center ms-2" id="{{ 'landing_edit'~landingIndex }}" style="height: fit-content" {{ stimulus_action('base','submitForm','click',{'routeIDs': landingRouteIDs})|stimulus_target('landing','submitName') }}>
+                            {{ (editPrefix~'editCommit')|trans }}
+                        </button>
+                    </div>
+                {% endif %}
+                {% if isProjectdetailsLanding %}
+                    <div class="flex align-items-center mt-1" style="width: fit-content">
+                        {% if not isMeasure %}
+                            <a class="Button_primary_act me-2" style="text-align: center" href="{{ href }}" {{ stimulus_action('base','setDummySubmit','click',dummyParam) }}>{{ (manipulatePrefix~'details')|trans }}</a>
+                        {% endif %}
+                        {% if not isGroup %}
+                            <button type="button" class="Button_primary_act mx-2" id="{{ 'edit'~landingIndex }}" {{ stimulus_action('landing','editStudyGroup','click') }}>{{ (editPrefix~'change')|trans }}</button> {# change name #}
+                        {% endif %}
+                        {% if isMultiple[isGroup ? 2 : (isStudy ? 1 : 0)] %}
+                            <button type="button" class="Button_primary_act mx-2" id="{{ 'landing_remove'~landingIndex }}" data-bs-toggle="modal" data-bs-target="#{{ modalID }}" {{ stimulus_action('base','setLandingRemove','click') }}>{{ manipulate|trans({'level': isGroup ? 'measure':  (isStudy ? 'group' : 'study'), 'type': 'remove'}) }}</button> {# remove #}
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% set landingIndex = landingIndex+1 %}
+            {% endfor %}
+        </div>
+        {# description of page part two #}
+        {% if isProjectdetailsLanding %}
+            <div class="flex mt-4 clickable bg-mono-200 mx-4"{{ stimulus_target('landing','dropdownNew') }}>
+                <span class="dropdownCollapsed" style="height: 1.5rem"></span>
+                {{ (prefix~'new')|trans }}
+            </div>
+            <div style="display: none" {{ stimulus_target('landing','newDiv') }}> {# div closes in next 'if not isMeasure' #}
+                <div class="MetaData-Label mt-4">
+                    {{ (prefix~'end')|trans|raw }}
+                </div>
+                {# new study, group, or measure time point #}
+                <div class="MetaData-Widget grid mt-4 gap-2" style="grid-template-columns: repeat(2,minmax(min-content,max-content))"> {# if isMeasure is true, then isGroup is also true #}
+                    {% if not isGroup %}
+                        <div style="grid-area: 1 / 1; {{ width }}" {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setButtons','input') }}> {# text field for entering a new study or group name #}
+                            {{ form_widget(content.newStudyGroupText,{'attr': minWidth|merge(addTarget('landing','name'))}) }}
+                        </div>
+                    {% endif %}
+                    {% set level = isStudy ? (not isGroup ? 'group' : 'measure') : 'study' %}
+                    {% set levelParam, routeParams = {'level': level}, {'routeIDs': landingRouteIDs} %}
+                    {# button for creating a new study, group or measure point in time #}
+                    <button type="submit" id="submitName" class="Button_primary_act align-self-center" style="grid-area: 1 / 2; height: fit-content" {{ stimulus_action('base','submitForm','click',routeParams)|stimulus_target('landing','submitName') }}>{{ manipulate|trans(levelParam|merge({'type': 'new'})) }}</button>
+                    {# dropdown for selecting the study, group or measure point in time to be copied #}
+                    <div style="grid-area: 2 / 1; {{ width }}" {{ stimulus_action('landing','setButtons','change') }}>
+                        {{ form_widget(content.copy,{'attr': addClass('Button_dropdown')|merge(addTarget('landing','copy'))|merge({'style': 'text-overflow: ellipsis'})}) }}
+                    </div>
+                    {# button for copying a study, group or measure point in time #}
+                    <button type="submit" id="submitCopy" class="Button_primary_act" style="grid-area: 2 / 2" {{ stimulus_action('base','submitForm','click',routeParams)|stimulus_target('landing','submitCopy') }} disabled>{{ manipulate|trans(levelParam|merge({'type': 'copy'})) }}</button>
+                </div>
+            </div> {# 'newDiv' #}
+        {% endif %}
+        {# modal for removing #}
+        {% if isProjectdetailsLanding %}
+            {{ include('components/redirectModal.html.twig',{'modalID': modalID, 'prefix': 'landing.projectdetails.removeModal.', 'link': 'app_landing', 'params': {'type': level}, 'submitParams': {'routeIDs': landingRouteIDs}, 'stim': ['base','submitForm'], 'stimNo': ['base','unsetLandingRemove'], 'modalBodyTarget': ['base','landingRemove']}) }}
+        {% endif %}
+        {{ formRender.addSubmitButtons(true,page is same as 'appData', isProjectdetailsLanding) }}
+    </div> {# div including stimulus controller #}
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview(isStudy ? [id[0]+1]|merge(isGroup ? [id[1]+1]|merge(isMeasure ? [id[2]+1] : []) : []) : []) }}
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block content %}
+    {% set translationPrefix = 'projectdetails.pages.dataReuse.' %}
+    {# confirm #}
+    {% set confirm, confirmDiv = content.confirmIntro, 'confirmDiv' %}
+    {% set vars = confirm.vars %}
+    <div class="MetaData-Widget">
+        {{ (translationPrefix~'intro.text')|trans(routeIDsParam)|raw|nl2br }}
+        <div {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,confirmDiv]]}) }}>{{ formRender.addCheckbox(confirm, {'style': 'margin-top: 1em'}) }}</div>
+    </div>
+    <div class="mt-8" id="{{ confirmDiv }}" style="{{ boolToDisplay(vars.checked) }}">
+        <div class="MetaData-Label">
+            {{ dataReuseHint|raw }}
+        </div>
+        {% set isReuseTwice, dataReuseValue, isFirstHowPublic = content.dataReuseHowreuse is defined, 'noTool', content.dataReuseHow.vars.value not in ['','own'] %}
+        {% for suffix in ['','reuse'] %}
+            {% set isSecond = suffix is same as 'reuse' %}
+            {% if content.dataReuse is defined and (not isReuseTwice and suffix is same as '' or isReuseTwice and isSecond)  %}
+                {# data reuse #}
+                {% set dataReuse = content.dataReuse %}
+                {% set dataReuseValue, selfDiv = dataReuse.vars.value,'reuseSelfDiv' %}
+                <div class="mt-8">
+                    {{ formRender.renderButtons(dataReuse,{'hint': [translationPrefix~'dataReuse.'], 'stimVisible': {'values': [[['yes','anonymous','anonymized','personal'],'dataReuseHow'~(isReuseTwice ? 'reuse' : '')~'Div'],['no',selfDiv]]}}) }}
+                    {# data reuse self #}
+                    {{ formRender.renderButtons(content.dataReuseSelf,{'addDiv': [selfDiv,boolToDisplay(dataReuseValue is same as 'no')]}) }}
+                </div>
+            {% endif %}
+            {# data reuse how #}
+            {% set widgetName, tempPrefix = 'dataReuseHow'~suffix, translationPrefix~'dataReuseHow.' %}
+            {% if content[widgetName] is defined %}
+                {% set dataReuseHow, description = content[widgetName], widgetName~'Description' %}
+                {% set descriptionDiv, descriptionStart = description~'Div', 'descriptionStart' %}
+                <div class="mt-8" id="{{ widgetName~'Div' }}" style="{{ boolToDisplay(isPurposeReuse and suffix is same as '' or dataReuseValue not in ['','no']) }}">
+                    <div class="MetaData-Title">{{ dataReuseHowHeading[suffix] }}</div>
+                    {{ formRender.addHint(tempPrefix~'headingHint') }}
+                    <div class="MetaData-Label mb-2" id="{{ suffix~'startOnly' }}">
+                        {{ (tempPrefix~'start')|trans({'personal': not isSecond ? personal : 'keep', 'isSecond': boolToString(isSecond)})~' ...' }}
+                    </div>
+                    {{ formRender.renderButtons(dataReuseHow,noHeading|merge({
+                        'icons': dataReuseHowIconArray,
+                        'stimVisible': {'values': [[['','class0','class1','class2','class3'],[descriptionDiv,descriptionStart]]]}})) }}
+                    <div class="MetaData-Label mt-4" id="{{ descriptionStart }}" style="margin-bottom: -1rem;">{{ (tempPrefix~'descriptionStart')|trans~' ...' }}</div>
+                    <div id="{{ descriptionDiv }}" style="{{ boolToDisplay(dataReuseHow.vars.value is not same as 'own') }}">
+                        {{ formRender.addTextfield(content[description],{'transfer': [transferInfo,addresseeType]}) }}
+                        <div class="MetaData-Label hint">{{ (tempPrefix~'hints.hint')|trans }}</div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div> {# div containing all widgets if confirm checbox if checked #}
+    {{ formRender.addSubmitButtons() }}
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview([studyID,groupID,measureID]) }}
+{% endblock %}

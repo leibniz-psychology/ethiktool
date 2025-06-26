@@ -1,0 +1,12 @@
+home:
+    resource: ../src/Controller/Main/MainController.php
+    type: annotation
+
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: annotation
+    prefix:
+        de: '/de'
+        en: '/en'

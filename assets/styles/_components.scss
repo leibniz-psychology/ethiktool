@@ -1,0 +1,45 @@
+@import "components/radio_check";
+@import "components/buttons";
+@import "components/navigation";
+@import "components/modal";
+@import "components/widget_author";
+
+.MetaDataGroup-Title {
+  @apply px-6 pt-4 pb-4 text-2xl font-semibold rounded-lg bg-mono-100 text-zpid-purple-700;
+  font-family: "zillaslab-medium", sans-serif;
+  font-weight: 500;
+  font-size: 1.75rem;
+}
+
+.MetaData-Title {
+  @apply flex justify-between w-full px-6 pt-3 pb-2 text-xl font-semibold bg-gradient-to-b from-mono-100 to-mono-50 text-zpid-purple-700;
+  font-family: "zillaslab-medium", sans-serif;
+  font-weight: 500;
+  font-size: 1.5rem;
+
+  label, span, u {
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+  }
+
+  scroll-margin-top: 6rem;
+}
+
+.MetaData-Label {
+  @apply block px-6 mt-1;
+}
+
+.MetaData-Widget {
+  @apply px-6 pt-1;
+}
+
+.MetaData-Widget_collection > div {
+  @apply flex mt-0.5 items-baseline;
+}
+
+.MetaData-TextInput,
+.MetaData-Widget_collection > div input,
+.MetaData-Widget_collection > div textarea {
+  @apply w-full;
+}

@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "base";
+@import "components";
+@import "utilities";
+@import "~bootstrap/scss/bootstrap.scss";
+@import "customFonts.css";
+@import url("https://www.lifp.de/assets/collapsible-footer/styles/footer_css.css");
+
+.minAutoGrid {
+    display: grid;
+    grid-template-columns: min-content auto;
+}
+
+title {
+    display: none;
+}
+
+/* fonts */
+* {
+    font-family: montserrat-regular, sans-serif;
+}
+
+h1,h3,h5 {
+    font-family: zillaSlab-medium, sans-serif;
+}
+
+h2,h3 {
+    margin-bottom: 0;
+}
+
+select {
+    margin-left: 0 !important;
+    width: inherit;
+}
+
+:disabled {
+    @apply bg-mono-200;
+    color: gray; // text in text fields
+
+    + label { // label of radiobuttons or checkboxes
+        color: darkgray;
+
+        &::before { // radiobutton or checkbox
+            @apply bg-mono-200 #{!important};
+        }
+    }
+}
+
+.column {
+    @apply border rounded-lg shadow-sm bg-mono-50;
+}
+
+/* classes */
+.errorStyle { /* for displaying form errors */
+    color: red;
+}
+
+.hintCollapsed::before {
+    vertical-align: middle;
+    content: url("../images/plus.svg");
+}
+
+.hintExpanded::before {
+    vertical-align: middle;
+    content: url("../images/minus.svg");
+}
+
+.hint {
+    font-style: italic;
+    font-size: smaller;
+}
+
+.pdfInfo::before {
+    font-style: inherit;
+    content: url("../images/pdf.svg");
+}
+
+/* input fields */
+input { /* simple text fields  (Texttype in xxxType.php. "input" tag itself is not used until now */
+    width: 100%;
+}
+
+input[type="number"], .borderLight {
+    @apply border;
+}
+
+input[type="file"] {
+    @apply Button_primary_act;
+}
+
+::placeholder {
+    color: red;
+    white-space: normal;
+}
+
+.optional::placeholder {
+    color: black;
+}
+
+textarea {
+    height: 6rem;
+    resize: none;
+}
+
+a {
+    text-decoration: none;
+
+    &.a_disabled { // currently only used once in navigationSidebar
+        @apply bg-mono-200;
+        pointer-events: none;
+        border-color: darkgray;
+        color: gray;
+    }
+}
+
+.borderHint {
+    @apply border;
+    margin: 2rem 1.5rem 0 1.5rem;
+    border-color: black !important;
+}
+
+// navigation
+.NavBar {
+    @apply grid gap-y-1 mx-2;
+    width: fit-content;
+}
+
+.NavBarMain {
+    @apply NavBar mt-8;
+}
+
+.dropdownCollapsed {
+    content: url("../images/caret-right.svg");
+}
+
+.dropdownExpanded {
+    content: url("../images/caret-down.svg");
+}
+
+.clickable:hover { // only used in contributors and addHint, but needed in base_controller for getting the dropdown elements
+    cursor: pointer;
+}
+
+// pdf application preview
+div.inputPage {
+    position: relative;
+}
+
+div.inputPage span {
+    width: fit-content;
+    position: absolute;
+    line-height: 1;
+    top: -1.25em;
+    left: 0.5em;
+    font-size: smaller;
+    font-style: italic;
+    font-family: zillaSlab-medium, sans-serif;
+    opacity: 0;
+}
+
+h3.inputPageHeading:hover {
+    cursor: pointer;
+}
+
+.template {
+    @apply MetaData-Label bg-mono-200 mt-4;
+    background-clip: content-box;
+    width: fit-content;
+}
+
+// footer
+#microsite-footer-first, .microsite-footer-content-container {
+    display: none;
+}
+
+.microsite-section-heading a {
+    font-family: "Zilla Slab", serif;
+}

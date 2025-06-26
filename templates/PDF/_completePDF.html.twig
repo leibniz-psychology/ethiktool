@@ -1,0 +1,53 @@
+{% extends 'PDF/basePDF.html.twig' %}
+{% import 'PDF/pdfMacros.html.twig' as pdfMacros %}
+{% trans_default_domain 'pdf' %}
+{% block pdfBody %}
+    {% set translationPrefix, headingCenter, textPreview = 'completeForm.', 'pdfHeadingCenter'~(not savePDF ? ' previewXLarge'), 'textJustify'~(not savePDF ? ' previewSmall') %}
+    {# first page #}
+    <div style="page-break-after: always">
+        {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
+        <h2 class="{{ headingCenter }}">{{ (translationPrefix~'consent')|trans(committeeParams) }}</h2>
+        {% for curContent, checkbox in content %}
+            {% if curContent is not same as '' %}
+                <div class="{{ textPreview }}" style="margin-bottom: 5em">
+                    {{ curContent|raw|nl2br }}
+                    <table class="mt-1">
+                        <tr>
+                            <td>{{ pdfMacros.addCheckbox(checkbox[0] is same as '1',savePDF) }}</td>
+                            <td class="align-content-end">{{ checkbox[1] }}</td>
+                        </tr>
+                    </table>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
+    {% endif %}
+    {# second page #}
+    {% set biasStart, biasPrefix = (translationPrefix~'titles.bias')|trans([],'messages')~': ', translationPrefix~'bias.types.' %}
+    {% set translationPrefix, isMessages = translationPrefix~'further.', messages is not same as '' %}
+    <div>
+        {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
+        <h2 class="{{ headingCenter }}">{{ (translationPrefix~'title')|trans(committeeParams) }}</h2>
+        {% if bias is not same as '' %}
+            {% for curBias, biasDescription in bias %}
+                <div class="{{ textPreview }}" style="margin-bottom: 5em">
+                    {{ biasStart~(biasPrefix~curBias)|trans([],'messages') }}
+                    {% if biasDescription is not same as '' %}
+                        <div style="margin: 0">{{ biasDescription|nl2br }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="{{ textPreview }}" {% if isMessages and savePDF %} style="{{ noPageBreakFirstLine }}" {% endif %}>
+            {{ (translationPrefix~'messages')|trans(committeeParams|merge({'messages': boolToString(isMessages)})) }}
+            {% if isMessages %}
+                {{ ("\n"~messages)|nl2br }}
+            {% endif %}
+        </div>
+    </div>
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
+    {% endif %}
+{% endblock %}

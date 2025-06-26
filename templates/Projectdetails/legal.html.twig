@@ -1,0 +1,24 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block content %}
+    {% set translationPrefix = 'projectdetails.pages.legal.' %}
+    <div>
+        <div class="borderHint">{{ (translationPrefix~'hint')|trans }}</div>
+        {% for type in legalNodes %}
+            {% if content[type] is defined %}
+                {% set widget, tempPrefix, isApparatus = content[type], translationPrefix~type~'.', type is same as 'apparatus' %}
+                {% set widgetVal, templateDiv, prefix = widget.vars.value, type~'TemplateDiv', 'legal_'~type~'_' %}
+                <div class="mt-8">
+                    {{ formRender.renderButtons(widget,{'text': [content[type~'Text'],{'transfer': [[isApparatus and isReceipt is same as 'true' ? 'receipt' : 'consent'],addresseeType], 'visibility': widgetVal is same as 'text'}], 'stimVisible': {'multi': [[prefix~'0',templateDiv],[prefix~'1',type~'TextDiv']]}}|merge(not isApparatus or isLoan ? {'hint': [tempPrefix,{'isReceipt': isReceipt}]} : {})) }}
+                    <div class="template" id="{{ templateDiv }}" style="{{ boolToDisplay(widgetVal is same as 'template') }}">{{ (tempPrefix~'template')|trans(committeeArray)~(type is same as 'apparatus' and isLoan ? (tempPrefix~'loan')|trans) }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {{ formRender.addSubmitButtons() }}
+    </div> {# entire form #}
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview([studyID,groupID,measureID]) }}
+{% endblock %}

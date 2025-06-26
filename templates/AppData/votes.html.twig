@@ -1,0 +1,34 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block content %}
+    <div>
+        {# other vote #}
+        {% set otherVote, otherVoteDescription, otherVoteResult, otherVoteResultDescription, translationPrefix = content.otherVote, content.description, content.otherVoteResult, content.otherVoteResultDescription, 'votes.' %}
+        {% set isOtherVote, otherVoteResultValue, otherVoteDiv, otherVoteHint, tempPrefix = otherVote.vars.value is same as '0', otherVoteResult.vars.value, 'OtherVoteDiv', 'otherVoteHint', translationPrefix~'otherVote.' %}
+        {% set noOtherVoteResultSelected, targetParam = otherVoteResultValue is same as '', {'target': true} %}
+        <div>
+            {{ formRender.renderButtons(otherVote,{'stimVisible': {'values': [['0',[otherVoteDiv,otherVoteDescription.vars.name~'Div']]]}, 'text': [otherVoteDescription,textInputAttr|merge({'visibility': isOtherVote, 'hint': tempPrefix~'committee', 'fontStyle': true})]}) }}
+            <div id="{{ otherVoteDiv }}" style="{{ boolToDisplay(isOtherVote) }}">
+                <div class="MetaData-Label mt-4">{{ form_label(otherVoteResult,null,labelDummy) }}</div>
+                <div {{ stimulus_action('base','setVisibility','change',{'values': [[['positive','negative'],otherVoteHint]]}) }}>
+                    {{ formRender.renderButtons(otherVoteResult,{'noHeading': true, 'text': [otherVoteResultDescription,{'hint': noOtherVoteResultSelected ? 'multiple.choiceTextHint' : otherVoteResultHeadingText[otherVoteResultValue], 'fontStyle': true}|merge(noOtherVoteResultSelected ? targetParam : {})], 'stim': ['base','setWidgetByValue',{'widgetValue': ['',otherVoteResultDescription.vars.name,otherVoteResultHeadingText]}], 'hintButtons': [[tempPrefix~'explanation'],otherVoteHint,not noOtherVoteResultSelected]}) }}
+                </div>
+            </div>
+        </div>
+        {# own institution vote #}
+        <div class="mt-8">
+            {% set instVote, reference, instVoteText, appParams = content.instVote, content.reference, content.instVoteText, {'type': appType} %}
+            {% set isVisible, hintDiv, isNotMain = instVote.vars.value is same as '0', 'hintDiv', appType in ['extended','resubmission'] %}
+            {% set textParams, isHint = {'visibility': isVisible, 'fontStyle': true}, isNotMain or appType is same as 'new' %}
+            {{ formRender.renderButtons(instVote,{'text': [reference,textParams|merge({'attributes': {'style': 'width: 20em'}})|merge(isNotMain ? targetParam : {})], 'stimVisible': {'values': [['0',[reference.vars.name~'Div',instVoteText.vars.name~'Div']|merge(isHint ? [hintDiv] : [])]]}}|merge(isHint ? {'hintButtons': [[translationPrefix~'instVote.hint.'~(isNotMain ? 'notMain' : 'main'),appParams|merge(committeeParams),[]],hintDiv,isVisible]} : {})|merge(isNotMain ? {'target': 'instVote1'} : {})) }}
+            {{ formRender.addTextfield(instVoteText,textParams|merge({'attributes': textHeightLong, 'textHintParams': appParams})) }}
+        </div>
+        {# buttons #}
+        {{ formRender.addSubmitButtons() }}
+    </div> {# entire form #}
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview() }}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block content %}
+    {% set medicine, medicineDescription, textStyle = content.medicine, content.medicineDescription, {'attributes': {'style': 'height: '~textHeight}} %}
+    <div>
+        {# medicine #}
+        <div>
+            {{ formRender.renderButtons(medicine,{'stimVisible': {'values': [['0',medicineDescription.vars.name~'Div']]}, 'text': [medicineDescription,textStyle|merge({'hint': 'medicine.medicine.textHint', 'textHintParams': committeeArray, 'visibility': medicine.vars.value is same as '0'})]}) }}
+        </div>
+        {# physician #}
+        {% set physician, physicianDescription, description, descriptionDiv = content.physician, content.physicianDescription, content.description, 'descriptionDiv' %}
+        {% set isNoChoice = physicianDescription.vars.value is same as '' %}
+        <div class="mt-8">
+            {{ formRender.renderButtons(physician,{'stimVisible': {'values': [['0',descriptionDiv]]}}) }}
+            {{ formRender.renderButtons(physicianDescription,{'stim': ['base','setWidgetByValue',{'widgetValue': ['',description.vars.name,hintArray]}], 'text': [description,textStyle|merge({'hint': isNoChoice ? 'multiple.choiceTextHint' : hintArray[0]})|merge(isNoChoice ? {'target': true} : {})], 'addDiv': [descriptionDiv,boolToDisplay(physician.vars.value is same as '0')]}) }}
+        </div>
+        {# buttons #}
+        {{ formRender.addSubmitButtons() }}
+    </div>
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview() }}
+{% endblock %}
