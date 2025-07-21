@@ -80,22 +80,16 @@ class AppDataController extends ControllerAbstract
             $isNotLeave = !$this->getLeavePage($coreData,$session,self::coreDataNode);
             return $this->saveDocumentAndRedirect($request,$isNotLeave ? $appNode : $appNodeNew,$isNotLeave ? $appNodeNew : null);
         } // if ($coreData->isSubmitted())
-        return $this->render('AppData/coreData.html.twig',
-            [self::content => $coreData,
-                'positions' => $positions,
+        return $this->render('AppData/coreData.html.twig', $this->setRenderParameters($request,$coreData,
+            ['positions' => $positions,
                 'funding' => self::fundingTypes,
                 'support' => array_diff_key(self::supportTypes,!$isEUB ? [self::supportCenter => ''] : []),
-                'applicantInfo' => self::applicantContributorsInfosTypes,
-                'committeeParams' => $session->get(self::committeeSession),
-                self::pageTitle => 'appData.coreData',
-                self::preview => $this->getPreviewScroll($session),
-                self::pageErrors => $this->getErrors($request,self::coreDataNode)]);
+                'applicantInfo' => self::applicantContributorsInfosTypes,],'appData.coreData'));
     }
 
     #[Route('/appData/votes', name: 'app_votes')]
     public function showVotes(Request $request): Response {
-        $session = $request->getSession();
-        $appNode = $this->getXMLfromSession($session);
+        $appNode = $this->getXMLfromSession($request->getSession());
         if (!$appNode) { // page was opened before a proposal was created/loaded
             return $this->redirectToRoute('app_main');
         }
@@ -114,33 +108,23 @@ class AppDataController extends ControllerAbstract
         }
         $translationPrefix = 'votes.otherVote.description.';
         $tempVal = $this->translateString($translationPrefix.'positiveNo');
-        return $this->render('AppData/votes.html.twig',
-                [self::content => $votes,
-                 'committeeParams' => $session->get(self::committeeSession),
-                 'appType' => $appType,
-                 'otherVoteResultHeadingText' => ['positive' => $tempVal, self::otherVoteResultNegative => $this->translateString($translationPrefix.self::otherVoteResultNegative), 'noVote' => $tempVal],
-                 self::pageTitle => 'appData.votes',
-                 self::preview => $this->getPreviewScroll($session),
-                 self::pageErrors => $this->getErrors($request,self::voteNode)]
+        return $this->render('AppData/votes.html.twig', $this->setRenderParameters($request,$votes,
+                ['appType' => $appType,
+                 'otherVoteResultHeadingText' => ['positive' => $tempVal, self::otherVoteResultNegative => $this->translateString($translationPrefix.self::otherVoteResultNegative), 'noVote' => $tempVal],],'appData.votes')
             );
     }
 
     #[Route('/appData/medicine', name: 'app_medicine')]
     public function showMedicine(Request $request): Response {
         return $this->createFormAndHandleSubmit(MedicineType::class,$request,[self::appDataNodeName,self::medicine],
-            [self::pageTitle => 'appData.medicine',
-             self::preview => $this->getPreviewScroll($request->getSession()),
-             'hintArray' => $this->createStringArray(['0','1'],'medicine.physician.description.textHint'),
-             'committeeParams' => $request->getSession()->get(self::committeeSession),]);
+            ['hintArray' => $this->createStringArray(['0','1'],'medicine.physician.description.textHint')]);
     }
 
     #[Route('/appData/summary', name: 'app_summary')]
     public function showSummary(Request $request): Response {
         return $this->createFormAndHandleSubmit(SummaryType::class,$request,[self::appDataNodeName,self::summary],
             ['maxChars' => 3000,
-             self::pageTitle => 'appData.summaryPage',
-             self::preview => $this->getPreviewScroll($request->getSession()),
-             'committeeParams' => $request->getSession()->get(self::committeeSession),]);
+             self::pageTitle => 'appData.summaryPage']);
     }
 
     // functions for core data

@@ -32,8 +32,7 @@ class LegalController extends ControllerAbstract
         }
 
         return $this->createFormAndHandleSubmit(LegalType::class,$request,[self::legalNode],
-            [self::pageTitle => 'projectdetails.legal',
-             'legalNodes' => self::legalTypes,
+            ['legalNodes' => self::legalTypes,
              'isLoan' => $isLoan,
              'isReceipt' => $isReceipt,],
             [self::dummyParams =>

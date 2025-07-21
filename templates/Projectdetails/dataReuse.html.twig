@@ -6,10 +6,8 @@
     {# confirm #}
     {% set confirm, confirmDiv = content.confirmIntro, 'confirmDiv' %}
     {% set vars = confirm.vars %}
-    <div class="MetaData-Widget">
-        {{ (translationPrefix~'intro.text')|trans(routeIDsParam)|raw|nl2br }}
-        <div {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,confirmDiv]]}) }}>{{ formRender.addCheckbox(confirm, {'style': 'margin-top: 1em'}) }}</div>
-    </div>
+    <div class="borderHint">{{ (translationPrefix~'intro.text')|trans(routeIDsParam)|raw|nl2br }}</div>
+    <div class="MetaData-Widget" id="confirmIntroDiv" {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,confirmDiv]]}) }}>{{ formRender.addCheckbox(confirm, {'style': 'margin-top: 1rem'}) }}</div>
     <div class="mt-8" id="{{ confirmDiv }}" style="{{ boolToDisplay(vars.checked) }}">
         <div class="MetaData-Label">
             {{ dataReuseHint|raw }}
@@ -20,8 +18,8 @@
             {% if content.dataReuse is defined and (not isReuseTwice and suffix is same as '' or isReuseTwice and isSecond)  %}
                 {# data reuse #}
                 {% set dataReuse = content.dataReuse %}
-                {% set dataReuseValue, selfDiv = dataReuse.vars.value,'reuseSelfDiv' %}
-                <div class="mt-8">
+                {% set dataReuseValue, selfDiv = dataReuse.vars.value,'dataReuseSelf' %}
+                <div class="mt-8" id="dataReuse">
                     {{ formRender.renderButtons(dataReuse,{'hint': [translationPrefix~'dataReuse.'], 'stimVisible': {'values': [[['yes','anonymous','anonymized','personal'],'dataReuseHow'~(isReuseTwice ? 'reuse' : '')~'Div'],['no',selfDiv]]}}) }}
                     {# data reuse self #}
                     {{ formRender.renderButtons(content.dataReuseSelf,{'addDiv': [selfDiv,boolToDisplay(dataReuseValue is same as 'no')]}) }}
@@ -31,7 +29,7 @@
             {% set widgetName, tempPrefix = 'dataReuseHow'~suffix, translationPrefix~'dataReuseHow.' %}
             {% if content[widgetName] is defined %}
                 {% set dataReuseHow, description = content[widgetName], widgetName~'Description' %}
-                {% set descriptionDiv, descriptionStart = description~'Div', 'descriptionStart' %}
+                {% set descriptionDiv, descriptionStart = description~'Div', 'descriptionStart'~suffix %}
                 <div class="mt-8" id="{{ widgetName~'Div' }}" style="{{ boolToDisplay(isPurposeReuse and suffix is same as '' or dataReuseValue not in ['','no']) }}">
                     <div class="MetaData-Title">{{ dataReuseHowHeading[suffix] }}</div>
                     {{ formRender.addHint(tempPrefix~'headingHint') }}

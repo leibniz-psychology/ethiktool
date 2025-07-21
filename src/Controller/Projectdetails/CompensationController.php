@@ -22,7 +22,6 @@ class CompensationController extends ControllerAbstract
         if ($measure===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
             return $this->redirectToRoute('app_main');
         }
-        $addressee = $this->getAddresseeFromRequest($request);
         $compensationNode = $measure->{self::compensationNode}[0];
         $isCodeCompensationLoad = $this->checkCompensationAwarding($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::compensationNode}));
         // check if inputs were made for the code compensation question on data privacy
@@ -31,10 +30,15 @@ class CompensationController extends ControllerAbstract
             $this->addInputPage('pages.projectdetails.',self::privacyNode,$inputArray);
         }
         $textInput = $this->setInputHint($inputArray);
+        // get date for later text hint
+        try {
+            $date = (new \DateTime())->add(new \DateInterval('P6M'))->format($this->translateString('projectdetails.pages.'.self::compensationNode.'.'.self::awardingNode.'.dateFormat'));
+        }
+        catch (\Throwable $throwable) {
+            $date = '';
+        }
 
-        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request,
-            [self::addresseeTrans => $this->translateString('projectdetails.addressee'.($addressee===self::addresseeParticipants ? '.participants.' : '.both.').$addressee),
-             self::dummyParams => [self::addressee => $addressee]]);
+        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request);
         if ($compensation->isSubmitted()) {
             $data = $this->getDataAndConvert($compensation,$compensationNode);
             [$appNodeNew,$measureNodeNew] = $this->getClonedMeasureTimePoint($appNode,$routeParams);
@@ -54,16 +58,9 @@ class CompensationController extends ControllerAbstract
             return $this->saveDocumentAndRedirect($request,$isNotLeave ? $appNode : $appNodeNew, $isNotLeave ? $appNodeNew : null);
         }
         return $this->render('Projectdetails/compensation.html.twig',
-            $this->setParameters($request,$appNode,
-                [self::content => $compensation,
-                 self::pageTitle => 'projectdetails.compensation',
-                 'types' => self::compensationTypes,
-                 'textInput' => $textInput]));
-
-//        return $this->createFormAndHandleSubmit(CompensationType::class,$request,[self::compensationNode],
-//            [self::pageTitle => 'projectdetails.compensation',
-//             'types' => self::compensationTypes],
-//            [self::addresseeTrans => $this->translateString('projectdetails.addressee'.($addressee===self::addresseeParticipants ? '.participants.' : '.both.').$addressee),
-//             self::dummyParams => [self::addressee => $addressee]]);
+            $this->setRenderParameters($request,$compensation,
+                ['types' => self::compensationTypes,
+                 'textInput' => $textInput,
+                 'laterDate' => ['date' => $date]],'projectdetails.compensation',true));
     }
 }

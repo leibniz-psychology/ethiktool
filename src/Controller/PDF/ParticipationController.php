@@ -7,7 +7,6 @@ use App\Traits\AppData\AppDataTrait;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use function Symfony\Component\VarDumper\Dumper\esc;
 
 class ParticipationController extends PDFAbstract
 {
@@ -21,7 +20,7 @@ class ParticipationController extends PDFAbstract
 
     public function createPDF(Request $request, array $routeIDs = []): Response {
         $session = $request->getSession();
-        $committeeParam = $session->get(self::committeeSession);
+        $committeeParam = $session->get(self::committeeParams);
         $savePDFParam = ['savePDF' => self::$savePDF, 'isComplete' => self::$isCompleteForm];
         $appNode = $this->getXMLfromSession($session,getRecent: true); // if supervisor was added while on core data page, indices of contributors have changed
         $coreDataArray = $this->xmlToArray($appNode->{self::appDataNodeName})[self::coreDataNode];
@@ -182,6 +181,7 @@ class ParticipationController extends PDFAbstract
                         $intro = [$textsArray[self::introNode][self::descriptionNode] ?? $this->translateString($textsPrefix.self::introNode.'.template',$translationParams)];
                         $tempVal = implode('; ',$contributorsLeaderInstitution);
                         $leaderPrefix = $tempPrefix.'leader.';
+                        $leaderHeading = $this->addHeadingLink($leaderPrefix.'title',fragment: $isMultiple ? 'leader' : ''); // set here to avoid routeIDs if only one variant
                         $intro[] = $this->translateStringPDF($leaderPrefix.'text',['leader' => $this->replaceString($tempVal,';')]);
                         if ($contributorsFurtherTasks!==[]) {
                             $intro[] = $this->translateStringPDF($tempPrefix.'contributors',['contributors' => $this->replaceString(implode(', ',$contributorsFurtherTasks))]);
@@ -189,15 +189,18 @@ class ParticipationController extends PDFAbstract
                         $tempArray = $coreDataArray[self::funding];
                         $tempVal = '';
                         if ($tempArray!=='') {
+                            $numFunding = count($tempArray);
                             $isQualiFunding = array_key_exists(self::fundingQuali,$tempArray);
-                            $funding = [];
+                            $funding = '';
                             if (!$isQualiFunding) {
                                 $fundingPrefix = self::coreDataNode.'.'.self::funding.'.';
+                                $fundingIndex = 0;
                                 foreach ($tempArray as $type => $source) {
-                                    $funding[] = $this->translateString($fundingPrefix.$type).' ('.$source[self::descriptionNode].')';
+                                    $funding .= ($fundingIndex>0 && $fundingIndex===($numFunding-1) ? $this->translateString('multiple.inputs.lastAnd').' ' : ', ').$this->translateString($fundingPrefix.$type).' ('.$source[self::descriptionNode].')';
+                                    ++$fundingIndex;
                                 }
                             }
-                            $tempVal = $this->translateStringPDF($tempPrefix.self::funding,['isQualiFunding' => $this->getStringFromBool($isQualiFunding), self::funding => implode(', ',$funding)]);
+                            $tempVal = $this->translateStringPDF($tempPrefix.self::funding,['isQualiFunding' => $this->getStringFromBool($isQualiFunding), self::funding => substr($funding,2)]); // no replaceString because string ends with custom text which may contain commas
                         }
                         $intro[] = $tempVal;
 
@@ -251,7 +254,7 @@ class ParticipationController extends PDFAbstract
                         $tempPrefix = $textsPrefix.'pro.template.';
                         $content = [(($tempArray[self::proTemplate] ?? '')==='1' ? $this->translateString($tempPrefix.'start',$translationParams).' '.$tempArray[self::proTemplateText].' '.$this->translateString($tempPrefix.'middle').' '.$tempVal."\n".$this->translateString($tempPrefix.'end',$addresseeParam) : $tempVal)];
                         $content[] = trim($this->getConTemplateText($measureTimePoint));
-                        $paragraphs['proCon'] = [$linkedString => self::textsNode, self::content => $content, $subHeadingsString => [$translationPrefix.self::proNode,$translationPrefix.self::conNode],$parametersString => ['isBurdensRisks' => $this->getStringFromBool($this->getBurdensRisks($measureTimePoint[self::burdensRisksNode]))],$noPageBreakString => false, $subColonString => true];
+                        $paragraphs[self::proNode] = [$linkedString => self::textsNode, self::content => $content, $subHeadingsString => [$translationPrefix.self::proNode,$translationPrefix.self::conNode],$parametersString => ['isBurdensRisks' => $this->getStringFromBool($this->getBurdensRisks($measureTimePoint[self::burdensRisksNode]))],$noPageBreakString => false, $subColonString => true];
 
                         // criteria
                         if ($isNotPost) {
@@ -303,7 +306,6 @@ class ParticipationController extends PDFAbstract
                         $processingPrefix = $privacyPrefix.'processing.';
                         $dataResearchPrefix = $processingPrefix.self::dataResearchNode.'.';
                         $privacyPrefixTool = $projectdetailsPrefix.self::privacyNode.'.';
-                        $dataReusePrefix = $projectdetailsPrefix.self::dataReuseNode.'.';
                         if ($privacyCreate===self::createTool) {
                             if ($createArray[self::descriptionNode]==='1') {
                                 $responsibility = $privacyArray[self::responsibilityNode];
@@ -348,9 +350,8 @@ class ParticipationController extends PDFAbstract
                                 }
                             }
                         }
-                        $isPersonal = $privacyCreate===self::createSeparate || $isToolPersonal; // true if personal data is collected. Also true if processing is checked later
-                        $isPersonalString = $this->getStringFromBool($isPersonal);
-                        $translationParams[self::isPersonal] = $isPersonalString;
+                        $isPersonal = $privacyCreate===self::createSeparate || $isToolPersonal; // true if personal data is collected. Also true if processing is checked later. False if research data are personal, but marking is other.
+                        $translationParams[self::isPersonal] = $this->getStringFromBool($isPersonal);
                         // other sources
                         $otherSourcesArray = $measuresArray[self::otherSourcesNode];
                         $otherSourcesSentence = '';
@@ -360,7 +361,8 @@ class ParticipationController extends PDFAbstract
                         $otherSourcesParam = [self::otherSourcesNode => $otherSourcesSentence];
                         [$markingSentences,$codeCompensationSentences] = $this->getMarkingSentences($privacyArray,$addresseeParam);
                         $isMarking = $markingSentences!=='';
-                        if ($isPersonal) {
+                        $isMarkingOtherPersonal = $isMarkingOther && $isDataPersonal;
+                        if ($isPersonal || $isMarkingOtherPersonal) {
                             $content = $this->translateStringPDF($translationPrefix.(($isToolPersonal && $dataPersonal===self::dataPersonalMaybe && !$isMarkingPersonal && !$isPurpose) ? self::dataPersonalMaybe : 'personal'),$otherSourcesParam); // self::dataPersonalMaybe if the only personal data are research data that may be personal
                         }
                         // data reuse
@@ -406,7 +408,7 @@ class ParticipationController extends PDFAbstract
                         if ($isPersonal) {
                             $content .= "\n".$dataReuseContent;
                         }
-                        else {
+                        elseif (!$isMarkingOtherPersonal) {
                             $content = $this->translateStringPDF(($privacyCreate==='separateLater' || $isMarkingOther) ? $translationPrefix.'noTool' : $translationPrefix.self::markingNode.'.start',array_merge($otherSourcesParam,['codeMarking' => ($isMarking ? $markingSentences : '')."\n".$dataReuseContent]));
                         }
                         // add code compensation sentences if purpose research is not compensation
@@ -418,17 +420,17 @@ class ParticipationController extends PDFAbstract
                         // add paragraphs from compensation to voluntary
                         foreach ($paragraphs as $key => $paragraph) {
                             self::$linkedPage = $paragraph[$linkedString];
-                            $this->addParagraph($key,$paragraph[self::content],$paragraph[$subHeadingsString],$paragraph[$parametersString],$paragraph[$noPageBreakString],$paragraph[$subColonString]);
+                            $this->addParagraph($key,$paragraph[self::content],$paragraph[$subHeadingsString],$paragraph[$parametersString],$paragraph[$noPageBreakString],$paragraph[$subColonString],$key!==self::compensationNode);
                         }
                         // add data privacy paragraph
                         self::$linkedPage = self::privacyNode;
-                        $this->addParagraph(self::privacyNode,trim($content));
+                        $this->addParagraph(self::privacyNode,trim($content),addFragment: false);
 
                         // contact
                         $contributorsLink = $isMultiple ? self::contributorNode : 'contributors';
                         self::$linkedPage = $contributorsLink;
                         $translationParams['contributors'] = $this->replaceString(implode('; ',$contributorsContact),';');
-                        $this->addParagraph('contact',$this->translateStringPDF($participationPrefix.'contact',$translationParams));
+                        $this->addParagraph('contact',$this->translateStringPDF($participationPrefix.'contact',$translationParams),addFragment: $isMultiple);
 
                         // loan receipt -> check here because either the receipt or the consent may contain the hint
                         $loanArray = $measuresArray[self::loanNode];
@@ -441,7 +443,7 @@ class ParticipationController extends PDFAbstract
                                 $apparatusArray = $measureTimePoint[self::legalNode][self::apparatusNode] ?? [];
                                 $chosen = $apparatusArray[self::chosen] ?? self::template; // if no consent is given, the template text on the legal page (which is deactivated in that case) is added to the receipt
                                 self::$linkedPage = self::measuresNode;
-                                $loanReceiptParameters = ['content' => $this->getTemplateChoice($chosen) ? ($chosen===self::templateText ? [$apparatusArray[self::descriptionNode]] : [$this->translateString($tempPrefix.self::template), $this->translateString($tempPrefix.'loan')]) : [], 'confirm' => $receiptArray[self::chosen]===self::templateText ? $receiptArray[self::descriptionNode] : $this->translateString($projectdetailsPrefix.self::measuresNode.'.'.self::loanNode.'.'.self::template), 'heading' => $this->addHeadingLink('loanReceipt.title')];
+                                $loanReceiptParameters = ['content' => $this->getTemplateChoice($chosen) ? ($chosen===self::templateText ? [$apparatusArray[self::descriptionNode]] : [$this->translateString($tempPrefix.self::template), $this->translateString($tempPrefix.'loan')]) : [], 'confirm' => $receiptArray[self::chosen]===self::templateText ? $receiptArray[self::descriptionNode] : $this->translateString($projectdetailsPrefix.self::measuresNode.'.'.self::loanNode.'.'.self::template), 'heading' => $this->addHeadingLink('loanReceipt.title',fragment: self::loanNode)];
                                 $isLoanReceipt = true;
                             }
                         }
@@ -453,10 +455,10 @@ class ParticipationController extends PDFAbstract
                         if ($isConsent) { // consent is given
                             $tempPrefix = 'consent.';
                             self::$linkedPage = self::consentNode;
-                            $consentHeading = $this->addHeadingLink($tempPrefix.'title',$translationParams);
+                            $consentHeading = $this->addHeadingLink($tempPrefix.'title',$translationParams,self::consentNode);
                             $translationParams['informationType'] = $isPre ? $informationArray[self::descriptionNode] : $informationArray[self::informationAddNode][self::descriptionNode];
                             $consent = [$this->translateStringPDF($tempPrefix.'start',array_merge($translationParams,$terminateConsParam,$voluntaryParams))];
-                            $consent[] = $this->translateStringPDF($tempPrefix.'personal',array_merge($translationParams,$dataSpecialParam,['dataSpecial' => $this->replaceString(implode(', ',$dataResearchSpecialTrans)), 'contributors' => $contributorsData]));
+                            $consent[] = $this->translateStringPDF($tempPrefix.'personal',array_merge($translationParams,$dataSpecialParam,['dataSpecial' => $this->replaceString(implode(', ',$dataResearchSpecialTrans)), 'contributors' => $this->replaceString($contributorsData,replace: $this->translateStringPDF('or'))]));
                             if ($isPre) {
                                 $isNotLocation = in_array($measuresArray[self::locationNode][self::chosen],[self::locationOnline,'']); // for insuranceWay
                                 // legal
@@ -515,7 +517,8 @@ class ParticipationController extends PDFAbstract
                                     if ($tempArray!=='') { // at least one type of anonymization was selected
                                         if (array_key_exists(self::anonymizationNo, $tempArray)) {
                                             $anonymizationResearch = $this->translateStringPDF($anonymizationPrefix.self::dataResearchNode.'No');
-                                        } else {
+                                        }
+                                        else {
                                             $tempPrefix = $anonymizationPrefixTool.'types.';
                                             $tempVal = [];
                                             foreach ($tempArray as $type => $description) {
@@ -587,9 +590,6 @@ class ParticipationController extends PDFAbstract
                                     }
                                 }
                             }
-                            if ($findingConsent!=='') { // finding consent is optional -> after the optional privacy consents
-                                $optionalConsent[] = $findingConsent;
-                            }
                             $purposesMerged = array_merge($isPurposeResearch ? $purposeResearch : [], $isDataOnlineProcessingResearch && !$isMarking ? [self::purposeTechnical => []] : [],$isPurposeFurther ? $purposeFurther : []);
                             $purposeDataPrefix = $privacyPrefixTool.self::purposeDataNode.'.types.';
                             $andTrans = $this->translateString('multiple.inputs.lastAnd');
@@ -621,34 +621,35 @@ class ParticipationController extends PDFAbstract
                                         $tempVal = "• ".$this->translateString($purposeDataPrefix.'ip');
                                     }
                                     if ($tempVal!=='') {
-                                        $purposes[] = trim($purposeStart.$this->translateStringPDF($processingPrefix.'purposeTypes.'.$purposeWoPrefix).($purposeWoPrefix===self::purposeRelatable ? ' ('.$this->replaceString(implode(', ',$relatable)).')' : '').":\n".$tempVal) . "\n\n";
+                                        $purposes[] = trim($purposeStart.$this->translateStringPDF($processingPrefix.'purposeTypes.'.$purposeWoPrefix).($purposeWoPrefix===self::purposeRelatable ? ' ('.$this->replaceString(implode(', ',$relatable)).')' : '').":\n".$tempVal)."\n\n";
                                     }
                                     if ($questions!=='') {
                                         // access
                                         $tempArray = $questions[self::accessNode] ?? '';
-                                        if ($tempArray !== '') {
+                                        if ($tempArray!=='') {
                                             $transferContent[] = $this->translateStringPDF($accessStart, $purposeParam)."\n".$this->addAccess($tempArray,$purposeWoPrefix,$committeeParam,$anyOrderProcessingKnown,$purposesKnownTrans,$purposeTrans);
                                         }
                                         // marking remove
                                         $markingRemove = '';
                                         if (array_key_exists(self::markingRemoveNode, $questions)) {
-                                            $markingRemovePrefix = $privacyPrefixTool . self::markingRemoveNode.'.';
+                                            $markingRemovePrefix = $privacyPrefixTool.self::markingRemoveNode.'.';
                                             $tempArray = $questions[self::markingRemoveNode];
                                             $tempVal = str_replace($purposeWoPrefix, '', $tempArray[self::chosen]);
-                                            if ($tempVal !== '') {
-                                                $markingRemove = $this->translateString($markingRemovePrefix.'start', [self::purposeNode => $this->translateStringPDF( $processingPrefix.'purposeTypesGen.'.$purposeWoPrefix)]).$this->translateStringPDF($privacyPrefix . self::markingRemoveNode . '.' . $tempVal, [self::descriptionNode => ($tempArray[self::descriptionNode] ?? '') . ($tempVal === self::markingRemoveNode . 'Later' ? '.' : ',')]);
-                                                if ($tempVal === self::markingRemoveLater) {
-                                                    $markingRemove .= $this->translateString($markingRemovePrefix . 'laterEnd', ['isName' => $this->getStringFromBool($isMarkingName)]) . ' ' . $tempArray['laterDescription'];
-                                                } else { // must be immediately
+                                            if ($tempVal!=='') {
+                                                $markingRemove = $this->translateString($markingRemovePrefix.'start', [self::purposeNode => $this->translateStringPDF( $processingPrefix.'purposeTypesGen.'.$purposeWoPrefix)]).$this->translateStringPDF($privacyPrefix.self::markingRemoveNode.'.'.$tempVal, [self::descriptionNode => ($tempArray[self::descriptionNode] ?? '').($tempVal===self::markingRemoveNode.'Later' ? '.' : ',')]);
+                                                if ($tempVal===self::markingRemoveLater) {
+                                                    $markingRemove .= $this->translateString($markingRemovePrefix.'laterEnd', ['isName' => $this->getStringFromBool($isMarkingName)]).' '.$tempArray['laterDescription'];
+                                                }
+                                                else { // immediately
                                                     $tempVal = '';
                                                     $tempArray = $tempArray[self::markingRemoveMiddleNode];
-                                                    if ($tempArray !== '') {
-                                                        $tempPrefix = $markingRemovePrefix . self::markingRemoveMiddleNode . '.types.';
+                                                    if ($tempArray!=='') {
+                                                        $tempPrefix = $markingRemovePrefix.self::markingRemoveMiddleNode.'.types.';
                                                         foreach ($tempArray as $type => $value) {
-                                                            $tempVal .= $andTrans . $this->translateString($tempPrefix . str_replace($purposeWoPrefix, '', $type));
+                                                            $tempVal .= $andTrans.$this->translateString($tempPrefix.str_replace($purposeWoPrefix, '', $type));
                                                         }
                                                     }
-                                                    $markingRemove .= substr($tempVal, strlen($andTrans)) . $this->translateString($markingRemovePrefix . 'immediatelyEnd');
+                                                    $markingRemove .= substr($tempVal, strlen($andTrans)).$this->translateString($markingRemovePrefix.'immediatelyEnd');
                                                 }
                                             }
                                         }
@@ -657,11 +658,11 @@ class ParticipationController extends PDFAbstract
                                             $tempArray = $questions[self::personalRemoveNode];
                                             $tempVal = $tempArray[self::chosen];
                                             $personalRemove = '';
-                                            if ($tempVal !== '') {
+                                            if ($tempVal!=='') {
                                                 $tempVal = str_replace($purposeWoPrefix, '', $tempVal);
-                                                $personalRemove = $this->translateString($privacyPrefixTool . self::personalRemoveNode . '.start', $purposeParam) . $this->translateStringPDF($privacyPrefix . self::personalRemoveNode . '.' . $tempVal, [self::descriptionNode => ($tempArray[self::descriptionNode] ?? '') . ($tempVal === self::personalRemoveImmediately ? '.' : '')]);
+                                                $personalRemove = $this->translateString($privacyPrefixTool.self::personalRemoveNode.'.start', $purposeParam).$this->translateStringPDF($privacyPrefix.self::personalRemoveNode.'.'.$tempVal, [self::descriptionNode => ($tempArray[self::descriptionNode] ?? '').($tempVal===self::personalRemoveImmediately ? '.' : '')]);
                                             }
-                                            $anonymizationContent[] = trim($markingRemove . "\n" . $personalRemove);
+                                            $anonymizationContent[] = trim($markingRemove."\n".$personalRemove);
                                         }
                                     }
                                 } // if not purposeNo
@@ -740,7 +741,10 @@ class ParticipationController extends PDFAbstract
                             $tempPrefix = $privacyPrefix.'rights.';
                             $privacyContent[$this->translateStringPDF($tempPrefix.'title')] = $this->translateStringPDF($tempPrefix.'text',$translationParams).$this->translateStringPDF($tempPrefix.'textEnd'); // rights
                         }
-                        $privacyParameters = ['privacyContent' => $privacyContent, 'data' => $contributorsDataContact, 'committeeArray' => $committeeParam, 'privacyHeading' => $this->addHeadingLink($privacyPrefix.'title')];
+                        $privacyParameters = array_merge($committeeParam,['privacyContent' => $privacyContent, 'data' => $contributorsDataContact, 'privacyHeading' => $this->addHeadingLink($privacyPrefix.'title'), self::committeeParams => $committeeParam]);
+                        if ($findingConsent!=='') { // finding consent is optional -> after the optional privacy consents
+                            $optionalConsent[] = $findingConsent;
+                        }
 
                         self::$linkedPage = self::informationNode;
                         $participationHeading = $this->addHeadingLink($participationPrefix.'title',$informationParam);
@@ -758,10 +762,10 @@ class ParticipationController extends PDFAbstract
                         if ($levelIDs!==[]) {
                             $levelString = ' - '.implode(', ',$levelIDs);
                         }
-                        $parameters = array_merge($parameters,$savePDFParam,$committeeParam,$projectTitleParam,$privacyParameters,
+                        $parameters = array_merge($parameters,$savePDFParam,$projectTitleParam,$privacyParameters,
                             ['participationHeading' => $participationHeading,
                              'intro' => $intro,
-                             'leaderHeading' => $this->addHeadingLink($leaderPrefix.'title'),
+                             'leaderHeading' => $leaderHeading,
                              'leaderInstitution' => $contributorsLeaderInstitution,
                              'levelNames' => $levelString,
                              'isOral' => $isOral,
@@ -773,7 +777,7 @@ class ParticipationController extends PDFAbstract
                              'noTrans' => $this->translateString('buttons.no'), // for optional consent
                              'optionalConsent' => $optionalConsent,
                              'oralHint' => $tempVal,
-                             'isPersonal' => $isPersonalString,
+                             'isPersonal' => $this->getStringFromBool($isPersonal || $isMarkingOtherPersonal),
                              'privacyParameters' => $privacyParameters,
                              'numStudies' => count($this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode])),
                              self::studyID => $studyID+1]);
@@ -788,14 +792,14 @@ class ParticipationController extends PDFAbstract
                                 $levelArray[] = $this->translateStringPDF($boxHeadingPrefix.$level).' '.$info['id'].($level!==self::measureTimePointNode ? ($name!=='' ? ' ('.$name.')' : '') : '');
                             }
                         }
-                        $parameters = array_merge($translationParams,$savePDFParam,[ 'parameters' => array_merge($parameters,$informationParam,['levelNames' => implode(', ',$levelArray), 'numLevels' => $numLevels])]);
+                        $parameters = array_merge($translationParams,$savePDFParam,['parameters' => array_merge($parameters,$informationParam,['levelNames' => implode(', ',$levelArray), 'numLevels' => $numLevels, 'routeIDs' => $curRouteIDs])]);
                     }
                     // render the current document
                     try {
                         $curHtml = $this->renderView('PDF/_participation.html.twig',$parameters);
                         if ($isConsent) { // consent is given
                             self::$linkedPage = self::consentNode;
-                            $curHtml .= $this->renderView('PDF/_participationConsent.html.twig',array_merge($parameters,$isOral ? ['isSeparate' => true] : []));
+                            $curHtml .= $this->renderView('PDF/_participationConsent.html.twig',array_merge($parameters,[],$isOral ? ['isSeparate' => true] : []));
                         }
                         // data privacy
                         if ($isToolPersonal) {
@@ -904,9 +908,11 @@ class ParticipationController extends PDFAbstract
      * @param array $parameters if $subHeadings is not empty, translation parameters for the subheadings
      * @param bool $noPageBreak true if the content of each element in $content should be on the same page, false otherwise
      * @param bool $subColon true if the subheadings should be followed by a colon, false otherwise
+     * @param bool $addFragment if true, the fragment equal to $heading will be added to the heading link
+     * @param bool $addFragmentSubheading if true, the fragment equal to the respective keys of $subHeadings will be added to the subheadings links
      * @return void
      */
-    private function addParagraph(string $heading, string|array $content, array $subHeadings = [], array $parameters = [], bool $noPageBreak = false, bool $subColon = true): void {
+    private function addParagraph(string $heading, string|array $content, array $subHeadings = [], array $parameters = [], bool $noPageBreak = false, bool $subColon = true, bool $addFragment = true, bool $addFragmentSubheading = true): void {
         $isEmpty = $content===[]; // true if first paragraph
         $linkedPageType = self::$isPageLink;
         $linkSubHeadings = $this->linkedSubHeadings!==[];
@@ -919,11 +925,11 @@ class ParticipationController extends PDFAbstract
             }
             foreach ($subHeadings as $index => $subHeading) {
                 self::$linkedPage = $this->linkedSubHeadings[$index] ?? self::$linkedPage;
-                $content[$index] = [$subHeading!=='' ? $this->addHeadingLink($subHeading,$parameters).($subColon ? ':' : '')."\n" : '',$content[$index]];
+                $content[$index] = [$subHeading!=='' ? $this->addHeadingLink($subHeading,$parameters,$addFragmentSubheading ? substr($subHeading,strrpos($subHeading,'.')+1) : '').($subColon ? ':' : '')."\n" : '',$content[$index]];
             }
         }
         self::$isPageLink = !$linkSubHeadings; // if links are in subheadings, avoid link in heading
-        $this->content[$this->addHeadingLink('participation.headings.'.$heading)] = [$content,$noPageBreak];
+        $this->content[$this->addHeadingLink('participation.headings.'.$heading,fragment: $addFragment ? $heading : '')] = [$content,$noPageBreak];
         self::$isPageLink = $linkedPageType; // reset in case it was changed
     }
 }

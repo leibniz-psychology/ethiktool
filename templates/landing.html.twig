@@ -36,7 +36,7 @@
         {# variable for creating, editing, removing, i.e., after manipulation redirect to same page #}
         {% set landingRouteIDs, modalID = isStudy ? {'studyID': id[0]+1}|merge(isGroup ? {'groupID': id[1]+1}|merge(isMeasure ? {'measureID': id[2]+1} : {}) : {}) : {}, 'removeModal' %}
         <div class="MetaData-Widget">
-            {% set manipulatePrefix, landingIndex, width = 'landing.manipulate.', 0, 'width: 15em' %} {# either all pages or no page links to landing #}
+            {% set manipulatePrefix, landingIndex, width = 'landing.manipulate.', 0, 'width: 15rem' %} {# either all pages or no page links to landing #}
             {% set minWidth, manipulate, editPrefix = {'style': width}, manipulatePrefix~'manipulate', manipulatePrefix~'edit.' %}
             {% for route in menu %}
                 {% set routeIDs, curRoute = route.routeIDs ?? {}, route.route %}

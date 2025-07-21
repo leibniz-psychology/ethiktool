@@ -277,12 +277,13 @@ class PDFAbstract extends ControllerAbstract
     /** Translates \$string. If the pdf should not be saved on disk (i.e., if preview), \$string is then converted to a link.
      * @param string $string string to be translated and eventually converted
      * @param array $parameters if $string is a translation key, parameters for the translation
+     * @param string $fragment fragment to be added to the link
      * @return string converted string
      */
-    protected function addHeadingLink(string $string, array $parameters = []): string {
+    protected function addHeadingLink(string $string, array $parameters = [], string $fragment = ''): string {
         $string = $this->translateStringPDF($string,$parameters);
         if (!self::$savePDF && self::$isPageLink) {
-            $string = $this->convertStringToLink($string,self::$linkedPage,self::$routeIDs);
+            $string = $this->convertStringToLink($string,self::$linkedPage,self::$routeIDs,$fragment);
         }
         return $string;
     }

@@ -3,14 +3,14 @@
 
 {% block content %}
     {% set translationPrefix, noCompensation, typesWoNo, compensationController, isTextInput = 'projectdetails.pages.compensation.', 'noCompensation', types|slice(1), 'Projectdetails--compensation', textInput is not same as '' %}
-    {% set selection, margins, widthStyle, terminatePrefix = getAnySelected(content,types,noCompensation), 'margin-right: 0.2em; margin-left: 0.2em; ', 'width: fit-content;', translationPrefix~'terminate.textHint' %}
+    {% set selection, margins, widthStyle, terminatePrefix, addresseeTypeParam = getAnySelected(content,types,noCompensation), 'margin-right: 0.2rem; margin-left: 0.2rem; ', 'width: fit-content;', translationPrefix~'terminate.textHint', {'addressee': addresseeType} %}
     {% set noSelected, anySelected, valueStyle, flexCenter, terminateHints = selection[0], selection[1], {'style': 'width: 6rem; height: 1.75rem; '~margins}, 'flex align-items-center', [terminatePrefix|trans, (terminatePrefix~'Other')|trans] %}
     <div {{ stimulus_controller(compensationController,{
             'compensationTypes': typesWoNo,
             'terminateHint': terminateHints
     }) }}>
         {# types #}
-        <div class="MetaData-Label">{{ (translationPrefix~'title')|trans({'addressee': addresseeType}) }}{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
+        <div class="MetaData-Label" id="type">{{ (translationPrefix~'title')|trans(addresseeTypeParam) }}{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
         <div class="MetaData-Widget" {{ stimulus_action('base','setMultiCheckbox','change',{'single': noCompensation, 'multiCheck': typesWoNo})|stimulus_action(compensationController,'setCompensation','change') }}>
             {% for compensation in types %}
                 {% set widget, isCompensation, typePrefix = content[compensation], compensation is not same as noCompensation, translationPrefix~'types.' %}
@@ -20,7 +20,7 @@
                     {{ form_label(widget,null,{'id': name, 'label_attr': checkLabel|merge({'style': widthStyle})}) }}
                     {% if isCompensation %}
                         {% set description = compensation~'Description' %}
-                        <div id="{{ description~'Div' }}"  style="margin-top: -1em">{{ formRender.addTextfield(content[description]) }}</div>
+                        <div id="{{ description~'Div' }}"  style="margin-top: -1rem">{{ formRender.addTextfield(content[description]) }}</div>
                     {% endif %}
                     {% if compensation is same as 'hours' %}
                         <div id="{{ amountDiv }}" class="mb-4">
@@ -28,7 +28,7 @@
                                 {# amount #}
                                 {{ formRender.renderButtons(content.hoursAmount,noHeading|merge({'contTarget': ['hoursAmountflat',compensationController,'hoursAmountFlat']})) }}
                                 {# value #}
-                                <div class="{{ flexCenter }}" {{ stimulus_target(compensationController,'hoursValueDiv') }}>
+                                <div class="{{ flexCenter }} align-self-end" style="margin-left: -6rem;" {{ stimulus_target(compensationController,'hoursValueDiv') }}>
                                     {{ form_widget(content.hoursValue,{'attr': addTarget(compensationController,'hoursValue')|merge(valueStyle)}) }}
                                     <div style="{{ margins }}" {{ stimulus_target(compensationController,'hoursEndDefault') }}>{{ (typePrefix~'hoursEndDefault')|trans }}</div>
                                     <div style="{{ margins }}" {{ stimulus_target(compensationController,'hoursEndSpecific') }}>{{ (typePrefix~'hoursEndSpecific')|trans }}</div>
@@ -38,7 +38,7 @@
                     {% endif %}
                 {% else %}
                     {% set tempPrefix = typePrefix~'money' %}
-                    <label class="CheckBox-Label" for="{{ name }}" style="{{ widthStyle }}">
+                    <label class="CheckBox-Label flex flex-wrap" for="{{ name }}" style="{{ widthStyle }}">
                         {{ tempPrefix|trans }}
                         {# value #}
                         <div style="{{ margins }}" {{ stimulus_target(compensationController,'moneyMiddle') }}>{{ (tempPrefix~'Middle')|trans }}</div>
@@ -59,44 +59,44 @@
             {% endif %}
         </div>
         {# money further #}
-        {% set moneyFurther, tempPrefix = content.moneyFurther, translationPrefix~'money.' %}
-        <div class="mt-4" style="{{ boolToDisplay(content.money.vars.checked) }}" {{ stimulus_target(compensationController,'moneyFurther') }}>
-            <div class="MetaData-Label">{{ form_label(moneyFurther) }}</div>
+        {% set moneyFurther, tempPrefix, transferParam = content.moneyFurther, translationPrefix~'money.', {'transfer': [transferInfo,addresseeType]} %}
+        <div class="mt-4" id="moneyFurther" style="{{ boolToDisplay(content.money.vars.checked) }}" {{ stimulus_target(compensationController,'moneyFurther') }}>
+            <div class="MetaData-Label">{{ form_label(moneyFurther,null,labelDummy) }}</div>
             {{ formRender.addHint(tempPrefix~'headingHint') }}
-            <div class="mt-2">{{ formRender.renderButtons(moneyFurther,noHeading|merge({'text': [content.moneyFurtherDescription,{'visibility': moneyFurther.vars.value is same as '0', 'hint': (tempPrefix~'textHint')|trans~' ...', 'transfer': [transferInfo,addresseeType]}], 'stimVisible': {'values': [['0','moneyFurtherDescriptionDiv']]}})) }}</div>
+            <div class="mt-2">{{ formRender.renderButtons(moneyFurther,noHeading|merge({'text': [content.moneyFurtherDescription,transferParam|merge({'visibility': moneyFurther.vars.value is same as '0', 'hint': (tempPrefix~'textHint')|trans~' ...'})], 'stimVisible': {'values': [['0','moneyFurtherDescriptionDiv']]}})) }}</div>
         </div>
         {# terminate #}
         {% set terminate = content.terminate %}
         {% set value = terminate.vars.value %}
-        <div class="mt-4" {{ stimulus_target(compensationController,'terminate') }}>
+        <div class="mt-4" id="terminate" {{ stimulus_target(compensationController,'terminate') }}>
             <div class="MetaData-Label">{{ form_label(terminate,null,labelDummy) }}</div>
-            {{ formRender.renderButtons(terminate,noHeading|merge({'text': [content.terminateDescription,{'visibility': value in ['nothing','terminateOther'], 'hint': terminateHints[value is same as 'nothing' ? 0 : 1], 'transfer': [transferInfo,addresseeType]}], 'stim': [compensationController,'setTerminate']})) }}
+            {{ formRender.renderButtons(terminate,noHeading|merge({'text': [content.terminateDescription,transferParam|merge({'visibility': value in ['nothing','terminateOther'], 'hint': terminateHints[value is same as 'nothing' ? 0 : 1]})], 'stim': [compensationController,'setTerminate']})) }}
         </div>
         {# awarding #}
-        {% set awardingPrefix, laterEndOther = translationPrefix~'awarding.', 'laterEndOther' %}
+        {% set awardingPrefix, laterEndOther, noHeadingLabelParams = translationPrefix~'awarding.', 'laterEndOther', noHeading|merge({'labelParams': addresseeTypeParam}) %}
         <div class="mt-8" {{ stimulus_target(compensationController,'awarding') }}>
             {{ formRender.addHeading(awardingPrefix~'title') }}
             {% if transferInfo is not same as [] %}
                 <div class="MetaData-Label">
-                    {{ 'multiple.wording'|trans({'addressee': addressee}) }}
+                    {{ 'multiple.wording'|trans({'addressee': addresseeString}) }}
                     {{ formRender.addPDFhint(transferInfo) }}
                 </div>
             {% endif %}
             {% for type in typesWoNo %}
-                {% set tempPrefix, widgetName = awardingPrefix~type~'.', 'awarding'~type %}
+                {% set tempPrefix, widgetName, isNotOther = awardingPrefix~type~'.', 'awarding'~type, type is not same as 'compensationOther' %}
                 <div class="mt-8" id="{{ widgetName~'Div' }}">
                     {% if type is same as 'lottery' %}
                         {% set resultPrefix, descriptionDiv, lotteryStart = tempPrefix~'result.', 'lotteryEndDescriptionDiv', content.lotteryStart %}
-                        <div class="MetaData-Label" style="margin-bottom: -1em">{{ (resultPrefix~'start')|trans~'...' }}</div> {# start of text #}
+                        <div class="MetaData-Label" style="margin-bottom: -1rem">{{ (resultPrefix~'start')|trans~'...' }}</div> {# start of text #}
                         {{ formRender.addTextfield(content.lotteryStartDescription) }} {# description of start #}
                         {{ formRender.renderButtons(lotteryStart,noHeading|merge({'stimVisible': {'values': [['resultOther',descriptionDiv]]}})) }} {# type of start #}
                         <div class="MetaData-Widget" id="{{ descriptionDiv }}" style="{{ boolToDisplay(lotteryStart.vars.value is same as 'resultOther') }}">{{ form_widget(content.lotteryStartOtherDescription) }}</div> {# description of other type of start #}
                         <div class="MetaData-Label mb-4">{{ (resultPrefix~'end')|trans }}</div> {# end of text #}
                     {% endif %}
-                    <div class="MetaData-Label">
-                        {{ (tempPrefix~'title')|trans~'...' }}
+                    <div class="MetaData-Label" id="{{ 'awarding'~type~'Heading' }}">
+                        {{ (tempPrefix~'title')|trans~(isNotOther ? '...') }}
                     </div>
-                    {% if type is not same as 'compensationOther' %}
+                    {% if isNotOther %}
                         <div class="MetaData-Widget" id="{{ type~'Awarding' }}" {{ stimulus_action(compensationController,'setAwarding','change') }}> {# id needed for stimulus action #}
                             {% for option in content[widgetName] %}
                                 {% set vars = option.vars %}
@@ -105,15 +105,15 @@
                                 {% set isLaterDeliver, typeValueParam = isLater or value is same as 'deliver', {'id': typeValue} %}
                                 <div {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>
                                     {{ form_widget(option,typeValueParam|merge({'attr': addClass('RadioButton-Input')})) }}
-                                    {{ form_label(option,null,typeValueParam|merge({'label_html': true, 'label_attr': addClass('RadioButton-Label minAutoGrid')|merge({'style': 'margin-right: 0'})})) }}
+                                    {{ form_label(option,null,typeValueParam|merge({'label_html': true, 'label_attr': addClass('RadioButton-Label minAutoGrid me-0')})) }}
                                     {% if isLaterDeliver %}
                                         {% set laterDeliver = content[type~(isLater ? 'laterInformation' : 'deliverDescription')] %}
                                         <div id="{{ typeValue~'Div' }}">
                                             {% if isLater %}
-                                                <div style="margin-top: -1em">{{ formRender.addTextfield(content[type~'laterDescription']) }}</div>
+                                                <div style="margin-top: -1rem">{{ formRender.addTextfield(content[type~'laterDescription'],{'hint': awardingPrefix~'laterTextHint', 'textHintParams': laterDate}) }}</div>
                                                 <div class="MetaData-Label">{{ (awardingPrefix~'laterEnd.title')|trans }}</div>
                                             {% endif %}
-                                            {{ formRender.renderButtons(laterDeliver,noHeading|merge(isLater ? {'stimVisible': {'values': [[laterEndOther,typeValue~'OtherDiv']]}} : {})) }}
+                                            {{ formRender.renderButtons(laterDeliver,noHeadingLabelParams|merge(isLater ? {'stimVisible': {'values': [[laterEndOther,typeValue~'OtherDiv']]}} : {})) }}
                                     {% endif %}
                                     {% set typeValue = typeValue~(isLater ? 'Other') %}
                                     {% if isLater or isExternal or value is same as 'other' %} {# if later, the later type other description #}

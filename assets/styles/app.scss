@@ -9,6 +9,10 @@
 @import "customFonts.css";
 @import url("https://www.lifp.de/assets/collapsible-footer/styles/footer_css.css");
 
+.winWidth { // width of window
+    width: 95%;
+}
+
 .minAutoGrid {
     display: grid;
     grid-template-columns: min-content auto;
@@ -29,6 +33,17 @@ h1,h3,h5 {
 
 h2,h3 {
     margin-bottom: 0;
+}
+
+li {
+    margin-left: 3rem;
+    text-indent: -1.1rem;
+    list-style-position: inside;
+
+    ::marker {
+        content: '•';
+        font-size: x-large;
+    }
 }
 
 select {
@@ -152,7 +167,7 @@ div.inputPage {
 div.inputPage span {
     width: fit-content;
     position: absolute;
-    line-height: 1;
+    line-height: 1 !important;
     top: -1.25em;
     left: 0.5em;
     font-size: smaller;

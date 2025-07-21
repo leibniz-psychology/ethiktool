@@ -55,7 +55,6 @@
     #}
     {% set isTestCommittee = committeeType is same as 'testCommittee' %}
     <div class="logo" style="background: inherit;{{ style }}; width: 20%; {% if isTestCommittee %} margin: 0 {% endif %}" title="{{ ('logo.'~committeeType)|trans([],'pdf') }}">{{ include('images/logos/'~committeeType~(isTestCommittee ? '_'~app.request.locale)~'.svg') }}</div>
-{#    <div class="logo" style="background: inherit;{{ style }}; width: 20%; {% if committeeType is same as 'testCommittee' %} margin: 0 {% endif %}" title="{{ ('logo.'~committeeType)|trans([],'pdf') }}">{{ include('images/logos/'~committeeType~'.svg') }}</div>#}
 {% endmacro %}
 
 {% macro addDate(savePDF, isComplete, style, toolVersion = '') %}
@@ -67,9 +66,9 @@
     #}
     <div {% if not savePDF %} class="previewSmall" {% endif %} {% if style is not same as '' %} style="{{ style }}" {% endif %}>
         {% if toolVersion is not same as '' %}
-            {{ 'header'|trans({'toolVersion': toolVersion},'pdf')|raw|nl2br }}
+            {{ 'header'|trans({'toolVersion': toolVersion, 'savePDF': savePDF ? 'true' : 'false'},'pdf')|raw|nl2br }}
         {% endif %}
-        {{ 'now'|date('dateFormat'|trans({'noTime': boolToString(isComplete)},'pdf')) }}
+        {{ 'now'|date('dateFormat'|trans({'noTime': boolToString(isComplete)}), 'Europe/Berlin') }}
     </div>
 {% endmacro %}
 
@@ -81,17 +80,23 @@
     <div class="pdfHeadingCenter pdfHeadingMain {% if not savePDF %}previewXLarge{% endif %}" style="page-break-inside: avoid">{{ heading|raw }}</div>
 {% endmacro %}
 
-{% macro addSignature(savePDF, addressee = '') %}
+{% macro addSignature(savePDF, addressee, addName = false) %}
     {# Adds the location, date and signature line. Input arguments:
         savePDF:   if true, the pdf wil be saved on disk
-        addressee: translation key for the addressee to be added after the signature
+        addressee: translation key for the addressee to be added in the signature
+        addName:   if true, a line for the name will be added
     #}
-    {% set style, textPreview = 'width: 30%; border-top: 1px solid black', not savePDF ? 'previewSmall' %}
-    <div style="margin-top: 100px; display: flex">
-        <div style="{{ style }}">
+    {% set style, textPreview, topMargin, width = 'border-top: 1px solid black;'~(savePDF ? ' white-space: nowrap;' : ''), not savePDF ? 'previewSmall', 'margin-top: 100px;', 'width: 30%;' %}
+    {% if addName %}
+        <div style="{{ style~topMargin~width }}">
+            <i class="{{ textPreview }}">{{ 'signature.name'|trans([],'pdf') }}</i>
+        </div>
+    {% endif %}
+    <div style="{{ topMargin }} display: flex">
+        <div style="{{ style~width }}">
             <i class="{{ textPreview }}">{{ 'signature.location'|trans([],'pdf') }}</i>
         </div>
-        <div style="{{ style }}; margin-left: 200px">
+        <div style="{{ style }} margin-left: {{ savePDF ? '200px' : '100px' }}; min-width: 30%; max-width: 50%">
             <i class="{{ textPreview }}">{{ 'signature.signature'|trans({'addressee': addressee},'pdf') }}</i>
         </div>
     </div>

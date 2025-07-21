@@ -30,7 +30,6 @@ class InformationController extends ControllerAbstract
         $isFinding = $measureArray[self::burdensRisksNode][self::findingNode][self::chosen]==='0';
         $addressee = $this->getAddressee($measureArray[self::groupsNode]);
         $addresseeString = $this->getAddresseeString($addressee,!$isInformationII);
-        $participantString = $this->getAddresseeString($addressee,!$isInformationII,true, $isInformationII || $addressee===self::addresseeParticipants);
         $translationPrefix = 'pages.projectdetails.';
         $inputPrefix = 'multiple.inputs.';
         [$informationIIIinputText,$textInputPre,$textInputPost] = ['','',''];
@@ -74,8 +73,8 @@ class InformationController extends ControllerAbstract
 
         $information = $this->createFormAndHandleRequest(InformationType::class,$this->xmlToArray($informationNode),$request,
             [self::dummyParams => ['isAttendance' => !$isInformationII && $addressee!==self::addresseeParticipants],
-             self::addresseeTrans => $addresseeString,
-             self::participantTrans => $participantString]);
+             self::addresseeString => $addresseeString,
+             self::participantsString => $this->getAddresseeString($addressee,!$isInformationII,true, $isInformationII || $addressee===self::addresseeParticipants)]);
         if ($information->isSubmitted()) {
             $data = $this->getDataAndConvert($information,$informationNode);
             if (!$isInformationII) {
@@ -128,14 +127,10 @@ class InformationController extends ControllerAbstract
             return $this->saveDocumentAndRedirect($request,$isInformationII || $isNotLeave ? $appNode : $appNodeNew, !$isInformationII && $isNotLeave ? $appNodeNew : null); // $appNodeNew is only defined if $isInformationII is false
         }
         return $this->render('Projectdetails/information.html.twig',
-            $this->setParameters($request,$appNode,
-                [self::content => $information,
-                 'isInformationII' => $isInformationII,
+            $this->setRenderParameters($request,$information,
+                ['isInformationII' => $isInformationII,
                  'informationIIIinput' => $informationIIIinputText,
                  'textInputPre' => $textInputPre,
-                 'textInputPost' => $textInputPost,
-                 'addresseeString' => $addresseeString,
-                 'addresseePart' => $participantString,
-                 self::pageTitle => 'projectdetails.information'.($isInformationII ? 'II' : '')]));
+                 'textInputPost' => $textInputPost],'projectdetails.information'.($isInformationII ? 'II' : ''),true));
     }
 }

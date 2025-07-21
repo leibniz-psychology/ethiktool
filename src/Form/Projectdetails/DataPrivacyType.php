@@ -14,18 +14,17 @@ class DataPrivacyType extends TypeAbstract
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $translationPrefix = 'projectdetails.pages.dataPrivacy.';
         $dummyParams = $options[self::dummyParams];
-        $committeeParamsLabel = [self::labelParams => $options[self::committeeArray]];
         // processing
         $tempPrefix = $translationPrefix.self::processingNode.'.';
         $this->addFormElement($builder,self::processingNode,'textarea',$tempPrefix.'title',hint: $tempPrefix.self::textHint);
         // create
         $tempPrefix = $translationPrefix.self::createNode.'.';
-        $this->addRadioGroup($builder,self::createNode,self::createTypes,$tempPrefix.'title',options: [self::labelParams => [self::addressee => $options[self::addresseeTrans], self::participantTrans => $options[self::participantTrans]]]);
+        $this->addRadioGroup($builder,self::createNode,self::createTypes,$tempPrefix.'title');
         $this->addRadioGroup($builder,self::createVerificationNode,self::verificationTypes,$tempPrefix.self::createVerificationNode.'.title');
         // confirm
         $this->addFormElement($builder,self::confirmIntroNode,'checkbox',$translationPrefix.self::introNode.'.confirm');
         // responsibility
-        $this->addRadioGroup($builder,self::responsibilityNode,array_diff(self::responsibilityTypes,$options[self::committeeType]!==self::committeeEUB ? self::responsibilityPrivate : []),$translationPrefix.self::responsibilityNode.'.title',options: $committeeParamsLabel);
+        $this->addRadioGroup($builder,self::responsibilityNode,array_diff(self::responsibilityTypes,$options[self::committeeParams][self::committeeType]!==self::committeeEUB ? self::responsibilityPrivate : []),$translationPrefix.self::responsibilityNode.'.title');
         // transfer outside
         $this->addRadioGroup($builder,self::transferOutsideNode,self::transferOutsideTypes,$translationPrefix.self::transferOutsideNode.'.title');
         if ($dummyParams['isOnline']) { // only if location is online
@@ -38,15 +37,14 @@ class DataPrivacyType extends TypeAbstract
         $this->addRadioGroup($builder,self::dataPersonalNode,self::dataPersonalTypes,$translationPrefix.self::dataPersonalNode.'.title');
         // marking
         $tempPrefix = $translationPrefix.self::markingNode.'.';
-        $labelParams = [self::labelParams => [self::addressee => $dummyParams[self::addressee]]];
         foreach (['',self::markingSuffix] as $suffix) {
             $marking = self::markingNode.$suffix;
             $this->addRadioGroup($builder,$marking,$suffix==='' ? self::markingTypes : array_flip(array_diff_key(array_flip(self::markingTypes),[self::markingNo => '', self::markingOther => '']))); // text field is for external and name
             $this->addFormElement($builder,$marking.self::descriptionCap,'text'); // text field is for external and name
-            $this->addRadioGroup($builder,self::markingInternal.$suffix,self::internalTypes,$tempPrefix.self::markingInternal.'.title',options: $labelParams); // how the code is created
+            $this->addRadioGroup($builder,self::markingInternal.$suffix,self::internalTypes,$tempPrefix.self::markingInternal.'.title'); // how the code is created
             $title = $tempPrefix.'code';
             foreach (['external','pattern','own','contributors'] as $key) { // whether the code has personal data
-                $this->addRadioGroup($builder,$key.$suffix,self::markingSubTypes[$key],$title,options: $labelParams);
+                $this->addRadioGroup($builder,$key.$suffix,self::markingSubTypes[$key],$title);
             }
         }
         // marking further
@@ -94,10 +92,10 @@ class DataPrivacyType extends TypeAbstract
                 }
                 // marking remove
                 if ($type!=='contactResult') {
-                    $tempPrefix = $translationPrefix . self::markingRemoveNode . '.';
-                    $this->addRadioGroup($builder, $type . self::markingRemoveNode, array_combine(array_keys(self::markingRemoveTypes), $this->prefixArray(array_values(self::markingRemoveTypes), $type)), textareaName: $type . self::laterDescription, textHint: $tempPrefix . self::textHintPlural . '.' . self::laterDescription);
-                    $this->addFormElement($builder, $type . self::markingRemoveNode . self::descriptionCap, 'text');
-                    $this->addCheckboxGroup($builder, $this->prefixArray(self::markingRemoveMiddleTypes, $type), $tempPrefix . self::markingRemoveMiddleNode . '.types.', labelNames: self::markingRemoveMiddleTypes);
+                    $tempPrefix = $translationPrefix.self::markingRemoveNode.'.';
+                    $this->addRadioGroup($builder, $type.self::markingRemoveNode, array_combine(array_keys(self::markingRemoveTypes), $this->prefixArray(array_values(self::markingRemoveTypes), $type)), textareaName: $type.self::laterDescription, textHint: $tempPrefix.self::textHintPlural.'.'.self::laterDescription);
+                    $this->addFormElement($builder, $type.self::markingRemoveNode.self::descriptionCap, 'text');
+                    $this->addCheckboxGroup($builder, $this->prefixArray(self::markingRemoveMiddleTypes, $type), $tempPrefix.self::markingRemoveMiddleNode.'.types.', labelNames: self::markingRemoveMiddleTypes);
                 }
                 // personal remove
                 $tempPrefix = $translationPrefix.self::personalRemoveNode.'.textHints.';
@@ -105,7 +103,7 @@ class DataPrivacyType extends TypeAbstract
                 $this->addFormElement($builder,$type.self::personalRemoveNode.self::descriptionCap,'text',hint: $tempPrefix.self::personalRemoveImmediately);
             }
             // access
-            $this->addCheckboxGroup($builder,$this->prefixArray(self::accessTypes,$type),$accessTypesPrefix,array_values($this->createPrefixArray(self::accessOthers,$type)),$accessPlaceholderArray,labelNames: self::accessTypes, options: $committeeParamsLabel);
+            $this->addCheckboxGroup($builder,$this->prefixArray(self::accessTypes,$type),$accessTypesPrefix,array_values($this->createPrefixArray(self::accessOthers,$type)),$accessPlaceholderArray,labelNames: self::accessTypes);
             foreach (self::accessOrderProcessing as $accessType) {
                 $prefix = $type.$accessType;
                 // order processing
@@ -131,10 +129,10 @@ class DataPrivacyType extends TypeAbstract
             $tempPrefix = $translationPrefix.self::codeCompensationNode.'.';
             $this->addRadioGroup($builder,self::codeCompensationNode,self::codeCompensationTypes,$tempPrefix.'title');
             $this->addFormElement($builder,self::codeCompensationNode.self::descriptionCap,'text',hint: $tempPrefix.'hints.textHintCodeExternal');
-            $this->addRadioGroup($builder,self::codeCompensationInternal,self::codeCompensationInternalTypes,$tempPrefix.self::codeCompensationInternal.'.title',options: $labelParams); // how the code is created
+            $this->addRadioGroup($builder,self::codeCompensationInternal,self::codeCompensationInternalTypes,$tempPrefix.self::codeCompensationInternal.'.title'); // how the code is created
             $tempPrefix .= 'code';
             foreach (self::codeCompensationKeys as $key) { // whether the code has personal data
-                $this->addRadioGroup($builder,self::codeCompensationNode.$key,self::codeCompensationSubTypes[$key],$tempPrefix,options: $labelParams);
+                $this->addRadioGroup($builder,self::codeCompensationNode.$key,self::codeCompensationSubTypes[$key],$tempPrefix);
             }
         }
         // processing further
@@ -242,29 +240,29 @@ class DataPrivacyType extends TypeAbstract
                                     $purposeWoPrefix = str_replace(self::purposeFurtherNode, '', $purpose);
                                     if ($questions!=='') {
                                         // purpose data
-                                        if ($purposeWoPrefix !== self::purposeTechnical) {
-                                            $other = $purposeWoPrefix . self::purposeDataOther;
+                                        if ($purposeWoPrefix!==self::purposeTechnical) {
+                                            $other = $purposeWoPrefix.self::purposeDataOther;
                                             $this->setSelectedCheckboxes($forms, $questions[self::purposeDataNode], [$other => $this->appendText($other)]);
                                         }
                                         // marking remove
                                         if (array_key_exists(self::markingRemoveNode, $questions)) {
-                                            $markingRemove = $purpose . self::markingRemoveNode;
+                                            $markingRemove = $purpose.self::markingRemoveNode;
                                             $tempArray = $questions[self::markingRemoveNode];
                                             $forms[$markingRemove]->setData($tempArray[self::chosen]);
-                                            $forms[$markingRemove . self::descriptionCap]->setData($this->getArrayValue($tempArray, self::descriptionNode));
-                                            $forms[$purpose . self::laterDescription]->setData($this->getArrayValue($tempArray, self::laterDescription));
+                                            $forms[$markingRemove.self::descriptionCap]->setData($this->getArrayValue($tempArray, self::descriptionNode));
+                                            $forms[$purpose.self::laterDescription]->setData($this->getArrayValue($tempArray, self::laterDescription));
                                             // middle
                                             if (array_key_exists(self::markingRemoveMiddleNode, $tempArray)) {
                                                 $this->setSelectedCheckboxes($forms, $tempArray[self::markingRemoveMiddleNode]);
                                             }
                                         }
                                         // personal remove
-                                        $personalRemove = $purposeWoPrefix . self::personalRemoveNode;
+                                        $personalRemove = $purposeWoPrefix.self::personalRemoveNode;
                                         $tempArray = $questions[self::personalRemoveNode];
                                         $tempVal = $tempArray[self::chosen];
                                         $forms[$personalRemove]->setData($tempVal);
                                         if (array_key_exists(self::descriptionNode, $tempArray)) {
-                                            $forms[$tempVal === $purposeWoPrefix . self::personalRemoveImmediately ? $personalRemove . self::descriptionCap : $purposeWoPrefix . self::keepDescription]->setData($tempArray[self::descriptionNode]);
+                                            $forms[$tempVal===$purposeWoPrefix.self::personalRemoveImmediately ? $personalRemove.self::descriptionCap : $purposeWoPrefix.self::keepDescription]->setData($tempArray[self::descriptionNode]);
                                         }
                                         // access
                                         $this->setAccess($forms,$questions[self::accessNode],$purposeWoPrefix);
@@ -465,7 +463,8 @@ class DataPrivacyType extends TypeAbstract
                                         $tempArray[self::descriptionNode] = $forms[$markingRemove.self::descriptionCap]->getData();
                                         if ($tempVal===$purposeType.self::markingRemoveLater) { // description why marking is removed later
                                             $tempArray[self::laterDescription] = $forms[$purposeType.self::laterDescription]->getData();
-                                        } else { // how the marking is removed
+                                        }
+                                        else { // how the marking is removed
                                             $tempArray[self::markingRemoveMiddleNode] = $this->getSelectedCheckboxes($forms, $this->prefixArray(self::markingRemoveMiddleTypes, $purposeType));
                                         }
                                     }
@@ -473,12 +472,12 @@ class DataPrivacyType extends TypeAbstract
                                 }
                                 // personal remove
                                 if ($isNotOnlyTechnical) {
-                                    $personalRemove = $purposeWoPrefix . self::personalRemoveNode;
+                                    $personalRemove = $purposeWoPrefix.self::personalRemoveNode;
                                     $tempVal = $forms[$personalRemove]->getData();
                                     $tempArray = [self::chosen => $tempVal];
-                                    $isImmediately = $tempVal === $purposeWoPrefix.self::personalRemoveImmediately;
-                                    if ($isImmediately || $tempVal === $purposeWoPrefix.self::personalRemoveKeep) {
-                                        $tempArray[self::descriptionNode] = $forms[$isImmediately ? $personalRemove . self::descriptionCap : $purposeWoPrefix.self::keepDescription]->getData();
+                                    $isImmediately = $tempVal===$purposeWoPrefix.self::personalRemoveImmediately;
+                                    if ($isImmediately || $tempVal===$purposeWoPrefix.self::personalRemoveKeep) {
+                                        $tempArray[self::descriptionNode] = $forms[$isImmediately ? $personalRemove.self::descriptionCap : $purposeWoPrefix.self::keepDescription]->getData();
                                     }
                                     $purposeArray[self::personalRemoveNode] = $tempArray;
                                     // access

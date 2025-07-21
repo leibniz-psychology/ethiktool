@@ -26,12 +26,11 @@ class ConsentController extends ControllerAbstract
         }
         $measureArray = $this->xmlToArray($measureNode);
         $consentNode = $measureNode->{self::consentNode};
-        $addressee = $this->getAddresseeFromRequest($request);
         $isLoanReceipt = $this->getTemplateChoice($this->getLoanReceipt($measureArray[self::measuresNode][self::loanNode]));
         $groupsArray = $measureArray[self::groupsNode];
         $examined = $groupsArray[self::examinedPeopleNode];
 
-        $consent = $this->createFormAndHandleRequest(ConsentType::class,$this->xmlToArray($consentNode),$request,[self::addresseeTrans => $this->getAddresseeString($addressee), self::participantTrans => $this->getAddresseeString($addressee,false,true,$addressee===self::addresseeParticipants), self::dummyParams => [self::addresseeType => $addressee, 'isAttendance' => ($measureArray[self::informationNode][self::attendanceNode] ?? '')==='0', 'isClosedDependent' => $examined!=='' && array_key_exists(self::dependentExaminedNode,$examined) || $groupsArray[self::closedNode][self::chosen]==='0'], self::informationNode => $information]);
+        $consent = $this->createFormAndHandleRequest(ConsentType::class,$this->xmlToArray($consentNode),$request,[self::informationNode => $information, self::addresseeType => $this->getAddresseeFromRequest($request), self::dummyParams => ['isAttendance' => ($measureArray[self::informationNode][self::attendanceNode] ?? '')==='0', 'isClosedDependent' => $examined!=='' && array_key_exists(self::dependentExaminedNode,$examined) || $groupsArray[self::closedNode][self::chosen]==='0']]);
         if ($consent->isSubmitted()) {
             $isConsentOld = $this->getAnyConsent($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::consentNode}));
             $isConsent = in_array($this->getDataAndConvert($consent,$consentNode)[self::consentNode][self::chosen],self::consentTypesAny);
@@ -51,9 +50,7 @@ class ConsentController extends ControllerAbstract
             return $this->saveDocumentAndRedirect($request,!$isInformation || $isNotLeave ? $appNode : $appNodeNew, $isInformation && $isNotLeave ? $appNodeNew : null); // appNodeNew is only defined if $isInformation is true
         }
         return $this->render('Projectdetails/consent.html.twig',
-            $this->setParameters($request,$appNode,
-                [self::content => $consent,
-                 self::pageTitle => 'projectdetails.consent',
-                 'textInput' => $this->getLegalInput($this->setInputArray(),$measureArray,!$isLoanReceipt)]));
+            $this->setRenderParameters($request,$consent,
+                ['textInput' => $this->getLegalInput($this->setInputArray(),$measureArray,!$isLoanReceipt)],'projectdetails.consent',true));
     }
 }

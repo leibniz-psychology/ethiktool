@@ -7,8 +7,8 @@
     <div {{ stimulus_controller('base',
         {'route': request.get('_route'),
             'routeParams': request.get('_route_params'),
-            'preview': preview ?? 0}) }} style="padding-bottom: 3rem">
-        {{ include('components/header.html.twig',committeeParams) }}
+            'preview': preview ?? 0}) }} class="pb-5 grid">
+        {{ include('components/header.html.twig',committeeParams|merge({'update': isUpdateTime})) }}
         {{ formRender.startForm(content) }} {# every controller needs to pass the data as 'content' #}
         <div style="display: none">{{ form_widget(submitDummy,addTargetArray('base','submitDummy')|merge({'id': submitDummy.vars.name})) }}</div> {#  id needed for dummy label #}
         <div style="display: none">{{ form_widget(content.loadInput,addTargetArray('base','loadInput')|merge({'id': content.loadInput.vars.name})) }}</div>
@@ -22,9 +22,8 @@
                 {% block groupMeasureTitle %}
                     {% if multipleStudyGroupMeasure is defined %}
                         {% set landingPath, params, topClasses = path('app_landing'), {'page': 'Projectdetails', 'url': 'app_landing'}, 'flex mt-2' %}
-                        <div style="margin: 0">
-                            {% set routeIDs, topMargin = {'studyID': studyID}, 'margin-top: 0.5em;' %}
-                            {% set isMultipleStudies, isMultipleGroups = multipleStudyGroupMeasure[0], multipleStudyGroupMeasure[1] %}
+                        <div class="m-0">
+                            {% set routeIDs, isMultipleStudies, isMultipleGroups = {'studyID': studyID}, multipleStudyGroupMeasure[0], multipleStudyGroupMeasure[1] %}
                             <a class="flex" style="{{ fitWidth }}" href="{{ landingPath }}" {{ stimulus_action('base','setDummySubmit','click', params|merge({'route-i-ds': routeIDs})) }}>
                                 {{ 'projectdetails.headings.study'|trans }} {{ isMultipleStudies ? studyID }} {{ studyName is not same as '' ? (isMultipleStudies ? '('~studyName~')' : studyName) }}
                             </a>

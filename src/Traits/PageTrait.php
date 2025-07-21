@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use DateTime;
 use SimpleXMLElement;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -10,16 +11,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 trait PageTrait
 {
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '1.0.1';
+    protected const toolVersion = '1.1.1';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
-    /** @var string session key for the translated committee */
+    /** @var string name of xml node for the committee */
     protected const committee = 'committee';
-    /** @var string name of the session variable containing all committee parameters for translations */
-    protected const committeeSession = 'committeParam';
-    /** @var string name of option parameter for FormTypes. Contains an array with all committee parameters */
-    protected const committeeArray = 'committeeArray';
+    /** @var string name of the variable for session, forms, and views containing all committee parameters for, e.g., translations */
+    protected const committeeParams = 'committeeParams';
     /** @var string name of parameter indicating if current committee type is in beta status. */
     protected const isCommitteeBeta = 'isCommitteeBeta';
     protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.testCommittee' => 'testCommittee'];
@@ -65,7 +64,7 @@ trait PageTrait
      * @return string committee type
      */
     protected function getCommitteeType(Session $session): string {
-        return $session->get(self::committeeSession)[self::committeeType] ?? '';
+        return $session->get(self::committeeParams)[self::committeeType] ?? '';
     }
 
     /** Creates a string with concatenated IDs and underscores between them. Optionally the string can be prefixed or suffixed.
@@ -95,6 +94,29 @@ trait PageTrait
         $returnNode = $element->addChild($name);
         $returnNode->addChild(self::chosen);
         return $returnNode;
+    }
+
+    /** Converts a string representing a date to the format specific for the language.
+     * @param string|DateTime $dateString string to be converted
+     * @param bool $noTime if true, only the date will be added, without the current time
+     * @return string converted string
+     * @throws \DateMalformedStringException if an exception occurs during creation of the DateTime element
+     */
+    protected function convertDate(string|DateTime $dateString, bool $noTime = true): string {
+        if ($dateString!=='') {
+            if (is_string($dateString)) {
+                $dateString = new DateTime($dateString);
+            }
+            $dateString = $dateString->format($this->translateString('dateFormat',['noTime' => $this->getStringFromBool($noTime)]));
+        }
+        return $dateString;
+    }
+
+    /** Returns the Berlin timezone
+     * @return \DateTimeZone Berlin timezone
+     */
+    protected function getTimezone(): \DateTimeZone {
+        return new \DateTimeZone('Europe/Berlin');
     }
 
     /** Converts a string to an integer.

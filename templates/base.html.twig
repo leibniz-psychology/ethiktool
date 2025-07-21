@@ -11,6 +11,7 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
+        {{ include('components/tracking.html.twig') }}
     </head>
     <body>
         {% block body %}{% endblock %}

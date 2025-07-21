@@ -2,7 +2,7 @@
     {# Sets the start tag for a form. Input arguments:
        form: Form to be started
     #}
-    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'style': 'display: grid'}|merge(addTarget('base','form')),'name': random()}) }} {# random hash to prevent Firefox from caching inputs when the page is manually reloaded #}
+    {{ form_start(form, {'attr': {'class': 'winWidth', 'novalidate': 'novalidate', 'style': 'display: grid; justify-self: center'}|merge(addTarget('base','form'))}) }}
 {% endmacro %}
 
 {% macro renderButtons(form, arguments = {}) %}
@@ -30,6 +30,7 @@
                         1: stimulus action that is called if any of the buttons is clicked
                         2: if provided, parameters that are passed to the stimulus action
         addDiv:     if provided, a surrounding div with class mt-8 is added. If the passed array is not empty, the first element contains the id for the div and the second element the style
+        labelParams: if provided, parameters for the label translation
     #}
     {% set formName, target, contTargetArray, textfield, iconArray, stimVisible, stim, isAddDiv = form.vars.name, arguments.target ?? '', arguments.contTarget ?? [''], arguments.text ?? [], arguments.icons ?? {}, arguments.stimVisible ?? [], arguments.stim ?? [], arguments.addDiv is defined %}
     {% set contTarget, hint, hintButtons, iconKeys, addDivArray = contTargetArray[0], arguments.hint ?? [''], arguments.hintButtons ?? ['',[''],1], iconArray|keys, isAddDiv ? arguments.addDiv : [] %}
@@ -52,11 +53,15 @@
                 {% set widgetName = formName~widget.vars.value %}
                 {% set isIcon = widgetName in iconKeys %}
                 <div class="grid" style="grid-template-columns: minmax(min-content,max-content) {% if isIcon %} min-content {% endif %}; {% if loop.index>1 %} {{ topMarginButtons }} {% endif %}">
-                    {{ form_widget(widget,{'attr': addClass('RadioButton-Input')|merge(widgetName is same as target ? addDisableTarget() : {})|merge(widgetName is same as contTarget ? addTarget(contTargetArray[1],contTargetArray[2]) : {})}) }}
-                    {{ form_label(widget,null,{'label_html': true, 'label_attr': {'class': 'RadioButton-Label minAutoGrid'}}) }}
-                      {% if isIcon %}
-                        {{ _self.addIcon(iconArray[widgetName]) }}
-                    {% endif %}
+                    {{ form_widget(widget,{'id': widgetName, 'attr': addClass('RadioButton-Input')|merge(widgetName is same as target ? addDisableTarget() : {})|merge(widgetName is same as contTarget ? addTarget(contTargetArray[1],contTargetArray[2]) : {})}) }}
+                    <label class="RadioButton-Label" style="display: inline-grid; grid-template-columns: min-content auto" for="{{ widgetName }}">
+                         <span style="width: fit-content">
+                            {{ widget.vars.label|trans(arguments.labelParams ?? {}) }}
+                            {% if isIcon %}
+                                {{ _self.addIcon(iconArray[widgetName]) }}
+                            {% endif %}
+                        </span>
+                    </label>
                 </div>
             {% endfor %}
         </div>
@@ -90,8 +95,9 @@
                       0: ID of the div
                       1: style of the div
                       2: classes for the div. The class 'MetaData-Widget' is additionally added
+       labelParams: if provided, parameters for the label translations. May also be used for translating icons
     #}
-    {% set other, icons, targets, contTargets, addDiv = arguments.other ?? [], arguments.icons ?? [{},{},{},{}], arguments.targets ?? [], arguments.contTargets ?? {}, arguments.addDiv ?? [] %}
+    {% set other, icons, targets, contTargets, addDiv, labelParams = arguments.other ?? [], arguments.icons ?? [{},{},{},{}], arguments.targets ?? [], arguments.contTargets ?? {}, arguments.addDiv ?? [], arguments.labelParams ?? {} %}
     {% set iconIDs, iconTexts, iconTextColors, iconColors, iconTargets, isAddDiv = icons[0], icons[1], icons[2], icons[3] ?? [], icons[4] ?? {}, addDiv is not same as [] %}
     {% set iconTargetKeys, divID, divStyle = iconTargets|keys, addDiv[0] ?? '', addDiv[1] ?? '' %}
     {% if isAddDiv %}
@@ -102,10 +108,11 @@
         {% set id = curWidget.vars.name %}
         {% set isOther, isIcon = id in other, id in iconIDs %}
         <div class="grid" style="grid-template-columns: repeat({{ isIcon ? 2 : 1 }},minmax(min-content,max-content)) max-content {% if loop.index>1 %}; {{ topMarginButtons }} {% endif %}" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[[id],[id~'Text']]]}) }} {% endif %}>
-            {{ _self.addCheckbox(curWidget, {'disable': id in targets, 'target': contTargets[id] ?? []}) }}
-            {% if isIcon %}
-                <div id="{{ id~'Icon' }}">{{ _self.addIcon(iconTexts[id]|trans,iconTextColors[id],true,id in iconTargetKeys ? [iconTargets[id],id~'Icon'] : [],id in iconColors) }}</div>
-            {% endif %}
+            {{ _self.addCheckbox(curWidget, {
+                'labelParams': labelParams,
+                'disable': id in targets,
+                'target': contTargets[id] ?? []}|
+                merge(isIcon ? {'checkIcon': [iconTexts[id]|trans(labelParams),iconTextColors[id],true,id in iconTargetKeys ? [iconTargets[id],id~'Icon'] : [],id in iconColors]} : {})) }}
         </div>
         {% if isOther %}
             <div class="MetaData-Widget mb-1">
@@ -147,15 +154,15 @@
         {{ _self.addHint(hintText[0],{'params': hintText[1] ?? {}}|merge(hintArray[1] is defined ? {'hintStyle': true} : {})) }}
     {% endif %}
     <div class="grid" style="grid-template-columns: auto {% if isTransfer %}min-content{% endif %} min-content">
-        <div class="MetaData-Widget" id="{{ name~'Div' }}" style="padding-top: 0; grid-row: span {{ isTemplate ? 2 : 1 }}; grid-column: 1; height: {{ arguments.divHeight ?? textHeight }}; {{ isVisible }} {% if isTransfer %}; padding-right: 0 {% endif %}">
+        <div class="MetaData-Widget pt-0 {% if isTransfer %} pe-0 {% endif %}" id="{{ name~'Div' }}" style="grid-row: span {{ isTemplate ? 2 : 1 }}; grid-column: 1; height: {{ arguments.divHeight ?? textHeight }}; {{ isVisible }}">
             {% set style = 'grid-area: 1 / 1; height: 99%' %}
             <div class="border" style="background-color: white; white-space: pre-wrap; overflow-y: auto; word-break: break-word; {{ style }}"></div>
-            {{ form_widget(form,{'attr': {'style': 'background-color: transparent; padding: 0; '~style}|merge(addTarget('base','countableText'))}) }}
+            {{ form_widget(form,{'attr': {'class': 'p-0', 'style': 'background-color: transparent; '~style}|merge(addTarget('base','countableText'))}) }}
         </div>
         {% if isTransfer %}
-            <div id="{{ name~'PDF' }}" style="padding-right: 0.5rem; {{ isVisible }}">{{ _self.addPDFhint(transfer[0],transfer[1]) }}</div>
+            <div id="{{ name~'PDF' }}" class="pe-2" style="{{ isVisible }}">{{ _self.addPDFhint(transfer[0],transfer[1]) }}</div>
         {% endif %}
-        <div class="borderLight" id="{{ name~'Count' }}" style="height: min-content; width: min-content; margin-right: 0.3em; grid-area: {{ isTemplate ? 2 : 1 }} / {{ isTransfer ? 3 : 2 }}; {{ isVisible }}; {% if isTemplateClass %} margin-left: 1.5rem; {% endif %}">
+        <div class="borderLight {% if isTemplateClass %} mx-4 {% endif %}" id="{{ name~'Count' }}" style="height: min-content; width: min-content; margin-right: 0.3rem; grid-area: {{ isTemplate ? 2 : 1 }} / {{ isTransfer ? 3 : 2 }}; {{ isVisible }}">
             <div>{{ 'multiple.charCount'|trans }}</div>
             {% set text = vars.value %}
             <div style="justify-self: center" data-max-chars="{{ maxChars }}" {{ stimulus_target('base','charCount') }}>{{ text|trim|length-text|split('\n')|length+1 }}</div> {# color is set on load #}
@@ -179,10 +186,20 @@
         disable: if true, the checkbox gets disabled
         style:   if provided, style attributes for the label
         target:  if provided, an array of two elements: stimulus controller and target name
+        checkIcon: if provided, an array containing the id of an icon and the parameters for the addIcon() call
+        labelParams: if provided, parameters for the label translation
     #}
-    {% set name, target = {'id': widget.vars.name}, arguments.target ?? [] %}
-    {{ form_widget(widget,(name|merge({'attr': checkInput|merge((arguments.disable ?? false) ? addDisableTarget() : {})|merge(target is not same as [] ? addTarget(target[0],target[1]) : [])}))) }}
-    {{ form_label(widget,null,name|merge({'label_attr': checkLabel|merge({'style': 'width: fit-content; '~(arguments.style ?? '')})})) }}
+    {% set target, vars, checkIcon = arguments.target ?? [], widget.vars, arguments.checkIcon ?? [] %}
+    {% set widgetName = vars.name %}
+    {{ form_widget(widget,({'id': widgetName}|merge({'attr': checkInput|merge((arguments.disable ?? false) ? addDisableTarget() : {})|merge(target is not same as [] ? addTarget(target[0],target[1]) : [])}))) }}
+    <label class="CheckBox-Label" style="display: inline-flex; flex-wrap: nowrap; {{ arguments.style ?? '' }}" for="{{ widgetName }}">
+        <span class="flex">
+            {{ vars.label|trans(arguments.labelParams ?? {}) }}
+            {% if checkIcon is not same as [] %}
+                {{ _self.addIcon(checkIcon[0],checkIcon[1] ?? 'black', checkIcon[2] ?? true, checkIcon[3] ?? [], checkIcon[4] ?? false) }}
+            {% endif %}
+        </span>
+    </label>
 {% endmacro %}
 
 {% macro addHeading(translationKey, arguments = {}) %}
@@ -219,7 +236,7 @@
     {% set vars = form.vars %}
     {% set name, transfer, attr, contTargetArray = vars.name, arguments.transfer ?? {}, vars.attr, arguments.contTarget ?? [''] %}
     {% set isTransfer, textHint, contTarget = transfer is not same as {}, attr.placeholder is defined and attr.placeholder is not same as '' ? attr.placeholder : (arguments.hint ?? ''), contTargetArray[0] %}
-    <div id="{{ name~'Div' }}" class="mt-4" style="{{ boolToDisplay(arguments.visibility ?? true) }}; margin-bottom: 0.5em">
+    <div id="{{ name~'Div' }}" class="mt-4 mb-2" style="{{ boolToDisplay(arguments.visibility ?? true) }}">
         {% if textHint is not same as '' %}
             {{ _self.addHint(textHint,{'params': arguments.textHintParams ?? {}, 'id': arguments.textHintID ?? ''}|merge(arguments.fontStyle is defined ? {'hintStyle': true} : {})) }}
         {% endif %}
@@ -255,7 +272,7 @@
         addressee: if provided (i.e., not an empty string), addressee for a sentence is added that the wording should be addressed to the addressee
     #}
     {% if transfer[0] is not same as '' %}
-        <span class="pdfInfo Label-Info" style="height: fit-content; white-space: initial; width: fit-content; margin-left: 0.3em"><span style="font-weight: 400">{{ 'multiple.inputHint'|trans({'type': transfer[0]}|merge(transfer[1] is defined ? {'infoType': transfer[1]} : {}))~(addressee is not same as '' ? ' '~'multiple.wording'|trans({'addressee': ('projectdetails.addressee.thirdParties.'~addressee)|trans})) }}</span></span>
+        <span class="pdfInfo Label-Info" style="height: fit-content; white-space: initial; width: fit-content; margin-left: 0.3rem"><span style="font-weight: 400">{{ 'multiple.inputHint'|trans({'type': transfer[0]}|merge(transfer[1] is defined ? {'infoType': transfer[1]} : {}))~(addressee is not same as '' ? ' '~'multiple.wording'|trans({'addressee': ('projectdetails.addressee.thirdParties.'~addressee)|trans})) }}</span></span>
     {% endif %}
 {% endmacro %}
 
@@ -265,31 +282,35 @@
         disablePrevious: true if the button for the previous page should be disabled, false otherwise (currently only false in landing for application data)
         undoButton:      if true, the button for undo is created (currently only false in landing for application data)
     #}
-    {% set style = 'margin-right: 0.5em' %}
-    <div class="mt-8 mb-2 MetaData-Widget grid" style="; grid-template-columns: repeat(3,auto)">  {# names of the buttons must be the same as in ControllerAbstract #}
+    {% set buttonClasses = 'Button_primary_go me-2 w-100' %}
+    <div class="mt-8 mb-2 MetaData-Widget grid gap-2" style="grid-template-columns: repeat(3,33%); width: 99%">  {# names of the buttons must be the same as in ControllerAbstract #}
         {% if pageButtons %}
-            <button type="submit" class="Button_primary_go" name="previousPage" id="navPreviousPage" style="{{ style }}" {% if disablePrevious %} disabled {% else %} {{ stimulus_action('base','setDummySubmit','click')}} {% endif %}>{{ include('images/arrow-left.svg') }}{{ 'buttons.previousPage'|trans }}</button>
+            <button type="submit" class="{{ buttonClasses }}" name="previousPage" id="navPreviousPage" {% if disablePrevious %} disabled {% else %} {{ stimulus_action('base','setDummySubmit','click')}} {% endif %}>
+                {{ include('images/arrow-left.svg') }}{{ 'buttons.previousPage'|trans }}
+            </button>
         {% endif %}
-        <button type="submit" class="Button_primary_go" name="backToMain" id="navBackToMain" style="{{ style }}; grid-column: {{ pageButtons ? 2 : 1 }}" {{ stimulus_action('base','setDummySubmit','click')}}>{{ 'buttons.backToMain'|trans }}</button>
+        <button type="submit" class="{{ buttonClasses }}" name="backToMain" id="navBackToMain" style="grid-column: {{ pageButtons ? 2 : 1 }}" {{ stimulus_action('base','setDummySubmit','click')}}>
+            {{ 'buttons.backToMain'|trans }}
+        </button>
         {% if pageButtons %}
-            <div class="flex"><button type="submit" class="Button_primary_go" name="nextPage" id="navNextPage" style="{{ style }}" {{ stimulus_action('base','setDummySubmit','click')}}>
-                    {{ 'buttons.nextPage'|trans }}{{ include('images/arrow-right.svg') }}</button>
-            </div>
+            <button type="submit" class="{{ buttonClasses }}" name="nextPage" id="navNextPage" {{ stimulus_action('base','setDummySubmit','click')}}>
+                    {{ 'buttons.nextPage'|trans }}{{ include('images/arrow-right.svg') }}
+            </button>
         {% endif %}
-        {% set style = style~'; margin-top: 0.3rem; grid-row: 2' %}
-        {{ _self.addSaveButton(style) }}
+        {{ _self.addSaveButton() }}
         {% if undoButton %}
-            <button type="submit" class="Button_primary_act" name="undo" style="{{ style }}" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target('base','undo')}} disabled>{{ 'buttons.undo'|trans }}</button>
+            <button type="submit" class="Button_primary_act me-2 w-100" name="undo"{{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target('base','undo')}} disabled>
+                {{ 'buttons.undo'|trans }}
+            </button>
         {% endif %}
     </div>
 {% endmacro %}
 
-{% macro addSaveButton(style = '', disabled = false) %}
+{% macro addSaveButton(disabled = false) %}
     {# Adds the button for downloading the xml-file. Input arguments:
-        style:    style of the buttons
         disabled: if true, the button gets disabled
     #}
-    <button type="button" class="Button_primary_act" name="save" {% if style is not same as '' %} style="{{ style }}" {% endif %} {% if disabled %} disabled {% else %} {{ stimulus_target('base','download','click') }} {% endif %}>{{ _self.addButtonIcon('buttons.save','save') }}</button>
+    <button type="button" class="Button_primary_act w-100" name="save" {% if disabled %} disabled {% else %} {{ stimulus_target('base','download','click') }} {% endif %}>{{ _self.addButtonIcon('buttons.save','save') }}</button>
 {% endmacro %}
 
 {% macro addIcon(text, color = 'black', visible = true, target = [], redIcon = false) %}
@@ -300,7 +321,8 @@
        target:  array of two elements: name of stimulus controller and target name
        redIcon: if true, the icon will be colored red, otherwise black
     #}
-    <i class="Label-Info {% if redIcon %} Label-Info-red {% endif %}" style="{{ boolToDisplay(visible,1) }}; white-space: initial; width: fit-content" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: {{ color }}">{{ text|raw|nl2br }}</span></i>
+    <i class="Label-Info {% if redIcon %} Label-Info-red {% endif %}" style="{{ boolToDisplay(visible,1) }}; white-space: initial; width: fit-content; display: inline-grid; vertical-align: text-bottom" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: {{ color }}; width: auto">{{ text|raw|nl2br }}</span></i>
+{#    <i class="Label-Info {% if redIcon %} Label-Info-red {% endif %}" style="{{ boolToDisplay(visible,1) }}; white-space: initial; width: fit-content" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: {{ color }}">{{ text|raw|nl2br }}</span></i>#}
 {% endmacro %}
 
 {% macro addPreview(ids = {}, isComplete = false, firstPage = []) %}

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Abstract\ControllerAbstract;
-use App\Classes\CheckDocClass;
 use App\Traits\AppData\AppDataTrait;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use Exception;
@@ -65,7 +64,6 @@ class NavigationController extends ControllerAbstract
              'windows' => $windows,
              'activeRoute' => $activeRoute,
              'routeParams' => $activeLevels,
-             'isComplete' => $this->getErrors($request,returnCheck: true),
-             self::toolVersionAttr => self::toolVersion]);
+             'isComplete' => $this->getErrors($request,returnCheck: true)]);
     }
 }

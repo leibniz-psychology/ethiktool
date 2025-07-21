@@ -14,6 +14,8 @@ trait ProjectdetailsTrait
     use ContributorsTrait;
 
     protected const addresseeParticipants = 'participants';
+    protected const addresseeString = 'addresseeString';
+    protected const participantsString = 'participantsString';
     protected const addresseeChildren = 'children';
     protected const addresseeWards = 'wards';
     protected const studyID = 'studyID';
@@ -22,8 +24,7 @@ trait ProjectdetailsTrait
     protected const studyName = 'studyName';
     protected const groupName = 'groupName';
     protected const addressee = 'addressee'; // session key
-    protected const addresseeTrans = '{addressee}'; // key for translation parameter that is added in the Form Type
-    protected const participantTrans = '{participant}'; // key for translation parameter that is added in the Form Type if both addressees are part of the translation
+    protected const participant = 'participant'; // key for translation parameter that is added in the Form Type if both addressees are part of the translation
     protected const addresseeType = 'addresseeType'; // translation key
     protected const routePrefix = '/projectdetails/study/{studyID}/group/{groupID}/measure/{measureID}/';
     protected const template = 'template'; // must equal one of the values in $templateChoices
@@ -71,10 +72,10 @@ trait ProjectdetailsTrait
     protected const preType = 'preType'; // type of pre information
     protected const preContent = 'preContent'; // extent of pre information
     protected const complete = 'complete';
-    protected const partial = 'partial';
-    protected const deceit = 'deceit';
-    protected const preComplete = 'preComplete'; // complete information afterwards
-    protected const preCompleteType = 'preCompleteType'; // node name for type of complete information afterwards
+    protected const preContentIncomplete = ['partial','deceit'];
+    protected const deceit = 'deceit'; // value must equal one value in $preContentIncomplete
+    protected const preComplete = 'preComplete'; // complete information afterward
+    protected const preCompleteType = 'preCompleteType'; // node name for type of complete information afterward
     protected const preCompleteText = 'preCompleteText';
     // widget names for no
     protected const preText = 'preText';
@@ -388,7 +389,7 @@ trait ProjectdetailsTrait
     protected function getInformationIII(array|string $information): bool {
         if ($information!=='' && $information[self::chosen]=='0') {
             $information = $information[self::informationAddNode];
-            return in_array($information[self::chosen],[self::partial,self::deceit]) && $information[self::complete]=='0';
+            return in_array($information[self::chosen],self::preContentIncomplete) && $information[self::complete]=='0';
         }
         return false;
     }

@@ -6,7 +6,7 @@ multiple:
   loadMessage:
     newForm:
       title: 'New application form generated'
-      text: 'An empty application form has been generated. Please note the requirements for ethics application and the technical information on the functionality of the tool. Via “Proposal data“ in the sidebar, you can start entering the data for your research project.'
+      text: 'An empty application form has been generated. Please note the requirements for ethics application and the technical information on the functionality of the Ethiktool. Via “Proposal data“ in the sidebar, you can start entering the data for your research project.'
     loadSuccess: # info modal if an xml-file was successfully loaded without being updated
       title: 'XML file loaded'
       text: >-
@@ -24,7 +24,10 @@ multiple:
       text: 'The selected XML file could not be loaded.'
     customPDF: # info modal if a custom pdf could not be added while creating the complete proposal
       title: 'Add self-formulated PDF'
-      text: 'The PDF file “{filename}“ could not be added. Please select the correct file and complete the proposal again.</br></br> If further self-formulated PDF files are required, they must be added again, too. The error message only pertains to the above-mentioned file.'
+      text: >-
+        {filename, select,
+          sizeExceed {At least one of the PDF files (or the sum of all PDF files) exceeds the maximum allowed size. Please add only files whose summed size is at most 7 MB}
+          other      {The PDF file “{filename}“ could not be added. Please select the correct file}} and complete the proposal again.</br></br> If further self-formulated PDF files are required, they must be added again, too. The error message only pertains to the above-mentioned file.
     errorMessage: # info modal if an error occurred
       title: 'Error'
       text: 'An error occurred. You were redirected to the main page. Please give us feedback via <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a> about what you were doing right before this error occurred. We will fix it as soon as possible. </br> If further errors occur, please re-load your proposal (XML file).'
@@ -108,9 +111,17 @@ multiple:
     positionOther: 'other position'
     otherDefault: 'please enter position'
 
+dateFormat: >-
+  Y-m-d{noTime, select,
+         true  {}
+         other { H:i:s}}
+
 header: # alternative texts for logos
     ZPID: 'Website of ZPID'
     TUC: 'Website of Chemnitz University of Technology'
+    update:
+      before: 'Weekly maintenance of the Ethiktool is about to take place (on Mondays at around 8 am). Please save your ethics proposal and resume later.'
+      during: 'Weekly maintenance of the Ethiktool is ongoing. Please resume working on your ethics proposal at about 8:30 am.'
 
 committee:
   committeeNom: >-
@@ -235,7 +246,7 @@ main:
     Further information is available in the sections “About us“ und “About the Ethiktool“. Please note the “Technical Information“ and “Terms of use“ for the Ethiktool.
     You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
 
-    <i>Please note: In the current project phase, the Ethiktool is arranged for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the tool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites.
+    <i>Please note: In the current project phase, the Ethiktool is arranged for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites.
 
     You can start creating an application for the respective committee via “New proposal“.
     You can load and edit an existing XML file created by the Ethiktool via “Load proposal”.</i>
@@ -254,6 +265,8 @@ main:
     
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee.}
       EUB   {Please note the following <b>requirements for the application:</b>
+    
+             The use of the Ethiktool is currently reserved for applications in the detailed procedure.
              
              Members and affiliates of Bielefeld University are eligible to apply. Students can also file an application for their final theses and other student research, the teaching staff or supervisor(s) have to check and approve the application before submission.
 
@@ -494,7 +507,7 @@ contributors:
       contact: 'contact'
       data: 'data responsib.'
       other: 'other'
-  hint: 'You can add further project contributors by using the plus symbol. Selecting the pencil allows you to edit the data of an existing project contributor, and to complement their roles in the research project. The trash bin symbol allows you to delete the entire data of an existing project contributor.</br></br>Please note:</br>The functions “principal investigator/project lead“ and “responsibility for data processing“ are typically occupied by the same person. Neither function should usually be assigned to student contributors, as this concerns taking responsibility for the actions of all project contributors.</br>Please contact the responsible data protection authorities at an early stage if more than one person is responsible for processing the data (according to EU-GDPR), especially if responsibilities fall with different institutions. Please also note that a GDPR-compliant information text on processing personal data cannot be generated by the Ethiktool in this case.</br></br>If individual contributors are not known by name yet, they can be listed as N. N. (including space) with their planned role(s) in the project. Adding contributors after having received ethics approval is possible; if this, however, touches upon ethical issues (e.g., by creating a new conflict of interest), ethics re-review is necessary.</br>'
+  hint: 'You can add further project contributors by using the plus symbol. Selecting the pencil allows you to edit the data of an existing project contributor, and to complement their roles in the research project. The trash bin symbol allows you to delete the entire data of an existing project contributor.</br></br>Please note:</br>The functions “principal investigator/project lead“ and “responsibility for data processing“ are typically occupied by the same person. Neither function should usually be assigned to student contributors, as this concerns taking responsibility for the actions of all project contributors.</br>Please contact the responsible data protection authorities at an early stage if more than one person is responsible for processing the data (according to EU-GDPR), especially if responsibilities fall with different institutions. Please also note that a GDPR-compliant information text on processing personal data cannot be generated by the Ethiktool in this case.</br></br>If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space) with their planned role(s) in the project. Adding contributors after having received ethics approval is possible; if this, however, touches upon ethical issues (e.g., by creating a new conflict of interest), ethics re-review is necessary.</br>'
   errors:
     name: 'Warning: name incomplete'
     eMail: 'Warning: no valid e-mail address'
@@ -540,7 +553,7 @@ projectdetails:
         minAge: 'minimum age'
         maxAge: 'maximum age'
         unlimited: 'unlimited'
-      wardsHint: 'The selected groups include participants who cannot give consent themselves. Further information and documents are therefore required for the legal guardians. If you also want to examine individuals who are capable of giving consent themselves, please create an additional group under “Project details“.'
+      wardsHint: 'The selected groups include participants who cannot give consent themselves. Further information and documents are therefore required for the legal guardians. If you also want to examine individuals who are capable of giving consent themselves, please create an additional group on the <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-route-i-ds-param="{studyID}" data-base-page-param="Projectdetails">overview page of this study</a>.'
       examined:
         title: 'Which group(s) shall be investigated?'
         healthy: 'healthy individuals'
@@ -779,7 +792,7 @@ projectdetails:
           {time, plural,
             =1    {minute}
             other {minutes}}
-          for data collection and
+          (net) for data collection and
         breaks: >-
           {time, plural,
             =1    {minute}
@@ -972,7 +985,8 @@ projectdetails:
         textHintOther: 'Please specify how compensation is treated in case of withdrawal from participation. Make sure your wording complements the sentence above.'
       awarding:
         title: 'How is the compensation technically granted?'
-        laterTextHint: '..., namely ... (please specify date/time and name/position/place, e.g. “from January 1, 2026 in the secretary''s office“)'
+        dateFormat: "F j, Y" # for laterTextHint
+        laterTextHint: '..., namely ... (please specify date/time and name/position/place, e.g. “from {date} in the secretary''s office“)'
         laterEnd: # other is participants in select
           title: 'This requires the following information: '
           code: >-
@@ -1120,7 +1134,7 @@ projectdetails:
         title: >-
           Shall the {isReceipt, select,
                       true  {confirmation sheet for loaned device(s)}
-                      other {consent to participate in the study}} include a liablility clause on the use of experimental devices?
+                      other {consent to participate in the study}} include a liability clause on the use of experimental devices?
         headingHint: >-
           {isReceipt, select,
                     true  {In the confirmation sheet for the loaned devices}
@@ -1155,14 +1169,14 @@ projectdetails:
             verified: 'The data privacy statement has been checked and approved by the responsible data protection authorities.'
             unverified: 'The data privacy statement has not yet been approved by the responsible data protection authorities.'
       intro:
-        text: |
-          The Ethiktool supports you in indicating all aspects of data processing related to your study.
-
-          The first step is to check whether personal data are processed. If that is the case, further aspects are queried to compose the annex on data processing.
-          The explanations are not exhaustive and cannot replace a legal assessment of the individual case. In case of doubt, ask the responsible data protection authorities for consultation. If the Ethiktool cannot reflect the structure of your data processing, please also consult the responsible data protection authorities.
-          The assessment as to whether data processing in a study is “anonymous“ oder “person-related“ in based both on the research content (i.e., the research data themselves) and on organisational aspects (e.g., data for contacting participants, for issuing a compensation). Only the combined view of research-content data with organisation-related data can indicate whether <u>personal data</u> are processed. <i class="Label-Info" style="display: inline-flex; white-space: initial; width: fit-content"><span style="color: black">According to Article 4 (1) EU-GDPR, “'personal data' means any information relating to an identified or identifiable natural person ('data subject'); an identifiable natural person is one who can be identified, directly or indirectly, in particular by reference to an identifier such as a name, an identification number, location data, an online identifier or to one or more factors specific to the physical, physiological, genetic, mental, economic, cultural or social identity of that natural person“.
-           Thus, this also includes data that allow for identification in the context of a study, such as the age in case of data collection in a closed group (training group, school class, or the like) in which only single persons are of a certain age.</span></i>
-          The Ethiktool does not ask about technical and organizational measures (TOMs) because these are usually not part of the data privacy statement. Of course, you are obliged to take appropriate action, such as suitable measures to ensure that the data are protected against unauthorised access. Please consult the responsible data protection authorities; usually you will fill a record of processing activities according to Article 30 EU-GDPR, yet this does not undergo ethics review.
+        text:
+          start: 'The Ethiktool supports you in indicating all aspects of data processing related to your study.'
+          end: |
+            The first step is to check whether personal data are processed. If that is the case, further aspects are queried to compose the annex on data processing.
+            The explanations are not exhaustive and cannot replace a legal assessment of the individual case. In case of doubt, ask the responsible data protection authorities for consultation. If the Ethiktool cannot reflect the structure of your data processing, please also consult the responsible data protection authorities.
+            The assessment as to whether data processing in a study is “anonymous“ oder “person-related“ in based both on the research content (i.e., the research data themselves) and on organisational aspects (e.g., data for contacting participants, for issuing a compensation). Only the combined view of research-content data with organisation-related data can indicate whether <u>personal data</u> are processed. <i class="Label-Info" style="display: inline-flex; white-space: initial; width: fit-content"><span style="color: black">According to Article 4 (1) EU-GDPR, “'personal data' means any information relating to an identified or identifiable natural person ('data subject'); an identifiable natural person is one who can be identified, directly or indirectly, in particular by reference to an identifier such as a name, an identification number, location data, an online identifier or to one or more factors specific to the physical, physiological, genetic, mental, economic, cultural or social identity of that natural person“.
+             Thus, this also includes data that allow for identification in the context of a study, such as the age in case of data collection in a closed group (training group, school class, or the like) in which only single persons are of a certain age.</span></i>
+            The Ethiktool does not ask about technical and organizational measures (TOMs) because these are usually not part of the data privacy statement. Of course, you are obliged to take appropriate action, such as suitable measures to ensure that the data are protected against unauthorised access. Please consult the responsible data protection authorities; usually you will fill a record of processing activities according to Article 30 EU-GDPR, yet this does not undergo ethics review.
         confirm: 'I have taken note of the above information.'
       dataOnline:
         title: 'Are IP addresses registered within the online data collection?'
@@ -1273,7 +1287,7 @@ projectdetails:
         title: 'How are the research data labelled?'
         headingHint: 'For various reasons, participants in research projects are often assigned numbers/codes/pseudonyms or the research data are registered/stored under a person-related code. This can also refer to file names for individual datasets. The term “code“ refers to different types of pseudonyms/codes in a narrow sense as well as to using participants'' names for labelling the data. For assessing whether the research data could be related to individual persons, the type of labelling is a relevant aspect and is therefore queried in detail here. <u>If you use two types of labelling, you will be separately asked for the second one further down.</u>'
         types:
-          external: 'The research data are labelled with a code that was or is assigned outside of the project '
+          external: 'The research data are labelled with a code that was or is assigned outside of the project'
           internal: 'The research data are labelled with an internal code in the project. '
           name: 'The research data are labelled with the participants'' names. '
           no: 'The research data are not individually labelled.'
@@ -1750,7 +1764,7 @@ checkDoc:
     single: ' is missing.'
     multiple: ' are missing.'
     description: 'description of '
-  missingChosen: 'Answer to question about {question} missing.'
+  missingChosen: 'Answer to question about {question} is missing.'
   appData:
     title: '<a href="appData/{page}">{title}</a>'
     coreData:
@@ -1824,7 +1838,7 @@ checkDoc:
       groups:
         minAge: 'minimum age'
         maxAge: 'maximum age'
-        minAgeAppType: 'For minors, a <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">full proposal</a> is necessary.'
+        minAgeAppType: 'For minors, a <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">full proposal</a> is necessary.'
         maxGreaterMin: 'The maximum age cannot be lower than the minimum age.'
         minAgeWards: 'If the minimum age is less than 16, the maximum age must be less than 18. If applicable, create a separate group for adult participants.'
         examinedPeople: 'participant groups'
@@ -1832,14 +1846,14 @@ checkDoc:
         physicalMental: >-
           If persons with {group, select,
                               physical {physical}
-                              other {mental or cognitive}} illnesses or impairments are part of the research, a <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">full proposal</a> is required.
+                              other {mental or cognitive}} illnesses or impairments are part of the research, a <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">full proposal</a> is required.
         closed:
           title: 'data collection in a closed group'
           types: 'types of closed groups'
           other: 'other closed group'
         criteria:
           include: 'Further inclusion criteria besides age are missing.'
-          exclude: 'exclusion criteria'
+          exclude: 'exclusion criteria are missing.'
         sampleSize: 'sample size'
         planning: 'sample size calculation'
         recruitment:
@@ -1882,8 +1896,7 @@ checkDoc:
           locationDescription: 'description of the location of data collection'
         presence: 'presence of project contributors'
         duration:
-          total: 'total duration of the study'
-          measureTime: 'mere data collection time'
+          measureTime: 'Data collection time (net)'
           breaks: 'preparation/follow-up time'
       burdensRisks:
         title: >-
@@ -1975,7 +1988,11 @@ checkDoc:
                  other    {}} no {participant, select,
                                    thirdParty {consent}
                                    other      {assent}} is given, the question about voluntariness must be answered with “no“.
-          consentDescription: 'justification for missing consent'
+          consentDescription: >-
+            justification for missing consent {addressee, select,
+                                                children {or assent, respectively,}
+                                                wards    {or assent, respectively,}
+                                                other    {}}
           presence: 'If no project contributors are <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">present</a> during data collection, participants cannot give oral consent.'
           finding: 'If <a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">incidental findings</a> may occur, consent must be obtained.'
         terminateCons:
@@ -2009,14 +2026,14 @@ checkDoc:
             missing: 'information on voucher'
           compensationOther:
             missing: 'other compensation'
-        awarding: # Überall 'missing' am Ende, sofern nicht anders angegeben
+        awarding: # Überall 'is missing' am Ende, sofern nicht anders angegeben
           type: # Zeilenbeginn für alle Fehlermeldungen ab 'missing'
             money: 'Financial compensation'
             hours: 'Course credit (participation hours)'
             lottery: 'Raffle'
             voucher: 'Voucher'
             compensationOther: 'Other compensation'
-          missing: '{type}: Technical details of issuing'
+          missing: '{type}: Technical processing of the compensation'
           lottery: # Werden in einer Zeile zusammengefasst, sofern mehrere auftreten
             start: 'time of announcing the result'
             announcement: 'way of announcing the result'
@@ -2068,6 +2085,10 @@ checkDoc:
           missing: 'generating the data privacy statement'
           informationToNotApplicable: 'If there is <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information<a>, the question about generating the data privacy statement must be answered with “not applicable“.'
           notApplicableToInformation: 'You selected “not applicable“ for the question about generating the data privacy statement. This is possibly only if <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is provided.'
+          support: >-
+            If{isVerified, select,
+                true  { the data privacy statement has been checked and approved by the responsible data protection authorities}
+                other {, according to the judgment of the responsible data protection authorities, the study includes only anonymous data}}, the <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">data protection officer or Data Protection and Information Security Coordinator (DISK)</a> must be have been consulted.
         verification: 'Information about approval of data privacy statement by the responsible data protection authorities' # '[] is missing.'
         confirmIntro: 'Confirmation of notice on data protection' # '[] is missing.'
         responsibility:
@@ -2116,7 +2137,7 @@ checkDoc:
         purposeResearch:
           missing: 'Further purposes of labelling the research data' # '[] are missing'.
           markingResearch: 'If labelling the research data only serves answering the research question, the label must not be person-related.' # 1:1
-          purpose: 'You chose that the code only serves labelling the datasets.  This is incompatible with the selection of further purposes for which the labelling is used.' # 1:1
+          purpose: 'You chose that the code only serves labelling the datasets. This is incompatible with the selection of further purposes for which the labelling is used.' # 1:1
           markingPurpose: >- # 1:1; other is contact
             If labelling also served the purpose of {type, select,
                                                         relatable {individual traceability}
@@ -2178,12 +2199,9 @@ checkDoc:
             noOnline: 'You selected that data collection does not take place <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">online</a>. This is incompatible with the selection of “IP address“ in the list of person-related data for answering the research question.'
             ipNo: 'If no IP addresses are registered within the online data collection, “IP address“ must not be selected in the list of person-related data for answering the research question.'
             ipList: 'You selected that the allocation list contains IP addresses. This is only plausible if IP addresses are collected within an <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">online study</a> and linked with the research data for the purpose of technical support.'
-            ipResearch:
-              dataPersonal: 'If IP addresses are registered for answering the research question, the research data must be person-related.'
-              dataResearch: 'If IP addresses are registered for answering the research question, “IP address“ must be selected in the list of person-related data for answering the research question.'
+            ipResearch: 'If IP addresses are registered for answering the research question, “IP address“ must be selected in the list of person-related data for answering the research question.'
             ipTechnical: 'If IP addresses are registered for technical support purposes only, “IP address“ must not be selected in the list of person-related data for answering the research question.'
             linkedMarking: 'If IP addresses can be linked with the research data, the research data must be labelled with an allocation list, and “IP address“ must be chosen amongst the personal data contained in the allocation list.'
-            research: 'If IP addresses are stored within the research dataset, the research data must be person-related.'
           closed: 'Identifying individual persons from the structure of the code is plausible only with <a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">data collection in a closed group</a>.'
           video: 'If “recordings or pictures“ are selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, the question on person-related character of the research data must be answered by selecting that the research data themselves are person-related.'
           measuresToVideo: 'If “recordings or pictures“ are selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, person-related data in terms of audio/video recordings or photos must be processed for answering the research question.'
@@ -2211,8 +2229,8 @@ checkDoc:
         dataReuseSelf: 'Answer to question whether research data are employed for own re-use' # '[] is missing.'
       contributor:
         mandatory: >-
-          No project contributor was selected for the “{task}“ function{type, select,
-              missing { because on page “<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“ this role was not selected for any of the project contributors.}
+          No contributor was chosen for the “{task}“ function{type, select,
+              missing { because on page “<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“ this role was not selected for any of the contributors.}
               other   {.}}
         task: >-
           The role “{task}“ of the {numContributor, plural,
@@ -2255,7 +2273,7 @@ completeForm:
     text: >-
       The ethics review is based on the regulations and rules of procedure for {committeeAcc} in its current version{committeeType, select,
         TUC   {, available at <a href="https://www.tu-chemnitz.de/tu/ethik/ordnung.php" target="_blank">https://www.tu-chemnitz.de/tu/ethik/ordnung.php</a>.}
-        EUB   {, available under “Regulations“ and “Rules of prodecure“ at the <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">website of {committeeGen}</a>.}
+        EUB   {, available under “Regulations“ and “Rules of procedure“ at the <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">website of {committeeGen}</a>.}
         other {.}}
       {committeeType, select,
         EUB   {}
@@ -2339,7 +2357,7 @@ technicalHints:
 
     To start the application process, it is best to begin with “Proposal data“ and then click through the form step by step via “next page“. Alternatively, you can also jump directly to specific sections (e.g., project details) in the navigation bar on the left.
 
-    On the right-hand side you will see a preview of the application document. You can select the questions and jump to specific areas/questions by clicking in the preview. In the area above the preview, you are informed about missing or incorrect input.
+    On the right-hand side, you will see a preview of the application document and the participant documents. You can click on the questions or headings there and jump to the related sections in the Ethiktool. In the area above the preview, you are informed about missing or incorrect input.
 
     Please save your entries regularly. The files are stored locally on your computer in XML format. You can pause the process at any time, reload your saved entries as an XML file later and continue editing them.
 

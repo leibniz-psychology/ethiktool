@@ -338,7 +338,7 @@ export default class extends Controller {
         setElementVisibility(this.anonymizationTarget,isPersonal);
         setElementVisibility(this.storageTarget,isPersonal && isAnyAnonymization);
         setElementVisibility(this.dataPersonalAccessTarget,isPersonal || this.getMarkingPersonal());
-        setElementVisibility('personalKeepDiv', isPersonal && (this.anonymizationNoTarget.checked || isAnyAnonymization && this.storageValue==='keep'));
+        setElementVisibility('personalKeep', isPersonal && (this.anonymizationNoTarget.checked || isAnyAnonymization && this.storageValue==='keep'));
     }
 
     /** Sets the widgets for the two purpose questions as well as the compensation code question. */
@@ -442,8 +442,8 @@ export default class extends Controller {
             if (purpose!=='technical' || !(this.dataOnlineValue==='technical' && this.dataOnlineProcessingValue==='research')) {
                 for (let accessType of this.accessOrderProcessingValue) {
                     let curType = purpose+accessType;
-                    let knownPrefix = 'data_privacy_'+curType+'orderProcessingKnown_';
-                    if (document.getElementById(curType).checked && document.getElementById('data_privacy_'+curType+'orderProcessing_0').checked && getSelected([knownPrefix+'0',knownPrefix+'1'])[0]) {
+                    let knownPrefix = curType+'orderProcessingKnownknown';
+                    if (document.getElementById(curType).checked && document.getElementById(curType+'orderProcessing0').checked && getSelected([knownPrefix+'Yes',knownPrefix+'Part'])[0]) {
                         isDescription = true;
                         break;
                     }

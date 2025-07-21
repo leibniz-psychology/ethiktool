@@ -8,7 +8,7 @@
             {{ include(modalBody) }}
         </div>
         <div class="modal-footer">
-            <div style="margin-right: auto; white-space: normal; max-width: 400px" {% if footerTarget is defined %} {{ stimulus_target(targetCont,footerTarget) }} {% endif %}>{{ (footerError ?? '')|raw }}</div>
+            <div class="me-auto" style="white-space: normal; max-width: 400px" {% if footerTarget is defined %} {{ stimulus_target(targetCont,footerTarget) }} {% endif %}>{{ (footerError ?? '')|raw }}</div>
             <button type="submit" class="Button_primary_go Button_standalone" {{ stimulus_action('base','submitForm','click') }} name="modalSubmitButton" {% if submitTarget is defined %} {{ stimulus_target(targetCont,submitTarget) }} {% endif %}>{{ leftButton }}</button>
             <button type="reset" class="Button_primary_act Button_standalone" data-bs-dismiss="modal">{{ rightButton }}</button>
         </div>

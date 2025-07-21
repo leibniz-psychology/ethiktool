@@ -56,7 +56,7 @@ class BurdensRisksController extends ControllerAbstract
             $iconArray[$type] = [array_slice($types,1,count($types)-2),array_combine($types,$this->prefixArray($types,$translationPrefix.$type.'.hintsTypes.')),$this->createStringArray($types,'black')]; // 0: options without 'no' and 'other', 1: text for icons, 2: icon text colors
         }
 
-        $burdensRisks = $this->createFormAndHandleRequest(BurdensRisksType::class,$this->xmlToArray($burdensRisksNode),$request,[self::addresseeTrans => $this->getAddresseeFromRequest($request)]);
+        $burdensRisks = $this->createFormAndHandleRequest(BurdensRisksType::class,$this->xmlToArray($burdensRisksNode),$request);
         if ($burdensRisks->isSubmitted()) {
             $data = $this->getDataAndConvert($burdensRisks,$burdensRisksNode);
             $isBurdensRisks =  $this->getBurdensOrRisks($data,self::burdensNode)[0] || $this->getBurdensOrRisks($data,self::risksNode)[0];
@@ -87,12 +87,10 @@ class BurdensRisksController extends ControllerAbstract
             return $this->saveDocumentAndRedirect($request,!$isTexts || $isNotLeave ? $appNode : $appNodeNew,$isTexts && $isNotLeave ? $appNodeNew : null); // appNodeNew is defined if isTexts is true
         }
         return $this->render('Projectdetails/burdensRisks.html.twig',
-            $this->setParameters($request,$appNode,
-                [self::content => $burdensRisks,
-                 self::pageTitle => 'projectdetails.burdensRisks',
-                 'checkboxTypes' => [self::burdensNode => self::burdensTypes,self::risksNode => self::risksTypes],
+            $this->setRenderParameters($request,$burdensRisks,
+                ['checkboxTypes' => [self::burdensNode => self::burdensTypes,self::risksNode => self::risksTypes],
                  'iconArrays' => $iconArray,
                  'textInputCon' => $textInputCon,
-                 'textInputFinding' => $textInputFinding]));
+                 'textInputFinding' => $textInputFinding],'projectdetails.burdensRisks',true));
     }
 }

@@ -10,7 +10,7 @@
             {{ _self.addBorderText(consentContent) }}
             <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setSubmitButton','change') }}>{{ formRender.addCheckbox(content.consent, {'target': [completeFormController,'consent']}) }}</div>
             <div class="{{ classes }}">{{ consentHint|raw }}</div>
-            <div class="{{ classes }}">{{ (translationPrefix~'consent.notes')|trans(committeeArray) }}</div>
+            <div class="{{ classes }}">{{ (translationPrefix~'consent.notes')|trans(committeeParams) }}</div>
             {{ formRender.addTextfield(content.consentText) }}
         </div>
         {# bias #}

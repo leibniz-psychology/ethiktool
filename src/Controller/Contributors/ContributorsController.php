@@ -123,9 +123,8 @@ class ContributorsController extends ControllerAbstract
         $infosPrefix = 'multiple.infos.';
         $institution = $infosPrefix.self::institutionInfo;
         $phone = $infosPrefix.self::phoneNode;
-        return $this->render('Contributors/contributors.html.twig',
-            ['content' => $contributors,
-             'positionsSupervisor' => $positionsSupervisor,
+        return $this->render('Contributors/contributors.html.twig', $this->setRenderParameters($request,$contributors,
+            ['positionsSupervisor' => $positionsSupervisor,
              'infos' => self::applicantContributorsInfosTypes,
              'tasks' => self::tasksNodes,
              'tasksMandatory' => self::tasksMandatory,
@@ -134,10 +133,7 @@ class ContributorsController extends ControllerAbstract
              'missingTasks' => $missingTasksArray,
              'institutionLabel' => [$this->translateString($institution.'Applicant'),$this->translateString($institution)],
              'phoneLabel' => [$this->translateString($phone), $this->translateString($phone.'Optional')],
-             'positions' => $positionsTranslated,
-             'committeeParams' => $session->get(self::committeeSession),
-             self::pageTitle => 'contributors.contributors',
-             self::preview => $this->getPreviewScroll($session),
-             self::pageErrors => $this->getErrors($request,self::contributorsNodeName)]);
+             'positions' => $positionsTranslated],
+            'contributors.contributors'));
     }
 }

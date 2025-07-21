@@ -10,7 +10,7 @@
         {% for type in ['intro', 'goals', 'procedure'] %}
             {% set isIntro, widget = type is same as 'intro', content[type] %}
             {% set name = widget.vars.name %}
-            <div class="mt-8 {% if isIntro %} grid {% endif %}">
+            <div class="mt-8 {% if isIntro %} grid {% endif %}" id="{{ type }}">
                 {% if isIntro %}
                     {% set template = content[type~'Template'] %}
                     {% set templateVars = template.vars %}
@@ -28,17 +28,17 @@
             {% set templateVars, templateDiv = content[template].vars, template~'Div' %}
             {% set isPro, isTemplate, widget = type is same as 'pro', templateVars.checked, content[type] %}
             {% set visible, isConBurdensRisks, isProBurdensRisks, name = boolToDisplay(isTemplate,1), not isPro and burdensRisks, isPro or burdensRisks, widget.vars.name %}
-            <div class="mt-8 grid">
+            <div class="mt-8 grid" id="{{ type }}">
                 {% if isConBurdensRisks %}
-                    <div style="grid-row: 2">{{ formRender.addHint(translationPrefix~'con.hint',{'params': {'type': isBurdens ? (isRisks ? 'both' : 'burdens') : 'risks', 'addressee': addressee}}) }}</div>
+                    <div style="grid-row: 2">{{ formRender.addHint(translationPrefix~'con.hint',{'params': {'type': isBurdens ? (isRisks ? 'both' : 'burdens') : 'risks', 'addressee': addresseeString}}) }}</div>
                 {% endif %}
                 {% set templateText = content.proTemplateText %}
                 <div id="{{ templateDiv }}" style="grid-row: {{ isConBurdensRisks ? 3 : 2 }}; {{ visible }}">
                     {% if isPro %}
                         <div class="template">{{ form_label(templateText) }}</div>
                         <div class="grid" style="grid-template-columns: auto min-content">
-                            <div class="MetaData-Widget" style="padding-right: 0">{{ form_widget(templateText) }}</div>
-                            <div class="pt-1" style="margin-right: 0.3em">{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
+                            <div class="MetaData-Widget pe-0">{{ form_widget(templateText) }}</div>
+                            <div class="pt-1" style="margin-right: 0.3rem">{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
                         </div>
                         <div class="template">{{ (templatePrefix~'middle')|trans }}</div>
                         <div class="MetaData-Label mt-2 hint">{{ (templatePrefix~'optional')|trans }}</div>
@@ -55,9 +55,9 @@
         {# finding text #}
         {% if content.findingText is defined %}
             {% set findingText, template = content.findingText, content.findingTextTemplate %}
-            {% set name, templateVars, templateDiv = findingText.vars.name, template.vars, 'findingTemplateDIv' %}
+            {% set name, templateVars, templateDiv = findingText.vars.name, template.vars, 'findingTemplateDiv' %}
             {% set isTemplate = templateVars.checked %}
-            <div class="mt-8 grid">
+            <div class="mt-8 grid" id="findingText">
                 <div class="template" id="{{ templateDiv }}" style="{{ boolToDisplay(isTemplate) }}; grid-row: 2">{{ (translationPrefix~'findingText.template')|trans({'consent': boolToString(isConsent), 'addressee': addresseeType}) }}</div>
                 {{ formRender.addCountableTextfield(findingText,maxCharsFinding,{'transfer': [['consent',information],addresseeType], 'visible': not isTemplate, 'template': template, 'templateClass' : true, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,templateDiv,[name~'Div',name~'Count']|merge(isTransfer ? [name~'PDF'] : [])]], 'isGrid': true}]}) }}
             </div>

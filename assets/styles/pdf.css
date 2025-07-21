@@ -44,6 +44,8 @@
     font-family: montserrat-regular, sans-serif;
     padding-right: 0.1em;
     page-break-after: always;
+    margin-left: 0.6rem;
+    margin-right: 0.6rem;
 }
 
 .pdfMargin {
@@ -160,7 +162,21 @@ i.pdfHeading {
 }
 
 tr {
-    word-break: keep-all;
+    word-break: normal;
+}
+
+.briefBorder { /* table for brief report */
+    border-collapse: collapse;
+    width: 90%;
+    margin-left: 5%;
+    margin-top: 0.5rem;
+}
+
+.briefBorder td {
+    border: 1px solid black;
+    padding: 0.25rem;
+    text-align: start;
+    width: fit-content;
 }
 
 /* Checkboxes. As there are no pseudo-elements possible in the downloaded pdf, checkboxes will be div-elements. These classes are only used once in pdfMacros. */

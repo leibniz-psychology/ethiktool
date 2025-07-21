@@ -15,7 +15,7 @@
             'phone-label': phoneLabel|json_encode,
             'tasks-names': tasks|json_encode}) }} class="MetaData-Widget">
         <div class="minAutoGrid borderLight">
-            <div class="grid align-items-center" style="grid-template-columns: repeat(2,min-content); {{ autoRows }} column-gap: 0.5em">
+            <div class="grid align-items-center" style="grid-template-columns: repeat(2,min-content); {{ autoRows }} column-gap: 0.5rem">
                 {% for index, contributor in contributorsArray %}
                     {% if not (index is same as 0 or index is same as 1 and hasSupervisor) %}
                         <button type="button" class="Button_primary_act" style="grid-area: {{ loop.index+2 }} / 1; height: fit-content" id={{"remove"~(index) }} {{ stimulus_action(contributorsController,'removeContributor','click') }}>{{ include('images/delete.svg') }}</button>
@@ -23,8 +23,8 @@
                     <button type="button" style="grid-area: {{ loop.index+2 }} / 2; height: fit-content" class="Button_primary_act" data-bs-id={{ "edit"~(index) }} data-bs-toggle="modal" data-bs-target="#formModal">{{ include('images/edit.svg') }}</button>
                 {% endfor %}
             </div>
-            {% set style = 'padding: 0.2em' %}
-            <div class="grid" style="grid-template-columns: repeat({{ numInfos+numTasks }},auto); {{ autoRows }} min-width: unset; overflow-x: auto; padding-bottom: 0.5em; margin-left: 0.5em; white-space: nowrap">
+            {% set style = 'padding: 0.2rem' %}
+            <div class="grid ms-2 pb-2" style="grid-template-columns: repeat({{ numInfos+numTasks }},auto); {{ autoRows }} min-width: unset; overflow-x: auto; white-space: nowrap">
                 <div class="borderLight" style="grid-column: span {{ numInfos }}; {{ style }}">{{ (titlesPrefix~'infos')|trans }}</div>
                 <div class="borderLight" style="grid-column: span {{ numTasks }}; {{ style }}">{{ 'contributors.tasks.title'|trans }}</div>
                 {% for task in tasks %}
@@ -35,13 +35,13 @@
                     {% set curInfos, curTasks, curRow = contributor['infos'], contributor['tasks'], loop.index+2 %}
                     {% for task in tasks %}
                         {% set curInfo, isOther, isTask, curCol = curInfos[infos[loop.index0]] ?? '', task is same as 'other', task in curTasks|keys, loop.index %}
-                        <div style="grid-area: {{ curRow }} / {{ curCol }}; margin-right: 0.5em">{{ curInfo in positions|keys ? ('multiple.position.'~curInfo)|trans : curInfo }}</div>
-                        <div {% if not isOther %} class="CheckBox-Label {% if isTask %} checkBoxChecked {% endif %}" {% endif %} style="grid-area: {{ curRow }} / {{ curCol+numInfos }}; {% if not isOther %} justify-self: center{% endif %}">{{ isOther and isTask ? curTasks['other'] }}</div>
+                        <div class="me-2" style="grid-area: {{ curRow }} / {{ curCol }}">{{ curInfo in positions|keys ? ('multiple.position.'~curInfo)|trans : curInfo }}</div>
+                        <div {% if not isOther %} class="CheckBox-Label flex {% if isTask %} checkBoxChecked {% endif %}" {% endif %} style="grid-area: {{ curRow }} / {{ curCol+numInfos }}; {% if not isOther %} justify-self: center{% endif %}">{{ isOther and isTask ? curTasks['other'] }}</div>
                     {% endfor %}
                 {% endfor %}
             </div>
         </div>
-        <button type="button" class="Button_primary_act mt-2" style="margin-left: 0.3em" data-bs-toggle="modal" data-bs-target="#formModal" data-bs-id="add">{{ include('images/add.svg') }}</button>
+        <button type="button" class="Button_primary_act mt-2" style="margin-left: 0.3rem" data-bs-toggle="modal" data-bs-target="#formModal" data-bs-id="add">{{ include('images/add.svg') }}</button>
         <div class="mt-4">{{ 'contributors.hint'|trans|raw }}</div>
         <div class="mt-4">{{ missingTasks[0] }}</div>
         <div class="mt-4">{{ missingTasks[1] }}</div>

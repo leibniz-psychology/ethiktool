@@ -120,17 +120,15 @@ class MeasuresController extends ControllerAbstract
                 $this->insertElementBefore(self::dataOnlineNode,$dataPrivacyNode->{self::dataPersonalNode});
             }
             $isNotLeave = !$this->getLeavePage($measures,$session,self::measuresNode);
-            return $this->saveDocumentAndRedirect($request,!$isPre || $isNotLeave ? $appNode : $appNodeNew, $isPre && $isNotLeave ? $appNodeNew : null); // $appNodeNew is only defined if $isPre is true
+            return $this->saveDocumentAndRedirect($request,$isNotLeave ? $appNode : $appNodeNew, $isNotLeave ? $appNodeNew : null);
         }
         return $this->render('Projectdetails/measures.html.twig',
-            $this->setParameters($request,$appNode,
-                [self::content => $measures,
-                 self::pageTitle => 'projectdetails.measures',
-                 'measuresTypes' => self::measuresTypes,
+            $this->setRenderParameters($request,$measures,
+                ['measuresTypes' => self::measuresTypes,
                  'interventionsTypes' => self::interventionsTypes,
                  'durationTypes' => self::durationTypes,
                  'textInputs' => $textInputs,
                  'textInputOnline' => $textInputOnline,
-                 'isConsent' => $isConsent]));
+                 'isConsent' => $isConsent],'projectdetails.measures',true));
     }
 }

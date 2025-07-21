@@ -38,8 +38,7 @@
                     {% endfor %}
                 </div>
                 <div style="page-break-inside: avoid">
-                    <div class="{{ textPreview }}" style="margin-top: 50px">{{ 'consent.name'|trans }}</div>
-                    {{ pdfMacros.addSignature(savePDF,addressee) }}
+                    {{ pdfMacros.addSignature(savePDF,addressee,true) }}
                 </div>
             {% endif %}
             <b class="{{ textPreview }}" style="display: flex; justify-content: center; margin-top: 50px">{{ 'consent.end'|trans }}</b>

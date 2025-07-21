@@ -3,7 +3,6 @@
 namespace App\Controller\Main;
 
 use App\Abstract\ControllerAbstract;
-use App\Classes\CheckDocClass;
 use App\Form\Main\CompleteFormType;
 use App\Traits\AppData\AppDataTrait;
 use App\Traits\Main\CompleteFormTrait;
@@ -36,7 +35,7 @@ class CompleteFormController extends ControllerAbstract
         $appDataNode = $appNode->{self::appDataNodeName};
         $coreDataArray = $this->xmlToArray($appDataNode->{self::coreDataNode});
         $appTypeArray = $coreDataArray[self::applicationType];
-        $parameters = $session->get(self::committeeSession);
+        $parameters = $session->get(self::committeeParams);
         // check if any documents besides the form are created
         $anyDoc = 'false'; // translation parameters need to be strings and strval() converts booleans to '0' or '1'
         $pdf = $this->xmlToArray($appDataNode->{self::voteNode})[self::otherVote][self::chosen]==='0' ? [self::voteNode => ''] : []; // indicates if self-written PDFs need to be added
@@ -101,23 +100,20 @@ class CompleteFormController extends ControllerAbstract
             return $this->saveDocumentAndRedirect($request,$appNode);
         }
         return $this->render('Main/completeForm.html.twig',
-            array_merge($session->get(self::committeeArray),
-            [self::content => $completeForm,
-             self::pageTitle => 'completeForm.title',
-             'pdfFilename' => $pdfFilename,
-             'firstPage' => $firstPage,
-             'consentContent' => $consentContent,
-             'consentHint' => $this->translateString($translationPrefix.'consent.hint',$parameters),
-             'biasTypes' => self::biasTypes,
-             'biasTitle' => $this->translateString($translationPrefix.'bias.title',$parameters),
-             'consentFurtherText' => $consentFurtherText,
-             'pdf' => $pdf,
-             'names' => $names,
-             'isMultiple' => $isMultiple,
-             'finishText' => $this->translateString($translationPrefix.'finish.text',array_merge($parameters,[self::fileName => $session->get(self::fileName), 'curDate' => (new DateTime('today'))->format('Ymd')])),
-             self::preview => $this->getPreviewScroll($session),
-             'committeeParams' => $parameters,
-             self::isCommitteeBeta => $parameters[self::isCommitteeBeta]]));
+            $this->setRenderParameters($request,$completeForm,
+                [self::pageTitle => 'completeForm.title',
+                 'pdfFilename' => $pdfFilename,
+                 'firstPage' => $firstPage,
+                 'consentContent' => $consentContent,
+                 'consentHint' => $this->translateString($translationPrefix.'consent.hint',$parameters),
+                 'biasTypes' => self::biasTypes,
+                 'biasTitle' => $this->translateString($translationPrefix.'bias.title',$parameters),
+                 'consentFurtherText' => $consentFurtherText,
+                 'pdf' => $pdf,
+                 'names' => $names,
+                 'isMultiple' => $isMultiple,
+                 'finishText' => $this->translateString($translationPrefix.'finish.text',array_merge($parameters,[self::fileName => $session->get(self::fileName), 'curDate' => $this->getCurrentTime()->format('Ymd')])),
+                  self::isCommitteeBeta => $parameters[self::isCommitteeBeta]],'completeForm',addErrors: false));
     }
 
     /** Checks if pre or post information is selected.

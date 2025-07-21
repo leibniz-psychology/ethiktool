@@ -126,19 +126,15 @@ class LandingController extends ControllerAbstract
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
         }
-        return $this->render('landing.html.twig',
-            [self::content => $landing,
-             'menu' => $isProjectdetails ? $this->pages : $this->pages[self::subPages],
+        return $this->render('landing.html.twig', $this->setRenderParameters($request,$landing,
+            ['menu' => $isProjectdetails ? $this->pages : $this->pages[self::subPages],
              'page' => lcfirst($title),
-             self::pageTitle => self::landing,
              'id' => $IDs,
              'isMultiple' => $this->isMultiple,
              self::studyName => $isStudy ? $study[$IDs[0]][self::nameNode] : '',
              self::groupName => $isGroup ? $this->addZeroIndex($study[$IDs[0]][self::groupNode])[$IDs[1]][self::nameNode] : '',
              'names' => $this->names,
-             self::preview => $this->getPreviewScroll($session),
-             self::pageErrors => $this->getErrors($request,$title),
-             'committeeParams' => $session->get(self::committeeSession)]);
+             self::pageErrors => $this->getErrors($request,$title)],self::landing));
     }
 
     /** Sets the variables needed for creating the links on the landing page.

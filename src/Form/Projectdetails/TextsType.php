@@ -25,7 +25,7 @@ class TextsType extends TypeAbstract
         }
         // additional pro text field
         $information = $options[self::informationNode];
-        $this->addFormElement($builder,self::proTemplateText,'text',$translationPrefix.'pro.template.start',[self::labelParams => [self::addresseeTrans => $options[self::addresseeTrans], self::informationNode => $information==='' || $information==='pre' ? 'pre' : 'post']]);
+        $this->addFormElement($builder,self::proTemplateText,'text',$translationPrefix.'pro.template.start',[self::labelParams => [self::addressee => $options[self::addresseeType], self::informationNode => $information==='' || $information==='pre' ? 'pre' : 'post']]);
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);
     }

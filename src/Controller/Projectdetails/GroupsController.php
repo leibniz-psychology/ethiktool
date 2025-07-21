@@ -135,16 +135,14 @@ class GroupsController extends ControllerAbstract
             return $this->saveDocumentAndRedirect($request,$isNotLeave ? $appNode : $appNodeNew, $isNotLeave ? $appNodeNew : null);
         }
         return $this->render('Projectdetails/groups.html.twig',
-            $this->setParameters($request,$appNode,
-            [self::content => $groups,
-             'examined' => self::examinedTypes,
+            $this->setRenderParameters($request,$groups,
+            ['examined' => self::examinedTypes,
              self::closedTypesNode => self::closedTypes,
              'criteriaHint' => $criteriaHint,
              'includeStart' => $includeStart,
              'firstInclude' => $firstInclude,
              'textInput' => $textInput,
              'textInputVoluntary' => $textInputVoluntary,
-             'recruitmentTypes' => self::recruitmentTypes,
-             self::pageTitle => 'projectdetails.groups']));
+             'recruitmentTypes' => self::recruitmentTypes],'projectdetails.groups',true));
     }
 }

@@ -13,7 +13,7 @@
             {% set hintsPrefix, anySelected = typePrefix~'hints.', getAnySelected(content,checkboxesWoNo)[1] %}
             {% set hintBurdensNothing, hintBurdensNo, hintDescription = (hintsPrefix~'missing')|trans, (hintsPrefix~'noBurdens')|trans, textHintTrans|trans(typeParam) %}
             {% set noID, descriptionDiv, compensationDiv = 'no'~(type|capitalize), type~'DescriptionDiv', type~'CompensationDiv' %}
-            <div {% if not isBurdens %} class="mt-8" {% endif %}>
+            <div {% if not isBurdens %} class="mt-8" {% endif %} id="{{ type~'Type' }}">
                 {{ formRender.addHeading(typePrefix~'title',{'headingHint': [[hintsPrefix~'headingHint']]}) }}
                 {% if isBurdensRisks %}
                     <div class="MetaData-Widget mt-2"
@@ -32,10 +32,10 @@
                 {% else %}
                     <div class="mt-2" {{ stimulus_action('base','setVisibility','change',{'values': [['0',[descriptionDiv,compensationDiv]]]}) }}>{{ formRender.renderButtons(contributors,noHeading) }}</div>
                 {% endif %}
-                {{ formRender.addTextfield(content[type~'Description'],{
+                {{ formRender.addTextfield(content[type~'Description'],fontNormal|merge({
                     'visibility': isBurdensRisks ? isBurdens or anySelected : isContributorsSelected,
                     'hint': not isBurdens or anySelected ? hintDescription : (isNoBurdens ? hintBurdensNo : hintBurdensNothing),
-                    'attributes': textHeightLong|merge(isBurdens ? {'disabled': not anySelected and not isNoBurdens} : {})}) }}
+                    'attributes': textHeightLong|merge(isBurdens ? {'disabled': not anySelected and not isNoBurdens} : {})})) }}
                 {# compensation #}
                 <div class="mt-4" id="{{ compensationDiv }}" style="{{ boolToDisplay(isBurdensRisks ? anySelected : isContributorsSelected) }}">
                     {% set compensation, compensationPrefix = content[type~'Compensation'], translationPrefix~'compensation.textHints.' %}
@@ -55,12 +55,13 @@
         {% set finding, addresseeParams, hintDiv, tempPrefix = content.finding, {'addressee': addresseeType}, 'findingHintDiv', translationPrefix~'finding.' %}
         {% set findingValue, informing, findingDiv, inputDiv = finding.vars.value, content.informing, 'findingDiv', 'inputDiv' %}
         {% set isFinding, isTextInput, isPre = findingValue is same as '0', textInputFinding is not same as '', information is same as 'pre' %}
-        <div class="mt-8">
-            {{ formRender.renderButtons(finding,{'text': [content.description,{'visibility': isFinding, 'textHintParams': addresseeParams, 'fontStyle': true}], 'hint': [tempPrefix], 'stimVisible': {'values': [['0',['descriptionDiv',findingDiv]]]|merge(isTextInput ? [['1',inputDiv]] : [])}}) }}
+        <div class="mt-8" id="finding">
+            {{ formRender.renderButtons(finding,{'text': [content.description,fontNormal|merge({'visibility': isFinding, 'textHintParams': addresseeParams})], 'hint': [tempPrefix], 'stimVisible': {'values': [['0',['descriptionDiv',findingDiv]]]|merge(isTextInput ? [['1',inputDiv]] : [])}}) }}
             <div id="{{ findingDiv }}" style="{{ boolToDisplay(isFinding) }}">
                 <div class="MetaData-Label mt-4">{{ form_label(informing,null,labelDummy) }}</div>
                 <div class="mt-2">{{ formRender.renderButtons(informing,noHeading|
-                        merge({'hint': ['projectdetails.pages.burdensRisks.finding.informing.',addresseeParams]})|
+                        merge({'hint': ['projectdetails.pages.burdensRisks.finding.informing.',addresseeParams],
+                        'labelParams': {'addressee': addresseeString}})|
                         merge(isPre ? {'stimVisible': {'values': [['always',hintDiv]]}} : {})) }}</div>
                 {% if isPre %}
                     <div class="mt-4">
@@ -74,7 +75,7 @@
         </div>
         {# feedback #}
         {% set feedback = content.feedback %}
-        {{ formRender.renderButtons(feedback,{'text': [content.feedbackDescription,{'visibility': feedback.vars.value is same as '0', 'fontStyle': true}], 'hint': [translationPrefix~'feedback.'], 'stimVisible': {'values': [['0','feedbackDescriptionDiv']]}, 'addDiv': []}) }}
+        {{ formRender.renderButtons(feedback,{'text': [content.feedbackDescription,fontNormal|merge({'visibility': feedback.vars.value is same as '0'})], 'hint': [translationPrefix~'feedback.'], 'stimVisible': {'values': [['0','feedbackDescriptionDiv']]}, 'addDiv': ['feedback']}) }}
         {{ formRender.addSubmitButtons() }}
     </div> {# entire form #}
 {% endblock %}

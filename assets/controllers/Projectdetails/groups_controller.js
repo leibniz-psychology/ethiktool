@@ -75,7 +75,7 @@ export default class extends Controller {
         setElementVisibility(this.wardsHintTarget,isWards); // hint between age and examined
         // wards icon
         if (this.hasWardsIconTarget) {
-            setElementVisibility(this.wardsIconTarget,!isWards,1);
+            this.wardsIconTarget.style.display = !isWards ? 'inline-grid' : 'none';
         }
         // criteria
         let addressee = 0; // participants

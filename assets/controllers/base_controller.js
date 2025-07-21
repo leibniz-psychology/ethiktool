@@ -48,6 +48,7 @@ export default class extends Controller {
         for (let target of this.languageTargets) {
             target.addEventListener('click', (event) => {
                 event.preventDefault();
+                this.removeHash();
                 this.submitDummyTarget.value = 'language:'+target.id;
                 this.formSubmit();
             })
@@ -86,6 +87,7 @@ export default class extends Controller {
      */
     async setDummySubmit(event) {
         event.preventDefault(); // prevent redirecting
+        this.removeHash();
         let dummyVal = '';
         let target = this.checkElementTag(event.target); // if the target is a button, the content of it may be wrapped in a span
         let targetID = target.id;
@@ -304,39 +306,25 @@ export default class extends Controller {
         }
 
         // submit the form and update the page
-        let data = new FormData(this.formTarget);
-        // data.set(target.name,target.value); // if only part of the form should be updated
-        await fetch(this.formTarget.action, {method: this.formTarget.method, body: data}).then(async (response) => {
+        await fetch(this.formTarget.action, {method: this.formTarget.method, body: new FormData(this.formTarget)}).then(async (response) => {
             let dummyVal = this.submitDummyTarget.value;
             this.numDocs += !(dummyVal.includes('undo') || dummyVal.includes('documents')) ? 1 : 0;
             this.submitDummyTarget.value = '';
             let html = document.createElement('div');
             html.innerHTML = await response.text();
-            // let oldForm = document.getElementById('threeColumns');
-            // let newForm = html.querySelector('#threeColumns');
-            // oldForm.parentNode.replaceChild(newForm,oldForm);
 
-            let newSidebar = html.querySelector('#sidebar');
-            this.sidebarTarget.parentNode.replaceChild(newSidebar,this.sidebarTarget);
+            this.sidebarTarget.parentNode.replaceChild(html.querySelector('#sidebar'),this.sidebarTarget);
 
             if (this.hasCheckDocTarget) { // update checkDoc scrollbar only if scrollbar exists
                 this.checkDocValue = this.checkDocTarget.scrollTop;
-                let newCheckDoc = html.querySelector('#checkDoc');
-                this.checkDocTarget.parentNode.replaceChild(newCheckDoc,this.checkDocTarget);
+                this.checkDocTarget.parentNode.replaceChild(html.querySelector('#checkDoc'),this.checkDocTarget);
                 this.checkDocTarget.scrollTop = this.checkDocValue;
             }
             if (this.hasPreviewTarget) { // update preview scrollbar only if preview exists
                 this.previewValue = this.previewTarget.scrollTop;
-                let newPreview = html.querySelector('#preview');
-                this.previewTarget.parentNode.replaceChild(newPreview,this.previewTarget);
+                this.previewTarget.parentNode.replaceChild(html.querySelector('#preview'),this.previewTarget);
                 this.previewTarget.scrollTop = this.previewValue;
             }
-            // if (!dummyVal.includes('undo')) {
-            //     let oldTarget = document.getElementById(target.id);
-            //     let newTarget = html.querySelector('#'+target.id);
-            //     target.parentNode.replaceChild(newTarget,oldTarget);
-            // }
-            // else {
             for (let backdrop of document.getElementsByClassName('modal-backdrop')) { // if submission was made inside a modal, remove the backdrop
                 backdrop.remove();
             }
@@ -346,13 +334,12 @@ export default class extends Controller {
             }
             let isUndo = this.hasUndoTarget && target===this.undoTarget;
             if (isUndo || ['app_contributors','app_landing'].includes(this.routeValue)) {
-                let newContent = html.querySelector('#content');
-                this.contentTarget.parentNode.replaceChild(newContent,this.contentTarget);
+                this.contentTarget.parentNode.replaceChild(html.querySelector('#content'),this.contentTarget);
                 if (isUndo) {
                     for (let [elementID, scrollPos] of Object.entries(scrollPositions)) { // set scroll position of text areas
                         let element = document.getElementById(elementID);
                         if (element!==null) { // in data privacy, some elements may not exist anymore after updating the page
-                            document.getElementById(elementID).scrollTop = scrollPos;
+                            element.scrollTop = scrollPos;
                         }
                     }
                     this.setAllHints();
@@ -626,5 +613,10 @@ export default class extends Controller {
             target = target.parentElement;
         }
         return target;
+    }
+
+    /** Removes the hash from the URL, including, the hash-symbol, to avoid jumps to the top of the page if the page changes and to prevent jumping to the label if the language has changed. */
+    removeHash() {
+        history.pushState('',document.title,window.location.href.split('#')[0]);
     }
 }

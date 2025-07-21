@@ -23,10 +23,6 @@ class CheckDocController extends ControllerAbstract
         if ($checkDoc->isSubmitted()) { // language was changed or a link was clicked
             return $this->saveDocumentAndRedirect($request,$appNode);
         }
-        return $this->render('Main/checkDoc.html.twig',[
-            self::pageTitle => 'checkDoc',
-            self::content => $checkDoc,
-            'text' => $this->getErrors($request,element: $appNode),
-            'committeeParams' => $request->getSession()->get(self::committeeSession)]);
+        return $this->render('Main/checkDoc.html.twig', $this->setRenderParameters($request,$checkDoc,['text' => $this->getErrors($request,element: $appNode)],'checkDoc',addErrors: false));
     }
 }

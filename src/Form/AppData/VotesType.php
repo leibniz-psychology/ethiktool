@@ -21,7 +21,7 @@ class VotesType extends TypeAbstract
         $this->addFormElement($builder,self::otherVoteResultDescription,'textarea');
         // own institution vote
         $tempPrefix = $translationPrefix.'instVote.';
-        $this->addBinaryRadio($builder, self::instVote, $tempPrefix.'title',self::instVoteText,$tempPrefix.self::textHint,[self::labelParams => $options[self::committeeArray]]);
+        $this->addBinaryRadio($builder, self::instVote, $tempPrefix.'title',self::instVoteText,$tempPrefix.self::textHint,[self::labelParams => $options[self::committeeParams]]);
         $this->addFormElement($builder, self::instReference,'text',hint: $tempPrefix.'reference');
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);

@@ -5,20 +5,18 @@
     {{ form_start(content,{'attr': {'novalidate': 'novalidate'}}) }}
     <div style="display: grid">
         <div class="border rounded-lg shadow-sm bg-mono-50" style="height:fit-content; width: fit-content; justify-self: center; max-width: 50%; margin-top: 10%">
-            <div class="MetaData-Label mb-1">{{ ('quit.'~(hasDoc ? 'download' : 'finish'))|trans|raw }}</div>
-            <div class="MetaData-Widget mt-8 mb-2 gap-x-4" style="{{ boolToDisplay(hasDoc,1) }}; grid-template-columns: repeat(2,minmax(min-content,max-content))">
+            <div class="MetaData-Label mb-1">{{ 'quit.download'|trans|raw }}</div>
+            <div class="MetaData-Widget mt-8 mb-2 gap-x-4 grid" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
                 {{ form_widget(content.quit,attributes) }}
                 {{ form_widget(content.backToMain,attributes) }}
                 {{ form_widget(content.dummy,{'id': 'dummy', 'attr': {'style': 'display: none'}}) }}
             </div>
         </div>
     </div>
-    {% if hasDoc %}
-        <script type="text/javascript">
-            window.onload = function () {
-                document.getElementById('dummy').click();
-            }
-        </script>
-    {% endif %}
+    <script type="text/javascript">
+        window.onload = function () {
+            document.getElementById('dummy').click();
+        }
+    </script>
     {{ form_end(content) }}
 {% endblock %}

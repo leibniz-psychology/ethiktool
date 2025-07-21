@@ -6,7 +6,7 @@ multiple:
   loadMessage:
     newForm:
       title: 'Neuer Antrag erstellt'
-      text: 'Ein leerer Antrag wurde erstellt. Bitte beachten Sie die Voraussetzungen für die Ethikantragstellung sowie die technischen Hinweise zur Funktionalität des Tools. Über den Menüpunkt „Antragsdaten“ können Sie beginnen, die Daten zu Ihrem Forschungsprojekt auszufüllen.'
+      text: 'Ein leerer Antrag wurde erstellt. Bitte beachten Sie die Voraussetzungen für die Ethikantragstellung sowie die technischen Hinweise zur Funktionalität des Ethiktools. Über den Menüpunkt „Antragsdaten“ können Sie beginnen, die Daten zu Ihrem Forschungsprojekt auszufüllen.'
     loadSuccess: # info modal if an xml-file was successfully loaded without being updated
       title: 'XML-Datei geladen'
       text: >-
@@ -24,7 +24,10 @@ multiple:
       text: 'Die ausgewählte XML-Datei konnte nicht geladen werden.'
     customPDF: # info modal if a custom pdf could not be added while creating the complete proposal 
       title: 'Selbst formulierte PDF hinzufügen'
-      text: 'Die PDF-Datei „{filename}“ konnte nicht hinzugefügt werden. Bitte wählen Sie die korrekte Datei aus und erstellen Sie den Gesamtantrag erneut.</br></br> Sollten weitere selbst formulierte PDF-Dateien erforderlich sein, müssen diese ebenfalls neu hinzugefügt werden. Die Fehlermeldung bezieht sich nur auf die oben genannte Datei.'
+      text: >-
+        {filename, select,
+          sizeExceed  {Mindestens eine der hinzugefügten PDF-Dateien ist zu groß, oder die Gesamtgröße aller PDF-Dateien überschreitet das Maximum. Bitte fügen Sie nur PDF-Dateien hinzu, die in Summe eine maximale Größe von 7 MB haben, }
+          other       {Die PDF-Datei „{filename}“ konnte nicht hinzugefügt werden. Bitte wählen Sie die korrekte Datei aus}} und erstellen Sie den Gesamtantrag erneut.</br></br> Sollten weitere selbst formulierte PDF-Dateien erforderlich sein, müssen diese ebenfalls neu hinzugefügt werden. Die Fehlermeldung bezieht sich nur auf die oben genannte Datei.
     errorMessage: # info modal if an error occurred
         title: 'Fehler'
         text: 'Ein Fehler ist aufgetreten. Sie wurden daher auf die Hauptseite zurückgeleitet. Bitte teilen Sie uns über <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a> mit, welche Aktionen Sie ausgeführt haben, unmittelbar bevor der Fehler auftrat. Wir beheben den Fehler schnellstmöglich. </br> Sollten weiterhin Fehler auftreten, laden Sie bitte Ihren Antrag (XML-Datei) erneut.'
@@ -108,9 +111,17 @@ multiple:
     positionOther: 'sonstige Position'
     otherDefault: 'Bitte Position eingeben'
 
+dateFormat: >-
+  d.m.Y{noTime, select,
+         true  {}
+         other { H:i:s}}
+
 header: # alternative texts for logos
     ZPID: 'zur Webseite des ZPID'
     TUC: 'zur Webseite der TU Chemnitz'
+    update:
+      before: 'In wenigen Minuten (montags gegen 8 Uhr) beginnt die wöchentliche Wartung des Ethiktools. Bitte speichern Sie Ihren Ethikantrag und setzen Sie ihn später fort.'
+      during: 'Momentan findet die wöchentliche Wartung des Ethiktools statt. Bitte arbeiten Sie ab 8:30 Uhr an Ihrem Ethikantrag weiter.'
 
 committee:
   committeeNom: >-
@@ -254,6 +265,8 @@ main:
  
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden.}
       EUB   {Bitte beachten Sie folgende <b>Voraussetzungen für die Antragstellung:</b>
+    
+             Die Nutzung des Ethiktools is derzeit nur für Anträge im ausführlichen Verfahren vorgesehen.
              
              Antragsberechtigt sind Mitglieder und Angehörige der Universität Bielefeld. Studierende können ebenfalls einen Ethikantrag für ihre Abschlussarbeit oder andere studentische Forschungsprojekte einreichen, die Lehrpersonen bzw. Betreuenden müssen den Antrag vor der Einreichung gelesen und genehmigt haben.
 
@@ -381,7 +394,7 @@ coreData:
     title: 'Quelle(n) der Finanzierung'
     fundingQuali: 'keine gesonderte Finanzierung (Qualifikationsarbeit)'
     fundingBudget: 'Haushaltsmittel'
-    fundingResearch: 'Forschungsförderorganisation/Stiftung'
+    fundingResearch: 'Mittel einer Forschungsförderorganisation/Stiftung'
     fundingExternal: 'Industriedrittmittel'
     fundingOther: 'sonstige Quelle(n)'
     textHints:
@@ -494,7 +507,7 @@ contributors:
     contact: 'Kontaktperson'
     data: 'Datenverantw.'
     other: 'Sonstiges'
-  hint: 'Mit dem Plus-Symbol können Sie weitere Projektbeteiligte hinzufügen. Mit dem Stift-Symbol können Sie die Daten einer bereits angelegten Person bearbeiten und dieser Person weitere Funktionen im Forschungsprojekt hinzufügen. Mit dem Mülleimer-Symbol können Sie die Daten einer bereits angelegten Person wieder löschen.</br></br>Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. Beide Funktionen sollten in der Regel nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht.</br> Bitte nehmen Sie frühzeitig Kontakt zu den zuständigen Datenschutzstellen auf, wenn mehr als eine Person verantwortlich für die Verarbeitung der Daten (im Sinne der DS-GVO) ist und insbesondere wenn die Verantwortlichkeiten über verschiedene Institutionen verteilt sind. Bitte beachten Sie auch, dass die DS-GVO-konforme Aufklärung über die Verarbeitung personenbezogener Daten in diesem Fall nicht mit dem Ethiktool erstellt werden kann.</br></br>Wenn Personen noch nicht namentlich feststehen, können sie hier als N. N. (inkl. Leerzeichen) mit ihren geplanten Funktionen im Projekt hinzugefügt werden. Eine nachträgliche Ergänzung von Projektbeteiligten nach Erhalt eines positiven Ethikvotums ist möglich; falls dies allerdings die ethische Einschätzung berührt (z.B. durch einen neuen Interessenkonflikt), ist eine Nachbegutachtung erforderlich.</br>'
+  hint: 'Mit dem Plus-Symbol können Sie weitere Projektbeteiligte hinzufügen. Mit dem Stift-Symbol können Sie die Daten einer bereits angelegten Person bearbeiten und dieser Person weitere Funktionen im Forschungsprojekt hinzufügen. Mit dem Mülleimer-Symbol können Sie die Daten einer bereits angelegten Person wieder löschen.</br></br>Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. Beide Funktionen sollten in der Regel nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht.</br> Bitte nehmen Sie frühzeitig Kontakt zu den zuständigen Datenschutzstellen auf, wenn mehr als eine Person verantwortlich für die Verarbeitung der Daten (im Sinne der DS-GVO) ist und insbesondere wenn die Verantwortlichkeiten über verschiedene Institutionen verteilt sind. Bitte beachten Sie auch, dass die DS-GVO-konforme Aufklärung über die Verarbeitung personenbezogener Daten in diesem Fall nicht mit dem Ethiktool erstellt werden kann.</br></br>Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) mit ihren geplanten Funktionen im Projekt hinzugefügt werden. Eine nachträgliche Ergänzung von Projektbeteiligten nach Erhalt eines positiven Ethikvotums ist möglich; falls dies allerdings die ethische Einschätzung berührt (z.B. durch einen neuen Interessenkonflikt), ist eine Nachbegutachtung erforderlich.</br>'
   errors:
     name: 'Achtung: Name nicht vollständig'
     eMail: 'Achtung: keine gültige E-Mail-Adresse'
@@ -540,7 +553,7 @@ projectdetails:
         minAge: 'Mindestalter'
         maxAge: 'Maximales Alter'
         unlimited: 'unbegrenzt'
-      wardsHint: 'Die gewählten Gruppen umfassen Personen, die selbst nicht einwilligungsfähig sind. Daher sind weitere Angaben und Dokumente für die einwilligenden Personen erforderlich. Wenn Sie darüber hinaus noch selbst einwilligungsfähige Personen untersuchen wollen, legen Sie bitte unter „Projektdetails“ eine weitere Gruppe an.'
+      wardsHint: 'Die gewählten Gruppen umfassen Personen, die selbst nicht einwilligungsfähig sind. Daher sind weitere Angaben und Dokumente für die einwilligenden Personen erforderlich. Wenn Sie darüber hinaus noch selbst einwilligungsfähige Personen untersuchen wollen, legen Sie bitte auf der <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-route-i-ds-param="{studyID}" data-base-page-param="Projectdetails">Übersichtsseite dieser Studie</a> eine weitere Gruppe an.'
       examined:
         title: 'Welche Personen sollen untersucht werden?'
         healthy: 'gesunde Personen'
@@ -917,7 +930,7 @@ projectdetails:
                                             other    {Teilnehmenden}}, warum die Teilnahme nicht bzw. nicht ohne Nachteile beendet werden kann.
       terminateParticipants:
         title: 'Wie wird mit den Daten verfahren, wenn die Studienteilnahme einer Person vorzeitig abgebrochen wird?'
-        types:
+        types: # TODO (AB/EB): Ist noch eine unterschiedliche Formulierung für vorab/nachträgliche Aufklärung geplant? Sonst entferne ich das select. -AB: lass mal bitte noch stehen, das schauen wir uns noch an
           remove: >-
             {information, select,
               post  {Bei individuellem Abbruch der Studienteilnahme werden alle erhobenen Daten umgehend gelöscht und fließen nicht in die Auswertung ein.}
@@ -972,7 +985,8 @@ projectdetails:
         textHintOther: 'Bitte erläutern Sie näher, wie bei vorzeitigem Abbruch mit der Aufwandsentschädigung verfahren wird. Achten Sie darauf, dass sich Ihre Formulierung in den obenstehenden Satz einfügt.'
       awarding:
         title: 'Wie wird die Vergabe der Aufwandsentschädigung abgewickelt?'
-        laterTextHint: '..., und zwar ... (bitte Datum/Zeitpunkt sowie Name/Stelle benennen, z.B. „ab 01.01.2026 im Sekretariat“)'
+        dateFormat: 'd.m.Y' # for laterTextHint
+        laterTextHint: '..., und zwar ... (bitte Datum/Zeitpunkt sowie Name/Stelle benennen, z.B. „ab {date} im Sekretariat“)'
         laterEnd: # other is participants in select
           title: 'Hierfür werden folgende Informationen benötigt: '
           code: >-
@@ -1137,7 +1151,7 @@ projectdetails:
         template: 'Für die Studie ist keine gesonderte Studienversicherung (Teilnehmendenversicherung) vorgesehen.'
     dataPrivacy:
       processing:
-        title: 'Bitte beschreiben Sie kurz - zur Einordnung für die Ethikkommission - die Verarbeitung der Daten für den ausgewählten Teil (Studie/Gruppe/Zeitpunkt). Orientieren sich dabei an den verschiedenen Phasen im Projekt (z.B. Kontaktierung, Datenerhebung, Auswertung, Veröffentlichung, Teilung und Nachnutzung der Daten).'
+        title: 'Bitte beschreiben Sie kurz - zur Einordnung für die Ethikkommission - die Verarbeitung der Daten für den ausgewählten Teil (Studie/Gruppe/Zeitpunkt). Orientieren Sie sich dabei an den verschiedenen Phasen im Projekt (z.B. Kontaktierung, Datenerhebung, Auswertung, Veröffentlichung, Teilung und Nachnutzung der Daten).'
         textHint: 'Bitte beschreiben Sie die Datenverarbeitung so, dass eine fachlich unkundige Person die Verarbeitung im Wesentlichen verstehen kann. Bitte berücksichtigen Sie insbesondere folgende Aspekte: Welche personenbezogenen bzw. anonymen Daten werden ggf. warum verarbeitet? Bitte beachten Sie dabei sowohl organisatorische Aspekte der Studie (z.B. Rekrutierung von Teilnehmenden, Aufwandsentschädigung) als auch die Forschungsdaten selbst. Ziehen Sie alle Daten in Betracht, die konkret von einzelnen Personen im Verlauf des Forschungsprojekts zumindest kurz dokumentiert werden.'
       create:
         title: 'Wie soll die Datenschutzerklärung für die Studie erstellt werden?'
@@ -1155,14 +1169,14 @@ projectdetails:
             verified: 'Die Datenschutzerklärung ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.'
             unverified: 'Die Datenschutzerklärung ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.'
       intro: 
-        text: |
-          Das Ethiktool unterstützt Sie darin, die Datenverarbeitung in der Studie abzubilden.
-
-          Zunächst muss festgestellt werden, ob personenbezogene Daten verarbeitet werden. Sollte dies der Fall sein, werden zur Zusammenstellung der Datenschutzerklärung („Anlage zur Datenverarbeitung“) weitere Aspekte abgefragt.
-          Die Ausführungen sind nicht erschöpfend und ersetzen keine rechtliche Bewertung der Sachlage im Einzelfall. Lassen Sie sich ggf. von der für Sie zuständigen Datenschutzstelle beraten. Sollte sich die Struktur Ihrer Datenverarbeitung im Ethiktool nicht abbilden lassen, wenden Sie sich bitte ebenfalls an die für Sie zuständige Stelle.
-          Um einordnen zu können, ob die Datenverarbeitung in einer Studie als „anonym“ oder „personenbezogen“ gilt, sind sowohl die inhaltlichen Aspekte der Forschung (die reinen Forschungsdaten) als auch der organisatorische Rahmen (z.B. Kontaktdaten, Vergabe einer Aufwandsentschädigung) zu beachten. Nur in der Gesamtschau der inhaltlich verarbeiteten Daten in Kombination mit der organisatorischen Abwicklung der Studie lässt sich feststellen, ob <u>personenbezogene Daten</u> vorliegen. <i class="Label-Info" style="display: inline-flex; white-space: initial; width: fit-content"><span style="color: black">Personenbezogene Daten sind nach Art. 4 Abs. 1 DS-GVO „alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen; als identifizierbar wird eine natürliche Person angesehen, die direkt oder indirekt, insbesondere mittels Zuordnung zu einer Kennung wie einem Namen, zu einer Kennnummer, zu Standortdaten, zu einer Online-Kennung oder zu einem oder mehreren besonderen Merkmalen, die Ausdruck der physischen, physiologischen, genetischen, psychischen, wirtschaftlichen, kulturellen oder sozialen Identität dieser natürlichen Person sind, identifiziert werden kann“.
-          Hierzu zählen also auch Daten, die aus dem Kontext der Studie eine Identifikation ermöglichen, z.B. das Alter bei Erhebung einer geschlossenen Personengruppe (Trainingsgruppe, Schulklasse o.dgl.), in der nur einzelne Personen ein bestimmtes Alter aufweisen.</span></i>
-          Das Ethiktool fragt nicht nach technisch-organisatorischen Maßnahmen (TOMs), da diese üblicherweise nicht in die Datenschutzerklärung aufgenommen werden. Selbstverständlich müssen Sie geeignete Maßnahmen ergreifen, etwa um sicherzustellen, dass die Daten vor unautorisiertem Zugriff geschützt sind. Lassen Sie sich auch hierzu von der zuständigen Datenschutzstelle beraten; im Regelfall werden Sie ein Verzeichnis für Verarbeitungstätigkeiten (VVT) gemäß Art. 30 DS-GVO anfertigen, das jedoch kein Gegenstand der Ethikbegutachtung ist.
+        text:
+          start: 'Das Ethiktool unterstützt Sie darin, die Datenverarbeitung in der Studie abzubilden.'
+          end: |
+            Zunächst muss festgestellt werden, ob personenbezogene Daten verarbeitet werden. Sollte dies der Fall sein, werden zur Zusammenstellung der Datenschutzerklärung („Anlage zur Datenverarbeitung“) weitere Aspekte abgefragt.
+            Die Ausführungen sind nicht erschöpfend und ersetzen keine rechtliche Bewertung der Sachlage im Einzelfall. Lassen Sie sich ggf. von der für Sie zuständigen Datenschutzstelle beraten. Sollte sich die Struktur Ihrer Datenverarbeitung im Ethiktool nicht abbilden lassen, wenden Sie sich bitte ebenfalls an die für Sie zuständige Stelle.
+            Um einordnen zu können, ob die Datenverarbeitung in einer Studie als „anonym“ oder „personenbezogen“ gilt, sind sowohl die inhaltlichen Aspekte der Forschung (die reinen Forschungsdaten) als auch der organisatorische Rahmen (z.B. Kontaktdaten, Vergabe einer Aufwandsentschädigung) zu beachten. Nur in der Gesamtschau der inhaltlich verarbeiteten Daten in Kombination mit der organisatorischen Abwicklung der Studie lässt sich feststellen, ob <u>personenbezogene Daten</u> vorliegen. <i class="Label-Info" style="display: inline-flex; white-space: initial; width: fit-content"><span style="color: black">Personenbezogene Daten sind nach Art. 4 Abs. 1 DS-GVO „alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen; als identifizierbar wird eine natürliche Person angesehen, die direkt oder indirekt, insbesondere mittels Zuordnung zu einer Kennung wie einem Namen, zu einer Kennnummer, zu Standortdaten, zu einer Online-Kennung oder zu einem oder mehreren besonderen Merkmalen, die Ausdruck der physischen, physiologischen, genetischen, psychischen, wirtschaftlichen, kulturellen oder sozialen Identität dieser natürlichen Person sind, identifiziert werden kann“.
+            Hierzu zählen also auch Daten, die aus dem Kontext der Studie eine Identifikation ermöglichen, z.B. das Alter bei Erhebung einer geschlossenen Personengruppe (Trainingsgruppe, Schulklasse o.dgl.), in der nur einzelne Personen ein bestimmtes Alter aufweisen.</span></i>
+            Das Ethiktool fragt nicht nach technisch-organisatorischen Maßnahmen (TOMs), da diese üblicherweise nicht in die Datenschutzerklärung aufgenommen werden. Selbstverständlich müssen Sie geeignete Maßnahmen ergreifen, etwa um sicherzustellen, dass die Daten vor unautorisiertem Zugriff geschützt sind. Lassen Sie sich auch hierzu von der zuständigen Datenschutzstelle beraten; im Regelfall werden Sie ein Verzeichnis für Verarbeitungstätigkeiten (VVT) gemäß Art. 30 DS-GVO anfertigen, das jedoch kein Gegenstand der Ethikbegutachtung ist.
         confirm: 'Die obigen Informationen habe ich zur Kenntnis genommen.'
       dataOnline:
         title: 'Werden im Rahmen der Online-Erhebung IP-Adressen erfasst?'
@@ -1273,7 +1287,7 @@ projectdetails:
         title: 'Wie werden die Forschungsdaten gekennzeichnet?'
         headingHint: 'Häufig werden Teilnehmenden in Forschungsprojekten aus verschiedenen Gründen Nummern/Codes/Pseudonyme zugewiesen bzw. die Forschungsdaten unter einem Personencode oder (selten) Klarnamen registriert/gespeichert. Damit können auch Dateibezeichnungen für einzelne Datensätze gemeint sein. Mit Kennzeichnung sind hier sowohl verschiedene Arten der Codierung im engeren Sinn als auch die Kennzeichnung mit dem Klarnamen der Teilnehmenden gemeint. Für die Beurteilung, ob die Forschungsdaten personenbeziehbar sind, ist u.a. die Art der Kennzeichnung relevant; sie wird daher hier im Detail erfragt. <u>Wenn Sie zwei Kennzeichnungen verwenden, werden Sie weiter unten separat nach der zweiten Kennzeichnung gefragt.</u>'
         types:
-          external: 'Die Forschungsdaten werden mit einem Code versehen, der außerhalb des Projekts vergeben wurde oder wird '
+          external: 'Die Forschungsdaten werden mit einem Code versehen, der außerhalb des Projekts vergeben wurde oder wird'
           internal: 'Die Forschungsdaten werden mit einem projektinternen Code versehen. '
           name: 'Die Forschungsdaten werden mit dem Namen der Teilnehmenden gekennzeichnet. '
           no: 'Die Forschungsdaten werden nicht individuell gekennzeichnet.'
@@ -1824,7 +1838,7 @@ checkDoc:
       groups:
         minAge: 'Mindestalter'
         maxAge: 'maximales Alter'
-        minAgeAppType: 'Bei Minderjährigen ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Hauptantrag</a> erforderlich.'
+        minAgeAppType: 'Bei Minderjährigen ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Hauptantrag</a> erforderlich.'
         maxGreaterMin: 'Das maximale Alter darf nicht kleiner als das Mindestalter sein.'
         minAgeWards: 'Wenn das Mindestalter kleiner als 16 ist, muss das maximale Alter kleiner als 18 sein. Legen Sie bei Bedarf eine zweite Gruppe für die Erwachsenen an.'
         examinedPeople: 'Teilnehmende Personengruppen'
@@ -1832,14 +1846,14 @@ checkDoc:
         physicalMental: >-
           Wenn Personen mit {group, select,
                               physical {körperlichen}
-                              other {psychischen oder kognitiven}} Erkrankungen oder Einschränkungen untersucht werden, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Hauptantrag</a> erforderlich.
+                              other {psychischen oder kognitiven}} Erkrankungen oder Einschränkungen untersucht werden, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Hauptantrag</a> erforderlich.
         closed:
           title: 'Erhebung in einer geschlossenen Gruppe'
           types: 'Arten von geschlossenen Gruppen'
           other: 'sonstigen geschlossenen Gruppe'
         criteria:
           include: 'Weitere Einschlusskriterien neben dem Alter fehlen.'
-          exclude: 'Ausschlusskriterien'
+          exclude: 'Ausschlusskriterien fehlen.'
         sampleSize: 'Stichprobengröße'
         planning: 'Fallzahlplanung'
         recruitment:
@@ -1882,8 +1896,7 @@ checkDoc:
           locationDescription: 'Beschreibung des Ortes der Datenerhebung'
         presence: 'Anwesenheit von Projektbeteiligten'
         duration:
-          total: 'Gesamtdauer der Untersuchung'
-          measureTime: 'reine Erhebungszeit'
+          measureTime: 'Reine Erhebungszeit'
           breaks: 'Vor-/Nachbereitungszeit'
       burdensRisks: # other is burdens/risks for contributors
         title: >-
@@ -1975,7 +1988,11 @@ checkDoc:
                     other    {}} keine {participant, select,
                                           thirdParty {Einwilligung}
                                           other      {Zustimmung}} erfolgt, muss die Frage nach Freiwilligkeit mit „Nein“ beantwortet werden.
-          consentDescription: 'Begründung für fehlende Einwilligung'
+          consentDescription: >-
+            Begründung für fehlende Einwilligung {addressee, select,
+                                                    children {bzw. Zustimmung}
+                                                    wards    {bzw. Zustimmung}
+                                                    other    {}}
           presence: 'Wenn keine Projektbeteiligten bei der Erhebung <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">anwesend</a> sind, kann die Einwilligung der Teilnehmenden nicht mündlich erfolgen.'
           finding: 'Wenn <a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">(Zufalls-)Befunde</a> auftreten können, muss eine Einwilligung erfolgen.'
         terminateCons:
@@ -2068,6 +2085,10 @@ checkDoc:
           missing: 'Art der Erstellung der Datenschutzerklärung'
           informationToNotApplicable: 'Wenn es keine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung und keine nachträgliche Aufklärung<a> gibt, muss die Frage nach Art der Erstellung der Datenschutzerklärung mit „nicht zutreffend“ beantwortet werden.'
           notApplicableToInformation: 'Sie haben bei der Frage nach Art der Erstellung der Datenschutzerklärung „nicht zutreffend“ ausgewählt. Das ist nur möglich, wenn es <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt.'
+          support: >-
+            Wenn {isVerified, select,
+                    true  {die Datenschutzerklärung durch die zuständige Datenschutzstelle geprüft und genehmigt worden ist}
+                    other {nach Einschätzung der zuständigen Datenschutzstelle nur anonyme Daten verarbeitet werden}}, muss eine <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">Unterstützung durch die datenschutz- und/oder informationssicherheitsbeauftragte Person</a> in Anspruch genommen worden sein.
         verification: 'Angabe zur Prüfung der Datenschutzerklärung durch die zuständige Datenschutzstelle' # '[] fehlt.'
         confirmIntro: 'Bestätigung der Informationen zum Datenschutz' # '[] fehlt.'
         responsibility:
@@ -2178,12 +2199,9 @@ checkDoc:
             noOnline: 'Sie haben ausgewählt, dass die Erhebung nicht <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">online</a> stattfindet. Das passt nicht dazu, dass die „IP-Adresse“ in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt ist.'
             ipNo: 'Wenn im Rahmen der Online-Erhebung keine IP-Adressen erfasst werden, darf die „IP-Adresse“ nicht in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
             ipList: 'Sie haben ausgewählt, dass die Schlüsselliste IP-Adressen enthält. Das ist nur plausibel, wenn im Rahmen einer <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Online-Erhebung</a> IP-Adressen erfasst und zur technischen Unterstützung mit den Forschungsdaten verknüpft werden.'
-            ipResearch:
-              dataPersonal: 'Wenn IP-Adressen zur Beantwortung der Forschungsfrage erfasst werden, müssen die Forschungsdaten selbst personenbezogen sein.'
-              dataResearch: 'Wenn IP-Adressen zur Beantwortung der Forschungsfrage erfasst werden, muss „IP-Adressen“ in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
+            ipResearch: 'Wenn IP-Adressen zur Beantwortung der Forschungsfrage erfasst werden, muss „IP-Adressen“ in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
             ipTechnical: 'Wenn die IP-Adressen nur zur technischen Unterstützung erfasst werden, darf „IP-Adressen“ nicht in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
             linkedMarking: 'Wenn die IP-Adressen mit den Forschungsdaten verknüpft sind, müssen die Forschungsdaten mit einer Schlüsselliste gekennzeichnet sein, und „IP-Adresse“ muss in der Auflistung der personenbezogenen Daten der Schlüsselliste ausgewählt werden.'
-            research: 'Wenn die IP-Adressen im Forschungsdatensatz gespeichert werden, müssen die Forschungsdaten selbst personenbezogen sein.'
           closed: 'Dass die Art der Codebildung eine Identifikation einzelner Personen zulassen könnte, ist nur plausibel, wenn die <a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Erhebung in einer geschlossenen Gruppe</a> stattfindet.'
           video: 'Wenn als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, muss bei der Frage nach Personenbezug der Forschungsdaten ausgewählt werden, dass die Forschungsdaten selbst personenbezogen sind.'
           measuresToVideo: 'Wenn als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, müssen Tonaufnahmen, Fotos und/oder Videoaufnahmen in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
@@ -2211,8 +2229,8 @@ checkDoc:
         dataReuseSelf: 'Antwort auf Frage, ob die Forschungsdaten zur eigenen Nachnutzung/Re-Analyse verwendet werden,' # '[] fehlt.'
       contributor:
         mandatory: >-
-          Es wurde keine projektbeteiligte Person für die Funktion „{task}“ ausgewählt{type, select,
-              missing {, weil auf der Seite „<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Projektbeteiligte</a>“ bei keiner projektbeteiligten Person diese Funktion ausgewählt wurde.}
+          Es wurde keine Person für die Funktion „{task}“ ausgewählt{type, select,
+              missing {, weil auf der Seite „<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Projektbeteiligte</a>“ bei keiner Person diese Funktion ausgewählt wurde.}
               other   {.}}
         task: >-
           Die Funktion „{task}“ der {numContributor, plural,
@@ -2339,7 +2357,7 @@ technicalHints:
 
     Zum Ausfüllen der Antragsinhalte beginnen Sie am besten mit „Antragsdaten“ und klicken sich dann jeweils über „nächste Seite“ Schritt für Schritt durch das Formular. Alternativ können Sie in der linksseitigen Navigationsleiste auch direkt zu bestimmten Bereichen (z.B. Projektdetails) springen.
 
-    Auf der rechten Seite sehen Sie eine Vorschau des Antragsdokuments. Sie können die Fragen dort anwählen und darüber ebenfalls zu bestimmten Bereichen/Fragen springen. Oberhalb der Vorschau werden Sie auf fehlende oder fehlerhafte Eingaben hingewiesen.
+    Auf der rechten Seite sehen Sie eine Vorschau des Antragsdokuments und der Teilnahmedokumente. Sie können die Fragen bzw. Überschriften dort anwählen und darüber ebenfalls zu bestimmten Bereichen im Ethiktool springen. Oberhalb der Vorschau werden Sie auf fehlende oder fehlerhafte Eingaben hingewiesen.
 
     Bitte speichern Sie Ihre Eingaben regelmäßig. Die Dateien werden lokal bei Ihnen im XML-Format gespeichert. Sie können das Ausfüllen jederzeit unterbrechen und Ihre gespeicherten Angaben als XML-Datei später wieder laden und weiter bearbeiten.
 
@@ -2358,7 +2376,7 @@ technicalHints:
 termsOfUse:
   title: 'Nutzungsbedingungen'
   text: |
-    Die Nutzung des Ethiktools ist kostenfrei und erfolgt auf eigene Verantwortung. Weder das Leibniz-Institut für Psychologie (ZPID) noch die Technische Universität (TU) Chemnitz noch eine anderweitig mit dem Ethiktool verbundene Institution oder Person übernehmen irgendeine Verantwortung oder Haftung für die inhaltliche und rechtliche Korrektheit der erzeugten Dokumente oder die Beurteilung der ethischen und rechtlichen Zulässigkeit des Forschungsvorhabens. Die Verantwortung für die rechtlich und ethisch einwandfreie Durchführung von Forschungsvorhaben verbleibt allein bei den Forschenden oder – in Fällen, in denen eine Verantwortung oder Haftung anderer Gremien vorgesehen sind – bei den jeweiligen Gremien. Die Verantwortung für die Begutachtung verbleibt allein bei der jeweiligen Ethikkommission bzw. den von ihr beauftragten Personen, Gremien und Organisationen. 
+    Die Nutzung des Ethiktools ist kostenfrei und erfolgt auf eigene Verantwortung. Weder das Leibniz-Institut für Psychologie (ZPID) noch die Technische Universität (TU) Chemnitz noch eine anderweitig mit dem Ethiktool verbundene Institution oder Person übernehmen irgendeine Verantwortung oder Haftung für die inhaltliche und rechtliche Korrektheit der erzeugten Dokumente oder die Beurteilung der ethischen und rechtlichen Zulässigkeit des Forschungsvorhabens. Die Verantwortung für die rechtlich und ethisch einwandfreie Durchführung von Forschungsprojekten verbleibt allein bei den Forschenden oder – in Fällen, in denen eine Verantwortung oder Haftung anderer Gremien vorgesehen sind – bei den jeweiligen Gremien. Die Verantwortung für die Begutachtung verbleibt allein bei der jeweiligen Ethikkommission bzw. den von ihr beauftragten Personen, Gremien und Organisationen. 
     
     Informationen zum Datenschutz und zur Verarbeitung personenbezogener Daten im Sinne der EU-Datenschutz-Grundverordnung (DS-GVO) finden Sie unter <a class="linkExternal" href="https://leibniz-psychology.org/datenschutz" target="_blank">https://leibniz-psychology.org/datenschutz</a>.
     

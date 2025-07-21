@@ -13,17 +13,14 @@ class ConsentType extends TypeAbstract
 
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $dummyParams = $options[self::dummyParams];
-        $addressee = $dummyParams[self::addresseeType];
+        $addressee = $options[self::addresseeType];
         $isNotParticipants = $addressee!==self::addresseeParticipants;
         $translationPrefix = 'projectdetails.pages.consent.';
         foreach ([self::consentNode,self::voluntaryNode] as $type) {
             $types = $type===self::consentNode ? self::consentTypes : self::voluntaryTypes;
-            $partTrans = $this->translateString('projectdetails.addressee.participants.'.$addressee);
-            $partPronoun = $this->getAddresseeString($addressee,false,true,true);
             foreach (array_merge([''],$isNotParticipants ? ['Participants'] : []) as $curAddressee) {
                 $isThirdParty = $curAddressee==='';
-                $this->addRadioGroup($builder,$type.$curAddressee,$types,$translationPrefix.self::addressee.'.'.($isThirdParty ? $addressee : 'participants'),$isThirdParty ? $type.self::descriptionCap : '', $isThirdParty ? $translationPrefix.$type.'.'.self::textHint : '',[
-                    self::labelParams => ['curAddressee' => $curAddressee, self::addresseeTrans => $isThirdParty ? $options[self::addresseeTrans] : $partTrans, self::participantTrans => $isThirdParty ? $options[self::participantTrans] : $partPronoun]]);
+                $this->addRadioGroup($builder,$type.$curAddressee,$types,$translationPrefix.self::addressee.'.'.($isThirdParty ? $addressee : 'participants'),$isThirdParty ? $type.self::descriptionCap : '', $isThirdParty ? $translationPrefix.$type.'.'.self::textHint : '');
                 $this->addFormElement($builder,self::consentOtherDescription.$curAddressee,'text',options: ['attr' => ['placeholder' => $translationPrefix.self::consentNode.'.types.'.self::consentOtherDescription]]);
             }
         }
@@ -32,7 +29,7 @@ class ConsentType extends TypeAbstract
         }
         // terminate with disadvantages
         $tempPrefix = $translationPrefix.self::terminateConsNode.'.';
-        $this->addBinaryRadio($builder,self::terminateConsNode,$tempPrefix.'title',self::terminateConsNode.self::descriptionCap,$tempPrefix.self::textHint,[self::labelParams => [self::addresseeTrans => $this->translateString('projectdetails.addressee.'.($isNotParticipants ? ($dummyParams['isAttendance'] ? 'both' : 'participants') : 'thirdParties').'.'.$addressee)]]);
+        $this->addBinaryRadio($builder,self::terminateConsNode,$tempPrefix.'title',self::terminateConsNode.self::descriptionCap,$tempPrefix.self::textHint,[self::labelParams => [self::addressee => $this->translateString('projectdetails.addressee.'.($isNotParticipants ? ($dummyParams['isAttendance'] ? 'both' : 'participants') : 'thirdParties').'.'.$addressee)]]);
         $information = $options[self::informationNode];
         if (in_array($information,[self::pre,self::post])) {
             $this->addFormElement($builder,self::terminateConsNode.self::terminateConsParticipationNode,'textarea',hint: $translationPrefix.self::terminateConsNode.'.participation');

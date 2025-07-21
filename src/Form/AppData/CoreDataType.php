@@ -61,7 +61,7 @@ class CoreDataType extends TypeAbstract
         foreach (self::fundingTypes as $key => $value) {
             $this->addFormElement($builder,$key,'checkbox',$value);
             if ($key!==self::fundingQuali) {
-                $this->addFormElement($builder,$key.'Text','textarea',hint: $tempPrefix.$key);
+                $this->addFormElement($builder,$this->appendText($key),'textarea',hint: $tempPrefix.$key);
             }
             if (in_array($key,self::fundingResearchExternal)) {
                 $this->addRadioGroup($builder,$key.'FundingState',$fundingStateChoices);
@@ -119,7 +119,7 @@ class CoreDataType extends TypeAbstract
             $isBegun = array_key_exists(self::descriptionNode,$tempArray);
             $tempBool = $tempVal==='0' && !$isBegun; // true if projectStartNext is selected
             $forms[self::projectStartNext]->setData($tempBool);
-            $forms[self::projectStart]->setData(new DateTime(!($tempBool || $isBegun) ? $tempVal : 'today'));
+            $forms[self::projectStart]->setData(new DateTime(!($tempBool || $isBegun) ? $tempVal : 'today', $this->getTimezone()));
             if (array_key_exists(self::projectStartBegun,$forms)) {
                 $forms[self::projectStartBegun]->setData($isBegun);
                 $forms[$this->appendText(self::projectStartBegun)]->setData($this->getArrayValue($tempArray,self::descriptionNode));

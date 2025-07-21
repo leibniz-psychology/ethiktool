@@ -11,7 +11,7 @@
 {% block content %}
 {#    <h2 class="MetaDataGroup-Title">{{ 'pages.checkDoc.title'|trans }}</h2>#}
     <div class="MetaData-Label">{{ text|raw|nl2br }}</div>
-    <div class="MetaData-Widget mt-8 mb-2"><button type="button" class="Button_primary_go" style="margin-top: 0.5rem" onclick="window.location.href='{{ path('app_main') }}'">{{ 'buttons.backToMain'|trans }}</button></div>
+    <div class="MetaData-Widget mt-8 mb-2"><button type="button" class="Button_primary_go mt-2" onclick="window.location.href='{{ path('app_main') }}'">{{ 'buttons.backToMain'|trans }}</button></div>
 {% endblock %}
 
 {% block preview %}

@@ -16,7 +16,6 @@ class CompensationType extends TypeAbstract
         $typesPrefix = $translationPrefix.'types.';
         $textHintPrefix = $typesPrefix.self::textHintPlural.'.';
         $awardingPrefix = $translationPrefix.self::awardingNode.'.';
-        $choiceOptions = [self::labelParams => $options[self::dummyParams]];
         // types
         $this->addCheckboxGroup($builder,self::compensationTypes,$typesPrefix,self::compensationOther.self::descriptionCap,$textHintPrefix.self::compensationOther);
         foreach (array_diff(self::compensationTypes,[self::compensationNo]) as $type) {
@@ -27,8 +26,8 @@ class CompensationType extends TypeAbstract
             if ($type!==self::compensationOther) {
                 $this->addRadioGroup($builder,self::awardingNode.$type,self::awardingTypes[$type]);
                 $this->addFormElement($builder,$type.'otherDescription','text', options: $this->getPlaceholder($awardingPrefix.$type.'.'.$type.'OtherPlaceholder')); // other type
-                $this->addFormElement($builder,$type.self::awardingLater.self::descriptionCap,'text', hint: $awardingPrefix.'laterTextHint'); // later description
-                $this->addRadioGroup($builder,$type.self::laterTypesName,self::laterTypes, options: $choiceOptions); // later types
+                $this->addFormElement($builder,$type.self::awardingLater.self::descriptionCap,'text'); // later description
+                $this->addRadioGroup($builder,$type.self::laterTypesName,self::laterTypes); // later types
                 $this->addFormElement($builder,$type.self::laterOtherDescription,'text',options: $this->getPlaceholder($awardingPrefix.'laterEnd.placeholder')); // description of later type other
             }
             if (in_array($type,[self::compensationMoney,self::compensationLottery])) { // external description

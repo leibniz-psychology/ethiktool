@@ -28,7 +28,7 @@ class MeasuresType extends TypeAbstract
         $this->addBinaryRadio($builder,self::loanNode,$tempPrefix.'title');
         $this->addRadioGroup($builder,self::loanReceipt,self::templateTypes,$tempPrefix.'receipt',$this->appendText(self::loanReceipt));
         // location
-        $this->addRadioGroup($builder,self::locationNode,$this->translateArray($translationPrefix.'location.types.',['intern','extern',self::locationOnline,'other']),textareaName: self::locationNode.self::descriptionCap,options: [self::labelParams => $options[self::committeeArray]]);
+        $this->addRadioGroup($builder,self::locationNode,$this->translateArray($translationPrefix.'location.types.',['intern','extern',self::locationOnline,'other']),textareaName: self::locationNode.self::descriptionCap);
         // presence
         $this->addBinaryRadio($builder,self::presenceNode,$translationPrefix.self::presenceNode.'.title');
         // durations

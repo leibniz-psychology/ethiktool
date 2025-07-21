@@ -17,7 +17,7 @@ class MedicineType extends TypeAbstract
         $this->addBinaryRadio($builder,self::physicianNode,$translationPrefix.'title',self::descriptionNode,$translationPrefix.self::textHint);
         $translationPrefix .= self::descriptionNode.'.';
         $typesPrefix = $translationPrefix.'types.';
-        $this->addRadioGroup($builder,self::physicianNode.self::descriptionCap,[$typesPrefix.'exception' => 0, $typesPrefix.'other' => 1],$translationPrefix.'title',self::descriptionNode,options: [self::labelParams => $options[self::committeeArray]]);
+        $this->addRadioGroup($builder,self::physicianNode.self::descriptionCap,[$typesPrefix.'exception' => 0, $typesPrefix.'other' => 1],$translationPrefix.'title',self::descriptionNode,options: [self::labelParams => $options[self::committeeParams]]);
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);
     }

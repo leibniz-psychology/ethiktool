@@ -2,9 +2,9 @@
 {% set background, flexClasses = 'background: linear-gradient(to right,#240d46 0%,#2b2171 100%);', flexRowClasses~' flex-nowrap' %}
 {% set headerModals, infoModal = ['aboutUs','aboutTool','technicalHints','termsOfUse','contactModal'], 'components/infoModal.html.twig' %}
 <div class="bg-white relative z-20">
-    <div class="mx-auto" style="{{ maxWidth }}">
+    <div class="mx-auto winWidth" style="{{ maxWidth }}">
         <div class="{{ flexClasses }} justify-between" style="max-width: 1600px">
-            <div class="{{ flexClasses }}" style="width: 20%; padding-right: 2.5rem; margin-top: 0.5rem">
+            <div class="{{ flexClasses }} mt-2" style="width: 20%; padding-right: 2.5rem">
                 <a href="{{ 'https://leibniz-psychology.org/'~(curLocale is same as 'en' ? 'en' : '') }}" rel="noreferrer" target="_blank" style="{{ logoSize }}">
                     <div class="mt-[15px] lg:ml-0" title="{{ 'header.ZPID'|trans }}">{{ include('images/logos/header_ZPID.svg') }}</div>
                 </a>
@@ -29,7 +29,7 @@
         </div>
     </div>
     <header style="{{ background}} height: 150px">
-        <div class="HeaderBackground" style="height: 150px">
+        <div class="HeaderBackground winWidth" style="height: 150px">
             <div style="width: fit-content">
                 <a href="/{{ curLocale }}" class="block mx-auto sm:w-full font-serif text-5xl text-white whitespace-nowrap">
                     <span class="font-semibold font-serif">{{ 'main.title'|trans }}</span>
@@ -38,7 +38,9 @@
         </div>
     </header>
     <div style="{{ background }} height: 48px">
-        <div class="{{ flexRowClasses }} mx-auto bg-white flex-wrap pl-5 py-3" style="{{ maxWidth }} height: 48px">
+        {% set isUpdate = update is not same as '' %}
+        <div class="{{ flexRowClasses }} mx-auto bg-white flex-wrap align-content-center winWidth" style="{{ maxWidth }} min-height: 48px; max-height: max-content; justify-content: center">
+            <span class="mt-0 {% if isUpdate %} borderHint {% endif %}" style="border-color: red !important; color: red">{{ isUpdate ? ('header.update.'~update)|trans }}</span>
         </div>
     </div>
 </div>

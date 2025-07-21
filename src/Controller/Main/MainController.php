@@ -32,10 +32,8 @@ class MainController extends ControllerAbstract
         if ($main->isSubmitted()) { // language has changed, a link was clicked, the xml-file should be downloaded, or the program should be quit
             return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($session));
         }
-        return $this->render('Main/main.html.twig',
-            [self::content => $main,
-             'committeeParams' => $this->getCommitteeSession($session),
-             'error' => $errorModal,
-             'params' => ['oldVersion' => $sessionValue['oldVersion'] ?? '', 'newVersion' => self::toolVersion, 'isMain' => $sessionValue['isMain'] ?? '']]);
+        return $this->render('Main/main.html.twig',$this->setRenderParameters($request,$main,
+            ['error' => $errorModal,
+             'params' => ['oldVersion' => $sessionValue['oldVersion'] ?? '', 'newVersion' => self::toolVersion, 'isMain' => $sessionValue['isMain'] ?? '']]));
     }
 }

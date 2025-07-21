@@ -6,7 +6,9 @@ heading: >-
 
 header: |
   Erstellt mit Ethiktool Version {toolVersion}
-  <a class="no-linkout" href="https://ethiktool.org/" target="_blank">https://ethiktool.org/</a>
+  {savePDF, select,
+    true  {<a class="no-linkout" href="https://ethiktool.org/" target="_blank">https://ethiktool.org/</a>}
+    other {https://ethiktool.org/}}
   letzte Änderung am Ethikantrag:
 
 filenames:
@@ -14,11 +16,6 @@ filenames:
   application: 'Formular'
   participation: 'Teilnahmedokumente'
   completeForm: 'Gesamtantrag'
-
-dateFormat: >-
-  d.m.Y{noTime, select,
-         true  {}
-         other { H:i:s}}
 
 documentHint: >-
   Formulierung ist identisch zur Studieninformation und richtet sich daher im Wortlaut an die {participants, select,
@@ -67,13 +64,13 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     physician: 'Sind Ärztinnen oder Ärzte unter den Projektbeteiligten?'
   projectdetails:
     hint: >-
-      Die Eingaben in diesem Feld {noBox, select,
-                                    true  {würden}
-                                    other {wurden}} auf {numPages, plural,
-                                                          =1    {der Seite „{inputPage}“}
-                                                          other {den Seiten „Aufklärung“ und „AufklärungII“}} gemacht{noBox, select,
-                                                                                                                        true  { werden.}
-                                                                                                                        other {.}}
+      Die Eingaben zu dieser Frage {noBox, select,
+                                      true  {würden}
+                                      other {wurden}} auf {numPages, plural,
+                                                            =1    {der Seite „{inputPage}“}
+                                                            other {den Seiten „Aufklärung“ und „AufklärungII“}} getätigt{noBox, select,
+                                                                                                                          true  { werden.}
+                                                                                                                          other {.}}
     study: 'Studie '
     studyAll: 'alle Studien'
     group: 'Gruppe '
@@ -108,13 +105,13 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                               true {bzw. }
                               other {}} Begründung, warum keine über das alltagsübliche Maß hinausgehenden Belastungen erwartet werden}
                     other {}}:
-    burdensCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Belastungen Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
+    burdensCompensation: 'Sind bezogen auf die in der vorherigen Frage genannten Belastungen Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     risks: 'Welche potenziellen Gefährdungen oder Risiken bringt die Teilnahme mit sich?'
     risksSub: 'Beschreibung der Risiken:'
-    risksCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
+    risksCompensation: 'Sind bezogen auf die in der vorherigen Frage genannten Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     burdensRisksContributors: 'Werden die Projektbeteiligten oder unbeteiligte Dritte Belastungen bzw. Risiken ausgesetzt, die über das im Alltag zu erwartende Maß hinausgehen?'
     burdensRisksContributorsSub: 'Beschreibung der Belastungen bzw. Risiken' 
-    burdensRisksContributorsCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Belastungen bzw. Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
+    burdensRisksContributorsCompensation: 'Sind bezogen auf die in der vorherigen Frage genannten Belastungen bzw. Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     burdensRisksDescription: >- # if both questions are not answered yet, both will be named
       Die {burdens, select,
             true  {Belastungen /}
@@ -383,9 +380,9 @@ projectdetails:
       invasive: 'invasive Eingriffe'
       other: 'sonstige Maßnahme(n)'
     survey: >-
-      Details zu den Fragebögen finden sich in der Beschreibung der Erhebungsmethoden im vorherigen Feld{numInterventions, plural,
-                                                                                                          =1    {, keine Maßnahme im engeren Sinn}
-                                                                                                          other {}}.
+      Details zu den Fragebögen finden sich in der Beschreibung der Erhebungsmethoden in der vorherigen Frage{numInterventions, plural,
+                                                                                                                =1    {, keine Maßnahme im engeren Sinn}
+                                                                                                                other {}}.
     duration: >-
       Die Gesamtdauer der {multiple, select,
                             true  {heutigen}
@@ -524,7 +521,7 @@ participation:
     procedure: 'Studienablauf'
     finding: 'Zufallsbefunde'
     compensation: 'Aufwandsentschädigung'
-    proCon: 'Vor- und Nachteile der Teilnahme'
+    pro: 'Vor- und Nachteile der Teilnahme'
     criteria: 'Ein- und Ausschlusskriterien für die Teilnahme'
     voluntary: 'Freiwilligkeit und Rücktrittsrecht'
     dataPrivacy: 'Datenschutz und Datennutzung'
@@ -538,13 +535,13 @@ participation:
                                                                                         other    {Teilnehmenden}} erstellt, weil die {addressee, select,
       children {Erziehungsberechtigen}
       wards    {gesetzlichen Vertretungspersonen}
-      other    {Teilnehmenden}} nicht vorab darüber aufgeklärt werden, dass {addressee, select,
+      other    {Teilnehmenden}} nicht <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">vorab darüber aufgeklärt</a> werden, dass {addressee, select,
                                                                               children {ihre Kinder}
                                                                               wards    {die von ihnen betreuten Personen}
-                                                                              other    {sie}} an einer Studie teilnehmen (vgl. Feld 38 des Antragsformulars), und auch nicht nachträglich darüber aufgeklärt werden, dass {addressee, select,
+                                                                              other    {sie}} an einer Studie teilnehmen (vgl. Frage 38 des Antragsformulars), und auch nicht <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">nachträglich darüber aufgeklärt</a> werden, dass {addressee, select,
       children {ihre Kinder}
       wards    {die betreuten Personen}
-      other    {sie}} an einer Studie teilgenommen haben (vgl. Feld 41 des Antragsformulars).
+      other    {sie}} an einer Studie teilgenommen haben (vgl. Frage 41 des Antragsformulars).
   projectTitle:
   title: >-
     {information, select,
@@ -848,7 +845,7 @@ dataPrivacy:
                  E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
           EUB   {Tel.: 0521 106-5225
                  E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
-          other {Tel.: xxxx xxxxx
+          other {Tel.: 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
     title: 'Rechtsgrundlagen der Datenverarbeitung'
@@ -1121,13 +1118,13 @@ consent:
             other    {}}
   finding: 'Sollten sich in meiner Untersuchung Hinweise auf ein ungewöhnliches Untersuchungsergebnis ergeben, bin ich damit einverstanden, dass mir diese mitgeteilt werden, so dass ich diese ggf. weiter abklären lassen kann. Ich wurde darüber aufgeklärt, dass die Kenntnis von einem Krankheitsbild dazu führen kann, dass daraus resultierende Schäden nicht mehr versichert werden können.'
   personalKeepConsent: 'Ich bin mit der Aufbewahrung und Verwendung der personenbezogenen Forschungsdaten {type} einverstanden.'
-  name: 'Name in Druckbuchstaben:'
   digital: 'Hinweis: Die Einwilligung erfolgt über das Anklicken eines entsprechenden Buttons.'
   oral: 'Hinweis: Die Einwilligung wird von einer projektbeteiligten Person dokumentiert.'
   end: 'Wir danken Ihnen für Ihre Mitwirkung!'
 
 # signature
 signature:
+  name: 'Name in Druckbuchstaben'
   location: 'Ort, Datum'
   signature: >-
     Unterschrift {addressee, select,
@@ -1160,6 +1157,38 @@ completeForm:
       Weitere Mitteilungen an {committeeAcc}: {messages, select,
                                                       true  {}
                                                       other {Keine.}}
+  briefReport:
+    title: 'Kurzbericht'
+    intro: 'Die Antworten auf die folgenden Basisfragen wurden vom Ethiktool anhand der Eingaben der antragstellenden Person zusammengefasst. Ausführlichere Angaben zu allen Fragen finden sich im Antragsformular. Die Überprüfung der inhaltlichen Stimmigkeit der Angaben obliegt der Ethikkommission.'
+    types:
+      yes: 'Ja'
+      no: 'Nein'
+      unclear: 'Unklar'
+    headings:
+      information: 'Aufklärung'
+      voluntary: 'Freiwilligkeit'
+      terminateCons: 'Abbruch'
+      examinedPeople: 'Teilnehmende mit besonderem Schutzbedarf'
+      wards: 'Einwilligungsfähigkeit'
+      preContent: 'Täuschung'
+      burdens: 'Belastungen'
+      risks: 'Risiken'
+      finding: '(Zufalls-)Befunde'
+      dataPrivacy: 'Personenbezogene Daten'
+      conflict: 'Interessenkonflikt'
+      medicine: 'Medizinbezug'
+    information: 'Eine vollständige Vorab-Aufklärung ist gewährleistet.'
+    voluntary: 'Die Freiwilligkeit der Teilnahme ist gewährleistet.'
+    terminateCons: 'Die Teilnahme kann jederzeit ohne Nachteile beendet werden.'
+    examinedPeople: 'An der Studie nehmen Personen teil, die in Bezug auf den Forschungsgegenstand einer vulnerablen Gruppe angehören.'
+    wards:  'An der Studie nehmen Personen teil, die nicht selbst ihre Einwilligung geben können.'
+    preContent: 'Die Studienteilnahme beinhaltet eine aktive, gezielte Täuschung.'
+    burdens: 'Die Studie beinhaltet Belastungen, die über das im Alltag zu erwartende Maß hinausgehen.'
+    risks: 'Die Studie beinhaltet Gefährdungen oder Risiken für einzelne Personen.'
+    finding: 'In der Studie werden u.U. klinisch relevante (Zufalls-)Befunde aufgedeckt.'
+    dataPrivacy: 'In der Studie werden personenbezogene Daten verarbeitet.'
+    conflict: 'Bei den Projektbeteiligten besteht ein Interessenkonflikt in Bezug auf das Forschungsprojekt.'
+    medicine: 'Das Forschungsprojekt beinhaltet Aspekte nach AMG/MPG/MPDG und/oder Ärztinnen bzw. Ärzte sind projektbeteiligt.'
 
 metadata:
   title: 'Ethikantrag'
@@ -1172,5 +1201,6 @@ metadata:
 
 # alternative texts for logo
 logo:
+  testCommittee: 'Logo der Test-Ethikkommission'
   TUC: 'Logo der Technischen Universität Chemnitz'
   EUB: 'Logo der Universität Bielefeld'

@@ -9,12 +9,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class FormTypeExtension extends AbstractTypeExtension
 {
 
-    public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(['information' => '', '{addressee}' => '', '{participant}' => '', 'committeeArray' => [], 'committeeNom' => '', 'committeeGen' => '', 'committeeDat' => '', 'committeeAcc' => '', 'committeeType' => '', 'committeeLocation' => '', 'committeeLocationGen' => '', 'isCommitteeBeta' => false, 'toolVersion' => '', 'dummy' => []]);
+    public function configureOptions(OptionsResolver $resolver): void {
+        $resolver->setDefaults(['information' => '', 'addresseeString' => '','participantsString' => '','addresseeType' => '', 'committeeParams' => [], 'committeeNom' => '', 'committeeGen' => '', 'committeeDat' => '', 'committeeAcc' => '', 'committeeType' => '', 'committeeLocation' => '', 'committeeLocationGen' => '', 'isCommitteeBeta' => false, 'toolVersion' => '', 'dummy' => []]);
         $resolver->setAllowedTypes('information','string');
-        $resolver->setAllowedTypes('{addressee}', 'string');
-        $resolver->setAllowedTypes('{participant}','string');
-        $resolver->setAllowedTypes('committeeArray','array');
+        $resolver->setAllowedTypes('addresseeType', 'string');
+        $resolver->setAllowedTypes('addresseeString', 'string');
+        $resolver->setAllowedTypes('participantsString','string');
+        $resolver->setAllowedTypes('committeeParams','array');
         $resolver->setAllowedTypes('committeeNom','string');
         $resolver->setAllowedTypes('committeeGen','string');
         $resolver->setAllowedTypes('committeeDat','string');

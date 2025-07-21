@@ -98,6 +98,9 @@ export default class extends Controller {
 
     // methods that are called from the template
 
+    /** Sets this.modalType to indicate that a contributor should be removed.
+     * @param event widget that invoked the method
+     */
     removeContributor(event) {
         let target = event.target;
         while (target.id==='') { // the element is a button with a svg inside, so click may go on svg

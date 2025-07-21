@@ -38,10 +38,10 @@
                 </tr>
             {% endfor %}
         </table>
-        {{ pdfMacros.addSignature(savePDF,prefix~'receipt') }}
+        {{ pdfMacros.addSignature(savePDF,addressee) }}
         {# confirmation or return #}
         <div class="{{ textPreview }}" style="margin-top: 50px"><u>{{ (prefix~'return.title')|trans }}</u></div>
         <div class="{{ textPreview }}" style="{{ style }}">{{ (prefix~'return.text')|trans }}</div>
-        {{ pdfMacros.addSignature(savePDF,prefix~'return') }}
+        {{ pdfMacros.addSignature(savePDF,addressee) }}
     </div>
 {% endblock %}

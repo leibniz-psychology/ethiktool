@@ -14,18 +14,19 @@ class InformationType extends TypeAbstract
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $pagePrefix = 'projectdetails.pages.information.';
         $translationPrefix = $pagePrefix.self::pre.'.';
-        $parameters = [self::labelParams => [self::addresseeTrans => $options[self::addresseeTrans], self::participantTrans => $options[self::participantTrans]]];
+        $addresseeParam = [self::addressee => $options[self::addresseeString]];
+        $parameters = [self::labelParams => array_merge($addresseeParam,[self::participant => $options[self::participantsString]])];
         foreach ([self::pre,self::post,self::preComplete] as $type) {
             $this->addBinaryRadio($builder,$type,$pagePrefix.$type.'.title',$this->appendText($type),$pagePrefix.self::textHintPlural.'.'.$type,array_merge($parameters,$type===self::preComplete ? ['attr' => ['placeholder' => '']] : [])); // placeholder for preCompleteType is set in template
             $this->addRadioGroup($builder,$type.'Type',self::informationTypes,$pagePrefix.'type.title',options: [self::labelParams => ['type' => $type]]);
         }
         // additional widgets for yes
-        $this->addRadioGroup($builder,self::preContent,$this->translateArray($translationPrefix.'content.type.',[self::complete,self::partial,self::deceit]),$translationPrefix.'content.title',options: $parameters);
+        $this->addRadioGroup($builder,self::preContent,$this->translateArray($translationPrefix.'content.type.',array_merge([self::complete],self::preContentIncomplete)),$translationPrefix.'content.title',options: $parameters);
         // dummy forms
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);
         if ($options[self::dummyParams]['isAttendance']) {
-            $this->addBinaryRadio($builder,self::attendanceNode,$pagePrefix.self::attendanceNode,options: [self::labelParams => [self::addresseeTrans => $options[self::addresseeTrans]]]);
+            $this->addBinaryRadio($builder,self::attendanceNode,$pagePrefix.self::attendanceNode,options: [self::labelParams => $addresseeParam]);
         }
     }
 
@@ -39,7 +40,7 @@ class InformationType extends TypeAbstract
             $tempArray = $viewData[self::informationAddNode];
             $contentChosen = $tempArray[self::chosen]; // content or post
             $forms[$isPre ? self::preContent : self::post]->setData($contentChosen);
-            if (in_array($contentChosen,[self::partial,self::deceit])) {
+            if (in_array($contentChosen,self::preContentIncomplete)) {
                 $forms[self::preComplete]->setData($tempArray[self::complete]);
                 $forms[self::preCompleteType]->setData($this->getArrayValue($tempArray,self::preCompleteType));
                 $forms[self::preCompleteText]->setData($tempArray[self::descriptionNode]);
@@ -64,7 +65,7 @@ class InformationType extends TypeAbstract
             $contentChosen = $isPre ? $forms[self::preContent]->getData() : $forms[self::post]->getData(); // content or post
             $tempArray[self::chosen] = $contentChosen;
             if ($isPre) {
-                if (in_array($contentChosen,[self::partial,self::deceit])) { // pre information and incomplete/wrong information
+                if (in_array($contentChosen,self::preContentIncomplete)) { // pre information and incomplete/wrong information
                     $chosen = $forms[self::preComplete]->getData(); // complete information afterwards
                     $tempArray[self::complete] = $chosen;
                     if ($chosen===0) {

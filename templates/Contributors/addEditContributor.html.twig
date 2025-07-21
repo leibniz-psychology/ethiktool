@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 {% import 'macros.html.twig' as formRender %}
 
+{% block head %}
+{% endblock %}
+
 {% block body %}
     {% set contributorsController, positionOtherText, infosPrefix = 'Contributors--contributors', content.positionOtherText, 'multiple.infos.' %}
     <div>

@@ -23,8 +23,7 @@ class DataPrivacyController extends ControllerAbstract
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session);
         $privacyNode = $this->getMeasureTimePointNode($appNode,$routeParams)->{self::privacyNode};
-        $addressee = $this->getAddresseeFromRequest($request);
-        $addresseeTypeParam = [self::addressee => $addressee];
+        $addresseeTypeParam = [self::addressee => $this->getAddresseeFromRequest($request)];
         $projectdetailsPrefix = 'projectdetails.pages.';
         $privacyPrefix = $projectdetailsPrefix.self::privacyNode.'.';
         // data research icons
@@ -65,7 +64,7 @@ class DataPrivacyController extends ControllerAbstract
         [$iconTextsAnonymization,$iconColorsAnonymization] = [[],[]];
         $translationPrefix = $privacyPrefix.self::anonymizationNode.'.hints.';
         foreach ($iconIDsAnonymization as $type) {
-            $iconTextsAnonymization[$type] = $this->translateString($translationPrefix.$type);
+            $iconTextsAnonymization[$type] = $translationPrefix.$type;
             $iconColorsAnonymization[$type] = 'black';
         }
         // purpose research and further
@@ -98,10 +97,9 @@ class DataPrivacyController extends ControllerAbstract
         // purpose sub-questions
         [$purposeDataTrans,$purposeDataTransGen,$purposeDataNames,$middleNames,$accessNames,$iconArrayAccess,$orderProcessingKnownNames] = [[],[],[],[],[],[],[]];
         $translationPrefix = $privacyPrefix.self::accessNode.'.hints.';
-        $accessIconsTrans = [];
-        $committeeParam = $request->getSession()->get(self::committeeSession);
+        $accessIcons = [];
         foreach (self::accessTypes as $type) {
-            $accessIconsTrans[] = $this->translateString($translationPrefix.$type,$committeeParam);
+            $accessIcons[] = $translationPrefix.$type;
         }
         $typesShortPrefix = $purposeResearchPrefix.'typesShort.';
         $typesShortGenPrefix = $purposeResearchPrefix.'typesShortGen.';
@@ -115,7 +113,7 @@ class DataPrivacyController extends ControllerAbstract
             $purposeDataTrans[$type] = $this->translateString($typesShortPrefix.$type); // translated purposes short for headings
             $tempArray = $this->prefixArray(self::accessTypes,$type);
             $accessNames[$type] = $tempArray; // widget names
-            $iconArrayAccess[$type] = [$tempArray,array_combine($tempArray,$accessIconsTrans), array_combine($tempArray,$iconColorsArray)];
+            $iconArrayAccess[$type] = [$tempArray,array_combine($tempArray,$accessIcons), array_combine($tempArray,$iconColorsArray)];
             foreach (self::accessOrderProcessing as $accessType) {
                 $orderProcessingKnownNames[$type][$accessType] = $type.$accessType.self::orderProcessingKnownNode;
             }
@@ -215,10 +213,7 @@ class DataPrivacyController extends ControllerAbstract
                 }
             }
         }
-        $dataPrivacy = $this->createFormAndHandleRequest(DataPrivacyType::class,$this->xmlToArray($privacyNode),$request, array_merge($committeeParam,
-            [self::dummyParams => array_merge($addresseeTypeParam,['isCompensationCode' => $this->checkCompensationAwarding($compensationArray), 'isOnline' => $measureTimePoint[self::measuresNode][self::locationNode][self::chosen]===self::locationOnline]),
-             self::addresseeTrans => $this->getAddresseeString($addressee),
-             self::participantTrans => $this->getAddresseeString($addressee,false,true,$addressee===self::addresseeParticipants)]));
+        $dataPrivacy = $this->createFormAndHandleRequest(DataPrivacyType::class,$this->xmlToArray($privacyNode),$request, [self::dummyParams => ['isCompensationCode' => $this->checkCompensationAwarding($compensationArray), 'isOnline' => $measureTimePoint[self::measuresNode][self::locationNode][self::chosen]===self::locationOnline]]);
         if ($dataPrivacy->isSubmitted()) {
             $privacyLoad = $this->getPrivacyReuse($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::privacyNode}));
             $privacy = $this->getPrivacyReuse($this->getDataAndConvert($dataPrivacy,$privacyNode));
@@ -239,10 +234,8 @@ class DataPrivacyController extends ControllerAbstract
             return $this->saveDocumentAndRedirect($request,$isNotLeave ? $appNode : $appNodeNew, $isNotLeave ? $appNodeNew : null);
         }
         return $this->render('Projectdetails/dataPrivacy.html.twig',
-            $this->setParameters($request,$appNode,
-                [self::content => $dataPrivacy,
-                 self::pageTitle => 'projectdetails.dataPrivacy',
-                 'privacyCheck' => ['maybe' => $maybeString!=='' ? explode("\n",trim($maybeString)) : [],'sure' => $sureString!=='' ? explode("\n",trim($sureString)) : []],
+            $this->setRenderParameters($request,$dataPrivacy,
+                ['privacyCheck' => ['maybe' => $maybeString!=='' ? explode("\n",trim($maybeString)) : [],'sure' => $sureString!=='' ? explode("\n",trim($sureString)) : []],
                  'internalKeys' => ['pattern','own','contributors'],
                  'iconArray' => $iconArray,
                  'listTypes' => self::listTypes,
@@ -273,6 +266,6 @@ class DataPrivacyController extends ControllerAbstract
                  'iconArrayAccess' => $iconArrayAccess,
                  'accessOrderProcessingTypes' => self::accessOrderProcessing,
                  'orderProcessingKnownTypes' => $orderProcessingKnownNames,
-                 'orderProcessingKnownTexts' => self::orderProcessingKnownTexts]));
+                 'orderProcessingKnownTexts' => self::orderProcessingKnownTexts],'projectdetails.dataPrivacy',true));
     }
 }

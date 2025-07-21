@@ -29,6 +29,9 @@ class NewFormController extends ControllerAbstract
     #[Route('/newForm', name: 'app_newForm')]
     public function showNewForm(Request $request): Response {
         $session = $request->getSession();
+        if ($session->get(self::docName)!==null) { // page was opened after a proposal was created/loaded, but not by the button in the sidebar
+            return $this->redirectToRoute('app_main');
+        }
 
         $general = $this->createFormAndHandleRequest(NewFormType::class,[self::fileName => $session->get(self::filenameTemp) ?? '', self::committee => $session->get(self::committeeTemp) ?? '', self::language => $session->get(self::language)],$request);
         if ($general->isSubmitted()){
@@ -118,7 +121,7 @@ class NewFormController extends ControllerAbstract
                 return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($request->getSession())); // save the same document again
             }
         } // if ($general->isSubmitted())
-        return $this->render('Main/newForm.html.twig', [self::content => $general, 'committeeParams' => $this->getCommitteeSession($session)]);
+        return $this->render('Main/newForm.html.twig', $this->setRenderParameters($request,$general));
     }
 
     /** Resets the temp variables for saving filename and committee if the language was changed.

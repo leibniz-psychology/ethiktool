@@ -6,7 +6,9 @@ heading: >-
 
 header: |
   Generated with Ethiktool version {toolVersion}
-  <a class="no-linkout" href="https://ethiktool.org/" target="_blank">https://ethiktool.org/</a>
+  {savePDF, select,
+    true  {<a class="no-linkout" href="https://ethiktool.org/" target="_blank">https://ethiktool.org/</a>}
+    other {https://ethiktool.org/}}
   most recent modification of the ethics proposal:
 
 filenames:
@@ -14,11 +16,6 @@ filenames:
   application: 'proposal'
   participation: 'participantDocuments'
   completeForm: 'completeApplication'
-
-dateFormat: >-
-  Y-m-d{noTime, select,
-         true  {}
-         other { H:i:s}}
 
 documentHint: >-
   Wording is identical to the study information sheet and is therefore addressed to the {participants, select,
@@ -67,13 +64,13 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     physician: 'Are physicians amongst the project contributors?'
   projectdetails:
     hint: >-
-      The entries in this field {noBox, select,
-                                    true  {would be made}
-                                    other {were made}} on {numPages, plural,
-                                                          =1    {page “{inputPage}“}
-                                                          other {pages “participant information“ and “participant informationII“}} {noBox, select,
-                                                                                                                        true  {.}
-                                                                                                                        other {.}}
+      The entries for this question {noBox, select,
+                                      true  {would be made}
+                                      other {were made}} on {numPages, plural,
+                                                              =1    {page “{inputPage}“}
+                                                              other {pages “participant information“ and “participant informationII“}} {noBox, select,
+                                                                                                                                          true  {.}
+                                                                                                                                          other {.}}
     study: 'study '
     studyAll: 'all studies'
     group: 'group '
@@ -383,9 +380,9 @@ projectdetails:
       invasive: 'invasive interventions'
       other: 'other measure(s)'
     survey: >-
-      Details on questionnaires are described under data collection in the previous field {numInterventions, plural,
-                                                                                                          =1    {, no intervention/measures in a strict sense}
-                                                                                                          other {}}.
+      Details on questionnaires are described under data collection in the previous question{numInterventions, plural,
+                                                                                              =1    {, no intervention/measures in a strict sense}
+                                                                                              other {}}.
     duration: >-
       The total duration of {multiple, select,
                                   true  {today''s}
@@ -395,7 +392,7 @@ projectdetails:
                                                                                                                   0     {.}
                                                                                                                   other {, thereof {measureTime, select,
                                                                                                                                     1     {1 minute}
-                                                                                                                                    other {{measureTime} minutes}} for data collection and {breaks, select,
+                                                                                                                                    other {{measureTime} minutes}} (net) for data collection and {breaks, select,
               1     {1 minute}
               other {{breaks} minutes}} for preparation and follow-up time as well as breaks.}}
     location: >-
@@ -524,7 +521,7 @@ participation:
     procedure: 'Study procedure'
     finding: 'Incidental findings'
     compensation: 'Compensation'
-    proCon: 'Advantages and disadvantages of participation'
+    pro: 'Advantages and disadvantages of participation'
     criteria: 'Inclusion and exclusion criteria'
     voluntary: 'Voluntariness and withdrawal'
     dataPrivacy: 'Data protection and data use'
@@ -538,13 +535,13 @@ participation:
                                                                                         other    {participants}} because the {addressee, select,
       children {legal guardians}
       wards    {legal guardians}
-      other    {participants}} are not informed in advance that {addressee, select,
+      other    {participants}} are not <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">informed in advance</a> that {addressee, select,
                                                                               children {their children}
                                                                               wards    {the individuals under their supervision}
-                                                                              other    {they}} are participating in a study (see field 38 of the application form), nor are they informed after-the-fact that {addressee, select,
+                                                                              other    {they}} are participating in a study (see question 38 of the application form), nor are they <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">informed after-the-fact</a> that {addressee, select,
       children {their children}
       wards    {the supervised individuals}
-      other    {they}} participated in a study (see field 41 of the application form).
+      other    {they}} participated in a study (see question 41 of the application form).
   projectTitle:
   title: >-
     {information, select,
@@ -803,7 +800,7 @@ participation:
     dataReuseHow:
       reuse: ' Purpose, scope and extent of potential re-use are not foreseeable at this point.'
       public: ' The research data are published in a way that does not allow for identifying individual persons at any point in time.'
-      guidelines: ' In making the data available, the study follows current codes of practice by the DFG on assuring good scientific practice.'
+      guidelines: ' In making the data available, the study follows current codes of practice by the German Research Foundation (DFG) on assuring good scientific practice.'
   contact: 'If you have any questions about the study, please contact: {contributors}.'
 
 # data privacy
@@ -848,7 +845,7 @@ dataPrivacy:
                  E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
           EUB   {Tel.: +49 521 106-5225
                  E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
-          other {Tel.: +49 xxxx xxxxx
+          other {Tel.: +49 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
     title: 'Lawfulness of data processing'
@@ -878,7 +875,7 @@ dataPrivacy:
         sexual: 'Data concerning sex life or sexual orientation'
         brainStructure: 'Structural brain images'
         biometric: 'Biometric data'
-        health: 'Health data (e.g., EEG or ECG data, diagnoses)'
+        health: 'Health data'
         genetic: 'Genetic data'
         hair: 'Hair samples'
         saliva: 'Saliva samples'
@@ -1123,13 +1120,13 @@ consent:
             other    {}}
   finding: 'If the investigation points towards an unusual test result (incidental finding), I agree to being told about this for me to possibly seek further diagnostic assessment. I was informed that knowing about a disease could lead to difficulties in contracting insurance for resulting adversities.'
   personalKeepConsent: 'I agree to the storage and use of personal research data {type}.'
-  name: 'Name in block letters:'
   digital: 'Note: Consent is given by clicking on a corresponding button.'
   oral: 'Note: Consent is documented by a project contributor.'
   end: 'We thank you for your participation!'
 
 # signature
 signature:
+  name: 'Name in block letters'
   location: 'Place, date'
   signature: >-
     signature {addressee, select,
@@ -1162,6 +1159,38 @@ completeForm:
       Further notifications to {committeeAcc}: {messages, select,
                                                       true  {}
                                                       other {none.}}
+  briefReport:
+    title: 'Short Report'
+    intro: 'The answers to the following basic questions were extracted by the Ethiktool from the entries of the ethics applicant. More detailed information on each question is available in the ethics proposal form. The responsibility for checking the entries remains with the ethics committee.'
+    types:
+      yes: 'Yes'
+      no: 'No'
+      unclear: 'Unclear'
+    headings:
+      information: 'Information'
+      voluntary: 'Voluntariness'
+      terminateCons: 'Withdrawal'
+      examinedPeople: 'Vulnerable participants'
+      wards: 'Consent'
+      preContent: 'Deception'
+      burdens: 'Burdens'
+      risks: 'Risks'
+      finding: '(Incidental) Findings'
+      dataPrivacy: 'Personal data'
+      conflict: 'Conflict of interest'
+      medicine: 'Medical aspects'
+    information: 'Full prior information is guaranteed.'
+    voluntary: 'Voluntariness of participation is guaranteed.'
+    terminateCons: 'Withdrawal from participation is possible at any time and without disadvantages.'
+    examinedPeople: 'The study involves persons who belong to a vulnerable group with respect to the scope of the research.'
+    wards: 'The study involves persons who are not capable of giving consent themselves.'
+    preContent: 'Participating in the study involves being actively and deliberately deceived.'
+    burdens: 'The study involves burdens that go beyond the level commonly encountered in everyday life.'
+    risks: 'The study involves dangers or risks for individual persons.'
+    finding: 'The study might reveal clinically relevant (incidental) findings.'
+    dataPrivacy: 'The study involves processing personal data.'
+    conflict: 'The project contributors have a conflict of interest with respect to the research project.'
+    medicine: 'The research project involves aspects relating to AMG/MPG/MPDG, or physicians are among the project contributors.'
 
 metadata:
   title: 'Ethics proposal'
@@ -1174,5 +1203,6 @@ metadata:
 
 # alternative texts for logo
 logo:
+  testCommittee: 'Logo of the test ethics committee'
   TUC: 'Logo of Chemnitz University of Technology'
   EUB: 'Logo of Bielefeld University'

@@ -19,7 +19,7 @@
     <div class="NavBar mt-8" style="{{ buttonWidth }}">
         <a class="Button_primary_act {% if isNewForm %} a_disabled {% endif %}" {% if not isNewForm %} {% if isFilename %} data-bs-toggle="modal" data-bs-target="#{{ modalID }}" {% endif %} href="{{ path('app_newForm') }}" {% endif %}>{{ 'pages.newForm'|trans }}</a>
         <button class="Button_primary_act" type="button" {{ stimulus_target('base','load') }} {% if isNewForm %} disabled {% elseif isFilename %} data-bs-toggle="modal" data-bs-target="#{{ loadModalID }}" {% else %} {{ stimulus_action('base','setDummySubmit','click') }} {% endif %}>{{ 'navBar.loadForm'|trans }}</button>
-        {{ formRender.addSaveButton('',not isFilename) }}
+        {{ formRender.addSaveButton(not isFilename) }}
     </div>
     {# pages #}
     <div class="mt-8">
@@ -69,7 +69,7 @@
         visibility:       visibility of the surrounding div
     #}
 
-    <div class="{{ level>0 ? 'NavBar' : 'NavBarMain mt-2' }}" {% if level>0 %} style="{{ boolToDisplay(visibility,1) }} {% if isProjectdetails and level is same as 4 or not isProjectdetails and level is same as 1 %}; margin-left: 1.5rem; margin-right: 0{% endif %}" {% endif %}>
+    <div class="{{ level>0 ? 'NavBar' : 'NavBarMain mt-2' }} {% if isProjectdetails and level is same as 4 or not isProjectdetails and level is same as 1 %} ms-4 me-0 {% endif  %}" {% if level>0 %} style="{{ boolToDisplay(visibility,1) }}" {% endif %}>
         {% set isActiveAppData = activeRoute in ['app_coreData','app_votes','app_medicine','app_summary'] %}
         {% for route in window %}
             {% set hasSubPages, routeIDs, curRoute = route.subPages is defined, route.routeIDs ?? {}, route.route %}

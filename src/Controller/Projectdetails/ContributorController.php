@@ -31,8 +31,7 @@ class ContributorController extends ControllerAbstract
         }
 
         return $this->createFormAndHandleSubmit(ContributorType::class,$request,[self::contributorNode],
-            [self::pageTitle => 'projectdetails.contributor',
-             self::taskNode => $tasks,
+            [self::taskNode => $tasks,
              'tasksMandatory' => self::tasksMandatory],
             [self::dummyParams => [self::taskNode => $tasks]]);
     }

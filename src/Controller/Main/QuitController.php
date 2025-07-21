@@ -13,7 +13,9 @@ class QuitController extends ControllerAbstract
     #[Route('/quit', name: 'app_quit')]
     public function showQuit(Request $request): Response {
         $session = $request->getSession();
-        $hasDoc = $session->has(self::docName);
+        if ($session->get(self::docName)===null) { // page was opened before a proposal was created/loaded
+            return $this->redirectToRoute('app_main');
+        }
 
         $quit = $this->createForm(QuitType::class)->handleRequest($request);
         if ($quit->isSubmitted()) {
@@ -28,6 +30,6 @@ class QuitController extends ControllerAbstract
                 return $this->redirectToRoute('app_main');
             }
         }
-        return $this->render('Main/quit.html.twig', [self::pageTitle => 'quit', self::content => $quit, 'hasDoc' => $hasDoc]);
+        return $this->render('Main/quit.html.twig', [self::pageTitle => 'quit', self::content => $quit]);
     }
 }

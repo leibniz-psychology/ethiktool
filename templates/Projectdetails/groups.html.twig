@@ -22,20 +22,20 @@
                 <div class="MetaData-Widget grid gap-2 mt-2" style="grid-template-columns: minmax(min-content,max-content) min-content auto">
                     {% for age in ['minAge', 'maxAge'] %}
                         {% set widget = content[age] %}
-                        <div class="flex justify-content-end" style="grid-column: 1">
+                        <div class="flex justify-content-end" id="{{ age }}" style="grid-column: 1">
                             {{ form_label(widget) }}:
                         </div>
-                        <div style="width: 4em">
+                        <div style="width: 4rem">
                             {{ form_widget(widget,addTargetArray(groupsController,widget.vars.name)) }}
                         </div>
                     {% endfor %}
                     {{ formRender.addCheckbox(unlimited, {'target': [groupsController,unlimited.vars.name]}) }}
                 </div>
-            <div class="mt-4 mb-4">{{ formRender.addHint(translationPrefix~'wardsHint',{'target': [groupsController,'wardsHint']}) }}</div>
+            <div class="mt-4 mb-4">{{ formRender.addHint(translationPrefix~'wardsHint',{'target': [groupsController,'wardsHint'], 'params': {'studyID': '{&quot;studyID&quot;:&quot;'~studyID~'&quot;}'}}) }}</div>
             {# examined people #}
             {% set wardsName, isTextInputVoluntary = content.wards.vars.name, textInputVoluntary is not same as '' %}
             {% set iconTemp, heightString = {(wardsName): ''}, 'height: '~textHeight %}
-            {{ formRender.addCheckboxGroup(content,examined,{'addDiv': ['','','mt-2'],
+            {{ formRender.addCheckboxGroup(content,examined,{'addDiv': ['examinedPeople','','mt-2'],
                 'contTargets': {'healthy': [groupsController,'healthy'], (wardsName): [groupsController,wardsName]}|
                     merge(isTextInputVoluntary ? {(content.dependent.vars.name): [groupsController,'dependent']} : {})}|
                 merge(textInput is not same as '' ? {'icons': [[wardsName],{(wardsName): textInput},{(wardsName): ''},[],{(wardsName): groupsController}]} : {})) }}
@@ -48,8 +48,8 @@
             {% endif %}
         </div>
         {# closed group #}
-        {% set closed, closedDiv = content.closed, 'closedDiv' %}
-        <div class="mt-8" {% if isTextInputVoluntary %} {{ stimulus_action(groupsController,'setVoluntaryHint','change') }} {% endif %}>
+        {% set closed, closedDiv = content.closed, 'closedTypes' %}
+        <div class="mt-8" id="closed" {% if isTextInputVoluntary %} {{ stimulus_action(groupsController,'setVoluntaryHint','change') }} {% endif %}>
             {{ formRender.renderButtons(closed, {'stimVisible': {'values': [['0',closedDiv]]}, 'contTarget': ['closed1',groupsController,'closedNo'], 'hint': [translationPrefix~'closed.']}) }}
             {{ formRender.addCheckboxGroup(content,closedTypes,{'other': ['closedOther'], 'addDiv': [closedDiv, 'width: fit-content; '~boolToDisplay(closed.vars.value is same as '0'),'mt-4']}) }}
             {% if isTextInputVoluntary %}
@@ -58,11 +58,11 @@
         </div>
         {# criteria #}
         {% set addresseeParam, tempPrefix, classes, criteriaTransfer = {'addressee': addresseeType}, translationPrefix~'criteria.', 'MetaData-Label mt-4', [information in ['pre',''] ? transferInfo : [''],''] %}
-        <div class="mt-8" {{ stimulus_action(groupsController,'setCriteria','input') }}>
+        <div class="mt-8" id="criteria" {{ stimulus_action(groupsController,'setCriteria','input') }}>
             <div {{ stimulus_target(groupsController,'criteriaHint') }}>{{ formRender.addHeading(tempPrefix~'title',{'headingHint': [['multiple.wording',addresseeParam]]}) }}</div>
             {% for type in ['include','exclude'] %}
                 {% set textField, prefix, isInclude = content[type~'Text'], tempPrefix~type~'.', type is same as 'include' %}
-                <div class="{{ classes }}" {% if isInclude %} {{ stimulus_target(groupsController,'includeStart') }} {% endif %}>{{ (prefix~'start')|trans(addresseeParam) }}</div>
+                <div class="{{ classes }}" id="{{ type~'Start' }}" {% if isInclude %} {{ stimulus_target(groupsController,'includeStart') }} {% endif %}>{{ (prefix~'start')|trans(addresseeParam) }}</div>
                 {{ formRender.addHint(prefix~'hint',{'params': {'type': type}}) }}
                 <div {% if isInclude %} {{ stimulus_action('base','checkTextareaInput','keydown',{'start': textField.vars.value|trim|split("\n")[0], 'furtherAllowed': ['Enter']}) }} {% endif %}>{{ formRender.addTextfield(textField,{'attributes': {'style': 'white-space: pre; overflow-wrap: normal; '~heightString}, 'transfer': criteriaTransfer}|merge(isInclude ? {'contTarget': [groupsController,type]} : {})) }}</div>
                 <div class="MetaData-Widget pt-0">
@@ -73,13 +73,13 @@
         {# sample size #}
         {% set tempPrefix = translationPrefix~'sampleSize.' %}
         {% set totalPrefix = tempPrefix~'total.' %}
-        <div class="mt-8">
+        <div class="mt-8" id="total">
             {{ formRender.addHeading(tempPrefix~'title') }}
             <div class="MetaData-Label">{{ (totalPrefix~'title')|trans }}</div>
             {{ formRender.addHint(totalPrefix~'textHint') }}
-            <div class="MetaData-Widget" style="width: 8em">{{ form_widget(content.total) }}</div>
+            <div class="MetaData-Widget" style="width: 8rem">{{ form_widget(content.total) }}</div>
             {{ formRender.addTextfield(content.furtherParticulars, styleHeight) }}
-            <div class="MetaData-Widget mt-8" style="margin-bottom: -1.25rem">{{ (tempPrefix~'plan.title')|trans }}</div>
+            <div class="MetaData-Widget mt-8" style="margin-bottom: -1.25rem" id="sampleSizePlan">{{ (tempPrefix~'plan.title')|trans }}</div> {# id is same as text field id #}
             {{ formRender.addTextfield(content.sampleSizePlan, styleHeight) }}
         </div>
         {# recruitment #}
@@ -87,10 +87,13 @@
         {% set recruitmentFurtherPrefix, recruitmentFurther = recruitmentPrefix~'recruitmentFurther.', content.recruitmentFurther %}
         {% set recruitmentHint, notAnySelected = (recruitmentFurtherPrefix~'description')|trans, not getAnySelected(content,recruitmentTypes)[1] %}
         {% set hints = [(recruitmentFurtherPrefix~'missing')|trans,'multiple.optional'|trans~' '~recruitmentHint,recruitmentHint] %}
-        <div class="mt-8" {{ stimulus_action('base','setCheckboxTextfield','change',{'checkboxes': [recruitmentTypes,'recruitmentFurtherDiv',hints,[external,'recruitmentOther']]}) }}>
+        <div class="mt-8" id="recruitmentTypes" {{ stimulus_action('base','setCheckboxTextfield','change',{'checkboxes': [recruitmentTypes,'recruitmentFurtherDiv',hints,[external,'recruitmentOther']]}) }}>
             {{ formRender.addHeading(recruitmentPrefix~'title') }}
             {{ formRender.addCheckboxGroup(content,recruitmentTypes,{'addDiv': ['','width: fit-content']}) }}
-            {{ formRender.addTextfield(recruitmentFurther,{'hint': hints[notAnySelected ? 0 : (content[external].vars.checked ? 2 : 1)], 'fontStyle': true, 'contTarget': [groupsController,'recruitmentDescription']}|merge(notAnySelected ? {'target': recruitmentFurther.vars.name} : {})) }}
+            {{ formRender.addTextfield(recruitmentFurther,fontNormal|
+                merge({'hint': hints[notAnySelected ? 0 : (content[external].vars.checked ? 2 : 1)],
+                       'contTarget': [groupsController,'recruitmentDescription']})|
+                merge(notAnySelected ? {'target': recruitmentFurther.vars.name} : {})) }}
         </div>
         {{ formRender.addSubmitButtons() }}
     </div> {# entire form including stimulus controller #}

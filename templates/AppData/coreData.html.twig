@@ -3,7 +3,7 @@
 
 {% block content %}
     {% set committeeType = committeeParams['committeeType'] %}
-    {% set isEUB, style, projectLength, translationPrefix, coreDataController = committeeType is same as 'EUB', 'max-width: 60em', {'maxLength': 200}, 'coreData.', 'AppData--coreData' %}
+    {% set isEUB, style, projectLength, translationPrefix, coreDataController = committeeType is same as 'EUB', 'max-width: 60rem', {'maxLength': 200}, 'coreData.', 'AppData--coreData' %}
     {% set conflictPrefix, conflictHint = translationPrefix~'conflict.', 'conflictHintDiv' %}
     {% set conflictYesDescription = (conflictPrefix~'yes')|trans %}
     <div {{ stimulus_controller(coreDataController, {
@@ -13,17 +13,17 @@
             'conflictHintName': conflictHint}) }}>
         {# project title #}
         {% set projectTitle = content.projectTitle %}
-        <div>
+        <div id="projectTitle">
             {{ form_label(projectTitle,null,addLabelClass('MetaData-Title')) }}
             <div class="MetaData-Widget">{{ form_widget(projectTitle,{'attr': projectLength|merge(textInput)}) }}</div>
         </div>
         {# project title for participation documents #}
         {% set projectTitlePart, description = content.projectTitleParticipation, content.projectTitleParticipationDescription %}
-        {{ formRender.renderButtons(projectTitlePart,{'hint': [translationPrefix~'projectTitleParticipation.'], 'text': [description,{'attributes': projectLength, 'visibility': projectTitlePart.vars.value is same as 'different', 'transfer': [transferInfo,'participants']}], 'stimVisible': {'values': [['different', description.vars.name~'Div']]}, 'addDiv': []}) }}
+        {{ formRender.renderButtons(projectTitlePart,{'hint': [translationPrefix~'projectTitleParticipation.'], 'text': [description,{'attributes': projectLength, 'visibility': projectTitlePart.vars.value is same as 'different', 'transfer': [transferInfo,'participants']}], 'stimVisible': {'values': [['different', description.vars.name~'Div']]}, 'addDiv': ['projectTitleParticipation']}) }}
         {# application type #}
         {% set appType, description = content.appType, content.description %}
         {% set appValue, exRe, exReDiv, newTypeDiv = appType.vars.value, ['extended','resubmission'], 'exReDiv', 'newTypeDiv' %}
-        <div class="mt-8">
+        <div class="mt-8" id="appType">
             {{ formRender.renderButtons(appType,[]|merge({'stimVisible': {'values': [[exRe,exReDiv]]|merge(not isEUB ? [['new',newTypeDiv]] : [])}})) }}
             {% if not isEUB %}
                 {% set appNewType = content.appNewType %}
@@ -34,23 +34,23 @@
             {% endif %}
             <div class="mt-2" id="{{ exReDiv }}" style="{{ boolToDisplay(appValue in exRe) }}">
                 {{ form_label(description,null,addLabelClass('MetaData-Label')) }}
-                <div class="MetaData-Widget" style="width: 20em" {{ stimulus_action('base','preventTagStart','beforeinput') }}>{{ form_widget(description,textInputAttr) }}</div>
+                <div class="MetaData-Widget" style="width: 20rem" {{ stimulus_action('base','preventTagStart','beforeinput') }}>{{ form_widget(description,textInputAttr) }}</div>
                 {{ formRender.addHint(translationPrefix~'appType.hint') }}
             </div>
         </div>
         {# qualification #}
         {% if content.qualification is defined %}
-        {{ formRender.renderButtons(content.qualification,{'hint': [translationPrefix~'qualification.'], 'stim': [coreDataController,'setApplicantSupervisor'], 'contTarget': ['qualification0',coreDataController,'qualificationYes'], 'addDiv': []}) }}
+        {{ formRender.renderButtons(content.qualification,{'hint': [translationPrefix~'qualification.'], 'stim': [coreDataController,'setApplicantSupervisor'], 'contTarget': ['qualification0',coreDataController,'qualificationYes'], 'addDiv': ['qualification']}) }}
         {% endif %}
         {# information about the applying person and the supervisor #}
         {% set tempPrefix, infoPrefix = translationPrefix~'applicant.', 'multiple.infos.' %}
-        <div class="mt-8">
+        <div class="mt-8" id="applicant">
             {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'hint']]}) }}
             {% for type in ['applicant']|merge(content.namesupervisor is defined ? ['supervisor'] : []) %}
                 {% set isSupervisor = type is same as 'supervisor' %}
                 {% set suffix = isSupervisor ? 'supervisor' %}
                 {% set positionSuffix = 'position'~suffix %}
-                <div class="mt-4" style="width: fit-content" {% if isSupervisor %} {{ stimulus_target(coreDataController,'supervisorDiv') }} {% endif %}>
+                <div class="mt-4" style="width: fit-content" {% if isSupervisor %} id="supervisor" {{ stimulus_target(coreDataController,'supervisorDiv') }} {% endif %}>
                     <div class="MetaData-Label" style="width: fit-content">
                         {{ ('coreData.applicant.'~type)|trans }}:
                     </div>
@@ -59,7 +59,7 @@
                             {% set widget, isPosition, isInstitution, isProfessorship = content[info~suffix], info is same as 'position', info is same as 'institution', info is same as 'professorship' %}
                             {% set vars, tempPrefix = widget.vars, infoPrefix~info %}
                             {% set name = vars.name %}
-                            <div style="display: flex; justify-content: end">
+                            <div class="flex justify-content-end" id="{{ type~info }}">
                                 {% if info is same as 'phone' and not isSupervisor and isEUB %}
                                     <div id="phoneLabelOptional" class="align-self-center" style="text-align: end">{{ (infoPrefix~'phoneOptional')|trans~':' }}</div>
                                 {% endif %}
@@ -84,7 +84,7 @@
         {# project start  #}
         {% set projectStart, tempPrefix = content.projectStart, translationPrefix~'project.' %}
         {% set startPrefix = tempPrefix~'start.' %}
-        <div class="mt-8">
+        <div class="mt-8" id="projectDates">
             {{ formRender.addHeading(tempPrefix~'title') }}
             {{ form_label(projectStart,(startPrefix~'title')|trans({'{committeeType}': committeeType})~':',addLabelClass('MetaData-Label')) }}
             <div class="MetaData-Widget" style="height: min-content; width: fit-content" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
@@ -100,20 +100,20 @@
                     {{ formRender.addCheckbox(content.projectStartBegun,{'target': [coreDataController,'projectStartBegun']}) }}
                     <div {{ stimulus_target(coreDataController,'projectStartBegunText') }}>
                         {{ formRender.addHint(startPrefix~'hint') }}
-                        {{ formRender.addTextfield(content.projectStartBegunText,{'fontStyle': true}) }}
+                        {{ formRender.addTextfield(content.projectStartBegunText,fontNormal) }}
                     </div>
                 </div>
             {% endif %}
             {# project end #}
             {% set projectEnd, tempPrefix = content.projectEnd, tempPrefix~'end.' %}
-            {{ form_label(projectEnd,(tempPrefix~'title')|trans~':',addLabelClass('MetaData-Label mt-4')) }}
+            <div id="projectEnd">{{ form_label(projectEnd,(tempPrefix~'title')|trans~':',addLabelClass('MetaData-Label mt-4')) }}</div>
             <div class="MetaData-Widget" style="width: fit-content">
                 {{ form_widget(projectEnd) }}
             </div>
             {{ formRender.addHint(tempPrefix~'hint') }}
         </div>
         {# funding #}
-        <div class="mt-8">
+        <div class="mt-8" id="funding">
             <div class="grid" style="grid-template-columns: minmax(min-content,max-content) min-content">{{ formRender.addHeading(translationPrefix~'funding.title') }}
                 <div class="align-self-center">{{ formRender.addPDFhint(transferInfo,'participants') }}</div>
             </div>
@@ -133,7 +133,7 @@
                         <div class="mb-4" id="{{ textDiv }}" style="{{ boolToDisplay(isChecked) }}; margin-top: -1rem">
                             {{ formRender.addTextfield(content[widget~'Text']) }}
                             {% if content[widget~'FundingState'] is defined %}
-                                <div style="margin-top:-0.5em; margin-bottom: 0.5em">
+                                <div class="mb-2" id="{{ widget~'fundingStateDiv' }}" style="margin-top:-0.5rem">
                                     {{ formRender.renderButtons(content[widget~'FundingState'],noHeading) }}
                                 </div>
                             {% endif %}
@@ -144,13 +144,13 @@
         </div>
         {# conflict #}
         {% set conflictTextHeight = {'attributes': textHeightLong} %}
-        <div class="mt-8">
+        <div class="mt-8" id="conflict">
             {{ formRender.renderButtons(content.conflict,{'hint': [conflictPrefix], 'text': [content.conflictDescription,conflictTextHeight|merge({'hint': conflictYesDescription, 'textHintID': conflictHint})], 'stim': [coreDataController,'setConflict'], 'contTarget': ['conflict1',coreDataController,'conflictNo']}) }} {# correct hint is set in controller, but must not be empty here #}
             {{ formRender.addTextfield(content.participantDescription,conflictTextHeight|merge({'transfer': [transferInfo,'participants'], 'hint': conflictPrefix~'participants'})) }}
         </div>
         {# support #}
         {% set tempPrefix = translationPrefix~'support.' %}
-        <div class="mt-8">
+        <div class="mt-8" id="support">
             {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
             {% set supportKeys, noSupport = support|keys, 'noSupport' %}
             {% set selection = getAnySelected(content,supportKeys,noSupport) %}
@@ -174,7 +174,7 @@
             {% set guidelines, description = content.guidelines, content.guidelinesText %}
             {% set vars = guidelines.vars %}
             {% set name = vars.name %}
-            <div class="mt-8">
+            <div class="mt-8" id="guidelinesDiv">
                 {{ formRender.addHeading(translationPrefix~'guidelines.title') }}
                 <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [[name,description.vars.name~'Div']]}) }}>
                     {{ form_widget(guidelines,{'id': name, 'attr': checkInput}) }}

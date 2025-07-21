@@ -19,8 +19,9 @@
 
 .CheckBox-Label,
 .RadioButton-Label {
-  @apply flex flex-wrap items-center mt-1.5;
+  @apply items-center mt-1.5 gap-1;
   margin-right: 0.25rem;
+  width: fit-content;
 
   &::before {
     @apply relative self-start w-4 h-4 mr-1.5 bg-white border border-solid border-mono-700 mb-px;
@@ -59,7 +60,7 @@
 left center no-repeat;
   margin-top: 0.25rem;
 
-  @apply self-start bg-white;
+  @apply self-start bg-white backgroundPosition;
 }
 
 .RadioButton-Input:checked + .RadioButton-Label::before {
@@ -69,7 +70,7 @@ left center no-repeat;
           param(--color theme("colors.zpid-blue.500")))
 left center no-repeat;
 
-  @apply bg-white;
+  @apply bg-white backgroundPosition;
 }
 
 .RadioButton-Input:not(:checked):not(:disabled):hover + .RadioButton-Label::before {
@@ -79,5 +80,10 @@ left center no-repeat;
           param(--color theme("colors.zpid-blue.100")))
 left center no-repeat;
 
-  @apply bg-white;
+  @apply bg-white backgroundPosition;
+}
+
+.backgroundPosition {
+  background-position-x: center;
+  background-position-y: center;
 }

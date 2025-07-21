@@ -21,7 +21,6 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
 {
     public static TranslatorInterface $translator;
     protected const labelParams = 'label_translation_parameters'; // key in the $options array for translation parameters of the label
-    protected const choiceParams = 'choice_translation_parameters'; // key in the $options array for translation parameters of ChoiceType
     protected const attrParams = 'attr_translation_parameters'; // key in tne $options array for translation parameters of attributes
     // variables for translation keys of hints
     protected const textHint = 'textHint'; // above text fields
@@ -140,7 +139,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
     protected function addRadioGroup(FormBuilderInterface $builder, string $name, array $choices, string|bool $label = false, string $textareaName = '', string $textHint = '', array $options = []): void {
         $this->addFormElement($builder,$name,'choice',$label,array_merge(['choices' => $choices, 'expanded' => true],$options));
         if ($textareaName!=='') {
-            $this->addFormElement($builder,$textareaName,'textarea',options: array_diff_key($options,[self::choiceParams => '']),hint: $textHint);
+            $this->addFormElement($builder,$textareaName,'textarea',hint: $textHint);
         }
     }
 
@@ -201,10 +200,10 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
         $addOptions = array_merge(['label' => $label, 'required' => false, self::labelParams => $options[self::labelParams] ?? [], self::attrParams => $options[self::attrParams] ?? []], ['attr' => ['placeholder' => str_contains($class,'text') ? $hint : false, 'autocomplete' => 'off']]);
         switch ($class) {
             case 'choice':
-                $builder->add($name, ChoiceType::class, array_merge(['choices' => $options['choices'], 'empty_data' => '', 'expanded' => $options['expanded'] ?? false, 'multiple' => $options['multiple'] ?? false, self::choiceParams => $options[self::choiceParams] ?? [], 'placeholder' => $hint ?: false],$addOptions));
+                $builder->add($name, ChoiceType::class, array_merge(['choices' => $options['choices'], 'empty_data' => '', 'expanded' => $options['expanded'] ?? false, 'multiple' => $options['multiple'] ?? false, 'placeholder' => $hint ?: false],$addOptions));
                 break;
             case 'date':
-                $builder->add($name, DateType::class, array_merge(['empty_data' => '','widget' => 'single_text'],$addOptions));
+                $builder->add($name, DateType::class, array_merge(['empty_data' => '','widget' => 'single_text', 'model_timezone' => 'Europe/Berlin'],$addOptions));
                 break;
             case 'checkbox':
                 $builder->add($name,CheckboxType::class, $addOptions);

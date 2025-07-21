@@ -17,7 +17,7 @@ class BurdensRisksType extends TypeAbstract
         foreach ([self::burdensNode,self::risksNode,self::burdensRisksContributorsNode] as $type) {
             $description = $type.self::descriptionCap;
             if ($type!==self::burdensRisksContributorsNode) {
-                $this->addCheckboxGroup($builder, $type === self::burdensNode ? self::burdensTypes : self::risksTypes, $translationPrefix . $type . '.types.', textareaName: $description);
+                $this->addCheckboxGroup($builder, $type===self::burdensNode ? self::burdensTypes : self::risksTypes, $translationPrefix.$type.'.types.', textareaName: $description);
             }
             else {
                 $this->addBinaryRadio($builder,$type,textareaName: $description);
@@ -26,11 +26,9 @@ class BurdensRisksType extends TypeAbstract
         }
         // finding
         $tempPrefix = $translationPrefix.self::findingNode.'.';
-        $addresseeParams = [self::addresseeTrans => $this->getAddresseeString($options[self::addresseeTrans])];
         $this->addBinaryRadio($builder,self::findingNode,$tempPrefix.'title',self::descriptionNode,$tempPrefix.self::textHint);
         $tempPrefix .= self::informingNode.'.';
-        $typesPrefix = $tempPrefix.'types.';
-        $this->addRadioGroup($builder,self::informingNode,$this->translateArray($typesPrefix,[self::informingAlways,self::informingConsent]),$tempPrefix.'title',options: [self::choiceParams => [$typesPrefix.self::informingAlways => $addresseeParams, $typesPrefix.self::informingConsent => $addresseeParams]]);
+        $this->addRadioGroup($builder,self::informingNode,$this->translateArray($tempPrefix.'types.',[self::informingAlways,self::informingConsent]),$tempPrefix.'title');
         // finding
         $tempPrefix = $translationPrefix.self::feedbackNode.'.';
         $this->addBinaryRadio($builder,self::feedbackNode,$tempPrefix.'title',self::feedbackNode.self::descriptionCap,$tempPrefix.self::textHint);

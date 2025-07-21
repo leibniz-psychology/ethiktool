@@ -9,9 +9,9 @@
         <h2 class="{{ headingCenter }}">{{ (translationPrefix~'consent')|trans(committeeParams) }}</h2>
         {% for curContent, checkbox in content %}
             {% if curContent is not same as '' %}
-                <div class="{{ textPreview }}" style="margin-bottom: 5em">
+                <div class="{{ textPreview }}" style="margin-bottom: 5rem">
                     {{ curContent|raw|nl2br }}
-                    <table class="mt-1">
+                    <table class="mt-1 mb-5">
                         <tr>
                             <td>{{ pdfMacros.addCheckbox(checkbox[0] is same as '1',savePDF) }}</td>
                             <td class="align-content-end">{{ checkbox[1] }}</td>
@@ -26,13 +26,13 @@
     {% endif %}
     {# second page #}
     {% set biasStart, biasPrefix = (translationPrefix~'titles.bias')|trans([],'messages')~': ', translationPrefix~'bias.types.' %}
-    {% set translationPrefix, isMessages = translationPrefix~'further.', messages is not same as '' %}
-    <div>
+    {% set tempPrefix, isMessages = translationPrefix~'further.', messages is not same as '' %}
+    <div style="page-break-after: always">
         {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
-        <h2 class="{{ headingCenter }}">{{ (translationPrefix~'title')|trans(committeeParams) }}</h2>
+        <h2 class="{{ headingCenter }}">{{ (tempPrefix~'title')|trans(committeeParams) }}</h2>
         {% if bias is not same as '' %}
             {% for curBias, biasDescription in bias %}
-                <div class="{{ textPreview }}" style="margin-bottom: 5em">
+                <div class="{{ textPreview }}" style="margin-bottom: 5rem">
                     {{ biasStart~(biasPrefix~curBias)|trans([],'messages') }}
                     {% if biasDescription is not same as '' %}
                         <div style="margin: 0">{{ biasDescription|nl2br }}</div>
@@ -40,12 +40,36 @@
                 </div>
             {% endfor %}
         {% endif %}
-        <div class="{{ textPreview }}" {% if isMessages and savePDF %} style="{{ noPageBreakFirstLine }}" {% endif %}>
-            {{ (translationPrefix~'messages')|trans(committeeParams|merge({'messages': boolToString(isMessages)})) }}
+        <div class="{{ textPreview }}" {% if isMessages and savePDF %} style="{{ savePDF ? noPageBreakFirstLine : noPageBreakFirstLine }}" {% endif %}>
+            {{ (tempPrefix~'messages')|trans(committeeParams|merge({'messages': boolToString(isMessages)})) }}
             {% if isMessages %}
                 {{ ("\n"~messages)|nl2br }}
             {% endif %}
         </div>
+    </div>
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
+    {% endif %}
+    {# third page (brief report) #}
+    {% set tempPrefix = translationPrefix~'briefReport.' %}
+    <div>
+        {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
+        <h2 class="{{ headingCenter }}">{{ (tempPrefix~'title')|trans }}</h2>
+        <div class="{{ textPreview }}">{{ (tempPrefix~'intro')|trans }}</div>
+        {% for report in briefReports %}
+            {% set heading, content = report.heading, report.content %}
+            <div class="{{ textPreview }}" style="page-break-inside: avoid; {% if savePDF %} padding-top: 10% {% endif %}">
+                <b class="{{ textPreview }}" style="margin-left: 5%">{{ heading }}</b>
+                <table class="briefBorder">
+                    {% for question, answer in content %}
+                        <tr>
+                            <td>{{ question|raw|nl2br }}</td>
+                            <td {% if answer[1] %} class="errorStyle" {% endif %} style="text-align: center">{{ answer[0] }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endfor %}
     </div>
     {% if not savePDF %}
         {{ pdfMacros.addLine() }}
