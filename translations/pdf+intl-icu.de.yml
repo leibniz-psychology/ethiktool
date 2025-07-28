@@ -157,7 +157,11 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                                             other {}}:
     compensation: 'Welche Aufwandsentschädigung erhalten die Teilnehmenden?'
     compensationSub: 'Aufwandsentschädigung bei vorzeitigem Abbruch:'
-    furtherDescription: 'Sonstige Erläuterungen zur Aufwandsentschädigung'
+    compensationVoluntary: 'Ist die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet?'
+    compensationVoluntarySub: >-
+      {isCompensationVoluntary, select,
+        true  {Begründung der Gefährdung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung sowie sonstige}
+        other {Sonstige}} Erläuterungen zur Aufwandsentschädigung:
     terminateCons: 'Kann die Teilnahme jederzeit und ohne Nachteile beendet werden?'
     terminateConsSub: 'Begründung und ggf. Beschreibung der Nachteile im Falle eines vorzeitigen Abbruchs:'
     presence: 'Sind Projektbeteiligte bei der Erhebung anwesend?'
@@ -356,7 +360,7 @@ projectdetails:
       {chosen, select,
         complete {Die {addressee} werden vollständig aufgeklärt.}
         partial  {Mindestens eine Information wird nicht erwähnt, d.h., die {addressee} werden unvollständig aufgeklärt.}
-        deceit   {Mindestens eine Information an die {addressee} is falsch, d.h. sie werden explizit getäuscht.}
+        deceit   {Mindestens eine Information an die {addressee} ist falsch, d.h. sie werden explizit getäuscht.}
         other    {}}
   measures:
     measuresTypes:
@@ -448,14 +452,16 @@ projectdetails:
         notApplicable {nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
         other         {auf folgende Art: {otherDescription}}}
   compensation:
-    start: >- # other is participants
-      {addressee, select,
-        children {Ihr Kind erhält}
-        wards    {Die von Ihnen betreute Person erhält}
-        other    {Sie erhalten}} für die Teilnahme {number, plural,
-                                                       =0    {}
-                                                       =1    {}
-                                                       other {wahlweise }}
+    start: >- # other in addressee select is participants
+      {information, select,
+        noPost {Nach der Teilnahme erfolgt }
+        other  {{addressee, select,
+                  children {Ihr Kind erhält}
+                  wards    {Die von Ihnen betreute Person erhält}
+                  other    {Sie erhalten}} für die Teilnahme {number, plural,
+                                                                =0    {}
+                                                                =1    {}
+                                                                other {wahlweise }}}}
   # added empty lines to have same line numbers in all translation files.
 
 
@@ -1177,6 +1183,7 @@ completeForm:
       dataPrivacy: 'Personenbezogene Daten'
       conflict: 'Interessenkonflikt'
       medicine: 'Medizinbezug'
+      compensation: 'Aufwandsentschädigung'
     information: 'Eine vollständige Vorab-Aufklärung ist gewährleistet.'
     voluntary: 'Die Freiwilligkeit der Teilnahme ist gewährleistet.'
     terminateCons: 'Die Teilnahme kann jederzeit ohne Nachteile beendet werden.'
@@ -1189,6 +1196,7 @@ completeForm:
     dataPrivacy: 'In der Studie werden personenbezogene Daten verarbeitet.'
     conflict: 'Bei den Projektbeteiligten besteht ein Interessenkonflikt in Bezug auf das Forschungsprojekt.'
     medicine: 'Das Forschungsprojekt beinhaltet Aspekte nach AMG/MPG/MPDG und/oder Ärztinnen bzw. Ärzte sind projektbeteiligt.'
+    compensation: 'Die Freiwilligkeit ist durch Art oder Höhe der Aufwandsentschädigung gefährdet.'
 
 metadata:
   title: 'Ethikantrag'

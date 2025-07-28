@@ -6,7 +6,6 @@ use App\Abstract\ControllerAbstract;
 use App\Form\Main\CompleteFormType;
 use App\Traits\AppData\AppDataTrait;
 use App\Traits\Main\CompleteFormTrait;
-use DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -63,7 +62,7 @@ class CompleteFormController extends ControllerAbstract
                        $pdfArray[self::informationIINode] = [self::informationNode => $this->getInformationString($informationIIArray), self::addressee => $this->getAddressee($measureTimePoint[self::groupsNode])]; // must be 'pre' or 'post' at this point
                     }
                     $measuresArray = $measureTimePoint[self::measuresNode];
-                    foreach ([self::measuresNode,self::interventionsNode] as $type) {
+                    foreach ([self::measuresNode,self::interventionsNode,self::otherSourcesNode] as $type) {
                         if (array_key_exists($type.'PDF',$measuresArray[$type])) {
                             $pdfArray[$type] = [];
                         }

@@ -51,8 +51,10 @@ class CompensationType extends TypeAbstract
         // terminate
         $tempPrefix = $translationPrefix.self::terminateNode.'.';
         $this->addRadioGroup($builder,self::terminateNode,$this->translateArray($tempPrefix.'types.',array_merge(['complete','partial'],self::terminateTypesDescription)),$tempPrefix.'title',self::terminateNode.self::descriptionCap);
+        // compensation voluntary
+        $this->addBinaryRadio($builder,self::compensationVoluntaryNode,$translationPrefix.self::compensationVoluntaryNode);
         // further description
-        $this->addFormElement($builder,self::awardingTextNode,'textarea');
+        $this->addFormElement($builder,self::compensationTextNode,'textarea');
         // dummy forms
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);
@@ -102,8 +104,10 @@ class CompensationType extends TypeAbstract
             $tempArray = $viewData[self::terminateNode];
             $forms[self::terminateNode]->setData($tempArray[self::chosen]);
             $forms[self::terminateNode.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode));
+            // compensation Voluntary
+            $forms[self::compensationVoluntaryNode]->setData($this->getArrayValue($viewData,self::compensationVoluntaryNode));
             // further description
-            $forms[self::awardingTextNode]->setData($viewData[self::awardingTextNode]);
+            $forms[self::compensationTextNode]->setData($viewData[self::compensationTextNode]);
         }
     }
 
@@ -173,8 +177,10 @@ class CompensationType extends TypeAbstract
                 $tempArray[self::descriptionNode] = $forms[self::terminateNode.self::descriptionCap]->getData();
             }
             $newData[self::terminateNode] = $tempArray;
+            // compensation voluntary
+            $newData[self::compensationVoluntaryNode] = $forms[self::compensationVoluntaryNode]->getData();
             // further description
-            $newData[self::awardingTextNode] = $forms[self::awardingTextNode]->getData();
+            $newData[self::compensationTextNode] = $forms[self::compensationTextNode]->getData();
         }
         $viewData = $newData;
     }

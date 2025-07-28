@@ -293,9 +293,9 @@ export default class extends Controller {
             // set data personal
             let isDataPersonal = this.dataOnlineValue==='ipResearch' || isTechnical && this.dataOnlineProcessingValue==='research';
             this.dataPersonalValue = isDataPersonal ? 'personal' : this.dataPersonalValue;
-            let id = this.dataPersonalTarget.id.replace('0','');
+            let id = this.dataPersonalTarget.id;
             this.dataPersonalTarget.checked = isDataPersonal || this.dataPersonalTarget.checked;
-            for (let suffix of ['1','2']) {
+            for (let suffix of ['Maybe','No']) {
                 let widget = document.getElementById(id+suffix);
                 widget.checked = isDataPersonal ? false : widget.checked;
                 widget.disabled = isDataPersonal;

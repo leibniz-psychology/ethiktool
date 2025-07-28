@@ -47,7 +47,7 @@
                         'stim': ['base','setWidgetByValue',{'widgetValue': ['',type~'CompensationDescription',{'0': yesTrans, '1': noTrans}]}]})) }}
                 </div>
                 {% if isTextInput %}
-                    <div class="mt-8">{{ formRender.addHint(textInputCon,{'visible': not (getAnySelected(content,checkboxTypes['burdens']|slice(1))[1] or getAnySelected(content,checkboxTypes['risks']|slice(1))[1]), 'id': type~inputDiv}) }}</div>
+                    <div class="mt-8">{{ formRender.addHint(textInputCon,{'visible': not (getAnySelected(content,checkboxTypes['burdens']|slice(1))[1] or getAnySelected(content,checkboxTypes['risks']|slice(1))[1]), 'id': type~inputDiv, 'remove': true}) }}</div>
                 {% endif %}
             </div>
         {% endfor %}
@@ -70,7 +70,7 @@
                 {% endif %}
             </div>
             {% if isTextInput %}
-                {{ formRender.addHint(textInputFinding,{'id': inputDiv, 'visible': findingValue is same as '1'}) }}
+                {{ formRender.addHint(textInputFinding,{'id': inputDiv, 'visible': findingValue is same as '1', 'remove': true}) }}
             {% endif %}
         </div>
         {# feedback #}

@@ -60,11 +60,12 @@ class PDFAbstract extends ControllerAbstract
     /** Creates the compensation string.
      * @param array $compensationArray array containing the compensation nodes
      * @param array $addresseeParam array containing the addressee
+     * @param string $information information
      * @param Session $session current session
      * @param bool $addEnd if true, an additional sentence for money and hours (if existent) as well as the sentences for awarding and a sentence about further compensation are added
      * @return string compensation array
      */
-    protected function getCompensation(array $compensationArray, array $addresseeParam, Session $session, bool $addEnd = false): string {
+    protected function getCompensation(array $compensationArray, array $addresseeParam, string $information, Session $session, bool $addEnd = false): string {
         $compensationTypes = $compensationArray['type'];
         $returnString = '';
         $numCompensation = 0;
@@ -135,7 +136,7 @@ class PDFAbstract extends ControllerAbstract
                 $returnString .= ' '.$this->translateStringPDF('participation.'.self::compensationNode.'.start',['isMoneyHours' => $this->getStringFromBool($isMoney || $isHours), 'isMoney' => $this->getStringFromBool($isMoney), 'isHours' => $this->getStringFromBool($isHours)]).$moneyFurther."\n".$awardingString;
             }
         }
-        return $this->translateStringPDF($compensationPrefixPDF.'start',array_merge($addresseeParam,['number' => $numCompensation])).trim($returnString);
+        return $this->translateStringPDF($compensationPrefixPDF.'start',array_merge($addresseeParam,['number' => $numCompensation, self::informationNode => $information])).trim($returnString);
     }
 
     /** Creates the string for compensation if the experiment is terminated.
@@ -162,7 +163,6 @@ class PDFAbstract extends ControllerAbstract
         $markingSecond = $privacyArray[$markingSecondString] ?? '';
         $codeCompensation = $addCodeCompensation ? ($privacyArray[self::codeCompensationNode] ?? '') : '';
         $translationPrefix = 'participation.'.self::privacyNode.'.';
-        $privacyPrefixTool = 'projectdetails.pages.'.self::privacyNode.'.';
         $dataPersonal = $privacyArray[self::dataPersonalNode] ?? '';
         // the following variables get true if any marking is of that type
         $isExternal = false;
@@ -170,9 +170,7 @@ class PDFAbstract extends ControllerAbstract
         $codePersonal = ['isName' => false, 'isList' => false, 'isGeneration' => false, 'isNameList' => false];
         foreach (array_merge($marking!=='' ? [self::markingNode] : [], $markingSecond!=='' ? [$markingSecondString] : [], $codeCompensation!=='' ? [self::codeCompensationNode] : []) as $type) {
             $isMarkingCode = $type!==self::codeCompensationNode;
-            $curPrefix = ($isMarkingCode ? self::markingNode : self::codeCompensationNode).'.';
-            $markingPrefix = $translationPrefix.$curPrefix;
-            $tempPrefix = $privacyPrefixTool.$curPrefix;
+            $markingPrefix = $translationPrefix.($isMarkingCode ? self::markingNode : self::codeCompensationNode).'.';
             $tempArray = $privacyArray[$type];
             $chosen = $tempArray[self::chosen];
             $chosenWoPrefix = lcfirst(str_replace('code','',$chosen));
@@ -207,6 +205,7 @@ class PDFAbstract extends ControllerAbstract
                 $codeCompensationSentences .= $curSentences;
             }
         } // foreach
+        $markingSentences = trim($markingSentences); // if no marking is chosen yet, $curSentences may be only one space
         if ($markingSentences!=='' && $dataPersonal!=='') {
             $isDataPersonal = $dataPersonal==='personal';
             $isExternalInternal = $isExternal || $isInternal;
@@ -230,16 +229,6 @@ class PDFAbstract extends ControllerAbstract
             }
         }
         return [trim($markingSentences), trim($codeCompensationSentences)];
-    }
-
-    /** Checks if any personal marking is used.
-     * @param array $privacyArray array containing the data privacy nodes
-     * @return bool true if any personal marking is used, false otherwise
-     */
-    protected function getMarkingPersonal(array $privacyArray): bool {
-        $markingArray = $privacyArray[self::markingNode] ?? [];
-        $markingSecondArray = $privacyArray[self::markingNode.self::markingSuffix] ?? [];
-        return ($markingArray[self::chosen] ?? '')===self::markingName || in_array($markingArray[self::codePersonal] ?? '',self::markingDataResearchTypes) || ($markingSecondArray[self::chosen] ?? '')===self::markingName || in_array($markingSecondArray[self::codePersonal] ?? '',self::markingDataResearchTypes);
     }
 
     /** Creates the string for data reuse how.

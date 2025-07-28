@@ -19,7 +19,9 @@ export default class extends Controller {
     setPreContent(event) {
         let value = event.target.value;
         setElementVisibility(this.preCompleteTarget,['partial','deceit'].includes(value));
-        setElementVisibility('preContentHint',value==='complete');
+        if (document.getElementById('preContentHint')!==null) {
+            setElementVisibility('preContentHint',value==='complete');
+        }
     }
 
     /** Sets the visibility of the pre complete type and (de)actives the text field.

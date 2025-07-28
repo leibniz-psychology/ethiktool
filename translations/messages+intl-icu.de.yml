@@ -399,7 +399,7 @@ coreData:
     fundingOther: 'sonstige Quelle(n)'
     textHints:
       fundingBudget: 'Bitte Professur(en)/Institution(en) benennen.'
-      fundingResearch: 'Bitte Organisation(en)/Stiftung(en) benennen, z.B. DFG, BMBF, EU, ERC, VolkswagenStiftung.'
+      fundingResearch: 'Bitte Organisation(en)/Stiftung(en) benennen, z.B. DFG, BMFTR, EU, ERC, VolkswagenStiftung.'
       fundingExternal: 'Bitte Quelle(n) benennen.'
       fundingOther: 'Bitte benennen.'
     fundingState:
@@ -756,6 +756,9 @@ projectdetails:
         headingHint: 'Damit sind Daten gemeint, die an anderen Stellen bereits vorliegen und für die Studie genutzt/übertragen werden sollen, z.B. um die eigenen Forschungsdaten zu ergänzen (wie z.B. Gesundheitsdaten, Einschätzungen aus Psychotherapie/medizinischer Behandlung/Training) oder als Kontaktierungsgrundlage (wie z.B. Daten von Einwohnermeldeämtern).'
         textHint: 'Bitte beschreiben Sie, welche Daten von welchen Stellen hinzugezogen werden. Bitte beschreiben Sie auch, auf welcher Grundlage (z.B. gemeinsame Verantwortlichkeit, Schweigepflichtsentbindung) die Datenweitergabe abgesichert ist.'
         hint: 'In der Datenschutzerklärung („Anlage zur Datenverarbeitung“) beschreiben Sie bitte, anhand welcher Merkmale (z.B. Name oder Code) die Daten mit weiteren Daten zusammengeführt werden und welche personenbezogenen Daten der anderen Stelle Teil der Forschungsdaten oder der Daten für sonstige Zwecke jenseits der Forschungsfrage sind. Ggf. müssen zusätzliche Dokumente (z.B. Schweigepflichtsentbindung) hinzugefügt werden.'
+        pdf:
+          hint: 'Bitte geben Sie an, ob Sie bei der Erstellung des Gesamt-Ethikantrags ergänzende Materialien (z.B. Schweigepflichtsentbindung) im PDF-Format beifügen wollen.'
+          text: 'Ich möchte ergänzende Materialien zum Einbezug von Daten anderer Stellen beifügen.'
       loan:
         title: 'Werden Geräte (z.B. Handy, Tablet, Sensor-Kit) an die Teilnehmenden ausgegeben?'
         receipt: 'Soll der Empfang der Geräte von den Teilnehmenden bestätigt werden?'
@@ -930,7 +933,7 @@ projectdetails:
                                             other    {Teilnehmenden}}, warum die Teilnahme nicht bzw. nicht ohne Nachteile beendet werden kann.
       terminateParticipants:
         title: 'Wie wird mit den Daten verfahren, wenn die Studienteilnahme einer Person vorzeitig abgebrochen wird?'
-        types: # TODO (AB/EB): Ist noch eine unterschiedliche Formulierung für vorab/nachträgliche Aufklärung geplant? Sonst entferne ich das select. -AB: lass mal bitte noch stehen, das schauen wir uns noch an
+        types:
           remove: >-
             {information, select,
               post  {Bei individuellem Abbruch der Studienteilnahme werden alle erhobenen Daten umgehend gelöscht und fließen nicht in die Auswertung ein.}
@@ -946,10 +949,12 @@ projectdetails:
         textHint: 'Im Regelfall bezieht sich dies auf den Abbruch der Datenerhebung bei einer Einzelperson. Falls es auch Kriterien für den Abbruch der gesamten Studie gibt, benennen Sie dies ebenfalls hier. Wenn kein Abbruch seitens der Projektbeteiligten während der Erhebung möglich ist, erläutern Sie dies bitte. Das Recht auf Abbruch durch die Teilnehmenden selbst und ggf. deren Vertretungspersonen bleibt davon unberührt.'
     compensation:
       title: >-
-        {addressee, select,
-          children {Ihr Kind erhält}
-          wards    {Die von Ihnen betreute Person erhält}
-          other    {Sie erhalten}} für die Teilnahme ...
+        {information, select,
+          noPost {Nach der Teilnahme erfolgt}
+          other  {{addressee, select,
+                    children {Ihr Kind erhält}
+                    wards    {Die von Ihnen betreute Person erhält}
+                    other    {Sie erhalten}} für die Teilnahme}} ...
       types:
         noCompensation: 'keine Aufwandsentschädigung.'
         money: 'eine finanzielle Aufwandsentschädigung'
@@ -1053,9 +1058,11 @@ projectdetails:
         compensationOther:
           title: 'Sonstige Aufwandsentschädigung'
           textHint: 'Bitte beschreiben Sie die Ausgabe der sonstigen Aufwandsentschädigung in einem Satz. Bitte stellen Sie dabei den Bezug zur Art der vergebenen sonstigen Aufwandsentschädigung her und erwähnen den Zeitpunkt der Vergabe und was organisatorisch für den Erhalt notwendig ist (z.B. „Im Anschluss an die Studie erhalten Sie kostenlosen Zugriff auf unsere Kursmaterialien; dazu benötigen wir Ihre E-Mail-Adresse.“).'
-      otherText:
+      compensationVoluntary: 'Ist die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet?'
+      furtherDescription:
         title: 'Sonstige Erläuterungen zur Aufwandsentschädigung'
-        hint: '(optional) z.B. Begründung für außergewöhnlich hohe Aufwandsentschädigung; Begründung, warum die Teilnehmenden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt werden'
+        textHint: 'Bitte begründen Sie, warum die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet ist. Außerdem können Sie hier weitere Erläuterungen zur Aufwandsentschädigung ergänzen, z.B. Begründung für außergewöhnlich hohe Aufwandsentschädigung; Begründung, warum die Teilnehmenden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt werden.'
+        textHintOptional: '(optional) z.B. Begründung für außergewöhnlich hohe Aufwandsentschädigung; Begründung, warum die Teilnehmenden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt werden'
     texts:
       useTemplate: 'Vorlage nutzen'
       hint: 'Hier können Sie Eingaben für die Studieninformation vornehmen. Bitte wählen Sie dabei eine für die jeweilige Zielgruppe angemessene Beschreibungsebene. Bitte nutzen Sie ggf. aktuell gültige Empfehlungen bzw. Informationsvorlagen zu bestimmten Untersuchungsverfahren der einschlägigen Fachgesellschaften.'
@@ -1268,7 +1275,7 @@ projectdetails:
                                                                                       true  {Bitte nehmen Sie Kontakt zu der Person auf, die die Qualifikationsarbeit betreut.}
                                                                                       other {Nehmen Sie bitte Kontakt zu der zuständigen Datenschutzstelle auf.}} Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, die Datenschutzerklärung („Anlage zur Datenverarbeitung“) als PDF-Datei beizufügen.
       transferOutside:
-        title: 'Übermitteln Sie personenbezogene Daten an bzw. teilen Sie personenbezogene Daten mit Dritten außerhalb des EWR („Drittlandtransfer“)?'
+        title: 'Übermitteln Sie personenbezogene Daten an bzw. teilen Sie personenbezogene Daten mit Dritten außerhalb des Europäischen Wirtschaftsraums (EWR, „Drittlandtransfer“)?'
         types:
           yes: 'Ja'
           no: 'Nein'
@@ -2055,6 +2062,8 @@ checkDoc:
           missing: 'Aufwandsentschädigung bei Abbruch'
           nothing: 'Begründung für fehlende Aufwandsentschädigung bei Abbruch'
           terminateOther: 'Beschreibung der Aufwandsentschädigung bei Abbruch'
+        compensationVoluntary: 'Gefährdung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung'
+        furtherDescription: 'Sonstige Erläuterungen zur Aufwandsentschädigung fehlen'
         presence: >- # other is hours
           {compensation, select,
             money {Wenn die finanzielle Aufwandsentschädigung sofort vor Ort ausgezahlt werden soll}
@@ -2095,6 +2104,8 @@ checkDoc:
           missing: 'Verantwortung für die Verarbeitung der personenbezogenen Daten'
           qualification: 'Wenn eine Person privat verantwortlich für die Verarbeitung personenbezogener Daten ist, muss die Frage nach <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Qualifikationsarbeit</a> mit „Ja“ beantwortet werden.'
         transferOutside: 'Weitergabe der personenbezogenen Daten außerhalb des EWR'
+        responsibilityTotransferOutside: 'Wenn bei der Frage nach Verantwortung für die Verarbeitung personenbezogener Daten „nicht zutreffend“ gewählt wurde, muss auch bei der Frage nach Weitergabe personenbezogener Daten an Dritte außerhalb des EWR „nicht zutreffend“ gewählt werden.'
+        transferOutsideToresponsibility: 'Wenn bei der Frage nach Weitergabe personenbezogener Daten an Dritte außerhalb des EWR „nicht zutreffend“ gewählt wurde, muss auch bei der Frage nach Verantwortung für die Verarbeitung personenbezogener Daten „nicht zutreffend“ gewählt werden.'
         dataOnline: 'Antwort auf Frage nach Erhebung von IP-Adressen im Rahmen der Online-Erhebung' # '[] fehlt.'
         dataOnlineProcessing: 'Antwort auf Frage nach Verarbeitung der IP-Adressen' # '[] fehlt.'
         dataPersonal: 'Personenbezug der Forschungsdaten'
@@ -2229,7 +2240,7 @@ checkDoc:
         dataReuseSelf: 'Antwort auf Frage, ob die Forschungsdaten zur eigenen Nachnutzung/Re-Analyse verwendet werden,' # '[] fehlt.'
       contributor:
         mandatory: >-
-          Es wurde keine Person für die Funktion „{task}“ ausgewählt{type, select,
+          Es wurde keine Person für die Funktion „{task}“ vorgesehen{type, select,
               missing {, weil auf der Seite „<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Projektbeteiligte</a>“ bei keiner Person diese Funktion ausgewählt wurde.}
               other   {.}}
         task: >-
@@ -2295,6 +2306,7 @@ completeForm:
                                                                        other    {betreuten Personen}}
       measures: 'Zusätzliche Materialien für die Erhebungsmethoden'
       interventions: 'Zusätzliche Materialien für die Maßnahmen'
+      otherSources: 'Zusätzliche Materialien für die Daten anderer Stellen'
       dataPrivacy: 'Datenschutzerklärung'
     upload: 'PDF-Datei auswählen'
   finish:

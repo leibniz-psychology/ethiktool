@@ -128,9 +128,12 @@ class InformationController extends ControllerAbstract
         }
         return $this->render('Projectdetails/information.html.twig',
             $this->setRenderParameters($request,$information,
+                array_merge(
                 ['isInformationII' => $isInformationII,
                  'informationIIIinput' => $informationIIIinputText,
                  'textInputPre' => $textInputPre,
-                 'textInputPost' => $textInputPost],'projectdetails.information'.($isInformationII ? 'II' : ''),true));
+                 'textInputPost' => $textInputPost],
+                  $isInformationII ? [self::participantsString => $this->getAddresseeString($addressee,false),
+                                      self::participantsString.self::post => $this->getAddresseeString($addressee,false,true,true)] : []),'projectdetails.information'.($isInformationII ? 'II' : ''),true));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Abstract\ControllerAbstract;
+use App\Classes\CheckDocClass;
 use App\Traits\AppData\AppDataTrait;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use Exception;
@@ -22,9 +23,9 @@ class NavigationController extends ControllerAbstract
         $appNode = $hasDoc ? $this->getXMLfromSession($session) : '';
         if ($hasDoc) { // application is open
             // application data
-            $windows[self::appDataNodeName] = [$this->setSubMenu(self::appDataNodeName,cutName: false)];
+            $windows[self::appDataNodeName] = [$this->setSubMenu(self::appDataNodeName,$request,cutName: false)];
             // contributors
-            $windows[self::contributorsNodeName] = 'app_contributors';
+            $windows[self::contributorsNodeName] = [self::label => 'app_contributors', self::error => CheckDocClass::getDocumentCheck($request,'contributors')];
             // project details
             $projectDetailsArray = $this->setSubMenu(self::projectdetailsNodeName,$request);
             foreach ($this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]) as $studyIndex => $study) {
@@ -38,7 +39,7 @@ class NavigationController extends ControllerAbstract
                 }
                 $projectDetailsArray[$studyIndex][self::subPages] = $studyArray;
             }
-            $windows[self::projectdetailsNodeName] = [[self::label => $this->translateString('pages.projectdetails.title'), self::route => 'app_landing', self::subPages => $projectDetailsArray]];
+            $windows[self::projectdetailsNodeName] = [[self::label => $this->translateString('pages.projectdetails.title'), self::route => 'app_landing', self::subPages => $projectDetailsArray, self::error => CheckDocClass::getDocumentCheck($request,self::projectdetailsNodeName)]];
         }
         else {
             foreach ($windows as $page => $value) {
@@ -64,6 +65,28 @@ class NavigationController extends ControllerAbstract
              'windows' => $windows,
              'activeRoute' => $activeRoute,
              'routeParams' => $activeLevels,
-             'isComplete' => $this->getErrors($request,returnCheck: true)]);
+             'isComplete' => $this->getErrors($request,returnCheck: true),
+             'anyError' => $this->checkAnyError($windows)]);
+    }
+
+    /** Checks if a key 'errors' exists in the given array or any sub-array.
+     * @param array|string $windows array to be checked
+     * @return bool true if an 'error' key exists and is true, false otherwise
+     */
+    private function checkAnyError(array|string $windows): bool {
+        if (!is_array($windows)) {
+            return false;
+        }
+        if (array_key_exists(self::error,$windows)) {
+            return $windows[self::error] ?: (array_key_exists(self::subPages, $windows) && $this->checkAnyError($windows[self::subPages]));
+        }
+        else {
+            foreach ($windows as $page) {
+                if ($this->checkAnyError($page)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

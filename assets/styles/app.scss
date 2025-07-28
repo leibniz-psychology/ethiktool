@@ -137,6 +137,12 @@ a {
     border-color: black !important;
 }
 
+.removeHint {
+    @apply border;
+    margin: 1.5rem 1.5rem 0 1.5rem;
+    border-color: red !important;
+}
+
 // navigation
 .NavBar {
     @apply grid gap-y-1 mx-2;

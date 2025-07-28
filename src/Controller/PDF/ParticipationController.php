@@ -245,7 +245,7 @@ class ParticipationController extends PDFAbstract
                         // get texts for paragraphs compensation, pro/con, criteria and voluntary. $paragraphs: Keys: key used for addParagraph() call. Values: 0: further arguments for the addParagraph() call
                         // compensation
                         [$linkedString, $subHeadingsString,$parametersString,$noPageBreakString,$subColonString] = ['linked','subHeadings','parameters','noPageBreak','subColon'];
-                        $paragraphs = [self::compensationNode => [$linkedString => self::compensationNode,self::content => $this->getCompensation($measureTimePoint[self::compensationNode],$addresseeParam,$session,true),$subHeadingsString => [], $parametersString => [],$noPageBreakString => false, $subColonString => true]];
+                        $paragraphs = [self::compensationNode => [$linkedString => self::compensationNode,self::content => $this->getCompensation($measureTimePoint[self::compensationNode],$addresseeParam,$information,$session,true),$subHeadingsString => [], $parametersString => [],$noPageBreakString => false, $subColonString => true]];
 
                         // pro, con
                         $translationPrefix = $participationPrefix.'proCon.';

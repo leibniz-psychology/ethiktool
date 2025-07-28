@@ -5,7 +5,7 @@
     {% set translationPrefix, measuresController, location = 'projectdetails.pages.measures.', 'Projectdetails--measures', content.location %}
     {% set measuresInterventionsPrefix, locationPrefix, locationValue = translationPrefix~'measuresInterventions.', translationPrefix~'location.', location.vars.value %}
     {% set measuresHintPrefix, interventionsHintPrefix = measuresInterventionsPrefix~'measures.textHints.', measuresInterventionsPrefix~'interventions.textHints.' %}
-    {% set measuresSentence, locationInputName, durationPrefix, noLocation, locationHint = (measuresHintPrefix~'description')|trans, 'locationInputHint', translationPrefix~'duration.', 'multiple.choiceTextHint'|trans, (locationPrefix~'textHint')|trans %}
+    {% set measuresSentence, durationPrefix, noLocation, locationHint = (measuresHintPrefix~'description')|trans, translationPrefix~'duration.', 'multiple.choiceTextHint'|trans, (locationPrefix~'textHint')|trans %}
     {% set multipleParam, totalName, durationStart, measureTime, breaks = {'multiple': boolToString(true in multipleStudyGroupMeasure)}, 'total', durationPrefix~'total', durationPrefix~'measureTime', durationPrefix~'breaks' %}
     <div {{ stimulus_controller(measuresController,{
             'measuresTypes': measuresTypes,
@@ -16,7 +16,6 @@
             'location': locationValue,
             'locationHint': [noLocation, locationHint],
             'locationInput': textInputs|slice(1),
-            'locationInputName': locationInputName,
             'duration': {(totalName): [durationStart|trans(multipleParam|merge({'time': 1})), durationStart|trans(multipleParam|merge({'time': 0}))], 'measureTime': [measureTime|trans({'time': 1}), measureTime|trans({'time': 0})], 'breaks': [breaks|trans({'time': 1}), breaks|trans({'time': 0})]}
     }) }}>
         {# measures and interventions #}
@@ -41,21 +40,28 @@
                         {{ formRender.addHint(hintsPrefix~'pdf',{'params': params}) }}
                     </div>
                     <div class="MetaData-Widget">
-                        {{ formRender.addCheckbox(content[type~'PDF'], {'style': 'margin-left: 0.3rem', 'labelParams': {'type': type}}) }}
+                        {{ formRender.addCheckbox(content[type~'PDF'], {'labelParams': {'type': type}}) }}
                     </div>
                 </div>
             </div>
         {% endfor %}
         {# other sources #}
-        {% set otherSources, description, tempPrefix, hintDiv = content.otherSources, content.otherSourcesDescription, translationPrefix~'otherSources.', 'otherSourceshintDiv' %}
-        {% set isOtherSources = otherSources.vars.value is same as '0' %}
+        {% set otherSources, tempPrefix, otherSourcesDiv = content.otherSources, translationPrefix~'otherSources.', 'otherSourcesDiv' %}
         <div class="mt-8" id="otherSources">
-            {{ formRender.renderButtons(otherSources,{'hint': [tempPrefix], 'stimVisible': {'values': [['0',[description.vars.name~'Div',hintDiv]]]}}) }}
-            {{ formRender.addTextfield(description,fontNormal|merge({'attributes': textHeightLong, 'hint': [translationPrefix~'otherSources'], 'visibility': isOtherSources, 'transfer': [transferInfo,addresseeType]})) }}
-            {{ formRender.addHint(tempPrefix~'hint',{'params': routeIDsParam, 'id': hintDiv, 'visible': isOtherSources}) }}
+            {{ formRender.renderButtons(otherSources,{'hint': [tempPrefix], 'stimVisible': {'values': [['0',otherSourcesDiv]]}}) }}
+            <div id="{{ otherSourcesDiv }}" style="{{ boolToDisplay(otherSources.vars.value is same as '0') }}">
+                {{ formRender.addTextfield(content.otherSourcesDescription,fontNormal|merge({'attributes': textHeightLong, 'hint': [translationPrefix~'otherSources'], 'transfer': [transferInfo,addresseeType]})) }}
+                {{ formRender.addHint(tempPrefix~'hint',{'params': routeIDsParam}) }}
+                <div class="mt-4">
+                    {{ formRender.addHint(tempPrefix~'pdf.hint') }}
+                    <div class="MetaData-Widget">
+                        {{ formRender.addCheckbox(content.otherSourcesPDF) }}
+                    </div>
+                </div>
+            </div>
         </div>
         {# loan #}
-        {% set loan, receipt = content.loan, content.receipt %}
+        {% set loan, receipt, apparatusHint = content.loan, content.receipt, textInputs['apparatus'] %}
         {% set receiptVars = receipt.vars %}
         {% set receiptValue, loanReceiptDiv, loanTemplate = receiptVars.value, 'receiptDiv', 'loanTemplate' %}
         <div class="mt-8" id="loan" {{ stimulus_action(measuresController,'setInputHints','change') }}>
@@ -65,10 +71,12 @@
                 {{ formRender.renderButtons(receipt,noHeading|merge({'text': [content.receiptText,{'transfer': [['consent'],addresseeType], 'visibility': receiptValue is same as 'text'}], 'stimVisible': {'values': [['template',loanTemplate],['text',receiptVars.name~'TextDiv']]}})) }}
                 <div class="template" id="{{ loanTemplate }}" style="{{ boolToDisplay(receiptValue is same as 'template') }}">{{ (translationPrefix~'loan.template')|trans }}</div>
             </div>
-            {{ formRender.addHint(textInputs['apparatus'],{'id': 'loanInputHint'}) }} {# hint text is set in controller, but must not be empty here #}
+            {% if apparatusHint is not same as '' %}
+                {{ formRender.addHint(apparatusHint,{'target': [measuresController,'loanInputHint'], 'remove': true}) }} {# hint text is set in controller, but must not be empty here #}
+            {% endif %}
         </div>
         {# location #}
-        {% set isLocation = locationValue is not same as '' %}
+        {% set isLocation, bothHint = locationValue is not same as '', textInputs['both'] %}
         <div class="mt-8" id="location">
             {{ formRender.addHeading(locationPrefix~'title') }}
             <div class="MetaData-Label">{{ (locationPrefix~'start')|trans({'information': information}) }}{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
@@ -78,9 +86,12 @@
                 'icons': {'locationother': (locationPrefix~'otherHint')|trans},
                 'labelParams': committeeParams})) }}
             <div class="MetaData-Label mb-4" style="{{ boolToDisplay(locationValue is same as 'online') }}" {{ stimulus_target(measuresController,'locationEnd') }}>{{ (locationPrefix~'end')|trans }}</div>
-            {{ formRender.addHint(textInputs['both'],{'id': locationInputName}) }} {# hint text is set in controller, but must not be empty here. If 'both' is emtpy, then 'insuranceWay' will also be empty, but not vice versa #}
+            {% if bothHint is not same as '' %}
+                {{ formRender.addHint(bothHint,{'target': [measuresController,'locationInputHint'], 'remove': true}) }} {# hint text is set in controller, but must not be empty here. If 'both' is
+                 emtpy, then 'insuranceWay' will also be empty, but not vice versa #}
+            {% endif %}
             {% if textInputOnline is not same as '' %} {# the previous hint and this one can not be shown at the same time #}
-                {{ formRender.addHint(textInputOnline,{'target': [measuresController,'onlineHint']}) }}
+                {{ formRender.addHint(textInputOnline,{'target': [measuresController,'onlineHint'], 'remove': true}) }}
             {% endif %}
         </div>
         {# presence #}

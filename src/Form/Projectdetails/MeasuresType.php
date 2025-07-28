@@ -23,6 +23,7 @@ class MeasuresType extends TypeAbstract
         // other sources
         $tempPrefix = $translationPrefix.self::otherSourcesNode.'.';
         $this->addBinaryRadio($builder,self::otherSourcesNode,$tempPrefix.'title',self::otherSourcesNode.self::descriptionCap,$tempPrefix.self::textHint);
+        $this->addFormElement($builder,self::otherSourcesPDF,'checkbox',$tempPrefix.'pdf.text');
         // loan
         $tempPrefix = $translationPrefix.self::loanNode.'.';
         $this->addBinaryRadio($builder,self::loanNode,$tempPrefix.'title');
@@ -52,6 +53,7 @@ class MeasuresType extends TypeAbstract
         }
         // other sources
         $this->setChosenArray($forms,$viewData,self::otherSourcesNode,[self::otherSourcesNode.self::descriptionCap]);
+        $forms[self::otherSourcesPDF]->setData(array_key_exists(self::otherSourcesPDF,$viewData[self::otherSourcesNode]));
         // loan
         $tempArray = $viewData[self::loanNode];
         $forms[self::loanNode]->setData($tempArray[self::chosen]);
@@ -94,7 +96,11 @@ class MeasuresType extends TypeAbstract
         }
         $viewData[self::interventionsNode] = $tempArray;
         // other sources
-        $viewData[self::otherSourcesNode] = $this->getChosenArray($forms,self::otherSourcesNode,0,[self::otherSourcesNode.self::descriptionCap]);
+        $tempArray = $this->getChosenArray($forms,self::otherSourcesNode,0,[self::otherSourcesNode.self::descriptionCap]);
+        if ($forms[self::otherSourcesPDF]->getData()) {
+            $tempArray[self::otherSourcesPDF] = '';
+        }
+        $viewData[self::otherSourcesNode] = $tempArray;
         // loan
         $tempVal = $forms[self::loanNode]->getData();
         $tempArray = [self::chosen => $tempVal];

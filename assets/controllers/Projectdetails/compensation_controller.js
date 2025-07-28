@@ -3,7 +3,7 @@ import {setElementVisibility, getSelected, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['moneyMiddle','moneyEndSpecific','moneyValue','moneyAmountReal','hoursAmountFlat','hoursValueDiv','hoursValue','hoursEndDefault','hoursEndSpecific','moneyFurther','terminate','awarding','further','textInput'];
+    static targets = ['moneyMiddle','moneyEndSpecific','moneyValue','moneyAmountReal','hoursAmountFlat','hoursValueDiv','hoursValue','hoursEndDefault','hoursEndSpecific','moneyFurther','compensationDiv','textInput'];
 
     static values = {
         compensationTypes: Array, // without 'no compensation'
@@ -19,10 +19,7 @@ export default class extends Controller {
 
     /** Sets the compensation widgets. */
     setCompensation() {
-        let anySelected = getSelected(this.compensationTypesValue)[0];
-        setElementVisibility(this.terminateTarget,anySelected);
-        setElementVisibility(this.awardingTarget,anySelected); // entire question
-        setElementVisibility(this.furtherTarget,anySelected);
+        setElementVisibility(this.compensationDivTarget,getSelected(this.compensationTypesValue)[0]);
         for (let type of this.compensationTypesValue) {
             let isMoney = type==='money';
             let isChecked = document.getElementById(type).checked;
@@ -84,7 +81,7 @@ export default class extends Controller {
             let isHint = true;
             for (let type of this.compensationTypesValue) {
                 let later = type+'later';
-                if (document.getElementById(type).checked && document.getElementById(later).checked && document.getElementById('compensation_'+later+'Information_0').checked) {
+                if (document.getElementById(type).checked && document.getElementById(later).checked && document.getElementById(later+'Informationcode').checked) {
                     isHint = false;
                 }
             }

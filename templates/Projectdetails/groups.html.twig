@@ -37,14 +37,16 @@
             {% set iconTemp, heightString = {(wardsName): ''}, 'height: '~textHeight %}
             {{ formRender.addCheckboxGroup(content,examined,{'addDiv': ['examinedPeople','','mt-2'],
                 'contTargets': {'healthy': [groupsController,'healthy'], (wardsName): [groupsController,wardsName]}|
-                    merge(isTextInputVoluntary ? {(content.dependent.vars.name): [groupsController,'dependent']} : {})}|
-                merge(textInput is not same as '' ? {'icons': [[wardsName],{(wardsName): textInput},{(wardsName): ''},[],{(wardsName): groupsController}]} : {})) }}
+                    merge(isTextInputVoluntary ? {(content.dependent.vars.name): [groupsController,'dependent']} : {})}) }}
             </div>
+            {% if textInput is not same as '' %}
+                {{ formRender.addHint(textInput,removeHint|merge({'target': [groupsController,'removeHint']})) }}
+            {% endif %}
             {# people description #}
-            {% set styleHeight, voluntaryTarget = {'attributes': {'style': heightString}}, {'target': [groupsController,'voluntaryHint']} %}
+            {% set styleHeight, voluntaryHintParams = {'attributes': {'style': heightString}}, removeHint|merge({'target': [groupsController,'voluntaryHint']}) %}
             {{ formRender.addTextfield(content.peopleDescription,styleHeight|merge({'hint': examinedMissing, 'contTarget': [groupsController,'examinedDescription']})) }} {# hint text is set in stimulus controller, but must not be empty here #}
             {% if isTextInputVoluntary %}
-                {{ formRender.addHint(textInputVoluntary,voluntaryTarget) }}
+                {{ formRender.addHint(textInputVoluntary,voluntaryHintParams) }}
             {% endif %}
         </div>
         {# closed group #}
@@ -53,7 +55,7 @@
             {{ formRender.renderButtons(closed, {'stimVisible': {'values': [['0',closedDiv]]}, 'contTarget': ['closed1',groupsController,'closedNo'], 'hint': [translationPrefix~'closed.']}) }}
             {{ formRender.addCheckboxGroup(content,closedTypes,{'other': ['closedOther'], 'addDiv': [closedDiv, 'width: fit-content; '~boolToDisplay(closed.vars.value is same as '0'),'mt-4']}) }}
             {% if isTextInputVoluntary %}
-                {{ formRender.addHint(textInputVoluntary,voluntaryTarget) }}
+                {{ formRender.addHint(textInputVoluntary,voluntaryHintParams) }}
             {% endif %}
         </div>
         {# criteria #}
@@ -91,7 +93,7 @@
             {{ formRender.addHeading(recruitmentPrefix~'title') }}
             {{ formRender.addCheckboxGroup(content,recruitmentTypes,{'addDiv': ['','width: fit-content']}) }}
             {{ formRender.addTextfield(recruitmentFurther,fontNormal|
-                merge({'hint': hints[notAnySelected ? 0 : (content[external].vars.checked ? 2 : 1)],
+                merge({'hint': hints[notAnySelected ? 0 : (content[external].vars.checked or content.recruitmentOther.vars.checked ? 2 : 1)],
                        'contTarget': [groupsController,'recruitmentDescription']})|
                 merge(notAnySelected ? {'target': recruitmentFurther.vars.name} : {})) }}
         </div>

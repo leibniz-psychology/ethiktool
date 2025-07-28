@@ -8,6 +8,7 @@ use App\Traits\Main\CompleteFormTrait;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use DateTime;
 use DOMDocument;
+use Exception;
 use setasign\Fpdi\Fpdi;
 use setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException;
 use setasign\Fpdi\PdfParser\Filter\FilterException;
@@ -58,6 +59,7 @@ abstract class ControllerAbstract extends AbstractController
     protected const label = 'label';
     protected const route = 'route';
     protected const routeIDs = 'routeIDs';
+    protected const error = 'error';
     protected const tempFolder = 'tmpFiles'; // name of folder where PDFs will be temporarily saved if the complete proposal is created. Must be equal to the name in knp_snappy.yaml
     protected const newForm = 'newForm'; // name of session variable indicating that a new proposal was created successfully
     protected const pdfLoad = 'pdfLoadFailure'; // name of session variable indicating that a custom pdf could not be added
@@ -256,6 +258,7 @@ abstract class ControllerAbstract extends AbstractController
                 if ($loadInput!==[]) { // form was loaded
                     try {
                         $xml = simplexml_load_string(file_get_contents($loadInput->getRealPath()));
+                        $this->updateXML($xml);
                         $xmlArray = $this->xmlToArray($xml);
                         $this->getErrors($request,element: $xml); // if the file is invalid, an exception is thrown
                         $this->setCommittee($session, $xmlArray[self::committee], $oldLanguage);
@@ -518,32 +521,33 @@ abstract class ControllerAbstract extends AbstractController
      * @param int|null $groupID if $page does not equal 'AppData', the id of the group or null if an overview of the study pages should be created
      * @param int|null $measureID if $page does not equal 'AppData', the id of the measure point in time or null if an overview of the group pages should be created
      * @param bool $cutName if $page equals 'Projectdetails' and an overview of studies or groups should be created, true if only the first 5 characters of the name should be shown, false otherwise
-     * @return array keys: label for the pages, values: array: names of the routes and route IDs, if applicable
+     * @return array keys: label for the pages, values: array: names of the routes and route IDs, if applicable, and a bool indicating if any inconsistencies are on the page(s)
+     * @throws Exception is any error is thrown in getDocumentCheck
      */
     protected function setSubMenu(string $page, ?Request $request = null, ?int $studyID = null, ?int $groupID = null, ?int $measureID = null, bool $cutName = true): array {
         if ($page===self::appDataNodeName) {
             $tempVal = 'pages.appData.';
             $tempArray = [];
             foreach ([self::coreDataNode,self::voteNode,self::medicine,self::summary] as $page) {
-                $tempArray[] = [self::label => $this->translateString($tempVal.$page),self::route => 'app_'.$page];
+                $tempArray[] = [self::label => $this->translateString($tempVal.$page),self::route => 'app_'.$page,self::error => CheckDocClass::getDocumentCheck($request,$page)];
             }
-            $returnArray = [self::label => $this->translateString($tempVal.'title'),self::route => 'app_landing',self::subPages => $tempArray];
+            $returnArray = [self::label => $this->translateString($tempVal.'title'),self::route => 'app_landing',self::subPages => $tempArray, self::error => CheckDocClass::getDocumentCheck($request,self::appDataNodeName)];
         }
         else {
             $appNode = $this->getXMLfromSession($request->getSession());
             $studies = $this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]);
             if ($studyID===null) { // overview of studies
-                $returnArray = $this->setOverview($studies,self::studyNode,$cutName,[]);
+                $returnArray = $this->setOverview($request,$studies,self::studyNode,$cutName,[]);
             }
             else {
                 $groups = $this->addZeroIndex($studies[$studyID][self::groupNode]);
                 if ($groupID===null) { // overview of groups
-                    $returnArray = $this->setOverview($groups,self::groupNode,$cutName,[self::studyID => $studyID+1]);
+                    $returnArray = $this->setOverview($request,$groups,self::groupNode,$cutName,[self::studyID => $studyID+1]);
                 }
                 else {
                     $measureTimePoints = $this->addZeroIndex($groups[$groupID][self::measureTimePointNode]);
                     if ($measureID===null) { // overview of measure time points
-                        $returnArray = $this->setOverview($measureTimePoints,self::measureTimePointNode,$cutName,[self::studyID => $studyID+1, self::groupID => $groupID+1]);
+                        $returnArray = $this->setOverview($request,$measureTimePoints,self::measureTimePointNode,$cutName,[self::studyID => $studyID+1, self::groupID => $groupID+1]);
                     }
                     else { // overview of one measure time point
                         $prefix = 'pages.projectdetails.';
@@ -552,21 +556,21 @@ abstract class ControllerAbstract extends AbstractController
                         $information = $this->getInformation($appNode,[self::studyID => $studyID+1, self::groupID => $groupID+1, self::measureID => $measureID+1]);
                         $isPre = $information===self::pre;
                         $sidebarSuffix = $cutName ? 'Sidebar' : ''; // use abbreviation for information pages only in sidebar
-                        $returnArray = [
-                            [self::label => $this->translateString($prefix.self::groupsNode), self::route => 'app_groups', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::informationNode.$sidebarSuffix), self::route => 'app_information', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::informationIINode.$sidebarSuffix), self::route => $this->getAddressee($measure[self::groupsNode])!==self::addresseeParticipants ? 'app_informationII' : '', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::informationIIINode.$sidebarSuffix), self::route => $this->getInformationIII($measure[self::informationNode]) ?  'app_informationIII' : '', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::measuresNode), self::route => 'app_measures', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::burdensRisksNode), self::route => 'app_burdensRisks', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::consentNode), self::route => 'app_consent', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::compensationNode), self::route => 'app_compensation', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::textsNode), self::route => ($isPre || $information===self::post) ? 'app_texts' : '', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::legalNode), self::route => ($isPre && ($this->getAnyConsent($measure[self::consentNode]) || $this->getTemplateChoice($this->getLoanReceipt($measure[self::measuresNode][self::loanNode])))) ? 'app_legal' : '', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::privacyNode), self::route => 'app_dataPrivacy', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::dataReuseNode), self::route => 'app_dataReuse', self::routeIDs => $routeIDs],
-                            [self::label => $this->translateString($prefix.self::contributorNode), self::route => (count($studies)>1 || count($groups)>1 || count($measureTimePoints)>1) ? 'app_contributor' : '', self::routeIDs => $routeIDs]
-                        ];
+                        $returnArray = [];
+                        foreach ([self::groupsNode,self::informationNode,self::informationIINode,self::informationIIINode,self::measuresNode,self::burdensRisksNode,self::consentNode,self::compensationNode,self::textsNode,self::legalNode,self::privacyNode,self::dataReuseNode,self::contributorNode] as $page) {
+                            $route = match ($page) {
+                                self::informationIINode => $this->getAddressee($measure[self::groupsNode])!==self::addresseeParticipants ? 'app_informationII' : '',
+                                self::informationIIINode => $this->getInformationIII($measure[self::informationNode]) ? 'app_informationIII' : '',
+                                self::textsNode => ($isPre || $information===self::post) ? 'app_texts' : '',
+                                self::legalNode => ($isPre && ($this->getAnyConsent($measure[self::consentNode]) || $this->getTemplateChoice($this->getLoanReceipt($measure[self::measuresNode][self::loanNode])))) ? 'app_legal' : '',
+                                self::contributorNode => (count($studies)>1 || count($groups)>1 || count($measureTimePoints)>1) ? 'app_contributor' : '',
+                                default => 'app_'.$page};
+                            $returnArray[] =
+                                [self::label => $this->translateString($prefix.$page.(str_contains($page,self::informationNode) ? $sidebarSuffix : '')),
+                                 self::route => $route,
+                                 self::routeIDs => $routeIDs,
+                                 self::error => CheckDocClass::getDocumentCheck($request,$page,routeIDs: $routeIDs)];
+                        }
                     }
                 }
             }
@@ -575,13 +579,15 @@ abstract class ControllerAbstract extends AbstractController
     }
 
     /** Sets the overview of studies, groups, or measure time points.
+     * @param Request $request request
      * @param array $array array containing the subpages
      * @param string $nodeName type of subpages overview to create. Must equal 'study', 'group', or 'measureTimePoint'
      * @param bool $cutName if $nodeName equals 'study' or 'group' and if true, only the first 5 characters of the name are shown
      * @param array $routeIDs routeIDs
      * @return array keys: label for the pages, values: names of the routes
+     * @throws Exception if an error occurs in getDocumentCheck
      */
-    protected function setOverview(array $array, string $nodeName, bool $cutName, array $routeIDs): array {
+    protected function setOverview(Request $request, array $array, string $nodeName, bool $cutName, array $routeIDs): array {
         $returnArray = [];
         $multiple = count($array)>1;
         $showName = $nodeName!==self::measureTimePointNode;
@@ -594,7 +600,12 @@ abstract class ControllerAbstract extends AbstractController
                     $name = substr($name,0,5).'...';
                 }
             }
-            $returnArray[] = [self::label => $this->translateString('projectdetails.headings.'.$nodeName).($multiple ? ' '.($index+1) : '').($name!=='' ? ($multiple ? ' (' : ' ').$name.($multiple ? ')' : '') : ''), self::route => 'app_landing', self::routeIDs => array_merge($routeIDs,[$loopID => $index+1])];
+            $curRouteIDs = array_merge($routeIDs,[$loopID => $index+1]);
+            $returnArray[] =
+                [self::label => $this->translateString('projectdetails.headings.'.$nodeName).($multiple ? ' '.($index+1) : '').($name!=='' ? ($multiple ? ' (' : ' ').$name.($multiple ? ')' : '') : ''),
+                 self::route => 'app_landing',
+                 self::routeIDs => $curRouteIDs,
+                 self::error => CheckDocClass::getDocumentCheck($request,self::projectdetailsNodeName,routeIDs: $curRouteIDs)];
         }
         return $returnArray;
     }
@@ -950,11 +961,7 @@ abstract class ControllerAbstract extends AbstractController
                 $pdfApplication->addPdf($applicationFilename,'1-'.($this->addPDF($applicationFilename)-1));
                 if (self::$isCompleteForm) {
                     $files = $request->files->all()['complete_form'];
-                    if (array_key_exists(self::voteNode,$files) && $files[self::voteNode]!==null) {
-                        $file = $files[self::voteNode];
-                        $this->failureName = $file->getClientOriginalName();
-                        $this->addPDF($file->getPathname(),false);
-                    }
+                    $this->addCustomPDF(self::voteNode,$files);
                     $this->addParticipationPDFs($session,true,$files);
                     // set meta data
                     $versionParam = [self::toolVersionAttr => self::toolVersion];
@@ -1027,12 +1034,8 @@ abstract class ControllerAbstract extends AbstractController
             $filename = $tempFolder.'participation'.$idSuffix.$sessionIDExt;
             if ($isCompleteForm) {
                 $this->addPDF($filename); // only date
-                foreach ([self::informationIINode.$idSuffix, self::measuresNode.$idSuffix, self::interventionsNode.$idSuffix, self::privacyNode.$idSuffix] as $custom) {
-                    if (array_key_exists($custom, $files)) {
-                        $file = $files[$custom];
-                        $this->failureName = $file->getClientOriginalName();
-                        $this->addPDF($file->getPathname(), false);
-                    }
+                foreach ([self::informationIINode.$idSuffix, self::measuresNode.$idSuffix, self::otherSourcesNode.$idSuffix, self::interventionsNode.$idSuffix, self::privacyNode.$idSuffix] as $custom) {
+                    $this->addCustomPDF($custom,$files);
                 }
             }
             else {
@@ -1040,6 +1043,24 @@ abstract class ControllerAbstract extends AbstractController
                 // if no participation was created, the pdf has only two pages (hint that no participation was created and empty page). If 'pages' is passed to 'addPdf' with a '-', end page must be greater than start page.
                 $this->pdfParticipation->addPdf($filename,'1'.($numPages>2 ? '-'.($numPages-1) : ''));
             }
+        }
+    }
+
+    /** Adds a custom pdf if it exists.
+     * @param string $name key in $files to be checked for existence
+     * @param array $files array with custom PDFs
+     * @return void
+     * @throws CrossReferenceException
+     * @throws FilterException
+     * @throws PdfTypeException
+     * @throws PdfParserException
+     * @throws PdfReaderException
+     */
+    private function addCustomPDF(string $name, array $files): void {
+        if (array_key_exists($name,$files) && $files[$name]!==null) {
+            $file = $files[$name];
+            $this->failureName = $file->getClientOriginalName();
+            $this->addPDF($file->getPathname(), false);
         }
     }
 
@@ -1109,7 +1130,7 @@ abstract class ControllerAbstract extends AbstractController
      */
     protected function getErrors(Request $request, string $page = '', bool $returnCheck = false, SimpleXMLElement|bool $element = null ): string|bool {
         try {
-            return CheckDocClass::getDocumentCheck($request, $page, $returnCheck, $element);
+            return CheckDocClass::getDocumentCheck($request, $page, $returnCheck, $element, false);
         }
         catch (\Throwable $throwable) {
             return '';
@@ -1411,6 +1432,30 @@ abstract class ControllerAbstract extends AbstractController
     }
 
     // methods involving xml
+
+    /** Updates the xml-file
+     * @param SimpleXMLElement $xml loaded xml-file
+     * @return void
+     */
+    private function updateXML(SimpleXMLElement $xml): void {
+        $loadedVersion = explode('.',(string)($xml->attributes()->{self::toolVersionAttr}));
+        $major = $loadedVersion[0];
+        $minor = $loadedVersion[1];
+        if ($major==='1' && $minor<'2') { // updates for version 1.2.1
+            $this->setToolVersion($xml); // update attribute
+            foreach ($xml->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
+                foreach ($studyNode->{self::groupNode} as $groupNode) {
+                    foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
+                        // compensation
+                        $compensationNode = $measureTimePointNode->{self::compensationNode};
+                        if ($compensationNode->{self::terminateNode}->getName()!=='') { // compensation is given -> add node
+                            $this->insertElementBefore(self::compensationVoluntaryNode,$compensationNode->{self::compensationTextNode});
+                        }
+                    } // foreach measure time point
+                } // foreach group
+            } // foreach study
+        } // if major===1 and minor<2
+    }
 
     /** Sets the string for the first inclusion criterion.
      * @param SimpleXMLElement $groups groups node

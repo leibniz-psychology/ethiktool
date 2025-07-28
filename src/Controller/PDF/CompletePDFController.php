@@ -97,6 +97,8 @@ class CompletePDFController extends PDFAbstract
                         : (in_array($create,['separateLater',self::privacyNotApplicable]) || // data privacy is checked later or no information is given
                            $isTool && $dataPrivacyArray[self::markingNode][self::chosen]===self::markingOther // marking can not be created by the tool
                             ? self::answerUnclear : self::answerNo));
+                    // compensation
+                    $this->addBriefReportAnswer(self::compensationNode,($measureTimePoint[self::compensationNode][self::compensationVoluntaryNode] ?? '')==='0' ? self::answerYes : self::answerNo);
                     // add question to time point
                     $allBriefReports[] = ['heading' => implode(', ',$heading), 'content' => array_merge($this->briefReport,$conflictMedicine)];
                 }

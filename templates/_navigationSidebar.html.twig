@@ -1,7 +1,6 @@
 {% import 'macros.html.twig' as formRender %}
 {% set isFilename, modalID, loadModalID = content['fileName']['titleValue'] is not empty, 'newFormModal', 'loadModal' %} {# isFilename: true if an application is open #}
-{% set maxWidth = 'navBar.completeForm'|trans|length %}
-{% set buttonWidth, isNewForm = 'width: '~(maxWidth-(maxWidth*0.25))~'rem', activeRoute is same as 'app_newForm' %}
+{% set buttonWidth, isNewForm = 'width: 16rem; justify-self: center', activeRoute is same as 'app_newForm' %}
 {# width must sum up to 100% with the two divs in threeColumns #}
 <div class="border rounded-lg shadow-sm sticky top-0 bg-mono-50 overflow-hidden" id="sidebar" style="height: fit-content; min-width: min-content; max-width: max-content; width: 20%" {{ stimulus_target('base','sidebar') }}>
     {# filename and project title #}
@@ -22,21 +21,28 @@
         {{ formRender.addSaveButton(not isFilename) }}
     </div>
     {# pages #}
-    <div class="mt-8">
-        {{ _self.createSideMenu(windows.AppData,isFilename,activeRoute,[],0) }}
-        {% set isContributors = activeRoute is same as 'app_contributors' %}
+    <div class="mt-8 {% if anyError %} ms-2 {% else %} ms-3 {% endif %}">
+        {{ _self.createSideMenu(windows.AppData,isFilename,activeRoute,[],0,anyError) }}
+        {% set contributors = windows.Contributors %}
+        {% set label = contributors.label ?? '' %}
+        {% set isContributors = activeRoute is same as label %}
         {% set isNotContributors = isFilename and not isContributors %}
-        <a class="mx-2 mt-2 dropdownNav {% if isNotContributors %}StudyNav-NavItem Button_navigation {% elseif isContributors %}StudyNav-NavItem_active{% elseif not isFilename %}NavBarMain{% endif %}"
-           nosubpage
-           {% if isNotContributors %}
-               href="{{ path('app_contributors') }}"
-               {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_contributors'}) }}
-           {% endif %}
-           style="width: fit-content; {% if not isFilename %} color: black; pointer-events: none{% endif %}"
-        >
-            {{ 'pages.contributors.contributors'|trans }}
-        </a>
-        {{ _self.createSideMenu(windows.Projectdetails,isFilename,activeRoute,routeParams,0,true) }}
+        <div class="flex" style="margin-left: {{ (contributors.error ?? true) ? '0' : (anyError ? '20px' : '12px') }} !important;">
+            {% if contributors.error ?? false %}
+                <span {% if not isContributors%} style="margin-top: 0.75rem;" {% endif %}>{{ include('images/exclamation.svg') }}</span>
+            {% endif %}
+            <a class="mx-2 mt-2 dropdownNav flex {% if isNotContributors %}StudyNav-NavItem Button_navigation {% elseif isContributors %}StudyNav-NavItem_active{% elseif not isFilename %}NavBarMain{% endif %}"
+               nosubpage
+               {% if isNotContributors %}
+                   href="{{ path(label) }}"
+                   {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_contributors'}) }}
+               {% endif %}
+               style="width: fit-content; {% if not isFilename %} color: black; pointer-events: none;{% endif %} {% if isContributors %} margin-top: 0 !important;{% endif %}"
+            >
+                {{ 'pages.contributors.contributors'|trans }}
+            </a>
+        </div>
+        {{ _self.createSideMenu(windows.Projectdetails,isFilename,activeRoute,routeParams,0,anyError,true) }}
     </div>
     {# check document #}
     <button class="Button_primary_go NavBar mt-8" style="{{ buttonWidth }}" {% if isFilename %} {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_checkDoc'}) }} {% else %}disabled {% endif %}>{{ 'navBar.checkDoc'|trans }}</button>
@@ -58,18 +64,19 @@
     {{ include('components/redirectModal.html.twig',{'modalID': quitModalID, 'prefix': quitPrefix, 'link': 'app_main', 'leftButton': quitPrefix~'leftButton', 'middleButton': quitPrefix~'middleButton', 'rightButton': quitPrefix~'rightButton'}) }}
 {% endif %}
 
-{% macro createSideMenu(window,isFilename,activeRoute,routeParams,level,isProjectdetails = false, visibility = false) %}
+{% macro createSideMenu(window,isFilename,activeRoute,routeParams,level,anyError,isProjectdetails = false, visibility = false) %}
     {# Creates the side menu for the application data and project details pages. Input arguments:
         window:           array whose keys are the labels for the menu and values are either the route to a page or an array equally to window
         isFilename:       true if an application is open, i.e., if a filename exists
         activeRoute:      current page that is rendered
         routeParams:      parameter for the current page that is rendered. Only existent parameters are passed
         level:            current level. Top level is 0.
+        anyError:         true if any inconsistency on any page exists
         isProjectdetails: if true, the side menu for the projectdetails pages is created, otherwise for the application data
         visibility:       visibility of the surrounding div
     #}
 
-    <div class="{{ level>0 ? 'NavBar' : 'NavBarMain mt-2' }} {% if isProjectdetails and level is same as 4 or not isProjectdetails and level is same as 1 %} ms-4 me-0 {% endif  %}" {% if level>0 %} style="{{ boolToDisplay(visibility,1) }}" {% endif %}>
+    <div class="{{ level>0 ? 'NavBar' : 'NavBarMain mt-2' }} {% if isProjectdetails and level is same as 4 or not isProjectdetails and level is same as 1 %} ms-2 me-0 {% endif  %}" {% if level>0 %} style="{{ boolToDisplay(visibility,1) }}" {% endif %}>
         {% set isActiveAppData = activeRoute in ['app_coreData','app_votes','app_medicine','app_summary'] %}
         {% for route in window %}
             {% set hasSubPages, routeIDs, curRoute = route.subPages is defined, route.routeIDs ?? {}, route.route %}
@@ -79,25 +86,28 @@
                 {% set isActivePath = isActivePath and (routeParams[key] ?? -1) is same as id %}
             {% endfor %}
             {% set isCurrentActive = curRoute is same as activeRoute and isActivePath %}
+            <div class="flex" style="margin-left: {{ (route.error ?? false) ? '0' : (anyError and not (hasSubPages and isCurrentActive) ? '20px' : '12px') }}">
+                {% if route.error ?? false %}
+                    <span class="{% if isCurrentActive or not hasSubPages %} mt-0 {% else %} mt-1 {% endif %}">{{ include('images/exclamation.svg') }}</span>
+                {% endif %}
+                <a class="flex {% if hasSubPages %} StudyNav-NavItem Button_navigation {% elseif isCurrentActive %} StudyNav-NavItem_active {% endif %}"
+                   {% if isFilename and isRoute and (not isCurrentActive or curRoute is same as 'app_landing') %}
+                        href="{{ path(curRoute,routeIDs) }}"
+                        {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': curRoute}|merge(hasSubPages ? {'page': isProjectdetails ? 'Projectdetails' : 'AppData'} : {})) }}
+                   {% endif %}
+                    style="width: fit-content; column-gap: 0; {% if not isRoute or not isFilename %}color: black; pointer-events: none;{% endif %}"
+                   {% if not hasSubPages %}
+                        nosubpage
+                   {% endif %}
+                >
+                    {{ route.label }}
+                </a>
+                {% if hasSubPages %}
+                    <span class="{{ 'dropdown'~(isActivePath ? 'Expanded' : 'Collapsed') }} dropdownNav clickable mt-1" style="height: 1.5rem"></span>
+                {% endif %}
+            </div>
             {% if hasSubPages %}
-                <div class="flex">
-            {% endif %}
-            <a class="{% if hasSubPages %} StudyNav-NavItem Button_navigation {% elseif isCurrentActive %} StudyNav-NavItem_active {% endif %}"
-               {% if isFilename and isRoute and (not isCurrentActive or curRoute is same as 'app_landing') %}
-                    href="{{ path(curRoute,routeIDs) }}"
-                    {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': curRoute}|merge(hasSubPages ? {'page': isProjectdetails ? 'Projectdetails' : 'AppData'} : {})) }}
-               {% endif %}
-                style="width: fit-content; {% if not isRoute or not isFilename %}color: black; pointer-events: none{% endif %}"
-               {% if not hasSubPages %}
-                    nosubpage
-               {% endif %}
-            >
-                {{ route.label }}
-            </a>
-            {% if hasSubPages %}
-                <span class="{{ 'dropdown'~(isActivePath ? 'Expanded' : 'Collapsed') }} dropdownNav clickable" style="height: 1.5rem"></span>
-                </div>
-                {{ _self.createSideMenu(route.subPages,isFilename,activeRoute,routeParams,level+1,isProjectdetails,isActivePath) }}
+                {{ _self.createSideMenu(route.subPages,isFilename,activeRoute,routeParams,level+1,anyError,isProjectdetails,isActivePath) }}
             {% endif %}
         {% endfor %}
     </div>

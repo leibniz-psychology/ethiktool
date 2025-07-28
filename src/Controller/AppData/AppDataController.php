@@ -110,7 +110,7 @@ class AppDataController extends ControllerAbstract
         $tempVal = $this->translateString($translationPrefix.'positiveNo');
         return $this->render('AppData/votes.html.twig', $this->setRenderParameters($request,$votes,
                 ['appType' => $appType,
-                 'otherVoteResultHeadingText' => ['positive' => $tempVal, self::otherVoteResultNegative => $this->translateString($translationPrefix.self::otherVoteResultNegative), 'noVote' => $tempVal],],'appData.votes')
+                 'otherVoteResultHeadingText' => ['positive' => $tempVal, self::otherVoteResultNegative => $this->translateString($translationPrefix.self::otherVoteResultNegative), 'noVote' => $tempVal]],'appData.votes')
             );
     }
 

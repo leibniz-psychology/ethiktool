@@ -13,11 +13,12 @@
         hint:        if provided, an array of one or two elements:
                         0: translation key for a hint that is placed below the heading. Will be suffixed by 'headingHint'
                         1: if provided, translation parameters
-        hintButtons: if provided, an array of two, three, four, or five elements for a hint that is placed below the buttons:
+        hintButtons: if provided, an array of two, three, or four elements for a hint that is placed below the buttons:
                         0: array of one or two elements: the translation key for the hint and optionally translation parameters
                         1: if provided, id of the div surrounding the hint
                         2: if provided, visibility of the surrounding div
                         3: if provided, the hint will be displayed in normal style
+        removeHint:  if provided, an array equal to hintButtons, but with at most three elements, for a hint below the buttons indicating removal of inputs on an other page. May only be provided if hintButtons is not provided
         target:      if provided, ID of a button which will be passed as a 'disableLoad' target to the base controller. Currently only used once in votes
         contTarget:  if provided, an array of three elements: ID of a button which will be passed as a target to the stimulus controller, stimulus controller and target name
         text:        if provided, an array of one or two elements for a text field which will be placed below the buttons and the hint:
@@ -32,9 +33,10 @@
         addDiv:     if provided, a surrounding div with class mt-8 is added. If the passed array is not empty, the first element contains the id for the div and the second element the style
         labelParams: if provided, parameters for the label translation
     #}
-    {% set formName, target, contTargetArray, textfield, iconArray, stimVisible, stim, isAddDiv = form.vars.name, arguments.target ?? '', arguments.contTarget ?? [''], arguments.text ?? [], arguments.icons ?? {}, arguments.stimVisible ?? [], arguments.stim ?? [], arguments.addDiv is defined %}
-    {% set contTarget, hint, hintButtons, iconKeys, addDivArray = contTargetArray[0], arguments.hint ?? [''], arguments.hintButtons ?? ['',[''],1], iconArray|keys, isAddDiv ? arguments.addDiv : [] %}
-    {% set hintKey, hintText, divID, divStyle = hint[0], hintButtons[0], addDivArray[0] ?? '', addDivArray[1] ?? '' %}
+    {% set formName, target, contTargetArray, textfield, iconArray, stimVisible, stim, isAddDiv, isHintButtons = form.vars.name, arguments.target ?? '', arguments.contTarget ?? [''], arguments.text ?? [], arguments.icons ?? {}, arguments.stimVisible ?? [], arguments.stim ?? [], arguments.addDiv is defined, arguments.hintButtons is defined %}
+    {% set contTarget, hint, buttonHint, iconKeys, addDivArray = contTargetArray[0], arguments.hint ?? [''], arguments.hintButtons ?? (arguments.removeHint ?? [['']]), iconArray|keys, isAddDiv ? arguments.addDiv : [] %}
+    {% set hintKey, hintTextAndParam, divID, divStyle = hint[0], buttonHint[0], addDivArray[0] ?? '', addDivArray[1] ?? '' %}
+    {% set hintText, labelParams = hintTextAndParam[0], arguments.labelParams ?? {} %}
     {% if isAddDiv %}
         <div class="mt-8" {% if divID is not same as '' %} id="{{ divID }}" {% endif %} {% if divStyle is not same as '' %} style="{{ divStyle }}" {% endif %}>
     {% endif %}
@@ -56,7 +58,7 @@
                     {{ form_widget(widget,{'id': widgetName, 'attr': addClass('RadioButton-Input')|merge(widgetName is same as target ? addDisableTarget() : {})|merge(widgetName is same as contTarget ? addTarget(contTargetArray[1],contTargetArray[2]) : {})}) }}
                     <label class="RadioButton-Label" style="display: inline-grid; grid-template-columns: min-content auto" for="{{ widgetName }}">
                          <span style="width: fit-content">
-                            {{ widget.vars.label|trans(arguments.labelParams ?? {}) }}
+                            {{ widget.vars.label|trans(labelParams) }}
                             {% if isIcon %}
                                 {{ _self.addIcon(iconArray[widgetName]) }}
                             {% endif %}
@@ -67,7 +69,9 @@
         </div>
     </div>
     {% if hintText is not same as '' %}
-        {{ _self.addHint(hintText[0],{'id': hintButtons[1] ?? '', 'params': hintText[1] ?? {}, 'visible': hintButtons[2] ?? true}|merge(hintButtons[3] is defined ? {'hintStyle': ''} : {})) }}
+        {{ _self.addHint(hintText,
+                        {'id': buttonHint[1], 'params': hintTextAndParam[1] ?? {}, 'visible': buttonHint[2] ?? true}|
+                        merge(isHintButtons ? (hintButtons[3] is defined ? {'hintStyle': ''} : {}) : {'remove': true})) }}
     {% endif %}
     {% if textfield is not same as [] %}
         {{ _self.addTextfield(textfield[0],textfield[1] ?? {}) }}
@@ -257,9 +261,10 @@
         id:        if provided, if of the surrounding div
         visible:   if provided, visibility of the surounding div
         hintStyle: if provided, the hint will be displayed in normal font style and size, otherwise in 'smaller' and italic
+        remove:    if provided, the hint will be surrounded by a red border
     #}
     {% set target, id = arguments.target ?? [], arguments.id ?? ''  %}
-    <div {% if id is not same as '' %} id="{{ id }}" {% endif %} class="MetaData-Label" style="{{ boolToDisplay(arguments.visible ?? true) }}" data-base-target="hint" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1])}} {% endif %}>
+    <div {% if id is not same as '' %} id="{{ id }}" {% endif %} class="{% if arguments.remove is not defined %} MetaData-Label {% else %} removeHint {% endif %}" style="{{ boolToDisplay(arguments.visible ?? true) }}" data-base-target="hint" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1])}} {% endif %}>
         <span {% if arguments.hintStyle is not defined %} class="hint" {% endif %} style="white-space: normal">{{ text|trans(arguments.params ?? {})|raw }}</span>
     </div>
 {% endmacro %}

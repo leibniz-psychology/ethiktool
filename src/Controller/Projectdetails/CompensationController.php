@@ -30,9 +30,10 @@ class CompensationController extends ControllerAbstract
             $this->addInputPage('pages.projectdetails.',self::privacyNode,$inputArray);
         }
         $textInput = $this->setInputHint($inputArray);
+        $translationPrefix = 'projectdetails.pages.'.self::compensationNode.'.';
         // get date for later text hint
         try {
-            $date = (new \DateTime())->add(new \DateInterval('P6M'))->format($this->translateString('projectdetails.pages.'.self::compensationNode.'.'.self::awardingNode.'.dateFormat'));
+            $date = (new \DateTime())->add(new \DateInterval('P6M'))->format($this->translateString($translationPrefix.self::awardingNode.'.dateFormat'));
         }
         catch (\Throwable $throwable) {
             $date = '';
@@ -57,10 +58,12 @@ class CompensationController extends ControllerAbstract
             $isNotLeave = !$this->getLeavePage($compensation,$session,self::compensationNode);
             return $this->saveDocumentAndRedirect($request,$isNotLeave ? $appNode : $appNodeNew, $isNotLeave ? $appNodeNew : null);
         }
+        $tempPrefix = $translationPrefix.self::compensationTextNode.'.textHint';
         return $this->render('Projectdetails/compensation.html.twig',
             $this->setRenderParameters($request,$compensation,
                 ['types' => self::compensationTypes,
                  'textInput' => $textInput,
-                 'laterDate' => ['date' => $date]],'projectdetails.compensation',true));
+                 'laterDate' => ['date' => $date],
+                 'otherHints' => [$this->translateString($tempPrefix),$this->translateString($tempPrefix.'Optional')]],'projectdetails.compensation',true));
     }
 }

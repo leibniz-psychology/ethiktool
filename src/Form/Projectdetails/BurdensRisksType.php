@@ -22,7 +22,7 @@ class BurdensRisksType extends TypeAbstract
             else {
                 $this->addBinaryRadio($builder,$type,textareaName: $description);
             }
-            $this->addBinaryRadio($builder,$type.'Compensation', $translationPrefix.'compensation.title',$type.'CompensationDescription',options: [self::labelParams => ['{type}' => $this->translateString($translationPrefix.'title.'.$type,['number' => 2])]]);
+            $this->addBinaryRadio($builder,$type.'Compensation', $translationPrefix.'compensation.title',$type.'CompensationDescription',options: [self::labelParams => ['type' => $type]]);
         }
         // finding
         $tempPrefix = $translationPrefix.self::findingNode.'.';

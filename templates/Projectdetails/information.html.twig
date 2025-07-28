@@ -4,7 +4,7 @@
 {% block content %}
     {% set pre, preContent, preComplete, post, translationPrefix, informationController = content.pre, content.preContent, content.preComplete, content.post, 'projectdetails.pages.information.', 'Projectdetails--information' %}
     {% set preCompleteValue, postValue = preComplete.vars.value, post.vars.value %}
-    {% set isPreComplete, isPostNo, addresseeStringParam = preCompleteValue is same as '0', postValue is same as '1', {'addressee': addresseeString} %}
+    {% set isPreComplete, isPostNo, addresseeStringParam = preCompleteValue is same as '0', postValue is same as '1', {'addressee': not isInformationII ? addresseeString : participantsString} %}
     {% set preYes, preNo, postType, preCompleteTextHint, informationHintName, preHintDiv, labelParams = 'preYes', 'preNo', 'postType', (translationPrefix~'textHints.preComplete')|trans(addresseeStringParam), 'informationIIIhint', 'preHintDiv', {'labelParams': addresseeStringParam} %}
     <div {{ stimulus_controller(informationController,{
             'preCompleteTextHint': [choiceTextHint|trans,preCompleteTextHint],
@@ -13,12 +13,12 @@
     }) }}>
         {# pre #}
         {% set preSelection, styleHeight = pre.vars.value, {'style': 'height: '~textHeight} %}
-        {% set isPreNo, textParams = preSelection is same as '1', fontNormal|merge({'attributes': styleHeight, 'textHintParams': addresseeStringParam|merge({'participant': participantsString})}) %}
+        {% set isPreNo, textParams = preSelection is same as '1', fontNormal|merge({'attributes': styleHeight, 'textHintParams': addresseeStringParam|merge({'participant': not isInformationII ? participantsString : participantsStringpost})}) %}
         <div id="pre">
             {{ formRender.renderButtons(pre,{
                 'text': [content.preText,textParams|merge({'visibility': isPreNo})|merge(not isInformationII and not isPostNo ? {'transfer': [['info','post'],addresseeType]} : {})],
-                'stimVisible': {'values': [['0',preYes],['1',['preTextDiv',preNo]|merge(not isInformationII ? [preHintDiv] : [])]]},
-                'hintButtons': [[textInputPre],preHintDiv,isPreNo]}) }}
+                'stimVisible': {'values': [['0',preYes],['1',['preTextDiv',preNo]|merge(not isInformationII and textInputPre is not same as '' ? [preHintDiv] : [])]]},
+                'removeHint': [[textInputPre],preHintDiv,isPreNo]}) }}
         </div>
         <div id="{{ preYes }}" class="mt-8" style="{{ boolToDisplay(preSelection is same as '0') }}" {{ stimulus_target(informationController,'preContent') }}>
             {{ _self.addType(true,content.preType,isInformationII,addresseeType,'preType') }}
@@ -27,22 +27,22 @@
             {{ formRender.renderButtons(preContent,labelParams|merge({
                 'hint': [translationPrefix~'pre.content.hints.',addresseeStringParam],
                 'stim': [informationController,'setPreContent'],
-                'hintButtons': [[informationIIIinput],'preContentHint',preContentSelection is same as 'complete'],
-                'addDiv': ['preContent']})) }}
+                'addDiv': ['preContent'],
+                'removeHint': [[informationIIIinput],'preContentHint',preContentSelection in ['','complete']]})) }}
             {# complete post if incomplete or deceit #}
             {% set anyComplete = preCompleteValue is not same as '' %}
             <div class="mt-8" id="preComplete" style="{{ boolToDisplay(preContentSelection in ['partial','deceit']) }}" {{ stimulus_target(informationController,'preComplete') }}>
                 {{ formRender.renderButtons(preComplete,{
                     'text': [content.preCompleteText,fontNormal|merge({'contTarget': [informationController,'preCompleteText'], 'attributes': styleHeight|merge({'disabled': not anyComplete}), 'hint': anyComplete ? preCompleteTextHint : choiceTextHint, 'textHintParams': addresseeStringParam, 'textHintID': 'preCompleteTextHint'})],
                     'stim': [informationController,'setPreComplete']}|
-                    merge(not isInformationII and informationIIIinput is not same as '' ? {'hintButtons': [[informationIIIinput],informationHintName,preCompleteValue is same as '1']} : {})) }}
+                    merge(not isInformationII ? {'removeHint': [[informationIIIinput],informationHintName,preCompleteValue is not same as '0']} : {})) }}
                 {{ _self.addType(isPreComplete,content.preCompleteType,false,addresseeType,'completePostType',[informationController,'preCompleteType']) }}
             </div>
         </div>
         {# post #}
         {% set postHint, postText = 'postHint', content.postText %}
         <div id="{{ preNo }}" class="mt-8" style="{{ boolToDisplay(isPreNo) }}">
-            {{ formRender.renderButtons(post,{'text': [postText,textParams|merge({'visibility': isPreNo and isPostNo})], 'stimVisible': {'values': [['0',postType],['1',[postText.vars.name~'Div',postHint]]]}, 'hintButtons': [[textInputPost],postHint,isPostNo]}) }}
+            {{ formRender.renderButtons(post,{'text': [postText,textParams|merge({'visibility': isPreNo and isPostNo})], 'stimVisible': {'values': [['0',postType],['1',[postText.vars.name~'Div']|merge(textInputPost is not same as '' ? [postHint] : [])]]}, 'removeHint': [[textInputPost],postHint,isPostNo]}) }}
             {{ _self.addType(isPreNo and postValue is same as '0',content.postType,isInformationII,addresseeType,postType) }}
         </div>
         {# attendance #}

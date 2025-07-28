@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 trait PageTrait
 {
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '1.1.1';
+    protected const toolVersion = '1.2.1';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';

@@ -58,7 +58,7 @@
         <div class="{{ textPreview }}">{{ (tempPrefix~'intro')|trans }}</div>
         {% for report in briefReports %}
             {% set heading, content = report.heading, report.content %}
-            <div class="{{ textPreview }}" style="page-break-inside: avoid; {% if savePDF %} padding-top: 10% {% endif %}">
+            <div class="{{ textPreview }}" style="page-break-inside: avoid; {% if savePDF %} padding-top: 5% {% endif %}">
                 <b class="{{ textPreview }}" style="margin-left: 5%">{{ heading }}</b>
                 <table class="briefBorder">
                     {% for question, answer in content %}

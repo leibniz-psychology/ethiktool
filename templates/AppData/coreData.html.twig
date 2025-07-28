@@ -115,7 +115,7 @@
         {# funding #}
         <div class="mt-8" id="funding">
             <div class="grid" style="grid-template-columns: minmax(min-content,max-content) min-content">{{ formRender.addHeading(translationPrefix~'funding.title') }}
-                <div class="align-self-center">{{ formRender.addPDFhint(transferInfo,'participants') }}</div>
+                <div class="align-self-center" style="margin-left: -1.5rem;">{{ formRender.addPDFhint(transferInfo,'participants') }}</div>
             </div>
             {% set fundingKeys, noFunding = funding|keys, 'fundingQuali' %}
             {% set selection = getAnySelected(content,fundingKeys,noFunding) %}

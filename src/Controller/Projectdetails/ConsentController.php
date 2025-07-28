@@ -29,6 +29,7 @@ class ConsentController extends ControllerAbstract
         $isLoanReceipt = $this->getTemplateChoice($this->getLoanReceipt($measureArray[self::measuresNode][self::loanNode]));
         $groupsArray = $measureArray[self::groupsNode];
         $examined = $groupsArray[self::examinedPeopleNode];
+        $addressee = $this->getAddresseeFromRequest($request);
 
         $consent = $this->createFormAndHandleRequest(ConsentType::class,$this->xmlToArray($consentNode),$request,[self::informationNode => $information, self::addresseeType => $this->getAddresseeFromRequest($request), self::dummyParams => ['isAttendance' => ($measureArray[self::informationNode][self::attendanceNode] ?? '')==='0', 'isClosedDependent' => $examined!=='' && array_key_exists(self::dependentExaminedNode,$examined) || $groupsArray[self::closedNode][self::chosen]==='0']]);
         if ($consent->isSubmitted()) {
@@ -51,6 +52,8 @@ class ConsentController extends ControllerAbstract
         }
         return $this->render('Projectdetails/consent.html.twig',
             $this->setRenderParameters($request,$consent,
-                ['textInput' => $this->getLegalInput($this->setInputArray(),$measureArray,!$isLoanReceipt)],'projectdetails.consent',true));
+                array_merge(
+                ['textInput' => $this->getLegalInput($this->setInputArray(),$measureArray,!$isLoanReceipt)],
+                $addressee!==self::addresseeParticipants ? ['labelParamsParticipants' => [self::addressee => $this->getAddresseeString($addressee,false), self::participant => $this->getAddresseeString($addressee,false,true,true)]] : []),'projectdetails.consent',true));
     }
 }

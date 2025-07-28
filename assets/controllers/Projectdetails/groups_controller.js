@@ -3,7 +3,7 @@ import { setElementVisibility, getSelected, setHint } from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['minAge','maxAge','unlimited','healthy','wards','examinedDescription','wardsHint','wardsIcon','physical','mental','dependent','closedNo','voluntaryHint','criteriaHint','includeStart','include'];
+    static targets = ['minAge','maxAge','unlimited','healthy','wards','examinedDescription','wardsHint','removeHint','physical','mental','dependent','closedNo','voluntaryHint','criteriaHint','includeStart','include'];
 
     static values = {
         wardsHint: String, // inputs are about to be deleted
@@ -74,8 +74,8 @@ export default class extends Controller {
         this.setTextfield(this.examinedDescriptionTarget,!anySelected,this.examinedDescriptionValue[!anySelected ? 0 : (isHealthy && numSelected===1 ? 1 : 2)])
         setElementVisibility(this.wardsHintTarget,isWards); // hint between age and examined
         // wards icon
-        if (this.hasWardsIconTarget) {
-            this.wardsIconTarget.style.display = !isWards ? 'inline-grid' : 'none';
+        if (this.hasRemoveHintTarget) {
+            setElementVisibility(this.removeHintTarget,!isWards);
         }
         // criteria
         let addressee = 0; // participants

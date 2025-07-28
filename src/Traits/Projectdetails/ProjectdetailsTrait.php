@@ -102,6 +102,7 @@ trait ProjectdetailsTrait
     protected const interventionsTypes = ['noIntervention','interventionsSurvey','feedback','everyday','stimulus','tasks','stimulation','psychological','physical','therapy','medical','invasive','other'];
     protected const interventionsPDF = 'interventionsPDF';
     protected const otherSourcesNode = 'otherSources';
+    protected const otherSourcesPDF = 'otherSourcesPDF';
     protected const loanNode = 'loan';
     protected const loanReceipt = 'receipt';
     protected const presenceNode = 'presence';
@@ -185,7 +186,8 @@ trait ProjectdetailsTrait
     protected const lotteryDeliverTypes = ['projectdetails.pages.compensation.awarding.lottery.deliverTypes.mail' => 'mail', 'projectdetails.pages.compensation.awarding.lottery.deliverTypes.eMail' => 'eMail', 'projectdetails.pages.compensation.awarding.lottery.deliverTypes.local' => 'local'];
     protected const voucherDeliverTypes = ['projectdetails.pages.compensation.awarding.voucher.deliverTypes.mail' => 'mail', 'projectdetails.pages.compensation.awarding.voucher.deliverTypes.eMail' => 'eMail'];
     protected const awardingOtherDescription = 'awardingOtherDescription'; // widget name of text field for awarding description of other compensation
-    protected const awardingTextNode = 'furtherDescription';
+    protected const compensationTextNode = 'furtherDescription';
+    protected const compensationVoluntaryNode = 'compensationVoluntary';
     // texts
     protected const textsNode = 'texts';
     protected const introNode = 'intro';

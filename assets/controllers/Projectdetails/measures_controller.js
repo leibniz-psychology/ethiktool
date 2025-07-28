@@ -3,7 +3,7 @@ import { checkTextareaInput, getSelected, setElementVisibility, setHint } from "
 
 export default class extends Controller {
 
-    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsDescription','interventionsPDF','loanYes','onlineHint','locationDescription','locationEnd','measureTime','breaks'];
+    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsDescription','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','measureTime','breaks'];
 
     static values = {
         measuresTypes: Array,
@@ -14,7 +14,6 @@ export default class extends Controller {
         location: String,
         locationHint: Array, // 0: please choose, 1: hint if answer is chosen
         locationInput: Object, // 0: insurance way, 1: apparatus and insurance way
-        locationInputName: String,
         duration: Object, // keys: 'total', 'measureTime', 'breaks'. Values: arrays: 0: singular, 1: plural
     }
 
@@ -114,9 +113,13 @@ export default class extends Controller {
     setInputHints() {
         let isOnlineNothing = ['','online'].includes(this.locationValue);
         let isNotLoan = !this.loanYesTarget.checked;
-        setElementVisibility('loanInputHint',isOnlineNothing && isNotLoan);
-        setHint(this.locationInputNameValue,this.locationInputValue[isNotLoan ? 'both' : 'insuranceWay']);
-        setElementVisibility(this.locationInputNameValue,isOnlineNothing);
+        if (this.hasLoanInputHintTarget) {
+            setElementVisibility(this.loanInputHintTarget,isOnlineNothing && isNotLoan);
+        }
+        if (this.hasLocationInputHintTarget) {
+            setHint(this.locationInputHintTarget,this.locationInputValue[isNotLoan ? 'both' : 'insuranceWay']);
+            setElementVisibility(this.locationInputHintTarget,isOnlineNothing);
+        }
         if (this.hasOnlineHintTarget) { // hint that ip-question in data privacy will be deleted
             setElementVisibility(this.onlineHintTarget,!isOnlineNothing); // this.locationValue can not be empty at this point
         }

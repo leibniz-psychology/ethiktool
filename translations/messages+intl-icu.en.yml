@@ -399,7 +399,7 @@ coreData:
     fundingOther: 'other source(s)'
     textHints:
       fundingBudget: 'Please name the faculty/department/research group(s).'
-      fundingResearch: 'Please name organisation(s)/foundation(s), e.g., DFG, BMBF, EU, ERC, VolkswagenStiftung.'
+      fundingResearch: 'Please name organisation(s)/foundation(s), e.g., DFG, BMFTR, EU, ERC, VolkswagenStiftung.'
       fundingExternal: 'Please name source(s).'
       fundingOther: 'Please specify.'
     fundingState:
@@ -710,9 +710,9 @@ projectdetails:
                   measures {data collection methods}
                   other    {measures/interventions}}, please enter these on page “<a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param={routeIDs}>Burdens/risks</a>“ and describe them in detail.
           pdf: >-
-            Please indicate whether you would like to add supplementary materials when completing the ethics proposal (e.g., {type, select,
+            Please indicate whether you would like to add supplementary materials as a PDF file when completing the ethics proposal (e.g., {type, select,
                 measures {questionnaires, interview guides, observation protocols, pictures of equipment}
-                other    {stimuli, intervention procedure, TMS protocols}} as a PDF file. You should use this option if it helps to convey a clearer picture of your {type, select,
+                other    {stimuli, intervention procedure, TMS protocols}}). You should use this option if it helps to convey a clearer picture of your {type, select,
                     measures {data collection methods}
                     other    {intervention measures}}.
         measures:
@@ -756,6 +756,9 @@ projectdetails:
         headingHint: 'This refers to data that is already available at other sources and will be used/transferred for the study to supplement the own research data (e.g. health data, assessments from psychotherapy/medical treatment/training) or to provide a basis for contacting potential participants (e.g., data from the residents'' registration office).'
         textHint: 'Please describe which data will be used from which sources. Please also describe the basis that allows for data transfer (e.g. joint responsibility, release from confidentiality).'
         hint: 'In the annex on data processing, you will need to describe the identifiers (e.g., name or code) used to merge the data as well as the person-related data of the other source that will become part of the research data or of the data for further purposes beyond the research question. If necessary, additional documents (e.g. release from confidentiality) must be added.'
+        pdf:
+          hint: 'Please indicate whether you would like to add supplementary materials as a PDF file (e.g., release from confidentiality) when completing the ethics proposal.'
+          text: 'I want to add supplementary materials on my data inclusion of other sources.'
       loan:
         title: 'Are devices (e.g., mobile phone, tablet, sensor kit) handed out to the participants?'
         receipt: 'Should the receipt of the devices be confirmed by the participants?'
@@ -946,10 +949,12 @@ projectdetails:
         textHint: 'This usually refers to termination of data collection in an individual participant. If criteria for discontinuation of the entire study are defined, please state these here as well. If it is not possible for the project contributors to terminate participation during data collection, please explain this. This does not affect the participants'' or their legal guardians'' right to withdraw from participation at any time on their own request.'
     compensation:
       title: >-
-        For participating, {addressee, select,
-          children {your child receives}
-          wards    {the individual under your supervision receives}
-          other    {you receive}} ...
+        {information, select,
+          noPost {After participation, there will be}
+          other  {For participating, {addressee, select,
+                                        children {your child receives}
+                                        wards    {the individual under your supervision receives}
+                                        other    {you receive}}}} ...
       types:
         noCompensation: 'no compensation.'
         money: 'a financial compensation'
@@ -1053,9 +1058,11 @@ projectdetails:
         compensationOther:
           title: 'Other compensation'
           textHint: 'Please describe how the compensation is issued in one sentence. Please make reference to the type of compensation and mention the time of issuing and what is necessary for retrieval (e.g., “Following the study, you will receive free access to our course materials; we will need your e-mail address for this.“).'
-      otherText:
+      compensationVoluntary: 'Is the voluntary nature of participation compromised by the type or amount of compensation?'
+      furtherDescription:
         title: 'Other remarks regarding the compensation'
-        hint: '(optional) e.g., justification for exceptionally high compensation; justification why participants are treated unequally with regard to compensation'
+        textHint: 'Please justify why the voluntary nature of participation is compromised by the type or amount of compensation. Further explanations regarding compensation can also be added, e.g., justification for exceptionally high compensation; justification why participants are treated unequally with regard to compensation.'
+        textHintOptional: 'e.g., justification for exceptionally high compensation; justification why participants are treated unequally with regard to compensation'
     texts:
       useTemplate: 'use template'
       hint: 'Here you can enter details for the study information. Please select an appropriate level of description for the respective target group. If applicable, please use the latest version of recommendations or information templates for specific examination procedures from the relevant professional associations.'
@@ -1268,7 +1275,7 @@ projectdetails:
                                                                                       true  {Please contact the person supervising the qualification thesis.}
                                                                                       other {Please contact the responsibly data protection authorities.}} When completing the ethics proposal, you will be asked to add the data privacy statement (“annex on data processing“) as a PDF file.
       transferOutside:
-        title: 'Do you transmit personal data to or share personal data with third parties outside of the EEA (“third-country transfer“)?'
+        title: 'Do you transmit personal data to or share personal data with third parties outside of the European Economic Area (EEA, “third-country transfer“)?'
         types:
           yes: 'Yes'
           no: 'No'
@@ -2055,6 +2062,8 @@ checkDoc:
           missing: 'compensation in case of withdrawal'
           nothing: 'justification for missing compensation in case of withdrawal'
           terminateOther: 'description of compensation in case of withdrawal' # [...] is missing.
+        compensationVoluntary: 'the compromise to voluntary nature of participation by the type or amount of compensation'
+        furtherDescription: 'Other remarks regarding the compensation are missing.'
         presence: >- # other is hours
            {compensation, select,
              money {If financial compensation shall be paid}
@@ -2095,6 +2104,8 @@ checkDoc:
           missing: 'responsibility for processing personal data'
           qualification: 'If one individual is privately responsible for the processing of personal data, the question about <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">qualification work</a> must be answered with “yes“.'
         transferOutside: 'transmission of personal data outside of the EEA'
+        responsibilityTotransferOutside: 'If the question about responsibility for processing personal data is answered with “not applicable“, the question about transmission of personal data outside of the EEA must also be answered with “not applicable“.'
+        transferOutsideToresponsibility: 'If the question about transmission of personal data outside of the EEA is answered with “not applicable“, the question about responsibility for processing personal data must also be answered with “not applicable“.'
         dataOnline: 'Answer to question about registration of IP addresses within online data collection' # '[] is missing.'
         dataOnlineProcessing: 'Answer to question about processing of IP addresses' # '[] is missing.'
         dataPersonal: 'person-related character of the research data'
@@ -2295,6 +2306,7 @@ completeForm:
                                                                        other    {supervised individuals}}
       measures: 'Additional material on data collection methods'
       interventions: 'Additional material on interventions/measures'
+      otherSources: 'Additional material on inclusion of data from other sources'
       dataPrivacy: 'Data privacy statement'
     upload: 'Choose PDF file'
   finish:
