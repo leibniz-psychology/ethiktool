@@ -24,14 +24,14 @@
         text:        if provided, an array of one or two elements for a text field which will be placed below the buttons and the hint:
                         0: text field
                         1: if provided, arguments for the addTextfield() call
-        icons:       if provided, an associative array. Keys: element names. Values: text for an icon that is placed after the respective option
+        icons:       if provided, an associative array. Keys: element names. Values: translation keys for an icon that is placed after the respective option
         stimVisible: if provided, an array that is passed as the parameter to a the 'setVisibility' stimulus action
         stim:        if provided, an array of two or three elements (may only be provided if stimVisible is not provided):
                         0: name of stimulus controller
                         1: stimulus action that is called if any of the buttons is clicked
                         2: if provided, parameters that are passed to the stimulus action
         addDiv:     if provided, a surrounding div with class mt-8 is added. If the passed array is not empty, the first element contains the id for the div and the second element the style
-        labelParams: if provided, parameters for the label translation
+        labelParams: if provided, parameters for the label translation. May also be used for translating icons
     #}
     {% set formName, target, contTargetArray, textfield, iconArray, stimVisible, stim, isAddDiv, isHintButtons = form.vars.name, arguments.target ?? '', arguments.contTarget ?? [''], arguments.text ?? [], arguments.icons ?? {}, arguments.stimVisible ?? [], arguments.stim ?? [], arguments.addDiv is defined, arguments.hintButtons is defined %}
     {% set contTarget, hint, buttonHint, iconKeys, addDivArray = contTargetArray[0], arguments.hint ?? [''], arguments.hintButtons ?? (arguments.removeHint ?? [['']]), iconArray|keys, isAddDiv ? arguments.addDiv : [] %}
@@ -60,7 +60,7 @@
                          <span style="width: fit-content">
                             {{ widget.vars.label|trans(labelParams) }}
                             {% if isIcon %}
-                                {{ _self.addIcon(iconArray[widgetName]) }}
+                                {{ _self.addIcon(iconArray[widgetName]|trans(labelParams)) }}
                             {% endif %}
                         </span>
                     </label>
@@ -87,12 +87,7 @@
        names:     names of the widgets
        Input arguments in the 'arguments' array:
        other:       if provided, IDs of buttons whose selection sets the visibility of a text field. The IDs of the text fields must be the IDs of the buttons suffixed by 'Text'.
-       icons:       if provided, an array with three to five arrays of the same size for icons that are added to individual buttons:
-                      0: the IDs of buttons where icons are added
-                      1: keys: IDs of buttons where the icons are added, values: translation keys for the icons.
-                      2: keys: IDs of buttons where the icons are added, values: text colors of the icons.
-                      3: IDs of buttons whose icons should be colored red.
-                      4: keys: IDs of buttons where the icons are added, values: stimulus controller where the icons will be passed to as a target. The target name will be the button ID followed by 'Icon'.
+       icons:       if provided, an array for icons that are added to individual buttons. keys: IDs of buttons where the icons are added, values: translation keys for the icons.
        targets:     if provided, an array of IDs. Each widget in this array will be passed as a 'disableLoad' target to the base controller.
        contTargets: if provided, an associative array. Keys: IDs of buttons, values: arrays of two elements: stimulus controller and target name
        addDiv:      if provided, the group is surrounded by a div. The value is an array of one to three elements:
@@ -101,9 +96,9 @@
                       2: classes for the div. The class 'MetaData-Widget' is additionally added
        labelParams: if provided, parameters for the label translations. May also be used for translating icons
     #}
-    {% set other, icons, targets, contTargets, addDiv, labelParams = arguments.other ?? [], arguments.icons ?? [{},{},{},{}], arguments.targets ?? [], arguments.contTargets ?? {}, arguments.addDiv ?? [], arguments.labelParams ?? {} %}
-    {% set iconIDs, iconTexts, iconTextColors, iconColors, iconTargets, isAddDiv = icons[0], icons[1], icons[2], icons[3] ?? [], icons[4] ?? {}, addDiv is not same as [] %}
-    {% set iconTargetKeys, divID, divStyle = iconTargets|keys, addDiv[0] ?? '', addDiv[1] ?? '' %}
+    {% set other, icons, targets, contTargets, addDiv, labelParams = arguments.other ?? [], arguments.icons ?? {}, arguments.targets ?? [], arguments.contTargets ?? {}, arguments.addDiv ?? [], arguments.labelParams ?? {} %}
+    {% set iconIDs, isAddDiv = icons|keys, addDiv is not same as [] %}
+    {% set divID, divStyle = addDiv[0] ?? '', addDiv[1] ?? '' %}
     {% if isAddDiv %}
         <div {% if divID is not same as '' %} id="{{ divID }}" {% endif %} class="MetaData-Widget {{ addDiv[2] ?? '' }}" {% if divStyle is not same as '' %} style="{{ divStyle }}" {% endif %}>
     {% endif %}
@@ -116,7 +111,7 @@
                 'labelParams': labelParams,
                 'disable': id in targets,
                 'target': contTargets[id] ?? []}|
-                merge(isIcon ? {'checkIcon': [iconTexts[id]|trans(labelParams),iconTextColors[id],true,id in iconTargetKeys ? [iconTargets[id],id~'Icon'] : [],id in iconColors]} : {})) }}
+                merge(isIcon ? {'checkIcon': [icons[id]|trans(labelParams)]} : {})) }}
         </div>
         {% if isOther %}
             <div class="MetaData-Widget mb-1">
@@ -200,7 +195,7 @@
         <span class="flex">
             {{ vars.label|trans(arguments.labelParams ?? {}) }}
             {% if checkIcon is not same as [] %}
-                {{ _self.addIcon(checkIcon[0],checkIcon[1] ?? 'black', checkIcon[2] ?? true, checkIcon[3] ?? [], checkIcon[4] ?? false) }}
+                {{ _self.addIcon(checkIcon[0], checkIcon[1] ?? true, checkIcon[2] ?? [], checkIcon[3] ?? false) }}
             {% endif %}
         </span>
     </label>
@@ -318,16 +313,13 @@
     <button type="button" class="Button_primary_act w-100" name="save" {% if disabled %} disabled {% else %} {{ stimulus_target('base','download','click') }} {% endif %}>{{ _self.addButtonIcon('buttons.save','save') }}</button>
 {% endmacro %}
 
-{% macro addIcon(text, color = 'black', visible = true, target = [], redIcon = false) %}
+{% macro addIcon(text, visible = true, target = []) %}
     {# Adds an information icon. Input arguments:
        text:    text of the icon which can contain html
-       color:   text color
        visible: boolean whether the icon should be visible
        target:  array of two elements: name of stimulus controller and target name
-       redIcon: if true, the icon will be colored red, otherwise black
     #}
-    <i class="Label-Info {% if redIcon %} Label-Info-red {% endif %}" style="{{ boolToDisplay(visible,1) }}; white-space: initial; width: fit-content; display: inline-grid; vertical-align: text-bottom" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: {{ color }}; width: auto">{{ text|raw|nl2br }}</span></i>
-{#    <i class="Label-Info {% if redIcon %} Label-Info-red {% endif %}" style="{{ boolToDisplay(visible,1) }}; white-space: initial; width: fit-content" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: {{ color }}">{{ text|raw|nl2br }}</span></i>#}
+    <i class="Label-Info" style="{{ boolToDisplay(visible,1) }}; white-space: initial; width: fit-content; display: inline-grid; vertical-align: text-bottom" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: black; width: auto">{{ text|raw|nl2br }}</span></i>
 {% endmacro %}
 
 {% macro addPreview(ids = {}, isComplete = false, firstPage = []) %}

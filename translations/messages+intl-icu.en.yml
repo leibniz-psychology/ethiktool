@@ -757,8 +757,8 @@ projectdetails:
         textHint: 'Please describe which data will be used from which sources. Please also describe the basis that allows for data transfer (e.g. joint responsibility, release from confidentiality).'
         hint: 'In the annex on data processing, you will need to describe the identifiers (e.g., name or code) used to merge the data as well as the person-related data of the other source that will become part of the research data or of the data for further purposes beyond the research question. If necessary, additional documents (e.g. release from confidentiality) must be added.'
         pdf:
-          hint: 'Please indicate whether you would like to add supplementary materials as a PDF file (e.g., release from confidentiality) when completing the ethics proposal.'
-          text: 'I want to add supplementary materials on my data inclusion of other sources.'
+          hint: 'Please indicate whether you would like to add supplementary materials (e.g., release from confidentiality) as a PDF file when completing the ethics proposal.'
+          text: 'I want to add supplementary materials on data retrieval from other sources.'
       loan:
         title: 'Are devices (e.g., mobile phone, tablet, sensor kit) handed out to the participants?'
         receipt: 'Should the receipt of the devices be confirmed by the participants?'
@@ -949,12 +949,15 @@ projectdetails:
         textHint: 'This usually refers to termination of data collection in an individual participant. If criteria for discontinuation of the entire study are defined, please state these here as well. If it is not possible for the project contributors to terminate participation during data collection, please explain this. This does not affect the participants'' or their legal guardians'' right to withdraw from participation at any time on their own request.'
     compensation:
       title: >-
-        {information, select,
-          noPost {After participation, there will be}
-          other  {For participating, {addressee, select,
-                                        children {your child receives}
-                                        wards    {the individual under your supervision receives}
-                                        other    {you receive}}}} ...
+        For participating, the {information, select,
+                                  noPost {{addressee, select,
+                                            children {children}
+                                            wards    {supervised individuals}
+                                            other    {participants}} receive}
+                                  other  {{addressee, select,
+                                            children {your child receives}
+                                            wards    {the individual under your supervision receives}
+                                            other    {you receive}}}} ...
       types:
         noCompensation: 'no compensation.'
         money: 'a financial compensation'
@@ -1057,11 +1060,11 @@ projectdetails:
           voucherOtherPlaceholder: 'Please describe the process'
         compensationOther:
           title: 'Other compensation'
-          textHint: 'Please describe how the compensation is issued in one sentence. Please make reference to the type of compensation and mention the time of issuing and what is necessary for retrieval (e.g., “Following the study, you will receive free access to our course materials; we will need your e-mail address for this.“).'
+          textHint: 'Please describe how the compensation is issued in sentence style. Please make reference to the type of compensation and mention the time of issuing and what is necessary for retrieval (e.g., “Following the study, you will receive free access to our course materials; we will need your e-mail address for this.“).'
       compensationVoluntary: 'Is the voluntary nature of participation compromised by the type or amount of compensation?'
       furtherDescription:
         title: 'Other remarks regarding the compensation'
-        textHint: 'Please justify why the voluntary nature of participation is compromised by the type or amount of compensation. Further explanations regarding compensation can also be added, e.g., justification for exceptionally high compensation; justification why participants are treated unequally with regard to compensation.'
+        textHint: 'Please explain how why the voluntary nature of participation is compromised by the type or amount of compensation. Further explanations regarding compensation can also be added, e.g., justification for exceptionally high compensation; justification why participants are treated unequally with regard to compensation.'
         textHintOptional: 'e.g., justification for exceptionally high compensation; justification why participants are treated unequally with regard to compensation'
     texts:
       useTemplate: 'use template'
@@ -1275,7 +1278,7 @@ projectdetails:
                                                                                       true  {Please contact the person supervising the qualification thesis.}
                                                                                       other {Please contact the responsibly data protection authorities.}} When completing the ethics proposal, you will be asked to add the data privacy statement (“annex on data processing“) as a PDF file.
       transferOutside:
-        title: 'Do you transmit personal data to or share personal data with third parties outside of the European Economic Area (EEA, “third-country transfer“)?'
+        title: 'Do you transmit personal data to or share personal data with third parties outside of the European Economic Area (EEA, so-called “third-country transfer“)?'
         types:
           yes: 'Yes'
           no: 'No'
@@ -1875,7 +1878,7 @@ checkDoc:
         deceit: 'Answer to question about debriefing'
         deceitType: 'type of debriefing'
         deceitDescription: 'Justification and description of given information'
-        deceitMain: 'If the {addressee} are deceived, a <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">full proposal</a> is required.'
+        deceitMain: 'If the {addressee} are deceived, a <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">full proposal</a> is required.'
         descriptionPre: 'Justification for not providing prior information'
         missingPost: 'after-the-fact information'
         descriptionPost: 'Justification for not providing after-the-fact information'
@@ -1897,7 +1900,7 @@ checkDoc:
           title: 'loan devices'
           receipt: 'confirmation sheet for the loaned devices'
           description: 'Text for confirmation sheet for the loaned devices'
-          information: 'If no <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the question regarding loaned devices must be answered with “no“.'
+          information: 'If no <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the question regarding loaned devices must be answered with “no“.'
         location:
           title: 'location of data collection'
           locationDescription: 'description of the location of data collection'
@@ -1919,16 +1922,16 @@ checkDoc:
                                                         risks   {risks}
                                                         other   {burdens/risks for contributors/third parties}}
         noBurdens: 'reasons why no burdens beyond everyday level are expected'
-        risksPhysical: 'If physical integrity is at risk, a <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">full proposal</a> is required.'
+        risksPhysical: 'If physical integrity is at risk, a <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">full proposal</a> is required.'
         finding:
           title: 'incidental findings'
           description: 'incidental findings'
           informing: 'handling of incidental findings'
-          information: 'If incidental findings might be revealed, <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">prior information</a> must be provided.'
+          information: 'If incidental findings might be revealed, <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> must be provided.'
         feedback:
           title: 'feedback on individual test results'
           description: 'individual test results'
-          feedbackInterventions: 'If participants receive feedback on their individual test results, the corresponding option must be selected in the <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a> section as well.'
+          feedbackInterventions: 'If participants receive feedback on their individual test results, the corresponding option must be selected in the <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventionsType" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a> section as well.'
       consent:
         informationToNotApplicable: >-
           If{addressee, select,
@@ -1938,9 +1941,9 @@ checkDoc:
                    wards    {, for the {participant, select,
                                        thirdParty {legal guardians,}
                                        other      {supervised individuals,}}}
-                   other    {}} no <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">prior information {type, select,
-                       consent {and no after-the-fact information </a> is provided, the question regarding consent}
-                       other     {</a> is provided, the question regarding voluntariness}} must be answered with “not applicable“.
+                   other    {}} no <a href="{page}" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_{page}{type, select,
+                       consent   {">prior information and no after-the-fact information </a> is provided, the question regarding consent}
+                       other     {#pre">prior information</a> is provided, the question regarding voluntariness}} must be answered with “not applicable“.
         notApplicableToInformation: >-
           You selected “not applicable“ on the question regarding {type, select,
                                     consent {consent}
@@ -1953,7 +1956,7 @@ checkDoc:
                                                                                     other {supervised individuals}}}
                                                                other    {}}. {type, select,
                           consent {This is possible only if <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is provided.}
-                          other   {This is possible only if the question regarding <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">prior information</a> is answered with “no“.}}
+                          other   {This is possible only if the question regarding <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> is answered with “no“.}}
         voluntary:
           title: 'voluntariness'
           voluntaryParticipants: 'voluntariness for participants'
@@ -2000,8 +2003,8 @@ checkDoc:
                                                 children {or assent, respectively,}
                                                 wards    {or assent, respectively,}
                                                 other    {}}
-          presence: 'If no project contributors are <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">present</a> during data collection, participants cannot give oral consent.'
-          finding: 'If <a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">incidental findings</a> may occur, consent must be obtained.'
+          presence: 'If no project contributors are <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">present</a> during data collection, participants cannot give oral consent.'
+          finding: 'If <a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#finding" data-base-route-i-ds-param="{routeIDs}">incidental findings</a> may occur, consent must be obtained.'
         terminateCons:
           title: 'withdrawal without disadvantages'
           description: 'disadvantages in case of withdrawal'
@@ -2016,7 +2019,11 @@ checkDoc:
         terminateCriteria: 'termination criteria'
       compensation:
         missing: 'information on the type of compensation'
-        information: 'If there is neither prior nor after-the-fact information, no compensation can be given.'
+        information: >-
+          If there is {addressee, select,
+                        children {neither prior nor after-the-fact information}
+                        wards    {neither prior nor after-the-fact information}
+                        other    {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a>}}, no compensation can be given.
         type:
           money:
             missing: 'amount of compensation'
@@ -2028,7 +2035,7 @@ checkDoc:
             amount: 'selection whether the amount of participation hours is per hour or a fixed value'
             amountFlat: 'amount of fixed participation hours'
           lottery:
-            missing: 'details of raffle'
+            missing: 'specification of details for raffle'
           voucher:
             missing: 'information on voucher'
           compensationOther:
@@ -2062,12 +2069,12 @@ checkDoc:
           missing: 'compensation in case of withdrawal'
           nothing: 'justification for missing compensation in case of withdrawal'
           terminateOther: 'description of compensation in case of withdrawal' # [...] is missing.
-        compensationVoluntary: 'the compromise to voluntary nature of participation by the type or amount of compensation'
+        compensationVoluntary: 'whether the voluntary nature of participation is compromised by the type or amount of compensation'
         furtherDescription: 'Other remarks regarding the compensation are missing.'
         presence: >- # other is hours
            {compensation, select,
              money {If financial compensation shall be paid}
-             other {If participation hours shall be certified}} immediately on site, project contributors must be <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">present during data collection</a>.
+             other {If participation hours shall be certified}} immediately on site, project contributors must be <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">present during data collection</a>.
       texts:
         intro: 'introduction is missing.'
         goals: 'background and goals/aims of the study'
@@ -2102,7 +2109,7 @@ checkDoc:
         confirmIntro: 'Confirmation of notice on data protection' # '[] is missing.'
         responsibility:
           missing: 'responsibility for processing personal data'
-          qualification: 'If one individual is privately responsible for the processing of personal data, the question about <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">qualification work</a> must be answered with “yes“.'
+          qualification: 'If one individual is privately responsible for the processing of personal data, the question about <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#qualification">qualification work</a> must be answered with “yes“.'
         transferOutside: 'transmission of personal data outside of the EEA'
         responsibilityTotransferOutside: 'If the question about responsibility for processing personal data is answered with “not applicable“, the question about transmission of personal data outside of the EEA must also be answered with “not applicable“.'
         transferOutsideToresponsibility: 'If the question about transmission of personal data outside of the EEA is answered with “not applicable“, the question about responsibility for processing personal data must also be answered with “not applicable“.'
@@ -2207,26 +2214,26 @@ checkDoc:
           transferOutsideToPersonal: 'Selecting “not applicable“ with respect to transmitting personal data outside of the EEA is possible only if no personal data are processed whatsoever.'
           personalTotransferOutside: 'If no personal data are processed, the question on transmitting personal data outside of the EEA must be answered with “not applicable“.'
           ip:
-            noOnline: 'You selected that data collection does not take place <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">online</a>. This is incompatible with the selection of “IP address“ in the list of person-related data for answering the research question.'
+            noOnline: 'You selected that data collection does not take place <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">online</a>. This is incompatible with the selection of “IP addresses“ in the list of person-related data for answering the research question.'
             ipNo: 'If no IP addresses are registered within the online data collection, “IP address“ must not be selected in the list of person-related data for answering the research question.'
             ipList: 'You selected that the allocation list contains IP addresses. This is only plausible if IP addresses are collected within an <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">online study</a> and linked with the research data for the purpose of technical support.'
             ipResearch: 'If IP addresses are registered for answering the research question, “IP address“ must be selected in the list of person-related data for answering the research question.'
             ipTechnical: 'If IP addresses are registered for technical support purposes only, “IP address“ must not be selected in the list of person-related data for answering the research question.'
             linkedMarking: 'If IP addresses can be linked with the research data, the research data must be labelled with an allocation list, and “IP address“ must be chosen amongst the personal data contained in the allocation list.'
-          closed: 'Identifying individual persons from the structure of the code is plausible only with <a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">data collection in a closed group</a>.'
-          video: 'If “recordings or pictures“ are selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, the question on person-related character of the research data must be answered by selecting that the research data themselves are person-related.'
-          measuresToVideo: 'If “recordings or pictures“ are selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, person-related data in terms of audio/video recordings or photos must be processed for answering the research question.'
-          videoToMeasures: 'If person-related data in terms of audio/video recordings or photos are processed for answering the research question, “recordings or pictures“ must be selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">data collection method</a>.'
+          closed: 'Identifying individual persons from the structure of the code is plausible only with <a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">data collection in a closed group</a>.'
+          video: 'If “recordings or pictures“ are selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, the question on person-related character of the research data must be answered by selecting that the research data themselves are person-related.'
+          measuresToVideo: 'If “recordings or pictures“ are selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, person-related data in terms of audio/video recordings or photos must be processed for answering the research question.'
+          videoToMeasures: 'If person-related data in terms of audio/video recordings or photos are processed for answering the research question, “recordings or pictures“ must be selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>.'
           compensation:
             noCompensation: 'You selected that no <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a> is granted for participation. This is incompatible with the selection that personal data are processed for the purpose of issuing the compensation.'
-            name: 'If the name is needed for retrieving the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a>, the name must be processed for the purpose of issuing the compensation.'
-            nameMarking: 'If the name is needed for retrieving the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must involve the name or there must be an allocation list that contains the name.'
-            eMail: 'If issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves e-mail contact, the e-mail address must be processed for the purpose of issuing the compensation.'
-            phone: 'If issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves phone calls, the phone number must be processed for the purpose of issuing the compensation.'
-            transfer: 'If the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a> is issued via bank transfer, name and IBAN must be processed for the purpose of issuing the compensation.'
-            mail: 'If issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves regular mail, name and postal address must be processed for the purpose of issuing the compensation.'
-            code: 'You selected that issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves a person-related code. This is incompatible with the selection that no person-related data are processed for the purpose of issuing the compensation.'
-            codeMarking: 'If a code is needed for retrieving the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must consist in a code.'
+            name: 'If the name is needed for retrieving the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, the name must be processed for the purpose of issuing the compensation.'
+            nameMarking: 'If the name is needed for retrieving the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must involve the name or there must be an allocation list that contains the name.'
+            eMail: 'If issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves e-mail contact, the e-mail address must be processed for the purpose of issuing the compensation.'
+            phone: 'If issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves phone calls, the phone number must be processed for the purpose of issuing the compensation.'
+            transfer: 'If the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> is issued via bank transfer, name and IBAN must be processed for the purpose of issuing the compensation.'
+            mail: 'If issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves regular mail, name and postal address must be processed for the purpose of issuing the compensation.'
+            code: 'You selected that issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves a person-related code. This is incompatible with the selection that no person-related data are processed for the purpose of issuing the compensation.'
+            codeMarking: 'If a code is needed for retrieving the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must consist in a code.'
       dataReuse:
         confirmIntro: 'Confirmation of notice on data re-use' # '[] is missing.'
         dataReuse: 'Answer to question whether research data are shared with others for re-use' # '[] is missing.
@@ -2236,7 +2243,7 @@ checkDoc:
             dataReuseHowreuse: 'Anonymized research data'
           missing: 'Answer to question how and with whom the research data are shared for re-use,'
           description: 'Description of data archive or repository for data sharing'
-          public: 'You selected that personal data are made publicly available. This is incompatible with the fact that no personal data are <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">shared outside of the EEA</a>.'
+          public: 'You selected that personal data are made publicly available. This is incompatible with the fact that no personal data are <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">shared outside of the EEA</a>.'
         dataReuseSelf: 'Answer to question whether research data are employed for own re-use' # '[] is missing.'
       contributor:
         mandatory: >-
@@ -2247,8 +2254,8 @@ checkDoc:
           The role “{task}“ of the {numContributor, plural,
                                         =1    {<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">project contributor</a> }
                                         other {<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">project contributors</a>}} {contributor} was not selected for any data collection time point.
-  notApplicableToInformation: 'If at least one <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a> involves prior or after-the-fact information, the answer to question about project title for participant documents must not be “not applicable“.'
-  informationToNotApplicable: 'If there is no prior information or after-the-fact information for any <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a>, the answer to question about project title for participant documents must be “not applicable“.'
+  projectTitleToInformation: 'If at least one <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a> involves prior or after-the-fact information, the answer to question about <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for participant documents</a> must not be “not applicable“.'
+  informationToProjectTitle: 'If there is no prior information or after-the-fact information for any <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a>, the answer to question about <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for participant documents</a> must be “not applicable“.'
 
 completeForm:
   titles:
@@ -2306,7 +2313,7 @@ completeForm:
                                                                        other    {supervised individuals}}
       measures: 'Additional material on data collection methods'
       interventions: 'Additional material on interventions/measures'
-      otherSources: 'Additional material on inclusion of data from other sources'
+      otherSources: 'Additional material on retrieval of data from other sources'
       dataPrivacy: 'Data privacy statement'
     upload: 'Choose PDF file'
   finish:

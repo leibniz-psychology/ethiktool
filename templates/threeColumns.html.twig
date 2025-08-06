@@ -54,7 +54,7 @@
                         {# error messages #}
                         {% if not ('completeForm' in pageTitle or 'checkDoc' in pageTitle) %} {# complete form is the only page with preview, but without error messages #}
                             <div class="{{ classes }} mb-2" id="checkDoc" style="height: min-content; max-height: 150px; word-break: break-word" {{ stimulus_target('base','checkDoc') }}>
-                                {{ (pageErrors)|raw|nl2br }}
+                                <div style="margin-left: 0.6rem; margin-right: 0.6rem">{{ (pageErrors)|raw|nl2br }}</div>
                             </div>
                         {% endif %}
                         {# help/preview #}

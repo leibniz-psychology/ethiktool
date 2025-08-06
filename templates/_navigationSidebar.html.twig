@@ -27,11 +27,11 @@
         {% set label = contributors.label ?? '' %}
         {% set isContributors = activeRoute is same as label %}
         {% set isNotContributors = isFilename and not isContributors %}
-        <div class="flex" style="margin-left: {{ (contributors.error ?? true) ? '0' : (anyError ? '20px' : '12px') }} !important;">
+        <div class="flex" style="margin-left: {{ (contributors.error ?? false) ? '8px' : (anyError ? '28px' : '20px') }} !important;">
             {% if contributors.error ?? false %}
                 <span {% if not isContributors%} style="margin-top: 0.75rem;" {% endif %}>{{ include('images/exclamation.svg') }}</span>
             {% endif %}
-            <a class="mx-2 mt-2 dropdownNav flex {% if isNotContributors %}StudyNav-NavItem Button_navigation {% elseif isContributors %}StudyNav-NavItem_active{% elseif not isFilename %}NavBarMain{% endif %}"
+            <a class="mx-0 mt-2 dropdownNav flex {% if isNotContributors %}StudyNav-NavItem Button_navigation {% elseif isContributors %}StudyNav-NavItem_active{% elseif not isFilename %}NavBarMain{% endif %}"
                nosubpage
                {% if isNotContributors %}
                    href="{{ path(label) }}"
@@ -76,7 +76,7 @@
         visibility:       visibility of the surrounding div
     #}
 
-    <div class="{{ level>0 ? 'NavBar' : 'NavBarMain mt-2' }} {% if isProjectdetails and level is same as 4 or not isProjectdetails and level is same as 1 %} ms-2 me-0 {% endif  %}" {% if level>0 %} style="{{ boolToDisplay(visibility,1) }}" {% endif %}>
+    <div class="{{ level>0 ? 'NavBar' : 'NavBarMain mt-2' }} {% if isProjectdetails and level is same as 4 or not isProjectdetails and level is same as 1 %} ms-2 me-0 mb-3 {% endif  %}" {% if level>0 %} style="{{ boolToDisplay(visibility,1) }}" {% endif %}>
         {% set isActiveAppData = activeRoute in ['app_coreData','app_votes','app_medicine','app_summary'] %}
         {% for route in window %}
             {% set hasSubPages, routeIDs, curRoute = route.subPages is defined, route.routeIDs ?? {}, route.route %}
@@ -95,7 +95,7 @@
                         href="{{ path(curRoute,routeIDs) }}"
                         {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': curRoute}|merge(hasSubPages ? {'page': isProjectdetails ? 'Projectdetails' : 'AppData'} : {})) }}
                    {% endif %}
-                    style="width: fit-content; column-gap: 0; {% if not isRoute or not isFilename %}color: black; pointer-events: none;{% endif %}"
+                    style="width: fit-content; {% if not isRoute or not isFilename %}color: black; pointer-events: none;{% endif %}"
                    {% if not hasSubPages %}
                         nosubpage
                    {% endif %}

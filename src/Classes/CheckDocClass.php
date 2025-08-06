@@ -81,7 +81,7 @@ class CheckDocClass extends ControllerAbstract
         $checkDoc = new CheckDocClass(self::$translator);
         $session = $request->getSession();
         // set variables
-        $checkDoc->appNode = $checkDoc->getXMLfromSession($session);
+        $checkDoc->appNode = $checkDoc->getXMLfromSession($session,getRecent: true);
         $checkDoc->appArray = $checkDoc->xmlToArray($checkDoc->appNode);
         $checkDoc->committeeParam = $session->get(self::committeeParams);
         $checkDoc->appDataArray = $checkDoc->appArray[self::appDataNodeName];
@@ -958,7 +958,7 @@ class CheckDocClass extends ControllerAbstract
                 // types
                 $typePrefix = $translationPage.self::compensationTypeNode.'.';
                 if ($this->noPre && $this->noPost && (!$this->isInformationII || $this->noPreParticipants && $this->noPostParticipants)) { // no information -> no compensation
-                    $this->addCheckLabelString($translationPage.'information');
+                    $this->addCheckLabelString($translationPage.'information',parameters: array_merge($this->routeIDs,[self::addressee => $this->addressee]));
                 }
                 foreach ($typeArray as $type => $value) {
                     $isMoney = $type===self::compensationMoney;
@@ -1078,6 +1078,9 @@ class CheckDocClass extends ControllerAbstract
         $this->addProjectdetailsTitle(self::privacyNode,$setTitle);
         $translationPage = self::projectdetailsPrefix.self::privacyNode.'.';
         $furtherPrefix = $translationPage.'further.';
+        // processing
+        $this->checkMissingContent($pageArray,[self::processingNode => $translationPage.self::processingNode],true,hash: $this->addDiv(self::processingNode));
+
         // create
         $tempArray = $pageArray[self::createNode];
         $tempPrefix = $translationPage.self::createNode.'.';
@@ -1398,8 +1401,7 @@ class CheckDocClass extends ControllerAbstract
                             }
                         }
                         // list has ip-addresses -> only if ip-addresses are linked to research data
-                        $isDataOnlineProcessingLinked = $dataOnlineProcessing===self::dataOnlineProcessingLinked;
-                        if ($isListIP && !$isDataOnlineProcessingLinked) {
+                        if ($isListIP && (!in_array($dataOnline,['',self::dataOnlineTechnical]) || $dataOnline===self::dataOnlineTechnical && !in_array($dataOnlineProcessing,['',self::dataOnlineProcessingLinked]))) {
                             $this->addCheckLabelString($ipPrefix.'ipList',parameters: $this->routeIDs);
                         }
                         if ($dataOnline===self::dataOnlineResearch) {
@@ -1411,7 +1413,7 @@ class CheckDocClass extends ControllerAbstract
                             if ($isIP) { // ip-addresses only for technical reasons -> ip-addresses must not be research data
                                 $this->addCheckLabelString($ipPrefix.self::dataOnlineTechnical);
                             }
-                            if ($isDataOnlineProcessingLinked && $isMarkingAnswered && (!$isMarkingList || $hasList && !$isListIP)) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
+                            if ($dataOnlineProcessing===self::dataOnlineProcessingLinked && $isMarkingAnswered && (!$isMarkingList || $hasList && !$isListIP)) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
                                 $this->addCheckLabelString($ipPrefix.'linkedMarking');
                             }
                         }
@@ -1516,7 +1518,7 @@ class CheckDocClass extends ControllerAbstract
                     }
                 }
             }
-            if (($pageArray[self::dataReuseHowNode][self::chosen] ?? '')==='class0' && $personal['personal']==='purpose' && ($privacyArray[self::transferOutsideNode] ?? '')==='no') { // personal data are made publicly available -> transfer outside can not be answered with 'no'
+            if (($pageArray[self::dataReuseHowNode][self::chosen] ?? '')==='class0' && in_array($personal['personal'],['personal','purpose']) && ($privacyArray[self::transferOutsideNode] ?? '')==='no') { // personal data are made publicly available -> transfer outside can not be answered with 'no'
                 $this->addCheckLabelString($dataReuseHowPrefix.'public',parameters: $this->routeIDs);
             }
             // data reuse
@@ -2047,12 +2049,12 @@ class CheckDocClass extends ControllerAbstract
      */
     private function addCheckLabelString(string $label, string $hash = '', array $parameters = [], bool $colorRed = true): void {
         $hasHash = $hash!=='';
-        $labelTrans = $this->translateString($label,$parameters);
+        $labelTrans = ucfirst($this->translateString($label,$parameters));
         $label = ($colorRed ? '<span style="color: red">' : '').
             ($hasHash ? ($this->addPageHash ? $this->convertStringToLink($labelTrans,$this->linkedPage,$this->routeIDs[self::routeIDs] ?? '',$hash,true) : '<a href="'.$this->linkedPage.'#'.$hash.'" style="color: inherit">'.$labelTrans.'</a>') : $labelTrans).
             ($colorRed ? '</span>' : '');
         $this->checkLabel .= "<li>".ucfirst($label)."</li>";
         $this->anyMissing = true;
-        $this->anyError = $colorRed ? true : $this->anyError;
+        $this->anyError = true;
     }
 }

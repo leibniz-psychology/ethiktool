@@ -52,8 +52,9 @@ class BurdensRisksController extends ControllerAbstract
         $iconArray = [];
         $translationPrefix = 'projectdetails.pages.burdensRisks.';
         foreach ([self::burdensNode,self::risksNode] as $type) {
-            $types = $type===self::burdensNode ? self::burdensTypes : self::risksTypes;
-            $iconArray[$type] = [array_slice($types,1,count($types)-2),array_combine($types,$this->prefixArray($types,$translationPrefix.$type.'.hintsTypes.')),$this->createStringArray($types,'black')]; // 0: options without 'no' and 'other', 1: text for icons, 2: icon text colors
+            $typeUC = ucfirst($type);
+            $types = array_diff($type===self::burdensNode ? self::burdensTypes : self::risksTypes,['no'.$typeUC,'other'.$typeUC]);
+            $iconArray[$type] = array_combine($types,$this->prefixArray($types,$translationPrefix.$type.'.hintsTypes.'));
         }
 
         $burdensRisks = $this->createFormAndHandleRequest(BurdensRisksType::class,$this->xmlToArray($burdensRisksNode),$request);

@@ -266,7 +266,7 @@ main:
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden.}
       EUB   {Bitte beachten Sie folgende <b>Voraussetzungen für die Antragstellung:</b>
     
-             Die Nutzung des Ethiktools is derzeit nur für Anträge im ausführlichen Verfahren vorgesehen.
+             Die Nutzung des Ethiktools ist derzeit nur für Anträge im ausführlichen Verfahren vorgesehen.
              
              Antragsberechtigt sind Mitglieder und Angehörige der Universität Bielefeld. Studierende können ebenfalls einen Ethikantrag für ihre Abschlussarbeit oder andere studentische Forschungsprojekte einreichen, die Lehrpersonen bzw. Betreuenden müssen den Antrag vor der Einreichung gelesen und genehmigt haben.
 
@@ -758,7 +758,7 @@ projectdetails:
         hint: 'In der Datenschutzerklärung („Anlage zur Datenverarbeitung“) beschreiben Sie bitte, anhand welcher Merkmale (z.B. Name oder Code) die Daten mit weiteren Daten zusammengeführt werden und welche personenbezogenen Daten der anderen Stelle Teil der Forschungsdaten oder der Daten für sonstige Zwecke jenseits der Forschungsfrage sind. Ggf. müssen zusätzliche Dokumente (z.B. Schweigepflichtsentbindung) hinzugefügt werden.'
         pdf:
           hint: 'Bitte geben Sie an, ob Sie bei der Erstellung des Gesamt-Ethikantrags ergänzende Materialien (z.B. Schweigepflichtsentbindung) im PDF-Format beifügen wollen.'
-          text: 'Ich möchte ergänzende Materialien zum Einbezug von Daten anderer Stellen beifügen.'
+          text: 'Ich möchte ergänzende Materialien zum Hinzuziehen von Daten anderer Stellen beifügen.'
       loan:
         title: 'Werden Geräte (z.B. Handy, Tablet, Sensor-Kit) an die Teilnehmenden ausgegeben?'
         receipt: 'Soll der Empfang der Geräte von den Teilnehmenden bestätigt werden?'
@@ -950,11 +950,14 @@ projectdetails:
     compensation:
       title: >-
         {information, select,
-          noPost {Nach der Teilnahme erfolgt}
+          noPost {Die {addressee, select,
+                        children {Kinder}
+                        wards    {betreuten Personen}
+                        other    {Teilnehmenden}} erhalten}
           other  {{addressee, select,
                     children {Ihr Kind erhält}
                     wards    {Die von Ihnen betreute Person erhält}
-                    other    {Sie erhalten}} für die Teilnahme}} ...
+                    other    {Sie erhalten}}}} für die Teilnahme ...
       types:
         noCompensation: 'keine Aufwandsentschädigung.'
         money: 'eine finanzielle Aufwandsentschädigung'
@@ -1057,11 +1060,11 @@ projectdetails:
           voucherOtherPlaceholder: 'Bitte Abwicklung beschreiben'
         compensationOther:
           title: 'Sonstige Aufwandsentschädigung'
-          textHint: 'Bitte beschreiben Sie die Ausgabe der sonstigen Aufwandsentschädigung in einem Satz. Bitte stellen Sie dabei den Bezug zur Art der vergebenen sonstigen Aufwandsentschädigung her und erwähnen den Zeitpunkt der Vergabe und was organisatorisch für den Erhalt notwendig ist (z.B. „Im Anschluss an die Studie erhalten Sie kostenlosen Zugriff auf unsere Kursmaterialien; dazu benötigen wir Ihre E-Mail-Adresse.“).'
+          textHint: 'Bitte beschreiben Sie die Ausgabe der sonstigen Aufwandsentschädigung in Satzform. Bitte stellen Sie dabei den Bezug zur Art der vergebenen sonstigen Aufwandsentschädigung her und erwähnen den Zeitpunkt der Vergabe und was organisatorisch für den Erhalt notwendig ist (z.B. „Im Anschluss an die Studie erhalten Sie kostenlosen Zugriff auf unsere Kursmaterialien; dazu benötigen wir Ihre E-Mail-Adresse.“).'
       compensationVoluntary: 'Ist die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet?'
       furtherDescription:
         title: 'Sonstige Erläuterungen zur Aufwandsentschädigung'
-        textHint: 'Bitte begründen Sie, warum die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet ist. Außerdem können Sie hier weitere Erläuterungen zur Aufwandsentschädigung ergänzen, z.B. Begründung für außergewöhnlich hohe Aufwandsentschädigung; Begründung, warum die Teilnehmenden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt werden.'
+        textHint: 'Bitte erläutern Sie, inwiefern die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet ist. Außerdem können Sie hier weitere Erläuterungen zur Aufwandsentschädigung ergänzen, z.B. Begründung für außergewöhnlich hohe Aufwandsentschädigung; Begründung, warum die Teilnehmenden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt werden.'
         textHintOptional: '(optional) z.B. Begründung für außergewöhnlich hohe Aufwandsentschädigung; Begründung, warum die Teilnehmenden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt werden'
     texts:
       useTemplate: 'Vorlage nutzen'
@@ -1275,7 +1278,7 @@ projectdetails:
                                                                                       true  {Bitte nehmen Sie Kontakt zu der Person auf, die die Qualifikationsarbeit betreut.}
                                                                                       other {Nehmen Sie bitte Kontakt zu der zuständigen Datenschutzstelle auf.}} Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, die Datenschutzerklärung („Anlage zur Datenverarbeitung“) als PDF-Datei beizufügen.
       transferOutside:
-        title: 'Übermitteln Sie personenbezogene Daten an bzw. teilen Sie personenbezogene Daten mit Dritten außerhalb des Europäischen Wirtschaftsraums (EWR, „Drittlandtransfer“)?'
+        title: 'Übermitteln Sie personenbezogene Daten an bzw. teilen Sie personenbezogene Daten mit Dritten außerhalb des Europäischen Wirtschaftsraums (EWR, sog. „Drittlandtransfer“)?'
         types:
           yes: 'Ja'
           no: 'Nein'
@@ -1875,7 +1878,7 @@ checkDoc:
         deceit: 'Antwort auf Frage nach nachträglicher vollständiger Aufklärung'
         deceitType: 'Art der nachträglichen vollständigen Aufklärung'
         deceitDescription: 'Begründung und Angabe, wann welche Informationen mitgeteilt werden,'
-        deceitMain: 'Wenn die {addressee} getäuscht werden, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Hauptantrag</a> erforderlich.'
+        deceitMain: 'Wenn die {addressee} getäuscht werden, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Hauptantrag</a> erforderlich.'
         descriptionPre: 'Begründung für fehlende Vorab-Aufklärung'
         missingPost: 'nachträglicher Aufklärung'
         descriptionPost: 'Begründung für fehlende nachträgliche Aufklärung'
@@ -1897,7 +1900,7 @@ checkDoc:
           title: 'Leihgeräten'
           receipt: 'Empfangsbestätigung für die Leihgeräte'
           description: 'Text für die Empfangsbestätigung für die Leihgeräte'
-          information: 'Wenn es keine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, muss die Frage nach Leihgeräten mit „Nein“ beantwortet werden.'
+          information: 'Wenn es keine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, muss die Frage nach Leihgeräten mit „Nein“ beantwortet werden.'
         location:
           title: 'Ort der Datenerhebung'
           locationDescription: 'Beschreibung des Ortes der Datenerhebung'
@@ -1919,16 +1922,16 @@ checkDoc:
                                                 risks   {Risiken}
                                                 other   {Belastungen/Risiken für Projektbeteiligte/Dritte}}
         noBurdens: 'Begründung, warum keine das alltagsübliche Maß überschreitenden Belastungen erwartet werden,'
-        risksPhysical: 'Wenn die körperliche Unversehrtheit gefährdet ist, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Hauptantrag</a> erforderlich.'
+        risksPhysical: 'Wenn die körperliche Unversehrtheit gefährdet ist, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Hauptantrag</a> erforderlich.'
         finding:
           title: '(Zufalls-)Befunden'
           description: '(Zufalls-)Befunde'
           informing: 'Umgang mit den (Zufalls-)Befunden'
-          information: 'Wenn (Zufalls-)Befunde aufgedeckt werden könnten, muss es eine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> geben.'
+          information: 'Wenn (Zufalls-)Befunde aufgedeckt werden könnten, muss es eine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> geben.'
         feedback:
           title: 'Rückmeldung individueller Testergebnisse'
           description: 'individuellen Testergebnisse'
-          feedbackInterventions: 'Wenn den Teilnehmenden die individuellen Testergebnisse rückgemeldet werden, muss dies als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> ebenfalls ausgewählt werden.'
+          feedbackInterventions: 'Wenn den Teilnehmenden die individuellen Testergebnisse rückgemeldet werden, muss dies als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventionsType" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> ebenfalls ausgewählt werden.'
       consent:
         informationToNotApplicable: >-
           Wenn es {addressee, select,
@@ -1938,9 +1941,9 @@ checkDoc:
                     wards    {für die {participant, select,
                                         thirdParty {gesetzlichen Vertretungspersonen}
                                         other      {betreuten Personen}}}
-                    other    {}} keine <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung {type, select,
-                                  consent {und keine nachträgliche Aufklärung </a> gibt, muss die Frage nach Einwilligung}
-                                  other     {</a> gibt, muss die Frage nach Freiwilligkeit}} mit „nicht zutreffend“ beantwortet werden.
+                    other    {}} keine <a href="{page}" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_{page}{type, select,
+                                  consent {">Vorab-Aufklärung und keine nachträgliche Aufklärung </a> gibt, muss die Frage nach Einwilligung}
+                                  other     {#pre">Vorab-Aufklärung</a> gibt, muss die Frage nach Freiwilligkeit}} mit „nicht zutreffend“ beantwortet werden.
         notApplicableToInformation: >-
           Sie haben bei der Frage nach {type, select,
                                     consent {Einwilligung}
@@ -1953,7 +1956,7 @@ checkDoc:
                                                                                     other {betreuten Personen}}}
                                                                 other    {}} „nicht zutreffend“ ausgewählt. {type, select,
                           consent {Das ist nur möglich, wenn es <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt.}
-                          other   {Das ist nur möglich, wenn die Frage nach <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> mit „Nein“ beantwortet wird.}}
+                          other   {Das ist nur möglich, wenn die Frage nach <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> mit „Nein“ beantwortet wird.}}
         voluntary:
           title: 'Freiwilligkeit'
           voluntaryParticipants: 'Freiwilligkeit für Teilnehmende'
@@ -2000,8 +2003,8 @@ checkDoc:
                                                     children {bzw. Zustimmung}
                                                     wards    {bzw. Zustimmung}
                                                     other    {}}
-          presence: 'Wenn keine Projektbeteiligten bei der Erhebung <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">anwesend</a> sind, kann die Einwilligung der Teilnehmenden nicht mündlich erfolgen.'
-          finding: 'Wenn <a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">(Zufalls-)Befunde</a> auftreten können, muss eine Einwilligung erfolgen.'
+          presence: 'Wenn keine Projektbeteiligten bei der Erhebung <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">anwesend</a> sind, kann die Einwilligung der Teilnehmenden nicht mündlich erfolgen.'
+          finding: 'Wenn <a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#finding" data-base-route-i-ds-param="{routeIDs}">(Zufalls-)Befunde</a> auftreten können, muss eine Einwilligung erfolgen.'
         terminateCons:
           title: 'Beendigung ohne Nachteile'
           description: 'Nachteile bei vorzeitigem Abbruch'
@@ -2016,7 +2019,11 @@ checkDoc:
         terminateCriteria: 'Abbruchkriterien'
       compensation:
         missing: 'Angaben zur Art der Aufwandsentschädigung'
-        information: 'Wenn es keine Vorab-Aufklärung und keine nachträgliche Aufklärung gibt, kann keine Aufwandsentschädigung vergeben werden.'
+        information: >-
+          Wenn es keine {addressee, select,
+                          children {Vorab-Aufklärung und keine nachträgliche Aufklärung}
+                          wards    {Vorab-Aufklärung und keine nachträgliche Aufklärung}
+                          other    {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung und keine nachträgliche Aufklärung</a>}} gibt, kann keine Aufwandsentschädigung vergeben werden.
         type:
           money:
             missing: 'Höhe der Aufwandsentschädigung'
@@ -2028,7 +2035,7 @@ checkDoc:
             amount: 'Auswahl, ob die VP-Stunden pro Stunde oder pauschal sind,'
             amountFlat: 'Anzahl der pauschalen VP-Stunden'
           lottery:
-            missing: 'Details zur Verlosung'
+            missing: 'Angabe von Details zur Verlosung'
           voucher:
             missing: 'Angabe zum Gutschein'
           compensationOther:
@@ -2067,7 +2074,7 @@ checkDoc:
         presence: >- # other is hours
           {compensation, select,
             money {Wenn die finanzielle Aufwandsentschädigung sofort vor Ort ausgezahlt werden soll}
-            other {Wenn die Versuchspersonenstunden sofort vor Ort bescheinigt werden sollen}}, müssen Projektbeteiligte <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">bei der Erhebung anwesend</a> sein. 
+            other {Wenn die Versuchspersonenstunden sofort vor Ort bescheinigt werden sollen}}, müssen Projektbeteiligte <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">bei der Erhebung anwesend</a> sein.
       texts:
         intro: 'Einleitung fehlt.'
         goals: 'Hintergrund und Zielsetzung der Studie'
@@ -2102,7 +2109,7 @@ checkDoc:
         confirmIntro: 'Bestätigung der Informationen zum Datenschutz' # '[] fehlt.'
         responsibility:
           missing: 'Verantwortung für die Verarbeitung der personenbezogenen Daten'
-          qualification: 'Wenn eine Person privat verantwortlich für die Verarbeitung personenbezogener Daten ist, muss die Frage nach <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Qualifikationsarbeit</a> mit „Ja“ beantwortet werden.'
+          qualification: 'Wenn eine Person privat verantwortlich für die Verarbeitung personenbezogener Daten ist, muss die Frage nach <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#qualification">Qualifikationsarbeit</a> mit „Ja“ beantwortet werden.'
         transferOutside: 'Weitergabe der personenbezogenen Daten außerhalb des EWR'
         responsibilityTotransferOutside: 'Wenn bei der Frage nach Verantwortung für die Verarbeitung personenbezogener Daten „nicht zutreffend“ gewählt wurde, muss auch bei der Frage nach Weitergabe personenbezogener Daten an Dritte außerhalb des EWR „nicht zutreffend“ gewählt werden.'
         transferOutsideToresponsibility: 'Wenn bei der Frage nach Weitergabe personenbezogener Daten an Dritte außerhalb des EWR „nicht zutreffend“ gewählt wurde, muss auch bei der Frage nach Verantwortung für die Verarbeitung personenbezogener Daten „nicht zutreffend“ gewählt werden.'
@@ -2207,26 +2214,26 @@ checkDoc:
           transferOutsideToPersonal: 'Wenn bei der Frage nach Weitergabe personenbezogener Daten an Dritte außerhalb des EWR „nicht zutreffend“ gewählt wurde, dürfen in keiner Form personenbezogene Daten verarbeitet werden.'
           personalTotransferOutside: 'Wenn keine personenbezogenen Daten verarbeitet werden, muss die Frage nach Weitergabe personenbezogener Daten an Dritte außerhalb des EWR mit „nicht zutreffend“ beantwortet werden.'
           ip:
-            noOnline: 'Sie haben ausgewählt, dass die Erhebung nicht <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">online</a> stattfindet. Das passt nicht dazu, dass die „IP-Adresse“ in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt ist.'
+            noOnline: 'Sie haben ausgewählt, dass die Erhebung nicht <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">online</a> stattfindet. Das passt nicht dazu, dass „IP-Adressen“ in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt ist.'
             ipNo: 'Wenn im Rahmen der Online-Erhebung keine IP-Adressen erfasst werden, darf die „IP-Adresse“ nicht in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
-            ipList: 'Sie haben ausgewählt, dass die Schlüsselliste IP-Adressen enthält. Das ist nur plausibel, wenn im Rahmen einer <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Online-Erhebung</a> IP-Adressen erfasst und zur technischen Unterstützung mit den Forschungsdaten verknüpft werden.'
+            ipList: 'Sie haben ausgewählt, dass die Schlüsselliste IP-Adressen enthält. Das ist nur plausibel, wenn im Rahmen einer <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">Online-Erhebung</a> IP-Adressen erfasst und zur technischen Unterstützung mit den Forschungsdaten verknüpft werden.'
             ipResearch: 'Wenn IP-Adressen zur Beantwortung der Forschungsfrage erfasst werden, muss „IP-Adressen“ in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
             ipTechnical: 'Wenn die IP-Adressen nur zur technischen Unterstützung erfasst werden, darf „IP-Adressen“ nicht in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
             linkedMarking: 'Wenn die IP-Adressen mit den Forschungsdaten verknüpft sind, müssen die Forschungsdaten mit einer Schlüsselliste gekennzeichnet sein, und „IP-Adresse“ muss in der Auflistung der personenbezogenen Daten der Schlüsselliste ausgewählt werden.'
-          closed: 'Dass die Art der Codebildung eine Identifikation einzelner Personen zulassen könnte, ist nur plausibel, wenn die <a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Erhebung in einer geschlossenen Gruppe</a> stattfindet.'
-          video: 'Wenn als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, muss bei der Frage nach Personenbezug der Forschungsdaten ausgewählt werden, dass die Forschungsdaten selbst personenbezogen sind.'
-          measuresToVideo: 'Wenn als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, müssen Tonaufnahmen, Fotos und/oder Videoaufnahmen in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
-          videoToMeasures: 'Wenn personenbezogene Daten in Form von Tonaufnahmen, Fotos und/oder Videoaufnahmen zur Beantwortung der Forschungsfrage verarbeitet werden, muss als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ ausgewählt werden.'
+          closed: 'Dass die Art der Codebildung eine Identifikation einzelner Personen zulassen könnte, ist nur plausibel, wenn die <a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">Erhebung in einer geschlossenen Gruppe</a> stattfindet.'
+          video: 'Wenn als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, muss bei der Frage nach Personenbezug der Forschungsdaten ausgewählt werden, dass die Forschungsdaten selbst personenbezogen sind.'
+          measuresToVideo: 'Wenn als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, müssen Tonaufnahmen, Fotos und/oder Videoaufnahmen in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
+          videoToMeasures: 'Wenn personenbezogene Daten in Form von Tonaufnahmen, Fotos und/oder Videoaufnahmen zur Beantwortung der Forschungsfrage verarbeitet werden, muss als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ ausgewählt werden.'
           compensation:
             noCompensation: 'Sie haben ausgewählt, dass keine <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> vergeben wird. Das passt nicht dazu, dass personenbezogene Daten zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
-            name: 'Wenn zur Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> der Name benötigt wird, muss der Name zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
-            nameMarking: 'Wenn zur Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> der Name benötigt wird und es außerdem eine Kennzeichnung der Forschungsdaten gibt, die auch der Vergabe der Aufwandsentschädigung dient, muss die Kennzeichnung selbst den Namen beinhalten oder es muss eine Schlüsselliste geben, welche den Namen beinhaltet.'
-            eMail: 'Wenn die Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> E-Mail-Kontakt erfordert, muss die E-Mail-Adresse zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
-            phone: 'Wenn die Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> Telefonkontakt erfordert, muss die Telefonnummer zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
-            transfer: 'Wenn die Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> per Überweisung geschieht, müssen Name und IBAN zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
-            mail: 'Wenn die Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> per Post geschieht, müssen Name und Anschrift zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
-            code: 'Sie haben ausgewählt, dass der Code zur Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> personenbeziehbar ist. Das passt nicht zur Angabe, dass keine personenbezogenen Daten zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
-            codeMarking: 'Wenn zur Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> ein Code benötigt wird und es außerdem eine Kennzeichnung der Forschungsdaten gibt, die auch der Vergabe der Aufwandsentschädigung dient, muss die Kennzeichnung per Code erfolgen.'
+            name: 'Wenn zur Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> der Name benötigt wird, muss der Name zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
+            nameMarking: 'Wenn zur Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> der Name benötigt wird und es außerdem eine Kennzeichnung der Forschungsdaten gibt, die auch der Vergabe der Aufwandsentschädigung dient, muss die Kennzeichnung selbst den Namen beinhalten oder es muss eine Schlüsselliste geben, welche den Namen beinhaltet.'
+            eMail: 'Wenn die Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> E-Mail-Kontakt erfordert, muss die E-Mail-Adresse zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
+            phone: 'Wenn die Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> Telefonkontakt erfordert, muss die Telefonnummer zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
+            transfer: 'Wenn die Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> per Überweisung geschieht, müssen Name und IBAN zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
+            mail: 'Wenn die Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> per Post geschieht, müssen Name und Anschrift zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
+            code: 'Sie haben ausgewählt, dass der Code zur Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> personenbeziehbar ist. Das passt nicht zur Angabe, dass keine personenbezogenen Daten zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
+            codeMarking: 'Wenn zur Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> ein Code benötigt wird und es außerdem eine Kennzeichnung der Forschungsdaten gibt, die auch der Vergabe der Aufwandsentschädigung dient, muss die Kennzeichnung per Code erfolgen.'
       dataReuse:
         confirmIntro: 'Bestätigung der Informationen zur Nachnutzung' # '[] fehlt.'
         dataReuse: 'Antwort auf Frage, ob die Forschungsdaten anderen zur Nachnutzung zur Verfügung gestellt werden,' # '[] fehlt.
@@ -2236,7 +2243,7 @@ checkDoc:
             dataReuseHowreuse: 'Anonymisierte Forschungsdaten'
           missing: 'Antwort auf Frage, wie bzw. wem die Forschungsdaten zur Nachnutzung zur Verfügung gestellt werden,'
           description: 'Beschreibung des Datenarchivs bzw. der Plattform zur Datenbereitstellung'
-          public: 'Sie haben ausgewählt, dass personenbezogene Forschungsdaten öffentlich zugänglich gemacht werden. Das passt nicht dazu, dass keine personenbezogenen Daten <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">außerhalb des EWR weitergegeben</a> werden.'
+          public: 'Sie haben ausgewählt, dass personenbezogene Forschungsdaten öffentlich zugänglich gemacht werden. Das passt nicht dazu, dass keine personenbezogenen Daten <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">außerhalb des EWR weitergegeben</a> werden.'
         dataReuseSelf: 'Antwort auf Frage, ob die Forschungsdaten zur eigenen Nachnutzung/Re-Analyse verwendet werden,' # '[] fehlt.'
       contributor:
         mandatory: >-
@@ -2247,8 +2254,8 @@ checkDoc:
           Die Funktion „{task}“ der {numContributor, plural,
                                         =1    {<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">projektbeteiligten Person</a> }
                                         other {<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Projektbeteiligten</a>}} {contributor} wurde bei keinem Erhebungszeitpunkt ausgewählt.
-  projectTitleToInformation: 'Wenn es mindestens eine <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Studie</a> mit einer Vorab-Aufklärung oder einer nachträglichen Aufklärung gibt, darf die Frage nach dem <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Projekttitel für die Teilnahmedokumente</a> nicht mit „nicht zutreffend“ beantwortet werden.'
-  informationToProjectTitle: 'Wenn es in keiner <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Studie</a> eine Vorab-Aufklärung oder eine nachträgliche Aufklärung gibt, muss die Frage nach dem <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Projekttitel für die Teilnahmedokumente</a> mit „nicht zutreffend“ beantwortet werden.'
+  projectTitleToInformation: 'Wenn es mindestens eine <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Studie</a> mit einer Vorab-Aufklärung oder einer nachträglichen Aufklärung gibt, darf die Frage nach dem <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">Projekttitel für die Teilnahmedokumente</a> nicht mit „nicht zutreffend“ beantwortet werden.'
+  informationToProjectTitle: 'Wenn es in keiner <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Studie</a> eine Vorab-Aufklärung oder eine nachträgliche Aufklärung gibt, muss die Frage nach dem <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">Projekttitel für die Teilnahmedokumente</a> mit „nicht zutreffend“ beantwortet werden.'
 
 completeForm:
   titles:
@@ -2306,7 +2313,7 @@ completeForm:
                                                                        other    {betreuten Personen}}
       measures: 'Zusätzliche Materialien für die Erhebungsmethoden'
       interventions: 'Zusätzliche Materialien für die Maßnahmen'
-      otherSources: 'Zusätzliche Materialien für die Daten anderer Stellen'
+      otherSources: 'Zusätzliche Materialien für die hinzugezogenen Daten anderer Stellen'
       dataPrivacy: 'Datenschutzerklärung'
     upload: 'PDF-Datei auswählen'
   finish:

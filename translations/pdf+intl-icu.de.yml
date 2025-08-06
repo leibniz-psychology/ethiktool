@@ -160,7 +160,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     compensationVoluntary: 'Ist die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet?'
     compensationVoluntarySub: >-
       {isCompensationVoluntary, select,
-        true  {Begründung der Gefährdung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung sowie sonstige}
+        true  {Begründung der Gefährdung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung; sonstige}
         other {Sonstige}} Erläuterungen zur Aufwandsentschädigung:
     terminateCons: 'Kann die Teilnahme jederzeit und ohne Nachteile beendet werden?'
     terminateConsSub: 'Begründung und ggf. Beschreibung der Nachteile im Falle eines vorzeitigen Abbruchs:'
@@ -454,15 +454,21 @@ projectdetails:
   compensation:
     start: >- # other in addressee select is participants
       {information, select,
-        noPost {Nach der Teilnahme erfolgt }
+        noPost {Die {addressee, select,
+                      children {Kinder}
+                      wards    {betreuten Personen}
+                      other    {Teilnehmenden}} erhalten}
         other  {{addressee, select,
                   children {Ihr Kind erhält}
                   wards    {Die von Ihnen betreute Person erhält}
-                  other    {Sie erhalten}} für die Teilnahme {number, plural,
+                  other    {Sie erhalten}}}} für die Teilnahme {number, plural,
                                                                 =0    {}
                                                                 =1    {}
-                                                                other {wahlweise }}}}
+                                                                other {wahlweise }}
   # added empty lines to have same line numbers in all translation files.
+
+
+
 
 
 
@@ -1183,7 +1189,6 @@ completeForm:
       dataPrivacy: 'Personenbezogene Daten'
       conflict: 'Interessenkonflikt'
       medicine: 'Medizinbezug'
-      compensation: 'Aufwandsentschädigung'
     information: 'Eine vollständige Vorab-Aufklärung ist gewährleistet.'
     voluntary: 'Die Freiwilligkeit der Teilnahme ist gewährleistet.'
     terminateCons: 'Die Teilnahme kann jederzeit ohne Nachteile beendet werden.'

@@ -39,7 +39,7 @@
             'accessOrderProcessing': accessOrderProcessingTypes
     }) }}>
         {# processing #}
-        <div>
+        <div id="processingDiv">
             {{ formRender.addHeading(translationPrefix~'processing.title') }}
             {{ formRender.addTextfield(content.processing,{'attributes': textHeightLong}) }}
         </div>
@@ -50,7 +50,7 @@
         <div class="mt-8" id="create" {{ stimulus_action(privacyController,'setPrivacyCreate','change') }}>
             {{ formRender.renderButtons(create,{
                 'stimVisible': {'values': [['tool',toolDiv],['separate',[verificationDiv, pdfHint]]]},
-                'icons': {'createtool': (translationPrefix~'create.toolHint')|trans},
+                'icons': {'createtool': translationPrefix~'create.toolHint'},
                 'labelParams': {'addressee': addresseeString, 'participant': participantsString}}) }}
             {{ formRender.addHint(translationPrefix~'create.hint',{'visible': isSeparate, 'id': pdfHint}) }}
             {{ formRender.renderButtons(verification,{'addDiv': [verificationDiv,boolToDisplay(isSeparate)]}) }}
@@ -75,7 +75,7 @@
                         {{ formRender.renderButtons(widget,labelParamsCommittee|merge({
                             'stim': [privacyController,'setResponsibilityTransfer'],
                             'hint': [tempPrefix]})|
-                            merge(isResponsibility ? {'icons': {'responsibilityonlyOther': (tempPrefix~'onlyOther')|trans}} : {})) }}
+                            merge(isResponsibility ? {'icons': {'responsibilityonlyOther': tempPrefix~'onlyOther'}} : {})) }}
                         <div class="borderHint" {{ boolToDisplay(isResponsibility ? value in responsibilityTypes : value is same as 'yes') }}" {{ stimulus_target(privacyController,type~'Hint') }}>{{ transferOutsideHint }}</div> {# correct hint for responsibility is set in controller #}
                     </div>
                 {% endfor %}
@@ -99,12 +99,12 @@
                         {{ formRender.renderButtons(dataOnline,{
                             'stim': [privacyController,'setDataOnline'],
                             'hint': [tempPrefix],
-                            'icons': {'dataOnlineipTechnical': (tempPrefix~'ipTechnicalHint')|trans},
+                            'icons': {'dataOnlineipTechnical': tempPrefix~'ipTechnicalHint'},
                             'addDiv': ['dataOnline']}) }}
                         <div class="mt-8" id="dataOnlineProcessing" {{ stimulus_target(privacyController,'dataOnlineProcessingDiv') }}>
                             {{ formRender.renderButtons(content.dataOnlineProcessing,{
                                 'stim': [privacyController,'setDataOnlineProcessing'],
-                                'icons': {'dataOnlineProcessingseparate': (translationPrefix~'dataOnlineProcessing.separateHint')|trans}}) }}
+                                'icons': {'dataOnlineProcessingseparate': translationPrefix~'dataOnlineProcessing.separateHint'}}) }}
                         </div>
                     {% endif %}
                     {# data personal #}
@@ -118,7 +118,7 @@
                     {% set markingRemoveHintsPrefix = markingRemovePrefix~'textHints.markingRemove' %}
                     {% set markingHintsImmediately, markingHintsLater = (markingRemoveHintsPrefix~'Immediately')|trans, (markingRemoveHintsPrefix~'Later')|trans %}
                     {% set markingIcons, internalIcons = iconArray['marking'], iconArray['internal'] %}
-                    {% set externalTrans, internalTrans, noTrans, externalGenerationTrans, internalOwnTrans, internalContributorsTrans, patternGenerationTrans, contributorsMarkingTrans = markingIcons['external'], markingIcons['internal'], markingIcons['no'], iconArray['external']['generation'], internalIcons['own'], internalIcons['contributors'], iconArray['pattern']['generation'], iconArray['contributors']['marking'] %}
+                    {% set externalIcon, internalIcon, noIcon, externalGeneration, internalOwn, internalContributors, patternGeneration, contributorsMarking = markingIcons['external'], markingIcons['internal'], markingIcons['no'], iconArray['external']['generation'], internalIcons['own'], internalIcons['contributors'], iconArray['pattern']['generation'], iconArray['contributors']['marking'] %}
                     {# marking -> question may be asked twice #}
                     {% for suffix in ['','Second'] %}
                         {% set markingString, externalString, internalString = 'marking'~suffix, 'external'~suffix, 'internal'~suffix %}
@@ -139,12 +139,12 @@
                                     {{ formRender.renderButtons(marking,noHeading|merge({
                                         'text': [description,transferParam|merge({'hint': descriptionHints[0]})],
                                         'stimVisible': {'values': [[externalNameArray,description.vars.name~'Div'],['external',externalDiv],['internal',internalDiv]]|merge(isFirst ? [['other',otherDiv],[furtherValues,furtherDiv]] : [])},
-                                        'icons': {(markingString~'external'): externalTrans, (markingString~'internal'): internalTrans, (markingString~'no'): noTrans}})) }}
+                                        'icons': {(markingString~'external'): externalIcon, (markingString~'internal'): internalIcon, (markingString~'no'): noIcon}})) }}
                                 </div>
                             </div>
                             {# personal data of code for external #}
                             {{ formRender.renderButtons(content[externalString],{
-                                'icons': {(externalString~'generation'): externalGenerationTrans},
+                                'icons': {(externalString~'generation'): externalGeneration},
                                 'stim': [privacyController,'setExternal'],
                                 'addDiv': [externalDiv,boolToDisplay(markingValue is same as 'external')]}) }}
                             {# internal #}
@@ -154,14 +154,14 @@
                                 <div {{ stimulus_action(privacyController,'setCreate','change') }}>
                                     {{ formRender.renderButtons(internal,labelParams|merge({
                                         'stimVisible': {'values': [['pattern','patternDiv'~suffix],['own','ownDiv'~suffix],['contributors','contributorsDiv'~suffix]]},
-                                        'icons': {(internalString~'own'): internalOwnTrans, (internalString~'contributors'): internalContributorsTrans}})) }}
+                                        'icons': {(internalString~'own'): internalOwn, (internalString~'contributors'): internalContributors}})) }}
                                 </div>
                                 {# personal data of code for interal #}
                                 {% for type in internalKeys %}
                                     {{ formRender.renderButtons(content[type~suffix],labelParams|merge({
                                         'stim': [privacyController,'set'~type],
                                         'addDiv': [type~'Div'~suffix,boolToDisplay(internalValue is same as type)]})
-                                        |merge(type in ['pattern','contributors'] ? {'icons': type is same as 'pattern' ? {('pattern'~suffix~'generation') : patternGenerationTrans} : {('contributors'~suffix~'marking'): contributorsMarkingTrans}} : {})) }}
+                                        |merge(type in ['pattern','contributors'] ? {'icons': type is same as 'pattern' ? {('pattern'~suffix~'generation') : patternGeneration} : {('contributors'~suffix~'marking'): contributorsMarking}} : {})) }}
                                 {% endfor %}
                             </div>
                         </div>
@@ -219,7 +219,7 @@
                                 {{ formRender.renderButtons(storage,{
                                     'text': [description,transferParam|merge({'visibility': storageValue is same as 'delete'})],
                                     'stimVisible': {'values': [['delete',description.vars.name~'Div'],['keep',personalKeepDiv]]},
-                                    'icons': {'storagekeep': (tempPrefix~'keepHint')|trans}}) }}
+                                    'icons': {'storagekeep': tempPrefix~'keepHint'}}) }}
                             </div>
                         </div>
                         {# personal keep #}
@@ -358,7 +358,7 @@
                         <div class="mt-8" id="orderProcessingDescription" {{ stimulus_target(privacyController,'orderProcessingDescription') }}>
                             {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
                             {% for textPart in orderProcessingKnownTexts %}
-                                {{ formRender.addTextfield(content[textPart],transferParam) }}
+                                {{ formRender.addTextfield(content[textPart],transferParam|merge(fontNormal)) }}
                             {% endfor %}
                         </div>
                         {# code compensation #}
@@ -367,10 +367,10 @@
                             {% set value, tempPrefix, externalDiv, internalDiv = compensation.vars.value, codePrefix~'hints.code', 'codeExternalDiv', 'codeInternalDiv' %}
                             {% set isExternal = value is same as 'codeExternal' %}
                             <div class="mt-8" id="codeCompensation" {{ stimulus_target(privacyController,'compensationCode') }}>
-                                {{ formRender.renderButtons(compensation,{
+                                {{ formRender.renderButtons(compensation,labelParams|merge({
                                     'text': [content.codeCompensationDescription,transferParam|merge({'visibility': isExternal})],
                                     'stimVisible': {'values': [['codeExternal',['codeCompensationDescriptionDiv',externalDiv]],['codeInternal',internalDiv]]},
-                                    'icons': {'codeCompensationcodeExternal': (tempPrefix~'External')|trans, 'codeCompensationcodeInternal': (tempPrefix~'Internal')|trans(addresseeParam)}}) }}
+                                    'icons': {'codeCompensationcodeExternal': tempPrefix~'External', 'codeCompensationcodeInternal': tempPrefix~'Internal'}})) }}
                                 {# personal data of code for codeExternal #}
                                 {{ formRender.renderButtons(content.codeCompensationexternal,{'addDiv': [externalDiv,boolToDisplay(isExternal)]}) }}
                                 {# code internal #}
@@ -379,12 +379,12 @@
                                 <div class="mt-8" id="{{ internalDiv }}" style="{{ boolToDisplay(value is same as 'codeInternal') }}">
                                     {{ formRender.renderButtons(content.codeInternal,labelParams|merge({
                                         'stimVisible':{'values':  [['pattern','codepatternDiv'],['contributors','codecontributorsDiv']]},
-                                        'icons': {'codeInternalown': (tempPrefix~'own')|trans(addresseeParam), 'codeInternalcontributors': (tempPrefix~'contributors')|trans}})) }}
+                                        'icons': {'codeInternalown': tempPrefix~'own', 'codeInternalcontributors': tempPrefix~'contributors'}})) }}
                                     {# personal data of code for codeInternal #}
                                     {% for type in ['pattern','contributors'] %}
                                         {{ formRender.renderButtons(content['codeCompensation'~type], labelParams|merge({
                                             'addDiv': ['code'~type~'Div',boolToDisplay(internalValue is same as type)]})|
-                                            merge(type is same as 'pattern' ? {'icons': {'codeCompensationpatterngeneration': (internalPrefix~'pattern.hints.generation')|trans}} : {})) }}
+                                            merge(type is same as 'pattern' ? {'icons': {'codeCompensationpatterngeneration': internalPrefix~'pattern.hints.generation'}} : {})) }}
                                     {% endfor %}
                                 </div>
                             </div>

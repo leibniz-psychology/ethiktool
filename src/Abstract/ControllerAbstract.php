@@ -1441,7 +1441,7 @@ abstract class ControllerAbstract extends AbstractController
         $loadedVersion = explode('.',(string)($xml->attributes()->{self::toolVersionAttr}));
         $major = $loadedVersion[0];
         $minor = $loadedVersion[1];
-        if ($major==='1' && $minor<'2') { // updates for version 1.2.1
+        if ($major==='1' && $minor<'2') { // updates for versions before 1.2.1
             $this->setToolVersion($xml); // update attribute
             foreach ($xml->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {

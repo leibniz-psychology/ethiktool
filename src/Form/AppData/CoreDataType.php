@@ -119,12 +119,13 @@ class CoreDataType extends TypeAbstract
             $isBegun = array_key_exists(self::descriptionNode,$tempArray);
             $tempBool = $tempVal==='0' && !$isBegun; // true if projectStartNext is selected
             $forms[self::projectStartNext]->setData($tempBool);
-            $forms[self::projectStart]->setData(new DateTime(!($tempBool || $isBegun) ? $tempVal : 'today', $this->getTimezone()));
+            $forms[self::projectStart]->setData(!($tempBool || $isBegun) && $tempVal!=='' ? new DateTime($tempVal, $this->getTimezone()) : null);
             if (array_key_exists(self::projectStartBegun,$forms)) {
                 $forms[self::projectStartBegun]->setData($isBegun);
                 $forms[$this->appendText(self::projectStartBegun)]->setData($this->getArrayValue($tempArray,self::descriptionNode));
             }
-            $forms[self::projectEnd]->setData(new DateTime($viewData[self::projectEnd]));
+            $tempVal = $viewData[self::projectEnd];
+            $forms[self::projectEnd]->setData($tempVal!=='' ? new DateTime($viewData[self::projectEnd]) : null);
         }
         catch (Exception $e) {
             // do not set dates if exception occurs

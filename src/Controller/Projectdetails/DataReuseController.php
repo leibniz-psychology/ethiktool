@@ -29,7 +29,7 @@ class DataReuseController extends ControllerAbstract
         $dataReuseHowIconArray = [];
         $tempPrefix = $dataReuseHowPrefix.'hints.';
         foreach ($this->prefixArray(['0','1','2','3'],'class') as $type) {
-            $dataReuseHowIconArray[self::dataReuseHowNode.$type] = $this->translateString($tempPrefix.$type);
+            $dataReuseHowIconArray[self::dataReuseHowNode.$type] = $tempPrefix.$type;
         }
 
         $dataReuseTitle = $translationPrefix.self::dataReuseNode.'.title';

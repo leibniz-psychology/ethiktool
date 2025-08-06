@@ -20,13 +20,9 @@
             left center no-repeat theme("colors.zpid-purple.50");
     content: "";
   }
-
-  &.Label-Info-red::before {
-    background-color: red !important;
-  }
 }
 
-.Label-Info, .Label-Info-red {
+.Label-Info {
   & span {
     display: none;
   }

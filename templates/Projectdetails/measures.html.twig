@@ -83,7 +83,7 @@
             {{ formRender.renderButtons(location,noHeading|merge({
                 'text': [content.locationDescription,{'attributes': {'disabled': not isLocation}, 'contTarget': [measuresController,'locationDescription'], 'hint': isLocation ? locationHint : noLocation}],
                 'stim': [measuresController,'setLocation'],
-                'icons': {'locationother': (locationPrefix~'otherHint')|trans},
+                'icons': {'locationother': locationPrefix~'otherHint'},
                 'labelParams': committeeParams})) }}
             <div class="MetaData-Label mb-4" style="{{ boolToDisplay(locationValue is same as 'online') }}" {{ stimulus_target(measuresController,'locationEnd') }}>{{ (locationPrefix~'end')|trans }}</div>
             {% if bothHint is not same as '' %}

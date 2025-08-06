@@ -200,3 +200,7 @@ h3.inputPageHeading:hover {
 .microsite-section-heading a {
     font-family: "Zilla Slab", serif;
 }
+
+.microsite-section-heading + ul {
+    margin-left: 1.1rem !important;
+}

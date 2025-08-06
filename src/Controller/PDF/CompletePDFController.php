@@ -67,17 +67,29 @@ class CompletePDFController extends PDFAbstract
                     $consentArray = $measureTimePoint[self::consentNode];
                     $tempArray = $consentArray[self::voluntaryNode];
                     $voluntary = [$tempArray[self::chosen], $tempArray[self::chosen2Node] ?? 'yes'];
-                    $this->addBriefReportAnswer(self::voluntaryNode,in_array('no',$voluntary) ? self::answerNo : (in_array(self::voluntaryNotApplicable,$voluntary) || array_key_exists(self::voluntaryYesDescription,$tempArray) ? self::answerUnclear : self::answerYes),$noUnclear);
+                    $this->addBriefReportAnswer(self::voluntaryNode,in_array('no',$voluntary)
+                        ? self::answerNo
+                        : (in_array(self::voluntaryNotApplicable,$voluntary) || // no voluntariness
+                        array_key_exists(self::voluntaryYesDescription,$tempArray) || // closed group or dependent
+                        ($measureTimePoint[self::compensationNode][self::compensationVoluntaryNode] ?? '')==='0' // compensation may compromise voluntariness
+                            ? self::answerUnclear : self::answerYes),$noUnclear);
                     // terminate cons
                     $this->addBriefReportAnswer(self::terminateConsNode,$consentArray[self::terminateConsNode][self::chosen]==='0' ? self::answerYes : self::answerNo,$noUnclear);
                     // examined
                     $groupsArray = $measureTimePoint[self::groupsNode];
                     $tempArray = $groupsArray[self::examinedPeopleNode];
-                    $this->addBriefReportAnswer(self::examinedPeopleNode,array_diff_key($tempArray,['healthy' => '', 'otherPeople' => ''])!==[] ? self::answerYes : (array_key_exists('otherPeople',$tempArray) || $groupsArray[self::minAge]<18 ? self::answerUnclear : self::answerNo));
+                    $this->addBriefReportAnswer(self::examinedPeopleNode,array_diff_key($tempArray,['healthy' => '', 'otherPeople' => ''])!==[] // people other than healthy and other are examined
+                        ? self::answerYes
+                        : (array_key_exists('otherPeople',$tempArray) || // only other is selected
+                           $groupsArray[self::minAge]<18 // underage
+                            ? self::answerUnclear : self::answerNo));
                     // wards
                     $this->addBriefReportAnswer(self::wardsExaminedNode,array_key_exists(self::wardsExaminedNode,$tempArray) ? self::answerYes : self::answerNo);
                     // pre content
-                    $this->addBriefReportAnswer(self::preContent,in_array(self::deceit,$preContent) ? self::answerYes : (array_intersect([$this->getInformationString($informationArray),$informationII],[self::post,'noPost'])!==[] ? self::answerUnclear : self::answerNo));
+                    $this->addBriefReportAnswer(self::preContent,in_array(self::deceit,$preContent) // deceit was chosen
+                        ? self::answerYes
+                        : (array_intersect([$this->getInformationString($informationArray),$informationII],[self::post,'noPost'])!==[] // no information is given
+                            ? self::answerUnclear : self::answerNo));
                     // burdens and risks
                     $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
                     $isBurdensRisksContributors = $burdensRisksArray[self::burdensRisksContributorsNode][self::chosen]==='0';
@@ -97,8 +109,6 @@ class CompletePDFController extends PDFAbstract
                         : (in_array($create,['separateLater',self::privacyNotApplicable]) || // data privacy is checked later or no information is given
                            $isTool && $dataPrivacyArray[self::markingNode][self::chosen]===self::markingOther // marking can not be created by the tool
                             ? self::answerUnclear : self::answerNo));
-                    // compensation
-                    $this->addBriefReportAnswer(self::compensationNode,($measureTimePoint[self::compensationNode][self::compensationVoluntaryNode] ?? '')==='0' ? self::answerYes : self::answerNo);
                     // add question to time point
                     $allBriefReports[] = ['heading' => implode(', ',$heading), 'content' => array_merge($this->briefReport,$conflictMedicine)];
                 }

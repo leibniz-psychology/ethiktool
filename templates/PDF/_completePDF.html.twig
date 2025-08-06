@@ -64,7 +64,7 @@
                     {% for question, answer in content %}
                         <tr>
                             <td>{{ question|raw|nl2br }}</td>
-                            <td {% if answer[1] %} class="errorStyle" {% endif %} style="text-align: center">{{ answer[0] }}</td>
+                            <td style="text-align: center; {% if answer[1] %} color: red {% endif %}">{{ answer[0] }}</td>
                         </tr>
                     {% endfor %}
                 </table>

@@ -16,14 +16,13 @@ class DataPrivacyController extends ControllerAbstract
     #[Route(self::routePrefix.'dataPrivacy', name: 'app_dataPrivacy')]
     public function showDataPrivacy(Request $request): Response {
         $routeParams = $request->get('_route_params');
-        $measure = $this->getMeasureTimePointNode($request,$routeParams);
-        if ($measure===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
-            return $this->redirectToRoute('app_main');
-        }
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session);
-        $privacyNode = $this->getMeasureTimePointNode($appNode,$routeParams)->{self::privacyNode};
-        $addresseeTypeParam = [self::addressee => $this->getAddresseeFromRequest($request)];
+        $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
+        if ($measureNode===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
+            return $this->redirectToRoute('app_main');
+        }
+        $privacyNode = $measureNode->{self::privacyNode};
         $projectdetailsPrefix = 'projectdetails.pages.';
         $privacyPrefix = $projectdetailsPrefix.self::privacyNode.'.';
         // data research icons
@@ -37,21 +36,22 @@ class DataPrivacyController extends ControllerAbstract
         // marking question
         $tempPrefix = $translationPrefix.'hints.';
         $tempArray = [];
+        $addresseeTypeParam = [self::addressee => $this->getAddresseeFromRequest($request)];
         foreach ([self::markingExternal,self::markingInternal,self::markingNo] as $type) { // external
             $tempArray[$type] = $this->translateString($tempPrefix.$type,$addresseeTypeParam);
         }
-        $iconArray = [self::markingNode => $tempArray, self::markingExternal => ['generation' => $this->translateString($translationPrefix.self::markingExternal.'.hints.generation')]]; // one element for marking question, one sub-array for external sub-question, one sub-array for internal
+        $iconArray = [self::markingNode => $tempArray, self::markingExternal => ['generation' => $translationPrefix.self::markingExternal.'.hints.generation']]; // one element for marking question, one sub-array for external sub-question, one sub-array for internal
         // internal
         $tempArray = [];
         $translationPrefix .= self::markingInternal.'.';
         $tempPrefix = $translationPrefix.'hints.';
         foreach (['own', 'contributors'] as $type) { // internal
-            $tempArray[$type] = $this->translateString($tempPrefix.$type,$addresseeTypeParam);
+            $tempArray[$type] = $tempPrefix.$type;
         }
         $iconArray[self::markingInternal] = $tempArray;
         // internal sub-questions
         foreach (['pattern' => 'generation', 'contributors' => 'marking'] as $key => $value) {
-            $iconArray[$key] = [$value => $this->translateString($translationPrefix.$key.'.hints.'.$value)];
+            $iconArray[$key] = [$value => $translationPrefix.$key.'.hints.'.$value];
         }
         // data research hints
         $dataResearchHints = [];
@@ -60,39 +60,30 @@ class DataPrivacyController extends ControllerAbstract
             $dataResearchHints[$type] = $this->translateString($tempPrefix.$type);
         }
         // anonymization
-        $iconIDsAnonymization = ['convert','delete','alienate','preprocess',self::anonymizationOther];
-        [$iconTextsAnonymization,$iconColorsAnonymization] = [[],[]];
+        $iconTextsAnonymization = [];
         $translationPrefix = $privacyPrefix.self::anonymizationNode.'.hints.';
-        foreach ($iconIDsAnonymization as $type) {
+        foreach (['convert','delete','alienate','preprocess',self::anonymizationOther] as $type) {
             $iconTextsAnonymization[$type] = $translationPrefix.$type;
-            $iconColorsAnonymization[$type] = 'black';
         }
         // purpose research and further
         $iconIDs = array_slice(self::purposeResearchTypes,1);
         $iconIDsFurther = $this->prefixArray(array_diff($iconIDs,[self::purposeRelatable]),self::purposeFurtherNode);
-        [$iconTexts,$iconTextsFurther,$iconColors,$iconColorsFurther] = [[],[],[],[]];
+        [$iconTexts,$iconTextsFurther] = [[],[]];
         $purposeResearchPrefix = $privacyPrefix.self::purposeResearchNode.'.';
         $translationPrefix = $purposeResearchPrefix.'icons.';
         foreach ($iconIDs as $type) {
             $iconTexts[$type] = $translationPrefix.$type;
-            $iconColors[$type] = 'black';
             $tempVal = self::purposeFurtherNode.$type;
             if (in_array($tempVal,$iconIDsFurther)) {
                 $iconTextsFurther[$tempVal] = $translationPrefix.$type.($type===self::compensationNode ? 'Further' : '');
-                $iconColorsFurther[$tempVal] = 'black';
             }
         }
-        $tempVal = self::purposeFurtherNode.'contactResult'; // contact result only exists in purpose further
-        $iconIDsFurther[] = $tempVal;
-        $iconTextsFurther[$tempVal] = $translationPrefix.'contactResult';
-        $iconColorsFurther[$tempVal] = 'black';
+        $iconTextsFurther[self::purposeFurtherNode.'contactResult'] = $translationPrefix.'contactResult'; // contact result only exists in purpose further
         // relatable
-        $iconIDsRelatable = array_slice(self::relatableTypes,1);
-        [$iconTextsRelatable,$iconColorsRelatable] = [[],[]];
+        $iconTextsRelatable = [];
         $translationPrefix = $privacyPrefix.self::relatableNode.'.icons.';
-        foreach ($iconIDsRelatable as $type) {
+        foreach (array_slice(self::relatableTypes,1) as $type) {
             $iconTextsRelatable[$type] = $translationPrefix.$type;
-            $iconColorsRelatable[$type] = 'black';
         }
         // purpose sub-questions
         [$purposeDataTrans,$purposeDataTransGen,$purposeDataNames,$middleNames,$accessNames,$iconArrayAccess,$orderProcessingKnownNames] = [[],[],[],[],[],[],[]];
@@ -103,7 +94,6 @@ class DataPrivacyController extends ControllerAbstract
         }
         $typesShortPrefix = $purposeResearchPrefix.'typesShort.';
         $typesShortGenPrefix = $purposeResearchPrefix.'typesShortGen.';
-        $iconColorsArray = array_fill(0,count(self::accessTypes),'black');
         foreach (array_merge([self::dataPersonalNode],self::allPurposeTypes) as $type) {
             if ($type!==self::dataPersonalNode) {
                 $purposeDataTransGen[$type] = $this->translateString($typesShortGenPrefix.$type); // translated purposes short for headings
@@ -113,7 +103,7 @@ class DataPrivacyController extends ControllerAbstract
             $purposeDataTrans[$type] = $this->translateString($typesShortPrefix.$type); // translated purposes short for headings
             $tempArray = $this->prefixArray(self::accessTypes,$type);
             $accessNames[$type] = $tempArray; // widget names
-            $iconArrayAccess[$type] = [$tempArray,array_combine($tempArray,$accessIcons), array_combine($tempArray,$iconColorsArray)];
+            $iconArrayAccess[$type] = array_combine($tempArray,$accessIcons);
             foreach (self::accessOrderProcessing as $accessType) {
                 $orderProcessingKnownNames[$type][$accessType] = $type.$accessType.self::orderProcessingKnownNode;
             }
@@ -246,17 +236,17 @@ class DataPrivacyController extends ControllerAbstract
                  'dataSpecialTextFields' => self::dataSpecialTextFields,
                  'dataResearchIcons' => $dataResearchIcons,
                  'anonymizationTypes' => self::anonymizationTypes,
-                 'iconArrayAnonymization' => [$iconIDsAnonymization,$iconTextsAnonymization,$iconColorsAnonymization],
+                 'iconArrayAnonymization' => $iconTextsAnonymization,
                  'storageTypes' => self::storageTypes,
                  'personalKeepTypes' => self::personalKeepTypes,
                  'iconArrayPersonalKeep' => $iconArrayPersonalKeep,
                  'purposeResearchTypes' => array_combine(self::purposeResearchTypes,self::purposeResearchTypes),
                  'purposeFurtherTypes' => array_combine(self::purposeFurtherTypes,$this->prefixArray(self::purposeFurtherTypes,self::purposeFurtherNode)),
                  'allPurposeTypes' => self::allPurposeTypes,
-                 'iconArrayPurpose' => [$iconIDs,$iconTexts,$iconColors],
-                 'iconArrayPurposeFurther' => [$iconIDsFurther,$iconTextsFurther,$iconColorsFurther],
+                 'iconArrayPurpose' => $iconTexts,
+                 'iconArrayPurposeFurther' => $iconTextsFurther,
                  'relatableTypes' => self::relatableTypes,
-                 'iconArrayRelatable' => [$iconIDsRelatable,$iconTextsRelatable,$iconColorsRelatable],
+                 'iconArrayRelatable' => $iconTextsRelatable,
                  'purposeDataTypes' => self::purposeDataTypes,
                  'purposeDataNames' => $purposeDataNames,
                  'purposeDataTrans' => $purposeDataTrans,

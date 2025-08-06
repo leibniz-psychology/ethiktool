@@ -15,7 +15,7 @@
                 <div class="grid" style="justify-content: end; {% if isIcon %} grid-template-columns: auto min-content; {% else %} text-align: end;{% endif %}" {% if isInstitution or widget is same as 'phone' %} {{ stimulus_target(contributorsController,widget~'Label') }} {% endif %}>
                     {{ (infosPrefix~widget)|trans~':' }}
                     {% if isIcon %}
-                        {{ formRender.addIcon((infosPrefix~widget~'Hint')|trans, 'black', isProfessorship ? content.position.vars.value in ['student','phd'] : true, isProfessorship ? [contributorsController,'professorshipIcon'] : []) }}
+                        {{ formRender.addIcon((infosPrefix~widget~'Hint')|trans, isProfessorship ? content.position.vars.value in ['student','phd'] : true, isProfessorship ? [contributorsController,'professorshipIcon'] : []) }}
                     {% endif %}
                 </div>
                 <div data-action="input->{{ contributorsController }}#setSubmitButton {% if isPosition %}input->{{ contributorsController }}#setTasks{% endif %}">

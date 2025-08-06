@@ -160,7 +160,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     compensationVoluntary: 'Is the voluntary nature participation compromised by the type or amount of compensation?'
     compensationVoluntarySub: >-
       {isCompensationVoluntary, select,
-        true  {Justification why the voluntary nature of participation is compromised by the type or amount of compensation and other}
+        true  {Explanation on how voluntary participation is compromised by the type or amount of compensation; other}
         other {Other}} remarks regarding the compensation:
     terminateCons: 'Is withdrawal from participation possible at any time and without disadvantages?'
     terminateConsSub: 'Justification and, if applicable, description of disadvantages in case of withdrawal from participation:'
@@ -390,7 +390,7 @@ projectdetails:
     duration: >-
       The total duration of {multiple, select,
                                   true  {today''s}
-                                  other {}} investigation usually is about {total, select,
+                                  other {the}} investigation usually is about {total, select,
                                                                                         1     {1 minute}
                                                                                         other {{total} minutes}}{breaks, select,
                                                                                                                   0     {.}
@@ -454,7 +454,13 @@ projectdetails:
   compensation:
     start: >- # other in addressee select is participants
       {information, select,
-        noPost {After participation, there will be }
+        noPost {For participating, the {addressee, select,
+                                          children {children}
+                                          wards    {supervised individuals}
+                                          other    {participants}} {number, plural,
+                                                                      =0    {}
+                                                                      =1    {}
+                                                                      other {can choose to}} receive }
         other  {For participating, {addressee, select,
                                       children {your child {number, plural,
                                                              =0    {receives }
@@ -1183,7 +1189,6 @@ completeForm:
       dataPrivacy: 'Personal data'
       conflict: 'Conflict of interest'
       medicine: 'Medical aspects'
-      compensation: 'Compensation'
     information: 'Full prior information is guaranteed.'
     voluntary: 'Voluntariness of participation is guaranteed.'
     terminateCons: 'Withdrawal from participation is possible at any time and without disadvantages.'
@@ -1196,7 +1201,7 @@ completeForm:
     dataPrivacy: 'The study involves processing personal data.'
     conflict: 'The project contributors have a conflict of interest with respect to the research project.'
     medicine: 'The research project involves aspects relating to AMG/MPG/MPDG, or physicians are among the project contributors.'
-    compensation: 'The voluntary nature of participation is compromised by the type or amount of compensation'
+    compensation: 'The voluntary nature of participation is compromised by the type or amount of compensation.'
 
 metadata:
   title: 'Ethics proposal'

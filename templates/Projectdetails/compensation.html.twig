@@ -75,7 +75,7 @@
             </div>
             {# awarding #}
             {% set awardingPrefix, laterEndOther, noHeadingLabelParams = translationPrefix~'awarding.', 'laterEndOther', noHeading|merge({'labelParams': addresseeTypeParam}) %}
-            <div class="mt-8">
+            <div class="mt-8" id="awarding">
                 {{ formRender.addHeading(awardingPrefix~'title') }}
                 {% if transferInfo is not same as [] %}
                     <div class="MetaData-Label">
