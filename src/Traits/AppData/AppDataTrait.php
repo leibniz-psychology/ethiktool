@@ -30,6 +30,7 @@ trait AppDataTrait
     protected const applicationTypes = ['coreData.appType.new.title' => 'new', 'coreData.appType.extended' => 'extended', 'coreData.appType.resubmission' => 'resubmission']; // values must equal the values of the preceding variables
     protected const appTypeShort = 'short';
     protected const supervisor = 'supervisor';
+    protected const committeeStudent = ['EUB','JGU']; // committees where position can be 'student' and a supervisor must be added if student is selected
     protected const fundingQuali = 'fundingQuali'; // must equal one of the keys in $fundingChoices
     protected const fundingResearchExternal = ['fundingResearch','fundingExternal']; // must equal two keys in $fundingChoices
     protected const fundingTypes = ['fundingQuali' => 'coreData.funding.fundingQuali', 'fundingBudget' => 'coreData.funding.fundingBudget', 'fundingResearch' => 'coreData.funding.fundingResearch', 'fundingExternal' => 'coreData.funding.fundingExternal', 'fundingOther' => 'coreData.funding.fundingOther'];

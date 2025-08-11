@@ -41,7 +41,7 @@
         {% endfor %}
         {# terminate with disadvantages #}
         {% set terminateCons, terminateConsParticipation, transferParam = content.terminateCons, content.terminateConsparticipation ?? '', {'transfer': [transferInfo,addresseeType]} %}
-        {% set visibility, isInformation = {'visibility': terminateCons.vars.value is same as '1'}, terminateConsParticipation is not same as '' %}
+        {% set visibility, isInformation = fontNormal|merge({'visibility': terminateCons.vars.value is same as '1'}), terminateConsParticipation is not same as '' %}
         <div class="mt-8" id="terminateCons">
             {{ formRender.renderButtons(terminateCons,{'text': [content.terminateConsDescription,visibility], 'stimVisible': {'values': [['1',['terminateConsDescriptionDiv']|merge(isInformation ? ['terminateConsparticipationDiv'] : [])]]}, 'hint': [translationPrefix~'terminateCons.']}) }}
             {% if isInformation %}
@@ -51,7 +51,7 @@
         {# termination by participants #}
         {% set terminate, description, other = content.terminateParticipants, content.terminateParticipantsText, 'terminateParticipantsOther' %}
         {{ formRender.renderButtons(terminate,{
-            'text': [description,transferParam|merge({'visibility': terminate.vars.value is same as other})],
+            'text': [description,transferParam|merge(fontNormal)|merge({'visibility': terminate.vars.value is same as other})],
             'stimVisible': {'values': [[other,description.vars.name~'Div']]},
             'addDiv': ['terminateParticipants'],
             'labelParams': {'information': information}}) }}

@@ -43,7 +43,7 @@
                     {% set noSelection, yesTrans, noTrans = value is same as '', (compensationPrefix~'yes')|trans(typeParam), (compensationPrefix~'no')|trans %}
                     <div class="MetaData-Label">{{ form_label(compensation,null,labelDummy) }}</div>
                     {{ formRender.renderButtons(compensation,noHeading|merge({
-                        'text': [content[type~'CompensationDescription'],{'hint': noSelection ? 'multiple.choiceTextHint' : (value is same as '0' ? yesTrans : noTrans), 'attributes': textHeightLong|merge({'disabled': noSelection})}],
+                        'text': [content[type~'CompensationDescription'],fontNormal|merge({'hint': noSelection ? 'multiple.choiceTextHint' : (value is same as '0' ? yesTrans : noTrans), 'attributes': textHeightLong|merge({'disabled': noSelection})})],
                         'stim': ['base','setWidgetByValue',{'widgetValue': ['',type~'CompensationDescription',{'0': yesTrans, '1': noTrans}]}]})) }}
                 </div>
                 {% if isTextInput %}

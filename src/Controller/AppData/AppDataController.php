@@ -36,9 +36,9 @@ class AppDataController extends ControllerAbstract
         if ($coreData->isSubmitted()) { // a button was clicked or the language was changed
             $data = $this->getDataAndConvert($coreData,$coreDataNode);
             $appNodeNew = $this->cloneNode($appNode);
-            $studentPhd = [self::positionsStudent,self::positionsPhd];
             $coreDataArrayLoad = $this->xmlToArray($this->getXMLfromSession($session,true)->{self::appDataNodeName}->{self::coreDataNode}); // core data on page loading
-            $isStudentPhd = in_array($coreDataArrayLoad[self::applicant][self::position],$studentPhd) && $this->getQualification($coreDataArrayLoad); // position on page loading
+            $positionLoad = $coreDataArrayLoad[self::applicant][self::position];
+            $isStudentPhd = $this->checkSupervisor($committeeType,$positionLoad,$coreDataArrayLoad); // position on page loading
             // set number or reference for extended or resubmission type
             $appType = $data[self::applicationType];
             $type = $appType[self::chosen];
@@ -53,7 +53,8 @@ class AppDataController extends ControllerAbstract
             // update applicant and supervisor in contributors
             $contributorsArray = $this->getContributors($session);
             $this->updateContributor($contributorsArray,$data,self::applicant);
-            $isStudentPhdNew = $isEUB && in_array($data[self::applicant][self::position],$studentPhd) && $data[self::qualification]===0; // position on submission
+            $position = $data[self::applicant][self::position];
+            $isStudentPhdNew = $this->checkSupervisor($committeeType,$position,$data); // position on submission
             if ($isStudentPhdNew) {
                 if ($isStudentPhd) {
                     $supervisorTasks = $contributorsArray[1][self::taskNode];
@@ -64,11 +65,11 @@ class AppDataController extends ControllerAbstract
                 $this->updateContributor($contributorsArray,$data,self::supervisor);
             }
             else {
-                if (count($contributorsArray)>count($this->getContributors($session,true))) { // supervisor was added after entering the page, but position is no longer student/phd or no qualification -> remove supervisor
+                if (count($contributorsArray)>count($this->getContributors($session,true))) { // supervisor was added after entering the page, but position (and qualification) do no longer lead to supervisor-> remove supervisor
                     unset($contributorsArray[1]);
                     $contributorsArray = array_values($contributorsArray); // re-indexing
                 }
-                elseif ($isStudentPhd) { // position was student or phd or qualification on page load, but was changed -> remove supervision as task
+                elseif ($isStudentPhd) { // supervisor was existent on page load, but due to changes no supervisor is needed anymore -> remove supervision as task
                     unset($contributorsArray[1][self::taskNode][self::supervisorNode]);
                 }
             }
@@ -82,9 +83,9 @@ class AppDataController extends ControllerAbstract
         } // if ($coreData->isSubmitted())
         return $this->render('AppData/coreData.html.twig', $this->setRenderParameters($request,$coreData,
             ['positions' => $positions,
-                'funding' => self::fundingTypes,
-                'support' => array_diff_key(self::supportTypes,!$isEUB ? [self::supportCenter => ''] : []),
-                'applicantInfo' => self::applicantContributorsInfosTypes,],'appData.coreData'));
+             'funding' => self::fundingTypes,
+             'support' => array_diff_key(self::supportTypes,!$isEUB ? [self::supportCenter => ''] : []),
+             'applicantInfo' => self::applicantContributorsInfosTypes,],'appData.coreData'));
     }
 
     #[Route('/appData/votes', name: 'app_votes')]
@@ -128,13 +129,6 @@ class AppDataController extends ControllerAbstract
     }
 
     // functions for core data
-    /** Checks if the qualification question was answered with yes.
-     * @param array $coreDataArray array containing the core data
-     * @return bool true if qualification questions exists and was answered with yes, false otherwise
-     */
-    private function getQualification(array $coreDataArray): bool {
-        return ($coreDataArray[self::qualification] ?? '')==='0';
-    }
 
     /** Updates the applicant and the supervisor.
      * @param array $contributors array containing all contributors

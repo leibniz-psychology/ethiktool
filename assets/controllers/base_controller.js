@@ -142,19 +142,19 @@ export default class extends Controller {
      */
     setVisibility(event) {
         let params = event.params;
-        let hasValues = params.values !== undefined;
-        let display = params.isGrid !== undefined ? 1 : (params.isFlex !== undefined ? 2 : 0);
+        let hasValues = params.values!==undefined;
+        let display = params.isGrid!==undefined ? 1 : (params.isFlex!==undefined ? 2 : 0);
         if (hasValues) {
             let targetValue = event.target.value;
             for (let values of params.values) {
                 let curValue = values[0];
                 let ids = this.checkArray(values[1]);
-                this.setArrayVisibility(ids, (typeof curValue) === 'string' ? targetValue === curValue : curValue.includes(targetValue), display);
+                this.setArrayVisibility(ids, (typeof curValue)==='string' ? targetValue===curValue : curValue.includes(targetValue), display);
             }
         } else {
             let setOr = params.setOr ?? true;
             let multi = params.multi;
-            if (setOr === true) {
+            if (setOr===true) {
                 setOr = [];
                 for (let index = 0; index < multi.length; index++) {
                     setOr.push(index);
@@ -169,7 +169,7 @@ export default class extends Controller {
                 }
                 let isVisible = setOr.includes(index) ? isChecked.includes(true) : !isChecked.includes(false);
                 this.setArrayVisibility(array[1], isVisible, display);
-                if (array[2] !== undefined) {
+                if (array[2]!==undefined) {
                     this.setArrayVisibility(array[2], !isVisible, display);
                 }
             }

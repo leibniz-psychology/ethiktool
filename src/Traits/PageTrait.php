@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 trait PageTrait
 {
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '1.2.2';
+    protected const toolVersion = '1.2.3';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -21,8 +21,8 @@ trait PageTrait
     protected const committeeParams = 'committeeParams';
     /** @var string name of parameter indicating if current committee type is in beta status. */
     protected const isCommitteeBeta = 'isCommitteeBeta';
-    protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.testCommittee' => 'testCommittee'];
-    protected const committeeTypesBeta = ['']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
+    protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.testCommittee' => 'testCommittee'];
+    protected const committeeTypesBeta = ['JGU']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
     // constant variables
     /** Node name for nodes which indicate the selection of a radio button. */
     protected const chosen = 'chosen'; // for nodes whose content indicates which answer was chosen, if any
@@ -38,6 +38,7 @@ trait PageTrait
     protected const groupNode = 'group';
     protected const measureTimePointNode = 'measureTimePoint';
     protected const committeeEUB = 'EUB';
+    protected const committeeTUC = 'TUC';
     protected const position = 'position';
     protected const positionsStudent = 'student'; // must equal one of the keys in $positions
     protected const positionsPhd = 'phd'; // must equal one of the keys in $positions

@@ -7,6 +7,7 @@
     {% set conflictPrefix, conflictHint = translationPrefix~'conflict.', 'conflictHintDiv' %}
     {% set conflictYesDescription = (conflictPrefix~'yes')|trans %}
     <div {{ stimulus_controller(coreDataController, {
+            'committeeType': committeeType,
             'positions': positions,
             'noChoice': 'multiple.choiceTextHint'|trans,
             'conflictHint': [conflictYesDescription,(conflictPrefix~'no')|trans],
@@ -21,11 +22,11 @@
         {% set projectTitlePart, description = content.projectTitleParticipation, content.projectTitleParticipationDescription %}
         {{ formRender.renderButtons(projectTitlePart,{'hint': [translationPrefix~'projectTitleParticipation.'], 'text': [description,{'attributes': projectLength, 'visibility': projectTitlePart.vars.value is same as 'different', 'transfer': [transferInfo,'participants']}], 'stimVisible': {'values': [['different', description.vars.name~'Div']]}, 'addDiv': ['projectTitleParticipation']}) }}
         {# application type #}
-        {% set appType, description = content.appType, content.description %}
+        {% set appType, description, isNewType = content.appType, content.description, content.appNewType is defined %}
         {% set appValue, exRe, exReDiv, newTypeDiv = appType.vars.value, ['extended','resubmission'], 'exReDiv', 'newTypeDiv' %}
         <div class="mt-8" id="appType">
-            {{ formRender.renderButtons(appType,[]|merge({'stimVisible': {'values': [[exRe,exReDiv]]|merge(not isEUB ? [['new',newTypeDiv]] : [])}})) }}
-            {% if not isEUB %}
+            {{ formRender.renderButtons(appType,[]|merge({'stimVisible': {'values': [[exRe,exReDiv]]|merge(isNewType ? [['new',newTypeDiv]] : [])}})) }}
+            {% if isNewType %}
                 {% set appNewType = content.appNewType %}
                 <div id="{{ newTypeDiv }}" style="{{ boolToDisplay(appValue is same as 'new') }}">
                     <div class="MetaData-Label mt-4">{{ form_label(appNewType,null,labelDummy) }}</div>
@@ -43,10 +44,10 @@
         {{ formRender.renderButtons(content.qualification,{'hint': [translationPrefix~'qualification.'], 'stim': [coreDataController,'setApplicantSupervisor'], 'contTarget': ['qualification0',coreDataController,'qualificationYes'], 'addDiv': ['qualification']}) }}
         {% endif %}
         {# information about the applying person and the supervisor #}
-        {% set tempPrefix, infoPrefix = translationPrefix~'applicant.', 'multiple.infos.' %}
+        {% set tempPrefix, infoPrefix, hasSupervisor = translationPrefix~'applicant.', 'multiple.infos.', content.namesupervisor is defined %}
         <div class="mt-8" id="applicant">
             {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'hint']]}) }}
-            {% for type in ['applicant']|merge(content.namesupervisor is defined ? ['supervisor'] : []) %}
+            {% for type in ['applicant']|merge(hasSupervisor ? ['supervisor'] : []) %}
                 {% set isSupervisor = type is same as 'supervisor' %}
                 {% set suffix = isSupervisor ? 'supervisor' %}
                 {% set positionSuffix = 'position'~suffix %}
@@ -60,7 +61,7 @@
                             {% set vars, tempPrefix = widget.vars, infoPrefix~info %}
                             {% set name = vars.name %}
                             <div class="flex justify-content-end" id="{{ type~info }}">
-                                {% if info is same as 'phone' and not isSupervisor and isEUB %}
+                                {% if info is same as 'phone' and not isSupervisor and hasSupervisor %}
                                     <div id="phoneLabelOptional" class="align-self-center" style="text-align: end">{{ (infoPrefix~'phoneOptional')|trans~':' }}</div>
                                 {% endif %}
                                 {{ form_label(widget,(tempPrefix~(isInstitution ? 'Applicant'))|trans~':',{'id': name, 'label_attr': addClass('align-self-center')|merge({'id': name~'Label'})}) }}
@@ -131,7 +132,7 @@
                     </div>
                     {% if isFunding %}
                         <div class="mb-4" id="{{ textDiv }}" style="{{ boolToDisplay(isChecked) }}; margin-top: -1rem">
-                            {{ formRender.addTextfield(content[widget~'Text']) }}
+                            {{ formRender.addTextfield(content[widget~'Text'],fontNormal) }}
                             {% if content[widget~'FundingState'] is defined %}
                                 <div class="mb-2" id="{{ widget~'fundingStateDiv' }}" style="margin-top:-0.5rem">
                                     {{ formRender.renderButtons(content[widget~'FundingState'],noHeading) }}
@@ -143,7 +144,7 @@
             </div>
         </div>
         {# conflict #}
-        {% set conflictTextHeight = {'attributes': textHeightLong} %}
+        {% set conflictTextHeight = fontNormal|merge({'attributes': textHeightLong}) %}
         <div class="mt-8" id="conflict">
             {{ formRender.renderButtons(content.conflict,{'hint': [conflictPrefix], 'text': [content.conflictDescription,conflictTextHeight|merge({'hint': conflictYesDescription, 'textHintID': conflictHint})], 'stim': [coreDataController,'setConflict'], 'contTarget': ['conflict1',coreDataController,'conflictNo']}) }} {# correct hint is set in controller, but must not be empty here #}
             {{ formRender.addTextfield(content.participantDescription,conflictTextHeight|merge({'transfer': [transferInfo,'participants'], 'hint': conflictPrefix~'participants'})) }}
@@ -164,7 +165,7 @@
                         {{ formRender.addCheckbox(curWidget, {'disable': not isSupport and anySelected or isSupport and noSelected}) }}
                     </div>
                     {% if isSupport %}
-                        {{ formRender.addTextfield(content[name~'Text'],{'visibility': vars.checked, 'attributes': {'style': 'margin-bottom: 1.5rem'}}) }}
+                        {{ formRender.addTextfield(content[name~'Text'],fontNormal|merge({'visibility': vars.checked, 'attributes': {'style': 'margin-bottom: 1.5rem'}})) }}
                     {% endif %}
                 {% endfor %}
             </div>

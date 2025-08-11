@@ -11,7 +11,8 @@ export default class extends Controller {
         title: Array,
         isStudentApplicant: Boolean, // true if position of applicant is student
         positions: Object,
-        hasSupervisor: Boolean,
+        hasSupervisor: Boolean, // true if second contributor exists and has task 'supervision'
+        isQualification: Boolean, // true if qualification question was answered with yes
         noChoice: String,
         infosNames: Array,
         institutionLabel: Array, // 0: applicant/supervisor, 1: remaining contributors
@@ -35,16 +36,16 @@ export default class extends Controller {
             let isAdd = id==='add';
             let noChoice = {'': this.noChoiceValue};
             let allowedPositions = Object.assign({},noChoice,this.positionsValue);
-            let isEUB = this.committeeTypeValue==='EUB';
-            if (isApplicant && this.hasSupervisorValue) { // applicant and has supervisor -> only PhD and eventually student
+            let isStudent = ['EUB','JGU'].includes(this.committeeTypeValue);
+            if (isApplicant && (this.hasSupervisorValue || this.isQualificationValue) && this.committeeTypeValue==='EUB') { // applicant and has supervisor or qualification was answered with yes -> only PhD and eventually student
                 allowedPositions = noChoice;
                 allowedPositions[this.phdChoiceValue] = this.positionsValue[this.phdChoiceValue];
-                if (isEUB) {
+                if (isStudent) {
                     allowedPositions[this.studentChoiceValue] = this.positionsValue[this.studentChoiceValue];
                 }
             }
             else {
-                if (isSupervisor || isApplicant && !isEUB) { // applicant (if not EUB) and supervisor must not be student
+                if (isSupervisor || isApplicant && !isStudent) { // applicant and supervisor must not be student
                     delete allowedPositions[this.studentChoiceValue];
                 }
                 if (isSupervisor && this.contributorsValue[0]['infos']['position']===this.phdChoiceValue) { // if applicant is PhD, supervisor must not be PhD

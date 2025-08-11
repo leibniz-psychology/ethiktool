@@ -4,14 +4,13 @@
     {% set translationPrefix, completeFormController = 'completeForm.', 'Main--completeForm' %}
     <div {{ stimulus_controller(completeFormController) }}>
         {# consent #}
-        {% set titlesPrefix, classes = translationPrefix~'titles.', 'MetaData-Label mt-4' %}
+        {% set titlesPrefix = translationPrefix~'titles.' %}
         <div>
             {{ formRender.addHeading(titlesPrefix~'consent') }}
             {{ _self.addBorderText(consentContent) }}
             <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setSubmitButton','change') }}>{{ formRender.addCheckbox(content.consent, {'target': [completeFormController,'consent']}) }}</div>
-            <div class="{{ classes }}">{{ consentHint|raw }}</div>
-            <div class="{{ classes }}">{{ (translationPrefix~'consent.notes')|trans(committeeParams) }}</div>
-            {{ formRender.addTextfield(content.consentText) }}
+            <div class="MetaData-Label mt-4">{{ consentHint|raw }}</div>
+            {{ formRender.addTextfield(content.consentText,fontNormal|merge({'hint': translationPrefix~'consent.notes', 'textHintParams': committeeParams})) }}
         </div>
         {# bias #}
         <div class="mt-8">

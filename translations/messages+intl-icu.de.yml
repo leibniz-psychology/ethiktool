@@ -128,43 +128,56 @@ committee:
     {committee, select,
       TUC   {die Ethikkommission der Technischen Universität Chemnitz}
       EUB   {die Ethik-Kommission der Universität Bielefeld}
+      JGU   {die Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
       other {die Test-Ethikkommission}}
   committeeGen: >-
     {committee, select,
     TUC   {der Ethikkommission der Technischen Universität Chemnitz}
     EUB   {der Ethik-Kommission der Universität Bielefeld}
+    JGU   {der Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
     other {der Test-Ethikkommission}}
   committeeDat: >-
     {committee, select,
       TUC   {der Ethikkommission der Technischen Universität Chemnitz}
       EUB   {der Ethik-Kommission der Universität Bielefeld}
+      JGU   {der Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
       other {der Test-Ethikkommission}}
   committeeAcc: >-
     {committee, select,
       TUC   {die Ethikkommission der Technischen Universität Chemnitz}
       EUB   {die Ethik-Kommission der Universität Bielefeld}
+      JGU   {die Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
       other {die Test-Ethikkommission}}
   committeeLocation: >-
     {committee, select,
       TUC   {die Technische Universität Chemnitz}
       EUB   {die Universität Bielefeld}
+      JGU   {die Johannes Gutenberg-Universität Mainz}
       other {die Institution der Test-Ethikkommission}}
   committeeLocationGen: >-
     {committee, select,
       TUC   {der Technischen Universität Chemnitz}
       EUB   {der Universität Bielefeld}
+      JGU   {der Johannes Gutenberg-Universität Mainz}
       other {der Institution der Test-Ethikkommission}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
   committee:
     title: 'Ethikkommission:'
     types:
-      TUC: 'Ethikkommission der Technischen Universität Chemnitz' # is once named in main->textNoCommittee
-      EUB: 'Ethik-Kommission der Universität Bielefeld' # is named in main->text and medicine->textHint
+      TUC: 'Ethikkommission der Technischen Universität Chemnitz'
+      EUB: 'Ethik-Kommission der Universität Bielefeld'
+      JGU: 'Ethikkommission des Psychologischen Instituts der JGU Mainz'
       testCommittee: 'Test-Ethikkommission'
+  password:
+    title: 'Passwort:'
+    modal:
+      title: 'Falsches Passwort'
+      text: 'Das eingegebene Passwort für den Zugang zur Beta-Version ist nicht korrekt.'
   hints:
     filename: 'Dieser Name wird in der Navigation angezeigt. Er wird außerdem als Dateiname vorgeschlagen.'
     committee: 'Bitte wählen Sie hier die Ethikkommission aus, bei der Sie den Antrag einreichen werden.'
+    password: 'Die Ethiktool-Version für die gewählte Ethikkommission befindet sich noch im Beta-Stadium. Der Zugang ist nur mit Passwort möglich. Bitte geben Sie das Passwort ein.'
   buttons:
     save: 'Antrag anlegen'
     cancel: 'Abbrechen'
@@ -247,7 +260,7 @@ main:
     Weitere Informationen finden Sie in den Abschnitten „Über uns“ und „Über das Ethiktool“. Bitte beachten Sie die technischen Hinweise und die Nutzungsbedingungen des Ethiktools.
     Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
 
-    <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz oder an der Universität Bielefeld ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet.
+    <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz oder an der Universität Bielefeld ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet; die Ethikkommission des Psychologischen Instituts der JGU Mainz befindet sich bereits im Beta-Stadium.
     
     Über „Neuer Antrag“ können Sie die Antragserstellung für die entsprechende Kommission beginnen.
     Über „Antrag laden“ können Sie eine vorhandene XML-Datei eines zuvor im Ethiktool erstellten Antrags laden und weiter bearbeiten. </i>
@@ -275,6 +288,13 @@ main:
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethik-Kommission eingereicht werden.
              
              Forschungsprojekte mit Ärztinnen bzw. Ärzten als Projektbeteiligte müssen normalerweise durch eine medizinische Ethikkommission geprüft werden. In Einzelfällen ist eine Begutachtung durch die nicht-medizinische Ethik-Kommission der Universität Bielefeld möglich. Weitere Informationen finden Sie <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">hier</a>.}
+      JGU   {Bitte beachten Sie folgende <b>Voraussetzungen für die Antragstellung:</b>
+              
+             Antragsberechtigt sind Mitglieder des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz. Antragsberechtigt sind außerdem Forscherinnen und Forscher, die einen Antrag auf eigene Stelle (z.B. bei der DFG) vorbereiten, um im Rahmen ihres Projektes in einer Abteilung des Psychologischen Instituts der JGU Mainz zu arbeiten; in diesem Fall ist den Antragsunterlagen eine kurze Erklärung der Abteilungsleiterin bzw. des Abteilungsleiters der aufnehmenden Abteilung beizulegen.
+             
+             Der Ethikantrag muss <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden; ein rückwirkendes Ethikvotum ist ausgeschlossen.
+ 
+             Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden. (Zu weiteren Eingrenzungen siehe auch: <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
       other {Bitte beachten Sie, dass <b>keine Einreichung des Test-Ethikantrags bei einer Ethikkommission vorgesehen ist.</b>}}
       
       <b>Unter „Technische Hinweise“ können Sie sich über das empfohlene Vorgehen für die Antragserstellung informieren.</b>
@@ -458,10 +478,13 @@ votes:
 medicine:
   medicine:
     heading: 'Wird medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt, die ggf. nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG/MPDG) oder anderen gesetzlichen Vorgaben bewertet werden muss?'
-    textHint: >-
+    textHint: >- # other is TUC and test committee
+      Forschungsprojekte, bei denen eine gesetzliche Vorgabe zur Prüfung durch eine medizinische Ethikkommission vorliegt, müssen - unabhängig von der Konstellation und Zugehörigkeit der Antragstellenden - bei einer medizinischen Ethikkommission eingereicht werden.
       {committeeType, select,
-        EUB   {Forschungsprojekte, bei denen eine gesetzliche Vorgabe zur Prüfung durch eine medizinische Ethik-Kommission vorliegt, müssen - unabhängig von der Konstellation und Zugehörigkeit der Antragstellenden - bei einer medizinischen Ethik-Kommission eingereicht werden. Weitere Informationen zu den Zuständigkeiten und weiteren, einzureichenden Unterlagen finden Sie <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">hier</a>. Bitte beschreiben Sie hier kurz, warum Sie denken, dass das Forschungsprojekt dennoch von {committeeGen} begutachtet werden kann.}
-        other {Forschungsprojekte, bei denen eine gesetzliche Vorgabe zur Prüfung durch eine medizinische Ethikkommission vorliegt, müssen - unabhängig von der Konstellation und Zugehörigkeit der Antragstellenden - bei einer medizinischen Ethikkommission eingereicht werden. Bitte beschreiben Sie hier kurz, warum Sie denken, dass das Forschungsprojekt trotz der nicht-medizinischen Zusammensetzung von {committeeDat} begutachtet werden kann.}}
+        EUB   {Weitere Informationen zu den Zuständigkeiten und weiteren, einzureichenden Unterlagen finden Sie <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">hier</a>.}
+        JGU   {(Zu weiteren Eingrenzungen siehe auch: <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
+        other {}}
+        Bitte beschreiben Sie hier kurz, warum Sie denken, dass das Forschungsprojekt dennoch von {committeeDat} begutachtet werden kann.
   physician:
     title: 'Sind Ärztinnen oder Ärzte unter den Projektbeteiligten?'
     description:
@@ -507,7 +530,7 @@ contributors:
     contact: 'Kontaktperson'
     data: 'Datenverantw.'
     other: 'Sonstiges'
-  hint: 'Mit dem Plus-Symbol können Sie weitere Projektbeteiligte hinzufügen. Mit dem Stift-Symbol können Sie die Daten einer bereits angelegten Person bearbeiten und dieser Person weitere Funktionen im Forschungsprojekt hinzufügen. Mit dem Mülleimer-Symbol können Sie die Daten einer bereits angelegten Person wieder löschen.</br></br>Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. Beide Funktionen sollten in der Regel nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht.</br> Bitte nehmen Sie frühzeitig Kontakt zu den zuständigen Datenschutzstellen auf, wenn mehr als eine Person verantwortlich für die Verarbeitung der Daten (im Sinne der DS-GVO) ist und insbesondere wenn die Verantwortlichkeiten über verschiedene Institutionen verteilt sind. Bitte beachten Sie auch, dass die DS-GVO-konforme Aufklärung über die Verarbeitung personenbezogener Daten in diesem Fall nicht mit dem Ethiktool erstellt werden kann.</br></br>Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) mit ihren geplanten Funktionen im Projekt hinzugefügt werden. Eine nachträgliche Ergänzung von Projektbeteiligten nach Erhalt eines positiven Ethikvotums ist möglich; falls dies allerdings die ethische Einschätzung berührt (z.B. durch einen neuen Interessenkonflikt), ist eine Nachbegutachtung erforderlich.</br>'
+  hint: 'Mit dem Plus-Symbol können Sie weitere Projektbeteiligte hinzufügen. Mit dem Stift-Symbol können Sie die Daten und Funktionen einer bereits angelegten Person bearbeiten. Mit dem Mülleimer-Symbol können Sie die Daten einer bereits angelegten Person wieder löschen.</br></br>Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. Beide Funktionen sollten in der Regel nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht.</br> Bitte nehmen Sie frühzeitig Kontakt zu den zuständigen Datenschutzstellen auf, wenn mehr als eine Person verantwortlich für die Verarbeitung der Daten (im Sinne der DS-GVO) ist und insbesondere wenn die Verantwortlichkeiten über verschiedene Institutionen verteilt sind. Bitte beachten Sie auch, dass die DS-GVO-konforme Aufklärung über die Verarbeitung personenbezogener Daten in diesem Fall nicht mit dem Ethiktool erstellt werden kann.</br></br>Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) mit ihren geplanten Funktionen im Projekt hinzugefügt werden. Eine nachträgliche Ergänzung von Projektbeteiligten nach Erhalt eines positiven Ethikvotums ist möglich; falls dies allerdings die ethische Einschätzung berührt (z.B. durch einen neuen Interessenkonflikt), ist eine Nachbegutachtung erforderlich.</br>'
   errors:
     name: 'Achtung: Name nicht vollständig'
     eMail: 'Achtung: keine gültige E-Mail-Adresse'
@@ -710,9 +733,9 @@ projectdetails:
                   measures {Erhebungsmethoden}
                   other    {Maßnahmen}} Belastungen oder Risiken für die Teilnehmenden ergeben, geben Sie diese bitte auf der Seite „<a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param={routeIDs}>Belastungen/Risiken</a>“ an und beschreiben sie dort genauer.
           pdf: >-
-            Bitte geben Sie an, ob Sie bei der Erstellung des Gesamt-Ethikantrags ergänzende Materialien (z.B. {type, select,
+            Wenn Sie bei der Erstellung des Gesamt-Ethikantrags ergänzende Materialien (z.B. {type, select,
                 measures {Fragebögen, Interviewleitfäden, Beobachtungsprotokolle, Fotos von Apparaturen}
-                other    {Stimuli, Interventionsablauf, TMS-Protokolle}}) im PDF-Format beifügen wollen. Von dieser Möglichkeit sollten Sie Gebrauch machen, wenn es dem Verständnis Ihrer {type, select,
+                other    {Stimuli, Interventionsablauf, TMS-Protokolle}}) im PDF-Format beifügen wollen, geben Sie dies bitte hier an. Von dieser Möglichkeit sollten Sie Gebrauch machen, wenn es dem Verständnis Ihrer {type, select,
                     measures {Erhebungsmethoden}
                     other    {Maßnahmen}} dient.
         measures:
@@ -755,9 +778,9 @@ projectdetails:
         title: 'Werden Daten von anderen Stellen hinzugezogen?'
         headingHint: 'Damit sind Daten gemeint, die an anderen Stellen bereits vorliegen und für die Studie genutzt/übertragen werden sollen, z.B. um die eigenen Forschungsdaten zu ergänzen (wie z.B. Gesundheitsdaten, Einschätzungen aus Psychotherapie/medizinischer Behandlung/Training) oder als Kontaktierungsgrundlage (wie z.B. Daten von Einwohnermeldeämtern).'
         textHint: 'Bitte beschreiben Sie, welche Daten von welchen Stellen hinzugezogen werden. Bitte beschreiben Sie auch, auf welcher Grundlage (z.B. gemeinsame Verantwortlichkeit, Schweigepflichtsentbindung) die Datenweitergabe abgesichert ist.'
-        hint: 'In der Datenschutzerklärung („Anlage zur Datenverarbeitung“) beschreiben Sie bitte, anhand welcher Merkmale (z.B. Name oder Code) die Daten mit weiteren Daten zusammengeführt werden und welche personenbezogenen Daten der anderen Stelle Teil der Forschungsdaten oder der Daten für sonstige Zwecke jenseits der Forschungsfrage sind. Ggf. müssen zusätzliche Dokumente (z.B. Schweigepflichtsentbindung) hinzugefügt werden.'
+        hint: 'In der Datenschutzerklärung („Anlage zur Datenverarbeitung“) beschreiben Sie bitte, anhand welcher Merkmale (z.B. Name oder Code) die Daten mit weiteren Daten zusammengeführt werden und welche personenbezogenen Daten der anderen Stellen Teil der Forschungsdaten oder der Daten für sonstige Zwecke jenseits der Forschungsfrage sind. Ggf. müssen zusätzliche Dokumente (z.B. Schweigepflichtsentbindung) hinzugefügt werden.'
         pdf:
-          hint: 'Bitte geben Sie an, ob Sie bei der Erstellung des Gesamt-Ethikantrags ergänzende Materialien (z.B. Schweigepflichtsentbindung) im PDF-Format beifügen wollen.'
+          hint: 'Wenn Sie bei der Erstellung des Gesamt-Ethikantrags ergänzende Materialien (z.B. Schweigepflichtsentbindung) im PDF-Format beifügen wollen, geben Sie dies bitte hier an.'
           text: 'Ich möchte ergänzende Materialien zum Hinzuziehen von Daten anderer Stellen beifügen.'
       loan:
         title: 'Werden Geräte (z.B. Handy, Tablet, Sensor-Kit) an die Teilnehmenden ausgegeben?'
@@ -1609,8 +1632,8 @@ projectdetails:
         headingHint: 'Werden verschiedene Auftragsverarbeiter für verschiedene Zwecke eingesetzt, kann dies mit A)... und B)... im Freitext beschrieben werden.'
         text:
           orderProcessingStart: 'Für '
-          orderProcessingMiddle: ' werden folgende Auftragsverarbeiter eingesetzt: '
-          orderProcessingEnd: ' Dabei werden folgende Daten verarbeitet: '
+          orderProcessingMiddle: " werden folgende Auftragsverarbeiter eingesetzt:\n"
+          orderProcessingEnd: "\nDabei werden folgende Daten verarbeitet: "
         hints: # icons
           orderProcessingStart: 'Bitte beschreiben Sie die Dienstleistung, z.B. Kontaktierung, Erhebung, Transkription von Interviews, Analyse von Haar- und Speichelproben.'
           orderProcessingMiddle: 'Bitte geben Sie Name und Adresse der Auftragsverarbeiter an.'
@@ -1825,9 +1848,11 @@ checkDoc:
       instVoteReference: 'Aktenzeichen'
       instVoteText: 'Beschreibung der zentralen Gemeinsamkeiten sowie der Unterschiede'
     medicine:
-      medicine: 'medizinischen oder pharmazeutischen Forschungen'
+      medicine:
+        missing: 'medizinischer oder pharmazeutischer Forschung'
+        description: 'Begründung, warum {committeeNom} trotz medizinischer oder pharmazeutischer zuständig ist,'
       physician:
-        chosen: 'Antwort auf Frage, ob von den Projektbeteiligten jemand der Berufsordnung der zuständigen Landesärztekammer unterliegt,'
+        chosen: 'Antwort auf Frage, ob Ärztinnen oder Ärzte unter den Projektbeteiligten sind,'
         description:
           chosen: 'Antwort auf Frage, warum {committeeNom} trotz der nicht-medizinischen Zusammensetzung zuständig ist,'
           description: 'Erläuterung, warum {committeeNom} trotz der nicht-medizinischen Zusammensetzung zuständig ist,'
@@ -2247,9 +2272,9 @@ checkDoc:
         dataReuseSelf: 'Antwort auf Frage, ob die Forschungsdaten zur eigenen Nachnutzung/Re-Analyse verwendet werden,' # '[] fehlt.'
       contributor:
         mandatory: >-
-          Es wurde keine Person für die Funktion „{task}“ vorgesehen{type, select,
-              missing {, weil auf der Seite „<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Projektbeteiligte</a>“ bei keiner Person diese Funktion ausgewählt wurde.}
-              other   {.}}
+          Es wurde keine {type, select,
+              missing {Person für die Funktion „{task}“ vorgesehen, weil auf der Seite „<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Projektbeteiligte</a>“ bei keiner Person diese Funktion ausgewählt wurde.}
+              other   {projektbeteiligte Person für die Funktion „{task}“ ausgewählt.}}
         task: >-
           Die Funktion „{task}“ der {numContributor, plural,
                                         =1    {<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">projektbeteiligten Person</a> }
@@ -2279,9 +2304,10 @@ completeForm:
   bias:
     title: >-
       Bitte prüfen Sie die {committeeType, select,
-                                        TUC   {<a href="https://www.tu-chemnitz.de/tu/ethik/mitglieder.php" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                                        EUB   {<a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/personen/index.xml" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                                        other {aktuelle Zusammensetzung {committeeGen}}} und teilen Sie uns nachfolgend mögliche Befangenheiten mit:
+                              TUC   {<a href="https://www.tu-chemnitz.de/tu/ethik/mitglieder.php" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+                              EUB   {<a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/personen/index.xml" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+                              JGU   {<a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+                              other {aktuelle Zusammensetzung {committeeGen}}} und teilen Sie uns nachfolgend mögliche Befangenheiten mit:
     types:
       noBias: 'Es liegt keine Befangenheit eines Mitglieds der Ethikkommission vor.'
       participate: 'Folgende Mitglieder der Ethikkommission sind am Forschungsprojekt selbst beteiligt oder stehen in einem Weisungsverhältnis zu einer projektbeteiligten Person:'
@@ -2292,6 +2318,7 @@ completeForm:
       Grundlage für die Begutachtung sind die Regelungen bzw. die Geschäftsordnung für {committeeAcc} in der aktuell gültigen Fassung{committeeType, select,
         TUC   {, abrufbar unter <a href="https://www.tu-chemnitz.de/tu/ethik/ordnung.php" target="_blank">https://www.tu-chemnitz.de/tu/ethik/ordnung.php</a>.}
         EUB   {, abrufbar unter "Regelungen" bzw. "Geschäftsordnung" auf der <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">Website {committeeGen}</a>.}
+        JGU   {, abrufbar unter <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.}
         other {.}}
       {committeeType, select,
         EUB   {}
@@ -2322,6 +2349,7 @@ completeForm:
       Der Gesamtantrag wird nun zur Einreichung vorbereitet. Es wird eine ZIP-Datei „{fileName}_Gesamtantrag_{curDate}.zip“ erstellt, die alle nötigen Unterlagen für die Einreichung enthält, und zwar die PDF-Datei für den Gesamtantrag und die zugehörige XML-Datei. Bitte nehmen Sie weder an der PDF-Datei noch im Ethiktool weitere Änderungen vor. Senden Sie die PDF-Datei mit der zugehörigen XML-Datei an {committeeAcc} unter {committeeType, select,
       TUC   {ethik@tu-chemnitz.de (E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet, bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Hinweise zum Datenschutz</a>)}
       EUB   {ethikkommission@uni-bielefeld.de}
+      JGU   {ethikkommission-psychologie@uni-mainz.de}
       other {E-Mail-Adresse {committeeGen}}}. Möchten Sie die Vorbereitung nun abschließen?
 
 quitModal:

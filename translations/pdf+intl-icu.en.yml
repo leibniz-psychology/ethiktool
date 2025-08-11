@@ -211,9 +211,10 @@ coreData:
   appType:
     title: 'Type of proposal: '
     types:
-      new: >-
+      new: >- # other is TUC and test committee
         new proposal {committeeType, select,
                         EUB {}
+                        JGU {}
                         other {({newType, select,
                                 short {short proposal}
                                 main  {full proposal}
@@ -507,7 +508,9 @@ projectdetails:
   dataPrivacy:
     create: >- # other is not yet answered
       {type, select,
-        tool          {The data privacy statement was generated within the Ethiktool.}
+        tool          {{personal, select,
+                          anonymous {All aspects of data processing were specified within the Ethiktool. The chosen selections on the “data privacy“ page indicate that no personal data are processed and thus no data privacy statement is necessary.}
+                          other     {The data privacy statement was generated within the Ethiktool.}}}
         noTool        {Due to the characteristics of data processing (according to the selections on the “data privacy“ page), the data privacy statement could not be generated with the Ethiktool. Therefore, the data privacy statement was generated separately (i.e., outside of the Ethiktool).}
         separate      {The data privacy statement was generated separately (i.e., outside of the Ethiktool). {verification, select,
                                                                           verified   {It has been checked and approved by the responsible data protection authorities.}
@@ -547,10 +550,15 @@ participation:
                                                                                         other    {participants}} because the {addressee, select,
       children {legal guardians}
       wards    {legal guardians}
-      other    {participants}} are not <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">informed in advance</a> that {addressee, select,
+      other    {participants}} are not {savePDF, select,
+                                          true  {informed in advance}
+                                          other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">informed in advance</a>}} that {addressee, select,
                                                                               children {their children}
                                                                               wards    {the individuals under their supervision}
-                                                                              other    {they}} are participating in a study (see question 38 of the application form), nor are they <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">informed after-the-fact</a> that {addressee, select,
+                                                                              other    {they}} are participating in a study (see question 38 of the application form), nor are they
+                {savePDF, select,
+                  true  {informed after-the-fact}
+                  other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">informed after-the-fact</a>}} that {addressee, select,
       children {their children}
       wards    {the supervised individuals}
       other    {they}} participated in a study (see question 41 of the application form).
@@ -674,7 +682,7 @@ participation:
   dataPrivacy:
     otherSources: 'Moreover, the following data from other sources will be added: {description} '
     personal: 'As part of this study, personal data will be collected and processed. {otherSources} Handling of the personal data is described in detail in the attached annex on data processing.'
-    personalMaybe: 'Processing of personal data is not intended in this study, but it cannot be entirely excluded that the combination of collected data with additional knowledge might allow for identifying individual persons. {otherSources} Therefore, handling of the potentially person-related data is described in detail in the attached annex on data processing.'
+    personalMaybe: 'Processing of personal data is not intended in this study, but it cannot be entirely ruled out that the combination of collected data with additional knowledge might allow for identifying individual persons. {otherSources} Therefore, handling of the potentially person-related data is described in detail in the attached annex on data processing.'
     noTool: 'As part of this study, data will be collected and processed. {otherSources} Handling of the data is described in detail in the attached data privacy statement.'
     marking: # types-keys are copied from messages. Examples are removed and addressee is added where applicable
       start: 'As part of this study, data will be collected and processed. {otherSources} {codeMarking} '
@@ -727,9 +735,9 @@ participation:
         anonymous: 'Part of the research data could, however, allow for direct identification. Due to being linked with each other, all collected research data are thus person-related.'
         codePersonal: '{codePersonal} Moreover, part of the research data could allow for direct identification.'
       personalMaybe:
-        anonymous: 'However, although the research data themselves are not directly person-related, it cannot be entirely excluded that the combination of parts of the research data with additional knowledge might allow for identifying individual persons. Due to being linked with each other, all collected research data are thus person-related.'
-        codePersonal: '{codePersonal} Moreover, though the research data themselves are not directly person-related, it cannot be entirely excluded that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.'
-        no: 'The research data themselves are not directly person-related, but it cannot be entirely excluded that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.'
+        anonymous: 'However, although the research data themselves are not directly person-related, it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons. Due to being linked with each other, all collected research data are thus person-related.'
+        codePersonal: '{codePersonal} Moreover, though the research data themselves are not directly person-related, it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.'
+        no: 'The research data themselves are not directly person-related, but it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.'
       personalNo:
         external: 'For use within this study, the research data are anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
         internal: 'For the project contributors, the research data are anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
@@ -838,6 +846,8 @@ dataPrivacy:
                 Universitätsstraße 25
                 D-33615 Bielefeld
                 Web: https://www.uni-bielefeld.de}
+          JGU  {Johannes Gutenberg-Universität Mainz
+                55099 Mainz}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -857,6 +867,9 @@ dataPrivacy:
                  E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
           EUB   {Tel.: +49 521 106-5225
                  E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
+          JGU   {Tel.: +49 6131 39-20065
+                 E-Mail: datenschutz@uni-mainz.de
+                 Web: https://www.uni-mainz.de/datenschutz/}
           other {Tel.: +49 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1023,6 +1036,11 @@ dataPrivacy:
                40213 Düsseldorf
                Tel.: +49 211/384 24-0
                E-Mail: poststelle@ldi.nrw.de}
+        JGU   {Landesbeauftragter für den Datenschutz und die Informationsfreiheit Rheinland-Pfalz
+               Hintere Bleiche 34
+               55116 Mainz
+               Tel.: 06131 8920-0
+               E-Mail: poststelle@datenschutz.rlp.de}
         other {}}
     textEnd: "\n\nIf you have any questions on data processing within this study, please contact the responsible project contributors (see section 1)."
 
@@ -1201,7 +1219,6 @@ completeForm:
     dataPrivacy: 'The study involves processing personal data.'
     conflict: 'The project contributors have a conflict of interest with respect to the research project.'
     medicine: 'The research project involves aspects relating to AMG/MPG/MPDG, or physicians are among the project contributors.'
-    compensation: 'The voluntary nature of participation is compromised by the type or amount of compensation.'
 
 metadata:
   title: 'Ethics proposal'
@@ -1217,3 +1234,4 @@ logo:
   testCommittee: 'Logo of the test ethics committee'
   TUC: 'Logo of Chemnitz University of Technology'
   EUB: 'Logo of Bielefeld University'
+  JGU: 'Logo of Johannes Gutenberg University Mainz'

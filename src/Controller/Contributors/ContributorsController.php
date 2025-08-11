@@ -24,7 +24,7 @@ class ContributorsController extends ControllerAbstract
         $contributorsArray = $allContributorsArrays[count($allContributorsArrays)-1]; // most recent contributors array
         $appNode = $this->getXMLfromSession($session);
         $coreDataNode = $appNode->{self::appDataNodeName}->{self::coreDataNode};
-        $isQualification = ((string) $coreDataNode->{self::qualification} ?? '')==='0';
+        $coreDataArray = $this->xmlToArray($coreDataNode);
         // Check if any mandatory task is not selected for any contributor and create an error message, if so. Additionally, check if the applicant has more than one task.
         $missingTasksArray = ['',''];
         $missingFunction = 'contributors.errors.missingFunction';
@@ -53,8 +53,9 @@ class ContributorsController extends ControllerAbstract
                 $isRemoved = str_contains($submitType,'remove');
                 $tasks = [];
                 if (!$isRemoved) { // contributor was added or edited
+                    $committeeType = $this->getCommitteeType($session);
                     $positionOld = (string) $coreDataNode->{self::applicant}->{self::position};
-                    $isStudentOld = $positionOld===self::positionsStudent || $positionOld===self::positionsPhd && $isQualification;
+                    $isStudentOld = $this->checkSupervisor($committeeType,$positionOld,$coreDataArray);
                     $isApplicant = $id==='0';
                     $isApplicantOrSupervisor = $isApplicant || $isStudentOld && $id==='1';
                     $tempArray = [];
@@ -95,13 +96,13 @@ class ContributorsController extends ControllerAbstract
                         foreach (self::applicantContributorsInfosTypes as $info) { // update infos in core data
                             $node->{$info} = $infos[$info];
                         }
-                        $isStudent = $position===self::positionsStudent || $position===self::positionsPhd && $isQualification;
+                        $isStudent = $this->checkSupervisor($committeeType,$position,$coreDataArray);
                         if ($isApplicant) {
-                            if (!$isStudentOld && $isStudent) { // position was changed to student or PhD
+                            if (!$isStudentOld && $isStudent) { // position was changed such that a supervisor is needed
                                 $this->insertElementBefore(self::supervisor,$coreDataNode->{self::projectStart},self::applicantContributorsInfosTypes);
                                 $this->addSupervisor($contributorsArray);
                             }
-                            elseif ($isStudentOld && !$isStudent) { // position was changed from student to something else
+                            elseif ($isStudentOld && !$isStudent) { // position was changed such that no supervisor is needed anymore
                                 unset($contributorsArray[1][self::taskNode][self::supervisorNode]);
                                 $this->removeElement(self::supervisor,$coreDataNode);
                             }
@@ -125,6 +126,7 @@ class ContributorsController extends ControllerAbstract
         $phone = $infosPrefix.self::phoneNode;
         return $this->render('Contributors/contributors.html.twig', $this->setRenderParameters($request,$contributors,
             ['positionsSupervisor' => $positionsSupervisor,
+             'isQualification' => $this->getQualification($coreDataArray),
              'infos' => self::applicantContributorsInfosTypes,
              'tasks' => self::tasksNodes,
              'tasksMandatory' => self::tasksMandatory,

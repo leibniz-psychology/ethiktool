@@ -62,3 +62,4 @@ secret.*.y?ml
 /templates/images/logos
 /templates/components/tracking.html.twig
 /public/
+/config/secrets/

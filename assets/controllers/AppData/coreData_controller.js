@@ -6,6 +6,7 @@ export default class extends Controller {
     static targets = ['qualificationYes','applicantPosition','supervisorPosition','supervisorDiv','projectStart','projectStartNext','projectStartBegun','projectStartBegunText','fundingResearch','fundingExternal','conflictNo'];
 
     static values = {
+        committeeType: String,
         positions: Array, // 0: positions without qualification, 1: positions with qualification, 2: positions for supervisor (not used), 3: all positions translated
         noChoice: String,
         conflictHint: Array, // 0: description for yes, 1: description for no
@@ -55,12 +56,11 @@ export default class extends Controller {
 
     /** Sets the visibility of the supervisor div as well as the positions for the applicant and supervisor and the phone label for the applicant. */
     setApplicantSupervisor() {
-        if (this.hasQualificationYesTarget) { // only EUB
-            let isQualification = this.qualificationYesTarget.checked;
+        if (this.hasSupervisorDivTarget) {
+            let isQualification = this.hasQualificationYesTarget && this.qualificationYesTarget.checked;
             let positionApplicant = this.applicantPositionTarget.value;
-            let isSupervisor = isQualification && this.studentPhd.includes(positionApplicant);
+            let isSupervisor = this.committeeTypeValue==='EUB' ? isQualification && this.studentPhd.includes(positionApplicant) : positionApplicant===this.studentValue;
             setElementVisibility(this.supervisorDivTarget,isSupervisor);
-            // set allowed positions for applicant and supervisor: remove all positions and recreate allowed ones
             this.setPositions(this.applicantPositionTarget,this.positionsValue[isQualification ? 1 : 0],positionApplicant);
             if (isSupervisor) {
                 let positions = this.positionsValue[0];
@@ -70,7 +70,7 @@ export default class extends Controller {
                 }
                 this.setPositions(this.supervisorPositionTarget,positions,this.supervisorPositionTarget.value);
             }
-            let isStudent = positionApplicant===this.studentValue;
+            let isStudent = positionApplicant===this.studentValue; // position may have changed
             setElementVisibility('phoneLabel',!isStudent);
             setElementVisibility('phoneLabelOptional',isStudent);
         }

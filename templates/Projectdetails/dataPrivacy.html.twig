@@ -89,7 +89,7 @@
                                 {% for sentence in text %}
                                     <li>{{ (sentence)|raw }}</li>
                                 {% endfor %}
-                                {{ (tempPrefix~'end')|trans }}
+                                {{ ("\n"~(tempPrefix~'end')|trans)|nl2br }}
                             </div>
                         {% endif %}
                     {% endfor %}
@@ -137,7 +137,7 @@
                                 {% endif %}
                                 <div {% if isFirst %} class="mt-2" {% endif %} {{ stimulus_action(privacyController,'setMarking','change') }}> {# correct hint for text field is set in controller #}
                                     {{ formRender.renderButtons(marking,noHeading|merge({
-                                        'text': [description,transferParam|merge({'hint': descriptionHints[0]})],
+                                        'text': [description,transferParam|merge(fontNormal)|merge({'hint': descriptionHints[0]})],
                                         'stimVisible': {'values': [[externalNameArray,description.vars.name~'Div'],['external',externalDiv],['internal',internalDiv]]|merge(isFirst ? [['other',otherDiv],[furtherValues,furtherDiv]] : [])},
                                         'icons': {(markingString~'external'): externalIcon, (markingString~'internal'): internalIcon, (markingString~'no'): noIcon}})) }}
                                 </div>

@@ -45,6 +45,7 @@ abstract class ControllerAbstract extends AbstractController
     protected const docNameRecent = 'documentRecent'; // Same as 'document' but including changes on other pages. Will be used if the xml-file or the single documents are downloaded before the page is left, but only on pages whose inputs may affect other pages. Therefore, the key only exists on such pages.
     protected const contributorsSessionName = 'contributors'; // name of the key in the session where the most recent contributors are stored
     public const fileName = 'fileName'; // needed in NewFormType, therefore public
+    public const passwordInput = 'passwordInput'; // needed in NewFormType, therefore public
     protected const saveNodeName = 'saveDate';
     protected const pdfNodeName = 'pdfDate';
     protected const appDataNodeName = 'AppData';
@@ -865,17 +866,35 @@ abstract class ControllerAbstract extends AbstractController
      * @return array 0: positions without qualification, 1: positions with qualification, 2: positions for supervisor, 3: all positions translated
      */
     protected function setPositions(Session $session): array {
-        $isNotEUB = $this->getCommitteeType($session)!==self::committeeEUB;
+        $isNotStudent = !in_array($this->getCommitteeType($session),self::committeeStudent);// $this->getCommitteeType($session)!==self::committeeEUB;
         $phdOption = [self::positionsPhd => ''];
         $studentOption = [self::positionsStudent => ''];
         $positionsTranslated = self::positionsTypes;
         foreach ($positionsTranslated as $position => $translation) {
             $positionsTranslated[$position] = $this->translateString($translation);
         }
-        $positionsApplicant = array_diff_key(self::positionsTypes,$isNotEUB ? $studentOption : []);
-        $positionsQualification = array_intersect_key($positionsApplicant,array_merge($phdOption,!$isNotEUB ? $studentOption : []));
+        $positionsApplicant = array_diff_key(self::positionsTypes,$isNotStudent ? $studentOption : []);
+        $positionsQualification = array_intersect_key($positionsApplicant,array_merge($phdOption,!$isNotStudent ? $studentOption : []));
         $positionsSupervisor = array_diff_key(self::positionsTypes,array_merge($studentOption,$this->xmlToArray($this->getXMLfromSession($session))[self::appDataNodeName][self::coreDataNode][self::applicant][self::position]===self::positionsPhd ? $phdOption : []));
         return [$positionsApplicant,$positionsQualification,$positionsSupervisor,$positionsTranslated];
+    }
+
+    /** Checks if a supervisor is needed.
+     * @param string $committeeType committee
+     * @param string|null $position position of the applicant
+     * @param array $coreDataArray array containing the information about the core data page
+     * @return bool true is a supervisor is needed, false otherwise
+     */
+    protected function checkSupervisor(string $committeeType, ?string $position, array $coreDataArray): bool {
+        return $committeeType===self::committeeEUB ? in_array($position ?? '',[self::positionsStudent,self::positionsPhd]) && $this->getQualification($coreDataArray) : $position===self::positionsStudent;
+    }
+
+    /** Checks if the qualification question was answered with yes.
+     * @param array $coreDataArray array containing the core data
+     * @return bool true if qualification questions exists and was answered with yes, false otherwise
+     */
+    protected function getQualification(array $coreDataArray): bool {
+        return ($coreDataArray[self::qualification] ?? '')=='0';
     }
 
     /** Creates an array where the keys are the values from \$array and the values are all \$string.

@@ -120,7 +120,7 @@
                                             {% if isLater or isExternal or value is same as 'other' %} {# if later, the later type other description #}
                                                 <div class="MetaData-Widget" id="{{ typeValue~'Div' }}" style="{{boolToDisplay(not isLater ? vars.checked : laterDeliver.vars.value is same as laterEndOther) }}" {{ stimulus_action('base','preventTagStart','beforeinput') }}>
                                                     {% if isExternal %}
-                                                        <div class="mt-1">{{ (tempPrefix~'externalTextHint')|trans }}</div> {# hint above text field #}
+                                                        <div class="mt-1 hint">{{ (tempPrefix~'externalTextHint')|trans }}</div> {# hint above text field #}
                                                     {% endif %}
                                                     {{ form_widget(content[typeValue~'Description']) }}
                                                 </div>

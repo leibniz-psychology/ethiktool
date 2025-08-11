@@ -13,15 +13,17 @@ class CoreDataType extends TypeAbstract
 {
     use AppDataTrait;
 
+    private string $committeeType;
+
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $translationPrefix = 'coreData.';
-        $committeeType = $options[self::committeeType];
-        $isEUB = $committeeType===self::committeeEUB;
+        $this->committeeType = $options[self::committeeType];
+        $isEUB = $this->committeeType===self::committeeEUB;
         $this->addFormElement($builder, self::projectTitle, 'textarea', $translationPrefix.'projectTitle');
         $this->addRadioGroup($builder,self::projectTitleParticipation,self::projectTitleTypes,$translationPrefix.self::projectTitleParticipation.'.title',self::projectTitleParticipation.self::descriptionCap);
         $appTypePrefix = $translationPrefix.'appType.';
         $this->addRadioGroup($builder,self::applicationType,self::applicationTypes,$appTypePrefix.'title');
-        if (!$isEUB) {
+        if (in_array($this->committeeType,[self::committeeTUC,'testCommittee'])) {
             $tempPrefix = $appTypePrefix.'new.';
             $this->addRadioGroup($builder,self::applicationNewType,$this->translateArray($tempPrefix,[self::appTypeShort,'main']),$tempPrefix.'label');
         }
@@ -33,7 +35,7 @@ class CoreDataType extends TypeAbstract
         // applicant info
         $tempPrefix = 'multiple.position.';
         $dummyParams = $options[self::dummyParams];
-        foreach (array_merge([''],$isEUB ? [self::supervisor] : []) as $applicant) {
+        foreach (array_merge([''],in_array($this->committeeType,self::committeeStudent) ? [self::supervisor] : []) as $applicant) {
             foreach (self::applicantContributorsInfosTypes as $info) {
                 if ($info!==self::position) {
                     $this->addFormElement($builder, $info.$applicant, 'text');
@@ -172,7 +174,7 @@ class CoreDataType extends TypeAbstract
         $newData[self::projectTitleParticipation] = $tempArray;
         $tempVal = $forms[self::applicationType]->getData();
         $tempArray = [self::chosen => $tempVal];
-        $isNewType = $tempVal===self::appNew && array_key_exists(self::applicationNewType,$forms); // applicationNewType does only exist if committee is not EUB
+        $isNewType = $tempVal===self::appNew && array_key_exists(self::applicationNewType,$forms);
         if ($isNewType || $tempVal===self::appExtended || $tempVal===self::appResubmission) {
             $tempArray[self::descriptionNode] = $forms[$isNewType ? self::applicationNewType : self::descriptionNode]->getData();
         }
@@ -184,7 +186,9 @@ class CoreDataType extends TypeAbstract
         }
         $isQualification = $isQualification && $qualification===0; // true if question exists and was answered with yes
         // applicant info
-        foreach (array_merge([self::applicant],in_array($forms[self::position]->getData(),[self::positionsStudent,self::positionsPhd]) && $isQualification ? [self::supervisor] : []) as $type) {
+        $position = $forms[self::position]->getData();
+        $isEUB = $this->committeeType===self::committeeEUB;
+        foreach (array_merge([self::applicant],$isEUB && in_array($position,[self::positionsStudent,self::positionsPhd]) && $isQualification || !$isEUB && $position===self::positionsStudent ? [self::supervisor] : []) as $type) {
             $tempArray = [];
             $suffix = $type===self::supervisor ? self::supervisor : '';
             foreach (self::applicantContributorsInfosTypes as $info) {

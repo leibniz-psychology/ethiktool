@@ -18,6 +18,9 @@ class NewFormType extends TypeAbstract
         }
         $this->addFormElement($builder,ControllerAbstract::fileName,'text','multiple.filename');
         $this->addFormElement($builder,self::committee,'choice','newForm.committee.title',options: ['choices' => array_flip($committeTypes)],hint: self::choiceTextHint);
+        if (self::committeeTypesBeta!==[]) {
+            $this->addFormElement($builder,ControllerAbstract::passwordInput,'text','newForm.password.title');
+        }
         $this->addDummyForms($builder);
     }
 

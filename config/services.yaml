@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     timezone: 'Europe/Berlin'
+    passwords:
+        JGU: '%env(PASSWORD_JGU)%'
 #    locale: 'de' #new
 #    app_locales: de|end #new
 

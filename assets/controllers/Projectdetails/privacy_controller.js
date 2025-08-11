@@ -423,7 +423,7 @@ export default class extends Controller {
     /** Sets the access widgets. */
     setAccessWidgets() {
         let isDescription = false;
-        let purposesSelected = this.personalValues.includes(this.dataPersonalValue) ? ['dataPersonal'] : [];
+        let purposesSelected = this.personalValues.includes(this.dataPersonalValue) || this.getMarkingPersonal() ? ['dataPersonal'] : [];
         if (this.getAnyMarking() && getSelected(Object.values(this.purposeResearchTypesValue))[0]) {
             for (let [value,id] of Object.entries(this.purposeResearchTypesValue)) {
                 if (document.getElementById(id).checked) {

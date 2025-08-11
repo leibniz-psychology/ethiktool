@@ -64,9 +64,8 @@
             <div {{ stimulus_target(groupsController,'criteriaHint') }}>{{ formRender.addHeading(tempPrefix~'title',{'headingHint': [['multiple.wording',addresseeParam]]}) }}</div>
             {% for type in ['include','exclude'] %}
                 {% set textField, prefix, isInclude = content[type~'Text'], tempPrefix~type~'.', type is same as 'include' %}
-                <div class="{{ classes }}" id="{{ type~'Start' }}" {% if isInclude %} {{ stimulus_target(groupsController,'includeStart') }} {% endif %}>{{ (prefix~'start')|trans(addresseeParam) }}</div>
-                {{ formRender.addHint(prefix~'hint',{'params': {'type': type}}) }}
-                <div {% if isInclude %} {{ stimulus_action('base','checkTextareaInput','keydown',{'start': textField.vars.value|trim|split("\n")[0], 'furtherAllowed': ['Enter']}) }} {% endif %}>{{ formRender.addTextfield(textField,{'attributes': {'style': 'white-space: pre; overflow-wrap: normal; '~heightString}, 'transfer': criteriaTransfer}|merge(isInclude ? {'contTarget': [groupsController,type]} : {})) }}</div>
+                <div class="{{ classes }}" id="{{ type~'Start' }}" style="margin-bottom: -1rem" {% if isInclude %} {{ stimulus_target(groupsController,'includeStart') }} {% endif %}>{{ (prefix~'start')|trans(addresseeParam) }}</div>
+                <div {% if isInclude %} {{ stimulus_action('base','checkTextareaInput','keydown',{'start': textField.vars.value|trim|split("\n")[0], 'furtherAllowed': ['Enter']}) }} {% endif %}>{{ formRender.addTextfield(textField,{'attributes': {'style': 'white-space: pre; overflow-wrap: normal; '~heightString}, 'transfer': criteriaTransfer, 'hint': prefix~'hint', 'textHintParams': {'type': type}}|merge(isInclude ? {'contTarget': [groupsController,type]} : {})) }}</div>
                 <div class="MetaData-Widget pt-0">
                     {{ formRender.addCheckbox(content[type]) }}
                 </div>

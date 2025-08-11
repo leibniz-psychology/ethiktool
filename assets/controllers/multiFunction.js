@@ -58,7 +58,7 @@ export function setHint(element, text = null) {
     if (!isElement) { // element is an event
         element = element.target.parentElement;
     }
-    else if (typeof element === 'string') {
+    else if ((typeof element)==='string') {
         element = document.getElementById(element);
     }
     let children = element.children;

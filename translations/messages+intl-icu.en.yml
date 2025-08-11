@@ -128,31 +128,37 @@ committee:
     {committee, select,
       TUC   {the Ethics Committee of Chemnitz University of Technology}
       EUB   {Bielefeld University Ethics Review Board}
+      JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       other {the test ethics committee}}
   committeeGen: >-
     {committee, select,
     TUC   {the Ethics Committee of Chemnitz University of Technology}
     EUB   {Bielefeld University Ethics Review Board}
+    JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
     other {the test ethics committee}}
   committeeDat: >-
     {committee, select,
       TUC   {the Ethics Committee of Chemnitz University of Technology}
       EUB   {Bielefeld University Ethics Review Board}
+      JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       other {the test ethics committee}}
   committeeAcc: >-
     {committee, select,
       TUC   {the Ethics Committee of Chemnitz University of Technology}
       EUB   {Bielefeld University Ethics Review Board}
+      JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       other {the test ethics committee}}
   committeeLocation: >-
     {committee, select,
       TUC   {Chemnitz University of Technology}
       EUB   {Bielefeld University}
+      JGU   {Johannes Gutenberg University Mainz}
       other {the institution of the test ethics committee}}
   committeeLocationGen: >-
     {committee, select,
       TUC   {of Chemnitz University of Technology}
       EUB   {of Bielefeld University}
+      JGU   {Johannes Gutenberg University Mainz}
       other {of the institution of the test ethics committee}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
@@ -161,10 +167,17 @@ newForm: # placed immediately after 'committee' to have the committee names all 
     types:
       TUC: 'Ethics Committee of Chemnitz University of Technology'
       EUB: 'Bielefeld University Ethics Review Board'
+      JGU: 'Ethics Committee of the Department of Psychology of JGU Mainz'
       testCommittee: 'Test ethics committee'
+  password:
+    title: 'Password:'
+    modal:
+      title: 'Wrong password.'
+      text: 'The password you entered for accessing the beta stage is not corret.'
   hints:
     filename: 'This name is displayed in the navigation area. It is also suggested as file name.'
     committee: 'Please select the ethics committee you will submit the proposal to.'
+    password: 'The Ethiktool version for the chosen ethics committee is still in beta stage. It can only be accessed by those who know the password. Please enter the password.'
   buttons:
     save: 'generate proposal'
     cancel: 'cancel'
@@ -246,7 +259,7 @@ main:
     Further information is available in the sections “About us“ und “About the Ethiktool“. Please note the “Technical Information“ and “Terms of use“ for the Ethiktool.
     You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
 
-    <i>Please note: In the current project phase, the Ethiktool is arranged for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites.
+    <i>Please note: In the current project phase, the Ethiktool is arranged for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites; the Ethics Committee of the Department of Psychology of JGU Mainz is already in beta stage.
 
     You can start creating an application for the respective committee via “New proposal“.
     You can load and edit an existing XML file created by the Ethiktool via “Load proposal”.</i>
@@ -275,6 +288,13 @@ main:
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee.
               
              Research projects involving physicians as project contributors usually have to be evaluated by a medical ethics committee. In individual cases a review by the non-medical Bielefeld University Ethics Review Board may be possible. Further information can be found <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">here</a>.}
+      JGU   {Please note the following <b>requirements for the application:</b>
+    
+             All members of the Department of Psychology of Johannes Gutenberg University Mainz are eligible to apply. The eligibility to apply extends to researchers who are preparing an application for their own position (e.g., with the DFG) in a project to be conducted at the Department of Psychology of JGU Mainz; in this case, a brief statement by the leader of the lab in whose group the project shall be conducted must be submitted with the ethics application.
+             
+             The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible.
+    
+             Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. (For further specifications, see <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
       other {Please note that <b>the test ethics application is not designed to be submitted to an ethics review board at this point.</b>}}
       
       <b>The section “Technical information“ informs you about how to proceed in creating your application.</b>
@@ -409,7 +429,7 @@ coreData:
     title: 'Is there a conflict of interest for any of the project contributors due to personal interests or due to interests of third parties?'
     headingHint: 'There is a conflict of interest if the research process could be affected by your own interests or by interests of third parties or if the independence of scientific judgement could be compromised. Typical examples of potential conflicts of interests include the evaluation of an own product, sponsored research to evaluate other''s products, or research on societally delicate topics under the influence of lobbyism or of strong own opinions. Conflicts of interests can arise from multiple factors, such as family- or friendship-related, financial or social factors, or from economic or personal relationships to sponsors or collaborators. If there is a conflict of interest, the nature of the conflict and how it is handled must be explained. Please note that potential conflicts of interest must also be disclosed to the participants.'
     yes: 'Describe the conflict of interest and explain how it will be handled. For example, explain how one could influence the research project (e.g., choice of data collection methods, choice of data analysis, decision on publication) and how you will prevent biases in scientific decision.'
-    no: 'Explain how conflicts of interest are ruled out. For example, in case of third-party funding, explain how undue influence on the research project by the sponsor or funder is excluded through the format of the call for research proposals, the funding conditions, or contractual agreements (e.g., choice of data collection methods, choice of data analysis, decision on publication).'
+    no: 'Explain how conflicts of interest are ruled out. For example, in case of third-party funding, explain how undue influence on the research project by the sponsor or funder is ruled out through the format of the call for research proposals, the funding conditions, or contractual agreements (e.g., choice of data collection methods, choice of data analysis, decision on publication).'
     participants: 'Please also disclose any potential conflicts of interest to the participants.'
   support:
     title: 'The following consulting and support services were used for this research project:'
@@ -458,10 +478,13 @@ votes:
 medicine:
   medicine:
     heading: 'Is medical, pharmaceutical or other research planned that may have to be assessed in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG), or other legal requirements?'
-    textHint: >-
+    textHint: >- # other is TUC and test committee
+      Research projects with a legal requirement for review by a medical ethics committee must be submitted to an ethics committee with medical constitution, irrespective of the applicants' affiliations.
       {committeeType, select,
-        EUB   {Research projects with a legal requirement for review by a medical ethics committee must be submitted to a medical ethics committee, irrespective of the applicants' affiliations. Further information on the jurisdiction and additional documents to be submitted can be found <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">here</a>. Please briefly describe why you think that the research project can still be assessed by {committeeGen}.}
-        other {Research projects with a legal requirement for review by a medical ethics committee must be submitted to a medical ethics committee, irrespective of the applicants' affiliations. Please briefly describe why you think that the research project can still be assessed by {committeeDat} despite its non-medical constitution.}}
+        EUB   {Further information on the jurisdiction and additional documents to be submitted can be found <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">here</a>.}
+        JGU   {(For further specifications, see <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
+        other {}}
+        Please briefly describe why you think that the research project can still be assessed by {committeeDat}.
   physician:
     title: 'Are physicians amongst the project contributors?'
     description:
@@ -507,7 +530,7 @@ contributors:
       contact: 'contact'
       data: 'data responsib.'
       other: 'other'
-  hint: 'You can add further project contributors by using the plus symbol. Selecting the pencil allows you to edit the data of an existing project contributor, and to complement their roles in the research project. The trash bin symbol allows you to delete the entire data of an existing project contributor.</br></br>Please note:</br>The functions “principal investigator/project lead“ and “responsibility for data processing“ are typically occupied by the same person. Neither function should usually be assigned to student contributors, as this concerns taking responsibility for the actions of all project contributors.</br>Please contact the responsible data protection authorities at an early stage if more than one person is responsible for processing the data (according to EU-GDPR), especially if responsibilities fall with different institutions. Please also note that a GDPR-compliant information text on processing personal data cannot be generated by the Ethiktool in this case.</br></br>If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space) with their planned role(s) in the project. Adding contributors after having received ethics approval is possible; if this, however, touches upon ethical issues (e.g., by creating a new conflict of interest), ethics re-review is necessary.</br>'
+  hint: 'You can add further project contributors by using the plus symbol. Selecting the pencil allows you to edit the data and roles of an existing project contributor. The trash bin symbol allows you to delete the entire data of an existing project contributor.</br></br>Please note:</br>The functions “principal investigator/project lead“ and “responsibility for data processing“ are typically occupied by the same person. Neither function should usually be assigned to student contributors, as this concerns taking responsibility for the actions of all project contributors.</br>Please contact the responsible data protection authorities at an early stage if more than one person is responsible for processing the data (according to EU-GDPR), especially if responsibilities fall with different institutions. Please also note that a GDPR-compliant information text on processing personal data cannot be generated by the Ethiktool in this case.</br></br>If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space) with their planned role(s) in the project. Adding contributors after having received ethics approval is possible; if this, however, touches upon ethical issues (e.g., by creating a new conflict of interest), ethics re-review is necessary.</br>'
   errors:
     name: 'Warning: name incomplete'
     eMail: 'Warning: no valid e-mail address'
@@ -710,9 +733,9 @@ projectdetails:
                   measures {data collection methods}
                   other    {measures/interventions}}, please enter these on page “<a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param={routeIDs}>Burdens/risks</a>“ and describe them in detail.
           pdf: >-
-            Please indicate whether you would like to add supplementary materials as a PDF file when completing the ethics proposal (e.g., {type, select,
+            If you would like to add supplementary materials as a PDF file when completing the ethics proposal (e.g., {type, select,
                 measures {questionnaires, interview guides, observation protocols, pictures of equipment}
-                other    {stimuli, intervention procedure, TMS protocols}}). You should use this option if it helps to convey a clearer picture of your {type, select,
+                other    {stimuli, intervention procedure, TMS protocols}}), please indicate this here. You should use this option if it helps to convey a clearer picture of your {type, select,
                     measures {data collection methods}
                     other    {intervention measures}}.
         measures:
@@ -755,9 +778,9 @@ projectdetails:
         title: 'Will data from other sources be added?'
         headingHint: 'This refers to data that is already available at other sources and will be used/transferred for the study to supplement the own research data (e.g. health data, assessments from psychotherapy/medical treatment/training) or to provide a basis for contacting potential participants (e.g., data from the residents'' registration office).'
         textHint: 'Please describe which data will be used from which sources. Please also describe the basis that allows for data transfer (e.g. joint responsibility, release from confidentiality).'
-        hint: 'In the annex on data processing, you will need to describe the identifiers (e.g., name or code) used to merge the data as well as the person-related data of the other source that will become part of the research data or of the data for further purposes beyond the research question. If necessary, additional documents (e.g. release from confidentiality) must be added.'
+        hint: 'In the annex on data processing, you will need to describe the identifiers (e.g., name or code) used to merge the data as well as the person-related data of the other sources that will become part of the research data or of the data for further purposes beyond the research question. If necessary, additional documents (e.g. release from confidentiality) must be added.'
         pdf:
-          hint: 'Please indicate whether you would like to add supplementary materials (e.g., release from confidentiality) as a PDF file when completing the ethics proposal.'
+          hint: 'If you would like to add supplementary materials (e.g., release from confidentiality) as a PDF file when completing the ethics proposal, please indicate this here.'
           text: 'I want to add supplementary materials on data retrieval from other sources.'
       loan:
         title: 'Are devices (e.g., mobile phone, tablet, sensor kit) handed out to the participants?'
@@ -1138,8 +1161,8 @@ projectdetails:
       hint: 'Researchers should consider and decide on a case-by-case basis whether information on one or more of the following aspects appear useful. The templates can be used as basic information for frequently occurring cases; they cannot replace an individual assessment and consultation. The use of the templates is therefore at the user''s own responsibility; in particular, they are no substitute for legal advice. The Ethics Committee takes no responsibility for the correct use of the templates in individual cases and does not perform a legal review of the wording.'
       liability:
         title: 'Shall the consent to study participation contain a liability clause?'
-        headingHint: 'Liability can never be completely excluded (e.g., in case of intent or severe negligence), but it can be limited in certain respects. The template for the liability limitation serves as a guide for frequently occurring cases; it cannot replace an individual assessment and consultation. The use of the template is therefore at the user''s own responsibility; in particular, it is no substitute for legal advice. The Ethics Committee takes no responsibility for the correct use of the template in individual cases and does not perform a legal review of the wording. Researchers should consider and decide on a case-by-case basis whether they want to include a clause on the limitation of liability in the participation information.'
-        template: 'Participation is at the participant''s own risk. The liability of the project contributors is limited to intent and severe negligence. The parties, their legal representatives and vicarious agents shall also be liable for negligence in the event of breaches of duty in direct connection with the conduction of the study, whereby liability in such cases shall be limited to reasonably foreseeable damage. Liability for damages resulting from injury to life, limb or health shall be governed by the statutory provisions.'
+        headingHint: 'Liability can never be completely ruled out (e.g., in case of intent or severe negligence), but it can be limited in certain respects. The template for the liability limitation serves as a guide for frequently occurring cases; it cannot replace an individual assessment and consultation. The use of the template is therefore at the user''s own responsibility; in particular, it is no substitute for legal advice. The Ethics Committee takes no responsibility for the correct use of the template in individual cases and does not perform a legal review of the wording. Researchers should consider and decide on a case-by-case basis whether they want to include a clause on the limitation of liability in the participation information.'
+        template: 'Participation is at own risk. The liability of the project contributors is limited to intent and severe negligence. The parties, their legal representatives and vicarious agents shall also be liable for negligence in the event of breaches of duty in direct connection with the conduction of the study, whereby liability in such cases shall be limited to reasonably foreseeable damage. Liability for damages resulting from injury to life, limb or health shall be governed by the statutory provisions.'
       apparatus:
         title: >-
           Shall the {isReceipt, select,
@@ -1149,7 +1172,7 @@ projectdetails:
           {isReceipt, select,
                     true  {In the confirmation sheet for the loaned devices}
                     other {When loaning equipment}} it is advisable to inform participants about liability regulations when using the equipment.
-        template: 'The devices used are checked regularly and carefully to ensure that they are in a proper condition for use. The use of the equipment during study participation is at your own risk.'
+        template: 'The devices used are checked regularly and carefully to ensure that they are in a proper condition for use. The equipment is used during study participation at own risk.'
         loan: 'The loaned equipment and accessories must be handled with care, protected against loss and damage, and returned at the agreed time without further notice. Loss of or damage to the equipment or accessories during the loan period must be reported immediately. The loaned equipment or accessories must not be passed on to third parties. In the event of loss or damage, the research institution must be compensated for the damage caused.'
       insuranceWay:
         title: 'Should the consent to participate in the study include a reference to route/accident insurance?'
@@ -1609,8 +1632,8 @@ projectdetails:
         headingHint: 'If different data processors are involved for different purposes, this can be described by using the labels A)... and B)... in the text entries.'
         text:
           orderProcessingStart: 'The '
-          orderProcessingMiddle: ' involves the following data processors: '
-          orderProcessingEnd: ' For this service, the following data are processed: '
+          orderProcessingMiddle: " involves the following data processors:\n"
+          orderProcessingEnd: "\nFor this service, the following data are processed: "
         hints: # icons
           orderProcessingStart: 'Please describe the service, e.g., contacting, data collection, transcription of interviews, analysis of hair and saliva samples.'
           orderProcessingMiddle: 'Please insert name and address of data processor(s).'
@@ -1825,9 +1848,11 @@ checkDoc:
       instVoteReference: 'case number'
       instVoteText: 'description of key similarities and differences'
     medicine:
-      medicine: 'medical or pharmaceutical research'
+      medicine:
+        missing: 'medical or pharmaceutical research'
+        description: 'Justification why {committeeNom} is responsible despite medical or pharmaceutical research'
       physician:
-        chosen: 'Answer to question whether any of the project contributors is subject to the professional code of conduct of the relevant state medical association'
+        chosen: 'Answer to question whether physicians are amongst the project contributors'
         description:
           chosen: 'Answer to question why {committeeNom} is responsible despite its non-medical constitution'
           description: 'Explanation why {committeeNom} is responsible despite its non-medical constitution'
@@ -2247,9 +2272,9 @@ checkDoc:
         dataReuseSelf: 'Answer to question whether research data are employed for own re-use' # '[] is missing.'
       contributor:
         mandatory: >-
-          No contributor was chosen for the “{task}“ function{type, select,
-              missing { because on page “<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“ this role was not selected for any of the contributors.}
-              other   {.}}
+          No {type, select,
+                missing {contributor was chosen for the “{task}“ function because on page “<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“, this role was not selected for any of the contributors.}
+                other   {project contributor was selected for the “{task}“ function.}}
         task: >-
           The role “{task}“ of the {numContributor, plural,
                                         =1    {<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">project contributor</a> }
@@ -2279,9 +2304,10 @@ completeForm:
   bias:
     title: >-
       Please check the {committeeType, select,
-                                        TUC   {<a href="https://www.tu-chemnitz.de/tu/ethik/mitglieder.php" target="_blank">current composition of {committeeGen}</a>}
-                                        EUB   {<a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/personen/index.xml" target="_blank">current composition of {committeeGen}</a>}
-                                        other {current composition of {committeeGen}}} and inform us of any possible conflicts of interest below:
+                          TUC   {<a href="https://www.tu-chemnitz.de/tu/ethik/mitglieder.php" target="_blank">current composition of {committeeGen}</a>}
+                          EUB   {<a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/personen/index.xml" target="_blank">current composition of {committeeGen}</a>}
+                          JGU   {<a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/" target="_blank">current composition of {committeeGen}</a>}
+                          other {current composition of {committeeGen}}} and inform us of any possible conflicts of interest below:
     types:
       noBias: 'No member of the Ethics Committee has a conflict of interest.'
       participate: 'The following members of the Ethics Committee are involved in the research project themselves or have a directive relationship with a project contributor:'
@@ -2292,6 +2318,7 @@ completeForm:
       The ethics review is based on the regulations and rules of procedure for {committeeAcc} in its current version{committeeType, select,
         TUC   {, available at <a href="https://www.tu-chemnitz.de/tu/ethik/ordnung.php" target="_blank">https://www.tu-chemnitz.de/tu/ethik/ordnung.php</a>.}
         EUB   {, available under “Regulations“ and “Rules of procedure“ at the <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">website of {committeeGen}</a>.}
+        JGU   {, available at <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.}
         other {.}}
       {committeeType, select,
         EUB   {}
@@ -2311,9 +2338,9 @@ completeForm:
                                       other {prior}} information of the {addressee, select,
                                                                        children {children}
                                                                        other    {supervised individuals}}
-      measures: 'Additional material on data collection methods'
-      interventions: 'Additional material on interventions/measures'
-      otherSources: 'Additional material on retrieval of data from other sources'
+      measures: 'Additional materials on data collection methods'
+      interventions: 'Additional materials on interventions/measures'
+      otherSources: 'Additional materials on retrieval of data from other sources'
       dataPrivacy: 'Data privacy statement'
     upload: 'Choose PDF file'
   finish:
@@ -2322,6 +2349,7 @@ completeForm:
       The complete proposal is now prepared for submission. A ZIP file “{fileName}_completeApplication_{curDate}.zip“ is generated, which contains all the necessary documents for submission, namely the PDF file with the complete proposal and the corresponding XML file. Please do not make any further changes to the PDF file or in the Ethiktool. Please send the PDF file with the corresponding XML file to {committeeAcc} at {committeeType, select,
       TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
       EUB   {ethikkommission@uni-bielefeld.de}
+      JGU   {ethikkommission-psychologie@uni-mainz.de}
       other {e-mail address of {committeeGen}}}. Would you like to complete the preparation now?
 
 quitModal:

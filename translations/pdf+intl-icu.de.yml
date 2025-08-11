@@ -211,9 +211,10 @@ coreData:
   appType:
     title: 'Antragstyp:'
     types:
-      new: >-
+      new: >- # other is TUC and test committee
         Neuer Antrag {committeeType, select,
                         EUB {}
+                        JGU {}
                         other {({newType, select,
                                 short {Kurzantrag}
                                 main  {Hauptantrag}
@@ -507,7 +508,9 @@ projectdetails:
   dataPrivacy: 
     create: >- # other is not yet answered 
       {type, select,
-        tool          {Die Datenschutzerklärung wurde mit Hilfe des Ethiktools erstellt.}
+        tool          {{personal, select,
+                          anonymous {Die Datenverarbeitung wurde mit Hilfe des Ethiktools abgebildet. Die Angaben auf der Seite „Datenschutz“ lassen darauf schließen, dass nur anonyme Daten verarbeitet werden und keine Datenschutzerklärung notwendig ist.}
+                          other     {Die Datenschutzerklärung wurde mit Hilfe des Ethiktools erstellt.}}}
         noTool        {Aufgrund von Besonderheiten im Umgang mit den Daten (gemäß Angaben auf der Seite „Datenschutz“) konnte die Datenschutzerklärung nicht mit dem Ethiktool erstellt werden. Daher wurde die Datenschutzerklärung selbst erstellt.}
         separate      {Die Datenschutzerklärung wurde selbst erstellt. {verification, select,
                                                                           verified   {Sie ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.}
@@ -547,10 +550,15 @@ participation:
                                                                                         other    {Teilnehmenden}} erstellt, weil die {addressee, select,
       children {Erziehungsberechtigen}
       wards    {gesetzlichen Vertretungspersonen}
-      other    {Teilnehmenden}} nicht <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">vorab darüber aufgeklärt</a> werden, dass {addressee, select,
+      other    {Teilnehmenden}} nicht {savePDF, select,
+                                        true  {vorab darüber aufgeklärt}
+                                        other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">vorab darüber aufgeklärt</a>}} werden, dass {addressee, select,
                                                                               children {ihre Kinder}
                                                                               wards    {die von ihnen betreuten Personen}
-                                                                              other    {sie}} an einer Studie teilnehmen (vgl. Frage 38 des Antragsformulars), und auch nicht <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">nachträglich darüber aufgeklärt</a> werden, dass {addressee, select,
+                                                                              other    {sie}} an einer Studie teilnehmen (vgl. Frage 38 des Antragsformulars), und auch nicht
+                {savePDF, select,
+                  true  {nachträglich darüber aufgeklärt}
+                  other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">nachträglich darüber aufgeklärt</a>}} werden, dass {addressee, select,
       children {ihre Kinder}
       wards    {die betreuten Personen}
       other    {sie}} an einer Studie teilgenommen haben (vgl. Frage 41 des Antragsformulars).
@@ -838,6 +846,8 @@ dataPrivacy:
                 Universitätsstraße 25
                 D-33615 Bielefeld
                 Web: https://www.uni-bielefeld.de}
+          JGU  {Johannes Gutenberg-Universität Mainz
+                55099 Mainz}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -857,6 +867,9 @@ dataPrivacy:
                  E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
           EUB   {Tel.: 0521 106-5225
                  E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
+          JGU   {Tel.: 06131 39-20065
+                 E-Mail: datenschutz@uni-mainz.de
+                 Web: https://www.uni-mainz.de/datenschutz/}
           other {Tel.: 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1023,6 +1036,11 @@ dataPrivacy:
                40213 Düsseldorf
                Tel.: +49 211/384 24-0
                E-Mail: poststelle@ldi.nrw.de}
+        JGU   {Landesbeauftragter für den Datenschutz und die Informationsfreiheit Rheinland-Pfalz
+               Hintere Bleiche 34
+               55116 Mainz
+               Tel.: 06131 8920-0
+               E-Mail: poststelle@datenschutz.rlp.de}
         other {}}
     textEnd: "\n\nSollten Sie Fragen zur Datenverarbeitung in dieser Studie haben, wenden Sie sich gern an die verantwortlichen Projektbeteiligten (siehe Abschnitt 1)."
 
@@ -1201,7 +1219,6 @@ completeForm:
     dataPrivacy: 'In der Studie werden personenbezogene Daten verarbeitet.'
     conflict: 'Bei den Projektbeteiligten besteht ein Interessenkonflikt in Bezug auf das Forschungsprojekt.'
     medicine: 'Das Forschungsprojekt beinhaltet Aspekte nach AMG/MPG/MPDG und/oder Ärztinnen bzw. Ärzte sind projektbeteiligt.'
-    compensation: 'Die Freiwilligkeit ist durch Art oder Höhe der Aufwandsentschädigung gefährdet.'
 
 metadata:
   title: 'Ethikantrag'
@@ -1217,3 +1234,4 @@ logo:
   testCommittee: 'Logo der Test-Ethikkommission'
   TUC: 'Logo der Technischen Universität Chemnitz'
   EUB: 'Logo der Universität Bielefeld'
+  JGU: 'Logo der Johannes Gutenberg-Universität Mainz'

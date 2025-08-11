@@ -634,7 +634,7 @@ class ApplicationController extends PDFAbstract
                         $description = $tempArray[self::descriptionNode] ?? ''; // either confirm intro or verification of separate pdf, if any of these two was chosen
                         $tempPrefix = $projecdetailsPrefix.self::privacyNode.'.';
                         // create (data privacy)
-                        $this->addBoxContent(self::createNode,$this->translateStringPDF($tempPrefix.self::createNode,array_merge($addresseeStringParams,['type' => $create!==self::createSeparate && $this->getPrivacyNoTool($pageArray) ? 'noTool' : $create, self::createVerificationNode => $description])));
+                        $this->addBoxContent(self::createNode,$this->translateStringPDF($tempPrefix.self::createNode,array_merge($addresseeStringParams,['type' => $create!==self::createSeparate && $this->getPrivacyNoTool($pageArray) ? 'noTool' : $create, self::createVerificationNode => $description, 'personal' => $this->getPrivacyReuse($pageArray)['personal']])));
                         $tempVal = $isAnyDataPrivacy ? self::dummyBox : self::noBox;
                         $content = [self::responsibilityNode => $tempVal, self::transferOutsideNode => $tempVal];
                         if ($create===self::createTool && $description==='1') {

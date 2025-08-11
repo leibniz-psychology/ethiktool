@@ -88,7 +88,7 @@ class CheckDocClass extends ControllerAbstract
         $checkDoc->coreDataArray = $checkDoc->appDataArray[self::coreDataNode];
         $tempArray = $checkDoc->coreDataArray[self::applicationType];
         $checkDoc->appType = $tempArray[self::chosen];
-        $checkDoc->isAppTypeShort = $checkDoc->committeeParam[self::committeeType]==='TUC' && $checkDoc->appType===self::appNew && $tempArray[self::descriptionNode]===self::appTypeShort;
+        $checkDoc->isAppTypeShort = $checkDoc->committeeParam[self::committeeType]===self::committeeTUC && $checkDoc->appType===self::appNew && $tempArray[self::descriptionNode]===self::appTypeShort;
         $checkDoc->contributorTasks = array_combine(self::tasksNodes,array_fill(0,count(self::tasksTypes),array()));
         $checkDoc->isMandatory = array_combine(self::tasksMandatory,array_fill(0,count(self::tasksMandatory),false));
         foreach ($checkDoc->addZeroIndex($checkDoc->appArray[self::contributorsNodeName][self::contributorNode]) as $index => $contributor) {
@@ -553,9 +553,9 @@ class CheckDocClass extends ControllerAbstract
     private function checkMedicine(bool $setTitle = true): void {
         $this->addAppDataTitle(self::medicine,$setTitle);
         $translationPrefix = self::appDataPrefix.self::medicine.'.';
-        $tempPrefix = $translationPrefix.self::medicine;
+        $tempPrefix = $translationPrefix.self::medicine.'.';
         $pageArray = $this->appDataArray[self::medicine];
-        $this->checkMissingTextfield($pageArray[self::medicine],2,0,$tempPrefix,self::medicine,$tempPrefix,true);
+        $this->checkMissingTextfield($pageArray[self::medicine],2,0,$tempPrefix.'missing',self::medicine,$tempPrefix.self::descriptionNode, parameters: $this->committeeParam);
         $translationPrefix .= 'physician.';
         $tempArray = $pageArray[self::physicianNode];
         if ($this->checkMissingChosen($tempArray,$translationPrefix.self::chosen,2,self::physicianNode)===0) {
@@ -1546,7 +1546,7 @@ class CheckDocClass extends ControllerAbstract
                 $isTask = $tempArray[0]!=='';
                 if (in_array($task,self::tasksMandatory) && !$isTask) { // task is mandatory
                     $isTaskAvailable = $this->isMandatory[$task]; // true if task was not selected for at least one contributor on 'contributors' page
-                    $this->addCheckLabelString($translationPage.'mandatory',$isTaskAvailable ? $task : '', ['task' => $this->translateString(self::tasksTypes[$task]), 'type' => !$isTaskAvailable ? 'missing' : 'other']);
+                    $this->addCheckLabelString($translationPage.'mandatory',$isTaskAvailable ? $task : '', ['task' => $this->translateString(self::tasksTypes[$task]), 'type' => !$isTaskAvailable ? 'missing' : 'other'],!$isTaskAvailable);
                 }
                 elseif ($isTask) {
                     $tasksCopy = &$this->contributorTasks[$task]; // contributor of the current task. key: contributor index, value: empty or other description

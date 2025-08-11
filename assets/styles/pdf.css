@@ -113,15 +113,8 @@ i.pdfHeading {
     font-size: small;
 }
 
-.logoPreview {
-    max-width: 50px;
-    height: fit-content;
-    margin: 1em;
-}
-
 .logo {
-    max-width: 20%;
-    margin: 1em;
+    margin: 0.5rem;
 }
 
 .previewXLarge {
