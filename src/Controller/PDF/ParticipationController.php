@@ -83,7 +83,8 @@ class ParticipationController extends PDFAbstract
                     $translationParams = array_merge($addresseeParam,$committeeParam,$informationParam); // contains all parameters that are needed in several combinations
                     $isPre = $information===self::pre;
                     $isNotPost = $information!==self::post;
-                    $isOral = (!$isNotPost ? $informationArray[self::informationAddNode][self::descriptionNode] ?? '' : $informationArray[self::descriptionNode] ?? '')===self::consentOral;
+                    $informationDescription = $informationArray[self::descriptionNode] ?? '';
+                    $isOral = (!$isNotPost ? $informationArray[self::informationAddNode][self::descriptionNode] ?? '' : $informationDescription)===self::consentOral;
                     $isLoanReceipt = false; // loan receipt is only possible if pre information
                     [$loanReceiptParameters,$consent] = [[],[]]; // $loanReceiptParameters: parameters for the view of the loan receipt
                     $parameters = array_merge($translationParams,[self::studyID => $multipleStudies ? $studyID+1 : 0, self::groupID => $multipleGroups ? $groupID+1 : 0, self::measureID => $multipleMeasures ? $measureID : 0]);
@@ -275,7 +276,7 @@ class ParticipationController extends PDFAbstract
                         $tempPrefix = $participationPrefix.self::voluntaryNode.'.';
                         $voluntaryParams = array_merge($addresseeParam,$terminateConsParam,['isVoluntary' => $this->getStringFromBool(in_array((!array_key_exists(self::chosen2Node,$voluntaryArray) || $chosen2===self::voluntaryNotApplicable) ? $voluntaryArray[self::chosen] : $chosen2,['','yes']))]);
                         $content = trim($this->translateStringPDF($tempPrefix.(!$isNotPost ? self::post : self::pre), array_merge($voluntaryParams,[
-                                self::descriptionNode => $tempArray[self::terminateConsParticipationNode] ?? '',
+                                self::descriptionNode => in_array($information,['noPre',self::post]) ? $informationDescription : $tempArray[self::terminateConsParticipationNode] ?? '',
                                 self::attendanceNode => $this->getStringFromBool(($informationArray[self::attendanceNode] ?? '')==='0'),
                                 'isConsent' => $this->getStringFromBool($isConsent)])))
                             .($isNotPost ? ' '.$this->getCompensationTerminate($measureTimePoint[self::compensationNode],$voluntaryParams) : '')

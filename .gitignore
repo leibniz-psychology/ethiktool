@@ -63,3 +63,4 @@ secret.*.y?ml
 /templates/components/tracking.html.twig
 /public/
 /config/secrets/
+/src/Traits/Main/BetaCommitteeTrait.php

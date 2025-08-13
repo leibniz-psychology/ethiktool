@@ -5,6 +5,7 @@ namespace App\Controller\Main;
 use App\Abstract\ControllerAbstract;
 use App\Form\Main\NewFormType;
 use App\Traits\AppData\AppDataTrait;
+use App\Traits\Main\BetaCommitteeTrait;
 use App\Traits\Main\CompleteFormTrait;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use App\Traits\Contributors\ContributorsTrait;
@@ -18,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class NewFormController extends ControllerAbstract
 {
+    use BetaCommitteeTrait; // passwords for beta committees
     use AppDataTrait; // application data
     use ContributorsTrait; // contributors
     use ProjectdetailsTrait; // project details
@@ -48,7 +50,7 @@ class NewFormController extends ControllerAbstract
                     $this->resetTemp($session);
                     $data = $general->getData();
                     $committeeType = $data[self::committee];
-                    if (in_array($committeeType,self::committeeTypesBeta) && $data[self::passwordInput]!==$this->getParameter('passwords')[$committeeType]) {
+                    if (in_array($committeeType,self::committeeTypesBeta) && $data[self::passwordInput]!==self::betaPasswords[$committeeType]) {
                         $session->set(self::wrongPassword,'');
                         $this->setTemp($session,$data);
                         return $this->redirectToRoute('app_newForm');

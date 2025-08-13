@@ -6,13 +6,13 @@
     <h2 class="MetaDataGroup-Title">{{ 'pages.newForm'|trans }}</h2>
 {% endblock %}
 {% block content %}
-    {% set newFormController, fileName, committee, modalID, topMargin, labelStyle = 'Main--newForm', content.fileName, content.committee, 'passwordModal', '', 'text-align: end; white-space: nowrap; ' %}
+    {% set newFormController, fileName, committee, modalID, labelStyle = 'Main--newForm', content.fileName, content.committee, 'passwordModal', 'text-align: end; white-space: nowrap; ' %}
     <div class="MetaData-Widget" {% if wrongPassword %} {{ stimulus_action('base','showModal','load@window',{'target': modalID}) }} {% endif %}>
         <div class="grid align-items-center px-2 gap-2" style="grid-template-columns: repeat(2,min-content) auto" {{ stimulus_controller(newFormController,{
             'committeeBeta': committeeBeta
         }) }}>
             {# file name #}
-            <div class="me-2" style="{{ labelStyle }} justify-self: end">{{ form_label(fileName) }}:</div>
+            <div class="me-2" style="{{ labelStyle }}">{{ form_label(fileName) }}:</div>
             <div class="minAutoGrid align-items-center m-0" {{ stimulus_action(newFormController,'setButton','input') }}>{{ form_widget(fileName,{'attr': {'style': dropdownWidth}|merge(addTarget(newFormController,'fileName'))}) }}</div>
             <div class="MetaData-Label">{{ (hintPrefix~'filename')|trans }}</div>
             {# committee #}
@@ -22,9 +22,9 @@
             {# password #}
             {% if content.passwordInput is defined %}
                 {% set password = content.passwordInput %}
-                <div class="me-2" style="{{ labelStyle~topMargin }}">{{ form_label(password) }}</div>
-                <div style="{{ topMargin }}" {{ stimulus_action(newFormController,'setButton','input') }}>{{ form_widget(password,addTargetArray(newFormController,'password')) }}</div>
-                <div class="MetaData-Label" style="{{ topMargin }}">{{ (hintPrefix~'password')|trans }}</div>
+                <div class="me-2" style="{{ labelStyle }}">{{ form_label(password) }}</div>
+                <div {{ stimulus_action(newFormController,'setButton','input') }}>{{ form_widget(password,addTargetArray(newFormController,'password')) }}</div>
+                <div class="MetaData-Label">{{ (hintPrefix~'password')|trans }}</div>
             {% endif %}
             <div class="grid mt-8 mb-2" style="grid-column: 2 / span 2; grid-template-columns: repeat(2,minmax(min-content,max-content))">
                 <button class="Button_primary_go me-2" type="submit" name="newFormSubmit" {{ stimulus_target(newFormController,'save') }}>{{ 'newForm.buttons.save'|trans }}</button>

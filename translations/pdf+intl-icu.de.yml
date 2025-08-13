@@ -1227,7 +1227,7 @@ metadata:
   keywords: |
     Erstellt durch das Ethiktool Version {toolVersion}; vor der Einreichung bei der Ethikkommission duerfen keine Modifikationen an der PDF-Datei vorgenommen werden.
     
-    Erstelldatum: {createTime}
+    Erstelldatum: {createTime} (Europa/Berlin)
 
 # alternative texts for logo
 logo:
