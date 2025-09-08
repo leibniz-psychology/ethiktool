@@ -1,5 +1,7 @@
 // contains functions that are used in .js classes
 
+import DOMPurify from "isomorphic-dompurify";
+
 /** Sets the visibility of an element
  * @param id id of the element or the element itself
  * @param visible true if the element should be visible, false otherwise
@@ -136,4 +138,12 @@ export function checkHTMLvalidity(text, index) {
         }
     }
     return isEntireText ? textLength : index;
+}
+
+/** Sanitizes the string.
+ * @param input string to be sanitized
+ * @returns {string} sanitized string
+ */
+export function sanitizeString(input) {
+    return DOMPurify.sanitize(input,{ALLOWED_TAGS: [], ALLOWED_ATTR: []});
 }

@@ -14,7 +14,7 @@
         {# legal hints #}
         {% if content is not same as [] %}
             {% for paragraph in content %}
-                <div class="textJustify {{ textPreview }}" style="page-break-inside: avoid">{{ paragraph|nl2br }}</div>
+                <div class="textJustify {{ textPreview }}" style="page-break-inside: avoid">{{ paragraph|raw|nl2br }}</div>
             {% endfor %}
         {% endif %}
         {# contact #}
@@ -25,7 +25,7 @@
             {% endfor %}
         </div>
         {# confirmation and table of devices #}
-        <i class="{{ textPreview }}">{{ confirm }}</i>
+        <i class="{{ textPreview }}">{{ confirm|raw|nl2br }}</i>
         <table class="{{ 'tableWidth'~(not savePDF ? 'Preview') }}" style="margin-bottom: 2em; margin-top: 20px; width: 100%; border-spacing: 0; border-collapse: collapse">
             <tr class="{{ textPreview }}" style="font-weight: bold">
                 <td>{{ (prefix~'device')|trans }}</td>

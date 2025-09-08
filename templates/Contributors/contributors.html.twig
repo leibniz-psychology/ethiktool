@@ -44,8 +44,6 @@
         </div>
         <button type="button" class="Button_primary_act mt-2" style="margin-left: 0.3rem" data-bs-toggle="modal" data-bs-target="#formModal" data-bs-id="add">{{ include('images/add.svg') }}</button>
         <div class="mt-4">{{ 'contributors.hint'|trans|raw }}</div>
-        <div class="mt-4">{{ missingTasks[0] }}</div>
-        <div class="mt-4">{{ missingTasks[1] }}</div>
         {{ formRender.addSubmitButtons() }}
         {% set prefix = 'contributors.buttons.' %}
         {{ include('components/formModal.html.twig',{modalTitle: '', modalBody: 'Contributors/addEditContributor.html.twig', leftButton: (prefix~'confirm')|trans, rightButton: (prefix~'cancel')|trans, footerError: (prefix~'error')|trans, targetCont: contributorsController, formTarget: 'modal', labelTarget: 'modalLabel', submitTarget: 'modalSubmit', footerTarget: 'modalFooter'}) }}

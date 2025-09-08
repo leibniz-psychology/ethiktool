@@ -3,25 +3,29 @@
 
 {% block content %}
     {% set pre, preContent, preComplete, post, translationPrefix, informationController = content.pre, content.preContent, content.preComplete, content.post, 'projectdetails.pages.information.', 'Projectdetails--information' %}
-    {% set preCompleteValue, postValue = preComplete.vars.value, post.vars.value %}
-    {% set isPreComplete, isPostNo, addresseeStringParam = preCompleteValue is same as '0', postValue is same as '1', {'addressee': not isInformationII ? addresseeString : participantsString} %}
+    {% set preValue, preCompleteValue, postValue = pre.vars.value, preComplete.vars.value, post.vars.value %}
+    {% set isPreComplete, isPostNo, addresseeStringParam = preCompleteValue is same as '0', postValue is same as '1', {'addressee': isInformation ? addresseeString : participantsString} %}
     {% set preYes, preNo, postType, preCompleteTextHint, informationHintName, preHintDiv, labelParams = 'preYes', 'preNo', 'postType', (translationPrefix~'textHints.preComplete')|trans(addresseeStringParam), 'informationIIIhint', 'preHintDiv', {'labelParams': addresseeStringParam} %}
     <div {{ stimulus_controller(informationController,{
+            'pre': preValue,
             'preCompleteTextHint': [choiceTextHint|trans,preCompleteTextHint],
             'informationHintName': informationHintName,
             'isPreComplete': isPreComplete
     }) }}>
         {# pre #}
-        {% set preSelection, styleHeight = pre.vars.value, {'style': 'height: '~textHeight} %}
-        {% set isPreNo, textParams = preSelection is same as '1', fontNormal|merge({'attributes': styleHeight, 'textHintParams': addresseeStringParam|merge({'participant': not isInformationII ? participantsString : participantsStringpost})}) %}
-        <div id="pre">
+        {% set styleHeight = {'style': 'height: '~textHeight} %}
+        {% set isPreNo, textParams = preValue is same as '1', fontNormal|merge({'attributes': styleHeight, 'textHintParams': addresseeStringParam|merge({'participant': isInformation ? participantsString : participantsStringpost})}) %}
+        <div id="pre" {% if isInformation %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
             {{ formRender.renderButtons(pre,{
-                'text': [content.preText,textParams|merge({'visibility': isPreNo})|merge(not isInformationII and not isPostNo ? {'transfer': [['info','post'],addresseeType]} : {})],
-                'stimVisible': {'values': [['0',preYes],['1',['preTextDiv',preNo]|merge(not isInformationII and textInputPre is not same as '' ? [preHintDiv] : [])]]},
-                'removeHint': [[textInputPre],preHintDiv,isPreNo]}) }}
+                'text': [content.preText,textParams|merge({'visibility': isPreNo})|
+                    merge(isInformation ? {'transfer': [['info','post'],addresseeType], 'contTarget': [informationController,'preText']} : {})],
+                'stimVisible': {'values': [['0',preYes],['1',['preTextDiv',preNo]|
+                    merge(isInformation and textInputPre is not same as '' ? [preHintDiv] : [])]]},
+                'removeHint': [[textInputPre],preHintDiv,isPreNo]}|
+                merge(isInformation ? {'contTarget': ['pre1',informationController,'preNo']} : {})) }}
         </div>
-        <div id="{{ preYes }}" class="mt-8" style="{{ boolToDisplay(preSelection is same as '0') }}" {{ stimulus_target(informationController,'preContent') }}>
-            {{ _self.addType(true,content.preType,isInformationII,addresseeType,'preType') }}
+        <div id="{{ preYes }}" class="mt-8" style="{{ boolToDisplay(preValue is same as '0') }}" {{ stimulus_target(informationController,'preContent') }}>
+            {{ _self.addType(true,content.preType,not isInformation,addresseeType,'preType') }}
             {# pre content #}
             {% set preContentSelection = preContent.vars.value %}
             {{ formRender.renderButtons(preContent,labelParams|merge({
@@ -33,21 +37,45 @@
             {% set anyComplete = preCompleteValue is not same as '' %}
             <div class="mt-8" id="preComplete" style="{{ boolToDisplay(preContentSelection in ['partial','deceit']) }}" {{ stimulus_target(informationController,'preComplete') }}>
                 {{ formRender.renderButtons(preComplete,{
-                    'text': [content.preCompleteText,fontNormal|merge({'contTarget': [informationController,'preCompleteText'], 'attributes': styleHeight|merge({'disabled': not anyComplete}), 'hint': anyComplete ? preCompleteTextHint : choiceTextHint, 'textHintParams': addresseeStringParam, 'textHintID': 'preCompleteTextHint'})],
+                    'text': [content.preCompleteText,fontNormal|
+                        merge({'contTarget': [informationController,'preCompleteText'], 'attributes': styleHeight|merge({'disabled': not anyComplete}), 'hint': anyComplete ? preCompleteTextHint : choiceTextHint, 'textHintParams': addresseeStringParam, 'textHintID': 'preCompleteTextHint'})],
                     'stim': [informationController,'setPreComplete']}|
-                    merge(not isInformationII ? {'removeHint': [[informationIIIinput],informationHintName,preCompleteValue is not same as '0']} : {})) }}
+                    merge(isInformation ? {'removeHint': [[informationIIIinput],informationHintName,preCompleteValue is not same as '0']} : {})) }}
                 {{ _self.addType(isPreComplete,content.preCompleteType,false,addresseeType,'completePostType',[informationController,'preCompleteType']) }}
             </div>
         </div>
         {# post #}
         {% set postHint, postText = 'postHint', content.postText %}
-        <div id="{{ preNo }}" class="mt-8" style="{{ boolToDisplay(isPreNo) }}">
-            {{ formRender.renderButtons(post,{'text': [postText,textParams|merge({'visibility': isPreNo and isPostNo})], 'stimVisible': {'values': [['0',postType],['1',[postText.vars.name~'Div']|merge(textInputPost is not same as '' ? [postHint] : [])]]}, 'removeHint': [[textInputPost],postHint,isPostNo]}) }}
-            {{ _self.addType(isPreNo and postValue is same as '0',content.postType,isInformationII,addresseeType,postType) }}
+        <div id="{{ preNo }}" class="mt-8" style="{{ boolToDisplay(isPreNo) }}" {% if isInformation %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
+            {{ formRender.renderButtons(post,{'text': [postText,textParams|
+                    merge({'visibility': isPreNo and isPostNo})|
+                    merge(isInformation ? {'contTarget': [informationController,'postText']} : {})],
+                'stimVisible': {'values': [['0',postType],['1',[postText.vars.name~'Div']|
+                    merge(textInputPost is not same as '' ? [postHint] : [])]]},
+                'removeHint': [[textInputPost],postHint,isPostNo]}|
+                merge(isInformation ? {'contTarget': ['post0',informationController,'postYes']} : {})) }}
+            {{ _self.addType(isPreNo and postValue is same as '0',content.postType,not isInformation,addresseeType,postType) }}
         </div>
         {# attendance #}
         {% if content.attendance is defined %}
             {{ formRender.renderButtons(content.attendance,{'addDiv': ['attendance']}) }}
+        {% endif %}
+        {# document translation #}
+        {% set docTransString, pdfDiv = 'documentTranslation', 'translationPDFdiv' %}
+        {% if content[docTransString] is defined %}
+            {% set docTrans, description = content[docTransString], docTransString~'Description' %}
+            {% set isDocTrans = docTrans.vars.value is same as '0' %}
+            <div class="mt-8" id="documentTranslation" {{ stimulus_target(informationController,docTransString) }}>
+                {{ formRender.renderButtons(docTrans,{
+                    'text': [content[description],{'fontStyle': true, 'visibility': isDocTrans}],
+                    'stimVisible': {'values': [['0',[description~'Div',pdfDiv]]]}}) }}
+                <div class="mt-4" id="{{ pdfDiv }}" style="{{ boolToDisplay(isDocTrans) }}">
+                    {{ formRender.addHint(translationPrefix~docTransString~'.pdf.hint') }}
+                    <div class="MetaData-Widget">
+                        {{ formRender.addCheckbox(content[docTransString~'PDF']) }}
+                    </div>
+                </div>
+            </div>
         {% endif %}
         {{ formRender.addSubmitButtons() }}
     </div> {# entire form including stimulus controller #}

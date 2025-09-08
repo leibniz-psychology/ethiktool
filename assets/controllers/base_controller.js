@@ -1,6 +1,6 @@
-import { Controller } from "@hotwired/stimulus";
-import { Modal } from "bootstrap";
-import { checkTextareaInput, setElementVisibility, setHint, getSelected } from "./multiFunction";
+import {Controller} from "@hotwired/stimulus";
+import {Modal} from "bootstrap";
+import {checkTextareaInput, getSelected, sanitizeString, setElementVisibility, setHint} from "./multiFunction";
 
 export default class extends Controller {
 
@@ -32,15 +32,16 @@ export default class extends Controller {
             this.formTarget.addEventListener('change', async  (event) => {
                 let target = event.target;
                 let type = target.type;
-                if (this.submitDummyTarget.value!=='load' && type!=='number' && type!=='file') { // if a file is loaded, the type is checked first. If a spinner input is changed, the validity is checked first.
-                    let id = target.id;
-                    if (!(this.routeValue.includes('landing') && (id.includes('Text') || id==='landing_copy') || id.includes('language'))) {
-                        this.submitDummyTarget.value = '';
-                        await this.submitForm(event);
+                if (target.id!=='loadInput') {
+                    if (this.submitDummyTarget.value !== 'load' && type !== 'number' && type !== 'file') { // if a file is loaded, the type is checked first. If a spinner input is changed, the validity is checked first.
+                        let id = target.id;
+                        if (!(this.routeValue.includes('landing') && (id.includes('Text') || id === 'landing_copy') || id.includes('language'))) {
+                            this.submitDummyTarget.value = '';
+                            await this.submitForm(event);
+                        }
+                    } else { // file with wrong extension was tried to be uploaded
+                        this.submitDummyTarget.value = ''
                     }
-                }
-                else { // file with wrong extension was tried to be uploaded
-                    this.submitDummyTarget.value = ''
                 }
             });
         }
@@ -126,15 +127,6 @@ export default class extends Controller {
      */
     checkTextareaInput(event) {
         checkTextareaInput(event);
-    }
-
-    /** Checks if a '<' was entered and if so, removes it.
-     * @param event widget that invoked the method
-     */
-    preventTagStart(event) { // currently only used once by coreData
-        if (event.inputType.includes('insert') && (event.data ?? '').includes('<')) {
-            event.preventDefault();
-        }
     }
 
     /** Sets the visibility of one or more elements. The event must have either a parameter 'values' or 'multi'. If 'values' is passed, it must be an array. Each element is an array itself with two elements. The first element is either a string or an array. The values are either strings or arrays. If the value of the event target equals the first entry, all elements in the value string/array are set visible, otherwise invisible. Example: [['value1', ['id1','id2']]]: if the event value equals 'value1', the elements with IDs 'id1' and 'id2' are set visible. If the first entry is an array, the elements are set visible if the value of the event target is in this array. If 'multi' is passed, it must be an array. Each element is an array itself with two or three entries. Both entries are either strings oder arrays. If all elements in the first entry (which are IDs) are checked, all elements in the second entry (which are IDs) are set visible, otherwise invisible. If a third entry exists, the visibility of all elements in this entry are set opposite to the visibility of the elements in the second entry. Example: [[['id1','id2'],['id3','id4'],['id5','id6']]]: If the elements with IDs 'id1' and 'id2' are checked, the elements with IDs 'id3' and 'id4' are set visible and the elements with IDs 'id5' and 'id6' are set invisible. If a parameter 'setOr' is passed, it must either be the boolean 'true' or an array. Then, the elements are set visible if any of the elements in the first entry are checked. If 'setOr' is passed with an array, it must contain indices. 'setOr' is then only applíed to those arrays in 'multi' with the indices, otherwise to all arrays. In the previous example: If 'id1' or 'id2' are checked. If a parameter 'isGrid' (or 'isFlex') is passed, the 'display' attribute is set to 'grid' ('flex'), otherwise to 'block', if the element is set visible.
@@ -283,6 +275,10 @@ export default class extends Controller {
         body.style.overflow = 'unset';
         body.style.paddingRight = '0';
         let target = event.target;
+        if (target.type.includes('text')) {
+            // sanitize text inputs -> "<letter" will be removed (everything starting from "<"); "< letter", "<number" and "< number" will be escaped. ">" will only be escaped if the text contains "<", too.
+            target.value = sanitizeString(target.value);
+        }
         // set dummy target if on a landing page of projectdetails
         let params = event.params ?? [];
         let isLanding = this.routeValue.includes('landing');
@@ -360,14 +356,13 @@ export default class extends Controller {
      * @param element widget that invoked the method
      */
     setTextareaCharCount(element) {
-        let text = element.value;
+        let text = element.value.replaceAll('<','');
         // get the index of the textarea in the targets
         let id = -1;
         while (id<this.countableTextTargets.length && element!==this.countableTextTargets[id]) {
             ++id;
         }
         let count = this.charCountTargets[id]; // div showing the number of characters entered
-        text = text.replaceAll(/<\/?span>/g,''); // remove all opening/closing span tags without matching closing/opening tag entered by the user to avoid bugs in case a span for highlighting is added
         element.value = text; // enter text in textarea in case tags were removed
         let numChars = text.trim().length; // length of text after removing html tags entered by user, but before adding the span tag
         let maxChars = parseInt(count.dataset.maxChars);
@@ -376,8 +371,6 @@ export default class extends Controller {
         if (isGreater) { // highlight remaining text in red
             text = text.substring(0,maxChars)+'<'+spanTag+text.substring(maxChars)+'</span>';
         }
-        // escape all '<' except the one of the span tag that may have been added -> avoid user generated html
-        text = text.replaceAll('<','&lt;').replace('&lt;'+spanTag,'<'+spanTag).replace('&lt;/span>','</span>');
         if (text.endsWith("\n") || text.endsWith("\n</span>")) { // if entered text ends with a line break, add another line break to keep same height for div
             text += "\n";
         }
@@ -424,16 +417,6 @@ export default class extends Controller {
                 });
             }
         }
-        // load form
-        // this.loadTarget.addEventListener('click', (event) => { // element in the sidebar
-        //     event.preventDefault();
-        //     if (this.hasLoadModalTarget) {
-        //         this.showModal(this.loadModalTarget);
-        //     }
-        //     else {
-        //         this.loadInputTarget.click();
-        //     }
-        // });
         // save button
         if (this.hasDownloadTarget) {
             for (let download of this.downloadTargets) { // one is in the sidebar and eventually a second one on the page
@@ -473,7 +456,7 @@ export default class extends Controller {
             });
             textfield.addEventListener('scroll', () => {
                 textfield.previousElementSibling.scrollTop = textfield.scrollTop;
-            })
+            });
         }
         // prevent submitting the form by pressing enter
         for (let inputField of document.getElementsByTagName('input')) {
@@ -560,17 +543,17 @@ export default class extends Controller {
      * @param dummyVal if not an empty string, value the submitDummyTarget gets set to
      */
     formSubmit(dummyVal = '') {
-        this.submitDummyTarget.value = 'preview:'+(this.hasPreviewTarget ? this.previewTarget.scrollTop : '')+"\n"+this.submitDummyTarget.value;
-        if (dummyVal!=='') {
+        this.submitDummyTarget.value = 'preview:' + (this.hasPreviewTarget ? this.previewTarget.scrollTop : '') + "\n" + this.submitDummyTarget.value;
+        if (dummyVal !== '') {
             let split = this.submitDummyTarget.value.split("\n");
             let isPage = false;
-            for (let [key,value] of Object.entries(split)) {
+            for (let [key, value] of Object.entries(split)) {
                 if (value.includes('app')) { // if immediately after entering text in a text field a button/link is clicked, the form is submitted twice
                     split[key] = dummyVal;
                     isPage = true;
                 }
             }
-            this.submitDummyTarget.value = split.join("\n")+(!isPage ? dummyVal : '');
+            this.submitDummyTarget.value = split.join("\n") + (!isPage ? dummyVal : '');
         }
         this.formTarget.submit();
     }

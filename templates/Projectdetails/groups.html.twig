@@ -12,9 +12,10 @@
             'examinedDescription': [examinedMissing|trans,(examinedDescriptionPrefix~'descriptionOptional')|trans,(examinedDescriptionPrefix~'description')|trans],
             'criteriaHint': criteriaHint,
             'includeStart': includeStart,
-            'firstInclude': firstInclude
+            'firstInclude': firstInclude,
+            'firstIncludeSentence': content.includeText.vars.value|trim|split("\n")[0]
     }) }}>
-        <div>
+        <div id="examinedPeopleDiv">
             {{ formRender.addHeading(examinedPrefix~'title',{'headingHint': [[hintPrefix~'examined']]}) }}
             {# age #}
             {% set unlimited = content.unlimited %}
@@ -35,7 +36,9 @@
             {# examined people #}
             {% set wardsName, isTextInputVoluntary = content.wards.vars.name, textInputVoluntary is not same as '' %}
             {% set iconTemp, heightString = {(wardsName): ''}, 'height: '~textHeight %}
-            {{ formRender.addCheckboxGroup(content,examined,{'addDiv': ['examinedPeople','','mt-2'],
+            {{ formRender.addCheckboxGroup(content,examined,{
+                'addDiv': ['examinedPeople','','mt-2'],
+                'icons': {'healthy': examinedPrefix~'healthyIcon'},
                 'contTargets': {'healthy': [groupsController,'healthy'], (wardsName): [groupsController,wardsName]}|
                     merge(isTextInputVoluntary ? {(content.dependent.vars.name): [groupsController,'dependent']} : {})}) }}
             </div>
@@ -65,7 +68,7 @@
             {% for type in ['include','exclude'] %}
                 {% set textField, prefix, isInclude = content[type~'Text'], tempPrefix~type~'.', type is same as 'include' %}
                 <div class="{{ classes }}" id="{{ type~'Start' }}" style="margin-bottom: -1rem" {% if isInclude %} {{ stimulus_target(groupsController,'includeStart') }} {% endif %}>{{ (prefix~'start')|trans(addresseeParam) }}</div>
-                <div {% if isInclude %} {{ stimulus_action('base','checkTextareaInput','keydown',{'start': textField.vars.value|trim|split("\n")[0], 'furtherAllowed': ['Enter']}) }} {% endif %}>{{ formRender.addTextfield(textField,{'attributes': {'style': 'white-space: pre; overflow-wrap: normal; '~heightString}, 'transfer': criteriaTransfer, 'hint': prefix~'hint', 'textHintParams': {'type': type}}|merge(isInclude ? {'contTarget': [groupsController,type]} : {})) }}</div>
+                <div {% if isInclude %} {{ stimulus_action(groupsController,'checkFirstInclusion','keydown',{'furtherAllowed': ['Enter']}) }} {% endif %}>{{ formRender.addTextfield(textField,{'attributes': {'style': 'white-space: pre; overflow-wrap: normal; '~heightString}, 'transfer': criteriaTransfer, 'hint': prefix~'hint', 'textHintParams': {'type': type}}|merge(isInclude ? {'contTarget': [groupsController,type]} : {})) }}</div>
                 <div class="MetaData-Widget pt-0">
                     {{ formRender.addCheckbox(content[type]) }}
                 </div>

@@ -141,6 +141,10 @@ i.pdfHeading {
     margin: 0;
 }
 
+.markInput {
+    color: blue;
+}
+
 .tableWidth tr {
     height: 25px;
 }

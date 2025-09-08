@@ -78,7 +78,7 @@ class CompletePDFController extends PDFAbstract
                     // examined
                     $groupsArray = $measureTimePoint[self::groupsNode];
                     $tempArray = $groupsArray[self::examinedPeopleNode];
-                    $this->addBriefReportAnswer(self::examinedPeopleNode,array_diff_key($tempArray,['healthy' => '', 'otherPeople' => ''])!==[] // people other than healthy and other are examined
+                    $this->addBriefReportAnswer(self::examinedPeopleNode,array_diff_key($tempArray,[self::healthyExaminedNode => '', self::dependentExaminedNode => '', 'otherPeople' => ''])!==[] // people other than healthy, dependent, and other are examined
                         ? self::answerYes
                         : (array_key_exists('otherPeople',$tempArray) || // only other is selected
                            $groupsArray[self::minAge]<18 // underage
@@ -131,7 +131,7 @@ class CompletePDFController extends PDFAbstract
             self::$pdf->removeTemporaryFiles();
             return new Response();
         }
-        return new Response($completePDF.$session->get(self::pdfApplication).$session->get(self::pdfParticipation));
+        return new Response($completePDF.$session->get(self::pdfApplication).$session->get(self::pdfParticipation.'Marked'));
     }
 
     /** Adds an element to $this->briefReport.

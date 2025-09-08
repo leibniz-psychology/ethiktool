@@ -84,6 +84,8 @@ trait ProjectdetailsTrait
     protected const postText = 'postText';
     // other widgets
     protected const attendanceNode = 'attendance';
+    protected const documentTranslationNode = 'documentTranslation';
+    protected const documentTranslationPDF = 'documentTranslationPDF';
     // informationIII
     protected const informationIIINode = 'informationIII';
     protected const informationIIIInputsTypes = ['goals' => 'checkDoc.projectdetails.pages.informationIII.goals', 'infoBefore' => 'checkDoc.projectdetails.pages.informationIII.infoBefore', 'infoAfter' => 'checkDoc.projectdetails.pages.informationIII.infoAfter', 'explain' => 'checkDoc.projectdetails.pages.informationIII.explain'];
@@ -138,6 +140,7 @@ trait ProjectdetailsTrait
     protected const consentNotApplicable = 'notApplicable'; // must equal on of the values in $consentTypes
     protected const consentOral = 'oral'; // must equal one of the values in $consentTypes
     protected const consentTypesAny = ['written','digital','oral']; // must equal the values in $consentTypes; contains all types of consent where a consent gets created
+    protected const consentTypesAll = ['written','digital','oral','other']; // must equal the values in $consentTypes; contains all types of consent where consent is given
     protected const consentOther = 'other'; // must equal one of the values in $consentTypes
     protected const consentTypes = ['projectdetails.pages.consent.consent.types.written' => 'written', 'projectdetails.pages.consent.consent.types.digital' => 'digital', 'projectdetails.pages.consent.consent.types.oral' => 'oral', 'projectdetails.pages.consent.consent.types.noConsent' => 'no', 'projectdetails.pages.consent.consent.types.notApplicable' => 'notApplicable', 'projectdetails.pages.consent.consent.types.other' => 'other'];
     protected const consentOtherDescription = 'otherDescription';
@@ -145,7 +148,7 @@ trait ProjectdetailsTrait
     protected const terminateConsParticipationNode = 'participation'; // description of terminate cons for participation document
     protected const terminateParticipantsNode = 'terminateParticipants';
     protected const terminateParticipantsOther = 'terminateParticipantsOther'; // must equal one value in terminateParticipantsTypes
-    protected const terminateParticipantsTypes = ['projectdetails.pages.consent.terminateParticipants.types.remove' => 'remove', 'projectdetails.pages.consent.terminateParticipants.types.removePartial' => 'removePartial', 'projectdetails.pages.consent.terminateParticipants.types.terminateParticipantsOther' => 'terminateParticipantsOther'];
+    protected const terminateParticipantsTypes = ['projectdetails.pages.consent.terminateParticipants.types.remove' => 'remove', 'projectdetails.pages.consent.terminateParticipants.types.removePartial' => 'removePartial', 'projectdetails.pages.consent.terminateParticipants.types.documentation' => 'documentation', 'projectdetails.pages.consent.terminateParticipants.types.choose' => 'choose', 'projectdetails.pages.consent.terminateParticipants.types.terminateParticipantsOther' => 'terminateParticipantsOther'];
     protected const terminateCriteriaNode = 'terminateCriteria';
     protected const chosen2Node = 'chosen2';
     // compensation

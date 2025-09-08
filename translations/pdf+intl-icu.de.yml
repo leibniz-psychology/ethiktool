@@ -58,7 +58,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
   summary: 'Zusammenfassung des Forschungsprojekts'
   votes:
     otherVote: 'Wurde dieses Forschungsprojekt schon einmal von einer anderen Ethikkommission begutachtet?'
-    instVote: 'Wurde ein ähnliches Forschungsprojekt schon einmal von {committeeDat} begutachtet?'
+    instVote: 'Wurde ein ähnliches eigenes Forschungsprojekt schon einmal von {committeeDat} begutachtet?'
   medicine:
     medicine: 'Wird medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt, die ggf. nach Arzneimittelgesetz (AMG) oder Medizinproduktegesetz (MPDG) oder anderen gesetzlichen Vorgaben bewertet werden muss?'
     physician: 'Sind Ärztinnen oder Ärzte unter den Projektbeteiligten?'
@@ -133,10 +133,12 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                                         true  {}
                                         other {Erziehungsberechtigten bzw. gesetzlichen Vertretungspersonen}}}} bei der Erhebung anwesend?
     information: 'Wird vorab darüber aufgeklärt, dass eine Studienteilnahme erfolgt?'
+    informationSub: 'Werden die Teilnahmedokumente in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?'
     preContent: 'Wie umfassend ist die Vorab-Aufklärung hinsichtlich der Ziele, Inhalte und Methoden der Studie?'
     preComplete: 'Wird die vollständige Aufklärung später nachgeholt (d.h. werden die Vorab-Informationen ergänzt bzw. richtiggestellt)?'
     preCompleteSub: 'Form der nachträglichen vollständigen Aufklärung:'
     post: 'Wird nachträglich darüber aufgeklärt, dass an einer Studie teilgenommen wurde?'
+    postSub: 'Werden die Teilnahmedokumente in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?'
     voluntary: 'Erfolgt die Teilnahme freiwillig?'
     voluntarySub: 'Begründung, wann und warum die Freiwilligkeit nicht garantiert ist'
     voluntaryYes: 'Wie wird die freiwillige Studienteilnahme trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis) gewährleistet?'
@@ -236,7 +238,7 @@ coreData:
     startedDescription: |
       
       
-      Begründung, warum der Ethikantrag nicht vor Beginn der Datenerhebung gestellt werden konnte:
+      Beschreibung des Stands der Datenerhebung:
 
 summary: 'Zusammenfassung des Forschungsprojekts'
 
@@ -306,6 +308,12 @@ projectdetails:
                     true  {({groupName})}
                     other {}}
     measureTimePoint: 'ein Zeitpunkt'
+  pdf: >-
+    Am Ende des Antrags befinden sich {type, select,
+                                        measures      {ergänzende Materialien zu den Erhebungsmethoden}
+                                        interventions {ergänzende Materialien zu den Maßnahmen}
+                                        otherSources  {ergänzende Materialien zu den Daten anderer Stellen}
+                                        other {die übersetzten Teilnahmedokumente}}.
   groups:
     examined:
       title: >-
@@ -400,14 +408,16 @@ projectdetails:
                                                                                                                               other {{measureTime} Minuten}} reine Erhebungszeit und {breaks, select,
         1     {1 Minute}
         other {{breaks} Minuten}} Vor- und Nachbereitungszeit sowie Pausenzeiten.}}
-    location: >-
-      Die Untersuchung {information, select,
-                          post  {fand}
-                          other {findet}} {location, select,
-                                            intern {in Räumlichkeiten {committeeLocationGen} statt, und zwar {description}}
-                                            extern {in Räumlichkeiten externer Kooperationspartner statt, und zwar {description}}
-                                            online {online über die Plattform {description} statt.}
-                                            other  {{description}}}
+    location:
+      start: >-
+        Die Untersuchung {information, select,
+                            post  {fand}
+                            other {findet}} {location, select,
+                                              intern {in Räumlichkeiten {committeeLocationGen} statt, und zwar }
+                                              extern {in Räumlichkeiten externer Kooperationspartner statt, und zwar }
+                                              online {online über die Plattform }
+                                              other  {}}
+      end: ' statt.' # only for online
   burdensRisks:
     burdens:
       noBurdens: 'keine Belastungen'
@@ -476,22 +486,34 @@ projectdetails:
 
 
     types:
-      noCompensation: 'keine Aufwandsentschädigung'
-      money: >-
-        eine {additional, select,
-                flat  {pauschale }
-                other {}}finanzielle Aufwandsentschädigung in Höhe von {description}€{additional, select,
+      noCompensation:
+        start: 'keine Aufwandsentschädigung'
+        end: ''
+      money:
+        start: >-
+          eine {additional, select,
+                  flat  {pauschale }
+                  other {}}finanzielle Aufwandsentschädigung in Höhe von {description}€{additional, select,
                                                                                          flat  {}
                                                                                          other { pro Stunde}}
-      hours: >-
-        {additional, select,
-          flat  {{hoursValue}}
-          other {}} {amount, plural,
-                      =1    {Versuchspersonenstunde}
-                      other {Versuchspersonenstunden}} (anrechenbar in: {description})
-      lottery: 'die Möglichkeit, an einer Verlosung teilzunehmen ({description})'
-      voucher: 'eine geldwerte Aufwandsentschädigung in Form eines Gutscheins ({description})'
-      compensationOther: 'folgende Aufwandsentschädigung: {description}'
+        end: ''
+      hours:
+        start: >-
+          {additional, select,
+            flat  {{hoursValue}}
+            other {}} {amount, plural,
+                        =1    {Versuchspersonenstunde}
+                        other {Versuchspersonenstunden}} (anrechenbar in:
+        end: ')'
+      lottery:
+        start: 'die Möglichkeit, an einer Verlosung teilzunehmen ('
+        end: ')'
+      voucher:
+        start: 'eine geldwerte Aufwandsentschädigung in Form eines Gutscheins ('
+        end: ')'
+      compensationOther:
+        start: 'folgende Aufwandsentschädigung: '
+        end: ''
     namely: ', und zwar '
     laterEnd: # awarding. other is participants in select
       title: 'Hierfür werden folgende Informationen benötigt: '
@@ -526,9 +548,14 @@ projectdetails:
 
 # participation
 participation:
-  projectTitleHeader:
-    start: '<a href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Forschungsprojekt</a> „'
-    end: '{projectTitle}“'
+  projectTitleHeader: >-
+    <a href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitle{isDifferent, select,
+        true  {Participation}
+        other {}}">Forschungsprojekt</a> „{projectTitle}“
+  marking: >-
+    Schwarze Schriftfarbe kennzeichnet vom Ethiktool automatisch erzeugten Text. Blaue Schriftfarbe kennzeichnet selbst formulierten Text. {savePDF, select,
+      true  {Für die tatsächliche Verwendung der Teilnahmedokumente stehen die PDF-Dateien ohne farbliche Markierung im Ordner „{singleDocsName}“ zur Verfügung.}
+      other {}}
   oral: 'Die Aufklärung zur Studienteilnahme erfolgt mündlich. Sie orientiert sich an den hier verschriftlichten Informationen.'
   headings:
     goals: 'Hintergrund und Zielsetzung der Studie'
@@ -570,7 +597,7 @@ participation:
   intro:
     leader:
       title: '<b>Projektleitung:</b>'
-      text: 'Die Gesamtverantwortung für diese Studie liegt bei {leader}.'
+      text: 'Die Gesamtverantwortung für diese Studie liegt bei '
     contributors: 'Zudem sind folgende Personen an der Studie beteiligt: {contributors}.'
     funding: >-
       {isQualiFunding, select,
@@ -592,15 +619,15 @@ participation:
       {terminateCons, select,
          true  {In diesem Fall }
          other {Im Fall des vorzeitigen Abbruchs }} {compensation, select,
-                                                      complete {erfolgt die Aufwandsentschädigung vollumfänglich.}
-                                                      partial  {erfolgt die Aufwandsentschädigung anteilig.}
+                                                      complete {erfolgt die Aufwandsentschädigung vollumfänglich}
+                                                      partial  {erfolgt die Aufwandsentschädigung anteilig}
                                                       nothing  {{addressee, select,
                                                                    children {erhält Ihr Kind}
                                                                    wards    {erhält die von Ihnen betreute Person}
                                                                    other    {erhalten Sie}} {terminateCons, select,
                                                                                               true {jedoch}
-                                                                                              other {außerdem}} keine Aufwandsentschädigung. Dies begründet sich wie folgt: {description}.}
-                                                      other    {{description}.}}
+                                                                                              other {außerdem}} keine Aufwandsentschädigung. Dies begründet sich wie folgt: }
+                                                      other    {}}
   proCon:
     pro: 'Vorteile/Nutzen'
     con: >-
@@ -665,22 +692,26 @@ participation:
     post: >-
           Wir haben Sie vorab nicht darüber aufgeklärt, dass
           {addressee, select,
-            children {Ihr Kind an einer wissenschaftlichen Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie und Ihr Kind daher nicht im Vorhinein um freiwillige Einwilligung bzw. Zustimmung zur Studienteilnahme bitten. {isConsent, select,
+            children {Ihr Kind an einer Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie und Ihr Kind daher nicht im Vorhinein um freiwillige Einwilligung bzw. Zustimmung zur Studienteilnahme bitten. {isConsent, select,
                                 true  {Sie und Ihr Kind haben aber jetzt die Möglichkeit frei zu entscheiden, ob wir die von Ihrem Kind erhobenen Daten verwenden dürfen.}
                                 other {}}}
-            wards    {die von Ihnen betreute Person an einer wissenschaftlichen Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie und die von Ihnen betreute Person daher nicht im Vorhinein um freiwillige Einwilligung bzw. Zustimmung zur Studienteilnahme bitten. {isConsent, select,
+            wards    {die von Ihnen betreute Person an einer Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie und die von Ihnen betreute Person daher nicht im Vorhinein um freiwillige Einwilligung bzw. Zustimmung zur Studienteilnahme bitten. {isConsent, select,
                                 true  {Sie und die von Ihnen betreute Person haben aber jetzt die Möglichkeit frei zu entscheiden, ob wir die von der betreuten Person erhobenen Daten verwenden dürfen.}
                                 other {}}}
-            other    {Sie an einer wissenschaftlichen Studie teilnehmen. Dies begründet sich wie folgt: {description}. Wir konnten Sie deshalb nicht im Vorhinein um Ihre freiwillige Einwilligung in die Studienteilnahme bitten. {isConsent, select,
+            other    {Sie an einer Studie teilnehmen. Dies begründet sich wie folgt: {description}. Wir konnten Sie deshalb nicht im Vorhinein um Ihre freiwillige Einwilligung in die Studienteilnahme bitten. {isConsent, select,
                                 true  {Sie haben aber jetzt die Möglichkeit frei zu entscheiden, ob wir die von Ihnen erhobenen Daten verwenden dürfen.}
                                 other {}}}}
     terminateParticipants: >-
-      Bei vorzeitigem Abbruch {type, select,
-                                remove        {werden die erhobenen Daten umgehend gelöscht und fließen nicht in die Auswertung ein.}
-                                removePartial {werden die bis zu diesem Zeitpunkt erhobenen Daten für die Auswertung genutzt.}
-                                other         {wird mit den erhobenen Daten wie folgt verfahren: {description}}}
+      {information, select,
+        post  {Wenn die Studienteilnahme vorzeitig abgebrochen wurde,}
+        other {Bei vorzeitigem Abbruch}} {type, select,
+                                           remove        {werden die erhobenen Daten umgehend gelöscht und fließen nicht in die Auswertung ein.}
+                                           removePartial {werden die bis zu diesem Zeitpunkt erhobenen Daten für die Auswertung genutzt.}
+                                           documentation {werden die bis zu diesem Zeitpunkt erhobenen Daten zu Dokumentationszwecken gespeichert, fließen jedoch nicht in die Auswertung ein.}
+                                           choose        {können Sie entscheiden, ob die bis zu diesem Zeitpunkt erhobenen Daten gelöscht werden oder in die Auswertung einfließen.}
+                                           other         {wird mit den erhobenen Daten wie folgt verfahren: {description}}}
   dataPrivacy:
-    otherSources: 'Zudem werden folgende Daten von anderen Stellen hinzugezogen: {description}' 
+    otherSources: 'Zudem werden folgende Daten von anderen Stellen hinzugezogen: '
     personal: 'Im Rahmen dieser Studie werden personenbezogene Daten erhoben und verarbeitet. {otherSources} Der Umgang mit den personenbezogenen Daten wird ausführlich in der beigefügten Anlage zur Datenverarbeitung erläutert.'
     personalMaybe: 'Im Rahmen dieser Studie ist die Verarbeitung personenbezogener Daten nicht beabsichtigt, es lässt sich aber nicht vollkommen ausschließen, dass durch Kombination der erhobenen Daten mit Zusatzwissen einzelne Personen identifiziert werden können. {otherSources} Darum erklären wir den Umgang mit den eventuell personenbezogenen Daten ausführlich in der beigefügten Anlage zur Datenverarbeitung.'
     noTool: 'Im Rahmen dieser Studie werden Daten erhoben und verarbeitet. {otherSources} Der Umgang mit den Daten wird ausführlich in der beigefügten Datenschutzerklärung erläutert.'
@@ -690,7 +721,7 @@ participation:
         Die Forschungsdaten werden {isSecond, select,
                             true  {außerdem}
                             other {}} mit {type, select,
-                                            external {einem Code versehen, der außerhalb des Projekts vergeben wurde oder wird, und zwar {description} }
+                                            external {einem Code versehen, der außerhalb des Projekts vergeben wurde oder wird, und zwar }
                                             internal {einem projektinternen Code versehen. }
                                             other    {{addressee, select,
                                                         children {dem Namen Ihres Kindes versehen. }
@@ -761,9 +792,11 @@ participation:
                                             other {}} sind alle erhobenen Forschungsdaten personenbezogen.
     codeCompensation: # must be the same logic as the marking key above. types-keys are copied from messages. Exampled are removed and addressee is added where applicable
       codeMarking: >- # other is internal
-        Die Vergabe der Aufwandsentschädigung erfolgt über einen {type, select,
-                                                                    external {extern vergebenen Code, und zwar {description} }
-                                                                    other    {projektinternen Code. }}
+        Die Vergabe der Aufwandsentschädigung erfolgt {purposeCompensation, select,
+                                                        true  {zudem}
+                                                        other {}} über einen {type, select,
+                                                                                external {extern vergebenen Code, und zwar }
+                                                                                other    {projektinternen Code. }}
       external:
         types:
           anonymous: 'Der Code selbst lässt keinen Rückschluss auf konkrete Personen zu. Die Zuordnung des Codes zu personenidentifizierenden Daten ist nur der Stelle möglich, die den Code ursprünglich vergeben hat. Informationen zum Umgang mit den personenbezogenen Daten sind dort erhältlich.'
@@ -826,11 +859,12 @@ participation:
 # data privacy
 dataPrivacy:
   title: 'Anlage zur Datenverarbeitung'
-  intro: |
+  intro: >-
     Informationen zur Verarbeitung personenbezogener Daten im Rahmen {numStudies, plural,
                                                                        =1    {der Studie „{projectTitle}“}
                                                                        other {des Forschungsprojekts „{projectTitle}“, Studie {studyID}}} (Version vom {curDate}).
     Mit diesen Datenschutzhinweisen kommt {committeeLocation} ihrer Informationspflicht gemäß Artikel 13 und 14 der EU-Datenschutzgrundverordnung (DS-GVO) nach.
+    
     Hinsichtlich der weiteren verwendeten Begriffe „personenbezogene Daten“, „Verarbeitung“, „Verantwortlicher“, „Dritter“ etc. wird auf die Definitionen in Artikel 4 der DS-GVO verwiesen.
   contact:
     title: 'Kontaktdaten'
@@ -935,9 +969,9 @@ dataPrivacy:
       start: 'Zugriff auf die personenbezogenen Daten für {purpose} haben lediglich folgende Personengruppen:'
       types:
         contributors: 'Alle Projektbeteiligten {committeeLocationGen}'
-        contributorsPart: 'Folgende Projektbeteiligte {committeeLocationGen}: {description}'
-        institution: 'Folgende Nicht-Projektbeteiligte {committeeLocationGen}: {description}'
-        contributorsOther: 'Projektbeteiligte von Partnerinstitutionen {description}'
+        contributorsPart: 'Folgende Projektbeteiligte {committeeLocationGen}: '
+        institution: 'Folgende Nicht-Projektbeteiligte {committeeLocationGen}: '
+        contributorsOther: 'Projektbeteiligte von Partnerinstitutionen '
         accessExternal: 'Externe Dienstleistende'
         dataService: 'Externe Software/Datendienste'
     orderProcessingKnown:
@@ -952,7 +986,7 @@ dataPrivacy:
   anonymization:
     title: 'Anonymisierung und Aufbewahrung/Löschung der Daten'
     dataResearchNo: 'Die Forschungsdaten werden nicht anonymisiert.'
-  storage: 'Die Originaldaten werden unverzüglich nach der Anonymisierungsmaßnahme gelöscht, also voraussichtlich {description}'
+  storage: 'Die Originaldaten werden unverzüglich nach der Anonymisierungsmaßnahme gelöscht, also voraussichtlich '
   personalKeep:
     types: # also used for consent if consent is optional
       documentation: 'zur Qualitätssicherung/Dokumentation'
@@ -960,11 +994,11 @@ dataPrivacy:
       teaching: 'zur Verwendung im Rahmen der Lehre'
       demonstration: 'zur beispielhaften Demonstration'
   markingRemove: # start of sentence: 'Die Verknüpfung der Forschungsdaten mit personenbezogenen Daten zum Zweck {purpose} wird '
-    markingRemoveImmediately: 'unverzüglich nach Erfüllung des Zwecks, also voraussichtlich {description} '
-    markingRemoveLater: 'zu einem späteren Zeitpunkt aufgehoben, und zwar {description} '
+    markingRemoveImmediately: 'unverzüglich nach Erfüllung des Zwecks, also voraussichtlich '
+    markingRemoveLater: 'zu einem späteren Zeitpunkt aufgehoben, und zwar '
   personalRemove: # start of sentence: 'Personenbezogene Daten, die für {purpose} verarbeitet werden, werden '
-    immediately: 'unverzüglich nach Erfüllung des Zwecks gelöscht, also voraussichtlich {description}'
-    keep: 'nicht gelöscht. {description}'
+    immediately: 'unverzüglich nach Erfüllung des Zwecks gelöscht, also voraussichtlich '
+    keep: 'nicht gelöscht. '
     keepFurther: 'von den Projektbeteiligten unverzüglich nach Erfüllung des Zwecks gelöscht. Andere Stellen bewahren die Daten aber gemäß vorgeschriebener Aufbewahrungsfristen länger auf (z.B. zur rechnerischen Nachweisführung).'
   public:
     title: 'Datenveröffentlichung/-bereitstellung'
@@ -1090,11 +1124,11 @@ consent:
     Ich habe die Informationen zu {information, select,
                                     post  {}
                                     other {der Teilnahme an}} der Studie im Rahmen des Forschungsprojekts mit dem Titel „{projectTitle}“ {isPersonal, select,
-                                                true  {und die beigefügte Anlage zur Datenverarbeitung}
-                                                other {}} {informationType, select,
-                                                            oral  {erhalten}
-                                                            other {gelesen}} und verstanden. Ich bin ausreichend informiert worden und hatte die Möglichkeit, Fragen zu stellen.
-    
+          true  {und die beigefügte Anlage zur Datenverarbeitung}
+          other {}} {informationType, select,
+                      oral  {erhalten}
+                      other {gelesen}} und verstanden. Ich bin ausreichend informiert worden und hatte die Möglichkeit, Fragen zu stellen.
+      
     Mir ist bewusst, dass {information, select,
                             post  {die Zustimmung zur Verwendung {addressee, select,
                                                          children {der Daten meines Kindes freiwillig ist und dass weder meinem Kind noch mir bei einer Nicht-Einwilligung Nachteile entstehen.}

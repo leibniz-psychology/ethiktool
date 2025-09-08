@@ -35,7 +35,7 @@
             {% endif %}
             <div class="mt-2" id="{{ exReDiv }}" style="{{ boolToDisplay(appValue in exRe) }}">
                 {{ form_label(description,null,addLabelClass('MetaData-Label')) }}
-                <div class="MetaData-Widget" style="width: 20rem" {{ stimulus_action('base','preventTagStart','beforeinput') }}>{{ form_widget(description,textInputAttr) }}</div>
+                <div class="MetaData-Widget" style="width: 20rem">{{ form_widget(description,textInputAttr) }}</div>
                 {{ formRender.addHint(translationPrefix~'appType.hint') }}
             </div>
         </div>

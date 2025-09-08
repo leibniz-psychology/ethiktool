@@ -16,7 +16,7 @@
                     {% set templateVars = template.vars %}
                     {% set isIntroTemplate = templateVars.checked %}
                     <div id="{{ introHint }}" style="{{ boolToDisplay(not isIntroTemplate) }}; grid-row: 2">{{ formRender.addHint(translationPrefix~'intro.headingHint') }}</div>
-                    <div class="template" id="{{ introTemplate }}" style="{{ boolToDisplay(isIntroTemplate) }}; grid-row: 2">{{ introTemplateText }}</div>
+                    <div class="template" id="{{ introTemplate }}" style="{{ boolToDisplay(isIntroTemplate) }}; grid-row: 2">{{ introTemplateText|raw }}</div> {# intro template containts project title #}
                 {% endif %}
                 {{ formRender.addCountableTextfield(widget,maxCharsIntroGoalsProcedure,transferArray|merge(not isIntro ? {'hint': [[translationPrefix~type~'.'~headingHint,{'multiple': boolToString(true in multipleStudyGroupMeasure)}]]} : {'template': template, 'templateClass' : true, 'visible': not isIntroTemplate, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,introTemplate,[name~'Div',name~'Count',introHint]|merge(isTransfer ? [name~'PDF'] : [])]], 'isGrid': true}]})) }}
             </div>

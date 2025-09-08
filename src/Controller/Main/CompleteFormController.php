@@ -54,9 +54,13 @@ class CompleteFormController extends ControllerAbstract
                     $informationIIArray = $measureTimePoint[self::informationIINode];
                     $isInformationII = $this->checkInformation($informationIIArray);
                     $pdfArray = [];
-                    if ($this->checkInformation($measureTimePoint[self::informationNode]) || // information of participants or third party
+                    $informationArray = $measureTimePoint[self::informationNode];
+                    if ($this->checkInformation($informationArray) || // information of participants or third party
                         $isInformationII) { // information of participants if third party
                         $anyDoc = 'true';
+                    }
+                    if (array_key_exists(self::documentTranslationPDF,$informationArray[self::documentTranslationNode] ?? [])) {
+                        $pdfArray[self::informationNode] = [];
                     }
                     if ($isInformationII) {
                        $pdfArray[self::informationIINode] = [self::informationNode => $this->getInformationString($informationIIArray), self::addressee => $this->getAddressee($measureTimePoint[self::groupsNode])]; // must be 'pre' or 'post' at this point

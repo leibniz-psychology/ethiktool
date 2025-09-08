@@ -118,7 +118,7 @@
                                             {% endif %}
                                             {% set typeValue = typeValue~(isLater ? 'Other') %}
                                             {% if isLater or isExternal or value is same as 'other' %} {# if later, the later type other description #}
-                                                <div class="MetaData-Widget" id="{{ typeValue~'Div' }}" style="{{boolToDisplay(not isLater ? vars.checked : laterDeliver.vars.value is same as laterEndOther) }}" {{ stimulus_action('base','preventTagStart','beforeinput') }}>
+                                                <div class="MetaData-Widget" id="{{ typeValue~'Div' }}" style="{{boolToDisplay(not isLater ? vars.checked : laterDeliver.vars.value is same as laterEndOther) }}">
                                                     {% if isExternal %}
                                                         <div class="mt-1 hint">{{ (tempPrefix~'externalTextHint')|trans }}</div> {# hint above text field #}
                                                     {% endif %}
@@ -142,7 +142,10 @@
             </div>
             {# compensation voluntary #}
             {% set voluntary, tempPrefix = content.compensationVoluntary, translationPrefix~'furtherDescription.' %}
-            {{ formRender.renderButtons(voluntary,{'stim': ['base','setWidgetByValue',{'widgetValue': ['','furtherDescription',otherHints]}], 'addDiv': ['compensationVoluntary']}) }}
+            {{ formRender.renderButtons(voluntary,{
+                'stim': ['base','setWidgetByValue',{'widgetValue': ['','furtherDescription',otherHints]}],
+                'hint': [translationPrefix~'compensationVoluntary.'],
+                'addDiv': ['compensationVoluntary']}) }}
             {# further description #}
             <div class="mt-8" id="furtherDescriptionDiv">
                 {{ formRender.addHeading(tempPrefix~'title') }}

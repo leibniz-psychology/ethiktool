@@ -457,7 +457,7 @@ class CheckDocClass extends ControllerAbstract
         $this->checkMissingContent($coreDataArray,[self::projectEnd => $tempPrefix.'end.title']);
         $start = $tempArray[self::chosen];
         $isBegun = array_key_exists(self::descriptionNode,$tempArray);
-        $today = new DateTime('today', $this->getTimezone());
+        $today = $this->getCurrentDate();
         $validStart = false; // gets true if a date is selected
         if (!($start==='' || $start==='0' || $isBegun)) { // if 'next' is selected, $start is '0' and $isBegun is false
             $start = (new DateTime($start))->setTime(0,0);
@@ -590,7 +590,7 @@ class CheckDocClass extends ControllerAbstract
         foreach ($windowArray as $index => $contributor) {
             $infos = $contributor[self::infosNode];
             $tasks = $contributor[self::taskNode];
-            $parameter = ['index' => $index+1, 'name' => $infos[self::nameNode]];
+            $parameter = ['index' => $index+1, 'name' => $infos[self::nameNode], 'isSupervisor' => $this->getStringFromBool($isStudentPhd)];
             // infos
             if (!($index===0 || $index===1 && $isStudentPhd)) {
                 $lineTitle = $this->translateString(self::contributorsPrefix.'lineTitle',$parameter);
@@ -610,7 +610,8 @@ class CheckDocClass extends ControllerAbstract
                 }
             }
             // tasks
-            if ($tasks==='') { // contributor does not have any task
+            $numTasks = $tasks==='' ? 0 : count($tasks);
+            if ($numTasks===0 || $numTasks===1 && ($index===0 || $index===1 && $isStudentPhd)) { // contributor does not have any task
                 $this->addCheckLabelString($tasksPrefix.'missing',parameters: $parameter);
             }
             else {
@@ -739,8 +740,14 @@ class CheckDocClass extends ControllerAbstract
                     }
                 }
             }
+            // attendance
             if (array_key_exists(self::attendanceNode,$pageArray)) {
                 $this->checkMissingChosen($pageArray,$translationStart.self::attendanceNode,2,self::attendanceNode,true,self::attendanceNode,$this->paramsAddressee);
+            }
+            // document translation
+            if (array_key_exists(self::documentTranslationNode,$pageArray)) {
+                $tempPrefix = $translationStart.self::documentTranslationNode.'.';
+                $this->checkMissingTextfield($pageArray[self::documentTranslationNode],2,0,$tempPrefix.'missing',self::documentTranslationNode,$tempPrefix.self::descriptionNode);
             }
         }
         $this->setProjectdetailsTitle($setTitle);
@@ -936,7 +943,9 @@ class CheckDocClass extends ControllerAbstract
         }
         // termination by participants
         $tempPrefix = $translationPage.self::terminateParticipantsNode.'.';
-        $this->checkMissingTextfield($pageArray[self::terminateParticipantsNode],null,self::terminateParticipantsOther,$tempPrefix.'title',self::terminateParticipantsNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::terminateParticipantsNode,true));
+        if (!in_array($this->checkMissingTextfield($pageArray[self::terminateParticipantsNode],null,self::terminateParticipantsOther,$tempPrefix.'title',self::terminateParticipantsNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::terminateParticipantsNode,true)),['','remove','choose']) && $this->noPre && in_array($consentAddressee,self::consentTypesAll)) { // no pre information and consent is given -> data must either be deleted or participants must choose whether to delete or keep
+            $this->addCheckLabelString($tempPrefix.self::informationNode,parameters: array_merge($this->paramsAddressee,$this->routeIDs));
+        }
         // terminate criteria
         $this->checkMissingContent($pageArray,[self::terminateCriteriaNode => $translationPage.self::terminateCriteriaNode],true,hash: $this->addDiv(self::terminateCriteriaNode));
         $this->setProjectdetailsTitle($setTitle);
@@ -1892,18 +1901,6 @@ class CheckDocClass extends ControllerAbstract
             $returnVal = $maxVal;
         }
         return $isString ? $curVal : $returnVal;
-    }
-
-    // further functions
-
-    /** Adds 'Div' to a string.
-     * @param string $string string where 'Div' gets appended
-     * @param bool $addMiddle if false, only 'Div' will be appended
-     * @param bool $addText if true, 'Text' will be added before 'Div', otherwise 'Description'. Only used if $addMiddle is true
-     * @return string $string with 'Div' appended
-     */
-    private function addDiv(string $string, bool $addMiddle = false, bool $addText = true): string {
-        return $string.($addMiddle ? ($addText ? 'Text' : self::descriptionCap) : '').'Div';
     }
 
     // methods for checking if a valid input was made

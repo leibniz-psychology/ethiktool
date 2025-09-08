@@ -12,16 +12,14 @@
             {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
         <div class="noPageBreak {% if not isSeparate %} pdfMargin {% endif %}">  {# avoid page break between heading and first paragraph #}
             <div>{{ pdfMacros.addHeading(consentHeading,savePDF) }}</div>
-            <div class="{{ justify }}">{{ consent[0]|nl2br }}</div>
+            <div class="{{ justify }}">{{ consent[0]|raw|nl2br }}</div>
         </div>
         {% for paragraph in consent|slice(1) %}
-            <div class="{{ justify}}">{{ paragraph|nl2br }}</div>
+            <div class="{{ justify}}">{{ paragraph|raw|nl2br }}</div>
         {% endfor %}
         <div class="noPageBreak">
             <div class="{{ justify}}" style="margin-bottom: 2em; font-weight: bold">{{ 'consent.confirm'|trans({'addressee': addressee, 'information': information, 'isPersonal': isPersonal}) }}</div>
-            {% if consentType in ['digital','oral'] %}
-                <div class="{{ justify}}">{{ ('consent.'~consentType)|trans }}</div>
-            {% else %}
+            {% if optionalConsent is not same as [] %}
                 {% set classes = 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : '') %}
                 <div class="{{ textPreview }}" style="page-break-inside: avoid">
                     {% for text in optionalConsent %}
@@ -37,6 +35,10 @@
                         </table>
                     {% endfor %}
                 </div>
+            {% endif %}
+            {% if consentType in ['digital','oral'] %}
+                <div class="{{ justify}}">{{ ('consent.'~consentType)|trans }}</div>
+            {% else %}
                 <div style="page-break-inside: avoid">
                     {{ pdfMacros.addSignature(savePDF,addressee,true) }}
                 </div>

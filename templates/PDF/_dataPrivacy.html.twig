@@ -7,11 +7,11 @@
         {{ pdfMacros.addLine() }}
     {% endif %}
     <div>
-        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete,not savePDF ? 'max-height: 20px') }}
+        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
         <div class="noPageBreak"> {# avoid page break between heading and first paragraph #}
             {{ pdfMacros.addHeading(privacyHeading,savePDF) }}
             <div class="{{ textPreview }}" style="{{ style }}">
-                {{ 'dataPrivacy.intro'|trans(committeeParams|merge({'numStudies': numStudies, 'studyID': studyID, 'projectTitle': projectTitle, 'curDate': 'now'|date('dateFormat'|trans({'noTime': 'true'},'messages'), 'Europe/Berlin')}))|nl2br }}
+                {{ privacyIntro|raw|nl2br }}
             </div>
         </div>
         {# contact #}
@@ -25,7 +25,7 @@
                 {% endif %}
                 {{ heading }}
                 {% for curText in text %}
-                    <div class="{{ textPreview }}" style="{{ style }} margin-left: 1rem; margin-top: 0.25rem">{{ curText|nl2br }}</div>
+                    <div class="{{ textPreview }}" style="{{ style }} margin-left: 1rem; margin-top: 0.25rem">{{ curText|raw|nl2br }}</div>
                 {% endfor %}
             </div>
         {% endfor %}
@@ -33,7 +33,7 @@
         {% for heading, content in privacyContent %}
             {% set paragraph = paragraph+1 %}
             {{ _self.addParagraphHeading(textPreview,paragraph,heading,savePDF) }}
-            <div class="{{ textPreview }}" style="{{ style }}">{{ content|nl2br }}</div>
+            <div class="{{ textPreview }}" style="{{ style }}">{{ content|raw|nl2br }}</div>
         {% endfor %}
     </div>
 {% endblock %}

@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import {setElementVisibility} from "../multiFunction";
+import {sanitizeString, setElementVisibility} from "../multiFunction";
 
 export default class extends Controller {
 
@@ -95,6 +95,17 @@ export default class extends Controller {
         this.modalSubmitTarget.addEventListener('click', event => {
             event.target.value = this.modalType;
         });
+        // sanitize inputs in modal
+        for (let info of this.infosNamesValue) {
+            (info!=='position' ? document.getElementById(info) : this.positionOtherTarget).addEventListener('input', event => {
+                let target = event.target;
+                target.value = sanitizeString(target.value);
+            });
+        }
+        this.taskOtherDescriptionTarget.addEventListener('input', event => {
+            let target = event.target;
+            target.value = sanitizeString(target.value);
+        })
     }
 
     // methods that are called from the template
@@ -165,7 +176,7 @@ export default class extends Controller {
             disabled |= tempVal;
         }
         let curTask = 0;
-        let hasTask = this.idValue===0 || this.hasSupervisorValue && isSecondContributor;
+        let hasTask = false;
         while (!hasTask && curTask<this.tasksNamesValue.length) {
             hasTask = document.getElementById(this.tasksNamesValue[curTask]).checked;
             ++curTask;

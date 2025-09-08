@@ -28,16 +28,15 @@ class TextsController extends ControllerAbstract
         $finding = $measureArray[self::burdensRisksNode][self::findingNode];
         $isFinding = $finding[self::chosen]==='0';
         $compensation = $measureArray[self::compensationNode][self::compensationTypeNode];
-        $translationPrefix = 'projectdetails.pages.texts.';
 
         return $this->createFormAndHandleSubmit(TextsType::class,$request,[self::textsNode],
             ['maxCharsIntroGoalsProcedure' => 800,
              'maxCharsProCon' => 500,
              'maxCharsFinding' => 500,
-             'introTemplateText' => $this->translateString($translationPrefix.'intro.template',array_merge($addresseeParam,[self::informationNode => $this->getInformationString($measureArray[self::informationNode]), self::projectTitle => $this->getProjectTitleParticipants($request->getSession())])),
+             'introTemplateText' => $this->translateString('projectdetails.pages.'.self::textsNode.'.'.self::introNode.'.template',array_merge($addresseeParam,[self::informationNode => $this->getInformationString($measureArray[self::informationNode]), self::projectTitle => $this->getProjectTitleParticipants($request->getSession())])),
              'isBurdens' => $isBurdens,
              'isRisks' => $isRisks,
-             'proTemplateEnd' => $this->translateString($translationPrefix.'pro.template.end',array_merge($addresseeParam,['compensation' => $this->getStringFromBool($compensation!=='' && count($compensation)>0 && !array_key_exists(self::compensationNo,$compensation))])),
+             'proTemplateEnd' => $this->translateString('projectdetails.pages.texts.pro.template.end',array_merge($addresseeParam,['compensation' => $this->getStringFromBool($compensation!=='' && count($compensation)>0 && !array_key_exists(self::compensationNo,$compensation))])),
              'conTemplateText' => $this->getConTemplateText($measureArray,false,true,$routeParams,true),
              'isConsent' => $isFinding && $finding[self::informingNode]===self::informingConsent],
             [self::dummyParams => ['isFinding' => $isFinding, 'isBurdensRisks' => $isBurdens || $isRisks]]);

@@ -26,8 +26,10 @@ multiple:
       title: 'Add self-formulated PDF'
       text: >-
         {filename, select,
-          sizeExceed {At least one of the PDF files (or the sum of all PDF files) exceeds the maximum allowed size. Please add only files whose summed size is at most 7 MB}
-          other      {The PDF file “{filename}“ could not be added. Please select the correct file}} and complete the proposal again.</br></br> If further self-formulated PDF files are required, they must be added again, too. The error message only pertains to the above-mentioned file.
+          sizeExceed {At least one of the PDF files (or the sum of all PDF files) exceeds the maximum allowed size.}
+          other      {The PDF file “{filename}“ could not be added.}} Please add only files that are compatible with PDF 1.4 (Acrobat 5) and whose summed size is at most 7 MB, and complete the proposal again. {filename, select,
+                sizeExceed {}
+                other      {</br></br> If further self-formulated PDF files are required, they must be added again, too. The error message only pertains to the above-mentioned file.}}
     errorMessage: # info modal if an error occurred
       title: 'Error'
       text: 'An error occurred. You were redirected to the main page. Please give us feedback via <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a> about what you were doing right before this error occurred. We will fix it as soon as possible. </br> If further errors occur, please re-load your proposal (XML file).'
@@ -46,7 +48,7 @@ multiple:
                                                                 consent {consent form}
                                                                 privacy {annex on data processing}
                                                                 other   {confirmation sheet for loaned devices}}.
-  inputs: # the last comma will be replaced by the 'lastRespectively' value, therefore be careful when using commas
+  inputs:
     pages:
       textsCon: 'Study information'
       textsFinding: 'Study information'
@@ -69,7 +71,7 @@ multiple:
         apparatus    {the note on the use of experimental equipment}
         insuranceWay {the note on route/accident insurance}
         other        {the notes on the use of experimental equipment and route/accident insurance}}
-    legal: >-
+    legal: >- # last comma will be replaced by 'and'
       the liability clause and {hints, plural,
                                   =1    {the note}
                                   other {the notes}} on {apparatus, select,
@@ -78,7 +80,7 @@ multiple:
                                                                             true  {route/accident insurance, }
                                                                             other {}} participant insurance
     dataPrivacy: 'the code for issuing the compensation'
-    dataPrivacyOnline: >- # Lösch-Hinweis auf Seite "Datenerhebung"
+    dataPrivacyOnline: >- # deletion hint on page "measures"
       the registration {isProcessing, select,
                       true  {and processing}
                       other {}} of IP addresses {isPurposeQuestions, select,
@@ -88,6 +90,9 @@ multiple:
                                                   other {}}
     lastAnd: ' and '
     lastRespectively: ' resp. '
+    quotes:
+      start: '“'
+      end: '“'
     hint: >-
       Due to the change you just made, on {pages, plural,
                       =1    {page {page}}
@@ -107,7 +112,7 @@ multiple:
     professorship: 'chair'
     scientific: 'scientific staff'
     phd: 'graduate student (doctoral candidate)'
-    student: 'undergraduate student (B.Sc./M.Sc./etc.)'
+    student: 'undergraduate student (B.Sc./M.Sc. or similar)'
     positionOther: 'other position'
     otherDefault: 'please enter position'
 
@@ -414,8 +419,8 @@ coreData:
     title: 'Funding source(s)'
     fundingQuali: 'no separate funding (qualification thesis)'
     fundingBudget: 'university/in-house budget'
-    fundingResearch: 'third-party funding by public or private research funding organisation/foundation'
-    fundingExternal: 'industrial third-party funding/sponsor'
+    fundingResearch: 'third-party funding by public or private research foundation'
+    fundingExternal: 'industrial third-party funding'
     fundingOther: 'other source(s)'
     textHints:
       fundingBudget: 'Please name the faculty/department/research group(s).'
@@ -437,7 +442,7 @@ coreData:
     type:
       noSupport: 'no consulting/advice'
       supportCommittee: 'committee office/member of the ethics committee'
-      supportCenter: 'center for research data'
+      supportCenter: 'research data management support center'
       supportData: 'data protection officer or Data Protection and Information Security Coordinator (DISK)'
       supportOther: 'other (please specify)'
     textHint: 'Please indicate who advised you on which aspects.'
@@ -460,7 +465,7 @@ votes:
       negative: 'Which reasons did the other ethics committee state to justify their vote?'
     explanation: 'When completing the ethics proposal, you will be asked to add the decision letter of the other ethics committee as a PDF file. If this is not possible for you, please prepare your own PDF file with further explanations.'
   instVote:
-    title: 'Has a similar research project been reviewed by {committeeDat} before?'
+    title: 'Has a similar own research project been reviewed by {committeeDat} before?'
     reference: 'case number'
     textHint: >-
       {type, select,
@@ -535,10 +540,6 @@ contributors:
     name: 'Warning: name incomplete'
     eMail: 'Warning: no valid e-mail address'
     phone: 'Warning: no valid phone number'
-    missingFunction: >-
-      {type, select,
-                  applicant  {The applicant (project contributor 1) has no other role apart from “application”.}
-                  other      {The responsible supervisor (project contributor 2) has no other role apart from “supervision of the thesis“}}.
     mandatory: >-
       Warning: The {amount, plural,
                       =1    {role {task} was}
@@ -588,6 +589,7 @@ projectdetails:
         vulnerable: 'individuals in particularly vulnerable (life) situations (e.g., persons from a conflict/war zone, refugees)'
         dependent: 'individuals in a dependent relationship to project contributors (e.g., students of own university courses, own employees)'
         otherPeople: 'other groups'
+        healthyIcon: 'Choose this option if you are not intending to recruit individuals with specific conditions or impairments.'
         description:
           missing: 'Please select at least one group.'
           description: 'Exact description of the group(s). If applicable, you can also describe which information/instruments are used to check or ensure that individuals belong to the target group(s) (inclusion/exclusion criteria).'
@@ -596,7 +598,7 @@ projectdetails:
         title: 'Are the data collected in a closed group?'
         headingHint: 'This pertains do data collection in clearly delimited groups or contexts, such as school classes or student groups.'
         types:
-          lecture: 'as part of a university course'
+          closedLecture: 'as part of a university course'
           school: 'in class (at school)'
           closedOther: 'other group (e.g., sports team)'
           placeholder: 'please describe'
@@ -707,6 +709,12 @@ projectdetails:
         preComplete: 'Please justify your choice and indicate which information will be given when to the {addressee}.'
       pdf: 'The wording of the study information sheet for the {participant} needs to be adapted to the target group and can therefore not be generated automatically by the Ethiktool. Please prepare a self-formulated PDF file that directly addresses the {participant} and contains the following parts: information on study participation, consent/assent form, annex on processing personal data (if applicable). The automatically generated documents for the {addressee} can serve as a guide. When completing the ethics proposal, you will be asked to add the study information sheet for {participant} as a PDF file.'
       attendance: 'Are the {addressee} present during data collection?'
+      documentTranslation:
+        title: 'Are the participant documents translated into easy or simple language and/or into a foreign language?'
+        textHint: 'Into which language(s)?'
+        pdf:
+          title: 'I want to add the translated version of the participant documents.'
+          hint: 'If you would like to add the translated version of the participant documents as a PDF file for review, please indicate this here. You should only make use of this option if it seems realistic that the ethics committee will be able to review the translated documents (e.g., not for foreign languages that the ethics committee cannot be expected to understand).'
     informationIII:
       title: 'Additional information for the {addressee}'
       goals:
@@ -776,7 +784,7 @@ projectdetails:
                                                         other    {interventions/measures}}.
       otherSources:
         title: 'Will data from other sources be added?'
-        headingHint: 'This refers to data that is already available at other sources and will be used/transferred for the study to supplement the own research data (e.g. health data, assessments from psychotherapy/medical treatment/training) or to provide a basis for contacting potential participants (e.g., data from the residents'' registration office).'
+        headingHint: 'This refers to individual data that is already available at other sources and will be used/transferred for this study to supplement the own research data (e.g. health data, assessments from psychotherapy/medical treatment/training) or to provide a basis for contacting potential participants (e.g., data from the residents'' registration office). A comparison of aggregated data with the data recorded here does not constitute an addition of data from other sources.'
         textHint: 'Please describe which data will be used from which sources. Please also describe the basis that allows for data transfer (e.g. joint responsibility, release from confidentiality).'
         hint: 'In the annex on data processing, you will need to describe the identifiers (e.g., name or code) used to merge the data as well as the person-related data of the other sources that will become part of the research data or of the data for further purposes beyond the research question. If necessary, additional documents (e.g. release from confidentiality) must be added.'
         pdf:
@@ -965,7 +973,15 @@ projectdetails:
             {information, select,
               post  {In case of withdrawal from participation, the data collected up to that point will be used for the analysis.}
               other {In case of withdrawal from participation, the data collected up to that point will be used for the analysis.}}
-          terminateParticipantsOther: 'Sonstiges'
+          documentation: >-
+            {information, select,
+              post  {In case of withdrawal from participation, the data collected up to that point will be kept for documentation purposes, but will not be included in the analysis.}
+              other {In case of withdrawal from participation, the data collected up to that point will be kept for documentation purposes, but will not be included in the analysis.}}
+          choose: >-
+            {information, select,
+              post  {In case of withdrawal from participation, the participant (or their legal guardian) can choose whether the data collected up to that point shall be deleted or included in the analysis.}
+              other {In case of withdrawal from participation, the participant (or their legal guardian) can choose whether the data collected up to that point shall be deleted or included in the analysis.}}
+          terminateParticipantsOther: 'other'
         textHint: 'Please describe the procedure, for example if you want to use the data collected up to that point via a “cancel button“ and automatically delete all data when the browser window is closed.'
       terminateCriteria:
         title: 'Which circumstances lead to an early termination of data collection by the project contributors?'
@@ -1084,7 +1100,9 @@ projectdetails:
         compensationOther:
           title: 'Other compensation'
           textHint: 'Please describe how the compensation is issued in sentence style. Please make reference to the type of compensation and mention the time of issuing and what is necessary for retrieval (e.g., “Following the study, you will receive free access to our course materials; we will need your e-mail address for this.“).'
-      compensationVoluntary: 'Is the voluntary nature of participation compromised by the type or amount of compensation?'
+      compensationVoluntary:
+        title: 'Is the voluntary nature of participation compromised by the type or amount of compensation?'
+        headingHint: 'Voluntariness can be compromised if the compensation is high relative to the target group''s financial strength (e.g., high financial compensation, high prize value in a raffle) or if there is an over-compensation of the actual effort (e.g., participation hours well above the actual time investment). Voluntariness can also be compromised if participation extends across a longer timespan and withdrawal from participation would involve a total loss of compensation.'
       furtherDescription:
         title: 'Other remarks regarding the compensation'
         textHint: 'Please explain how why the voluntary nature of participation is compromised by the type or amount of compensation. Further explanations regarding compensation can also be added, e.g., justification for exceptionally high compensation; justification why participants are treated unequally with regard to compensation.'
@@ -1095,7 +1113,7 @@ projectdetails:
       intro:
         title: 'Introduction'
         headingHint: 'Introduction to the study information'
-        template: >-
+        template: >- # other addressee is participant
           Thank you for your interest in our research project entitled “{projectTitle}“. Please read the following information carefully before you make your decision about {information, select,
               post  {the use of {addressee, select,
                                   children {your child's data}
@@ -1455,7 +1473,7 @@ projectdetails:
           anonymizationNo: 'The research data are not anonymized'
           placeholder: 'please describe' # for anonymization other
         hints: # icons
-          convert: 'e.g., transcription'
+          convert: 'e.g., transcription of audio recordings'
           delete: 'e.g., deleting IP addresses from the research dataset, changing names and places in an interview transcript'
           alienate: 'e.g., irreversible change of voice, face, or other identifiable properties'
           preprocess: 'e.g. transforming structural brain data'
@@ -1760,9 +1778,9 @@ projectdetails:
                                                           other       {anonymous research data}} are
         types:
           class0: ' made publicly available.'
-          class1: ' made available to the users of the archive/third parties under certain usage conditions, such as confirming re-use for scientific purposes only.'
-          class2: ' made available to the users of the archive/third parties under individualized usage contracts.'
-          class3: ' made available to the users of the archive/third parties under strict data-protection restrictions (e.g., online via a secure protocol or on-site in a research data center) following an individual contract.'
+          class1: ' made available to third parties under certain usage conditions, such as confirming re-use for scientific purposes only.'
+          class2: ' made available to third parties under individualized usage contracts.'
+          class3: ' made available to third parties under strict data-protection restrictions (e.g., online via a secure protocol or on-site in a research data center) following an individual contract.'
           own: ' not made available to others, but employed for own re-use.'
         descriptionStart: ' This is done by using '
         hints: # icons except keys textHint and hint
@@ -1822,7 +1840,7 @@ checkDoc:
           applicant {applicant}
           other     {responsible supervisor:}} Phone number is not valid.
       start: 'The planned start of data collection is in the past.'
-      begun: 'Justification why the ethics proposal could not be submitted before the start of data collection'
+      begun: 'Description of current state of data collection'
       end: 'The planned end of the research project is in the past.'
       endBeforeStart: 'Project end is before project start.'
       fundingState: >-
@@ -1864,7 +1882,13 @@ checkDoc:
       validEmail: 'E-mail address is not valid.'
       validPhone: 'Phone number is not valid.'
     tasks:
-      missing: 'Project contributor {index} ({name}) does not occupy any specific role.'
+      missing: >-
+        Project contributor {index} ({name}) does not occupy any specific role{index, select,
+                                                                                1     { apart from “application“}
+                                                                                2     {{isSupervisor, select,
+                                                                                          true  { apart from “supervision of the thesis“}
+                                                                                          other {}}}
+                                                                                other {}}.
       missingMandatory: 'Role “{task}“ was not selected for any project contributor.'
       missingOther: 'Project contributor {index} ({name}): Description of other position is missing.'
   projectdetails:
@@ -1912,6 +1936,9 @@ checkDoc:
           presence of {addressee, select,
                         children {legal guardians}
                         other    {legal guardians}}
+        documentTranslation:
+          missing: 'translation of participant documents'
+          description: 'Specification of language(s) the participant documents are translated into'
       informationIII:
         goals: 'goals of the study'
         infoBefore: 'prior information'
@@ -2041,6 +2068,11 @@ checkDoc:
         terminateParticipants:
           title: 'data handling in case of withdrawal from participation' # 'Answer to question about [] is missing.'
           description: 'data handling in case of withdrawal from participation' # 'Description of [] is missing.'
+          information: >-
+            If no <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the collected data must either be deleted or the {addressee, select,
+                children {legal guardians}
+                wards    {legal guardians}
+                other    {participants}} must choose whether the collected data shall be used or not in case of individual withdrawal.
         terminateCriteria: 'termination criteria'
       compensation:
         missing: 'information on the type of compensation'
@@ -2329,9 +2361,10 @@ completeForm:
            other {}}}}
     consent: 'I have taken note of the above information on the processing of my ethics proposal.'
   pdf:
-    text: 'Based on your entries in the Ethiktool, additional PDF documents are required. Please add them here. The PDF files must be in upright A4 format and must be compatible with pdf 1.4 (Acrobat 5); the maximum file size is 7 MB.'
+    text: 'Based on your entries in the Ethiktool, additional PDF documents are required. Please add them here. The PDF files must be in upright A4 format and must be compatible with PDF 1.4 (Acrobat 5); the maximum file size is 7 MB.'
     votes: 'Decision letter of the other ethics committee'
     projectdetails:
+      information: 'Translated participant documents'
       informationII: >-
         Study information sheet for {information, select,
                                       post  {after-the-fact}

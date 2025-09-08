@@ -70,9 +70,11 @@ abstract class ControllerAbstract extends AbstractController
     protected const preview = 'preview'; // name of the session variable indicating the position of the preview
     protected const pageErrors = 'pageErrors'; // name of twig variable containing the errors on a single page
     protected const isUpdateTime = 'isUpdateTime'; // name of parameter for twig
+    protected const dummyString = 'dummyString'; // dummy string used as a placeholder if multiple elements are listed separated by a comma except for the last two elements
     private Fpdi $fpdi; // used for merging PDFs
     private string $failureName;
     private PdfCollection $pdfParticipation;
+    protected static bool $markInput; // true if user input should be marked in pdf
 
     public function __construct(TranslatorInterface $translator) {
         self::$translator = $translator;
@@ -255,10 +257,46 @@ abstract class ControllerAbstract extends AbstractController
                 $loadInput = $request->files->all()[$nodeName][self::loadInput] ?? [];
                 $isDownload = str_contains($submitDummy, 'download');
                 $oldLanguage = $request->getLocale();
-
                 if ($loadInput!==[]) { // form was loaded
                     try {
-                        $xml = simplexml_load_string(file_get_contents($loadInput->getRealPath()));
+                        $xmlString = file_get_contents($loadInput->getRealPath());
+                        $xml = simplexml_load_string($xmlString);
+                        $attributes = $xml->attributes();
+                        $toolVersion = (string) ($attributes[self::toolVersionAttr] ?? '');
+                        if ($xml->getName()!=='Application' || // root node must be 'Application'
+                            count($attributes)!==1 || // root node must have exactly one attribute 'toolVersion'
+                            $toolVersion==='' || !preg_match("/^([0-9]+).([0-9]+).([0-9]+)$/", $toolVersion) || // tool version must be 'X.Y.Z'
+                            str_contains($xmlString,'<script') || str_contains($xmlString,'&lt;script')) { // xml must not contain a starting 'script' tag
+                            $session->set(self::xmlLoad,'');
+                            return $this->redirectToRoute('app_main');
+                        }
+                        else {
+                            $xmlArray = $this->xmlToArray($xml);
+                            unset($xmlArray['@attributes']); // attribute is checked separately
+                            foreach ($xmlArray as $key => $value) {
+                                $xmlArray[$key] = $this->replaceOpeningTag($value);
+                            }
+                            $this->arrayToXml($xmlArray,$xml);
+                            // set contributors and projectdetails nodes to avoid numbers as tags in case there are multiple nodes with the same name
+                            $contributorsNode = $xml->{self::contributorsNodeName};
+                            $this->removeAllChildNodes($contributorsNode);
+                            foreach ($this->addZeroIndex($xmlArray[self::contributorsNodeName][self::contributorNode]) as $contributor) {
+                                $this->arrayToXml($contributor,$contributorsNode->addChild(self::contributorNode));
+                            }
+                            $projectdetailsNode = $xml->{self::projectdetailsNodeName};
+                            $this->removeAllChildNodes($projectdetailsNode);
+                            foreach ($this->addZeroIndex($xmlArray[self::projectdetailsNodeName][self::studyNode]) as $study) {
+                                $studyNode = $projectdetailsNode->addChild(self::studyNode);
+                                $studyNode->addChild(self::nameNode,$study[self::nameNode]);
+                                foreach ($this->addZeroIndex($study[self::groupNode]) as $group) {
+                                    $groupNode = $studyNode->addChild(self::groupNode);
+                                    $groupNode->addChild(self::nameNode,$group[self::nameNode]);
+                                    foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measure) {
+                                        $this->arrayToXml($measure,$groupNode->addChild(self::measureTimePointNode));
+                                    }
+                                }
+                            }
+                        }
                         $this->updateXML($xml);
                         $xmlArray = $this->xmlToArray($xml);
                         $this->getErrors($request,element: $xml); // if the file is invalid, an exception is thrown
@@ -666,15 +704,14 @@ abstract class ControllerAbstract extends AbstractController
                 }
             }
         }
-        $multipleHints = $legalParams['hints']>1;
         if ($isInput) {
             $this->addInputPage('pages.projectdetails.',self::legalNode,$inputArray,$legalParams);
-            if ($multipleHints) {
+            if ($legalParams['hints']>1) {
                 $lastIndex = count($inputArray[self::pageInputs])-1;
                 $inputArray[self::pageInputs][$lastIndex] = $this->replaceString($inputArray[self::pageInputs][$lastIndex]);
             }
         }
-        return $this->setInputHint($inputArray,$multipleHints);
+        return $this->setInputHint($inputArray);
     }
 
     /** Checks for every key in \$inputs if the corresponding key in \$nodeArray is neither empty nor equals the value of the key in $inputs.
@@ -704,28 +741,39 @@ abstract class ControllerAbstract extends AbstractController
 
     /** Sets the hint saying that inputs on other pages are deleted.
      * @param array $pages array with keys 'pageNames' and 'pageInputs'
-     * @param bool $replaceFirst if true, the first comma of the inputs gets replaced, otherwise the last one
      * @return string hint with inputs that are deleted
      */
-    protected function setInputHint(array $pages, bool $replaceFirst = false): string {
+    protected function setInputHint(array $pages): string {
         $count = count($pages[self::pageNames]);
         if ($count>0) {
-            $translationPrefix = 'multiple.inputs.';
-            return $this->translateString($translationPrefix.'hint',['pages' => $count, 'page' => $this->replaceString(implode(',',$pages[self::pageNames]),useAnd: false), 'inputs' => $this->replaceString(implode(', ',$pages[self::pageInputs]),replaceFirst: $replaceFirst,useAnd: false)]);
+            return $this->translateString('multiple.inputs.hint',['pages' => $count, 'page' => $this->replaceDummyString($pages[self::pageNames],useAnd: false), 'inputs' => str_replace(self::dummyString,', ',$this->replaceDummyString($pages[self::pageInputs],useAnd: false))]); // replace last 'dummyString' by the 'lastRespectively' value and the other ones by a comma
         }
         return '';
+    }
+
+    /** Replaces all occurrences of 'dummyString' with ', ' except for the last occurrence which will be replaced by calling replaceString(). If the input is an array, it will first be imploded with 'dummyString' as the separator.
+     * @param string|array $input string where 'dummyString' will be replaced
+     * @param string $replaceString string to replace the other occurrences. Defaults to ', '
+     * @param string $replace translation key for the string to replace the last occurrence. Will use the 'pdf' domain
+     * @param bool $useAnd if $replace is empty, the last occurrence will be replaced with 'and' if true, otherwise with 'respectively'
+     * @return string input string with replaced strings
+     */
+    protected function replaceDummyString(string|array $input, string $replaceString = ', ', string $replace = '', bool $useAnd = true): string {
+        if (is_array($input)) {
+            $input = implode(self::dummyString,$input);
+        }
+        return str_replace(self::dummyString,$replaceString,$this->replaceString($input,self::dummyString,$replace!=='' ? $this->translateStringPDF($replace) : '',$useAnd));
     }
 
     /** Replaces either the first or last occurrence of a string in a string.
      * @param string $input string where the occurrence gets replaced
      * @param string $search string to be replaced. Defaults to a comma
      * @param string $replace string that should replace the occurrence
-     * @param bool $replaceFirst if true, the first occurrence will be replaced, otherwise the last one
      * @param bool $useAnd if $replace is empty, the occurrence will be replaced with 'and' if true, otherwise with 'respectively'
      * @return string \$input with the last occurrence of \$search replaced or \$input if it does not contain \$search
      */
-    protected function replaceString(string $input, string $search = ',', string $replace = '', bool $replaceFirst = false, bool $useAnd = true): string {
-        return str_contains($input,$search) ? substr_replace($input,$replace==='' ? $this->translateString('multiple.inputs.'.($useAnd ? 'lastAnd' : 'lastRespectively')) : $replace, $replaceFirst ? strpos($input,$search) : strrpos($input,$search),1) : $input;
+    protected function replaceString(string $input, string $search = ',', string $replace = '', bool $useAnd = true): string {
+        return str_contains($input,$search) ? substr_replace($input,$replace==='' ? $this->translateString('multiple.inputs.'.($useAnd ? 'lastAnd' : 'lastRespectively')) : $replace, strrpos($input,$search),strlen($search)) : $input;
     }
 
     /** Checks whether a pre or post information is chosen by calling getInformationString. If $element is the request, the most recent document will be used.
@@ -787,9 +835,10 @@ abstract class ControllerAbstract extends AbstractController
      * @param bool $addNoTemplate if true, the sentence that no template could be created, if applicable, is added
      * @param array $routeParams if $addNoTemplate is true, the route parameters of the current measure time point
      * @param bool $addTemplate if true, the template sentence will be added regardless of the choice in texts
+     * @param bool $markInput if true, custom text will be surrounded by a span-tag
      * @return string con template text
      */
-    protected function getConTemplateText(array $measureArray, bool $addDescription = true, bool $addNoTemplate = false, array $routeParams = [], bool $addTemplate = false): string {
+    protected function getConTemplateText(array $measureArray, bool $addDescription = true, bool $addNoTemplate = false, array $routeParams = [], bool $addTemplate = false, bool $markInput = false): string {
         $information = $this->getInformationString($measureArray[self::informationNode]);
         $returnString = '';
         if (in_array($information,[self::pre,self::post])) { // information is given
@@ -807,7 +856,7 @@ abstract class ControllerAbstract extends AbstractController
                     }
                 }
                 if ($addDescription && (!$isTemplate || $isBurdensRisks)) { // add description
-                    $returnString .= ' '.($conArray[self::descriptionNode] ?? '');
+                    $returnString .= ' '.(array_key_exists(self::descriptionNode,$conArray) ? $this->addMarkInput($conArray[self::descriptionNode],$markInput) : '');
                 }
             }
         }
@@ -958,9 +1007,9 @@ abstract class ControllerAbstract extends AbstractController
         if (!$isXML) {
             $curDate = '_'.$currentDate->format('Ymd');
             $pdfExt = $curDate.'.pdf';
-            $singleDocsName = $this->translateString('filenames.singleDocs',[],'pdf').$curDate;
+            $singleDocsName = $this->translateStringPDF('filenames.singleDocs').$curDate;
             $zip = new ZipArchive();
-            $folderName = $filename.(self::$isCompleteForm ? $this->translateString('filenames.completeForm',[],'pdf').$curDate : $singleDocsName);
+            $folderName = $filename.(self::$isCompleteForm ? $this->translateStringPDF('filenames.completeForm').$curDate : $singleDocsName);
             $zipName = sys_get_temp_dir().'/'.$folderName.'.zip';
             $zip->open($zipName,ZipArchive::CREATE | ZipArchive::OVERWRITE);
             $zip->addEmptyDir($folderName);
@@ -990,13 +1039,13 @@ abstract class ControllerAbstract extends AbstractController
                     $this->fpdi->SetKeywords($this->translateStringPDF('metadata.keywords',array_merge($versionParam,['createTime' => $this->convertDate($currentDate,false)])));
                     // add to zip
                     $folderNameWithFilename = $folderName.$filename;
-                    $zip->addFromString($folderNameWithFilename.$this->translateString('filenames.completeForm',[],'pdf').$pdfExt, $this->fpdi->Output( $folderNameWithFilename.$this->translateString('filenames.completeForm',[],'pdf').$pdfExt,PdfMerger::MODE_STRING));
+                    $zip->addFromString($folderNameWithFilename.$this->translateStringPDF('filenames.completeForm').$pdfExt, $this->fpdi->Output( $folderNameWithFilename.$this->translateStringPDF('filenames.completeForm').$pdfExt,PdfMerger::MODE_STRING));
                     $zip->addEmptyDir($singleDocsFolder);
                 }
                 $singleDocsFolder .= $filename;
-                $zip->addFromString($singleDocsFolder.$this->translateString('filenames.application',[],'pdf').$pdfExt,(new PdfMerger(new Fpdi()))->merge($pdfApplication ,PdfMerger::MODE_STRING));
+                $zip->addFromString($singleDocsFolder.$this->translateStringPDF('filenames.application').$pdfExt,(new PdfMerger(new Fpdi()))->merge($pdfApplication ,PdfMerger::MODE_STRING));
                 $this->addParticipationPDFs($session);
-                $zip->addFromString($singleDocsFolder.$this->translateString('filenames.participation',[],'pdf').$pdfExt,(new PdfMerger(new Fpdi()))->merge($this->pdfParticipation,PdfMerger::MODE_STRING)); // if single documents, with time, otherwise without
+                $zip->addFromString($singleDocsFolder.$this->translateStringPDF('filenames.participation').$pdfExt,(new PdfMerger(new Fpdi()))->merge($this->pdfParticipation,PdfMerger::MODE_STRING)); // if single documents, with time, otherwise without
                 $this->removeTempFiles($session);
             }
             catch (\Throwable $throwable) {
@@ -1018,6 +1067,18 @@ abstract class ControllerAbstract extends AbstractController
             unlink($zipName);
         }
         return $returnResponse;
+    }
+
+    /** Returns the current date with Berlin timezone.
+     * @return DateTime current date
+     */
+    protected function getCurrentDate(): DateTime {
+        try {
+            return new DateTime('today',$this->getTimezone());
+        }
+        catch (\Throwable $throwable) {
+            return new DateTime(); // without timezone
+        }
     }
 
     /** Returns the current time with Berlin timezone.
@@ -1050,10 +1111,10 @@ abstract class ControllerAbstract extends AbstractController
         foreach ($session->get(self::pdfParticipationArray) as $ids) {
             $idSuffix = $this->concatIDs($ids);
             // custom PDFs, if any
-            $filename = $tempFolder.'participation'.$idSuffix.$sessionIDExt;
+            $filename = $tempFolder.'participation'.($isCompleteForm ? 'Marked' : '').$idSuffix.$sessionIDExt;
             if ($isCompleteForm) {
                 $this->addPDF($filename); // only date
-                foreach ([self::informationIINode.$idSuffix, self::measuresNode.$idSuffix, self::otherSourcesNode.$idSuffix, self::interventionsNode.$idSuffix, self::privacyNode.$idSuffix] as $custom) {
+                foreach ([self::informationNode.$idSuffix, self::informationIINode.$idSuffix, self::measuresNode.$idSuffix, self::interventionsNode.$idSuffix, self::otherSourcesNode.$idSuffix, self::privacyNode.$idSuffix] as $custom) {
                     $this->addCustomPDF($custom,$files);
                 }
             }
@@ -1168,7 +1229,53 @@ abstract class ControllerAbstract extends AbstractController
         return '<a href="'.$link.'" data-action="base#setDummySubmit" data-base-url-param="app_'.$link.($fragment!='' ? '#'.$fragment : '').'"'.($link===self::landing ? 'data-base-page-param="Projectdetails"': '').($routeIDs!=='' ? 'data-base-route-i-ds-param="'.$routeIDs.'"' : '').($noColorLink ? ' style="color: inherit"' : '').'>'.$text.'</a>';
     }
 
+    /** Concatenates each element in $content and adds a span-tag to every second element.
+     * @param string|array $content array whose contents need to be concatenated
+     * @return string concatenated array
+     */
+    protected function mergeContent(string|array $content): string {
+        if (is_string($content)) {
+            $content = [$content];
+        }
+        $returnString = '';
+        foreach ($content as $index => $text) {
+            $addSpan = self::$markInput && ($index%2)===1;
+            $returnString .= $this->addMarkInput($text,$addSpan);
+        }
+        return $returnString;
+    }
+
+    /** Eventually adds a span-tag to the string
+     * @param string $text text
+     * @param bool $addSpan true if span-tag should be added, false otherwise
+     * @return string $text with eventually a span-tag
+     */
+    protected function addMarkInput(string $text, bool $addSpan): string {
+        return $text!=='' ? ($addSpan ? '<span class="markInput">' : '').$text.($addSpan ? '</span>' : '') : '';
+    }
+
     // functions involving xml
+
+    /** Replaces all '<' in the values of the input with '&lt;'.
+     * @param string|array $element element to be checked
+     * @return array|string $element with opening tags replaced
+     */
+    private function replaceOpeningTag(Array|string $element): array|string {
+        if (is_array($element)) {
+            foreach ($element as $key => $value) {
+                if (is_array($value)) {
+                    $element[$key] = $this->replaceOpeningTag($value);
+                }
+                else {
+                    $element[$key] = str_replace('<','&lt;',$value); // replace all opening tags
+                }
+            }
+        }
+        else {
+            $element = str_replace('<','&lt;',$element);
+        }
+        return $element;
+    }
 
     /** Checks the inputs of data privacy to determine the parameters for data reuse.
      * @param array $privacyArray array containing the data privacy information
@@ -1247,11 +1354,14 @@ abstract class ControllerAbstract extends AbstractController
 
     /** Gets the project title for the study information.
      * @param Session $session current session
-     * @return string project title for the study information
+     * @param bool $getDifferent if true, an array will be returned with the second element indicating whether the project title for participants differs
+     * @return string|array project title for the study information and eventually whether it differs for participants
      */
-    protected function getProjectTitleParticipants(Session $session): string {
+    protected function getProjectTitleParticipants(Session $session, bool $getDifferent = false): string|array {
         $coreDataArray = $this->xmlToArray($this->getXMLfromSession($session,getRecent: true)->{self::appDataNodeName}->{self::coreDataNode});
-        return $coreDataArray[self::projectTitleParticipation][self::descriptionNode] ?? $coreDataArray[self::projectTitle];
+        $tempArray = $coreDataArray[self::projectTitleParticipation];
+        $projectTitle = $tempArray[self::descriptionNode] ?? $coreDataArray[self::projectTitle];
+        return !$getDifferent ? $projectTitle : [$projectTitle,array_key_exists(self::descriptionNode,$tempArray)];
     }
 
     /** Converts all children of $node to array elements where the node name is the key and the node value is the value.
@@ -1395,8 +1505,10 @@ abstract class ControllerAbstract extends AbstractController
      */
     protected function addInputPage(string $translationPrefix, string $inputPage, array &$pages, array $parameters = []): void {
         $count = count($pages[self::pageNames]);
-        $pages[self::pageNames][$count] = '„'.$this->translateString($translationPrefix.$inputPage,$parameters).'“';
-        $pages[self::pageInputs][$count] = $this->translateString('multiple.inputs.'.$inputPage,$parameters);
+        $inputsPrefix = 'multiple.inputs.';
+        $quotesPrefix = $inputsPrefix.'quotes.';
+        $pages[self::pageNames][$count] = $this->translateString($quotesPrefix.'start').$this->translateString($translationPrefix.$inputPage,$parameters).$this->translateString($quotesPrefix.'end');
+        $pages[self::pageInputs][$count] = $this->translateString($inputsPrefix.$inputPage,$parameters);
     }
 
     /** Gets all tasks from all contributors and sets them as selected in the projectdetails contributor nodes.
@@ -1446,6 +1558,9 @@ abstract class ControllerAbstract extends AbstractController
         $prefix .= 'participation';
         foreach ($session->get(self::pdfParticipationArray) as $ids) {
             unlink($this->concatIDs($ids,$prefix,$suffix));
+            if (self::$isCompleteForm && self::$savePDF) {
+                unlink($this->concatIDs($ids,$prefix.'Marked',$suffix));
+            }
         }
 
     }
@@ -1460,15 +1575,29 @@ abstract class ControllerAbstract extends AbstractController
         $loadedVersion = explode('.',(string)($xml->attributes()->{self::toolVersionAttr}));
         $major = $loadedVersion[0];
         $minor = $loadedVersion[1];
-        if ($major==='1' && $minor<'2') { // updates for versions before 1.2.1
+        if ($major==='1' && $minor<'3') {
             $this->setToolVersion($xml); // update attribute
             foreach ($xml->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
                     foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
-                        // compensation
-                        $compensationNode = $measureTimePointNode->{self::compensationNode};
-                        if ($compensationNode->{self::terminateNode}->getName()!=='') { // compensation is given -> add node
-                            $this->insertElementBefore(self::compensationVoluntaryNode,$compensationNode->{self::compensationTextNode});
+                        if ($minor<'2') { // updates for versions before 1.2.1
+                            // compensation
+                            $compensationNode = $measureTimePointNode->{self::compensationNode};
+                            if ($compensationNode->{self::terminateNode}->getName()!=='') { // compensation is given -> add node
+                                $this->insertElementBefore(self::compensationVoluntaryNode,$compensationNode->{self::compensationTextNode});
+                            }
+                        }
+                        // updates for versions before 1.3.0
+                        // information
+                        $informationNode = $measureTimePointNode->{self::informationNode};
+                        $pre = (string) $informationNode->{self::chosen};
+                        $isPre = $pre==='0';
+                        if ($isPre || $pre==='1' && ((string) $informationNode->{self::informationAddNode}->{self::chosen})==='0') { // either pre or post information -> add question for document translation
+                            $this->addChosenNode($informationNode,self::documentTranslationNode);
+                        }
+                        // consent
+                        if (!$isPre) { // no pre information -> remove description for participants
+                            $this->removeElement(self::terminateConsParticipationNode,$measureTimePointNode->{self::consentNode}->{self::terminateConsParticipationNode});
                         }
                     } // foreach measure time point
                 } // foreach group

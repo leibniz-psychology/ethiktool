@@ -15,13 +15,13 @@
         {% set classes = 'textJustify '~textPreview %}
         {% for paragraph in content %}
             <div class="{{ classes }}">
-                {{ paragraph[0]|nl2br }}
-                {{ paragraph[1]|nl2br }}
+                {{ paragraph[0]|raw|nl2br }}
+                {{ paragraph[1]|raw|nl2br }}
             </div>
         {% endfor %}
         {# contributors #}
         {% for contributor in contributors %}
-            <div class="{{ classes }} noPageBreak">{{ (contributor~"\n")|nl2br }}</div>
+            <div class="{{ classes }} noPageBreak">{{ (contributor~"\n")|raw|nl2br }}</div>
         {% endfor %}
         {# confirm #}
         {% set tempPrefix, classes, addresseeParam = 'completePost.confirm.', 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : ''), {'addressee': addressee} %}

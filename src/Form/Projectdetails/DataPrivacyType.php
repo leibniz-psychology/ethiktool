@@ -549,7 +549,7 @@ class DataPrivacyType extends TypeAbstract
                     $prefix = $type.self::orderProcessingNode;
                     $forms[$prefix]->setData($tempArray[self::chosen]);
                     $prefix .= self::descriptionCap;
-                    if (array_key_exists($prefix, $tempArray)) { // may only be true for contributorsOther
+                    if (array_key_exists(self::descriptionNode, $tempArray)) { // may only be true for contributorsOther
                         $forms[$prefix]->setData($tempArray[self::descriptionNode]);
                     }
                     // order processing known

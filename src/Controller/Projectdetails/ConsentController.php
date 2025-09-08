@@ -44,7 +44,7 @@ class ConsentController extends ControllerAbstract
                     }
                 }
                 elseif (!$isConsentOld && $isConsent) { // add nodes
-                    $this->addLegalNodes($legalNode,$measureArray);
+                    $this->addLegalNodes($legalNode,$this->xmlToArray($measureNodeNew));
                 }
             }
             $isNotLeave = !$this->getLeavePage($consent,$session,self::consentNode);

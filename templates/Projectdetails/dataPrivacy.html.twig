@@ -260,7 +260,7 @@
                             <div class="borderHint" id="dataPersonalAccessHintDiv" style="{{ boolToDisplay(content.dataPersonalcontributorsOther.vars.checked) }}">
                                 {{ accessOtherHint|raw }}
                             </div>
-                            {{ _self.addOrderProcessing(content,'dataPersonal',accessOrderProcessingTypes,orderProcessingKnownTypes,privacyController) }}
+                            {{ _self.addOrderProcessing(content,'dataPersonal',accessOrderProcessingTypes,orderProcessingKnownTypes,privacyController,transferData) }}
                         </div>
                         {# purpose research #}
                         {% set tempPrefix = translationPrefix~'purposeResearch.' %}
@@ -349,7 +349,7 @@
                                     <div class="borderHint" id="{{ purpose~'AccessHintDiv' }}" style="{{ boolToDisplay(content[purpose~'contributorsOther'].vars.checked) }}">
                                         {{ accessOtherHint|raw }}
                                     </div>
-                                    {{ _self.addOrderProcessing(content,purpose,accessOrderProcessingTypes,orderProcessingKnownTypes,privacyController) }}
+                                    {{ _self.addOrderProcessing(content,purpose,accessOrderProcessingTypes,orderProcessingKnownTypes,privacyController,transferData) }}
                                 </div>
                             </div>
                         {% endfor %}
@@ -408,13 +408,14 @@
     {{ formRender.addPreview([studyID,groupID,measureID]) }}
 {% endblock %}
 
-{% macro addOrderProcessing(content,purpose,accessOrderProcessingTypes,orderProcessingKnownTypes,privacyController) %}
+{% macro addOrderProcessing(content,purpose,accessOrderProcessingTypes,orderProcessingKnownTypes,privacyController,transfer) %}
     {# Adds the order processing widgets. Input arguments:
-        content: form elements
-        purpose: purpose for which the widgets are created
+        content:                    form elements
+        purpose:                    purpose for which the widgets are created
         accessOrderProcessingTypes: access types for which order processing is asked
-        orderProcessingKnownTypes: widgets names for order processing known question
-        privacyController: stimulus controller
+        orderProcessingKnownTypes:  widgets names for order processing known question
+        privacyController:          stimulus controller
+        transfer:                   an array of two elements: the array for adding the symbol for showing that the input is transferred to some automatically created PDFs and the addressee
     #}
     {% for accessOrder in accessOrderProcessingTypes %}
         {# order processing #}
@@ -425,7 +426,7 @@
             {{ formRender.renderButtons(orderProcessing,{
                 'hint': ['projectdetails.pages.dataPrivacy.orderProcessing.'],
                 'stimVisible': {'values': [['0',orderProcessingKnownDiv]]|merge(isContributorsOther ? [['1',description~'Div']] : [])}}|
-                merge(isContributorsOther ? {'text': [content[description],{'visibility': orderProcessingValue is same as '1'}]} : {})) }}
+                merge(isContributorsOther ? {'text': [content[description],{'visibility': orderProcessingValue is same as '1', 'transfer': [transfer,'']}]} : {})) }}
             {# order processing known #}
                 {{ formRender.renderButtons(content[orderProcessingKnownTypes[purpose][accessOrder]],{'addDiv': [orderProcessingKnownDiv,boolToDisplay(orderProcessingValue is same as '0')]}) }}
         </div>

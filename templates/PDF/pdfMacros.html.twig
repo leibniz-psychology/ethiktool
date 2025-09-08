@@ -7,14 +7,13 @@
 {% macro addHeader(committeeType, projectTitle, leader, levelNames, savePDF, isComplete, style = '') %}
     {# Adds a header. Input arguments:
         committeeType:   committee type
-        projectTitle:    project title
+        projectTitle:    array of two elements: project title and whether it differs for participants
         leader:          array containing the  project leaders
-        levelNames:     string containing the level IDs
+        levelNames:      string containing the level IDs
         savePDF:         if true, the pdf will be saved on disk
         isComplete:      if true, for the date, only the date will be added, otherwise the time will also be added
         style:           additional style attributes for the img-tag of the logo
     #}
-    {% set tempPrefix = 'participation.projectTitleHeader.' %}
     <div style="page-break-inside: avoid; margin-bottom: 0.5em">
         <div style="display: flex">
             {{ _self.addLogo(committeeType,style) }}
@@ -22,11 +21,11 @@
             <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-top: 0.25rem; text-align: right; margin-right: 0.5em; width: {{ committeeType is not same as 'testCommittee' ? '80%' : '100%' }}">
                 <div>{{ 'contributors.tasks.leader'|trans([],'messages')~':' }}</div>
                 {% for curLeader in leader %}
-                    <div >{{ curLeader }}</div>
+                    <div >{{ curLeader|raw }}</div>
                 {% endfor %}
                 {# project title #}
                 <div {% if not savePDF %} class="previewSmall" {% endif %} style="word-break: break-word; margin-top: 0.25rem">
-                    {{ ((tempPrefix~'start')|trans([],'pdf'))|raw }}{{ (tempPrefix~'end')|trans({'projectTitle': projectTitle},'pdf')~levelNames }}
+                    {{ ('participation.projectTitleHeader'|trans({'projectTitle': projectTitle['projectTitle'], 'isDifferent': projectTitle['isDifferent']},'pdf')~levelNames)|raw }}
                 </div>
                 {{ _self.addDate(savePDF,isComplete) }}
             </div>

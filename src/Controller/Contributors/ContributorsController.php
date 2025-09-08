@@ -25,21 +25,6 @@ class ContributorsController extends ControllerAbstract
         $appNode = $this->getXMLfromSession($session);
         $coreDataNode = $appNode->{self::appDataNodeName}->{self::coreDataNode};
         $coreDataArray = $this->xmlToArray($coreDataNode);
-        // Check if any mandatory task is not selected for any contributor and create an error message, if so. Additionally, check if the applicant has more than one task.
-        $missingTasksArray = ['',''];
-        $missingFunction = 'contributors.errors.missingFunction';
-        foreach ($contributorsArray as $index => $contributor) {
-            $tasks = $contributor[self::taskNode];
-            if ($tasks!=='' ) {
-                $oneTask = count($tasks)===1;
-                if ($index===0 && $oneTask) {
-                    $missingTasksArray[0] = $this->translateString($missingFunction,['type' => self::applicant]);
-                }
-                elseif ($index===1 && array_key_exists(self::supervisorNode,$tasks) && $oneTask) {
-                    $missingTasksArray[1] = $this->translateString($missingFunction,['type' => self::supervisor]);
-                }
-            }
-        }
 
         $contributors = $this->createFormAndHandleRequest(ContributorsType::class,null,$request);
         if ($contributors->isSubmitted()) {
@@ -132,7 +117,6 @@ class ContributorsController extends ControllerAbstract
              'tasksMandatory' => self::tasksMandatory,
              'otherDescription' => self::otherDescription,
              'contributorsArray' => $contributorsArray,
-             'missingTasks' => $missingTasksArray,
              'institutionLabel' => [$this->translateString($institution.'Applicant'),$this->translateString($institution)],
              'phoneLabel' => [$this->translateString($phone), $this->translateString($phone.'Optional')],
              'positions' => $positionsTranslated],

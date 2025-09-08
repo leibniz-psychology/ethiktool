@@ -31,7 +31,7 @@ class ConsentType extends TypeAbstract
         $tempPrefix = $translationPrefix.self::terminateConsNode.'.';
         $this->addBinaryRadio($builder,self::terminateConsNode,$tempPrefix.'title',self::terminateConsNode.self::descriptionCap,$tempPrefix.self::textHint,[self::labelParams => [self::addressee => $this->translateString('projectdetails.addressee.'.($isNotParticipants ? ($dummyParams['isAttendance'] ? 'both' : 'participants') : 'thirdParties').'.'.$addressee)]]);
         $information = $options[self::informationNode];
-        if (in_array($information,[self::pre,self::post])) {
+        if ($information===self::pre) {
             $this->addFormElement($builder,self::terminateConsNode.self::terminateConsParticipationNode,'textarea',hint: $translationPrefix.self::terminateConsNode.'.participation');
         }
         // termination by participants

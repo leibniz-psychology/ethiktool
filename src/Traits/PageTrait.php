@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 trait PageTrait
 {
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '1.2.3';
+    protected const toolVersion = '1.3.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -158,6 +158,16 @@ trait PageTrait
             $returnArray[$prefixedValue] = $valuePrefix==='' ? $this->appendText($prefixedValue) : $valuePrefix.$value;
         }
         return $returnArray;
+    }
+
+    /** Adds 'Div' to a string.
+     * @param string $string string where 'Div' gets appended
+     * @param bool $addMiddle if false, only 'Div' will be appended
+     * @param bool $addText if true, 'Text' will be added before 'Div', otherwise 'Description'. Only used if $addMiddle is true
+     * @return string $string with 'Div' appended
+     */
+    private function addDiv(string $string, bool $addMiddle = false, bool $addText = true): string {
+        return $string.($addMiddle ? ($addText ? 'Text' : self::descriptionCap) : '').'Div';
     }
 
     /** Creates an array where each key is the concatenation of \$prefix and a value in \$values and the values are $values.

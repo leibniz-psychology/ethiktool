@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import { setElementVisibility, getSelected, setHint } from "../multiFunction";
+import {setElementVisibility, getSelected, setHint, checkTextareaInput} from "../multiFunction";
 
 export default class extends Controller {
 
@@ -11,7 +11,8 @@ export default class extends Controller {
         examinedDescription: Array, // 0: nothing selected, 1: description optional, 2: description obligatory
         criteriaHint: Array, // 0: participants, 1: children, 2: wards
         includeStart: Array, // 0: participants, 1: children, 2: wards
-        firstInclude: Array // 0: min age equals 1, 1: min age unequal to 1. In each array: 0: max age equals 1, 1: max age unequal 1. In each array: 0: participants, 1: children, 2: wards. In each array: 0: no upper limit, 1: same limit, 2: different limits
+        firstInclude: Array, // 0: min age equals 1, 1: min age unequal to 1. In each array: 0: max age equals 1, 1: max age unequal 1. In each array: 0: participants, 1: children, 2: wards. In each array: 0: no upper limit, 1: same limit, 2: different limits
+        firstIncludeSentence: String // first inclusion sentence as displayed in the text area
     }
 
     connect() {
@@ -23,6 +24,16 @@ export default class extends Controller {
             });
         }
         this.setCriteria();
+    }
+
+    // methods that are called from the template
+
+    /** Sets the 'params' value of the event and calls 'checkTextareaInput'.
+     * @param event widget that invoked the method
+     */
+    checkFirstInclusion(event) {
+        event.params.start = this.firstIncludeSentenceValue;
+        checkTextareaInput(event);
     }
 
     // methods that are called from the template and from within this class
@@ -93,7 +104,8 @@ export default class extends Controller {
         let include = this.includeTarget.value.split("\n");
         let minAgeSingular = minAge==='1';
         let maxAgeSingular = maxAge==='1';
-        include[0] = this.firstIncludeValue[minAgeSingular ? 0 : 1][maxAgeSingular ? 0 : 1][addressee][isUnlimited ? 0 : (minAge===maxAge || !isMinAge || !isMaxAge ? 1 : 2)].replace(maxAgeSingular ? '1' : '101',isMaxAge ? maxAge : 'X').replace(minAgeSingular ? '1' : '0' ,isMinAge ? minAge : (isMaxAge && !isUnlimited ? maxAge : 'X'));
+        this.firstIncludeSentenceValue = this.firstIncludeValue[minAgeSingular ? 0 : 1][maxAgeSingular ? 0 : 1][addressee][isUnlimited ? 0 : (minAge===maxAge || !isMinAge || !isMaxAge ? 1 : 2)].replace(maxAgeSingular ? '1' : '101',isMaxAge ? maxAge : 'X').replace(minAgeSingular ? '1' : '0' ,isMinAge ? minAge : (isMaxAge && !isUnlimited ? maxAge : 'X'));
+        include[0] = this.firstIncludeSentenceValue;
         this.includeTarget.value = include.join("\n");
     }
 

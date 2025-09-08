@@ -11,7 +11,7 @@
     {# guidelines #}
     {% if guidelinesText is not same as '' %}
         <h4 class="{{ headingCenter }}" style="margin-bottom: 0">{{ guidelines[0]|raw }}</h4>
-        <div class="pdfHeadingCenter {% if not savePDF %} previewSmall {% endif %}" style="margin-bottom: 1em; font-family: montserrat-regular, sans-serif">{{ guidelinesText }}</div>
+        <div class="pdfHeadingCenter {% if not savePDF %} previewSmall {% endif %}" style="margin-bottom: 1em; font-family: montserrat-regular, sans-serif">{{ guidelinesText|raw }}</div>
     {% endif %}
     {# project title #}
     {{ _self.addBox(boxContent[0],boxNumber,savePDF) }}
@@ -27,7 +27,7 @@
                 {% for label, content in infos.infos %}
                     <div style="display: flex">
                         <div style="justify-content: flex-end; display: flex; min-width: {{ applicantWidth }}em">{{ label }}:</div>
-                        <div style="margin-left: 1em">{{ content }}</div>
+                        <div style="margin-left: 1em">{{ content|raw }}</div>
                     </div>
                 {% endfor %}
             {% endfor %}
@@ -59,7 +59,7 @@
                                     {% if not isOther %}
                                         {{ pdfMacros.addCheckbox(value,savePDF) }}
                                     {% else %}
-                                        {{ value }}
+                                        {{ value|raw }}
                                     {% endif %}
                                 </td>
                             {% endfor %}
@@ -112,10 +112,10 @@
     <div class="pdfBox {% if isNotApplicable %}colorNA{% endif %}" {% if isParagraph %} style="page-break-before: avoid"{% endif %}>
         {{ _self.addHeading(boxNumber, boxContent['heading'], savePDF, boxContent['subHeading'] ?? '', isNotApplicable, boxContent['inputPage'] ?? '') }}
         <div class="{{ isNotApplicable ? 'boxInnerNA' : 'boxInner'}} {% if not savePDF %} previewSmall {% endif %}">
-            {{ content|nl2br }}
+            {{ content|raw|nl2br }}
             {% set subContent = boxContent['subContent'] ?? '' %}
             {% if subContent is not same as '' %}
-                <div>{{ subContent|nl2br }}</div>
+                <div>{{ subContent|raw|nl2br }}</div>
             {% endif %}
         </div>
     </div>

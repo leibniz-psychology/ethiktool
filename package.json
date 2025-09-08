@@ -32,6 +32,7 @@
     "dependencies": {
         "@popperjs/core": "^2.11.8",
         "bootstrap": "twbs/bootstrap#39030/head",
+        "isomorphic-dompurify": "^2.26.0",
         "uuid": "^10.0.0"
     }
 }

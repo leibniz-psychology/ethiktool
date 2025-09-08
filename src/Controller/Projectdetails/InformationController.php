@@ -45,15 +45,15 @@ class InformationController extends ControllerAbstract
                 $this->addInputPage($translationPrefix,self::informationIIINode,$inputArray);
                 $informationIIIinputText = $this->translateString($inputPrefix.'hint',['pages' => 1, 'page' => '„'.$this->translateString($translationPrefix.self::informationIIINode).'“', 'inputs' => $this->translateString($inputPrefix.self::informationIIINode)]);
             }
-            // legal
-            $textInputPre = $this->getLegalInput($inputArray,$measureArray);
-            // post
-            $inputArray = $this->setInputArray();
             // consent
             $terminateConsArray = $measureArray[self::consentNode][self::terminateConsNode];
             if (array_key_exists(self::terminateConsParticipationNode,$terminateConsArray) && $this->checkInput($terminateConsArray,[self::terminateConsParticipationNode => ''])) {
                 $this->addInputPage($translationPrefix,self::consentNode,$inputArray,[self::addressee => $addresseeString]);
             }
+            // legal
+            $textInputPre = $this->getLegalInput($inputArray,$measureArray);
+            // post
+            $inputArray = $this->setInputArray();
             // texts
             $textsArray = $measureArray[self::textsNode];
             $conArray = $textsArray[self::conNode] ?? null; // can only be null if tempArray is an empty string
@@ -72,7 +72,7 @@ class InformationController extends ControllerAbstract
         }
 
         $information = $this->createFormAndHandleRequest(InformationType::class,$this->xmlToArray($informationNode),$request,
-            [self::dummyParams => ['isAttendance' => !$isInformationII && $addressee!==self::addresseeParticipants],
+            [self::dummyParams => ['isAttendance' => !$isInformationII && $addressee!==self::addresseeParticipants, 'isInformation' => !$isInformationII],
              self::addresseeString => $addresseeString,
              self::participantsString => $this->getAddresseeString($addressee,!$isInformationII,true, $isInformationII || $addressee===self::addresseeParticipants)]);
         if ($information->isSubmitted()) {
@@ -89,27 +89,23 @@ class InformationController extends ControllerAbstract
                 elseif (!$informationIIIinput && $isInformationIII) { // add nodes to informationIII
                     $this->addChildNodes($informationIIInode,array_keys(self::informationIIIInputsTypes));
                 }
-                $chosen = $data[self::chosen];
-                $isPre = $chosen===0; // true if pre information
+                $isPre = $data[self::chosen]===0; // true if pre information
                 $isPreOld = $informationLoad===self::pre;
-                // texts
+                // consent and texts
                 $isPostOld = $informationLoad===self::post;
                 $isInformation = $isPre || ($data[self::informationAddNode][self::chosen] ?? 2)===0; // true if either pre or post information
                 $terminateConsNode = $measureNodeNew->{self::consentNode}->{self::terminateConsNode};
                 $textsNode = $measureNodeNew->{self::textsNode};
                 $legalNode = $measureNodeNew->{self::legalNode};
-                if ($isPreOld && !$isPre) { // pre information and now no pre information -> remove legal nodes
+                if ($isPreOld && !$isPre) { // pre information and now no pre information -> remove terminateConsParticipation and legal nodes
+                    $this->removeElement(self::terminateConsParticipationNode,$terminateConsNode);
                     $this->removeAllChildNodes($legalNode);
                 }
-                if (($isPreOld || $isPostOld) && !$isInformation) { // any information and now no information at all -> remove participation node for terminate cons in consent  and texts nodes
-                    $this->removeElement(self::terminateConsParticipationNode,$terminateConsNode);
+                if (($isPreOld || $isPostOld) && !$isInformation) { // any information and now no information at all -> remove texts nodes
                     $this->removeAllChildNodes($textsNode);
                 }
                 elseif (!$isPreOld) {
-                    if (!$isPostOld && $isInformation) { // no information at all and now any information -> add intro, goals, procedure, pro, con, and eventually finding consent and participation for terminate cons
-                        if (array_key_exists(self::descriptionNode,$terminateConsArray)) { // question was answered with no, i.e., descriptions are needed
-                            $this->addChildNodes($terminateConsNode,[self::terminateConsParticipationNode]);
-                        }
+                    if (!$isPostOld && $isInformation) { // no information at all and now any information -> add intro, goals, procedure, pro, con, and eventually finding consent
                         $this->addChildNodes($textsNode,[self::introNode,self::goalsNode,self::procedureNode,self::proNode,self::conNode]);
                         $this->addChildNodes($textsNode->{self::introNode},[self::introTemplate,self::descriptionNode]);
                         $this->addChildNodes($textsNode->{self::proNode},[self::proTemplate,self::descriptionNode]);
@@ -118,8 +114,13 @@ class InformationController extends ControllerAbstract
                             $this->addChildNodes($textsNode->addChild(self::findingTextNode),[self::findingTemplate,self::descriptionNode]);
                         }
                     }
-                    if ($isPre && ($this->getAnyConsent($measureArray[self::consentNode]) || $this->getTemplateChoice($this->getLoanReceipt($measureArray[self::measuresNode][self::loanNode])))) { // no pre information and now pre information and consent or loan receipt -> add legal nodes
-                        $this->addLegalNodes($legalNode,$this->xmlToArray($measureNode));
+                    if ($isPre) { // no pre information and now pre information
+                        if (($this->getAnyConsent($measureArray[self::consentNode]) || $this->getTemplateChoice($this->getLoanReceipt($measureArray[self::measuresNode][self::loanNode])))) { // consent or loan receipt -> add legal nodes
+                            $this->addLegalNodes($legalNode,$this->xmlToArray($measureNode));
+                        }
+                        if (array_key_exists(self::descriptionNode,$terminateConsArray)) { // terminateCons is answered with 'no' -> add terminateConsParticipation node
+                            $this->addChildNodes($terminateConsNode,[self::terminateConsParticipationNode]);
+                        }
                     }
                 }
             }
@@ -129,7 +130,7 @@ class InformationController extends ControllerAbstract
         return $this->render('Projectdetails/information.html.twig',
             $this->setRenderParameters($request,$information,
                 array_merge(
-                ['isInformationII' => $isInformationII,
+                ['isInformation' => !$isInformationII,
                  'informationIIIinput' => $informationIIIinputText,
                  'textInputPre' => $textInputPre,
                  'textInputPost' => $textInputPost],

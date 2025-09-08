@@ -27,31 +27,39 @@ class PDFAbstract extends ControllerAbstract
     /** Creates a string containing the information about the location.
      * @param array $measureTimePoint array containing the information about the current measure time point.
      * @param array $committeeParam array containing the committee
+     * @param bool $markInput if true, the description gets surrounded with span-tags
      * @return string string with location or an empty string if no location is chosen
      */
-    protected function getLocation(array $measureTimePoint, array $committeeParam): string {
+    protected function getLocation(array $measureTimePoint, array $committeeParam, bool $markInput = false): string {
         $locationArray = $measureTimePoint[self::measuresNode][self::locationNode];
         $chosen = $locationArray[self::chosen];
-        return $chosen!=='' ? $this->translateStringPDF('projectdetails.measures.location',array_merge($committeeParam,[self::informationNode => $this->getInformationString($measureTimePoint[self::informationNode]), self::locationNode => $chosen, self::descriptionNode => $locationArray[self::descriptionNode]])) : '';
+        $translationPrefix = 'projectdetails.measures.location.';
+        return $chosen!=='' ? $this->translateStringPDF($translationPrefix.'start',array_merge($committeeParam,[self::informationNode => $this->getInformationString($measureTimePoint[self::informationNode]), self::locationNode => $chosen])).$this->addMarkInput($locationArray[self::descriptionNode],$markInput).($chosen===self::locationOnline ? $this->translateStringPDF($translationPrefix.'end') : '') : '';
     }
 
     /** Creates a string for the inclusion and exclusion criteria.
      * @param array $measureTimePoint array containing the information about the current time point
      * @param string $addressee addressee
      * @param bool $addSubHeadings if true, the subheadings are added before the criteria
+     * @param bool $markInput if true, custom text will be surrounded by a span-tag
      * @return array the inclusion criteria and eventually the exclusion criteria
      */
-    protected function getCriteria(array $measureTimePoint, string $addressee, bool $addSubHeadings = true): array {
+    protected function getCriteria(array $measureTimePoint, string $addressee, bool $addSubHeadings = true, bool $markInput = false): array {
         $criteriaArray = $measureTimePoint[self::groupsNode][self::criteriaNode];
         $tempPrefix = 'projectdetails.pages.groups.criteria.';
         $returnArray = [];
         foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
             $tempArray = $criteriaArray[$type][self::criteriaNode];
             if ($tempArray!=='') { // at least one criterion
-                if ($type===self::criteriaIncludeNode && ($measureTimePoint[self::burdensRisksNode][self::findingNode][self::informingNode] ?? '')===self::informingAlways) { // informing about findings is obligatory -> set as second inclusion criterion
-                    $tempArray = array_merge(['include0' => $tempArray['include0']],['' => $this->translateStringPDF('participation.criteria.finding')],array_slice($tempArray,1));
+                $isInclude = $type===self::criteriaIncludeNode;
+                $criteria = $isInclude ? '• '.$tempArray['include0']."\n" : '';
+                if ($isInclude) {
+                    if (($measureTimePoint[self::burdensRisksNode][self::findingNode][self::informingNode] ?? '')===self::informingAlways) {
+                        $criteria .= "• ".$this->translateStringPDF('participation.criteria.finding')."\n";
+                    }
+                    $tempArray = array_slice($tempArray, 1);
                 }
-                $returnArray[] = ($addSubHeadings ? $this->translateString($tempPrefix.$type.'.start',[self::addressee => $addressee])."\n" : '')."• ".implode("\n• ",$tempArray);
+                $returnArray[] = ($addSubHeadings ? $this->translateString($tempPrefix.$type.'.start',[self::addressee => $addressee])."\n" : '').$criteria.($tempArray!==[] ? "• ".$this->addMarkInput(implode("\n• ",$tempArray),$markInput) : '');
             }
         }
         return $returnArray;
@@ -63,9 +71,10 @@ class PDFAbstract extends ControllerAbstract
      * @param string $information information
      * @param Session $session current session
      * @param bool $addEnd if true, an additional sentence for money and hours (if existent) as well as the sentences for awarding and a sentence about further compensation are added
+     * @param bool $markInput if true, custom text will be surrounded by a span-tag
      * @return string compensation array
      */
-    protected function getCompensation(array $compensationArray, array $addresseeParam, string $information, Session $session, bool $addEnd = false): string {
+    protected function getCompensation(array $compensationArray, array $addresseeParam, string $information, Session $session, bool $addEnd = false, bool $markInput = false): string {
         $compensationTypes = $compensationArray['type'];
         $returnString = '';
         $numCompensation = 0;
@@ -88,14 +97,15 @@ class PDFAbstract extends ControllerAbstract
                 $description = $isCompensation ? $description : [self::descriptionNode => $description];
                 $additional = $description[self::moneyHourAdditionalNode] ?? '';
                 $isMoneyCompensation = $type===self::compensationMoney;
+                $isHoursCompensation = $type===self::compensationHours;
                 $isReal = $additional==='real';
                 $isMoney = $isMoney || $isMoneyCompensation && $isReal;
-                $isHours = $isHours || $type===self::compensationHours && $isReal;
+                $isHours = $isHours || $isHoursCompensation && $isReal;
                 $value = $description[self::descriptionNode];
                 if ($isMoneyCompensation) {
                     $tempArray = $description[self::moneyFurther];
                     if (array_key_exists(self::descriptionNode,$tempArray)) {
-                        $moneyFurther = $this->translateString($compensationPrefix.self::compensationMoney.'.textHint').$tempArray[self::descriptionNode];
+                        $moneyFurther = $this->translateString($compensationPrefix.self::compensationMoney.'.textHint').$this->addMarkInput($tempArray[self::descriptionNode],$markInput);
                     }
                     if ($value!=='') {
                         $value = number_format((float) $value,2,$isGerman ? ',' : '.');
@@ -105,7 +115,8 @@ class PDFAbstract extends ControllerAbstract
                 if ($hoursValue!=='') {
                     $hoursValue = str_replace($isGerman ? '.' : ',', $isGerman ? ',' : '.',$hoursValue);
                 }
-                $returnString .= ($index===($numCompensation-1) ? $lastOr : ',').' '.$this->translateStringPDF($compensationPrefixPDF.'types.'.$type,[self::descriptionNode => $value, self::moneyHourAdditionalNode => $description[self::moneyHourAdditionalNode] ?? '', 'hoursValue' => $hoursValue, 'amount' => $hoursValue!='' ? (int)($hoursValue) : 0]);
+                $tempPrefix = $compensationPrefixPDF.'types.'.$type.'.';
+                $returnString .= ($index===($numCompensation-1) ? $lastOr : ',').' '.$this->translateStringPDF($tempPrefix.'start',[self::descriptionNode => $value, self::moneyHourAdditionalNode => $description[self::moneyHourAdditionalNode] ?? '', 'hoursValue' => $hoursValue, 'amount' => $hoursValue!='' ? (int)($hoursValue) : 0]).(!$isMoneyCompensation ? ($isHoursCompensation ? ' ' : '').$this->addMarkInput($value,$markInput) : '').$this->translateStringPDF($tempPrefix.'end');
                 // awarding
                 if ($addEnd && $isCompensation) {
                     $tempPrefix = $compensationPrefix.self::awardingNode.'.'.$type.'.';
@@ -113,21 +124,21 @@ class PDFAbstract extends ControllerAbstract
                     if ($type===self::compensationLottery) { // announcement
                         $lotteryPrefix = $tempPrefix.'result.';
                         $lotteryStart = $awardingArray[self::lotteryStart];
-                        $awardingString .= ' '.$this->translateString($lotteryPrefix.'start').$awardingArray[self::lotteryStart.self::descriptionCap].' '.(!in_array($lotteryStart,['',self::lotteryResultOther]) ? $this->translateString($lotteryPrefix.'types.'.$lotteryStart) : $awardingArray[self::lotteryStartOtherDescription] ?? '').$this->translateString($lotteryPrefix.'end');
+                        $awardingString .= ' '.$this->translateString($lotteryPrefix.'start').$this->addMarkInput($awardingArray[self::lotteryStart.self::descriptionCap],$markInput).' '.(!in_array($lotteryStart,['',self::lotteryResultOther]) ? $this->translateString($lotteryPrefix.'types.'.$lotteryStart) : $this->addMarkInput($awardingArray[self::lotteryStartOtherDescription] ?? '',$markInput)).$this->translateString($lotteryPrefix.'end');
                     }
                     $chosen = $awardingArray[self::chosen];
                     $isLater = $chosen===self::awardingLater;
-                    $awardingString .= ' '.($type!==self::compensationOther ? $this->translateString($tempPrefix.'title').(!in_array($chosen,['','other']) ? $this->translateString($tempPrefix.$chosen) : '') : $chosen);
+                    $awardingString .= ' '.($type!==self::compensationOther ? $this->translateString($tempPrefix.'title').(!in_array($chosen,['','other']) ? $this->translateString($tempPrefix.$chosen) : '') : $this->addMarkInput($chosen,$markInput));
                     $description = $awardingArray[self::descriptionNode] ?? '';
                     if ($isLater || $chosen==='external') {
                         $awardingString .= $namelyString;
                     }
                     if ($description!=='') { // a description or further choice is needed and was made
-                        $awardingString .= $chosen===self::awardingDeliver ? $this->translateString($tempPrefix.'deliverTypes.'.$description) : $description;
+                        $awardingString .= $chosen===self::awardingDeliver ? $this->translateString($tempPrefix.'deliverTypes.'.$description) : $this->addMarkInput($description,$markInput);
                     }
                     if ($chosen===self::awardingLater) { // information for later
                         $laterChosen = $awardingArray[self::laterTypesName];
-                        $awardingString .= ' '.$this->translateStringPDF($laterPrefix.'title').($awardingArray[self::laterOtherDescription] ?? ($laterChosen!=='' ? $this->translateStringPDF($laterPrefix.$laterChosen,$addresseeParam) : ''));
+                        $awardingString .= ' '.$this->translateStringPDF($laterPrefix.'title').(array_key_exists(self::laterOtherDescription,$awardingArray) ? $this->addMarkInput($awardingArray[self::laterOtherDescription],$markInput) : ($laterChosen!=='' ? $this->translateStringPDF($laterPrefix.$laterChosen,$addresseeParam) : ''));
                     }
                 }
             }
@@ -142,11 +153,12 @@ class PDFAbstract extends ControllerAbstract
     /** Creates the string for compensation if the experiment is terminated.
      * @param array $compensationArray array containing the compensation nodes
      * @param array $parameter array containing the parameters (addressee and terminate cons)
+     * @param bool $markInput if true, custom text will be surrounded by a span-tag
      * @return string compensation for termination or an empty string if no compensation is given at all
      */
-    protected function getCompensationTerminate(array $compensationArray, array $parameter): string {
+    protected function getCompensationTerminate(array $compensationArray, array $parameter, bool $markInput = false): string {
         $tempArray = $compensationArray[self::terminateNode] ?? [];
-        return $tempArray!==[] ? $this->translateStringPDF('participation.'.self::compensationNode.'.'.self::terminateNode,array_merge($parameter,[self::compensationNode => $tempArray[self::chosen], self::descriptionNode => $tempArray[self::descriptionNode] ?? ''])) : '';
+        return $tempArray!==[] ? $this->translateStringPDF('participation.'.self::compensationNode.'.'.self::terminateNode,array_merge($parameter,[self::compensationNode => $tempArray[self::chosen]])).$this->addMarkInput($tempArray[self::descriptionNode] ?? '',$markInput).'.' : '';
     }
 
     /** Creates the marking sentences.
@@ -164,6 +176,12 @@ class PDFAbstract extends ControllerAbstract
         $codeCompensation = $addCodeCompensation ? ($privacyArray[self::codeCompensationNode] ?? '') : '';
         $translationPrefix = 'participation.'.self::privacyNode.'.';
         $dataPersonal = $privacyArray[self::dataPersonalNode] ?? '';
+        $isPurposeCompensation = false;
+        foreach ([self::purposeNode,self::purposeFurtherNode] as $type) {
+            $tempArray = $privacyArray[$type] ?? '';
+            $isPurposeCompensation = $isPurposeCompensation || $tempArray!=='' && array_key_exists(($type===self::purposeFurtherNode ? self::purposeFurtherNode : '').self::purposeCompensation,$tempArray);
+        }
+        $purposeCompensationParam = ['purposeCompensation' => $this->getStringFromBool($isPurposeCompensation)];
         // the following variables get true if any marking is of that type
         $isExternal = false;
         $isInternal = false;
@@ -179,7 +197,7 @@ class PDFAbstract extends ControllerAbstract
             $isCurInternal = false;
             if (in_array($chosenWoPrefix,self::markingValues)) { // second marking or code compensation may not be chosen yet
                 $description = $tempArray[self::descriptionNode] ?? '';
-                $curSentences .= $this->translateStringPDF($markingPrefix.'codeMarking',array_merge($addresseeParam,['isSecond' => $this->getStringFromBool( $type!==self::markingNode), 'type' => $chosenWoPrefix, self::descriptionNode => $description!=='' ? $description.'.' : ''])); // if $type equals codeCompensation, isSecond is true, but not needed
+                $curSentences .= $this->mergeContent([$this->translateStringPDF($markingPrefix.'codeMarking',array_merge($addresseeParam,array_merge($purposeCompensationParam,['isSecond' => $this->getStringFromBool( $type!==self::markingNode), 'type' => $chosenWoPrefix]))),$description!=='' ? $description.'. ' : '']); // if $type equals codeCompensation, isSecond is true, but not needed
                 $isCurInternal = $chosenWoPrefix===self::markingInternal;
                 $internalChosen = '';
                 if ($isCurInternal) {
@@ -255,7 +273,7 @@ class PDFAbstract extends ControllerAbstract
                     $returnString .= ' '.$this->translateString($tempPrefix.'start',array_merge($isFirst ? $personalParam : ['personal' => 'keep'],['isSecond' => $this->getStringFromBool(!$isFirst)])).($dataReuseHow!=='' ? $this->translateString($tempPrefix.'types.'.$dataReuseHow) : '');
                     $description = $tempArray[self::descriptionNode] ?? '';
                     if ($description!=='') {
-                        $returnString .= $this->translateString($tempPrefix.'descriptionStart').$description.'.';
+                        $returnString .= $this->mergeContent([$this->translateString($tempPrefix.'descriptionStart'),$description,'.']);
                     }
                 }
             }
@@ -266,12 +284,12 @@ class PDFAbstract extends ControllerAbstract
     /** Translates \$string. If the pdf should not be saved on disk (i.e., if preview), \$string is then converted to a link.
      * @param string $string string to be translated and eventually converted
      * @param array $parameters if $string is a translation key, parameters for the translation
-     * @param string $fragment fragment to be added to the link
+     * @param string $fragment fragment to be added to the link.
      * @return string converted string
      */
     protected function addHeadingLink(string $string, array $parameters = [], string $fragment = ''): string {
         $string = $this->translateStringPDF($string,$parameters);
-        if (!self::$savePDF && self::$isPageLink) {
+        if (!self::$savePDF && self::$isPageLink && $fragment!==self::dummyString) {
             $string = $this->convertStringToLink($string,self::$linkedPage,self::$routeIDs,$fragment);
         }
         return $string;

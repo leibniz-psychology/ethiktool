@@ -56,72 +56,71 @@ class LandingController extends ControllerAbstract
         if ($landing->isSubmitted()) { // language has changed or a link was clicked
             $data = $landing->getData();
             $submitDummy = $data[self::submitDummy]; // submitDummy as string
-            $isRemove = str_contains($submitDummy,self::remove);
-            $isCopy = str_contains($submitDummy,'copyClicked');
-            if (str_contains($submitDummy,'newClicked') || $isCopy) { // new study, group, or measure point in time should be created
-                $addNode = $projectdetailsNode; // node where the new one gets appended
-                $nodeName = self::studyNode;
-                if (str_contains($submitDummy,self::studyID)) { // new group oder measure point in time
-                    $addNode = $addNode->{self::studyNode}[$IDs[0]];
-                    $nodeName = self::groupNode;
-                    if (str_contains($submitDummy,self::groupID)) { // new measure point in time
-                        $addNode = $addNode->{self::groupNode}[$IDs[1]];
-                        $nodeName = self::measureTimePointNode;
-                    }
-                }
-                $addMeasurement = true;
-                $newName = $data[self::newStudyGroupName] ?? '';
-                if ($nodeName!==self::measureTimePointNode) { // if double-clicked, prevent creating two studies/groups with the same name
-                    foreach ($this->addZeroIndex($this->xmlToArray($addNode)[$nodeName]) as $studyGroup) {
-                        $curName = $studyGroup[self::nameNode];
-                        if ($curName!=='' && $curName===$newName) {
-                            $addMeasurement = false;
+            if (!str_contains($submitDummy,"loadedXML:")) { // if a proposal is loaded, the submit dummy contains the entire xml
+                $isRemove = str_contains($submitDummy, self::remove);
+                $isCopy = str_contains($submitDummy, 'copyClicked');
+                if (str_contains($submitDummy, 'newClicked') || $isCopy) { // new study, group, or measure point in time should be created
+                    $addNode = $projectdetailsNode; // node where the new one gets appended
+                    $nodeName = self::studyNode;
+                    if (str_contains($submitDummy, self::studyID)) { // new group oder measure point in time
+                        $addNode = $addNode->{self::studyNode}[$IDs[0]];
+                        $nodeName = self::groupNode;
+                        if (str_contains($submitDummy, self::groupID)) { // new measure point in time
+                            $addNode = $addNode->{self::groupNode}[$IDs[1]];
+                            $nodeName = self::measureTimePointNode;
                         }
                     }
-                }
-                if ($addMeasurement) {
-                    $this->addMeasurement($addNode,$nodeName,$newName,$isCopy ? $data[self::copy] : null); // if 'new' is clicked, but an existing is selected, 'copy' is not null
-                }
-            }
-            elseif ($isRemove || str_contains($submitDummy,self::edit)) { // study, group, or measure point in time should be removed or study or group name should be changed
-                // logic: $submitDummy has the form 'key:value\r\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\r\n' (substr call). Then split the string by the colon such that the first element is 'remove' and the second element starts with 'index\r\n' (first explode call). Then, split again by "\r" such that the first element contains the index (second explode call). Finally, convert it to an integer ((int) call). Same for 'edit'.
-                // The only characters before the 'remove' are the page, but there must be no other 'remove' string before the one containing the index. Same for 'edit'.
-                $index = (int)(explode("\r",explode(':',substr($submitDummy,strpos($submitDummy,$isRemove ? self::remove : self::edit)))[1])[0]);
-                $editRemoveNode = $projectdetailsNode->{self::studyNode}[$isStudy ? $IDs[0] : $index];
-                if ($isStudy) { // remove group or measure time point or edit group name
-                    $editRemoveNode = $editRemoveNode->{self::groupNode}[($isRemove && $isGroup) ? $IDs[1] : $index];
-                }
-                if ($isRemove) {
-                    if ($isGroup) { // remove measure time point
-                        $editRemoveNode = $editRemoveNode->{self::measureTimePointNode}[$index];
-                    }
-                    if ($editRemoveNode!==null) { // if the remove button is double-clicked, the element may already be removed
-                        $dom = dom_import_simplexml($editRemoveNode);
-                        $childNodes = $dom->parentNode->childNodes;
-                        $index = 0;
-                        while ($childNodes->length>$index) { // remove '#text' nodes
-                            $child = $childNodes->item($index);
-                            if ($child->nodeName==='#text') {
-                                $child->remove();
-                            }
-                            else {
-                                ++$index;
+                    $addMeasurement = true;
+                    $newName = $data[self::newStudyGroupName] ?? '';
+                    if ($nodeName!==self::measureTimePointNode) { // if double-clicked, prevent creating two studies/groups with the same name
+                        foreach ($this->addZeroIndex($this->xmlToArray($addNode)[$nodeName]) as $studyGroup) {
+                            $curName = $studyGroup[self::nameNode];
+                            if ($curName!=='' && $curName===$newName) {
+                                $addMeasurement = false;
                             }
                         }
-                        if ($childNodes->count()>1 && in_array($childNodes->item(1)->nodeName,[self::studyNode,self::groupNode,self::measureTimePointNode])) { // if the remove button is double-clicked and an element after the one to be removed exists, it would also be removed
-                            $dom->parentNode->removeChild($dom);
-                            $studies = $this->addZeroIndex($this->xmlToArray($projectdetailsNode->{self::studyNode}));
-                            if (count($studies)===1) {
-                                $groups = $this->addZeroIndex($studies[0][self::groupNode]);
-                                if (count($groups)===1 && count($this->addZeroIndex($groups[0][self::measureTimePointNode]))===1) { // only one study with one group with one measure time point remaining
-                                    $this->setProjectdetailsContributor($request,$appNode);
+                    }
+                    if ($addMeasurement) {
+                        $this->addMeasurement($addNode, $nodeName, $newName, $isCopy ? $data[self::copy] : null); // if 'new' is clicked, but an existing is selected, 'copy' is not null
+                    }
+                } elseif ($isRemove || str_contains($submitDummy, self::edit)) { // study, group, or measure point in time should be removed or study or group name should be changed
+                    // logic: $submitDummy has the form 'key:value\r\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\r\n' (substr call). Then split the string by the colon such that the first element is 'remove' and the second element starts with 'index\r\n' (first explode call). Then, split again by "\r" such that the first element contains the index (second explode call). Finally, convert it to an integer ((int) call). Same for 'edit'.
+                    // The only characters before the 'remove' are the page, but there must be no other 'remove' string before the one containing the index. Same for 'edit'.
+                    $index = (int)(explode("\r", explode(':', substr($submitDummy, strpos($submitDummy, $isRemove ? self::remove : self::edit)))[1])[0]);
+                    $editRemoveNode = $projectdetailsNode->{self::studyNode}[$isStudy ? $IDs[0] : $index];
+                    if ($isStudy) { // remove group or measure time point or edit group name
+                        $editRemoveNode = $editRemoveNode->{self::groupNode}[($isRemove && $isGroup) ? $IDs[1] : $index];
+                    }
+                    if ($isRemove) {
+                        if ($isGroup) { // remove measure time point
+                            $editRemoveNode = $editRemoveNode->{self::measureTimePointNode}[$index];
+                        }
+                        if ($editRemoveNode!==null) { // if the remove button is double-clicked, the element may already be removed
+                            $dom = dom_import_simplexml($editRemoveNode);
+                            $childNodes = $dom->parentNode->childNodes;
+                            $index = 0;
+                            while ($childNodes->length>$index) { // remove '#text' nodes
+                                $child = $childNodes->item($index);
+                                if ($child->nodeName==='#text') {
+                                    $child->remove();
+                                } else {
+                                    ++$index;
+                                }
+                            }
+                            if ($childNodes->count()>1 && in_array($childNodes->item(1)->nodeName, [self::studyNode, self::groupNode, self::measureTimePointNode])) { // if the remove button is double-clicked and an element after the one to be removed exists, it would also be removed
+                                $dom->parentNode->removeChild($dom);
+                                $studies = $this->addZeroIndex($this->xmlToArray($projectdetailsNode->{self::studyNode}));
+                                if (count($studies)===1) {
+                                    $groups = $this->addZeroIndex($studies[0][self::groupNode]);
+                                    if (count($groups)===1 && count($this->addZeroIndex($groups[0][self::measureTimePointNode]))===1) { // only one study with one group with one measure time point remaining
+                                        $this->setProjectdetailsContributor($request, $appNode);
+                                    }
                                 }
                             }
                         }
+                    } else { // edit study or group name
+                        $editRemoveNode->{self::nameNode} = $data[self::editName.$index];
                     }
-                }
-                else { // edit study or group name
-                    $editRemoveNode->{self::nameNode} = $data[self::editName.$index];
                 }
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
