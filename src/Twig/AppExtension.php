@@ -16,7 +16,8 @@ class AppExtension extends AbstractExtension
                 new TwigFunction('addTarget',[$this,'addTarget']),
                 new TwigFunction('addLabelClass',[$this,'addLabelClass']),
                 new TwigFunction('addClass',[$this,'addClass']),
-                new TwigFunction('getAnySelected',[$this,'getAnySelected'])];
+                new TwigFunction('getAnySelected',[$this,'getAnySelected']),
+                new TwigFunction('addTracking',[$this,'addTracking']),];
     }
 
     /** Returns the display value for a tag.
@@ -101,5 +102,15 @@ class AppExtension extends AbstractExtension
             }
         }
         return [$uniqueSelected,$anySelected,$numSelected];
+    }
+
+    /** Adds the 'onClick' event for tracking.
+     * @param string $category category
+     * @param string $name name
+     * @param string $action action. Defaults to 'click'
+     * @return string onClick event
+     */
+    public function addTracking(string $category, string $name, string $action = 'click'): string {
+        return "_paq.push(['trackEvent', '".$category."', '".$action."', '".$name."'])";
     }
 }

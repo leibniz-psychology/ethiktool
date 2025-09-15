@@ -9,6 +9,7 @@ use App\Traits\Projectdetails\ProjectdetailsTrait;
 use DateTime;
 use DOMDocument;
 use Exception;
+use Knp\Snappy\Pdf;
 use setasign\Fpdi\Fpdi;
 use setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException;
 use setasign\Fpdi\PdfParser\Filter\FilterException;
@@ -55,6 +56,7 @@ abstract class ControllerAbstract extends AbstractController
     protected const language = 'language'; // value needs to be the same as in PageTrait
     protected static bool $savePDF = false; // indicates if the pdf should be saved
     protected static bool $isCompleteForm = false; // indicates if the complete proposal should be created
+    protected const customPDForder = [self::privacyNode, self::informationNode, self::informationIINode, self::measuresNode, self::interventionsNode, self::otherSourcesNode]; // order of custom PDFs
     public const loadInput = 'loadInput'; // form element that holds the loaded xml-file; needed in TypeAbstract, therefore public
     protected const subPages = 'subPages';
     protected const label = 'label';
@@ -1024,10 +1026,10 @@ abstract class ControllerAbstract extends AbstractController
                 if (self::$isCompleteForm) {
                     $this->addPDF($tempFolder.'complete'.$sessionIDExt);
                 }
-                $applicationFilename = $tempFolder.'application'.$sessionIDExt;
-                $pdfApplication = new PdfCollection(); // for single documents
-                $pdfApplication->addPdf($applicationFilename,'1-'.($this->addPDF($applicationFilename)-1));
+                $applicationPrefix = $tempFolder.'application';
                 if (self::$isCompleteForm) {
+                    $applicationFilename = $applicationPrefix.'CompleteForm'.$sessionIDExt; // if other vote is answered with no, file is identical to 'application'
+                    (new PdfCollection())->addPdf($applicationFilename,'1-'.($this->addPDF($applicationFilename)-1));
                     $files = $request->files->all()['complete_form'];
                     $this->addCustomPDF(self::voteNode,$files);
                     $this->addParticipationPDFs($session,true,$files);
@@ -1043,7 +1045,9 @@ abstract class ControllerAbstract extends AbstractController
                     $zip->addEmptyDir($singleDocsFolder);
                 }
                 $singleDocsFolder .= $filename;
-                $zip->addFromString($singleDocsFolder.$this->translateStringPDF('filenames.application').$pdfExt,(new PdfMerger(new Fpdi()))->merge($pdfApplication ,PdfMerger::MODE_STRING));
+                $this->fpdi = new Fpdi();
+                $applicationFilename = $applicationPrefix.$sessionIDExt;
+                $zip->addFromString($singleDocsFolder.$this->translateStringPDF('filenames.application').$pdfExt,(new PdfMerger(new Fpdi()))->merge((new PdfCollection())->addPdf($applicationFilename,'1-'.($this->addPDF($applicationFilename)-1)) ,PdfMerger::MODE_STRING));
                 $this->addParticipationPDFs($session);
                 $zip->addFromString($singleDocsFolder.$this->translateStringPDF('filenames.participation').$pdfExt,(new PdfMerger(new Fpdi()))->merge($this->pdfParticipation,PdfMerger::MODE_STRING)); // if single documents, with time, otherwise without
                 $this->removeTempFiles($session);
@@ -1108,14 +1112,20 @@ abstract class ControllerAbstract extends AbstractController
     private function addParticipationPDFs(Session $session, bool $isCompleteForm = false, array $files = []): void { // placed here because is called by getDownloadedResponse() and calls addPDF()
         $sessionIDExt = $session->getId().'.pdf';
         $tempFolder = self::tempFolder.'/';
+        $customPDFs = $session->get(self::pdfParticipationCustom);
         foreach ($session->get(self::pdfParticipationArray) as $ids) {
             $idSuffix = $this->concatIDs($ids);
             // custom PDFs, if any
-            $filename = $tempFolder.'participation'.($isCompleteForm ? 'Marked' : '').$idSuffix.$sessionIDExt;
+            $folderPrefix = $tempFolder.'participation';
+            $filename = $folderPrefix.($isCompleteForm ? 'Marked' : '').$idSuffix.$sessionIDExt;
             if ($isCompleteForm) {
                 $this->addPDF($filename); // only date
-                foreach ([self::informationNode.$idSuffix, self::informationIINode.$idSuffix, self::measuresNode.$idSuffix, self::interventionsNode.$idSuffix, self::otherSourcesNode.$idSuffix, self::privacyNode.$idSuffix] as $custom) {
-                    $this->addCustomPDF($custom,$files);
+                $curCustomPDFs = $customPDFs[$ids[0]][$ids[1]][$ids[2]] ?? [];
+                foreach (self::customPDForder as $custom) {
+                    if (in_array($custom,$curCustomPDFs)) {
+                        $this->addPDF($folderPrefix.$idSuffix.$custom.$sessionIDExt);
+                    }
+                    $this->addCustomPDF($custom.$idSuffix,$files);
                 }
             }
             else {
@@ -1553,13 +1563,18 @@ abstract class ControllerAbstract extends AbstractController
         $suffix = $sessionID.'.pdf';
         if (self::$isCompleteForm) {
             unlink($prefix.'complete'.$suffix);
+            unlink($prefix.'applicationCompleteForm'.$suffix);
         }
         unlink($prefix.'application'.$suffix);
         $prefix .= 'participation';
+        $customPDFs = $session->get(self::pdfParticipationCustom);
         foreach ($session->get(self::pdfParticipationArray) as $ids) {
             unlink($this->concatIDs($ids,$prefix,$suffix));
             if (self::$isCompleteForm && self::$savePDF) {
                 unlink($this->concatIDs($ids,$prefix.'Marked',$suffix));
+                foreach ($customPDFs[$ids[0]][$ids[1]][$ids[2]] ?? [] as $curCustomPDF) {
+                    unlink($this->concatIDs($ids,$prefix,$curCustomPDF.$suffix));
+                }
             }
         }
 
@@ -1597,7 +1612,7 @@ abstract class ControllerAbstract extends AbstractController
                         }
                         // consent
                         if (!$isPre) { // no pre information -> remove description for participants
-                            $this->removeElement(self::terminateConsParticipationNode,$measureTimePointNode->{self::consentNode}->{self::terminateConsParticipationNode});
+                            $this->removeElement(self::terminateConsParticipationNode,$measureTimePointNode->{self::consentNode}->{self::terminateConsNode});
                         }
                     } // foreach measure time point
                 } // foreach group

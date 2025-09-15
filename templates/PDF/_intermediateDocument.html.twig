@@ -1,0 +1,10 @@
+{# template that gets added before custom PDFs #}
+{% extends 'PDF/basePDF.html.twig' %}
+{% import 'PDF/pdfMacros.html.twig' as pdfMacros %}
+{% trans_default_domain 'pdf' %}
+{% block pdfBody %}
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
+    {% endif %}
+    <div {% if not savePDF %} class="previewSmall" {% endif %}>{{ content|raw }}</div>
+{% endblock %}

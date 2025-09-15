@@ -11,7 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 trait PageTrait
 {
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '1.3.0';
+    protected const toolVersion = '1.3.1';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -57,6 +57,7 @@ trait PageTrait
     protected const pdfApplication = 'pdfApplication'; // rendered view for preview
     protected const pdfParticipation = 'pdfParticipation'; // rendered view for preview
     protected const pdfParticipationArray = 'pdfParticipationArray'; // array of array with three elements containing the IDs of the participation documents to be created
+    protected const pdfParticipationCustom = 'pdfParticipationCustom'; // array with one sub-array for each study, group, and time point. Value for each time point is an array containing all values for which a custom pdf will be added
 
     // functions
 

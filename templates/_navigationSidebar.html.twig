@@ -16,9 +16,9 @@
     {% endfor %}
     {# new form, load form, save #}
     <div class="NavBar mt-8" style="{{ buttonWidth }}">
-        <a class="Button_primary_act {% if isNewForm %} a_disabled {% endif %}" {% if not isNewForm %} {% if isFilename %} data-bs-toggle="modal" data-bs-target="#{{ modalID }}" {% endif %} href="{{ path('app_newForm') }}" {% endif %}>{{ 'pages.newForm'|trans }}</a>
-        <button class="Button_primary_act" type="button" {{ stimulus_target('base','load') }} {% if isNewForm %} disabled {% elseif isFilename %} data-bs-toggle="modal" data-bs-target="#{{ loadModalID }}" {% else %} {{ stimulus_action('base','setDummySubmit','click') }} {% endif %}>{{ 'navBar.loadForm'|trans }}</button>
-        {{ formRender.addSaveButton(not isFilename) }}
+        <a class="Button_primary_act {% if isNewForm %} a_disabled {% endif %}" {% if not isNewForm %} {% if isFilename %} data-bs-toggle="modal" data-bs-target="#{{ modalID }}" {% endif %} href="{{ path('app_newForm') }}" {% endif %} onclick="{{ addTracking('Button Sidebar','New Form') }}">{{ 'pages.newForm'|trans }}</a>
+        <button class="Button_primary_act" type="button" {{ stimulus_target('base','load') }} {% if isNewForm %} disabled {% elseif isFilename %} data-bs-toggle="modal" data-bs-target="#{{ loadModalID }}" {% else %} {{ stimulus_action('base','setDummySubmit','click') }} {% endif %} onclick="{{ addTracking('Button Sidebar','Load Form') }}">{{ 'navBar.loadForm'|trans }}</button>
+        {{ formRender.addSaveButton(not isFilename,true) }}
     </div>
     {# pages #}
     <div class="mt-8 {% if anyError %} ms-2 {% else %} ms-3 {% endif %}">
@@ -45,16 +45,16 @@
         {{ _self.createSideMenu(windows.Projectdetails,isFilename,activeRoute,routeParams,0,anyError,true) }}
     </div>
     {# check document #}
-    <button class="Button_primary_go NavBar mt-8" style="{{ buttonWidth }}" {% if isFilename %} {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_checkDoc'}) }} {% else %}disabled {% endif %}>{{ 'navBar.checkDoc'|trans }}</button>
+    <button class="Button_primary_go NavBar mt-8" style="{{ buttonWidth }}" {% if isFilename %} {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_checkDoc'}) }} {% else %}disabled {% endif %} onclick="{{ addTracking('Button Sidebar','Check Document') }}">{{ 'navBar.checkDoc'|trans }}</button>
     {# single documents and complete form #}
     <div class="NavBar mt-8" style="{{ buttonWidth }}">
-        <button type="button" class="Button_primary_act" name="documents" {% if isFilename %} {{ stimulus_action('base','saveUndoDocuments','click') }} {% else %} disabled {% endif %}>{{ formRender.addButtonIcon('navBar.documents','pdf') }}</button>
-        <button type="submit" class="Button_primary_go" {% if not (isFilename and isComplete) %} disabled {% else %} {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_completeForm'})}} {% endif %}>{{ formRender.addButtonIcon('navBar.completeForm','pdf') }}</button>
+        <button type="button" class="Button_primary_act" name="documents" {% if isFilename %} {{ stimulus_action('base','saveUndoDocuments','click') }} {% else %} disabled {% endif %} onclick="{{ addTracking('Button Sidebar','Single Documents') }}">{{ formRender.addButtonIcon('navBar.documents','pdf') }}</button>
+        <button type="submit" class="Button_primary_go" {% if not (isFilename and isComplete) %} disabled {% else %} {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_completeForm'})}} {% endif %} onclick="{{ addTracking('Button Sidebar','Complete Form') }}">{{ formRender.addButtonIcon('navBar.completeForm','pdf') }}</button>
     </div>
     {# program information and quit #}
     {% set quitModalID = 'quitModal' %}
     <div class="NavBar mt-8 mb-2" style="{{ buttonWidth }}">
-        <button type="button" class="Button_primary_go" id="quit" name="quit" {% if isFilename %}data-bs-toggle="modal" data-bs-target="#{{ quitModalID }}" {% else %} {{ stimulus_action('base','setDummySubmit','click')}} {% endif %}>{{ formRender.addButtonIcon('navBar.quit','quit') }}</button>
+        <button type="button" class="Button_primary_go" id="quit" name="quit" {% if isFilename %}data-bs-toggle="modal" data-bs-target="#{{ quitModalID }}" {% else %} {{ stimulus_action('base','setDummySubmit','click')}} {% endif %} onclick="{{ addTracking('Button Sidebar','Quit') }}">{{ formRender.addButtonIcon('navBar.quit','quit') }}</button>
     </div>
 </div>
 {% if isFilename %} {# must be outside the previous div because the div is sticky #}

@@ -77,7 +77,7 @@ export default class extends Controller {
         setElementVisibility(this.interventionsBurdensRisksTarget,anyIntervention); // hint for burdens/risks
         setElementVisibility(this.interventionsDescriptionDivTarget,anyIntervention); // div containing text field and hint above text field
         let surveyStart = this.interventionsSurveyValue[0];
-        setHint(this.interventionsDescriptionDivTarget.firstElementChild.firstElementChild,isOnlySurvey ? surveyStart+this.interventionsSurveyValue[1] : this.interventionsDescriptionValue); // hint above text field. Only visible if at least one intervention unlike 'no intervention' and 'survey' is selected
+        setHint(this.interventionsDescriptionDivTarget.firstElementChild.firstElementChild,isOnlySurvey ? surveyStart+this.interventionsSurveyValue[1] : this.interventionsDescriptionValue); // hint above text field. Only visible if at least one intervention unlike 'no intervention' is selected
         setElementVisibility(this.interventionsDescriptionTarget,isNotOnlySurvey); // text field
         setElementVisibility(this.interventionsPDFTarget,anyIntervention);
         if (isMeasuresSurveyTarget) { // deselect and disable the 'no interventions' checkbox in case it was checked before and then measures survey was selected
@@ -94,16 +94,16 @@ export default class extends Controller {
             let startsWithDefault = text.startsWith(surveyStart);
             if (isInterventionsSurvey && !startsWithDefault) {
                 text = surveyStart+' '+text;
+                this.abortCont = new AbortController(); // new instance for abortCont.signal.aborted set to false
                 this.interventionsDescriptionTarget.addEventListener('keydown',(event) => {
-                    this.setSurvey(event);
-                });
+                    event.params = {'start': this.interventionsSurveyValue[0]+'.', 'furtherAllowed': ['Space','Enter']};
+                    checkTextareaInput(event);
+                },{signal: this.abortCont.signal});
                 this.interventionsDescriptionTarget.params = {'start': surveyStart};
             }
             else if (!isInterventionsSurvey && startsWithDefault) {
                 text = text.replace(surveyStart,'').trim();
-                this.interventionsDescriptionTarget.removeEventListener('keydown',(event) => {
-                    this.setSurvey(event);
-                });
+                this.abortCont.abort(); // remove listener
             }
             this.interventionsDescriptionTarget.value = text;
         }
@@ -136,15 +136,5 @@ export default class extends Controller {
             let isSingular = value===1;
             document.getElementById(time).textContent = this.durationValue[time][isSingular ? 0 : 1].replace(isSingular ? '1' : '0',value===0 ? 'X' : value); // only 'total' will replace
         }
-    }
-
-    // methods that are called from within this class
-
-    /** Sets the 'params' value of the event and calls 'checkTextareaInput'.
-     * @param event widget that invoked the method
-     */
-    setSurvey(event) {
-        event.params = {'start': this.interventionsSurveyValue[0]+'.'};
-        checkTextareaInput(event);
     }
 }

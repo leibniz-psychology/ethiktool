@@ -54,7 +54,7 @@
             {% set tempPrefix, failureName = 'multiple.loadMessage.', 'pdfFailure' %}
             <div class="MetaData-Widget mt-8" {% if isLoadFailure %} {{ stimulus_action('base','showModal','load@window',{'target': failureName}) }} {% endif %}>
                     <div {{ stimulus_target(completeFormController,'finishText') }}>{{ finishText|raw }}</div>
-                <div><button class="Button_primary_act" type="button" name="finish" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target(completeFormController,'finish') }}>{{ formRender.addButtonIcon(translationPrefix~'finish.title','pdf') }}</button></div>
+                <div><button class="Button_primary_act" type="button" name="finish" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target(completeFormController,'finish') }} onclick="{{ addTracking('Button','Complete Preparation') }}">{{ formRender.addButtonIcon(translationPrefix~'finish.title','pdf') }}</button></div>
             </div>
             {{ include('components/infoModal.html.twig',{'modalID': 'pdfLoad', 'prefix': tempPrefix~'failure.', 'params': {'type': 'pdf'}, 'targetName': 'pdfModal'}) }}
             {% if isLoadFailure %}

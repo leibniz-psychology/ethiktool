@@ -58,10 +58,22 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
   summary: 'Zusammenfassung des Forschungsprojekts'
   votes:
     otherVote: 'Wurde dieses Forschungsprojekt schon einmal von einer anderen Ethikkommission begutachtet?'
+    otherVoteSub: >-
+      {result, select,
+        positive {Warum ist ein neue Begutachtung erforderlich?}
+        negative {Wie lautete die Begründung der anderen Ethikkommission?}
+        noVote   {Warum ist ein neue Begutachtung erforderlich?}
+        other    {}}
     instVote: 'Wurde ein ähnliches eigenes Forschungsprojekt schon einmal von {committeeDat} begutachtet?'
+    instVoteSub: >-
+      {type, select,
+         resubmission {Im Vergleich zum ursprünglichen Antrag gibt es folgende Änderungen:}
+         other        {Die zentralen Gemeinsamkeiten sowie Unterschiede zum damaligen Antrag sind wie folgt:}}
   medicine:
     medicine: 'Wird medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt, die ggf. nach Arzneimittelgesetz (AMG) oder Medizinproduktegesetz (MPDG) oder anderen gesetzlichen Vorgaben bewertet werden muss?'
+    medicineSub: 'Beschreibung:'
     physician: 'Sind Ärztinnen oder Ärzte unter den Projektbeteiligten?'
+    physicianSub: 'Warum ist aus Ihrer Sicht trotz der nicht-medizinischen Zusammensetzung {committeeNom} zuständig?'
   projectdetails:
     hint: >-
       Die Eingaben zu dieser Frage {noBox, select,
@@ -89,7 +101,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     measuresSub: 'Beschreibung der Erhebungsmethoden:'
     interventions: 'Welchen gezielten Maßnahmen werden die Teilnehmenden im Rahmen der Studiendurchführung ausgesetzt?'
     interventionsSub: 'Beschreibung der Maßnahmen:'
-    otherSources: 'Werden Daten von anderen Stellen hinzugezogen?'
+    otherSources: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
     feedback: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
     feedbackSub: 'Beschreibung von Art und Rahmung der Rückmeldungen:'
     loan: 'Werden Geräte (z.B. Handy, Tablet, Sensor-Kit) an die Teilnehmenden ausgegeben?'
@@ -140,7 +152,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     post: 'Wird nachträglich darüber aufgeklärt, dass an einer Studie teilgenommen wurde?'
     postSub: 'Werden die Teilnahmedokumente in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?'
     voluntary: 'Erfolgt die Teilnahme freiwillig?'
-    voluntarySub: 'Begründung, wann und warum die Freiwilligkeit nicht garantiert ist'
+    voluntarySub: 'Begründung, wann und warum die Freiwilligkeit nicht garantiert ist:'
     voluntaryYes: 'Wie wird die freiwillige Studienteilnahme trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis) gewährleistet?'
     closed: 'Findet die Erhebung in einer geschlossenen Gruppe statt?'
     consent: >-
@@ -244,45 +256,19 @@ summary: 'Zusammenfassung des Forschungsprojekts'
 
 votes:
   otherVote:
-    committee: >-
-
-
-      Damalige Kommission:
-    result: |
-      
+    committee: "\n\nDamalige Kommission:"
+    result: >-
       Ergebnis der damaligen Begutachtung: {result, select,
-                                    positive {positives Votum
-      
-                                              Warum ist ein neue Begutachtung erforderlich?}
-                                    negative {negatives Votum
-      
-                                              Wie lautete die Begründung der anderen Ethikkommission?}
-                                    noVote   {kein Votum: Forschungsprojekt wurde als nicht begutachtungsrelevant eingestuft
-      
-                                              Warum ist ein neue Begutachtung erforderlich?}
-                                    other    {}}
+                                              positive {positives Votum}
+                                              negative {negatives Votum}
+                                              noVote   {kein Votum: Forschungsprojekt wurde als nicht begutachtungsrelevant eingestuft}
+                                              other    {}}
+    pdf: 'Am Ende des Antrags befindet sich das Ergebnisschreiben der anderen Ethikkommission oder eine von der antragstellenden Person erstellte PDF-Datei mit näheren Erläuterungen.'
   instVote:
-    reference: >-
-      
-      
-      Aktenzeichen:
-    description: |
-      
-      
-      {type, select,
-         resubmission {Im Vergleich zum ursprünglichen Antrag gibt es folgende Änderungen:}
-         other        {Die zentralen Gemeinsamkeiten sowie Unterschiede zum damaligen Antrag sind wie folgt:}}
+    reference: "\n\nAktenzeichen:"
 
 medicine:
-  medicine: |
-    
-    
-    Beschreibung:
   physician: >-
-    
-    
-    Warum ist aus Ihrer Sicht trotz der nicht-medizinischen Zusammensetzung {committeeNom} zuständig?
-    
     {result, select,
       0     {Die beteiligten Ärztinnen bzw. Ärzte können von einer Ausnahmeregelung zur berufsrechtlichen und berufsethischen Beratungspflicht durch eine medizinische Ethikkommission Gebrauch machen: }
       other {}}
@@ -312,8 +298,42 @@ projectdetails:
     Am Ende des Antrags befinden sich {type, select,
                                         measures      {ergänzende Materialien zu den Erhebungsmethoden}
                                         interventions {ergänzende Materialien zu den Maßnahmen}
-                                        otherSources  {ergänzende Materialien zu den Daten anderer Stellen}
-                                        other {die übersetzten Teilnahmedokumente}}.
+                                        otherSources  {ergänzende Materialien zu den hinzugezogenen Daten anderer Stellen}
+                                        other         {die übersetzten Teilnahmedokumente}}.
+  custom:
+    levelNames: >- # for the levelNamesString placeholder in the following keys
+      {numLevels, plural,
+        =0    {}
+        other { für {levelNames}}}
+    votes: 'Dieses Forschungsvorhaben wurde schon einmal von einer anderen Ethikkommission begutachtet. Auf der/den nächsten Seite(n) folgt das Ergebnisschreiben der anderen Ethikkommission oder eine von der antragstellenden Person erstellte PDF-Datei mit näheren Erläuterungen.'
+    information: >-
+      Auf der/den nächsten Seite(n) finden sich die übersetzten Teilnahmedokumente{addressee, select,
+                                                                                    children { für die Erziehungsberechtigten}
+                                                                                    wards    { für die gesetzlichen Vertretungspersonen}
+                                                                                    other    {}}{levelNamesString}.
+    informationII: >- # other addressee is wards
+      Die Studieninformation für die {addressee, select,
+                                        children {Kinder}
+                                        other    {betreuten Personen}} {numLevels, plural,
+                                                                          =0    {}
+                                                                          other {({levelNames})}} erfordert eine an die Zielgruppe angepasste Darstellung und kann daher nicht automatisch aus dem Ethiktool heraus erstellt werden. Auf der/den nächsten Seite(n) folgt eine von der antragstellenden Person erstellte PDF-Datei, die sich direkt an die {addressee, select,
+            children {Kinder}
+            other    {betreuten Personen}} richtet und folgende Abschnitte enthält: Informationen zur Studienteilnahme, Zustimmung, ggf. Anlage zur Verarbeitung personenbezogener Daten.
+    measures: 'Auf der/den nächsten Seite(n) finden sich ergänzende Materialien zu den Erhebungsmethoden{levelNamesString}.'
+    interventions: 'Auf der/den nächsten Seite(n) finden sich ergänzende Materialien zu den Maßnahmen{levelNamesString}.'
+    otherSources: 'Auf der/den nächsten Seite(n) finden sich ergänzende Materialien zu den hinzugezogenen Daten anderer Stellen{levelNamesString}.'
+    dataPrivacy: >-
+      {create, select,
+        separate      {Die Datenschutzerklärung {levelNamesString} wurde selbst erstellt (vgl. Frage 52 des Antragsformulars). Sie findet sich inkl. Einwilligungserklärung auf der/den nächsten Seite/n.}
+        anonymous     {Gemäß der {savePDF, select,
+                                   true  {Angaben im Ethiktool}
+                                   other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} (vgl. Frage 52 des Antragsformulars) werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
+        separateLater {Gemäß der {savePDF, select,
+                                    true  {Angaben im Ethiktool}
+                                    other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} (vgl. Frage 52 des Antragsformulars) erfolgt die detaillierte Klärung der Datenverarbeitung einem späteren Zeitpunkt. Daher wurde vom Ethiktool keine Datenschutzerklärung {levelNamesString} erstellt.}
+        other         {{personal, select,
+                          anonymous {Gemäß der Angaben im Ethiktool werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
+                          other     {Aufgrund von Besonderheiten im Umgang mit dem Daten (gemäß Angaben im Ethiktool) kann die Datenschutzerklärung {levelNamesString} nicht mit dem Ethiktool erstellt werden. Daher wurde die Datenschutzerklärung selbst erstellt. Sie findet sich inkl. Einwilligungserklärung auf der/den nächsten Seite/n.}}}}
   groups:
     examined:
       title: >-
@@ -533,7 +553,7 @@ projectdetails:
         tool          {{personal, select,
                           anonymous {Die Datenverarbeitung wurde mit Hilfe des Ethiktools abgebildet. Die Angaben auf der Seite „Datenschutz“ lassen darauf schließen, dass nur anonyme Daten verarbeitet werden und keine Datenschutzerklärung notwendig ist.}
                           other     {Die Datenschutzerklärung wurde mit Hilfe des Ethiktools erstellt.}}}
-        noTool        {Aufgrund von Besonderheiten im Umgang mit den Daten (gemäß Angaben auf der Seite „Datenschutz“) konnte die Datenschutzerklärung nicht mit dem Ethiktool erstellt werden. Daher wurde die Datenschutzerklärung selbst erstellt.}
+        noTool        {Aufgrund von Besonderheiten im Umgang mit den Daten (gemäß Angaben auf der Seite „Datenschutz“) kann die Datenschutzerklärung nicht mit dem Ethiktool erstellt werden. Daher wurde die Datenschutzerklärung selbst erstellt.}
         separate      {Die Datenschutzerklärung wurde selbst erstellt. {verification, select,
                                                                           verified   {Sie ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.}
                                                                           unverified {Sie ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.}
@@ -982,7 +1002,7 @@ dataPrivacy:
           other {Externe Auftragsverarbeiter erhalten}} Zugang zu personenbezogenen Daten für {purpose}. Dies geschieht {isKnown, select,
                                           true  {ebenfalls}
                                           other {}} auf Grundlage eines Vertrags gemäß Art. 28 DS-GVO. Diese Dienstleister sind verpflichtet, die personenbezogenen Daten vertraulich zu behandeln und nur nach unseren Weisungen zu verarbeiten.
-    transferOutside: 'Die personenbezogenen Daten übermitteln wir grundsätzlich nicht außerhalb des EWR.'
+    transferOutside: 'Die personenbezogenen Daten übermitteln wir grundsätzlich nicht außerhalb des Europäischen Wirtschaftsraums (EWR).'
   anonymization:
     title: 'Anonymisierung und Aufbewahrung/Löschung der Daten'
     dataResearchNo: 'Die Forschungsdaten werden nicht anonymisiert.'
@@ -1116,6 +1136,19 @@ completePost:
 
 # consent for participation
 consent:
+  noConsent: >-
+    Das Ethiktool hat {numLevels, plural,
+                            =0    {}
+                            other {für {levelNames}}} keinen Einwilligungstext für {addressee, select,
+                                                                                children {die Erziehungsberechtigen}
+                                                                                wards    {die gesetzlichen Vertretungspersonen}
+                                                                                other    {Teilnehmenden}} erstellt, da {savePDF, select,
+                    true  {{consent, select,
+                             no    {keine Einwilligung erfolgt (vgl. Frage 44 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
+                             other {die Einwilligung auf andere Weise erfolgt ({description}; vgl. Frage 44 des Antragsformulars).}}}
+                    other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">{consent, select,
+                         no    {keine Einwilligung</a> erfolgt (vgl. Frage 44 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
+                         other {die Einwilligung auf andere Weise</a> erfolgt ({description}; vgl. Frage 44 des Antragsformulars).}}}}
   title: >-
     {information, select,
       post  {Nachträgliche Einwilligung in die Datenverarbeitung}

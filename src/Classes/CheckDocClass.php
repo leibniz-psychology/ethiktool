@@ -942,9 +942,14 @@ class CheckDocClass extends ControllerAbstract
             $this->checkMissingContent($tempArray,[self::terminateConsParticipationNode => $tempPrefix.'participation'],true,parameter: $this->paramsAddressee,hash: $this->addDiv(self::terminateConsNode.self::terminateConsParticipationNode));
         }
         // termination by participants
+        $addresseeRouteParams = array_merge($this->paramsAddressee,$this->routeIDs);
         $tempPrefix = $translationPage.self::terminateParticipantsNode.'.';
-        if (!in_array($this->checkMissingTextfield($pageArray[self::terminateParticipantsNode],null,self::terminateParticipantsOther,$tempPrefix.'title',self::terminateParticipantsNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::terminateParticipantsNode,true)),['','remove','choose']) && $this->noPre && in_array($consentAddressee,self::consentTypesAll)) { // no pre information and consent is given -> data must either be deleted or participants must choose whether to delete or keep
-            $this->addCheckLabelString($tempPrefix.self::informationNode,parameters: array_merge($this->paramsAddressee,$this->routeIDs));
+        $terminate = $this->checkMissingTextfield($pageArray[self::terminateParticipantsNode],null,self::terminateParticipantsOther,$tempPrefix.'title',self::terminateParticipantsNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::terminateParticipantsNode,true));
+        if (!in_array($terminate,['','remove','choose']) && $this->noPre && in_array($consentAddressee,self::consentTypesAll)) { // no pre information and consent is given -> data must either be deleted or participants must choose whether to delete or keep
+            $this->addCheckLabelString($tempPrefix.self::informationNode,parameters: $addresseeRouteParams);
+        }
+        if ($this->noPost && $terminate==='choose') { // neither pre nor post information -> participants can not choose whether to delete or keep the data
+            $this->addCheckLabelString($tempPrefix.'noInformation',parameters: $addresseeRouteParams);
         }
         // terminate criteria
         $this->checkMissingContent($pageArray,[self::terminateCriteriaNode => $translationPage.self::terminateCriteriaNode],true,hash: $this->addDiv(self::terminateCriteriaNode));
@@ -1413,8 +1418,9 @@ class CheckDocClass extends ControllerAbstract
                         if ($isListIP && (!in_array($dataOnline,['',self::dataOnlineTechnical]) || $dataOnline===self::dataOnlineTechnical && !in_array($dataOnlineProcessing,['',self::dataOnlineProcessingLinked]))) {
                             $this->addCheckLabelString($ipPrefix.'ipList',parameters: $this->routeIDs);
                         }
+                        $isDataResearch = $dataResearch!==[];
                         if ($dataOnline===self::dataOnlineResearch) {
-                            if ($dataResearch!==[] && !$isIP) { // ip-addresses for research -> ip-addresses must be selected as research data
+                            if ($isDataResearch && !$isIP) { // ip-addresses for research -> ip-addresses must be selected as research data
                                 $this->addCheckLabelString($ipPrefix.self::dataOnlineResearch);
                             }
                         }
@@ -1438,7 +1444,7 @@ class CheckDocClass extends ControllerAbstract
                             $this->addCheckLabelString($furtherPrefix.'video', parameters: $this->routeIDs);
                         }
                         // video in measures <-> audio, photo, or video for data research.
-                        if ($isMeasures && $isDataPersonal) {
+                        if ($isMeasures && $isDataResearch) {
                             if ($isVideoMeasures && !$isDataResearchVideo) {
                                 $this->addCheckLabelString($furtherPrefix.'measuresToVideo', parameters: $this->routeIDs);
                             }

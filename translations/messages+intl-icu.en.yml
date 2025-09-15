@@ -56,7 +56,7 @@ multiple:
       dataPrivacyOnline: 'Data privacy'
     information: 'the presence of the {addressee}' # in groups (same for following)
     informationII: 'the information for the {addressee}'
-    consentGroups: 'the voluntariness and consent for the {addressee}'
+    consentGroups: 'the voluntariness and assent for the {addressee}'
     voluntary: 'how voluntary participation is ensured'
     informationIII: 'the after-the-fact information' # in information (same for following)
     consent: 'the disadvantages of withdrawal for the {addressee}'
@@ -259,14 +259,14 @@ navBar:
 main:
   title: 'Ethiktool'
   textNoCommittee: |
-    The “Ethiktool“ software supports applicants in writing their ethics proposal. A user-centered dialogue guides applicants through all relevant questions and requests information for the ethics application form, the informed consent form as well as other participant documents.
+    The “Ethiktool“ software supports applicants in writing their ethics proposal. A user-centered dialogue guides applicants through all relevant questions and requests information for the ethics application form, the informed consent form, and other participant documents.
     
-    Further information is available in the sections “About us“ und “About the Ethiktool“. Please note the “Technical Information“ and “Terms of use“ for the Ethiktool.
+    Further information is available in the sections “About us“ and “About the Ethiktool“. Please note the “Technical Information“ and “Terms of Use“ for the Ethiktool.
     You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
 
-    <i>Please note: In the current project phase, the Ethiktool is arranged for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites; the Ethics Committee of the Department of Psychology of JGU Mainz is already in beta stage.
+    <i>Please note: In the current project phase, the Ethiktool is intended for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites; the Ethics Committee of the Department of Psychology of JGU Mainz is already in the beta stage.
 
-    You can start creating an application for the respective committee via “New proposal“.
+    You can start creating an application for the respective committee via the “New proposal“ option.
     You can load and edit an existing XML file created by the Ethiktool via “Load proposal”.</i>
   # added empty line to have same line numbers in all translation files.
   text: | # other in second and in last select is test committee. For readability of the translation files newlines instead of br-tags are used.
@@ -419,7 +419,7 @@ coreData:
     title: 'Funding source(s)'
     fundingQuali: 'no separate funding (qualification thesis)'
     fundingBudget: 'university/in-house budget'
-    fundingResearch: 'third-party funding by public or private research foundation'
+    fundingResearch: 'third-party funding from a public or private research foundation'
     fundingExternal: 'industrial third-party funding'
     fundingOther: 'other source(s)'
     textHints:
@@ -707,7 +707,7 @@ projectdetails:
         pre: 'Please explain why the {addressee} are not informed in advance that {participant} are participating in a study.'
         post: 'Please explain why the {addressee} are not informed after-the-fact that {participant} participated in a study.'
         preComplete: 'Please justify your choice and indicate which information will be given when to the {addressee}.'
-      pdf: 'The wording of the study information sheet for the {participant} needs to be adapted to the target group and can therefore not be generated automatically by the Ethiktool. Please prepare a self-formulated PDF file that directly addresses the {participant} and contains the following parts: information on study participation, consent/assent form, annex on processing personal data (if applicable). The automatically generated documents for the {addressee} can serve as a guide. When completing the ethics proposal, you will be asked to add the study information sheet for {participant} as a PDF file.'
+      pdf: 'The wording of the study information sheet for the {participant} needs to be adapted to the target group and can therefore not be generated automatically by the Ethiktool. Please prepare a self-formulated PDF file that directly addresses the {participant} and contains the following parts: information on study participation, assent form, annex on processing personal data (if applicable). The automatically generated documents for the {addressee} can serve as a guide. When completing the ethics proposal, you will be asked to add the study information sheet for {participant} as a PDF file.'
       attendance: 'Are the {addressee} present during data collection?'
       documentTranslation:
         title: 'Are the participant documents translated into easy or simple language and/or into a foreign language?'
@@ -783,7 +783,7 @@ projectdetails:
                                                         measures {data collection methods}
                                                         other    {interventions/measures}}.
       otherSources:
-        title: 'Will data from other sources be added?'
+        title: 'Will individually traceable data from other sources be added?'
         headingHint: 'This refers to individual data that is already available at other sources and will be used/transferred for this study to supplement the own research data (e.g. health data, assessments from psychotherapy/medical treatment/training) or to provide a basis for contacting potential participants (e.g., data from the residents'' registration office). A comparison of aggregated data with the data recorded here does not constitute an addition of data from other sources.'
         textHint: 'Please describe which data will be used from which sources. Please also describe the basis that allows for data transfer (e.g. joint responsibility, release from confidentiality).'
         hint: 'In the annex on data processing, you will need to describe the identifiers (e.g., name or code) used to merge the data as well as the person-related data of the other sources that will become part of the research data or of the data for further purposes beyond the research question. If necessary, additional documents (e.g. release from confidentiality) must be added.'
@@ -801,8 +801,8 @@ projectdetails:
                               post  {took}
                               other {takes}} place ...
         types:
-          intern: 'at facilities {committeeLocationGen}, namely ...'
-          extern: 'at facilities of external partners, namely ...'
+          intern: 'at the facilities {committeeLocationGen}, namely ...'
+          extern: 'at the facilities of external partners, namely ...'
           online: 'online, using the platform ...'
           other: 'other (please insert location)'
         otherHint: 'If two data collection methods are planned consecutively at different locations, this can be described here. If data collection is distributed across several time points at different locations, please check whether a study structure with multiple time points should be created under unter "project details“.'
@@ -819,19 +819,19 @@ projectdetails:
         total: >-
           The total duration of {multiple, select,
                                 true  {today''s}
-                                other {the}} investigation usually is about {time, plural,
-                                                                      =1 {1 minute, thereof}
-                                                                      other {# minutes, thereof}}
+                                other {the}} investigation is usually about {time, plural,
+                                                                      =1 {1 minute, of which}
+                                                                      other {# minutes, of which}}
         measureTime: >-
           {time, plural,
             =1    {minute}
             other {minutes}}
-          (net) for data collection and
+          (net) are allocated for data collection and
         breaks: >-
           {time, plural,
             =1    {minute}
             other {minutes}}
-          for preparation and follow-up time as well as breaks.
+          for preparation, follow-up time, and breaks.
         hint: 'The preparation and follow-up time comprises the time needed to read the relevant documents (e.g., study information sheet).'
     burdensRisks: # other is burdens/risks for contributors
       textHint: >-
@@ -1145,7 +1145,7 @@ projectdetails:
                           other {Consenting to the use of the data of the individual under your supervision makes a contribution to research.}}}
               other    {{information, select,
                           pre   {By taking part in the study, you are making a contribution to research.}
-                          other {Consenting to the use of your data makes a contribution to research.}}}} This allows for a better understanding of
+                          other {Consenting to the use of your data makes a contribution to research.}}}} This helps us gain a better understanding of
           middle: 'in the future.'
           optional: '(optional) additional text'
           end: >-
@@ -1180,7 +1180,7 @@ projectdetails:
       liability:
         title: 'Shall the consent to study participation contain a liability clause?'
         headingHint: 'Liability can never be completely ruled out (e.g., in case of intent or severe negligence), but it can be limited in certain respects. The template for the liability limitation serves as a guide for frequently occurring cases; it cannot replace an individual assessment and consultation. The use of the template is therefore at the user''s own responsibility; in particular, it is no substitute for legal advice. The Ethics Committee takes no responsibility for the correct use of the template in individual cases and does not perform a legal review of the wording. Researchers should consider and decide on a case-by-case basis whether they want to include a clause on the limitation of liability in the participation information.'
-        template: 'Participation is at own risk. The liability of the project contributors is limited to intent and severe negligence. The parties, their legal representatives and vicarious agents shall also be liable for negligence in the event of breaches of duty in direct connection with the conduction of the study, whereby liability in such cases shall be limited to reasonably foreseeable damage. Liability for damages resulting from injury to life, limb or health shall be governed by the statutory provisions.'
+        template: 'Participation is at one''s own risk. The liability of the project contributors is limited to intent and severe negligence. The parties, their legal representatives and vicarious agents shall also be liable for negligence in the event of breaches of duty in direct connection with the conduction of the study, whereby liability in such cases shall be limited to reasonably foreseeable damage. Liability for damages resulting from injury to life, limb or health shall be governed by the statutory provisions.'
       apparatus:
         title: >-
           Shall the {isReceipt, select,
@@ -1190,12 +1190,12 @@ projectdetails:
           {isReceipt, select,
                     true  {In the confirmation sheet for the loaned devices}
                     other {When loaning equipment}} it is advisable to inform participants about liability regulations when using the equipment.
-        template: 'The devices used are checked regularly and carefully to ensure that they are in a proper condition for use. The equipment is used during study participation at own risk.'
+        template: 'The devices used are checked regularly and carefully to ensure that they are in appropriate condition for use. The usage of equipment during study participation is at one''s own risk.'
         loan: 'The loaned equipment and accessories must be handled with care, protected against loss and damage, and returned at the agreed time without further notice. Loss of or damage to the equipment or accessories during the loan period must be reported immediately. The loaned equipment or accessories must not be passed on to third parties. In the event of loss or damage, the research institution must be compensated for the damage caused.'
       insuranceWay:
         title: 'Should the consent to participate in the study include a reference to route/accident insurance?'
         headingHint: 'There is no obligation to inform participants that there is no study-related route/accident insurance. It can be assumed that people do not reasonably expect to be insured against accidents on the way to and from the place of the study, as this also does not apply to other private trips (e.g., to the doctor, sports club). However, information on the legal situation can be given if deemed necessary. The project contributors should consider on a case-by-case basis whether such information appears useful for the specific study or participant group. Information can be useful, for example, if research is carried out in special settings (e.g., as part of joint walks, field trips); that is, if paths are themselves part of the research (beyond the outward and return journey). If participants are injured during a study, liability issues play a role and details of these are to be provided in a separate question.'
-        template: 'I have been informed that no insurance against accidents is granted by {committeeLocation} within the scope of the study.'
+        template: 'I have been informed that no accident insurance coverage is granted by {committeeLocation} within the scope of the study.'
       insurance:
         title: 'Shall the consent to participate in the study include a reference to participant insurance?'
         headingHint: 'Except for legal requirements (e.g., from the German Medicinal Products Act or Medical Device Law Implementation Act), liability insurance or participant insurance is not mandatory for research involving humans as such. The project contributors should consider on a case-by-case basis whether it may be advisable to obtain such insurance. The Ethics Committee cannot offer legal advice; the legal department should be contacted if needed.'
@@ -2073,6 +2073,11 @@ checkDoc:
                 children {legal guardians}
                 wards    {legal guardians}
                 other    {participants}} must choose whether the collected data shall be used or not in case of individual withdrawal.
+          noInformation: >-
+            You selected that <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is given. This is incompatible with the selection that the {addressee, select,
+                  children {legal guardians}
+                  wards    {legal guardians}
+                  other    {participants}} can choose whether the collected data shall be used or not in case of individual withdrawal.
         terminateCriteria: 'termination criteria'
       compensation:
         missing: 'information on the type of compensation'
@@ -2411,18 +2416,18 @@ aboutUs:
     Dr. <a href="https://leibniz-psychology.org/profil-katarina-blask" target="_blank">Katarina Blask</a> (Leibniz Institute for Psychology (ZPID))
     Dr. <a href="https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=22797466" target="_blank">Eva-Maria Berens</a> (Bielefeld University)
     
-    Our mission is to facilitate the generation and evaluation of ethics proposals. Hence we provide the Ethiktool free of charge to all interested ethics committees. The Ethiktool development rests upon our longstanding experience in ethics committee work and on our experience with the predecessor software, whose development was led by Alexandra Bendixen and which was introduced at TU Chemnitz in 2021. Development of the current version has been financially supported by the Volkswagen Foundation since 2023, whose support will continue till 2026.
+    Our mission is to facilitate the generation and evaluation of ethics proposals. Hence we provide the Ethiktool free of charge to all interested ethics committees. The Ethiktool development is based on our longstanding experience in ethics committee work and our experience with the predecessor software, which was developed under the leadership of Alexandra Bendixen and introduced at TU Chemnitz in 2021. The development of the current version has been financially supported by the Volkswagen Foundation since 2023, with their support set to continue until 2026.
 
-    More information about us is available on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
+    For more information about us, please visit our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
     
 aboutTool:
   title: 'About the Ethiktool'
   text: |
     You are using version {toolVersion} of the browser-based Ethiktool. A list of changes relative to previous versions can be found <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html.en" target="_blank">here</a>. 
     
-    The Ethiktool simplifies the generation and evaluation of ethics proposals for research involving human participants, in particular for non-medical research. Based on your responses to questions that are automatically adapted to your input, the Ethiktool generates the application documents as well as all participant documents (information, consent, data privacy). The Ethiktool is a joint development of a project team headed by Prof. Dr. Alexandra Bendixen (Chemnitz University of Technology, TUC) that comprises members of TUC, Leibniz Institute for Psychology (ZPID) and Bielefeld University. The development has been based on experience with a predecessor software developed and used at TUC. 
+    The Ethiktool simplifies the generation and evaluation of ethics proposals for research involving human participants, in particular for non-medical research. Based on your responses to questions that are automatically adapted to your input, the Ethiktool generates the application documents as well as all participant documents (including information, consent, and data privacy). The Ethiktool is a joint development of a project team headed by Prof. Dr. Alexandra Bendixen (Chemnitz University of Technology, TUC), which comprises members from TUC, the Leibniz Institute for Psychology (ZPID), and Bielefeld University. The development has been based on experience with a predecessor software developed and used at TUC. 
     
-    We continuously extend and improve the Ethiktool. We therefore greatly appreciate your support by sending us error reports, questions and remarks via email to <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. In case you should experience technical issues with the current version, please contact <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
+    We continuously extend and improve the Ethiktool. We therefore greatly appreciate your support by sending us error reports, questions and remarks via email to <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. If you experience technical issues with the current version, please contact <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
     
     Are you a member of an ethics committee, IRB or otherwise involved in evaluating or processing ethics applications? If you are interested in introducing the Ethiktool at your site, you are very welcome to contact us at <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*.
     
@@ -2433,40 +2438,40 @@ aboutTool:
 technicalHints:
   title: 'Technical information'
   text: |
-    Your browser needs to have cookies and javascript enabled for the Ethiktool to work properly. Please do not delete cookies during the session. It is not advisable to work with the Ethiktool in more than one open browser tab. Moreover, please do not navigate forward and backward within the browser, but use the Ethiktool's “next page“ and “previous page“ buttons instead.
+    Your browser must have cookies and JavaScript enabled for the Ethiktool to function properly. Please do not delete cookies during the session. It is not advisable to work with the Ethiktool in more than one open browser tab. Moreover, please do not navigate forward and backward within the browser; instead, use the Ethiktool's “next page“ and “previous page“ buttons.
 
-    To start the application process, it is best to begin with “Proposal data“ and then click through the form step by step via “next page“. Alternatively, you can also jump directly to specific sections (e.g., project details) in the navigation bar on the left.
+    To start the application process, begin with “Proposal data“ and click through the form step by step via the “next page“ button. Alternatively, you can also jump directly to specific sections (e.g., project details) in the navigation bar on the left.
 
-    On the right-hand side, you will see a preview of the application document and the participant documents. You can click on the questions or headings there and jump to the related sections in the Ethiktool. In the area above the preview, you are informed about missing or incorrect input.
+    On the right-hand side, you will see a preview of the application document and the participant documents. You can click on the questions or headings to jump directly to the related sections in the Ethiktool. In the area above the preview, you are informed about missing or incorrect input.
 
     Please save your entries regularly. The files are stored locally on your computer in XML format. You can pause the process at any time, reload your saved entries as an XML file later and continue editing them.
 
     Once you have made all entries, please use “Check entries“ to ensure that everything is complete and consistent. If necessary, please correct your entries.
 
-    When the technical check reveals no errors, you are ready to generate the documents for submission by selecting “complete proposal“. During the process, you may need to add own PDF documents, depending on your entries.
+    If the technical check reveals no errors, you are ready to generate the documents for submission by selecting “complete proposal“. During the process, you may need to add your own PDF documents, depending on the information your entered.
 
-    In the end, you will receive an integrated document as a PDF file and the underlying XML file. Both files {committeeType, select,
+    Ultimately, you will receive an integrated document as a PDF file, along with the underlying XML file. Both files {committeeType, select,
       testCommittee {will later (after the testing phase) form the basis for submitting the ethics application; the XML file will also be needed for any revisions to the application. Moreover, you will receive individual documents for the various parts of the application. Please note that you are participating in a test run and that you should not actually use the documents at this point.}
       other         {need to be submitted to {committeeType, select,
                                                 noCommittee {your ethics committee}
-                                                other       {{committeeAcc}}}. You will also receive individual documents for the various parts of the application for your own use. Please note that you will need the XML file for any revisions to your application.}}
+                                                other       {{committeeAcc}}}. You will also receive individual documents for each part of the application for your own use. Please note that you will need the XML file for any revisions to your application.}}
                                                 
     The Ethiktool is regularly updated automatically. You are using version {toolVersion}; a version history can be found <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html.en" target="_blank">here</a>.
 
 termsOfUse:
-  title: 'Terms of use'
+  title: 'Terms of Use'
   text: |
-    The use of the Ethiktool is free of charge. You use the software on your own responsibility. Neither the Leibniz Institute for Psychology (ZPID) nor Chemnitz University of Technology (TUC) nor any party otherwise connected to the Ethiktool assume any responsibility or liability for the correctness of the generated documents in terms of content or lawfulness, nor for the assessment of the ethical admissibility and legitimacy of the planned research. The responsibility to conduct the research in a legally and ethically impeccable manner remains solely with the researchers or – in cases that include responsibility or liability of other bodies – with those bodies. The responsibility for ethics assessment remains solely with the applicable ethics committee or review board or with the persons, bodies and organisations that are commissioned by the respective committee or board. 
+    The use of the Ethiktool is free of charge. You use the software on your own responsibility. Neither the Leibniz Institute for Psychology (ZPID) nor Chemnitz University of Technology (TUC) nor any party otherwise connected to the Ethiktool assumes any responsibility or liability for the correctness of the generated documents in terms of content or lawfulness, nor for the assessment of the ethical admissibility and legitimacy of the planned research. The responsibility and liability for conducting the research in a legally and ethically impeccable manner remains solely with the researchers, or – in cases that include responsibility or liability of other bodies – with those bodies. The responsibility for ethics assessment remains solely with the applicable ethics committee or review board or with the persons, bodies and organisations that are commissioned by the respective committee or board. 
     
     Information on data protection and the processing of personal data as defined by the European Union's General Data Protection Regulation (GDPR) can be found at  <a class="linkExternal" href="https://leibniz-psychology.org/datenschutz" target="_blank">https://leibniz-psychology.org/datenschutz</a>.
     
     The Ethiktool, all its texts, content and links (including texts, content and links on all of its subpages) as well as its source code are subject to the open source software licence “European Union Public Licence” in its version 1.2 of May 19th, 2017 (<a href="https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12" target="_blank">EUPL v. 1.2</a>) and constitute “the work” in terms of this licence. In particular, any derivative works (e.g., extension, modification) are also part of the work. Moreover, the work may only be distributed or communicated under the terms of this licence, and no additional terms or conditions may be offered or imposed on the work (“CopyLeft”). The source code is available <a href="https://github.com/leibniz-psychology/ethiktool" target="_blank">here</a> .
     
-    We are happy to support you in introducing the Ethiktool at your institution and to include a version that is tailored to your institution into our software. If you are interested, please contact us at <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*.
+    We are happy to support you in introducing the Ethiktool at your institution and to include a version tailored to your institution's needs within our software. If you are interested, please contact us at <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*.
 
     *E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).
     
-    This is a translation of the German version (“Nutzungsbedingungen”). In case of deviating content, the German version is binding.
+    This is a translation of the German version (“Nutzungsbedingungen”). In the event of differing content, the German version shall prevail.
 
 contactModal:
   title: 'Contact'

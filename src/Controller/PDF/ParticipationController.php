@@ -17,6 +17,7 @@ class ParticipationController extends PDFAbstract
     // $content: array passed to the template. Keys: headings, values: array with two elements: First element: array of sub-paragraphs. Each of these arrays consists of two elements: sub-heading and content of the sub-paragraph. Second element: boolean if the content of each sub-paragraph should be on the same page. If false, the sub-heading and the first line will be on the same page.
     private array $content;
     private const isPersonal = 'isPersonal'; // select parameter in translations
+    private const intermediateDocument = 'PDF/_intermediateDocument.html.twig';
 
     public function createPDF(Request $request, array $routeIDs = [], bool $markInput = false): Response {
         $session = $request->getSession();
@@ -59,6 +60,10 @@ class ParticipationController extends PDFAbstract
         // create documents
         $html = [];
         $allHtml = '';
+        $customPDFs = [];
+        $privacyCreate = ''; // how the data privacy document should be created
+        $personal = '';
+        $isSeparate = false; // gets true if create question in data privacy is answered with 'separate'
         foreach ($allIDs as $studyID => $groupIDs) {
             $study = $studyArray[$studyID];
             foreach ($groupIDs as $groupID => $measureIDs) {
@@ -76,6 +81,18 @@ class ParticipationController extends PDFAbstract
                     $levelNames['measureTimePoint'] = ['isMultiple' => $multipleMeasures, self::nameNode => ''];
                     $measureTimePoint = $measureTimePointArray[$measureID];
                     $levelNames['measureTimePoint']['id'] = $multipleMeasures ? $measureID+1 : 0;
+                    $boxHeadingPrefix = 'boxHeadings.projectdetails.';
+                    $customPrefix = 'projectdetails.custom.';
+                    // create an array containing the number of levels and the level names -> needed if no information is given or no/other consent is given
+                    $levelArray = [];
+                    $numLevels = 0;
+                    foreach ($levelNames as $level => $info) {
+                        if ($info['isMultiple']) { // multiple elements exist
+                            $name = $info[self::nameNode];
+                            ++$numLevels;
+                            $levelArray[] = $this->translateStringPDF($boxHeadingPrefix.$level).' '.$info['id'].($level!==self::measureTimePointNode ? ($name!=='' ? ' ('.$name.')' : '') : '');
+                        }
+                    }
                     $groupsArray = $measureTimePoint[self::groupsNode];
                     $measuresArray = $measureTimePoint[self::measuresNode];
                     $addressee = $this->getAddressee($groupsArray);
@@ -83,21 +100,37 @@ class ParticipationController extends PDFAbstract
                     $informationArray = $measureTimePoint[self::informationNode];
                     $information = $this->getInformationString($informationArray);
                     $informationParam = [self::informationNode => $information];
-                    $translationParams = array_merge($addresseeParam,$committeeParam,$informationParam); // contains all parameters that are needed in several combinations
+                    $translationParams = array_merge($addresseeParam,$committeeParam,$informationParam,[
+                        self::createNode => '', // how the data privacy document should be created
+                        'personal' => '',
+                        'levelNames' => implode(', ',$levelArray),
+                        'numLevels' => $numLevels,
+                        self::routeIDs => $curRouteIDs]); // contains all parameters that are needed in several combinations
                     $isPre = $information===self::pre;
+                    $translationParams['levelNamesString'] = $this->translateStringPDF($customPrefix.'levelNames',$translationParams);
                     $isNotPost = $information!==self::post;
                     $informationDescription = $informationArray[self::descriptionNode] ?? '';
                     $isOral = (!$isNotPost ? $informationArray[self::informationAddNode][self::descriptionNode] ?? '' : $informationDescription)===self::consentOral;
                     $isLoanReceipt = false; // loan receipt is only possible if pre information
                     [$loanReceiptParameters,$consent] = [[],[]]; // $loanReceiptParameters: parameters for the view of the loan receipt
                     $parameters = array_merge($translationParams,[self::studyID => $multipleStudies ? $studyID+1 : 0, self::groupID => $multipleGroups ? $groupID+1 : 0, self::measureID => $multipleMeasures ? $measureID : 0]);
-                    $boxHeadingPrefix = 'boxHeadings.projectdetails.';
                     $projectdetailsPrefix = 'projectdetails.pages.';
                     $participationPrefix = 'participation.';
                     $privacyPrefix = self::privacyNode.'.';
                     $isInformation = in_array($information,[self::pre,self::post]);
+                    $consentPrefix = 'consent.';
+                    $consentType = ''; // type of consent
+                    $noConsentParams = []; // contains consent type and description
                     $isConsent = false; // gets true if any consent is given
-                    $isToolPersonal = false; // gets true if document should be created by the tool and either personal data are collected or responsibility or transferOutside is answered such that the document can not be created by the tool
+                    $isToolPersonal = false; // gets true if document should be created by the tool and personal data are collected
+                    $hasCustomPDF = array_fill_keys(self::customPDForder,false); // each element gets true if a custom pdf will be added
+                    $hasCustomPDF[self::informationNode] = array_key_exists(self::documentTranslationPDF,$informationArray[self::documentTranslationNode] ?? []);
+                    $informationIIArray = $measureTimePoint[self::informationIINode];
+                    if ($informationIIArray!=='') {
+                        $hasCustomPDF[self::informationIINode] = in_array($this->getInformationString($informationIIArray),[self::pre,self::post]);
+                    }
+                    $hasCustomPDF[self::measuresNode] = array_key_exists(self::measuresPDF,$measuresArray[self::measuresNode]);
+                    $hasCustomPDF[self::interventionsNode] = array_key_exists(self::interventionsPDF,$measuresArray[self::interventionsNode]);
                     if ($isInformation) {
                         // contributors
                         $pageArray = $measureTimePoint[self::contributorNode];
@@ -270,7 +303,9 @@ class ParticipationController extends PDFAbstract
                         $consentArray = $measureTimePoint[self::consentNode];
                         $voluntaryArray = $consentArray[self::voluntaryNode];
                         $chosen2 = $voluntaryArray[self::chosen2Node] ?? '';
-                        $consentType = $consentArray[self::consentNode][self::chosen];
+                        $tempArray = $consentArray[self::consentNode];
+                        $consentType = $tempArray[self::chosen];
+                        $noConsentParams = [self::consent => $consentType, self::descriptionNode => $tempArray[self::descriptionNode] ?? ($tempArray[self::otherDescription] ?? '')];
                         $isConsent = in_array($consentType,self::consentTypesAny);
                         $tempArray = $consentArray[self::terminateConsNode];
                         $terminateConsParam = [self::terminateConsNode => $this->getStringFromBool($tempArray[self::chosen]==='0')];
@@ -292,6 +327,9 @@ class ParticipationController extends PDFAbstract
                         $privacyArray = $measureTimePoint[self::privacyNode];
                         $createArray = $privacyArray[self::createNode];
                         $privacyCreate = $createArray[self::chosen];
+                        $translationParams[self::createNode] = $privacyCreate;
+                        $isSeparate = $privacyCreate===self::createSeparate;
+                        $customPrivacy = $isSeparate; // (gets) true if a custom privacy document needs to be added
                         $dataPersonal = '';
                         $isDataPersonal = false; // gets true if research data is/may be personal
                         $dataResearch = $privacyArray[self::dataResearchNode] ?? ''; // contains the selected research data
@@ -344,6 +382,7 @@ class ParticipationController extends PDFAbstract
                                     $isMarkingName = $isChosenName || $isChosenNameSecond;
                                     $isMarkingPersonal = $isChosenName || in_array($markingArray[self::codePersonal] ?? '',self::markingDataResearchTypes) || $isChosenNameSecond || in_array($markingSecondArray[self::codePersonal] ?? '',self::markingDataResearchTypes);
                                     $isMarkingOther = $markingChosen===self::markingOther;
+                                    $customPrivacy = $customPrivacy || $isMarkingOther;
                                     $purposeResearch = $privacyArray[self::purposeResearchNode] ?? '';
                                     $isPurposeResearch = $purposeResearch!=='' && !array_key_exists(self::purposeNo,$purposeResearch);
                                     $purposeFurther = $privacyArray[self::purposeFurtherNode] ?? ''; // if marking is 'other', keys does not exist
@@ -352,14 +391,17 @@ class ParticipationController extends PDFAbstract
                                     $isToolPersonal = $markingChosen!==self::markingOther && ($isDataPersonal || $isMarkingPersonal || $isPurpose);
                                 }
                                 elseif (in_array($responsibility,['onlyOther','multiple','private']) || $transferOutside==='yes') {
+                                    $customPrivacy = true;
                                     $isPersonal = true;
                                 }
                             }
                         }
-                        $isPersonal = $isPersonal || $privacyCreate===self::createSeparate || $isToolPersonal; // true if personal data is collected. Also true if processing is checked later. False if research data are personal, but marking is other.
+                        $hasCustomPDF[self::privacyNode] = $customPrivacy;
+                        $isPersonal = $isPersonal || $isSeparate || $isToolPersonal; // true if personal data is collected. Also true if processing is checked later. False if research data are personal, but marking is other.
                         $translationParams[self::isPersonal] = $this->getStringFromBool($isPersonal);
                         // other sources
                         $otherSourcesArray = $measuresArray[self::otherSourcesNode];
+                        $hasCustomPDF[self::otherSourcesNode] = array_key_exists(self::otherSourcesPDF,$otherSourcesArray);
                         $otherSourcesSentence = '';
                         if ($otherSourcesArray[self::chosen]==='0') {
                             $otherSourcesSentence = $this->mergeContent([$this->translateStringPDF($translationPrefix.self::otherSourcesNode),$otherSourcesArray[self::otherSourcesNode.self::descriptionCap] ?? '']);
@@ -460,7 +502,6 @@ class ParticipationController extends PDFAbstract
                         $optionalConsent = []; // consent for finding or personalKeep if informing/keep is optional
                         $dataSpecialParam = ['isDataSpecial' => $this->getStringFromBool($isDataSpecial)];
                         if ($isConsent) { // consent is given
-                            $consentPrefix = 'consent.';
                             self::$linkedPage = self::consentNode;
                             $consentHeading = $this->addHeadingLink($consentPrefix.'title',$translationParams,self::consentNode);
                             $translationParams['informationType'] = $isPre ? $informationArray[self::descriptionNode] : $informationArray[self::informationAddNode][self::descriptionNode];
@@ -489,6 +530,8 @@ class ParticipationController extends PDFAbstract
                         $isConsent = $consent!==[];
 
                         // data privacy: one array containing all the information because it may be a separate document
+                        $personal = $personalParam['personal'];
+                        $translationParams['personal'] = $personal;
                         $privacyContent = [];
                         if ($isToolPersonal) { // personal data are collected and the document should be created automatically
                             self::$linkedPage = self::privacyNode;
@@ -700,7 +743,6 @@ class ParticipationController extends PDFAbstract
                                 $processingContent[] = $this->addMarkInput($tempVal,self::$markInput);
                             }
                             $tempPrefix = $processingPrefix.'end.';
-                            $personal = $personalParam['personal'];
                             $isReusePersonal = $personal==='personal';
                             $tempVal = $this->translateStringPDF($tempPrefix.'start'.(($isReusePersonal && !($isDataReuse || $isSelf) || in_array($personal,['immediately','keep','marking','anonymous'])) ? 'NoUse' : ''),$translationParams);
                             $isDataReuseHowChosen = $dataReuseHowChosen!=='';
@@ -749,7 +791,14 @@ class ParticipationController extends PDFAbstract
                             $tempPrefix = $privacyPrefix.'rights.';
                             $privacyContent[$this->translateStringPDF($tempPrefix.'title')] = $this->translateStringPDF($tempPrefix.'text',$translationParams).$this->translateStringPDF($tempPrefix.'textEnd'); // rights
                         }
-                        $privacyParameters = array_merge($committeeParam,['privacyIntro' => $this->translateStringPDF($privacyPrefix.'intro',array_merge($translationParams,$numStudiesParam,[self::studyID => $studyID+1])), 'privacyContent' => $privacyContent, 'data' => $contributorsDataContact, 'privacyHeading' => $this->addHeadingLink($privacyPrefix.'title'), self::committeeParams => $committeeParam]);
+                        $privacyParameters = array_merge($committeeParam,[
+                            'privacyIntro' => $this->translateStringPDF($privacyPrefix.'intro',array_merge($translationParams,$numStudiesParam,[self::studyID => $studyID+1])),
+                            'privacyContent' => $privacyContent,
+                            'personal' => $personal,
+                            self::createNode => $privacyCreate,
+                            'data' => $contributorsDataContact,
+                            'privacyHeading' => $this->addHeadingLink($privacyPrefix.'title'),
+                            self::committeeParams => $committeeParam]);
                         if ($findingConsent!=='') { // finding consent is optional -> after the optional privacy consents
                             $optionalConsent[] = $findingConsent;
                         }
@@ -789,29 +838,27 @@ class ParticipationController extends PDFAbstract
                              'privacyParameters' => $privacyParameters]);
                     }
                     else { // no documents are created
-                        $levelArray = [];
-                        $numLevels = 0;
-                        foreach ($levelNames as $level => $info) {
-                            if ($info['isMultiple']) { // multiple elements exist
-                                $name = $info[self::nameNode];
-                                ++$numLevels;
-                                $levelArray[] = $this->translateStringPDF($boxHeadingPrefix.$level).' '.$info['id'].($level!==self::measureTimePointNode ? ($name!=='' ? ' ('.$name.')' : '') : '');
-                            }
-                        }
-                        $parameters = array_merge($translationParams,$savePDFParam,['parameters' => array_merge($parameters,$informationParam,['levelNames' => implode(', ',$levelArray), 'numLevels' => $numLevels, 'routeIDs' => $curRouteIDs])]);
+                        $parameters = array_merge($translationParams,$savePDFParam,['parameters' => array_merge($parameters,$informationParam)]);
                     }
                     // render the current document
                     try {
-                        $curHtml = $this->renderView('PDF/_participation.html.twig',array_merge($parameters,['markInputParams' => ['singleDocsName' => $session->get(self::fileName).'_'.$this->translateStringPDF('filenames.singleDocs').'_'.$this->getCurrentDate()->format('Ymd'), 'savePDF' => $this->getStringFromBool(self::$savePDF)], 'isMarkInput' => self::$markInput]));
+                        $savePDFstringParam = ['savePDF' => $this->getStringFromBool(self::$savePDF)];
+                        $translationParams = array_merge($translationParams,$savePDFstringParam);
+                        $curHtml = $this->renderView('PDF/_participation.html.twig',array_merge($parameters,['markInputParams' => array_merge($savePDFstringParam,['singleDocsName' => $session->get(self::fileName).'_'.$this->translateStringPDF('filenames.singleDocs').'_'.$this->getCurrentDate()->format('Ymd')]), 'isMarkInput' => self::$markInput]));
                         if ($isConsent) { // consent is given
                             self::$linkedPage = self::consentNode;
                             $curHtml .= $this->renderView('PDF/_participationConsent.html.twig',array_merge($parameters,[],$isOral ? ['isSeparate' => true] : []));
                         }
+                        elseif (in_array($consentType,[self::voluntaryConsentNo,self::consentOther])) {
+                            $curHtml .= $this->renderView(self::intermediateDocument,array_merge($parameters,[self::content => $this->translateStringPDF($consentPrefix.'noConsent',array_merge($translationParams,$noConsentParams))]));
+                        }
                         // data privacy
-
                         if ($isToolPersonal) {
                             self::$linkedPage = self::privacyNode;
                             $curHtml .= $this->renderView('PDF/_dataPrivacy.html.twig',$parameters);
+                        }
+                        elseif ($personal==='anonymous') {
+                            $curHtml .= $this->renderView(self::intermediateDocument,array_merge($parameters,[self::content => $this->translateStringPDF($customPrefix.self::privacyNode,$translationParams)]));
                         }
                         // complete post information
                         if ($isPre && $this->getInformationIII($informationArray)) { // partial or deceit with post information
@@ -844,6 +891,17 @@ class ParticipationController extends PDFAbstract
                         $allHtml .= $curHtml;
                         if (self::$savePDF) {
                             $this->generatePDF($session,$curHtml,$this->concatIDs($ids,'participation'.$markedSuffix));
+                            if (self::$isCompleteForm) { // check for custom PDFs
+                                $customValues = [];
+                                foreach (self::customPDForder as $custom) {
+                                    if ($hasCustomPDF[$custom]) {
+                                        $customValues[] = $custom;
+                                        $customHtml = $this->renderView(self::intermediateDocument,array_merge($parameters,[self::content => $this->translateStringPDF($customPrefix.$custom,$translationParams)]));
+                                        $this->generatePDF($session,$customHtml,$this->concatIDs($ids,'participation',$custom));
+                                    }
+                                }
+                                $customPDFs[$studyID][$groupID][$measureID] = $customValues;
+                            }
                         }
                     }
                     catch (\Throwable $throwable) { // catches exceptions and error
@@ -852,6 +910,9 @@ class ParticipationController extends PDFAbstract
                 } // for measureID
             } // for groupID
         } // for studyID
+        if (self::$savePDF && self::$isCompleteForm) {
+            $session->set(self::pdfParticipationCustom,$customPDFs);
+        }
         $session->set(self::pdfParticipation.$markedSuffix,$allHtml);
         $session->set(self::pdfParticipationArray,$html);
         return new Response($allHtml);

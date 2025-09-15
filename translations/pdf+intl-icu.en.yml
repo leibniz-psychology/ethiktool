@@ -58,10 +58,22 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
   summary: 'Summary of the research project'
   votes:
     otherVote: 'Has this research project been reviewed by another ethics committee before?'
+    otherVoteSub: >-
+      {result, select,
+        positive {Why is a new ethics review necessary?}
+        negative {What were the reasons provided by the other ethics committee?}
+        noVote   {Why is a new ethics review necessary?}
+        other    {}}
     instVote: 'Has a similar own research project been reviewed by {committeeDat} before?'
+    instVoteSub: >-
+      {type, select,
+         resubmission {Relative to the original proposal, the following changes were made:}
+         other        {The main similarities and differences compared to the previous proposal are as follows:}}
   medicine:
     medicine: 'Is medical, pharmaceutical or other research planned that may have to be assessed in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG), or other legal requirements?'
+    medicineSub: 'Description:'
     physician: 'Are physicians amongst the project contributors?'
+    physicianSub: 'In your opinion, why is {committeeNom} responsible despite its non-medical constitution?'
   projectdetails:
     hint: >-
       The entries for this question {noBox, select,
@@ -89,7 +101,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     measuresSub: 'Description of the methods:'
     interventions: 'Which specific measures/interventions are participants exposed to as part of the study?'
     interventionsSub: 'Description of the measures/interventions:'
-    otherSources: 'Will data from other sources be added?'
+    otherSources: 'Will individually traceable data from other sources be added?'
     feedback: 'Do participants receive feedback on their individual test results?'
     feedbackSub: 'Description of type and framing of feedback:'
     loan: 'Are devices (e.g., mobile phone, tablet, sensor kit) handed out to the participants?'
@@ -244,45 +256,19 @@ summary: 'Summary of the research project'
 
 votes:
   otherVote:
-    committee: >-
-
-
-      Committee at the time:
-    result: |
-      
+    committee: "\n\nCommittee at the time:"
+    result: >-
       Result of review at the time: {result, select,
-                                    positive {positive vote
-      
-                                              Why is a new ethics review necessary?}
-                                    negative {negative vote
-      
-                                              What were the reasons provided by the other ethics committee?}
-                                    noVote   {no vote: research project was judged as not requiring in-depth ethics review
-      
-                                              Why is a new ethics review necessary?}
-                                    other    {}}
+                                      positive {positive vote }
+                                      negative {negative vote}
+                                      noVote   {no vote: research project was judged as not requiring in-depth ethics review}
+                                      other    {}}
+    pdf: 'The decision letter of the other ethics committee or a PDF file created by the applicant with further explanations are added at the end of the proposal.'
   instVote:
-    reference: >-
-      
-      
-      Reference number:
-    description: |
-      
-      
-      {type, select,
-         resubmission {Relative to the original proposal, the following changes were made:}
-         other        {The main similarities and differences compared to the previous proposal are as follows:}}
+    reference: "\n\nReference number:"
 
 medicine:
-  medicine: |
-    
-    
-    Description:
   physician: >-
-    
-    
-    In your opinion, why is {committeeNom} responsible despite its non-medical constitution?
-    
     {result, select,
       0     {The involved physicians can make use of an exception to the compulsory professional and ethical counselling by a medical ethics committee: }
       other {}}
@@ -307,27 +293,61 @@ projectdetails:
       one group {isGroupName, select,
                   true  {({groupName})}
                   other {}}
-    measureTimePoints: 'one time point'
+    measureTimePoint: 'one time point'
   pdf: >-
     {type, select,
        measures      {Supplementary materials on the data collection methods}
        interventions {Supplementary materials on the interventions/measures}
        otherSources  {Supplementary materials on the data retrieval from other sources}
-       other         {The translated participant documents}} are added after the proposal.
+       other         {The translated participant documents}} are added at the end of the proposal.
+  custom:
+    levelNames: >- # for the levelNamesString placeholder in the following keys
+      {numLevels, plural,
+        =0    {}
+        other { for {levelNames}}}
+    votes: 'This research project has been reviewed by a different ethics committee before. The following page(s) contain(s) the decision letter of the other ethics committee or a PDF file created by the applicant with further explanations.'
+    information: >-
+      The following page(s) contain(s) the translated participant documents{addressee, select,
+                                                                              children { for the legal guardians}
+                                                                              wards    { for the legal guardians}
+                                                                              other    {}}{levelNamesString}.
+    informationII: >- # other addressee is wards
+      The wording of the study information sheet for the {addressee, select,
+                                                            children  {children}
+                                                            other     {supervised individuals}} {numLevels, plural,
+                                                                                =0    {}
+                                                                                other {({levelNames})}} needs to be adapted to the target group and can therefore not be generated automatically by the Ethiktool. The following page(s) contain(s) a PDF file created by the applicant that is aimed directly at the {addressee, select,
+            children {children}
+            other    {supervised individuals}} and contains the following parts: information on study participation, assent form, annex on processing personal data (if applicable).
+    measures: 'The following page(s) contain(s) supplementary materials on the data collection methods{levelNamesString}.'
+    interventions: 'The following page(s) contain(s) supplementary materials on the interventions/measures{levelNamesString}.'
+    otherSources: 'The following page(s) contain(s) supplementary materials on the data retrieval from other sources{levelNamesString}.'
+    dataPrivacy: >-
+      {create, select,
+        createSeparate {The data privacy statement {levelNamesString} was generated outside of the Ethiktool (see question 52 of the application form). That data privacy statement (including the consent form) can be found on the following page(s).}
+        anonymous      {According to the {savePDF, select,
+                            true {selections made in the Ethiktool}
+                            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}} (see question 52 of the application form), the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
+        separateLater  {According to the {savePDF, select,
+                                            true {selections made in the Ethiktool}
+                                            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}} (see question 52 of the application form), the data processing aspects will be sorted out in detail at a later point in time. Therefore, the Ethiktool did not generate a data privacy statement{levelNamesString}.}
+        other          {{personal, select,
+                          anonymous {According to the selections made in the Ethiktool, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
+                          other     {Due to the characteristics of data processing (according to the selections made in the Ethiktool), the data privacy statement {levelNamesString} cannot be generated with the Ethiktool. Therefore, the data privacy statement was generated separately. That data privacy statement (including the consent form) can be found on the following page(s).}}}}
   groups:
     examined:
       title: >-
         {number, plural,
           =0    {}
           =1    {}
-          other {; each}} between the ages of  {limits, select,
-                                            noUpperLimit {at least {minAge, plural,
+          other {; each}} {limits, select,
+                                            noUpperLimit {of at least {minAge, plural,
                                                                         =1    {1 year}
                                                                         other {# years}}}
-                                            sameLimit    {{minAge, plural,
+                                            sameLimit    {of {minAge, plural,
                                                             =1    {1 year}
                                                             other {# years}}}
-                                            other        {{minAge, number} and {maxAge, plural,
+                                            other        {between the ages of {minAge, number} and {maxAge, plural,
                                                                                   =1    {1 year}
                                                                                   other {# years}}}}.
       types:
@@ -399,22 +419,22 @@ projectdetails:
     duration: >-
       The total duration of {multiple, select,
                                   true  {today''s}
-                                  other {the}} investigation usually is about {total, select,
+                                  other {the}} investigation is usually about {total, select,
                                                                                         1     {1 minute}
                                                                                         other {{total} minutes}}{breaks, select,
                                                                                                                   0     {.}
-                                                                                                                  other {, thereof {measureTime, select,
+                                                                                                                  other {, of which {measureTime, select,
                                                                                                                                     1     {1 minute}
-                                                                                                                                    other {{measureTime} minutes}} (net) for data collection and {breaks, select,
+                                                                                                                                    other {{measureTime} minutes}} (net) are allocated for data collection and {breaks, select,
               1     {1 minute}
-              other {{breaks} minutes}} for preparation and follow-up time as well as breaks.}}
+              other {{breaks} minutes}} for preparation, follow-up time, and breaks.}}
     location:
       start: >-
         The study {information, select,
                             post  {took place}
                             other {takes place}} {location, select,
-                                              intern {at facilities {committeeLocationGen}, namely }
-                                              extern {at facilities of external cooperators, namely }
+                                              intern {at the facilities {committeeLocationGen}, namely }
+                                              extern {at the facilities of external cooperators, namely }
                                               online {online, using the platform }
                                               other  {}}
       end: '' # only for online
@@ -533,7 +553,7 @@ projectdetails:
         tool          {{personal, select,
                           anonymous {All aspects of data processing were specified within the Ethiktool. The chosen selections on the “data privacy“ page indicate that no personal data are processed and thus no data privacy statement is necessary.}
                           other     {The data privacy statement was generated within the Ethiktool.}}}
-        noTool        {Due to the characteristics of data processing (according to the selections on the “data privacy“ page), the data privacy statement could not be generated with the Ethiktool. Therefore, the data privacy statement was generated separately (i.e., outside of the Ethiktool).}
+        noTool        {Due to the characteristics of data processing (according to the selections on the “data privacy“ page), the data privacy statement cannot be generated with the Ethiktool. Therefore, the data privacy statement was generated separately (i.e., outside of the Ethiktool).}
         separate      {The data privacy statement was generated separately (i.e., outside of the Ethiktool). {verification, select,
                                                                           verified   {It has been checked and approved by the responsible data protection authorities.}
                                                                           unverified {It has not yet been approved by the responsible data protection authorities.}
@@ -982,7 +1002,7 @@ dataPrivacy:
           other {Access}} to personal data for {purpose} is granted to external data processors. This will {isKnown, select,
                                           true  {also}
                                           other {}} be based on a contract according to article 28 EU-GDPR. These data processors are obliged to treat personal data confidentially and process them only according to our instructions.
-    transferOutside: 'We generally do not transmit personal data to third parties outside of the EEA.'
+    transferOutside: 'We generally do not transmit personal data to third parties outside of the European Economic Area (EEA).'
   anonymization:
     title: 'Data anonymization and storage/deletion'
     dataResearchNo: 'The research data are not anonymized.'
@@ -1116,6 +1136,19 @@ completePost:
 
 # consent for participation
 consent:
+  noConsent: >-
+    The Ethiktool did not generate a consent form for the {addressee, select,
+                                                            children {legal guardians}
+                                                            wards    {legal guardians}
+                                                            other    {participants}} {numLevels, plural,
+                                                                                        =0    {}
+                                                                                        other {of {levelNames}}} because {savePDF, select,
+          true  {{consent, select,
+                    no    {no consent is given (see question 44 of the application form). This is justified as follows: {description}}
+                    other {consent is given in a different way ({description}; see question 44 of the application form).}}}
+          other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">{consent, select,
+                          no    {no consent</a> is given (see question 44 of the application form). This is justified as follows: {description}}
+                          other {consent is given in a different way</a> ({description}; see question 44 of the application form).}}}}
   title: >-
     {information, select,
       post  {After-the-fact declaration of consent to data processing}

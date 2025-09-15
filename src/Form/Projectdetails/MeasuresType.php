@@ -88,10 +88,11 @@ class MeasuresType extends TypeAbstract
         $interventions = $this->getSelectedCheckboxes($forms,self::interventionsTypes,exclusive: self::noIntervention);
         $tempArray[self::interventionsTypesNode] = $interventions;
         $numSelected = count($interventions);
-        if ($numSelected>0 && !array_key_exists(self::noIntervention,$interventions) && !($numSelected===1 && array_key_exists(self::interventionsSurvey,$interventions))) {
+        $isInterventions = $numSelected>0 && !array_key_exists(self::noIntervention,$interventions);
+        if ($isInterventions && !($numSelected===1 && array_key_exists(self::interventionsSurvey,$interventions))) {
             $tempArray[self::descriptionNode] = str_replace($this->translateString('projectdetails.pages.measures.measuresInterventions.interventions.textHints.defaultStart').'.','',$forms[self::interventionsNode.self::descriptionCap]->getData()); // may be invisible, but never disabled, i.e., will always return a string. Survey sentence differs between text field and pdf, therefore, save only user input
         }
-        if ($forms[self::interventionsPDF]->getData()) {
+        if ($isInterventions && $forms[self::interventionsPDF]->getData()) {
             $tempArray[self::interventionsPDF] = '';
         }
         $viewData[self::interventionsNode] = $tempArray;

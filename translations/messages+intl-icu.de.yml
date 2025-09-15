@@ -19,10 +19,10 @@ multiple:
         Die ausgewählte Datei ist keine {type, select,
                                           pdf   {PDF}
                                           other {XML}}-Datei.
-    xmlFailure: # info modal if an xml-file could not be loaded 
+    xmlFailure: # info modal if an xml-file could not be loaded
       title: 'XML-Datei laden'
       text: 'Die ausgewählte XML-Datei konnte nicht geladen werden.'
-    customPDF: # info modal if a custom pdf could not be added while creating the complete proposal 
+    customPDF: # info modal if a custom pdf could not be added while creating the complete proposal
       title: 'Selbst formulierte PDF hinzufügen'
       text: >-
         {filename, select,
@@ -56,7 +56,7 @@ multiple:
       dataPrivacyOnline: 'Datenschutz'
     information: 'der Anwesenheit der {addressee}' # in groups (same for following)
     informationII: 'der Aufklärung für die {addressee}'
-    consentGroups: 'der Freiwilligkeit und der Einwilligung für die {addressee}'
+    consentGroups: 'der Freiwilligkeit und der Zustimmung für die {addressee}'
     voluntary: 'der Frage nach Sicherstellung der Freiwilligkeit'
     informationIII: 'der nachträglichen Aufklärung' # in information (same for following)
     consent: 'der nicht nachteilsfreien Beendigung der Teilnahme für die {addressee}'
@@ -707,7 +707,7 @@ projectdetails:
         pre: 'Bitte begründen Sie, warum die {addressee} nicht vorab darüber aufgeklärt werden, dass {participant} an einer Studie teilnehmen.'
         post: 'Bitte begründen Sie, warum die {addressee} nicht nachträglich darüber aufgeklärt werden, dass {participant} an einer Studie teilgenommen haben.'
         preComplete: 'Bitte begründen Sie Ihr Vorgehen und geben Sie an, welche Informationen die {addressee} wann erhalten.'
-      pdf: 'Die Studieninformation für die {participant} erfordert eine an die Zielgruppe angepasste Darstellung und kann daher nicht automatisch aus dem Ethiktool heraus erstellt werden. Bitte bereiten Sie eine selbst formulierte PDF-Datei vor, die sich direkt an die {participant} richtet und folgende Abschnitte enthält: Informationen zur Studienteilnahme, Einwilligung/Zustimmung, ggf. Anlage zur Verarbeitung personenbezogener Daten. Zur Orientierung können Ihnen die automatisch erstellten Dokumente für die {addressee} dienen. Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, diese PDF-Datei beizufügen.'
+      pdf: 'Die Studieninformation für die {participant} erfordert eine an die Zielgruppe angepasste Darstellung und kann daher nicht automatisch aus dem Ethiktool heraus erstellt werden. Bitte bereiten Sie eine selbst formulierte PDF-Datei vor, die sich direkt an die {participant} richtet und folgende Abschnitte enthält: Informationen zur Studienteilnahme, Zustimmung, ggf. Anlage zur Verarbeitung personenbezogener Daten. Zur Orientierung können Ihnen die automatisch erstellten Dokumente für die {addressee} dienen. Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, diese PDF-Datei beizufügen.'
       attendance: 'Sind die {addressee} bei der Erhebung anwesend?'
       documentTranslation:
         title: 'Werden die Teilnahmedokumente in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?'
@@ -753,7 +753,7 @@ projectdetails:
             measuresSurvey: 'Befragungen (z.B. Interviews, Fragebögen)'
             measuresInstrumental: 'apparative Messungen (z.B. Reaktionszeiten, Eyetracking, Motion Tracking, EEG, EKG, Pulssensor, Atmung, (f)MRT, Körpermaße)'
             otherMeasures: 'sonstige Erhebungsmethode(n)'
-          headingHint: 'Geben Sie bitte alle Erhebungsmethoden an, mittels derer zum Zweck der Studie Daten von den Teilnehmenden erfasst werden. Denken Sie dabei auch an Erhebungsmethoden zur Überprüfung der Ein- und Ausschlusskriterien.' 
+          headingHint: 'Geben Sie bitte alle Erhebungsmethoden an, mittels derer zum Zweck der Studie Daten von den Teilnehmenden erfasst werden. Denken Sie dabei auch an Erhebungsmethoden zur Überprüfung der Ein- und Ausschlusskriterien.'
           textHints:
             noSelection: 'Bitte wählen Sie mindestens eine Erhebungsmethode aus.'
             description: 'Bitte benennen Sie die jeweilige Erhebungsmethode und erläutern Sie diese kurz.'
@@ -783,7 +783,7 @@ projectdetails:
                                                       measures {Erhebungsmethoden}
                                                       other    {Maßnahmen}} beifügen.
       otherSources:
-        title: 'Werden Daten von anderen Stellen hinzugezogen?'
+        title: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
         headingHint: 'Damit sind individuelle Daten gemeint, die an anderen Stellen bereits vorliegen und für diese Studie genutzt bzw. in die Studiendaten übertragen werden sollen, z.B. um die eigenen Forschungsdaten zu ergänzen (wie z.B. Gesundheitsdaten, Einschätzungen aus Psychotherapie/medizinischer Behandlung/Training) oder als Kontaktierungsgrundlage (wie z.B. Daten von Einwohnermeldeämtern). Ein Vergleich aggregierter Daten mit den hier erhobenen Daten ist nicht als Einbezug von Daten anderer Stellen zu werten.'
         textHint: 'Bitte beschreiben Sie, welche Daten von welchen Stellen hinzugezogen werden. Bitte beschreiben Sie auch, auf welcher Grundlage (z.B. gemeinsame Verantwortlichkeit, Schweigepflichtsentbindung) die Datenweitergabe abgesichert ist.'
         hint: 'In der Datenschutzerklärung („Anlage zur Datenverarbeitung“) beschreiben Sie bitte, anhand welcher Merkmale (z.B. Name oder Code) die Daten mit weiteren Daten zusammengeführt werden und welche personenbezogenen Daten der anderen Stellen Teil der Forschungsdaten oder der Daten für sonstige Zwecke jenseits der Forschungsfrage sind. Ggf. müssen zusätzliche Dokumente (z.B. Schweigepflichtsentbindung) hinzugefügt werden.'
@@ -1219,7 +1219,7 @@ projectdetails:
           types:
             verified: 'Die Datenschutzerklärung ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.'
             unverified: 'Die Datenschutzerklärung ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.'
-      intro: 
+      intro:
         text:
           start: 'Das Ethiktool unterstützt Sie darin, die Datenverarbeitung in der Studie abzubilden.'
           end: |
@@ -1246,7 +1246,7 @@ projectdetails:
         separateHint: 'Üblicherweise wird eine Liste mit IP-Adressen angelegt, mittels derer z.B. geprüft wird, ob bereits teilgenommen wurde; die IPs sind aber nicht den erhobenen Daten zuordenbar.' # icon
       personal:
         maybe:
-          start: 'Aufgrund folgender Angabe(n) besteht die Vermutung, dass Sie als Teil Ihrer Forschungsdaten oder zur Organisation der Studie personenbezogene Daten verarbeiten bzw. dass Personen für gewisse Zeit noch identifizierbar sind:' 
+          start: 'Aufgrund folgender Angabe(n) besteht die Vermutung, dass Sie als Teil Ihrer Forschungsdaten oder zur Organisation der Studie personenbezogene Daten verarbeiten bzw. dass Personen für gewisse Zeit noch identifizierbar sind:'
           end: 'Bitte prüfen Sie, ob Sie im Zusammenhang mit den aufgeführten Punkten personenbezogene Daten verarbeiten, und geben Sie diese ggf. im Folgenden an. Wenn Sie unsicher sind, lassen Sie sich bitte dazu beraten.'
         sure:
           start: 'Aufgrund folgender Angabe(n) ist klar, dass die Forschungsdaten selbst personenbezogen sind oder dass zu weiteren (organisatorischen) Zwecken personenbezogene Daten verarbeitet werden:'
@@ -1410,7 +1410,7 @@ projectdetails:
       list:
         title: 'Welche personenbezogenen Daten enthält die Schlüsselliste?'
         types:
-          name: 'Name'  
+          name: 'Name'
           eMail: 'E-Mail-Adresse'
           studentNumber: 'Matrikelnummer'
           token: 'Nutzungskürzel des Rechenzentrums'
@@ -1565,7 +1565,7 @@ projectdetails:
         title: 'Welche personenbezogenen Daten werden für <u>{purpose}</u> verarbeitet?'
         headingHint: 'Bitte wählen Sie alle personenbezogenen Daten, die für die gewählten Arten der Aufwandsentschädigung benötigt werden. Bedenken Sie sowohl die Abwicklung als auch die Dokumentation der Aufwandsentschädigung.' # only for compensation
         types:
-          name: 'Name' 
+          name: 'Name'
           eMail: 'E-Mail-Adresse'
           phone: 'Telefonnummer'
           address: 'Anschrift'
@@ -1596,7 +1596,7 @@ projectdetails:
             middleCodeChange: 'durch Änderung der Codes in den Forschungsdaten'
             middleCodeRemove: 'durch Löschung der Codes aus den Forschungsdaten'
             middleName: 'durch Löschung der Namen aus den Forschungsdaten'
-        immediatelyEnd: ' aufgehoben.' 
+        immediatelyEnd: ' aufgehoben.'
         laterEnd: >-
           Die Forschungsdaten werden bis zu diesem Zeitpunkt {isName, select,
                                         true  {mit Namen versehen}
@@ -1614,14 +1614,14 @@ projectdetails:
           keep: 'Bitte begründen Sie kurz, warum dies notwendig ist:'
       access:
         title: 'Wer hat Zugriff auf die personenbezogenen Daten für <u>{purpose}</u>?'
-        headingHint: "Bitte berücksichtigen Sie alle Personen/Institutionen/Dienste mit Zugriff zu personenbezogenen Daten zu irgendeinem Zeitpunkt im Forschungsprojekt. Dies umfasst beispielsweise die Erfassung und Verarbeitung von Daten durch Umfrageinstitute für das Forschungsprojekt (z.B. IP-Adressen, Kontaktdaten) sowie die Weitergabe selbst erfasster Daten an Projektbeteiligte oder Dienstleistende (z.B. zur Transkription oder Auswertung von Daten). Ebenso fällt darunter die Erfassung oder Aufbereitung von Daten mit Hilfe externer Tools wie socisurvey, mpath, Transkriptionssoftware oder die Nutzung von File-Transfer-Diensten für die Übermittlung von personenbezogenen Daten, da die Daten dafür zumindest für kurze Zeit auf Servern der Tool-Anbieter gespeichert werden.</br> Beachten Sie, dass es hier um Zugriff auf personenbezogene - nicht auf anonyme bzw. anonymisierte - Daten geht. Wenn Forschungsdaten beispielsweise nur über eine Schlüsselliste personenbeziehbar sind, sind hier nur diejenigen mit Zugang zur Schlüsselliste anzugeben. Für andere Projektbeteiligte liegen keine personenbezogenen Daten vor, sofern sie nicht durch andere Aspekte einzelne Personen aus den Daten identifizieren können.</br> Bitte beachten Sie auch, dass Zugriff auf personenbezogene Daten nur Dritten innerhalb des EWR gewährt werden darf. Wenn außerhalb des EWR auf Daten zugegriffen werden kann, ist die entsprechende Frage mit ja zu beantworten.)" 
+        headingHint: "Bitte berücksichtigen Sie alle Personen/Institutionen/Dienste mit Zugriff zu personenbezogenen Daten zu irgendeinem Zeitpunkt im Forschungsprojekt. Dies umfasst beispielsweise die Erfassung und Verarbeitung von Daten durch Umfrageinstitute für das Forschungsprojekt (z.B. IP-Adressen, Kontaktdaten) sowie die Weitergabe selbst erfasster Daten an Projektbeteiligte oder Dienstleistende (z.B. zur Transkription oder Auswertung von Daten). Ebenso fällt darunter die Erfassung oder Aufbereitung von Daten mit Hilfe externer Tools wie socisurvey, mpath, Transkriptionssoftware oder die Nutzung von File-Transfer-Diensten für die Übermittlung von personenbezogenen Daten, da die Daten dafür zumindest für kurze Zeit auf Servern der Tool-Anbieter gespeichert werden.</br> Beachten Sie, dass es hier um Zugriff auf personenbezogene - nicht auf anonyme bzw. anonymisierte - Daten geht. Wenn Forschungsdaten beispielsweise nur über eine Schlüsselliste personenbeziehbar sind, sind hier nur diejenigen mit Zugang zur Schlüsselliste anzugeben. Für andere Projektbeteiligte liegen keine personenbezogenen Daten vor, sofern sie nicht durch andere Aspekte einzelne Personen aus den Daten identifizieren können.</br> Bitte beachten Sie auch, dass Zugriff auf personenbezogene Daten nur Dritten innerhalb des EWR gewährt werden darf. Wenn außerhalb des EWR auf Daten zugegriffen werden kann, ist die entsprechende Frage mit ja zu beantworten.)"
         types:
           contributors: 'Alle Projektbeteiligten {committeeLocationGen}'
           contributorsPart: 'Einzelne Projektbeteiligte {committeeLocationGen}'
           institution: 'Nicht-Projektbeteiligte {committeeLocationGen}'
           contributorsOther: 'Projektbeteiligte von Partnerinstitutionen'
           accessExternal: 'externe Dienstleistende'
-          dataService: 'externe Software/Datendienste' 
+          dataService: 'externe Software/Datendienste'
         hints: # icons
           placeholder: 'bitte beschreiben'
           contributors: 'Wenn nicht alle Projektbeteiligten {committeeLocationGen} Zugriff haben, wählen Sie bitte „Einzelne Projektbeteiligte“ aus und spezifizieren die Personen.'
@@ -1714,7 +1714,7 @@ projectdetails:
         textHint: '(optional)'
       noDocumentHint: 'Gemäß Ihrer obigen Angaben werden in der Studie keine personenbezogenen Daten verarbeitet. Daher ist die Erstellung einer Datenschutzerklärung hier nicht erforderlich.'
     dataReuse:
-      intro: 
+      intro:
         text: 'Bitte beachten Sie, dass die Fragen zur Nachnutzung erst dann sinnvoll zu stellen und zu beantworten sind, wenn die Seite „<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">Datenschutz</a>“ vollständig ausgefüllt ist. Die Informationen zur Nachnutzung müssen ggf. neu ausgefüllt werden, wenn noch erhebliche Änderungen an den Angaben zum Datenschutz vorgenommen werden.'
         confirm: 'Die obigen Informationen habe ich zur Kenntnis genommen.'
       dataReuse:
@@ -1876,7 +1876,7 @@ checkDoc:
           description: 'Erläuterung, warum {committeeNom} trotz der nicht-medizinischen Zusammensetzung zuständig ist,'
   contributors:
     title: '<a href="contributors">Projektbeteiligte</a>'
-    lineTitle: 'Projektbeteiligte/r {index} ({name})' 
+    lineTitle: 'Projektbeteiligte/r {index} ({name})'
     infos:
       name: 'Name ist nicht vollständig.'
       validEmail: 'E-Mail-Adresse ist ungültig.'
@@ -1937,7 +1937,7 @@ checkDoc:
                             children {Erziehungsberechtigen}
                             other    {gesetzlichen Vertretungspersonen}}
         documentTranslation:
-          missing: 'Übersetzung der Teilnahmedokument'
+          missing: 'Übersetzung der Teilnahmedokumente'
           description: 'Angabe der Sprache(n), in die die Teilnahmedokumente übersetzt werden,'
       informationIII:
         goals: 'Ziele der Studie'
@@ -2073,6 +2073,11 @@ checkDoc:
                   children {Erziehungsberechtigten}
                   wards    {gesetzlichen Vertretungspersonen}
                   other    {Teilnehmenden}} müssen über die Nutzung entscheiden können.
+          noInformation: >-
+            Sie haben ausgewählt, dass es <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt. Das passt nicht dazu, dass die {addressee, select,
+                  children {Erziehungsberechtigten}
+                  wards    {gesetzlichen Vertretungspersonen}
+                  other    {Teilnehmenden}} bei vorzeitigem Abbruch über die Nutzung der Daten entscheiden können.
         terminateCriteria: 'Abbruchkriterien'
       compensation:
         missing: 'Angaben zur Art der Aufwandsentschädigung'

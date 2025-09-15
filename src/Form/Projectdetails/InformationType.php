@@ -102,7 +102,7 @@ class InformationType extends TypeAbstract
             $newData[self::attendanceNode] = $forms[self::attendanceNode]->getData();
         }
         // document translation
-        if (array_key_exists(self::documentTranslationNode,$forms) && $isPre || $post===0) {
+        if (array_key_exists(self::documentTranslationNode,$forms) && ($isPre || $post===0)) {
             $tempVal = $forms[self::documentTranslationNode]->getData();
             $tempArray = [self::chosen => $tempVal];
             if ($tempVal===0) {

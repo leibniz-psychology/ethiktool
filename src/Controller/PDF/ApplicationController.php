@@ -291,9 +291,13 @@ class ApplicationController extends PDFAbstract
             // conflict
             $tempArray = $pageArray[self::conflictNode];
             $tempVal = $tempArray[self::chosen];
+            $isConflict = $tempVal==='0';
             $this->addBox($pagePrefix.self::conflictNode, $this->translateBinaryAnswer($tempVal), $tempArray[self::descriptionNode] ?? '', parameters: ['conflictChosen' => $tempVal],fragment: self::conflictNode);
             // description of conflict
-            $this->addBox($pagePrefix.self::participantDescription, $tempArray[self::participantDescription] ?? $this->noBoxTrans, subHeadingKey: $this->documentHint,fragment: self::conflictNode);
+            $tempPageLink = self::$isPageLink;
+            self::$isPageLink = $isConflict;
+            $this->addBox($pagePrefix.self::participantDescription, $tempArray[self::participantDescription] ?? $this->noBoxTrans, subHeadingKey: $this->documentHint, inputPage: !$isConflict ? self::coreDataNode : '',fragment: $this->addDiv(self::participantDescription), inputPrefix: 'appData');
+            self::$isPageLink = $tempPageLink;
             // project dates
             $tempPrefix = $pagePrefix.'projectDates.';
             $projectStart = $pageArray[self::projectStart];
@@ -314,6 +318,7 @@ class ApplicationController extends PDFAbstract
             $this->addBox($pagePrefix.'projectDates', $content, fragment: 'projectDates');
 
             // votes and medicine
+            $isOtherVote = false; // gets true if the other vote question is answered with yes
             foreach ([self::voteNode => [self::otherVote, self::instVote], self::medicine => [self::medicine, self::physicianNode]] as $page => $subPages) {
                 self::$linkedPage = $page;
                 $pagePrefix = $page.'.';
@@ -323,12 +328,18 @@ class ApplicationController extends PDFAbstract
                     $tempArray = $pageArray[$subPage];
                     $tempVal = $tempArray[self::chosen];
                     $content = $this->translateBinaryAnswer($tempVal);
+                    $subContent = '';
+                    $translationParams = [];
                     $tempVal = $tempVal==='0';
                     if ($tempVal || $subPage===self::instVote && $isExtendedResubmission) { // if application type is changed, it may not yet be updated on votes
                         switch ($subPage) {
                             case self::otherVote:
+                                $isOtherVote = true;
+                                $resultParam = ['result' => $tempArray[self::otherVoteResult]];
                                 $content .= $this->translateStringPDF($tempPrefix.'committee').' '.$tempArray[self::descriptionNode];
-                                $content .= $this->translateStringPDF($tempPrefix.'result', ['result' => $tempArray[self::otherVoteResult]]).$tempArray[self::otherVoteResultDescription];
+                                $content .= "\n".$this->translateStringPDF($tempPrefix.'result', $resultParam);
+                                $subContent = $tempArray[self::otherVoteResultDescription]."\n\n".$this->translateStringPDF($tempPrefix.'pdf');
+                                $translationParams = $resultParam;
                                 break;
                             case self::instVote:
                                 if ($isExtendedResubmission) {
@@ -336,21 +347,22 @@ class ApplicationController extends PDFAbstract
                                 }
                                 if ($isExtendedResubmission || $tempVal) {
                                     $content .= $this->translateStringPDF($tempPrefix.self::instReference).' '.($isExtendedResubmission ? $appTypeDescription : $tempArray[self::instReference]);
-                                    $content .= $this->translateStringPDF($tempPrefix.self::descriptionNode, ['type' => $applicationType]).($tempArray[self::instVoteText] ?? '');
+                                    $subContent = $tempArray[self::instVoteText];
+                                    $translationParams = ['type' => $applicationType];
                                 }
                                 break;
                             case self::medicine:
-                                $content .= $this->translateStringPDF($pagePrefix.self::medicine).$tempArray[self::descriptionNode];
+                                $subContent = $tempArray[self::descriptionNode];
                                 break;
                             case self::physicianNode:
                                 $tempArray = $tempArray[self::descriptionNode];
-                                $content .= $this->translateStringPDF($pagePrefix.self::physicianNode, array_merge($committeeParam, ['result' => $tempArray[self::chosen]])).$tempArray[self::descriptionNode];
+                                $subContent = $this->translateStringPDF($pagePrefix.self::physicianNode, array_merge($committeeParam, ['result' => $tempArray[self::chosen]])).$tempArray[self::descriptionNode];
                                 break;
                             default:
                                 break;
                         }
                     }
-                    $this->addBox($pagePrefix.$subPage, $content, parameters: $committeeParam, fragment: $subPage);
+                    $this->addBox($pagePrefix.$subPage, $content, $subContent, parameters: array_merge($committeeParam,$translationParams), fragment: $subPage);
                 }
             }
 
@@ -377,7 +389,11 @@ class ApplicationController extends PDFAbstract
                 }
                 $nameTasks[$index] = [self::nameNode => $contributor[self::infosNode][self::nameNode], 'hasTasks' => in_array(true, $tasks) || $tasks[self::otherTask]!=='', self::taskNode => $tasks];
             }
-            $contributorsInfos = ['heading' => $this->addHeadingLink('boxHeadings.contributors'), self::content => $contributorsInfos!=='' ? $contributorsInfos : $this->noBoxTrans];
+            $hasFurtherContributors = $contributorsInfos!=='';
+            $tempPageLink = self::$isPageLink;
+            self::$isPageLink = $hasFurtherContributors;
+            $contributorsInfos = array_merge(['heading' => $this->addHeadingLink('boxHeadings.contributors'), self::content => $hasFurtherContributors ? $contributorsInfos : $this->noBoxTrans],!$hasFurtherContributors ? [self::inputPage => $this->getInputPageHint('contributors',1,'true','contributors')] : []);
+            self::$isPageLink = $tempPageLink;
 
             // projectdetails
             // $boxContent: one element for each question. key: key of the question. value: array of two elements ('main' and 'sub'). For each of the two keys: value: array of different answers for the question. In this array: key: box content. value: One element for each study. key: study index. value: array of array. Same for groups. For measure time points the values of the array are indices.
@@ -768,7 +784,10 @@ class ApplicationController extends PDFAbstract
             foreach ($supplementTypes as $type) {
                 if ($isAnySupplement[$type]) {
                     $main = $this->boxContent[$type][self::main];
-                    $this->boxContent[$type][self::main] = [array_keys($main)[0]."\n\n".$this->translateStringPDF($tempVal,['type' => $type]) => array_values($main)[0]];
+                    $sub = $this->boxContent[$type][self::sub] ?? '';
+                    $hasSub = $sub!=='';
+                    $key = $hasSub ? $sub : $main; // sub-content may not exist
+                    $this->boxContent[$type][$hasSub ? self::sub : self::main] = [array_keys($key)[0]."\n\n".$this->translateStringPDF($tempVal,['type' => $type]) => array_values($key)[0]];
                 }
             }
             if (!$isMultiple) { // simplify $names
@@ -866,6 +885,10 @@ class ApplicationController extends PDFAbstract
                     'levelHeading' => $levelHeading,
                     'boxContent' => $this->content,
                     'savePDF' => self::$savePDF]));
+            $htmlWithVotes = $html;
+            if (self::$savePDF && self::$isCompleteForm && $isOtherVote) {
+                $htmlWithVotes .= $this->renderView('PDF/_intermediateDocument.html.twig', array_merge($committeeParam,['savePDF' => self::$savePDF, self::content => $this->translateStringPDF($projecdetailsPrefix.'custom.'.self::voteNode)]));
+            }
             $session->set(self::pdfApplication, $html);
             $this->forward('App\Controller\PDF\ParticipationController::createPDF', ['routeIDs' => $routeIDs]);
             if (self::$savePDF) { // single documents or complete form
@@ -875,6 +898,8 @@ class ApplicationController extends PDFAbstract
                     return $this->getDownloadResponse($session, false);
                 }
                 else {
+                    $this->generatePDF($session,$htmlWithVotes,'applicationCompleteForm');
+                    self::$pdf->removeTemporaryFiles();
                     $this->forward('App\Controller\PDF\ParticipationController::createPDF', ['routeIDs' => $routeIDs, 'markInput' => true]);
                 }
             }
@@ -917,18 +942,29 @@ class ApplicationController extends PDFAbstract
      * @param string $subHeadingKey if not empty, translation key for the 'subHeading' element or 'documentHint' if the hint should be added
      * @param array $parameters parameters for the translations
      * @param string $paragraph if not empty, translation key for a paragraph heading will be added before the box
-     * @param string $inputPage if not empty, translation key for the page that will be displayed after the heading if hovered over the heading
+     * @param string $inputPage if not empty, translation key for the page that will be displayed above the heading if hovered over the heading
      * @param string $fragment fragment for the heading link
+     * @param string $inputPrefix if not empty, page prefix for the page that will be displayed above the heading
      */
-    private function addBox(string $headingKey, string $boxContent, string $boxContentSub = '', string $subHeadingKey = '', array $parameters = [], string $paragraph='', string $inputPage = '', string $fragment = ''): void {
+    private function addBox(string $headingKey, string $boxContent, string $boxContentSub = '', string $subHeadingKey = '', array $parameters = [], string $paragraph='', string $inputPage = '', string $fragment = '', string $inputPrefix = 'projectdetails'): void {
         $translation = 'boxHeadings.'.$headingKey;
-        $pagePrefix = 'pages.projectdetails.';
         $this->content = array_merge($this->content,
             [array_merge(['heading' => $this->addHeadingLink($translation,$parameters,$fragment),'content' => $boxContent],
                 $boxContentSub!=='' ? ['subContent' => "\n".$this->translateStringPDF($translation.'Sub',$parameters)."\n".$boxContentSub] : [],
                 $subHeadingKey!=='' ? [self::subHeading => $subHeadingKey===$this->documentHint ? $this->documentHint : $this->translateStringPDF('boxSubHeadings.'.$subHeadingKey,$parameters)] : [],
                 $paragraph!=='' ? [self::paragraph => $this->translateStringPDF('paragraphHeadings.'.$paragraph)] : [],
-                $inputPage!=='' ? [self::inputPage => $this->translateStringPDF('boxHeadings.projectdetails.hint',[self::inputPage => $this->translateString($pagePrefix.$inputPage), 'numPages' => $inputPage===self::informationIINode || $inputPage===self::informationNode && $this->isAnyTwoAddressees && !str_contains($headingKey,self::attendanceNode) ? 2 : 1, 'noBox' => $this->getStringFromBool($boxContent===$this->noBoxTrans)])] : [])]);
+                $inputPage!=='' ? [self::inputPage => $this->getInputPageHint($inputPage,$inputPage===self::informationIINode || $inputPage===self::informationNode && $this->isAnyTwoAddressees && !str_contains($headingKey,self::attendanceNode) ? 2 : 1,$this->getStringFromBool($boxContent===$this->noBoxTrans),$inputPrefix)] : [])]);
+    }
+
+    /** Creates the hint to be shown above the boxes.
+     * @param string $inputPage translation key for the page that will be displayed above the heading if hovered over the heading
+     * @param int $numPages number of pages that the hint contains
+     * @param string $noBox string representation whether the box has no content
+     * @param string $pagePrefix page prefix to be used for the input page
+     * @return string hint to be shown above the boxes
+     */
+    private function getInputPageHint(string $inputPage, int $numPages, string $noBox, string $pagePrefix = 'projectdetails'): string {
+        return $this->translateStringPDF('boxHeadings.projectdetails.hint',[self::inputPage => $this->translateString('pages.'.$pagePrefix.'.'.$inputPage), 'numPages' => $numPages, 'noBox' => $noBox]);
     }
 
     /** If \$array is not an empty string, a string is created where all elements in \$array are translated and eventually are concatenated with a comma.

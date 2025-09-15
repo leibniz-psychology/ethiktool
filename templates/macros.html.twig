@@ -285,32 +285,33 @@
     {% set buttonClasses = 'Button_primary_go me-2 w-100' %}
     <div class="mt-8 mb-2 MetaData-Widget grid gap-2" style="grid-template-columns: repeat(3,33%); width: 99%">  {# names of the buttons must be the same as in ControllerAbstract #}
         {% if pageButtons %}
-            <button type="submit" class="{{ buttonClasses }}" name="previousPage" id="navPreviousPage" {% if disablePrevious %} disabled {% else %} {{ stimulus_action('base','setDummySubmit','click')}} {% endif %}>
+            <button type="submit" class="{{ buttonClasses }}" name="previousPage" id="navPreviousPage" {% if disablePrevious %} disabled {% else %} {{ stimulus_action('base','setDummySubmit','click')}} {% endif %} onclick="{{ addTracking('Button Navigation','Previous Page') }}">
                 {{ include('images/arrow-left.svg') }}{{ 'buttons.previousPage'|trans }}
             </button>
         {% endif %}
-        <button type="submit" class="{{ buttonClasses }}" name="backToMain" id="navBackToMain" style="grid-column: {{ pageButtons ? 2 : 1 }}" {{ stimulus_action('base','setDummySubmit','click')}}>
+        <button type="submit" class="{{ buttonClasses }}" name="backToMain" id="navBackToMain" style="grid-column: {{ pageButtons ? 2 : 1 }}" {{ stimulus_action('base','setDummySubmit','click')}} onclick="{{ addTracking('Button Navigation','Back To Main') }}">
             {{ 'buttons.backToMain'|trans }}
         </button>
         {% if pageButtons %}
-            <button type="submit" class="{{ buttonClasses }}" name="nextPage" id="navNextPage" {{ stimulus_action('base','setDummySubmit','click')}}>
+            <button type="submit" class="{{ buttonClasses }}" name="nextPage" id="navNextPage" {{ stimulus_action('base','setDummySubmit','click')}} onclick="{{ addTracking('Button Navigation','Next Page') }}">
                     {{ 'buttons.nextPage'|trans }}{{ include('images/arrow-right.svg') }}
             </button>
         {% endif %}
         {{ _self.addSaveButton() }}
         {% if undoButton %}
-            <button type="submit" class="Button_primary_act me-2 w-100" name="undo"{{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target('base','undo')}} disabled>
+            <button type="submit" class="Button_primary_act me-2 w-100" name="undo"{{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target('base','undo')}} disabled onclick="{{ addTracking('Button Navigation','Undo') }}">
                 {{ 'buttons.undo'|trans }}
             </button>
         {% endif %}
     </div>
 {% endmacro %}
 
-{% macro addSaveButton(disabled = false) %}
+{% macro addSaveButton(disabled = false, isSidebar = false) %}
     {# Adds the button for downloading the xml-file. Input arguments:
         disabled: if true, the button gets disabled
+        isSidebar: if true, the button on the sidebar is added, otherwise the button on the page
     #}
-    <button type="button" class="Button_primary_act w-100" name="save" {% if disabled %} disabled {% else %} {{ stimulus_target('base','download','click') }} {% endif %}>{{ _self.addButtonIcon('buttons.save','save') }}</button>
+    <button type="button" class="Button_primary_act w-100" name="save" {% if disabled %} disabled {% else %} {{ stimulus_target('base','download','click') }} {% endif %} onclick="{{ addTracking('Button '~(isSidebar ? 'Sidebar' : 'Navigation'),'Save') }}">{{ _self.addButtonIcon('buttons.save','save') }}</button>
 {% endmacro %}
 
 {% macro addIcon(text, visible = true, target = []) %}
