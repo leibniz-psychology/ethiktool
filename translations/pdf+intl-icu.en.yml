@@ -324,7 +324,7 @@ projectdetails:
     otherSources: 'The following page(s) contain(s) supplementary materials on the data retrieval from other sources{levelNamesString}.'
     dataPrivacy: >-
       {create, select,
-        createSeparate {The data privacy statement {levelNamesString} was generated outside of the Ethiktool (see question 52 of the application form). That data privacy statement (including the consent form) can be found on the following page(s).}
+        separate {The data privacy statement {levelNamesString} was generated outside of the Ethiktool (see question 52 of the application form). That data privacy statement (including the consent form) can be found on the following page(s).}
         anonymous      {According to the {savePDF, select,
                             true {selections made in the Ethiktool}
                             other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}} (see question 52 of the application form), the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
@@ -652,7 +652,7 @@ participation:
     pro: 'Advantages'
     con: >-
       Disadvantages{isBurdensRisks, select,
-                  true  {, and risks}
+                  true  {/risks}
                   other {}}
   criteria:
     include: >- # other is participant
@@ -1106,7 +1106,7 @@ completePost:
     Thank you for {addressee, select,
                     children {your child''s participation}
                     wards    {participation of the individual under your supervision}
-                    other    {participating}} in our study within the research project entitled “{projectTitle“. We would like to give you some more information about our study now.
+                    other    {participating}} in our study within the research project entitled “{projectTitle}“. We would like to give you some more information about our study now.
   goals: 'As you already know, the study investigates '
   infoBefore: >-
     Before or during participation, you {addressee, select,
@@ -1158,8 +1158,8 @@ consent:
               oral  {received}
               other {read}} and understood the information about {information, select,
                                                                     post  {}
-                                                                    other {participation in}} the study within the research project entitled “{projectTitle}“ {isPersonal, select,
-          true  {and the annex on data processing}
+                                                                    other {participation in}} the study within the research project entitled “{projectTitle}“{isPersonal, select,
+          true  { and the annex on data processing}
           other {}}. I have been sufficiently informed and had the opportunity to ask questions.
       
     I am aware that {information, select,

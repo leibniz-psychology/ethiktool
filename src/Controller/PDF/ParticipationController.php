@@ -145,8 +145,8 @@ class ParticipationController extends PDFAbstract
                             $leaderIndices = explode(',',$tempArray); // indices of contributors who are leader
                             foreach ($leaderIndices as $index) {
                                 $curInfos = $contributors[$index][self::infosNode];
-                                $contributorsLeader[] = $this->addMarkInput(rtrim(str_replace("\n",', ',$this->addContributorInfo($curInfos,true)),', '),self::$markInput); // in complete post information without institution
-                                $contributorsLeaderInstitution[] = $this->addMarkInput($curInfos[self::nameNode].', '.$curInfos[self::institutionInfo],self::$markInput);
+                                $contributorsLeader[] = $this->addContributorInfo($curInfos); // in complete post information without institution
+                                $contributorsLeaderInstitution[] = $this->addContributorInfo($curInfos,false,true);
                             }
                         }
                         $numContributors = count($contributors);
@@ -191,10 +191,10 @@ class ParticipationController extends PDFAbstract
                                 unset($tasks[array_search($taskDataTrans,$tasks)]);
                             }
                             $contInfos = $contributors[$index][self::infosNode];
-                            $curInfos = $this->addMarkInput(implode(', ',array_merge([$contInfos[self::nameNode],$contInfos[self::eMailNode]],array_key_exists(self::phoneNode,$contInfos) ? [$contInfos[self::phoneNode]] : [])),self::$markInput);
+                            $curInfos = $this->addContributorInfo($contInfos);
                             if (!in_array($index,$leaderIndices)) { // contributor has further tasks, but not leader, in current variant
                                 $curTasks = ' ('.implode(', ',$tasks).')';
-                                $contributorsFurtherTasks[] = $this->addMarkInput($contInfos[self::nameNode],self::$markInput).( $tasks!==[] ? $curTasks : '');
+                                $contributorsFurtherTasks[] = $this->addMarkInput($contInfos[self::nameNode],self::$markInput).($tasks!==[] ? $curTasks : '');
                                 if ($isCurContact) {
                                     $contributorsFurther[] = $curInfos;
                                 }
@@ -918,18 +918,18 @@ class ParticipationController extends PDFAbstract
         return new Response($allHtml);
     }
 
-    /** Creates a string containing information about a contributor. Each information is added in a new line.
+    /** Creates a string containing information about a contributor. The information is marked.
      * @param array $infos array containing the information
-     * @param bool $addContact if true, the phone (if existing) and the eMail are added
+     * @param bool $addContact if true, the eMail and the phone (if existing) are added
      * @param bool $addInstitution if true, the institution is added
      * @return string information about a contributor
      */
-    private function addContributorInfo(array $infos, bool $addContact, bool $addInstitution = false): string {
-        $returnString = '';
-        foreach (array_merge([self::nameNode],$addInstitution ? [self::institutionInfo] : [],$addContact ? array_merge(array_key_exists(self::phoneNode,$infos) ? [self::phoneNode] : [],[self::eMailNode]) : []) as $info) {
-            $returnString .= $infos[$info]."\n";
+    private function addContributorInfo(array $infos, bool $addContact = true, bool $addInstitution = false): string {
+        $returnString = [];
+        foreach (array_merge([self::nameNode],$addInstitution ? [self::institutionInfo] : [],$addContact ? array_merge([self::eMailNode],array_key_exists(self::phoneNode,$infos) ? [self::phoneNode] : []) : []) as $info) {
+            $returnString[] = $infos[$info];
         }
-        return $returnString;
+        return $this->addMarkInput(implode(', ',$returnString),self::$markInput);
     }
 
     /** Creates the sub-paragraph for access.
