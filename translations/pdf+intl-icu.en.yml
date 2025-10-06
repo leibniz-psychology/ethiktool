@@ -34,16 +34,22 @@ noBox: '[not applicable]'
 or: ' or '
 
 paragraphHeadings:
-  methods: 'Methods'
-  burdens: 'Burdens and risks'
-  criteria: 'Conditions of participation'
-  processing: 'Data processing'
+  appType: 'Proposal data and Project contributors'
+  examinedPeople: 'Participants'
+  information: 'Participant information'
+  voluntary: 'Consent and withdrawal'
+  measures: 'Data collection'
+  measuresSub: 'Information about procedure, location and duration of the investigation can be found {informationHint}.'
+  burdens: 'Burdens/risks and compensation'
+  processing: 'Data privacy and Data re-use'
 
 boxHeadings: # key: heading of the box. keySub: sub heading inside the box if additional inputs may be necessary
   coreData:
+    appType: 'Type of proposal'
+    appTypeSub: 'The vote shall refer to an ethics assessment according to the following guidelines:'
     projectTitle: 'Title of the research project'
     projectTitleSub: 'Title for participant documents:'
-    support: 'Consulting and support services used for this research project'
+    projectDates: 'Planned duration of the project'
     funding: 'Funding source(s)'
     conflict: 'Is there a conflict of interest for any of the project contributors due to personal interests or due to interests of third parties?'
     conflictSub: >-
@@ -51,32 +57,19 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
         0     {Description and handling of the conflict of interest:}
         1     {Explanation how conflicts of interest are ruled out:}
         other {}}
-    participantDescription: 'The conflicts of interest are disclosed in the study information sheet as follows:'
-    projectDates: 'Planned duration of the project'
+    support: 'Consulting and support services used for this research project'
   contributors: 'Further contributors'
   contributorsTasks: 'Project role of contributors'
-  summary: 'Summary of the research project'
   votes:
     otherVote: 'Has this research project been reviewed by another ethics committee before?'
-    otherVoteSub: >-
-      {result, select,
-        positive {Why is a new ethics review necessary?}
-        negative {What were the reasons provided by the other ethics committee?}
-        noVote   {Why is a new ethics review necessary?}
-        other    {}}
     instVote: 'Has a similar own research project been reviewed by {committeeDat} before?'
-    instVoteSub: >-
-      {type, select,
-         resubmission {Relative to the original proposal, the following changes were made:}
-         other        {The main similarities and differences compared to the previous proposal are as follows:}}
   medicine:
     medicine: 'Is medical, pharmaceutical or other research planned that may have to be assessed in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG), or other legal requirements?'
-    medicineSub: 'Description:'
     physician: 'Are physicians amongst the project contributors?'
-    physicianSub: 'In your opinion, why is {committeeNom} responsible despite its non-medical constitution?'
+  summary: 'Summary of the research project'
   projectdetails:
     hint: >-
-      The entries for this question {noBox, select,
+      The entries for this field {noBox, select,
                                       true  {would be made}
                                       other {were made}} on {numPages, plural,
                                                               =1    {page “{inputPage}“}
@@ -92,22 +85,52 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     overview: 'Overview of the studies, groups and time points'
     examinedPeople: 'Which group(s) shall be investigated?'
     examinedPeopleSub: 'Description of the group(s):'
+    closed: 'Are the data collected in a closed group?'
     sampleSize: 'How many participants shall be included in the respective time points?'
     sampleSizeSub: 'Further information on the sample size:'
     sampleSizePlan: 'How was the sample size calculated?'
     recruitment: 'How are participants recruited?'
     recruitmentSub: 'Further details on recruitment:'
+    information: 'Is information about participating in a study given in advance?'
+    preContent: 'How complete is the information regarding the aims, content and methods of the study?'
+    preComplete: 'Will there be a debriefing (i.e., will full information be provided later)?'
+    preCompleteSub: 'Format of debriefing information:'
+    post: 'Will information about participating in a study be given after-the-fact?'
+    attendance: 'Are the legal guardians present during data collection?'
+    # added empty lines to have consistent line numbers in all translation files
+
+
+
+
+
+
+
+
+    voluntary: 'Is participation voluntary?'
+    voluntarySub: 'Justification on how and why voluntariness is not guaranteed:'
+    consent: >-
+      How is consent {isAssent, select,
+                        true  {or assent, respectively,}
+                        other {}} given to the {isPre, select,
+                                                  true  {study participation and the}
+                                                  other {}} data processing?
+    consentSub: >-
+      Justification for missing {anyConsentNo, select,
+                                  true  {consent}
+                                  other {}} {anyAssentNo, select,
+                                              true  {{anyConsentNo, select,
+                                                        true  {respectively}
+                                                        other {}} assent}
+                                              other {}}:
+    terminateCons: 'Is withdrawal from participation possible at any time and without disadvantages?'
+    terminateConsSub: 'Justification and, if applicable, description of disadvantages in case of withdrawal from participation:'
+    terminateCriteria: 'Which circumstances lead to an early termination of data collection by the project contributors?'
     measures: 'Which data collection methods are used to acquire data from participants?'
     measuresSub: 'Description of the methods:'
     interventions: 'Which specific measures/interventions are participants exposed to as part of the study?'
     interventionsSub: 'Description of the measures/interventions:'
     otherSources: 'Will individually traceable data from other sources be added?'
-    feedback: 'Do participants receive feedback on their individual test results?'
-    feedbackSub: 'Description of type and framing of feedback:'
-    loan: 'Are devices (e.g., mobile phone, tablet, sensor kit) handed out to the participants?'
-    procedure: 'The procedure is described in the study information sheet as follows:'
-    duration: 'Duration'
-    location: 'Location'
+    presence: 'Are project contributors present during data collection?'
     burdens: 'Which burdens will participants be exposed to that go beyond the level commonly encountered in everyday life?'
     burdensSub: >-
       {burdens, select,
@@ -132,65 +155,15 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                         other {}} disadvantages are described in the study information sheet as follows:
     finding: 'Might the applied data collection methods reveal clinically relevant (incidental) findings in individual participants?'
     findingSub: 'How are incidental findings handled?'
-    criteria: 'What are the inclusion and exclusion criteria for participation in the study?'
-    criteriaSub: 'Participation in the study is not possible if ...'
-    attendance: 'Are the legal guardians present during data collection?'
-    # empty lines to have consistent line numbers in both language files
-
-
-
-
-
-
-
-
-    information: 'Is information about participating in a study given in advance?'
-    informationSub: 'Are the participant documents translated into easy or simple language and/or into a foreign language?'
-    preContent: 'How complete is the information regarding the aims, content and methods of the study?'
-    preComplete: 'Will there be a debriefing (i.e., will full information be provided later)?'
-    preCompleteSub: 'Format of debriefing information:'
-    post: 'Will information about participating in a study be given after-the-fact?'
-    postSub: 'Are the participant documents translated into easy or simple language and/or into a foreign language?'
-    voluntary: 'Is participation voluntary?'
-    voluntarySub: 'Justification on when and why voluntariness is not guaranteed:'
-    voluntaryYes: 'How is voluntary participation in the study ensured despite the special circumstances (closed group / dependent relationship)?'
-    closed: 'Are the data collected in a closed group?'
-    consent: >-
-      How is consent {isAssent, select,
-                        true  {or assent, respectively,}
-                        other {}} given to the {isPre, select,
-                                                  true  {study participation and the}
-                                                  other {}} data processing?
-    consentSub: >-
-      Justification for missing {anyConsentNo, select,
-                                  true  {consent}
-                                  other {}} {anyAssentNo, select,
-                                              true  {{anyConsentNo, select,
-                                                        true  {respectively}
-                                                        other {}} assent}
-                                              other {}}:
-    compensation: 'Which compensation do participants receive?'
-    compensationSub: 'Compensation in case of withdrawal from participation:'
-    compensationVoluntary: 'Is the voluntary nature participation compromised by the type or amount of compensation?'
+    feedback: 'Do participants receive feedback on their individual test results?'
+    feedbackSub: 'Description of type and framing of feedback:'
+    compensationVoluntary: 'Compensation'
     compensationVoluntarySub: >-
       {isCompensationVoluntary, select,
         true  {Explanation on how voluntary participation is compromised by the type or amount of compensation; other}
         other {Other}} remarks regarding the compensation:
-    terminateCons: 'Is withdrawal from participation possible at any time and without disadvantages?'
-    terminateConsSub: 'Justification and, if applicable, description of disadvantages in case of withdrawal from participation:'
-    presence: 'Are project contributors present during data collection?'
-    terminateCriteria: 'Which circumstances lead to an early termination of data collection by the project contributors?'
     processing: 'Description of data processing'
-    create: 'Generation of data privacy statement'
-    responsibility: 'Who carries the responsibility for processing the personal data according to EU-GDPR?'
-    transferOutside: 'Are personal data transmitted to third parties outside of the EEA (“third-country transfer“)?'
-    dataOnline: 'Are IP addresses registered within the online data collection?'
-    dataOnlineSub: 'How are IP addresses processed?'
-    marking: 'How are the research data labelled?'
-    markingSub: 'Justification for labelling the data with participants'' names:'
-    dataReuse: 'Are the research data shared with others for re-use?'
-    dataReuseSelf: 'Are the research data employed for re-use by the project contributors?'
-    dataReuseHow: 'How and with whom are the research data shared for re-use?'
+    dataReuse: 'Will the research data be re-used?'
 
 boxSubHeadings:
   projectdetails:
@@ -221,57 +194,77 @@ addresseePrefix: >-
               other    {}}}}
 
 # application
+informationHint: >-
+  {anyDocs, select,
+      true  {in the study information sheet}
+      other {}}{anyNoDocs, select,
+                 true  {{anyDocs, select,
+                           true  { respectively}
+                           other {}} on the page „participant documents“}
+                 other {}}
 coreData:
   appType:
-    title: 'Type of proposal: '
-    types:
-      new: >- # other is TUC and test committee
-        new proposal {committeeType, select,
-                        EUB {}
-                        JGU {}
-                        other {({newType, select,
-                                short {short proposal}
-                                main  {full proposal}
-                                other {}})}}
-      extended: 'amendment of an already approved proposal'
-      resubmission: 'resubmission of a proposal after revision'
-      short: ' (short proposal)'
-      main: ' (full proposal)'
-  guidelines: 'The vote shall refer to an ethics assessment according to the following guidelines:'
-  applicant:
-    name: 'Name'
-    professorship: 'Research group'
-    qualification: ' (The research project is exclusively carried out within the scope an own qualification work (Bachelor/Master/PhD thesis)'
+    new: 'new proposal'
+    extended: 'amendment of an already approved proposal'
+    resubmission: 'resubmission of a proposal after revision'
+  qualification: ' (The research project is exclusively carried out within the scope an own qualification work (Bachelor/Master/PhD thesis)'
   projectDates:
     start: 'From: '
     end: 'To: '
     next: 'as soon as possible '
     started: 'Data collection has already started. '
     startedDescription: |
-      
-      
-      Description of current state of data collection:
 
-summary: 'Summary of the research project'
+
+      Description of current state of data collection:
+  conflict: 'The conflict of interest is disclosed to the participants in the study information sheet.'
 
 votes:
   otherVote:
-    committee: "\n\nCommittee at the time:"
-    result: >-
+    committee: >-
+
+
+      Committee at the time:
+    result: |
+      
       Result of review at the time: {result, select,
-                                      positive {positive vote }
-                                      negative {negative vote}
-                                      noVote   {no vote: research project was judged as not requiring in-depth ethics review}
-                                      other    {}}
-    pdf: 'The decision letter of the other ethics committee or a PDF file created by the applicant with further explanations are added at the end of the proposal.'
+                                    positive {positive vote
+      
+                                              Why is a new ethics review necessary?}
+                                    negative {negative vote
+      
+                                              What were the reasons provided by the other ethics committee?}
+                                    noVote   {no vote: research project was judged as not requiring in-depth ethics review
+      
+                                              Why is a new ethics review necessary?}
+                                    other    {}}
   instVote:
-    reference: "\n\nReference number:"
+    reference: >-
+      
+      
+      Reference number:
+    description: |
+      
+      
+      {type, select,
+         resubmission {Relative to the original proposal, the following changes were made:}
+         other        {The main similarities and differences compared to the previous proposal are as follows:}}
 
 medicine:
+  medicine: |
+    
+    
+    Description:
   physician: >-
+    
+    
+    In your opinion, why is {committeeNom} responsible despite its non-medical constitution?
+    
     {result, select,
       0     {The involved physicians can make use of an exception to the compulsory professional and ethical counselling by a medical ethics committee: }
       other {}}
+
+summary: 'Summary of the research project'
 
 contributors:
   title: '(Further) contributors'
@@ -294,18 +287,30 @@ projectdetails:
                   true  {({groupName})}
                   other {}}
     measureTimePoint: 'one time point'
-  pdf: >-
-    {type, select,
-       measures      {Supplementary materials on the data collection methods}
-       interventions {Supplementary materials on the interventions/measures}
-       otherSources  {Supplementary materials on the data retrieval from other sources}
-       other         {The translated participant documents}} are added at the end of the proposal.
+  pdf:
+    examinedPeople: 'The precise inclusion and exclusion criteria can be found {informationHint}.'
+    measures: 'Supplementary materials on the data collection methods are available after the participant documents created by the Ethiktool.'
+    interventions: 'Supplementary materials on the interventions/measures are available after the participant documents created by the Ethiktool.'
+    otherSources: 'Supplementary materials on the data retrieval from other sources are available after the participant documents created by the Ethiktool.'
+    burdens: 'For the participants, the burdens are described in the field “Disadvantages/risks“ of the study information sheet.'
+    risks: 'For the participants, the risks are described in the field “Disadvantages/risks“ of the study information sheet.'
+    information: 'The translated participant documents are available after the participant documents created by the Ethiktool.'
+    post: 'The translated participant documents are available after the participant documents created by the Ethiktool.'
+    compensationVoluntary: 'Information about compensation can be found {informationHint}.'
+    processing: >- # TODO (AB): Übersetzung prüfen, wenn anyDocs und anyNoDocs "true" sind - AB: geprüft, aber Auslösebedingung ist mir nicht 100% klar und Formulierung scheint widersprüchlich (siehe deutscher Text)
+      {anyDocs, select,
+        true  {Detailed information about data processing can be found in the annex on data processing as part of the study information sheet}
+        other {}}{anyNoDocs, select,
+                    true  {{anyDocs, select,
+                              true  {, or else the}
+                              other {The}} Ethiktool did not generate any participant documents for review and thus no data privacy statement (see page „participant documents“)}
+                    other {}}.
   custom:
     levelNames: >- # for the levelNamesString placeholder in the following keys
       {numLevels, plural,
         =0    {}
         other { for {levelNames}}}
-    votes: 'This research project has been reviewed by a different ethics committee before. The following page(s) contain(s) the decision letter of the other ethics committee or a PDF file created by the applicant with further explanations.'
+    votes: 'This research project has been reviewed by another ethics committee before. The following page(s) contain(s) the decision letter of the other ethics committee or a PDF file created by the applicant with further explanations.'
     information: >-
       The following page(s) contain(s) the translated participant documents{addressee, select,
                                                                               children { for the legal guardians}
@@ -324,16 +329,24 @@ projectdetails:
     otherSources: 'The following page(s) contain(s) supplementary materials on the data retrieval from other sources{levelNamesString}.'
     dataPrivacy: >-
       {create, select,
-        separate {The data privacy statement {levelNamesString} was generated outside of the Ethiktool (see question 52 of the application form). That data privacy statement (including the consent form) can be found on the following page(s).}
-        anonymous      {According to the {savePDF, select,
-                            true {selections made in the Ethiktool}
-                            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}} (see question 52 of the application form), the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
-        separateLater  {According to the {savePDF, select,
+        separate      {The data privacy statement {levelNamesString} was generated separately (i.e., outside of the Ethiktool). {verification, select,
+                                                                      verified   {It has been checked and approved by the responsible data protection authorities.}
+                                                                      unverified {It has not yet been approved by the responsible data protection authorities.}
+                                                                      other      {}} It can be found on the following page(s) including the consent form.}
+        anonymous     {According to the {savePDF, select,
+                                          true {selections made in the Ethiktool}
+                                          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
+        separateLater {According to the {savePDF, select,
                                             true {selections made in the Ethiktool}
-                                            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}} (see question 52 of the application form), the data processing aspects will be sorted out in detail at a later point in time. Therefore, the Ethiktool did not generate a data privacy statement{levelNamesString}.}
-        other          {{personal, select,
+                                            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the data processing aspects will be sorted out in detail at a later point in time. Therefore, the Ethiktool did not generate a data privacy statement{levelNamesString}.}
+        other         {{personal, select,
                           anonymous {According to the selections made in the Ethiktool, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
-                          other     {Due to the characteristics of data processing (according to the selections made in the Ethiktool), the data privacy statement {levelNamesString} cannot be generated with the Ethiktool. Therefore, the data privacy statement was generated separately. That data privacy statement (including the consent form) can be found on the following page(s).}}}}
+                          other     {Due to the following characteristics of data processing (according to the selections made in the Ethiktool), the data privacy statement {levelNamesString} could not be generated with the Ethiktool:
+                            {createOther} Therefore, the data privacy statement was generated separately. It can be found on the following page(s) including the consent form.}}}}
+    createOther:
+      responsibility: '{committeeLocation} does not carry exclusive responsibility for processing the personal data according to EU-GDPR.'
+      transferOutside: 'Personal data are transmitted to or shared with third parties outside the EAA.'
+      marking: 'The research data are labelled, but none of the available options in the Ethiktool fully applies to the procedure in the study.'
   groups:
     examined:
       title: >-
@@ -369,6 +382,7 @@ projectdetails:
       flyer: 'posters and flyers'
       lecture: 'invitations in own university courses'
       lectureOther: 'invitations in university courses led by non-project contributors'
+      recruitmentPrivate: 'personal invitation of family, friends, or acquaintances of the project contributors'
       media: 'social media'
       news: 'newspaper announcements'
       database: 'database(s)'
@@ -385,22 +399,43 @@ projectdetails:
                     writtenOral {in writing with oral explanation}
                     oral        {orally}
                     other       {{description}}}
+    documentTranslation: 'The participant documents are translated into easy or simple language and/or into a foreign language, namely: {description}.'
     preContent: >-
       {chosen, select,
         complete {The {addressee} are fully informed.}
         partial  {At least one core piece of information is not mentioned, that is, the {addressee} are informed incompletely.}
         deceit   {At least one core piece of information is wrong, that is, the {addressee} are deliberately deceived.}
         other    {}}
+  consent:
+    voluntary: >-
+      {chosen, select,
+        yes           {yes}
+        no            {no}
+        notApplicable {not applicable: The {addressee} are not informed in advance that {participant} are participating in a study.}
+        other         {}}
+    voluntaryDescription:
+      yes: "Explanation of how voluntariness is ensured despite the special circumstances (closed group / dependent relationship):\n"
+      no: "Justification on how and why voluntariness is not guaranteed:\n"
+    consent: >-
+      {chosen, select,
+        written       {in writing}
+        digital       {electronically}
+        oral          {orally with written documentation by a project contributor}
+        no            {no {addresseeType, select,
+                            participants {consent}
+                            other        {assent}} is given}
+        notApplicable {not applicable: The {addressee} are not informed in advance or after-the-fact that {participant} are participating in a study.}
+        other         {in the following way: {otherDescription}}}
   measures:
     measuresTypes:
       measuresObservation: 'observation of participant behaviour by a project contributor'
-      measuresVideo: 'recordings or pictures (audio/video/photo)'
-      measuresSurvey: 'surveys (e.g., interviews, questionnaires)'
+      measuresVideo: 'recordings or pictures'
+      measuresSurvey: 'surveys'
       measuresInstrumental: 'instrumental measurements'
       otherMeasures: 'other data collection method(s)'
     interventionsTypes:
       noIntervention: 'no specific intervention/measure, only incidental data'
-      interventionsSurvey: 'questions are being asked'
+      interventionsSurvey: 'questions are being asked (see data collection methods)'
       feedback: 'feedback to participants'
       everyday: 'deliberate induction of everyday situations'
       stimulus: 'presentation of stimuli'
@@ -412,32 +447,6 @@ projectdetails:
       medical: 'administration of substances'
       invasive: 'invasive interventions'
       other: 'other measure(s)'
-    survey: >-
-      Details on questionnaires are described under data collection in the previous question{numInterventions, plural,
-                                                                                              =1    {, no intervention/measures in a strict sense}
-                                                                                              other {}}.
-    duration: >-
-      The total duration of {multiple, select,
-                                  true  {today''s}
-                                  other {the}} investigation is usually about {total, select,
-                                                                                        1     {1 minute}
-                                                                                        other {{total} minutes}}{breaks, select,
-                                                                                                                  0     {.}
-                                                                                                                  other {, of which {measureTime, select,
-                                                                                                                                    1     {1 minute}
-                                                                                                                                    other {{measureTime} minutes}} (net) are allocated for data collection and {breaks, select,
-              1     {1 minute}
-              other {{breaks} minutes}} for preparation, follow-up time, and breaks.}}
-    location:
-      start: >-
-        The study {information, select,
-                            post  {took place}
-                            other {takes place}} {location, select,
-                                              intern {at the facilities {committeeLocationGen}, namely }
-                                              extern {at the facilities of external cooperators, namely }
-                                              online {online, using the platform }
-                                              other  {}}
-      end: '' # only for online
   burdensRisks:
     burdens:
       noBurdens: 'no burdens'
@@ -465,23 +474,111 @@ projectdetails:
                         wards    {legal guardians}
                         other    {participants}} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)}
         other   {}}
-  consent:
-    voluntary: >-
-      {chosen, select,
-        yes           {yes}
-        no            {no}
-        notApplicable {not applicable: The {addressee} are not informed in advance that {participant} are participating in a study.}
-        other         {}}
-    consent: >-
-      {chosen, select,
-        written       {in writing}
-        digital       {electronically}
-        oral          {orally with written documentation by a project contributor}
-        no            {no {addresseeType, select,
-                            participants {consent}
-                            other        {assent}} is given}
-        notApplicable {not applicable: The {addressee} are not informed in advance or after-the-fact that {participant} are participating in a study.}
-        other         {in the following way: {otherDescription}}}
+  compensationVoluntary: 'Is the voluntary nature participation compromised by the type or amount of compensation?'
+  dataReuse:
+    yes: 'Yes (see section “Data protection and data use“ in the study information sheet)'
+    dataReuse: >- # other selection is personal
+      Yes, {selection, select,
+              anonymous  {anonymous}
+              anonymized {anonymized}
+              other      {person-related}} research data are made {reuseType, select,
+                            class0 {publicly available.}
+                            class1 {available to third parties under certain usage conditions, such as confirming re-use for scientific purposes only.}
+                            class2 {available the third parties under individualized usage contracts.}
+                            class3 {available to third parties under strict data data-protection restrictions (e.g., online via a secure protocol or on-site in a research data center) following an individual contract.}
+                            other  {}}
+    dataReuseSelf: 'Yes, but only for own re-use. The research data are not made available to others.'
+    no: 'No, the data are neither used for own re-use nor made available to others.'
+
+# participation
+participation:
+  projectTitleHeader: >-
+    <a href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData{isDifferent, select,
+        true  {Participation}
+        other {}}">Research project</a> “{projectTitle}“
+  marking: >-
+    Black font color indicates text generated automatically by the Ethiktool. Blue font color indicates self-formulated text. {savePDF, select,
+      true  {For the actual use of the participation documents, the PDF files are available without coloring in the “{singleDocsName}“ folder.}
+      other {}}
+  oral: 'The information on the study will be given orally. It is in line with the written information provided here.'
+  headings:
+    goals: 'Introduction and aims of the study'
+    conflict: 'Potential conflicts of interest by the project contributors'
+    procedure: 'Study procedure'
+    finding: 'Incidental findings'
+    compensation: 'Compensation'
+    pro: 'Advantages and disadvantages of participation'
+    criteria: 'Inclusion and exclusion criteria'
+    voluntary: 'Voluntariness and withdrawal'
+    dataPrivacy: 'Data protection and data use'
+    contact: 'Contact persons for questions'
+  noInformation:
+    title: 'Participant documents'
+    start: >-
+      The Ethiktool did not generate a study information sheet {numLevels, plural,
+                                                                  =0    {}
+                                                                  other {for}} {levelNames} for the {addressee, select,
+                                                                                                      children {legal guardians}
+                                                                                                      wards    {legal guardians}
+                                                                                                      other    {participants}} because
+    information: >-
+      the {addressee, select,
+            children {legal guardians}
+            wards    {legal guardians}
+            other    {participants}} are not {savePDF, select,
+                                                true  {informed in advance}
+                                                other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">informed in advance</a>}} that {addressee, select,
+                                                                                    children {their children}
+                                                                                    wards    {the individuals under their supervision}
+                                                                                    other    {they}} are participating in a study (see field 38 of the application form), nor are they {savePDF, select,
+                        true  {informed after-the-fact}
+                        other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preNo" data-base-route-i-ds-param="{routeIDs}">informed after-the-fact</a>}} that {addressee, select,
+            children {their children}
+            wards    {the supervised individuals}
+            other    {they}} participated in a study (see field 41 of the application form).
+    funding: 'the research project is still in the stage of applying for funding and the participant documents will be handed in later, once the funding has been granted.'
+    projectStart: 'ethics review is requested after data collection has been started, and thus the participant documents already exist.'
+    short: 'the applicable ethics committee does not include participant documents in their review of short proposals.' # TODO (TW) hier möglichst "der zuständigen Ethikkommission" durch den Namen der tatsächlichen Ethikkommission ersetzen (vom Satzbau her ist es im Englischen Nominativ, aber da es sowieso egal ist, kannst Du auch {committeeDat} wie im Deutschen setzen, wenn das einfacher ist)
+    end: " For the same reason, no data privacy statement was generated. The following information, which otherwise would have been transferred to the participant documents, need to be taken into account for review:\n\n"
+  projectTitle:
+  title: >-
+    {information, select,
+      post  {Study information sheet}
+      other {Study information sheet}}
+  intro:
+    leader:
+      title: '<b>Project lead:</b>'
+      text: 'The overall responsibility for this study lies with '
+    contributors: 'The following persons are also involved in the study: {contributors}.'
+    funding: >-
+      {isQualiFunding, select,
+        true  {The study is conducted as part of a qualification thesis and has no separate funding.}
+        other {The study is funded by {funding}.}}
+  location: 'Location'
+  locationContent:
+    start: >-
+      The study {information, select,
+                          post  {took place}
+                          other {takes place}} {location, select,
+                                            intern {at the facilities {committeeLocationGen}, namely }
+                                            extern {at the facilities of external cooperators, namely }
+                                            online {online, using the platform }
+                                            other  {}}
+    end: '' # only for online
+  procedure: 'Procedure'
+  duration: 'Duration'
+  durationContent: >-
+    The total duration of {multiple, select,
+                                true  {today''s}
+                                other {the}} investigation is usually about {total, select,
+                                                                                      1     {1 minute}
+                                                                                      other {{total} minutes}}{breaks, select,
+                                                                                                                0     {.}
+                                                                                                                other {, of which {measureTime, select,
+                                                                                                                                  1     {1 minute}
+                                                                                                                                  other {{measureTime} minutes}} (net) are allocated for data collection and {breaks, select,
+            1     {1 minute}
+            other {{breaks} minutes}} for preparation, follow-up, and breaks.}}
   compensation:
     start: >- # other in addressee select is participants
       {information, select,
@@ -547,85 +644,7 @@ projectdetails:
           children {your child's name}
           wards    {the name of the individual under your supervision}
           other    {your name}}.
-  dataPrivacy:
-    create: >- # other is not yet answered
-      {type, select,
-        tool          {{personal, select,
-                          anonymous {All aspects of data processing were specified within the Ethiktool. The chosen selections on the “data privacy“ page indicate that no personal data are processed and thus no data privacy statement is necessary.}
-                          other     {The data privacy statement was generated within the Ethiktool.}}}
-        noTool        {Due to the characteristics of data processing (according to the selections on the “data privacy“ page), the data privacy statement cannot be generated with the Ethiktool. Therefore, the data privacy statement was generated separately (i.e., outside of the Ethiktool).}
-        separate      {The data privacy statement was generated separately (i.e., outside of the Ethiktool). {verification, select,
-                                                                          verified   {It has been checked and approved by the responsible data protection authorities.}
-                                                                          unverified {It has not yet been approved by the responsible data protection authorities.}
-                                                                          other      {}}}
-        anonymous     {According to the judgment of the responsible data protection authorities, the study includes only anonymous data. A data privacy statement is not necessary.}
-        separateLater {Aspects of data processing will be sorted out in detail at a later point in time. A separately generated data privacy statement will then be checked by the responsible data protection authorities.}
-        notApplicable {not applicable: The {addressee} are not informed in advance or after-the-fact that {participant} are participating in a study.}
-        other         {}}
-    marking: # all other marking options are in 'participation'
-      no: 'The research data are not individually labelled.'
-      other: 'The data research are labelled, but none of the options provided by the Ethiktool fully applies to the procedures in the study.'
-
-# participation
-participation:
-  projectTitleHeader: >-
-    <a href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData{isDifferent, select,
-        true  {Participation}
-        other {}}">Research project</a> “{projectTitle}“
-  marking: >-
-    Black font color indicates text generated automatically by the Ethiktool. Blue font color indicates self-formulated text. {savePDF, select,
-      true  {For the actual use of the participation documents, the PDF files are available without coloring in the “{singleDocsName}“ folder.}
-      other {}}
-  oral: 'The information on the study will be given orally. It is in line with the written information provided here.'
-  headings:
-    goals: 'Introduction and aims of the study'
-    conflict: 'Potential conflicts of interest by the project contributors'
-    procedure: 'Study procedure'
-    finding: 'Incidental findings'
-    compensation: 'Compensation'
-    pro: 'Advantages and disadvantages of participation'
-    criteria: 'Inclusion and exclusion criteria'
-    voluntary: 'Voluntariness and withdrawal'
-    dataPrivacy: 'Data protection and data use'
-    contact: 'Contact persons for questions'
-  noInformation: >-
-    The Ethiktool did not generate a study information sheet {numLevels, plural,
-                        =0    {}
-                        other {for}} {levelNames} for the {addressee, select,
-                                                                                        children {legal guardians}
-                                                                                        wards    {legal guardians}
-                                                                                        other    {participants}} because the {addressee, select,
-      children {legal guardians}
-      wards    {legal guardians}
-      other    {participants}} are not {savePDF, select,
-                                          true  {informed in advance}
-                                          other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">informed in advance</a>}} that {addressee, select,
-                                                                              children {their children}
-                                                                              wards    {the individuals under their supervision}
-                                                                              other    {they}} are participating in a study (see question 38 of the application form), nor are they
-                {savePDF, select,
-                  true  {informed after-the-fact}
-                  other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">informed after-the-fact</a>}} that {addressee, select,
-      children {their children}
-      wards    {the supervised individuals}
-      other    {they}} participated in a study (see question 41 of the application form).
-  projectTitle:
-  title: >-
-    {information, select,
-      post  {Study information sheet}
-      other {Study information sheet}}
-  intro:
-    leader:
-      title: '<b>Project lead:</b>'
-      text: 'The overall responsibility for this study lies with '
-    contributors: 'The following persons are also involved in the study: {contributors}.'
-    funding: >-
-      {isQualiFunding, select,
-        true  {The study is conducted as part of a qualification thesis and has no separate funding.}
-        other {The study is funded by {funding}.}}
-  procedure: 'Procedure'
-  compensation:
-    start: >-
+    moneyFurther: >-
       {isMoneyHours, select,
         true  {The exact amount of {isMoney, select,
                                       true  {compensated}
@@ -646,7 +665,9 @@ participation:
                                                            other {moreover}}, {addressee, select,
                                                                                 children {your child }
                                                                                 wards    {the individual under your supervision }
-                                                                                other    {you }} will not receive a compensation. The reasons for this are as follows: }
+                                                                                other    {you }} will not receive a compensation{isDuration, select,
+                                                  true  {. The reasons for this are as follows: }
+                                                  other { due to the short duration of the investigation.}}}
                                             other    {}}
   proCon:
     pro: 'Advantages'
@@ -656,12 +677,20 @@ participation:
                   other {}}
   criteria:
     include: >- # other is participant
-      {type, select,
-        children {Your child}
-        wards    {The individual under your supervision}
-        other    {You}} can participate in the study if
+      {information, select,
+        post  {We chose {addressee, select,
+                          children {your child}
+                          wards    {the individual under your supervision}
+                          other    {you}} because }
+        other {{addressee, select,
+                             children {Your child can}
+                             wards    {The individual under your supervision can}
+                             other    {You can}} participate in the study if }}
     finding: 'you agree to us informing you of any unusual test results (incidental finding)'
-    exclude: 'Participation in the study is not possible if'
+    exclude: >-
+      {information, select,
+        post  {and because the following does not apply:}
+        other {Participation in the study is not possible if}}
   voluntary:
     pre: >-
       {terminateCons, select,
@@ -1144,11 +1173,11 @@ consent:
                                                                                         =0    {}
                                                                                         other {of {levelNames}}} because {savePDF, select,
           true  {{consent, select,
-                    no    {no consent is given (see question 44 of the application form). This is justified as follows: {description}}
-                    other {consent is given in a different way ({description}; see question 44 of the application form).}}}
+                    no    {no consent is given (see field 44 of the application form). This is justified as follows: {description}}
+                    other {consent is given in a different way ({description}; see field 44 of the application form).}}}
           other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">{consent, select,
-                          no    {no consent</a> is given (see question 44 of the application form). This is justified as follows: {description}}
-                          other {consent is given in a different way</a> ({description}; see question 44 of the application form).}}}}
+                          no    {no consent</a> is given (see field 44 of the application form). This is justified as follows: {description}}
+                          other {consent is given in a different way</a> ({description}; see field 44 of the application form).}}}}
   title: >-
     {information, select,
       post  {After-the-fact declaration of consent to data processing}
@@ -1158,8 +1187,8 @@ consent:
               oral  {received}
               other {read}} and understood the information about {information, select,
                                                                     post  {}
-                                                                    other {participation in}} the study within the research project entitled “{projectTitle}“{isPersonal, select,
-          true  { and the annex on data processing}
+                                                                    other {participation in}} the study within the research project entitled “{projectTitle}“ {isPersonal, select,
+          true  {and the annex on data processing}
           other {}}. I have been sufficiently informed and had the opportunity to ask questions.
       
     I am aware that {information, select,
@@ -1261,6 +1290,144 @@ completeForm:
       yes: 'Yes'
       no: 'No'
       unclear: 'Unclear'
+      restricted: 'Restricted'
+    linking: # other in reviewProcess select is short. answer-keys must equal the 'types' keys. If order of boxes changes, numbers have to be updated here, too
+      information: >-
+        {answer, select,
+          no    { (see field {isNotPre, select,
+                                  true  {21}
+                                  other {}}{isIncomplete, select,
+                                              true  {{isNotPre, select,
+                                                        true  {/}
+                                                        other {}}22}
+                                              other {}})}
+          other {}}
+      voluntary: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    unclear    { (see field {isVoluntary, select,
+                                                 true  {26}
+                                                 other {}}{isConsent, select,
+                                                             true  {{isVoluntary, select,
+                                                                       true  {/}
+                                                                       other {}}27}
+                                                             other {}})}
+                    restricted { (see field 42)}
+                    no         { (see field 26)}
+                    other      {}}}
+          other {{answer, select,
+                    unclear { (see field 17)}
+                    other   {}}}}
+      terminateCons: >-
+        {answer, select,
+                  unclear {{reviewProcessSub, select,
+                              S2    { (see study information sheet)}
+                              F3    { (see {information, select,
+                                                noPost {{isTerminateCons, select,
+                                                          true  {field 28}
+                                                          other {}}{isDuration, select,
+                                                                      true  {{isTerminateCons, select,
+                                                                                true  { /}
+                                                                                other {}} page “Participant documents“}
+                                                                      other {}}}
+                                                other  {study information sheet}})}
+                              other { (see page “Participant documents“)}}}
+                  no      {{reviewProcessSub, select,
+                              F3    { (see {information, select,
+                                                noPost {{isTerminateCons, select,
+                                                          true  {field 28}
+                                                          other {}}{isDuration, select,
+                                                                      true  {{isTerminateCons, select,
+                                                                                true  { /}
+                                                                                other {}} page “Participant documents“}
+                                                                      other {}}}
+                                                other  {study information sheet}})}
+                              other { (see page “Participant documents“)}}}
+                  other   {}}
+      examinedPeople: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    yes     { (see field 16)}
+                    unclear { (see field 16)}
+                    other   {}}}
+          other {{answer, select,
+                    unclear { (see field 14)}
+                    other   {}}}}
+      wards: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    unclear { (see field 16)}
+                    no      { (see field 16)}
+                    other   {}}}
+          other {{answer, select,
+                    unclear { (see field 14)}
+                    other   {}}}}
+      preContent: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    yes     { (see field 22/23)}
+                    unclear { (see field 21/24)}
+                    other   {}}}
+          other {}}
+      burdens: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    yes     { (see field {isBurdens, select,
+                                              true  {34/35}
+                                              other {}}{isBurdensRisksContributors, select,
+                                                          true  {{isBurdens, select,
+                                                                    true  {, }
+                                                                    other {}}38/39}
+                                                          other {}})}
+                    other   {}}}
+          other {}}
+      risks: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    yes     { (see field {isRisks, select,
+                                              true  {36/37}
+                                              other {}}{isBurdensRisksContributors, select,
+                                                          true  {{isRisks, select,
+                                                                    true  {, }
+                                                                    other {}}38/39}
+                                                          other {}})}
+                    other   {}}}
+          other {}}
+      finding: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    yes   { (see field 40)}
+                    other {}}}
+          other {}}
+      otherSources: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    yes   { (see field 32)}
+                    other {}}}
+          other {}}
+      conflict: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    yes   { (see field 8)}
+                    other {}}}
+          other {}}
+      medicine: >-
+        {reviewProcess, select,
+          full  {{answer, select,
+                    yes   { (see field {isMedicine, select,
+                                            true  {12}
+                                            other {}}{isPhysician, select,
+                                                        true  {{isMedicine, select,
+                                                                  true  {/}
+                                                                  other {}}13}
+                                                        other {}})}
+                    other {}}}
+          other {}}
+      dataPrivacy: >-
+        {answer, select,
+          yes     { see annex on data processing}
+          unclear { see page “Data privacy“}
+          other   {}}
     headings:
       information: 'Information'
       voluntary: 'Voluntariness'
@@ -1272,18 +1439,20 @@ completeForm:
       risks: 'Risks'
       finding: '(Incidental) Findings'
       dataPrivacy: 'Personal data'
+      otherSources: 'Data from other sources'
       conflict: 'Conflict of interest'
       medicine: 'Medical aspects'
     information: 'Full prior information is guaranteed.'
     voluntary: 'Voluntariness of participation is guaranteed.'
     terminateCons: 'Withdrawal from participation is possible at any time and without disadvantages.'
     examinedPeople: 'The study involves persons who belong to a vulnerable group with respect to the scope of the research.'
-    wards: 'The study involves persons who are not capable of giving consent themselves.'
+    wards: 'The study solely involves persons who are capable of giving consent themselves.'
     preContent: 'Participating in the study involves being actively and deliberately deceived.'
     burdens: 'The study involves burdens that go beyond the level commonly encountered in everyday life.'
     risks: 'The study involves dangers or risks for individual persons.'
     finding: 'The study might reveal clinically relevant (incidental) findings.'
-    dataPrivacy: 'The study involves processing personal data.'
+    dataPrivacy: 'The study involves relevant processing of personal data.'
+    otherSources: 'Individually traceable data from other sources are retrieved.'
     conflict: 'The project contributors have a conflict of interest with respect to the research project.'
     medicine: 'The research project involves aspects relating to AMG/MPG/MPDG, or physicians are among the project contributors.'
 

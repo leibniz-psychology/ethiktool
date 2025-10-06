@@ -56,8 +56,7 @@ class CheckDocClass extends ControllerAbstract
     private array $informationII = [2,2]; // same as $information, but for participants, if third parties
     private bool $isInformationII = false; // gets true if informationII is active
     private bool $isFeedback = false; // gets true if 'feedback' is chosen in interventions
-    private bool $isNoPresence = false; // gets true if the presence question is answered with 'no'
-    private bool $isFinding = false; // gets true if the findings questions is answered with 'yes'
+    private string $consentAddressee = ''; // consent of participants or (if third parties are involved) of third parties
     // prefixes
     private const appDataPrefix = 'checkDoc.appData.';
     private const contributorsPrefix = 'checkDoc.contributors.';
@@ -180,9 +179,9 @@ class CheckDocClass extends ControllerAbstract
                                             $checkDoc->checkInformation(self::informationNode);
                                             $checkDoc->checkInformation(self::informationIINode);
                                             $checkDoc->checkInformationIII();
+                                            $checkDoc->checkConsent();
                                             $checkDoc->checkMeasures();
                                             $checkDoc->checkBurdensRisks();
-                                            $checkDoc->checkConsent();
                                             $checkDoc->checkCompensation();
                                             $checkDoc->checkTexts();
                                             $checkDoc->checkLegal();
@@ -207,14 +206,14 @@ class CheckDocClass extends ControllerAbstract
                             case self::informationIIINode:
                                 $checkDoc->checkInformationIII(false);
                                 break;
+                            case self::consentNode:
+                                $checkDoc->checkConsent(false);
+                                break;
                             case self::measuresNode:
                                 $checkDoc->checkMeasures(false);
                                 break;
                             case self::burdensRisksNode:
                                 $checkDoc->checkBurdensRisks(false);
-                                break;
-                            case self::consentNode:
-                                $checkDoc->checkConsent(false);
                                 break;
                             case self::compensationNode:
                                 $checkDoc->checkCompensation(false);
@@ -318,14 +317,14 @@ class CheckDocClass extends ControllerAbstract
                         // informationIII
                         $this->checkInformationIII();
 
+                        // consent
+                        $this->checkConsent();
+
                         // measures
                         $this->checkMeasures();
 
                         // burdens/risks
                         $this->checkBurdensRisks();
-
-                        // consent
-                        $this->checkConsent();
 
                         // compensation
                         $this->checkCompensation();
@@ -434,10 +433,15 @@ class CheckDocClass extends ControllerAbstract
         $this->checkMissingTextfield($coreDataArray[self::projectTitleParticipation],null,self::projectTitleDifferent,$tempVal,self::projectTitleParticipation,$tempVal);
         // application type
         $tempArray = $coreDataArray[self::applicationType];
-        $appType = $this->checkMissingChosen($tempArray,'coreData.appType.title',null,self::applicationType);
-        if (array_key_exists(self::descriptionNode,$tempArray)) {
-            $isNewType = $appType===self::appNew;
-            $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPrefix.($isNewType ? 'newType' : 'description')],hash: $isNewType ? 'newTypeDiv' : 'exReDiv');
+        if (in_array($this->checkMissingChosen($tempArray,'coreData.appType.title',null,self::applicationType),self::appExtendedResubmission)) {
+            $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPrefix.'reference'],hash: 'exReDiv');
+        }
+        // application process
+        $tempArray = $coreDataArray[self::applicationProcessNode];
+        $tempPrefix = $translationPrefix.self::applicationProcessNode.'.';
+        $this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::applicationProcessNode,true);
+        if (array_key_exists(self::shortDocsNode,$tempArray)) {
+            $this->checkMissingContent($tempArray,[self::shortDocsNode => $tempPrefix.self::shortDocsNode]);
         }
         // qualification
         $isQualification = true;
@@ -505,9 +509,6 @@ class CheckDocClass extends ControllerAbstract
         if (array_key_exists(self::descriptionNode,$tempArray)) {
             $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.'description.'.($chosen===0 ? 'yes' : 'no')],hash: $this->addDiv(self::conflictNode,true,false));
         }
-        if (array_key_exists(self::participantDescription,$tempArray)) {
-            $this->checkMissingContent($tempArray,[self::participantDescription => $tempPrefix.'participants'],true,hash: $this->addDiv(self::participantDescription));
-        }
         // support
         $tempArray = $coreDataArray[self::supportNode];
         if ($this->checkMissingChildren($coreDataArray,self::supportNode,$translationPrefix.self::supportNode) && !array_key_exists(self::noSupport,$tempArray)) { // at least one support type except no support was chosen
@@ -541,7 +542,7 @@ class CheckDocClass extends ControllerAbstract
         $pageArray = $voteArray[self::instVote];
         if ($this->checkMissingChosen($pageArray,$translationPrefix.'instVote',2,self::instVote,true,self::chosen,$this->committeeParam)===0) { // answer was yes
             $hasReference = $pageArray[self::instReference]!=='';
-            $this->checkMissingContent($pageArray,array_merge(!in_array($this->appType,[self::appExtended,self::appResubmission]) ? [self::instReference => $translationPrefix.'instVoteReference'] : [],[self::instVoteText => $translationPrefix.self::instVoteText]),hash: $this->addDiv($hasReference ? self::instVote : self::instReference,$hasReference));
+            $this->checkMissingContent($pageArray,array_merge(!in_array($this->appType,self::appExtendedResubmission) ? [self::instReference => $translationPrefix.'instVoteReference'] : [],[self::instVoteText => $translationPrefix.self::instVoteText]),hash: $this->addDiv($hasReference ? self::instVote : self::instReference,$hasReference));
         }
         $this->setAppDataTitle($setTitle);
     }
@@ -658,10 +659,10 @@ class CheckDocClass extends ControllerAbstract
         // examined people
         $isExamined = $this->checkMissingChildrenOther($pageArray, self::examinedPeopleNode, $translationPage.self::examinedPeopleNode);
         if ($isExamined) { // at least one group is selected
-            $tempArray = $pageArray[self::examinedPeopleNode]; // has at least one element at this point
-            if (count($tempArray)>1 || !array_key_exists(self::healthyExaminedNode,$tempArray)) { // at least one group except healthy is selected
+            if (array_key_exists(self::peopleDescription,$pageArray)) {
                 $this->checkMissingContent($pageArray,[self::peopleDescription => $translationPage.self::descriptionNode],true,hash: $this->addDiv(self::peopleDescription)); // description of groups
             }
+            $tempArray = $pageArray[self::examinedPeopleNode]; // has at least one element at this point
             foreach ([self::physicalExaminedNode, self::mentalExaminedNode] as $group) {
                 if ($this->isAppTypeShort && array_key_exists($group,$tempArray)) {
                     $this->addCheckLabelString($translationPage.'physicalMental',parameters: ['group' => $group]);
@@ -692,13 +693,15 @@ class CheckDocClass extends ControllerAbstract
         // recruitment
         $tempArray = $pageArray[self::recruitment];
         $tempPrefix = $translationPage.self::recruitment.'.';
-        if ($this->checkMissingChildrenOther($tempArray,self::recruitmentTypesNode,$tempPrefix.'missing')) {
+        if ($this->checkMissingChildrenOther($tempArray,self::recruitmentTypesNode,$tempPrefix.'missing',array_combine(self::recruitmentTypesOther,$this->createPrefixArray(self::recruitmentTypesOther,'',$tempPrefix.self::descriptionNode.'.')))) {
             $types = $tempArray[self::recruitmentTypesNode];
-            if (array_intersect(array_keys($types),['external',self::recruitmentOther])!==[] && $tempArray[self::descriptionNode]==='') {
-                $this->addCheckLabelString($tempPrefix.'further',$this->addDiv(self::recruitmentFurther),colorRed: false);
-            }
-            if (array_key_exists(self::recruitmentLecture,$types) && $isExamined && !array_key_exists(self::dependentExaminedNode,$pageArray[self::examinedPeopleNode])) {
-                $this->addCheckLabelString($tempPrefix.'dependent');
+            if ($isExamined && !array_key_exists(self::dependentExaminedNode,$pageArray[self::examinedPeopleNode])) {
+                $tempPrefix .= 'dependent';
+                foreach ([self::recruitmentLecture,'recruitmentPrivate'] as $type) {
+                    if (array_key_exists($type,$types)) {
+                        $this->addCheckLabelString($tempPrefix,parameters: ['type' => $type]);
+                    }
+                }
             }
         }
         $this->setProjectdetailsTitle($setTitle);
@@ -766,96 +769,6 @@ class CheckDocClass extends ControllerAbstract
         }
     }
 
-    /** Checks for errors on the measures page.
-     * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
-     */
-    private function checkMeasures(bool $setTitle = true): void {
-        $this->addProjectdetailsTitle(self::measuresNode,$setTitle);
-        $pageArray = $this->measure[self::measuresNode];
-        $translationPage = self::projectdetailsPrefix.self::measuresNode.'.';
-        // measures
-        $tempArray = $pageArray[self::measuresNode];
-        $this->checkMultiSelectionTextfield($tempArray,self::measuresTypesNode,self::missingTypes,$this->addDiv(self::measuresNode,true,false),parameters: ['type' => $this->translateString($translationPage.'measures')]);
-        // interventions
-        $tempArray = $pageArray[self::interventionsNode];
-        $tempVal = $translationPage.self::interventionsNode;
-        $this->checkMissingChildren($tempArray,self::interventionsTypesNode,self::missingTypes,['type' => $this->translateString($tempVal)]);
-        if (array_key_exists(self::descriptionNode,$tempArray)) {
-            $this->checkMissingContent($tempArray,[self::descriptionNode => $tempVal],true,$this->translateString(self::projectdetailsPrefixTool.self::measuresNode.'.measuresInterventions.interventions.textHints.defaultStart').'.',hash: $this->addDiv(self::interventionsNode,true,false));
-        }
-        // other sources
-        $tempPrefix = $translationPage.self::otherSourcesNode;
-        $this->checkMissingTextfield($pageArray[self::otherSourcesNode],2,0,$tempPrefix,self::otherSourcesNode,$tempPrefix,addDescription: true,descriptionKey: self::otherSourcesNode.self::descriptionCap);
-        // loan
-        $tempArray = $pageArray[self::loanNode];
-        $tempPrefix = $translationPage.self::loanNode.'.';
-        if ($this->checkMissingChosen($tempArray,$tempPrefix.'title',2,self::loanNode,true)===0) {
-            $this->checkMissingTextfield($tempArray[self::loanReceipt],null,self::templateText,$tempPrefix.self::loanReceipt,$this->addDiv(self::loanReceipt),$tempPrefix.self::descriptionNode,$this->addDiv(self::loanReceipt,true));
-            if ($this->noPre) {
-                $this->addCheckLabelString($tempPrefix.'information',parameters: $this->routeIDs);
-            }
-        }
-        // location
-        $tempArray = $pageArray[self::locationNode];
-        $tempPrefix = $translationPage.self::locationNode.'.';
-        if ($this->checkMissingChosen($tempArray,$tempPrefix.'title',null,self::locationNode)!=='') {
-            $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.'locationDescription'],hash: $this->addDiv(self::locationNode,true,false));
-        }
-        // presence
-        $this->checkMissingChosen($pageArray,$translationPage.self::presenceNode,null,self::presenceNode,true,self::presenceNode);
-        // durations
-        $tempPrefix = $translationPage.self::durationNode.'.';
-        $this->checkMissingContent($pageArray[self::durationNode],[self::durationMeasureTime => $tempPrefix.self::durationMeasureTime],default: '0',hash: self::durationNode);
-        $this->checkMissingContent($pageArray[self::durationNode],[self::durationBreaks => $tempPrefix.self::durationBreaks],hash: self::durationNode);
-        $this->setProjectdetailsTitle($setTitle);
-    }
-
-    /** Checks for errors on the burdensRisks page.
-     * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
-     */
-    private function checkBurdensRisks(bool $setTitle = true): void {
-        $this->addProjectdetailsTitle(self::burdensRisksNode,$setTitle);
-        $translationPage = self::projectdetailsPrefix.self::burdensRisksNode.'.';
-        $title = $translationPage.'title';
-        $pageArray = $this->measure[self::burdensRisksNode];
-        // burdens
-        $tempArray = $pageArray[self::burdensNode];
-        if ($this->checkBurdensRisksErrors($tempArray,$title,self::burdensTypesNode,self::burdensNode) && array_key_exists(self::noBurdens,$tempArray[self::burdensTypesNode])) {
-            $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPage.'noBurdens']);
-        }
-        // risks
-        $tempArray = $pageArray[self::risksNode];
-        if ($this->checkBurdensRisksErrors($tempArray,$title,self::risksTypesNode,self::risksNode) && array_key_exists(self::risksIntegrity,$tempArray[self::risksTypesNode]) && $this->isAppTypeShort) { // 'physical' was chosen, but application type is 'short'
-            $this->addCheckLabelString($translationPage.'risksPhysical');
-        }
-        // burdensRisksContributors
-        $tempArray = $pageArray[self::burdensRisksContributorsNode];
-        $tempVal = $title;
-        $params = ['burdensRisksType' => self::burdensRisksContributorsNode];
-        if ($this->checkMissingTextfield($tempArray,2,0,$tempVal,self::burdensRisksContributorsNode.'Type',$tempVal,$this->addDiv(self::burdensRisksContributorsNode,true,false),true, parameters: $params)===0) {
-            $this->checkBurdensRisksCompensation($tempArray,self::burdensRisksContributorsNode,$params);
-        }
-        // finding
-        $tempPrefix = $translationPage.self::findingNode.'.';
-        $tempArray = $pageArray[self::findingNode];
-        $this->checkMissingTextfield($tempArray,2,0,$tempPrefix.'title',self::findingNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::descriptionNode),true);
-        if ($this->isFinding) {
-            $this->checkMissingChosen($tempArray,$tempPrefix.self::informingNode,null,$this->addDiv(self::findingNode),true,self::informingNode);
-        }
-        if ($this->noPre && $this->isFinding) { // no pre information -> no finding
-            $this->addCheckLabelString($tempPrefix.'information',parameters: $this->routeIDs);
-        }
-        // feedback
-        $tempPrefix = $translationPage.self::feedbackNode.'.';
-        $tempArray = $pageArray[self::feedbackNode];
-        if ($this->checkMissingTextfield($tempArray,2,0,$tempPrefix.'title',self::feedbackNode,$tempPrefix.self::descriptionNode,addDescription: true)===0 && !$this->isFeedback) {
-            $this->addCheckLabelString($tempPrefix.'feedbackInterventions',parameters: $this->routeIDs);
-        }
-        $this->setProjectdetailsTitle($setTitle);
-    }
-
     /** Checks for errors on the consent page.
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
@@ -892,22 +805,20 @@ class CheckDocClass extends ControllerAbstract
         $tempPrefix = $translationPage.self::consentNode.'.';
         $this->paramsAddressee['type'] = self::consentNode;
         $this->paramsParticipants['type'] = self::consentNode;
-        $consent = $this->checkVoluntaryConsent($pageArray[self::consentNode],self::consentNode,$tempPrefix.'title',$tempPrefix.'consentParticipants',$tempPrefix.self::consentNode.self::descriptionCap);
-        $consentAddressee = $consent[0];
-        $isConsentChosen = $consentAddressee!=='';
-        $isConsentNotApplicable = $consentAddressee===self::consentNotApplicable;
-        $consentParticipant = $consent[1];
+        $consentParticipant = $this->checkVoluntaryConsent($pageArray[self::consentNode],self::consentNode,$tempPrefix.'title',$tempPrefix.'consentParticipants',$tempPrefix.self::consentNode.self::descriptionCap)[1];
+        $isConsentChosen = $this->consentAddressee!=='';
+        $isConsentNotApplicable = $this->consentAddressee===self::consentNotApplicable;
         $isConsentChosenParticipant = $consentParticipant!=='';
         $isConsentNotApplicableParticipant = $consentParticipant===self::consentNotApplicable;
         // no voluntariness -> no consent
-        if ($voluntaryAddressee===self::voluntaryConsentNo && $isConsentChosen && $consentAddressee!==self::voluntaryConsentNo) {
+        if ($voluntaryAddressee===self::voluntaryConsentNo && $isConsentChosen && $this->consentAddressee!==self::voluntaryConsentNo) {
             $this->addCheckLabelString($tempPrefix.'voluntaryToConsent',parameters: $this->paramsAddressee);
         }
         if ($voluntaryParticipant===self::voluntaryConsentNo && $isConsentChosenParticipant && $consentParticipant!==self::voluntaryConsentNo) {
             $this->addCheckLabelString($tempPrefix.'voluntaryToConsent',parameters: $this->paramsParticipants);
         }
         // pre-information and no consent -> no voluntariness
-        if ($this->isPre && $consentAddressee===self::voluntaryConsentNo && !in_array($voluntaryAddressee,['',self::voluntaryConsentNo])) {
+        if ($this->isPre && $this->consentAddressee===self::voluntaryConsentNo && !in_array($voluntaryAddressee,['',self::voluntaryConsentNo])) {
             $this->addCheckLabelString($tempPrefix.'consentToVoluntary',parameters: $this->paramsAddressee);
         }
         if ($isPreParticipants && $consentParticipant===self::voluntaryConsentNo && !in_array($voluntaryParticipant,['',self::voluntaryConsentNo])) {
@@ -928,12 +839,6 @@ class CheckDocClass extends ControllerAbstract
         if (in_array(0,$this->informationII) && $isConsentChosenParticipant && $isConsentNotApplicableParticipant) {
             $this->addCheckLabelString($translationPage.'notApplicableToInformation',parameters: $this->paramsParticipants);
         }
-        if ($this->isNoPresence && $consent[$this->isTwoAddressees ? 1 : 0]===self::consentOral) { // no contributors present -> no oral consent
-            $this->addCheckLabelString($tempPrefix.self::presenceNode,parameters: $this->routeIDs);
-        }
-        if ($this->isFinding && ($consentAddressee===self::voluntaryConsentNo || $isConsentNotApplicable)) { // finding -> consent
-            $this->addCheckLabelString($tempPrefix.self::findingNode,parameters: $this->routeIDs);
-        }
         // terminate with disadvantages
         $tempPrefix = $translationPage.self::terminateConsNode.'.';
         $tempArray = $pageArray[self::terminateConsNode];
@@ -942,17 +847,108 @@ class CheckDocClass extends ControllerAbstract
             $this->checkMissingContent($tempArray,[self::terminateConsParticipationNode => $tempPrefix.'participation'],true,parameter: $this->paramsAddressee,hash: $this->addDiv(self::terminateConsNode.self::terminateConsParticipationNode));
         }
         // termination by participants
-        $addresseeRouteParams = array_merge($this->paramsAddressee,$this->routeIDs);
         $tempPrefix = $translationPage.self::terminateParticipantsNode.'.';
-        $terminate = $this->checkMissingTextfield($pageArray[self::terminateParticipantsNode],null,self::terminateParticipantsOther,$tempPrefix.'title',self::terminateParticipantsNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::terminateParticipantsNode,true));
-        if (!in_array($terminate,['','remove','choose']) && $this->noPre && in_array($consentAddressee,self::consentTypesAll)) { // no pre information and consent is given -> data must either be deleted or participants must choose whether to delete or keep
-            $this->addCheckLabelString($tempPrefix.self::informationNode,parameters: $addresseeRouteParams);
-        }
-        if ($this->noPost && $terminate==='choose') { // neither pre nor post information -> participants can not choose whether to delete or keep the data
-            $this->addCheckLabelString($tempPrefix.'noInformation',parameters: $addresseeRouteParams);
+        if (!in_array($this->checkMissingTextfield($pageArray[self::terminateParticipantsNode],null,self::terminateParticipantsOther,$tempPrefix.'title',self::terminateParticipantsNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::terminateParticipantsNode,true)),['','remove','choose']) && $this->noPre && in_array($this->consentAddressee,self::consentTypesAll)) { // no pre information and consent is given -> data must either be deleted or participants must choose whether to delete or keep
+            $this->addCheckLabelString($tempPrefix.self::informationNode,parameters: array_merge($this->paramsAddressee,$this->routeIDs));
         }
         // terminate criteria
         $this->checkMissingContent($pageArray,[self::terminateCriteriaNode => $translationPage.self::terminateCriteriaNode],true,hash: $this->addDiv(self::terminateCriteriaNode));
+        $this->setProjectdetailsTitle($setTitle);
+    }
+
+    /** Checks for errors on the measures page.
+     * @param bool $setTitle if true, the page title will be added above the errors
+     * @return void
+     */
+    private function checkMeasures(bool $setTitle = true): void {
+        $this->addProjectdetailsTitle(self::measuresNode,$setTitle);
+        $pageArray = $this->measure[self::measuresNode];
+        $translationPage = self::projectdetailsPrefix.self::measuresNode.'.';
+        // procedure
+        $this->checkMissingContent($pageArray,[self::procedureNode => $translationPage.self::procedureNode]);
+        // measures and interventions
+        foreach ([self::measuresNode,self::interventionsNode] as $type) {
+            $tempPrefix = $translationPage.$type.'.';
+            $tempArray = $pageArray[$type];
+            $otherTypes = self::measuresInterventionsOther[$type];
+            if ($this->checkMissingChildrenOther($tempArray,$type.'Type',self::missingTypes,array_combine($otherTypes,$this->createPrefixArray($otherTypes,valuePrefix: $tempPrefix.'otherTypes.')),['type' => $this->translateString($tempPrefix.'missing')]) && array_key_exists(self::descriptionNode,$tempArray)) {
+                $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.'missing'],true,$this->addDiv($type,true,false),hash: $this->addDiv($type,true,false));
+            }
+        }
+        // other sources
+        $tempPrefix = $translationPage.self::otherSourcesNode;
+        $this->checkMissingTextfield($pageArray[self::otherSourcesNode],2,0,$tempPrefix,self::otherSourcesNode,$tempPrefix,addDescription: true,descriptionKey: self::otherSourcesNode.self::descriptionCap);
+        // loan
+        $tempArray = $pageArray[self::loanNode];
+        $tempPrefix = $translationPage.self::loanNode.'.';
+        if ($this->checkMissingChosen($tempArray,$tempPrefix.'title',2,self::loanNode,true)===0) {
+            $this->checkMissingTextfield($tempArray[self::loanReceipt],null,self::templateText,$tempPrefix.self::loanReceipt,$this->addDiv(self::loanReceipt),$tempPrefix.self::descriptionNode,$this->addDiv(self::loanReceipt,true));
+            if ($this->noPre) {
+                $this->addCheckLabelString($tempPrefix.'information',parameters: $this->routeIDs);
+            }
+        }
+        // location
+        $tempArray = $pageArray[self::locationNode];
+        $tempPrefix = $translationPage.self::locationNode.'.';
+        if ($this->checkMissingChosen($tempArray,$tempPrefix.'title',null,self::locationNode)!=='') {
+            $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.'locationDescription'],hash: $this->addDiv(self::locationNode,true,false));
+        }
+        // presence
+        $tempPrefix = $translationPage.self::presenceNode.'.';
+        if ($this->checkMissingChosen($pageArray,$tempPrefix.'missing',2,self::presenceNode,true,self::presenceNode)===1 && ($this->isTwoAddressees ? $this->measure[self::consentNode][self::consentNode][self::chosen2Node] : $this->consentAddressee)===self::consentOral) { // oral consent -> contributors must be present
+            $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->routeIDs);
+        }
+        // durations
+        $tempPrefix = $translationPage.self::durationNode.'.';
+        $this->checkMissingContent($pageArray[self::durationNode],[self::durationMeasureTime => $tempPrefix.self::durationMeasureTime],default: '0',hash: self::durationNode);
+        $this->checkMissingContent($pageArray[self::durationNode],[self::durationBreaks => $tempPrefix.self::durationBreaks],hash: self::durationNode);
+        $this->setProjectdetailsTitle($setTitle);
+    }
+
+    /** Checks for errors on the burdensRisks page.
+     * @param bool $setTitle if true, the page title will be added above the errors
+     * @return void
+     */
+    private function checkBurdensRisks(bool $setTitle = true): void {
+        $this->addProjectdetailsTitle(self::burdensRisksNode,$setTitle);
+        $translationPage = self::projectdetailsPrefix.self::burdensRisksNode.'.';
+        $title = $translationPage.'title';
+        $pageArray = $this->measure[self::burdensRisksNode];
+        // burdens
+        $tempArray = $pageArray[self::burdensNode];
+        if ($this->checkBurdensRisksErrors($tempArray,$title,self::burdensTypesNode,self::burdensNode) && array_key_exists(self::noBurdens,$tempArray[self::burdensTypesNode])) {
+            $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPage.'noBurdens']);
+        }
+        // risks
+        $tempArray = $pageArray[self::risksNode];
+        if ($this->checkBurdensRisksErrors($tempArray,$title,self::risksTypesNode,self::risksNode) && array_key_exists(self::risksIntegrity,$tempArray[self::risksTypesNode]) && $this->isAppTypeShort) { // 'physical' was chosen, but application type is 'short'
+            $this->addCheckLabelString($translationPage.'risksPhysical');
+        }
+        // burdensRisksContributors
+        $tempArray = $pageArray[self::burdensRisksContributorsNode];
+        $tempVal = $title;
+        $params = ['burdensRisksType' => self::burdensRisksContributorsNode];
+        if ($this->checkMissingTextfield($tempArray,2,0,$tempVal,self::burdensRisksContributorsNode.'Type',$tempVal,$this->addDiv(self::burdensRisksContributorsNode,true,false),true, parameters: $params)===0) {
+            $this->checkBurdensRisksCompensation($tempArray,self::burdensRisksContributorsNode,$params);
+        }
+        // finding
+        $tempPrefix = $translationPage.self::findingNode.'.';
+        $tempArray = $pageArray[self::findingNode];
+        if ($this->checkMissingTextfield($tempArray,2,0,$tempPrefix.'title',self::findingNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::descriptionNode),true)===0) {
+            $this->checkMissingChosen($tempArray,$tempPrefix.self::informingNode,null,$this->addDiv(self::findingNode),true,self::informingNode);
+            if ($this->noPre) { // no pre information -> no finding
+                $this->addCheckLabelString($tempPrefix.'information',parameters: $this->routeIDs);
+            }
+            if (in_array($this->consentAddressee,[self::voluntaryConsentNo,self::consentNotApplicable])) { // finding -> consent
+                $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->routeIDs);
+            }
+        }
+        // feedback
+        $tempPrefix = $translationPage.self::feedbackNode.'.';
+        $tempArray = $pageArray[self::feedbackNode];
+        if ($this->checkMissingTextfield($tempArray,2,0,$tempPrefix.'title',self::feedbackNode,$tempPrefix.self::descriptionNode,addDescription: true)===0 && !array_key_exists(self::feedbackNode,$this->measure[self::measuresNode][self::interventionsNode][self::interventionsTypesNode] ?: [])) {
+            $this->addCheckLabelString($tempPrefix.'feedbackInterventions',parameters: $this->routeIDs);
+        }
         $this->setProjectdetailsTitle($setTitle);
     }
 
@@ -1012,7 +1008,7 @@ class CheckDocClass extends ControllerAbstract
                         if (array_key_exists(self::laterTypesName,$awardingArray) && $this->checkMissingChosen($awardingArray,$tempPrefix,null,$hashDiv,name: self::laterTypesName,parameters: $typeParams)==='laterEndOther') { // information for later
                             $this->checkMissingContent($awardingArray,[self::laterOtherDescription => $tempPrefix.self::descriptionCap],true,lineTitle: $lineTitle,parameter: $typeParams,hash: $hashDiv);
                         }
-                        if ($isMoneyHours && $chosen==='immediately' && $this->isNoPresence) { // money and hours immediately -> contributors must be present
+                        if ($isMoneyHours && $chosen==='immediately' && $this->measure[self::measuresNode][self::presenceNode]==='1') { // money and hours immediately -> contributors must be present
                             $this->addCheckLabelString($translationPage.self::presenceNode,parameters: $typeParams);
                         }
                     }
@@ -1021,7 +1017,7 @@ class CheckDocClass extends ControllerAbstract
                 $tempPrefix = $translationPage.self::terminateNode.'.';
                 $tempArray = $pageArray[self::terminateNode];
                 $chosen = $this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::terminateNode,true);
-                if (in_array($chosen,self::terminateTypesDescription)) {
+                if (array_key_exists(self::descriptionNode,$tempArray)) {
                     $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.$chosen],hash: $this->addDiv(self::terminateNode,true,false));
                 }
                 // compensation voluntary
@@ -1048,8 +1044,8 @@ class CheckDocClass extends ControllerAbstract
             if (array_key_exists(self::descriptionNode,$tempArray) && $tempArray[self::descriptionNode]==='') {
                 $this->addCheckLabelString($translationPage.'intro',self::introNode,colorRed: false);
             }
-            // goals and procedure
-            $this->checkMissingContent($pageArray,[self::goalsNode => $translationPage.self::goalsNode,self::procedureNode => $translationPage.self::procedureNode],hash: $pageArray[self::goalsNode]!=='' ? self::procedureNode : self::goalsNode);
+            // goals
+            $this->checkMissingContent($pageArray,[self::goalsNode => $translationPage.self::goalsNode]);
             // pro
             $tempArray = $pageArray[self::proNode];
             $this->checkMissingContent($tempArray,[$this->getBoolFromString($tempArray[self::proTemplate]) ? self::proTemplateText : self::descriptionNode => $translationPage.'pro'],true,hash: self::proNode);
@@ -1061,6 +1057,10 @@ class CheckDocClass extends ControllerAbstract
                         $this->addCheckLabelString($translationPage.$type,$type,colorRed: false);
                     }
                 }
+            }
+            // conflict text
+            if (array_key_exists(self::conflictTextNode,$pageArray) && $pageArray[self::conflictTextNode]==='') {
+                $this->addCheckLabelString($translationPage.self::conflictTextNode,self::conflictTextNode,colorRed: false);
             }
             $this->setProjectdetailsTitle($setTitle);
         }
@@ -1092,6 +1092,9 @@ class CheckDocClass extends ControllerAbstract
         $this->addProjectdetailsTitle(self::privacyNode,$setTitle);
         $translationPage = self::projectdetailsPrefix.self::privacyNode.'.';
         $furtherPrefix = $translationPage.'further.';
+        $furtherOtherSourcesPrefix = $furtherPrefix.self::otherSourcesNode.'.';
+        $measuresArray = $this->measure[self::measuresNode];
+        $isOtherSources = $measuresArray[self::otherSourcesNode][self::chosen]==='0';
         // processing
         $this->checkMissingContent($pageArray,[self::processingNode => $translationPage.self::processingNode],true,hash: $this->addDiv(self::processingNode));
 
@@ -1108,7 +1111,8 @@ class CheckDocClass extends ControllerAbstract
         $isSeparate = $create===self::createSeparate;
         $support = $this->coreDataArray[self::supportNode];
         $isVerified = $isSeparate && $tempArray[self::descriptionNode]==='verified';
-        if (($isVerified || $create==='anonymous') && $support!=='' && !array_key_exists('supportData',$support)) { // privacy separate and verified or anonymous -> support by data privacy
+        $isCreateAnonymous = $create==='anonymous';
+        if (($isVerified || $isCreateAnonymous) && $support!=='' && !array_key_exists('supportData',$support)) { // privacy separate and verified or anonymous -> support by data privacy
             $this->addCheckLabelString($tempPrefix.self::supportNode,parameters: ['isVerified' => $this->getStringFromBool($isVerified)]);
         }
         $isTool = $create===self::createTool;
@@ -1149,6 +1153,7 @@ class CheckDocClass extends ControllerAbstract
                     $markingSecondString = self::markingNode.self::markingSuffix;
                     $markings = [self::markingNode => '', $markingSecondString => ''];
                     $isMarkingPersonal = false; // gets true if any marking is or may be personal
+                    $isMarkingPersonalNotGeneration = false; // gets true if any marking is by name or by code with list, or external
                     $isMarkingAnswered = true; // gets false if any marking (sub-)question is not answered
                     // variables indicating that a marking of a certain type is used
                     $isMarkingName = false; // gets true if any marking is by name
@@ -1165,15 +1170,17 @@ class CheckDocClass extends ControllerAbstract
                         $tempPrefix = $translationPage.self::markingNode.'.';
                         $markingChosen = $this->checkMissingChosen($tempArray, $tempPrefix.'title', null,$this->addDiv(self::markingNode).$suffix, lineTitle: $lineTitle);
                         $isMarkingAnswered = $isMarkingAnswered && $markingChosen!=='';
+                        $isExternal = $markingChosen===self::markingExternal;
                         $isName = $markingChosen===self::markingName;
                         $isMarkingPersonal = $isMarkingPersonal || $isName;
+                        $isMarkingPersonalNotGeneration = $isMarkingPersonalNotGeneration || $isName || $isExternal;
                         $isMarkingName = $isMarkingName || $isName;
                         $markings[$marking] = $markingChosen;
                         if (array_key_exists(self::descriptionNode, $tempArray)) { // can only be true if external or name
                             $this->checkMissingContent($tempArray, [self::descriptionNode => $tempPrefix.self::descriptionNode], lineTitle: $lineTitle, parameter: ['type' => $markingChosen],hash: $this->addDiv($markingWithSuffix,true,false));
                         }
                         $isInternal = $markingChosen===self::markingInternal;
-                        if ($markingChosen===self::markingExternal || $isInternal) {
+                        if ($isExternal || $isInternal) {
                             if ($isInternal) { // how the code is created
                                 $markingChosen = $this->checkMissingChosen($tempArray, $tempPrefix.self::markingInternal, null,'internalCreateDiv'.$suffix, name: self::markingInternal, lineTitle: $lineTitle);
                                 $isMarkingAnswered = $isMarkingAnswered && $markingChosen!=='';
@@ -1182,8 +1189,10 @@ class CheckDocClass extends ControllerAbstract
                                 $tempVal = $this->checkMissingChosen($tempArray, $tempPrefix.self::codePersonal, null,$this->addDiv($markingChosen).$suffix, name: self::codePersonal, lineTitle: $lineTitle);
                                 $isMarkingAnswered = $isMarkingAnswered && $tempVal!=='';
                                 $isMarkingPersonal = $isMarkingPersonal || in_array($tempVal, self::markingDataResearchTypes); // whether the code has personal data
+                                $isCurList = $tempVal===self::markingList;
+                                $isMarkingPersonalNotGeneration = $isMarkingPersonalNotGeneration || $isCurList;
                                 $isCodeMaybe = $isCodeMaybe || $tempVal===self::generation;
-                                $isMarkingList = $isMarkingList || $tempVal===self::markingList;
+                                $isMarkingList = $isMarkingList || $isCurList;
                                 $isCodeOnlyMarking = $isCodeOnlyMarking || $tempVal==='marking';
                                 $isCodeNoDoc = $isCodeNoDoc || $tempVal==='anonymous';
                             }
@@ -1402,7 +1411,6 @@ class CheckDocClass extends ControllerAbstract
                         $this->checkResponsibilityTransfer($responsibility,$transferOutside,$hasPersonal,$allPersonalAnswered,true);
                         $ipPrefix = $furtherPrefix.'ip.';
                         $isIP = array_key_exists('ip',$dataResearch);
-                        $measuresArray = $this->measure[self::measuresNode];
                         $isDataPersonal = in_array($dataPersonal, ['', 'personal']);
                         if ($isIP) {
                             // location not online -> data research must not be ip
@@ -1452,6 +1460,10 @@ class CheckDocClass extends ControllerAbstract
                                 $this->addCheckLabelString($furtherPrefix.'videoToMeasures', parameters: $this->routeIDs);
                             }
                         }
+                        // other sources -> an external code or a person-related label (either name or code by list) must be used
+                        if ($isOtherSources && $isMarkingAnswered && !$isMarkingPersonalNotGeneration) {
+                            $this->addCheckLabelString($furtherOtherSourcesPrefix.self::markingNode, parameters: $this->routeIDs);
+                        }
                         // no compensation -> purpose must not be compensation
                         $tempPrefix = $furtherPrefix.self::compensationNode.'.';
                         $purposeArraysMerged = array_merge($isPurposeResearch ? $purposeResearchArray : [], $isPurposeFurther ? $purposeFurtherArray : []);
@@ -1496,12 +1508,15 @@ class CheckDocClass extends ControllerAbstract
                     }
                     else { // marking is 'other'
                         $this->checkResponsibilityTransfer($responsibility,$transferOutside,$hasPersonal);
-                        if (in_array($dataPersonal,['','personalNo']) && ($pageArray[self::dataOnlineProcessingNode] ?? '')===self::dataOnlineProcessingLinked) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
+                        if (in_array($dataPersonal,['',self::dataPersonalNo]) && ($pageArray[self::dataOnlineProcessingNode] ?? '')===self::dataOnlineProcessingLinked) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
                             $this->addCheckLabelString($translationPage.'further.ip.linkedMarking');
                         }
                     }
                 }
             }
+        } // if isTool || isSeparate
+        elseif ($isCreateAnonymous && $isOtherSources) { // other sources -> create selection can not be that the study includes only anonymous data
+            $this->addCheckLabelString($furtherOtherSourcesPrefix.self::createNode,parameters: $this->routeIDs);
         }
         $this->setProjectdetailsTitle($setTitle);
     }
@@ -1613,12 +1628,8 @@ class CheckDocClass extends ControllerAbstract
             $this->noPostParticipants = $this->noPreParticipants && $post==='1';
             $this->informationII = [(int) ($chosen!=='' ? $chosen : 2), (int) ($post!=='' ? $post : 2)]; // no "?:" because values can be "0" which would translate to false
         }
-        // measures
-        $tempArray = $this->measure[self::measuresNode];
-        $this->isFeedback = array_key_exists(self::feedbackNode,$tempArray[self::interventionsNode][self::interventionsTypesNode] ?: []);
-        $this->isNoPresence = $tempArray[self::presenceNode]==='1';
-        // burdensRisks
-        $this->isFinding = $this->measure[self::burdensRisksNode][self::findingNode][self::chosen]==='0';
+        // consent
+        $this->consentAddressee = $this->measure[self::consentNode][self::consentNode][self::chosen];
     }
 
     /** Creates the string saying that no errors were found.
@@ -1638,12 +1649,18 @@ class CheckDocClass extends ControllerAbstract
      * @return bool true if at least one option except 'no' is selected, false otherwise
      */
     private function checkBurdensRisksErrors(array $pageArray, string $page, string $typeKey, string $type): bool {
-        $noID = $type===self::burdensNode ? self::noBurdens : self::noRisks;
         $typeParam = ['burdensRisksType' => $type];
         $params = array_merge($typeParam,['type' => $this->translateString(self::projectdetailsPrefix.self::burdensRisksNode.'.title',$typeParam)]);
-        $isSelected = $this->checkMultiSelectionTextfield($pageArray,$typeKey,$page,$this->addDiv($type,true,false),$noID,$params);
-        if ($isSelected && !array_key_exists($noID,$pageArray[$typeKey])) {
-            $this->checkBurdensRisksCompensation($pageArray,$type,$params);
+        $isSelected = $this->checkMissingChildren($pageArray,$typeKey,self::missingTypes,$params);
+        if ($isSelected) {
+            $multiArray = $pageArray[$typeKey];
+            $isNoID = array_key_exists($type===self::burdensNode ? self::noBurdens : self::noRisks,$multiArray);
+            if (!(count($multiArray)==1 && $isNoID)) {
+                $this->checkMissingContent($pageArray,[self::descriptionNode => $page],true,parameter: $params,hash: $this->addDiv($type,true,false));
+            }
+            if (!$isNoID) {
+                $this->checkBurdensRisksCompensation($pageArray,$type,$params);
+            }
         }
         return $isSelected;
     }
@@ -1824,26 +1841,6 @@ class CheckDocClass extends ControllerAbstract
             $this->checkMissingContent($element,[$descriptionKey => $description],$addDescription,parameter: $parameters,hash: $hashDescription!=='' ? $hashDescription : $this->addDiv($hash,true,false));
         }
         return $chosen;
-    }
-
-    /** Checks if an array element has children and if so, if another element has content.
-     * @param array $pageArray array containing the elements to be checked
-     * @param string $multi key for the element that is checked for children
-     * @param string $messageContent translation key for the part of the error message that is added if the description node is empty
-     * @param string $hashDescription id of text field element to be linked to
-     * @param string $exclude if provided and the only key in \$multi, then the check for \$content is skipped
-     * @param array $parameters parameters for the translation
-     * @return bool true if $multi has at least one child, false otherwise
-     */
-    private function checkMultiSelectionTextfield(array $pageArray, string $multi, string $messageContent, string $hashDescription, string $exclude = '', array $parameters = []): bool {
-        $hasChildren = $this->checkMissingChildren($pageArray,$multi,self::missingTypes,$parameters);
-        if ($hasChildren) {
-            $multiArray = $pageArray[$multi];
-            if ($exclude==='' || !(count($multiArray)==1 && array_key_exists($exclude,$multiArray))) {
-                $this->checkMissingContent($pageArray,[self::descriptionNode => $messageContent],true,parameter: $parameters,hash: $hashDescription);
-            }
-        }
-        return $hasChildren;
     }
 
     /** Calls checkMissingChildren. If it returns true and $other is not empty, it is checked if the key(s) exist and if so, if they have content.

@@ -13,11 +13,15 @@ class MeasuresType extends TypeAbstract
 
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $translationPrefix = 'projectdetails.pages.measures.';
+        // procedure
+        $tempPrefix = $translationPrefix.self::procedureNode.'.';
+        $this->addFormElement($builder,self::procedureNode,'textarea',$tempPrefix.'title');
         $measuresInterventionsPrefix = $translationPrefix.'measuresInterventions.';
         // measures and interventions
         foreach ([self::measuresNode,self::interventionsNode] as $type) {
             $tempPrefix = $measuresInterventionsPrefix.$type.'.';
-            $this->addCheckboxGroup($builder, $type===self::measuresNode ? self::measuresTypes : self::interventionsTypes,$tempPrefix.'types.',textareaName: $type.self::descriptionCap);
+            $otherTypes = self::measuresInterventionsOther[$type];
+            $this->addCheckboxGroup($builder, $type===self::measuresNode ? self::measuresTypes : self::interventionsTypes,$tempPrefix.'types.',$this->createPrefixArray($otherTypes),array_fill_keys($otherTypes,$tempPrefix.self::descriptionNode),textareaName: $type.self::descriptionCap);
             $this->addFormElement($builder,$type.'PDF','checkbox',$measuresInterventionsPrefix.'pdf',[self::labelParams => ['type' => $type]]);
         }
         // other sources
@@ -43,10 +47,13 @@ class MeasuresType extends TypeAbstract
 
     public function mapDataToForms(mixed $viewData, Traversable $forms): void {
         $forms = iterator_to_array($forms);
+        // procedure
+        $forms[self::procedureNode]->setData($viewData[self::procedureNode]);
         // measures and interventions
         foreach ([self::measuresNode,self::interventionsNode] as $type) {
             $tempArray = $viewData[$type];
-            $this->setSelectedCheckboxes($forms,$tempArray[$type.'Type']);
+            $otherTypes = self::measuresInterventionsOther[$type];
+            $this->setSelectedCheckboxes($forms,$tempArray[$type.'Type'],array_combine($otherTypes,$this->createPrefixArray($otherTypes)));
             $forms[$type.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode)); // survey start is added in stimulus controller
             $tempVal = $type.'PDF';
             $forms[$tempVal]->setData(array_key_exists($tempVal,$tempArray));
@@ -74,9 +81,12 @@ class MeasuresType extends TypeAbstract
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
         $forms = iterator_to_array($forms);
+        // procedure
+        $viewData[self::procedureNode] = $forms[self::procedureNode]->getData();
         // measures
         $tempArray = [];
-        $measures = $this->getSelectedCheckboxes($forms,self::measuresTypes);
+        $otherTypes = self::measuresInterventionsOther[self::measuresNode];
+        $measures = $this->getSelectedCheckboxes($forms,self::measuresTypes,array_combine($otherTypes,$this->createPrefixArray($otherTypes)));
         $tempArray[self::measuresTypesNode] = $measures;
         $tempArray[self::descriptionNode] = $measures!==[] ? $forms[self::measuresNode.self::descriptionCap]->getData() : '';
         if ($forms[self::measuresPDF]->getData()) {
@@ -85,14 +95,15 @@ class MeasuresType extends TypeAbstract
         $viewData[self::measuresNode] = $tempArray;
         // interventions
         $tempArray = [];
-        $interventions = $this->getSelectedCheckboxes($forms,self::interventionsTypes,exclusive: self::noIntervention);
+        $otherTypes = self::measuresInterventionsOther[self::interventionsNode];
+        $interventions = $this->getSelectedCheckboxes($forms,self::interventionsTypes,array_combine($otherTypes,$this->createPrefixArray($otherTypes)),exclusive: self::noIntervention);
         $tempArray[self::interventionsTypesNode] = $interventions;
         $numSelected = count($interventions);
-        $isInterventions = $numSelected>0 && !array_key_exists(self::noIntervention,$interventions);
-        if ($isInterventions && !($numSelected===1 && array_key_exists(self::interventionsSurvey,$interventions))) {
-            $tempArray[self::descriptionNode] = str_replace($this->translateString('projectdetails.pages.measures.measuresInterventions.interventions.textHints.defaultStart').'.','',$forms[self::interventionsNode.self::descriptionCap]->getData()); // may be invisible, but never disabled, i.e., will always return a string. Survey sentence differs between text field and pdf, therefore, save only user input
+        $tempVal = $numSelected>0 && !array_key_exists(self::noIntervention,$interventions);
+        if ($tempVal && !($numSelected===1 && array_key_exists(self::interventionsSurvey,$interventions))) {
+            $tempArray[self::descriptionNode] = $forms[self::interventionsNode.self::descriptionCap]->getData();
         }
-        if ($isInterventions && $forms[self::interventionsPDF]->getData()) {
+        if ($tempVal && $forms[self::interventionsPDF]->getData()) {
             $tempArray[self::interventionsPDF] = '';
         }
         $viewData[self::interventionsNode] = $tempArray;

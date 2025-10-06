@@ -19,10 +19,10 @@ multiple:
         Die ausgewählte Datei ist keine {type, select,
                                           pdf   {PDF}
                                           other {XML}}-Datei.
-    xmlFailure: # info modal if an xml-file could not be loaded
+    xmlFailure: # info modal if an xml-file could not be loaded 
       title: 'XML-Datei laden'
       text: 'Die ausgewählte XML-Datei konnte nicht geladen werden.'
-    customPDF: # info modal if a custom pdf could not be added while creating the complete proposal
+    customPDF: # info modal if a custom pdf could not be added while creating the complete proposal 
       title: 'Selbst formulierte PDF hinzufügen'
       text: >-
         {filename, select,
@@ -37,7 +37,7 @@ multiple:
   charCount: 'Zeichenanzahl:'
   charCountHint: 'Die empfohlene Maximalanzahl an Zeichen wurde überschritten. Die Einreichung des Antrags ist auch bei Überschreitung möglich; bitte prüfen Sie dennoch, ob Sie (ohne Informationsverlust für die ethische Begutachtung) kürzen können.'
   optional: '(optional)'
-  appHint: 'Achtung: <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Hauptantrag</a> ist erforderlich!'
+  appHint: 'Achtung: <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Vollantrag</a> ist erforderlich!'
   wording: 'Bitte formulieren Sie Ihre Beschreibungen so, dass sie sich an die {addressee} richten.'
   inputHint: >-
     Der Text erscheint so, wie Sie ihn hier eingeben, in {type, select,
@@ -52,6 +52,7 @@ multiple:
     pages:
       textsCon: 'Studieninformation'
       textsFinding: 'Studieninformation'
+      textsConflict: 'Studieninformation'
       consentApparatusInsuranceWay: 'Rechtliches'
       dataPrivacyOnline: 'Datenschutz'
     information: 'der Anwesenheit der {addressee}' # in groups (same for following)
@@ -66,6 +67,7 @@ multiple:
                                                other { und den Vor-/Nachteilen}}
     textsCon: 'dem Freitext der Nachteile'
     textsFinding: 'der Aufklärung über (Zufalls-)Befunde'
+    textsConflict: 'der Aufklärung über Interessenkonflikte'
     consentApparatusInsuranceWay: >-
       {input, select,
         apparatus    {dem Hinweis zur Benutzung von Versuchsgeräten}
@@ -79,6 +81,7 @@ multiple:
                                                                 other {}} {insuranceWay, select,
                                                                             true  {Wege-/Unfallversicherung, }
                                                                             other {}} Teilnehmendenversicherung
+    compensation: 'der Begründung für fehlende Aufwandsentschädigung bei Abbruch'
     dataPrivacy: 'dem Code für die Vergabe der Aufwandsentschädigung'
     dataPrivacyOnline: >- # deletion hint on page "measures"
       der Erfassung {isProcessing, select,
@@ -214,9 +217,9 @@ pages:
     informationIISidebar: 'AufklärungII'
     informationIII: 'AufklärungIII'
     informationIIISidebar: 'AufklärungIII'
+    consent: 'Einwilligung'
     measures: 'Datenerhebung'
     burdensRisks: 'Belastungen/Risiken'
-    consent: 'Einwilligung'
     consentGroups: 'Einwilligung' # for checking inputs on consent page that depend on inputs on groups page
     voluntary: 'Einwilligung' # description of voluntary yes text field
     compensation: 'Aufwandsentschädigung'
@@ -384,15 +387,20 @@ coreData:
       notApplicable: 'nicht zutreffend: Es werden keine Teilnahmedokumente erstellt, da es weder eine Vorab- noch eine nachträgliche Aufklärung gibt und auch keine Einwilligung in die Studienteilnahme bzw. Datenverarbeitung eingeholt wird.'
   appType:
     title: 'Antragstyp'
-    new:
-      title: 'Neuer Antrag'
-      label: 'Art des neuen Antrags:'
-      short: 'Kurzantrag'
-      main: 'Hauptantrag'
-    extended: 'Änderung eines bereits bewilligten Antrags'
-    resubmission: 'Wiedervorlage nach Überarbeitung eines Antrags'
+    type:
+      new: 'Neuer Antrag'
+      extended: 'Änderung eines bereits bewilligten Antrags'
+      resubmission: 'Wiedervorlage nach Überarbeitung eines Antrags'
     reference: 'Bitte Aktenzeichen eingeben:'
     hint: 'Bitte passen Sie nur die relevanten Punkte (Änderungen am Forschungsprojekt bzw. Erfüllung der Auflagen der Ethikkommission) an. Seien Sie bitte zurückhaltend mit darüber hinausgehenden, redaktionellen Änderungen an den Texten - Sie erleichtern damit den Vergleich der Antragsversionen und beschleunigen die Begutachtung.'
+  applicationProcess:
+    title: 'Art des Antragsverfahrens' # TODO (AB): Formulierung
+    types:
+      short: 'Kurzantrag'
+      full: 'Vollantrag'
+  shortDocs: # TODO (AB): Formulierung
+    title: 'Bei einem Kurzantrag zur Einreichung bei der {committeeAcc} erfolgt keine Begutachtung der Teilnahmedokumente. Möchten Sie dennoch die Teilnahmedokumente mit Hilfe des Ethiktools erstellen?'
+    remove: 'Durch die Änderung, die Sie gerade vorgenommen haben, sind die meisten Eingaben, welche ausschließlich in die Teilnahmedokumente übertragen werden, nicht mehr erforderlich. Die dort getätigten Eingaben werden gelöscht, sobald Sie diese Seite verlassen.' # TODO (AB): Formulierung an Löschhinweisen für Projektdetails-Seiten orientiert
   qualification:
     title: 'Wird das Forschungsprojekt ausschließlich im Rahmen der eigenen Qualifikationsarbeit durchgeführt (Bachelor-/Masterarbeit/Promotion)?'
     headingHint: 'Bitte antworten Sie nur dann mit „Ja“, wenn das Forschungsprojekt ohne Ihre Qualifikationsarbeit nicht durchgeführt werden würde. Wenn Sie für Ihre Qualifikationsarbeit Daten eines ohnehin durchgeführten Forschungsprojekts nutzen, ist die Frage mit „Nein“ zu beantworten und eine der Funktionen im Forschungsprojekt für die eigene Person auszuwählen.'
@@ -435,7 +443,6 @@ coreData:
     headingHint: 'Ein Interessenkonflikt besteht, wenn der Forschungsprozess von eigenen Interessen oder den Interessen Dritter beeinflusst werden könnte bzw. wenn die Unabhängigkeit des wissenschaftlichen Urteils gefährdet sein könnte. Typische Beispiele für mögliche Interessenkonflikte sind die Evaluation eines selbst entwickelten Produkts, der bezahlte Auftrag zur Evaluation eines fremden Produkts oder Forschung zu gesellschaftlich brisanten Themen unter Einfluss von Lobby-Aktivitäten oder von ausgeprägten eigenen Einstellungen. Interessenkonflikte können durch vielfältige Faktoren entstehen, z.B. durch familiäre, freundschaftliche, finanzielle oder soziale Verflechtungen und durch wirtschaftliche oder persönliche Verbindungen zu Auftraggeber/innen oder Kooperationspartner/innen. Sollte ein Interessenkonflikt vorliegen, ist dieser und der Umgang damit zu erläutern. Bitte beachten Sie, dass mögliche Interessenkonflikte auch den Teilnehmenden offengelegt werden müssen.'
     yes: 'Stellen Sie den Interessenkonflikt dar und erläutern Sie den Umgang damit. Legen Sie bspw. dar, an welchen Stellen Einfluss auf das Forschungsprojekt genommen werden kann (z.B. Wahl der Erhebungsmethoden, Festlegung der Datenanalyse, Entscheidung über Veröffentlichung) und wie Sie für ergebnisoffene Entscheidungen sorgen.'
     no: 'Begründen Sie, inwiefern sich Interessenkonflikte ausschließen lassen. Im Fall von Drittmittelfinanzierung legen Sie bspw. dar, inwiefern der/die Auftraggeber/in bzw. Mittelgeber/in durch das Ausschreibungsformat, die Förderbedingungen bzw. vertragliche Vereinbarungen keinen Einfluss auf das Forschungsprojekt nehmen kann (z.B. Wahl der Erhebungsmethoden, Festlegung der Datenanalyse, Entscheidung über Veröffentlichung).'
-    participants: 'Bitte legen Sie mögliche Interessenkonflikte auch den Teilnehmenden offen.'
   support:
     title: 'Folgende Beratungs- und Unterstützungsangebote wurden für das Forschungsprojekt in Anspruch genommen:'
     headingHint: 'Die Wahrnehmung von Beratungs- und Unterstützungsangeboten ist nicht verpflichtend. Wenn Sie jedoch solche Angebote wahrgenommen haben, sind Ihre Angaben dazu für die Ethikkommission hilfreich; sie können die interne Koordination bei etwaigen Rückfragen erleichtern.'
@@ -527,7 +534,7 @@ contributors:
     contact: 'Kontaktperson für Teilnehmende (in Teilnahmedokumenten)'
     data: 'Verantwortlichkeit für die Verarbeitung der Daten'
     other: 'sonstige Funktion'
-    otherDescription: 'bitte beschreiben'
+    otherDescription: 'bitte spezifizieren'
   tasksShort:
     leader: 'Projektleitung'
     research: 'wiss. Mitarbeit'
@@ -587,13 +594,10 @@ projectdetails:
         institutional: 'institutionalisierte Personen (z.B. Strafgefangene, stationäre Psychiatriepatient/innen)'
         wards: 'nicht einwilligungsfähige Personen (z.B. Kinder und Jugendliche, Personen mit schwerer Demenz)'
         vulnerable: 'Personen in besonders vulnerablen (Lebens-)Situationen (z.B. Personen aus einer Konflikt-/Kriegszone, Geflüchtete)'
-        dependent: 'Personen in einem Abhängigkeitsverhältnis zu den Projektbeteiligten (z.B. Studierende in eigener Lehrveranstaltung, eigene Angestellte)'
+        dependent: 'Personen in einem Abhängigkeitsverhältnis zu den Projektbeteiligten (z.B. Studierende in eigener Lehrveranstaltung, eigene Angestellte, Familie/Freundeskreis)'
         otherPeople: 'andere Personengruppen'
         healthyIcon: 'Wählen Sie diese Option, wenn Sie nicht gezielt Personen mit bestimmten Einschränkungen oder Besonderheiten rekrutieren.'
-        description:
-          missing: 'Bitte wählen Sie mindestens eine Personengruppe aus.'
-          description: 'Genaue Beschreibung der Personengruppe(n). Sie können hier ggf. auch beschreiben, anhand welcher Angaben/Instrumente die Zugehörigkeit zur Zielgruppe (Ein-/Ausschlusskriterien) überprüft bzw. sichergestellt wird.'
-          descriptionOptional: '(optional) Genaue Beschreibung der Personengruppe(n). Sie können hier ggf. auch beschreiben, anhand welcher Angaben/Instrumente die Zugehörigkeit zur Zielgruppe (Ein-/Ausschlusskriterien) überprüft bzw. sichergestellt wird.'
+        description: 'Genaue Beschreibung der Personengruppe(n). Sie können hier ggf. auch beschreiben, anhand welcher Angaben/Instrumente die Zugehörigkeit zur Zielgruppe (Ein-/Ausschlusskriterien) überprüft bzw. sichergestellt wird.'
       closed:
         title: 'Findet die Erhebung in einer geschlossenen Gruppe statt?'
         headingHint: 'Hiermit sind Erhebungen in fest umgrenzten Gruppen oder Kontexten gemeint, z.B. Schulklassen oder Studierendengruppen.'
@@ -601,16 +605,21 @@ projectdetails:
           closedLecture: 'im Rahmen einer Lehrveranstaltung'
           school: 'im Klassenverband (an einer Schule)'
           closedOther: 'sonstige Gruppe (z.B. Sport-Trainingsgruppe)'
-          placeholder: 'bitte beschreiben'
+          placeholder: 'bitte spezifizieren'
       criteria:
         title: 'Ein- und Ausschlusskriterien'
         include:
           hint: 'Geben Sie bitte pro Zeile genau ein Kriterium an. Das Alter wird automatisch als erste Zeile ergänzt. Diese Zeile kann nicht verändert werden. </br>Denken Sie bei den Einschlusskriterien auch an die Voraussetzungen der eingesetzten Methoden, z.B. Sprachkenntnisse oder sensorische/motorische Fähigkeiten. </br>Erläutern Sie ggf., wie die Kriterien überprüft werden.'
-          start: >- # other is participant
-            {addressee, select,
-              children {Ihr Kind kann}
-              wards    {Die von Ihnen betreute Person kann}
-              other    {Sie können}} an der Studie teilnehmen, wenn ...
+          start: >- # other in addressee select is participant
+            {information, select,
+              post  {Wir haben {addressee, select,
+                                 children {Ihr Kind}
+                                 wards    {die von Ihnen betreute Person}
+                                 other    {Sie}} ausgewählt, weil}
+              other {{addressee, select,
+                       children {Ihr Kind kann}
+                       wards    {Die von Ihnen betreute Person kann}
+                       other    {Sie können}} an der Studie teilnehmen, wenn}} ...
           noCriteria: 'Keine weiteren Einschlusskriterien'
           addressee: >- # other is participants
             {addressee, select,
@@ -646,7 +655,10 @@ projectdetails:
                                                                              other {# Jahre}}}} alt sind}}
         exclude:
           hint: 'Geben Sie bitte pro Zeile genau ein Kriterium an. Vermeiden Sie eine Doppelung der Einschlusskriterien.</br>Bei Verfahren, die aus Sicherheitsgründen den Ausschluss bestimmter Personengruppen erfordern (wie bspw. fMRT, körperliche Belastungstests), beachten Sie bitte die aktuell gültigen Empfehlungen und Verfahrensweisen der einschlägigen Fachgesellschaften. </br>Erläutern Sie ggf., wie die Kriterien überprüft werden.'
-          start: 'Eine Teilnahme an der Studie ist nicht möglich, wenn ...'
+          start: >-
+            {information, select,
+              post  {und weil nicht zutrifft, dass ...}
+              other {Eine Teilnahme an der Studie ist nicht möglich, wenn ...}}
           noCriteria: 'keine Ausschlusskriterien'
       sampleSize:
         title: 'Stichprobengröße'
@@ -664,20 +676,21 @@ projectdetails:
           flyer: 'Aushänge und Flyer'
           lecture: 'Aufrufe in eigenen Lehrveranstaltungen'
           lectureOther: 'Aufrufe in Lehrveranstaltungen nicht-projektbeteiligter Personen'
+          recruitmentPrivate: 'Aufrufe/Ansprache im privaten Umfeld der Projektbeteiligten'
           media: 'Social Media'
           news: 'Zeitungsannoncen'
           database: 'Datenbank(en)'
           external: 'externe Rekrutierungsplattform(en)'
           multiplier: 'Weiterleitung über Multiplikatoren (z.B. Schulen, Sportvereine)'
           recruitmentOther: 'sonstige Rekrutierungswege'
-          otherDescription: 'bitte beschreiben'
+          otherDescription: 'bitte spezifizieren'
         recruitmentFurther:
           missing: 'Bitte wählen Sie mindestens eine Art der Rekrutierung aus.'
           description: 'Bitte beschreiben Sie die Rekrutierungsart(en) genauer, z.B. welche Rekrutierungsplattform genutzt wird, wo Social-Media-Aufrufe vorgesehen sind.'
       hints:
         examined: 'Wählen Sie bitte alle Personengruppen aus, die an diesem Zeitpunkt der Studie untersucht werden und für die Sie keine separate Gruppe im Menü angelegt haben. Die Kategorien sind danach auszuwählen, welche Eigenschaften maßgeblich für den Untersuchungsgegenstand sind. Wenn Sie bspw. gezielt Personen mit körperlichen Erkrankungen untersuchen wollen, ist die entsprechende Kategorie auszuwählen; wenn Sie hingegen in einer großen, online rekrutierten Stichprobe davon ausgehen, dass darunter zufällig auch Personen mit körperlichen Erkrankungen sein werden, muss die Kategorie nicht ausgewählt werden.' # heading hint
         informationII: '<i>Bitte machen Sie ergänzende Angaben auf den Seiten „<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Aufklärung</a>“, „<a href="informationII" data-action="base#setDummySubmit" data-base-url-param="app_informationII" data-base-route-i-ds-param="{routeIDs}">AufklärungII</a>“ und „<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent" data-base-route-i-ds-param="{routeIDs}">Einwilligung</a>“.</i>'
-        age: 'Bei Minderjährigen ist ein <a href="{path}" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Hauptantrag</a> erforderlich!'
+        age: 'Bei Minderjährigen ist ein <a href="{path}" data-action="base#setDummySubmit" data-base-url-param="app_coreData">Vollantrag</a> erforderlich!'
     information:
       type:
         title: >-
@@ -729,7 +742,88 @@ projectdetails:
       explain:
         title: 'Wir bitten Sie um Verständnis für diese erst nachträglich umfassende Aufklärung. Dies war nötig, weil ...'
         textHint: 'Begründen Sie die Notwendigkeit der Täuschung bzw. unvollständigen Aufklärung in verständlicher Form. Typische Begründungen sind z.B. „um das Verhalten während der Studie so alltagsnah wie möglich erfassen zu können“ oder „um die Wirkung der Methode getrennt von der Wirkungserwartung untersuchen zu können“. Weisen Sie - falls zutreffend - darauf hin, dass es sich dabei um ein übliches Vorgehen in solchen Studien handelt.'
+    consent:
+      addressee:
+        children: 'Erziehungsberechtigte:'
+        wards: 'gesetzliche Vertretungspersonen:'
+        participants: 'Teilnehmende:'
+      voluntary:
+        title: 'Erfolgt die Teilnahme freiwillig?'
+        headingHint: 'Die Freiwilligkeit der Teilnahme kann u.a. gefährdet sein durch Zeitdruck zwischen Information und Einwilligung, Versprechen besonderer Vorteile durch die Studienteilnahme, Verschweigen der Freiwilligkeit im Rahmen der Aufklärung, Abhängigkeitsverhältnisse zwischen Teilnehmenden und Projektbeteiligten sowie Erwartungsdruck in geschlossenen Gruppen, insbesondere bei nicht-vertraulicher Einwilligung und Datenerhebung.'
+        types:
+          yes: 'Ja'
+          no: 'Nein'
+          notApplicable: 'nicht zutreffend: Die {addressee} werden nicht vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen'
+        textHintYes: 'Bitte erläutern Sie, wie die freiwillige Studienteilnahme gewährleistet wird. Im Fall der Erhebung in einer geschlossenen Gruppe erläutern Sie bspw., wie sichergestellt wird, dass einzelne Anwesende unauffällig auf die Teilnahme verzichten können. Im Fall der Rekrutierung von Personen, die in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen, erläutern Sie, welche gesonderten Maßnahmen Sie zur Wahrung der Freiwilligkeit treffen.'
+        textHint: 'Bitte beschreiben und begründen Sie, inwiefern die Freiwilligkeit nicht garantiert ist.'
+      consent:
+        title: >- # other is pre (first select) respectively post (third select). Participants is children or wards in second select.
+          Wie erfolgt die {type, select,
+                            post  {nachträgliche}
+                            other {}} Einwilligung {addressee, select,
+                                                      Participants {bzw. Zustimmung}
+                                                      other        {}} in die {type, select,
+                                                                                pre   {Studienteilnahme und die}
+                                                                                other {}} Datenverarbeitung?
+        types: # Participants is children or wards
+          written: 'schriftlich'
+          digital: 'elektronisch'
+          oral: 'mündlich mit schriftlicher Dokumentation seitens einer projektbeteiligten Person'
+          noConsent: >-
+            es erfolgt keine {curAddressee, select,
+                                Participants {Zustimmung}
+                                other        {Einwilligung}}
+          notApplicable: 'nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen'
+          other: >-
+            sonstige Art der {curAddressee, select,
+                                Participants {Zustimmung}
+                                other        {Einwilligung}}
+          otherDescription: 'bitte spezifizieren'
+        textHint: >-
+          Bitte begründen Sie, warum keine Einwilligung {addressee, select,
+                                                          children {bzw. Zustimmung}
+                                                          wards    {bzw. Zustimmung}
+                                                          other    {}} erfolgt.
+      terminateCons:
+        title: 'Kann die Teilnahme seitens der {addressee} jederzeit und ohne Nachteile beendet werden?'
+        headingHint: 'Der (anteilige) Verzicht auf Aufwandsentschädigung im Fall eines Abbruchs wird an anderer Stelle abgefragt und ist hier nicht als Nachteil zu benennen.'
+        textHint: 'Bitte beschreiben und begründen Sie, warum die Teilnahme nicht ohne Nachteile beendet werden kann und welche Nachteile den Teilnehmenden dadurch entstehen.'
+        participation: >-
+          Bitte beschreiben Sie auch den {addressee, select,
+                                            children {Erziehungsberechtigten}
+                                            wards    {gesetzlichen Vertretungspersonen}
+                                            other    {Teilnehmenden}}, warum die Teilnahme nicht bzw. nicht ohne Nachteile beendet werden kann.
+      terminateParticipants:
+        title: 'Wie wird mit den Daten verfahren, wenn die Studienteilnahme einer Person vorzeitig abgebrochen wird?'
+        types:
+          remove: >-
+            {information, select,
+              post  {Bei individuellem Abbruch der Studienteilnahme werden alle erhobenen Daten umgehend gelöscht und fließen nicht in die Auswertung ein.}
+              other {Bei individuellem Abbruch der Studienteilnahme werden alle erhobenen Daten umgehend gelöscht und fließen nicht in die Auswertung ein.}}
+          removePartial: >-
+            {information, select,
+              post  {Bei individuellem Abbruch der Studienteilnahme werden die bis dahin erhobenen Daten für die Auswertung genutzt.}
+              other {Bei individuellem Abbruch der Studienteilnahme werden die bis dahin erhobenen Daten für die Auswertung genutzt.}}
+          documentation: >-
+            {information, select,
+              post  {Bei individuellem Abbruch der Studienteilnahme werden die bis dahin erhobenen Daten zu Dokumentationszwecken gespeichert, fließen jedoch nicht in die Auswertung ein.}
+              other {Bei individuellem Abbruch der Studienteilnahme werden die bis dahin erhobenen Daten zu Dokumentationszwecken gespeichert, fließen jedoch nicht in die Auswertung ein.}}
+          choose: >-
+            {information, select,
+              post  {Bei individuellem Abbruch der Studienteilnahme kann die teilnehmende (bzw. deren vertretungsberechtigte) Person entscheiden, ob die bis dahin erhobenen Daten gelöscht werden oder in die Auswertung einfließen.}
+              other {Bei individuellem Abbruch der Studienteilnahme kann die teilnehmende (bzw. deren vertretungsberechtigte) Person entscheiden, ob die bis dahin erhobenen Daten gelöscht werden oder in die Auswertung einfließen.}}
+          terminateParticipantsOther: 'Sonstiges'
+        textHint: 'Bitte beschreiben Sie das Vorgehen, beispielsweise wenn Sie über einen „Abbruchbutton“ die bis dahin erhobenen Daten verwenden wollen und bei Schließen des Browserfensters alle Daten automatisch löschen.'
+      terminateCriteria:
+        title: 'Unter welchen Umständen wird die Datenerhebung durch die Projektbeteiligten vorzeitig abgebrochen?'
+        textHint: 'Im Regelfall bezieht sich dies auf den Abbruch der Datenerhebung bei einer Einzelperson. Falls es auch Kriterien für den Abbruch der gesamten Studie gibt, benennen Sie dies ebenfalls hier. Wenn kein Abbruch seitens der Projektbeteiligten während der Erhebung möglich ist, erläutern Sie dies bitte. Das Recht auf Abbruch durch die Teilnehmenden selbst und ggf. deren Vertretungspersonen bleibt davon unberührt.'
     measures:
+      procedure:
+        title: 'Ablauf'
+        headingHint: >-
+          Beschreiben Sie hier kurz den Erhebungsablauf und die Aufgabe(n), die von den Teilnehmenden absolviert werden soll(en). {multiple, select,
+              true  {Wenn zwischen den Erhebungszeitpunkten Maßnahmen (z.B. Trainings) stattfinden, bei denen keine Daten erhoben werden, beschreiben Sie auch deren Inhalt und Dauer. Benennen Sie außerdem die Dauern der nachfolgenden Erhebungszeitpunkte.}
+              other {}}
       measuresInterventions: # other is interventions in title, hints, pdf
         title: >-
           {type, select,
@@ -753,10 +847,11 @@ projectdetails:
             measuresSurvey: 'Befragungen (z.B. Interviews, Fragebögen)'
             measuresInstrumental: 'apparative Messungen (z.B. Reaktionszeiten, Eyetracking, Motion Tracking, EEG, EKG, Pulssensor, Atmung, (f)MRT, Körpermaße)'
             otherMeasures: 'sonstige Erhebungsmethode(n)'
-          headingHint: 'Geben Sie bitte alle Erhebungsmethoden an, mittels derer zum Zweck der Studie Daten von den Teilnehmenden erfasst werden. Denken Sie dabei auch an Erhebungsmethoden zur Überprüfung der Ein- und Ausschlusskriterien.'
+          description: 'bitte spezifizieren'
+          headingHint: 'Geben Sie bitte alle Erhebungsmethoden an, mittels derer zum Zweck der Studie Daten von den Teilnehmenden erfasst werden. Denken Sie dabei auch an Erhebungsmethoden zur Überprüfung der Ein- und Ausschlusskriterien.' 
           textHints:
             noSelection: 'Bitte wählen Sie mindestens eine Erhebungsmethode aus.'
-            description: 'Bitte benennen Sie die jeweilige Erhebungsmethode und erläutern Sie diese kurz.'
+            description: 'Bitte beschreiben Sie die jeweilige(n) Erhebungsmethode(n) genauer.'
             survey: ' Im Falle eines Fragebogens beschreiben Sie bitte kurz dessen Inhalt und benennen Sie eine Beispiel-Frage sowie die Gesamtanzahl der Fragen.'
         interventions:
           types:
@@ -773,18 +868,17 @@ projectdetails:
             medical: 'Verabreichung von Substanzen (z.B. Medikamente, Nahrungsmittel, Vitaminpräparate)'
             invasive: 'invasive Eingriffe'
             other: 'sonstige Maßnahme(n)'
+          description: 'bitte spezifizieren'
           headingHint: 'Geben Sie bitte alle Maßnahmen an, mittels derer zum Zweck der Studie gezielt etwas an die Teilnehmenden herangetragen wird. Der Begriff „Maßnahmen“ ist bewusst sehr weit gefasst und reicht vom Stellen einer Frage bis zu langfristigen Interventionen. Viele Maßnahmen sind mit der Notwendigkeit verbunden, Ein- und Ausschlusskriterien (z.B. zur Gewährleistung der Sicherheit der Teilnehmenden) zu überprüfen. Solche Kriterien sind unter „<a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">Ein- und Ausschlusskriterien</a>“ zu nennen. Falls Ein- und Ausschlusskriterien erfasst bzw. über den Selbstbericht im Rahmen der Einwilligung hinaus dokumentiert werden, beschreiben Sie bitte deren Messung unter Erhebungsmethoden.'
           textHints:
             description: 'Bitte beschreiben Sie die ausgewählten Maßnahmen genauer.'
-            defaultStart: 'Details zu den Fragebögen finden sich unter „Erhebungsmethoden“' # no full stop because sentence may continue
-            defaultEnd: ', keine Maßnahme im engeren Sinn.'
         pdf: >- # other is interventions
           Ich möchte ergänzende Materialien zu den {type, select,
                                                       measures {Erhebungsmethoden}
                                                       other    {Maßnahmen}} beifügen.
       otherSources:
         title: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
-        headingHint: 'Damit sind individuelle Daten gemeint, die an anderen Stellen bereits vorliegen und für diese Studie genutzt bzw. in die Studiendaten übertragen werden sollen, z.B. um die eigenen Forschungsdaten zu ergänzen (wie z.B. Gesundheitsdaten, Einschätzungen aus Psychotherapie/medizinischer Behandlung/Training) oder als Kontaktierungsgrundlage (wie z.B. Daten von Einwohnermeldeämtern). Ein Vergleich aggregierter Daten mit den hier erhobenen Daten ist nicht als Einbezug von Daten anderer Stellen zu werten.'
+        headingHint: 'Damit sind Daten einzelner Personen gemeint, die an anderen Stellen bereits vorliegen und mit den Daten dieser Studie zusammengeführt werden sollen, um die eigenen Forschungsdaten zu ergänzen (wie z.B. Gesundheitsdaten, Einschätzungen aus Psychotherapie/medizinischer Behandlung/Training). Ein Vergleich aggregierter Daten mit den hier erhobenen Daten (z.B. summarische Ergebnisse einer anderen Studie) ist nicht als Einbezug von Daten anderer Stellen zu werten.'
         textHint: 'Bitte beschreiben Sie, welche Daten von welchen Stellen hinzugezogen werden. Bitte beschreiben Sie auch, auf welcher Grundlage (z.B. gemeinsame Verantwortlichkeit, Schweigepflichtsentbindung) die Datenweitergabe abgesichert ist.'
         hint: 'In der Datenschutzerklärung („Anlage zur Datenverarbeitung“) beschreiben Sie bitte, anhand welcher Merkmale (z.B. Name oder Code) die Daten mit weiteren Daten zusammengeführt werden und welche personenbezogenen Daten der anderen Stellen Teil der Forschungsdaten oder der Daten für sonstige Zwecke jenseits der Forschungsfrage sind. Ggf. müssen zusätzliche Dokumente (z.B. Schweigepflichtsentbindung) hinzugefügt werden.'
         pdf:
@@ -911,81 +1005,6 @@ projectdetails:
         title: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
         headingHint: 'Eine Rückmeldung individueller Testergebnisse sollte - insbesondere bei persönlich bedeutsamen Testinhalten - sorgsam überdacht werden. Bitte berücksichtigen Sie, dass eine Rückmeldung ggf. negative oder beunruhigende Ergebnisse umfassen kann. Eine Rückmeldung sollte nur erfolgen, wenn die Projektbeteiligten über Erfahrung in der Rahmung der individuellen Ergebnisse verfügen. Bitte beachten Sie auch, dass für die Rückmeldung individueller Testergebnisse voraussichtlich personenbezogene Daten benötigt werden, die mit den erhobenen Forschungsdaten verknüpft sind. Alternativ kann ein allgemeiner Ergebnisbericht zur Verfügung gestellt werden (auch hierfür werden voraussichtlich personenbezogene Daten benötigt, diese müssen jedoch nicht mit den individuellen Forschungsdaten verknüpft werden).'
         textHint: 'Bitte beschreiben Sie genau, welche individuellen Ergebnisse den Teilnehmenden zurückgemeldet werden und ggf. wie diese gerahmt werden.'
-    consent:
-      addressee:
-        children: 'Erziehungsberechtigte:'
-        wards: 'gesetzliche Vertretungspersonen:'
-        participants: 'Teilnehmende:'
-      voluntary:
-        title: 'Erfolgt die Teilnahme freiwillig?'
-        headingHint: 'Die Freiwilligkeit der Teilnahme kann u.a. gefährdet sein durch Zeitdruck zwischen Information und Einwilligung, Versprechen besonderer Vorteile durch die Studienteilnahme, Verschweigen der Freiwilligkeit im Rahmen der Aufklärung, Abhängigkeitsverhältnisse zwischen Teilnehmenden und Projektbeteiligten sowie Erwartungsdruck in geschlossenen Gruppen, insbesondere bei nicht-vertraulicher Einwilligung und Datenerhebung.'
-        types:
-          yes: 'Ja'
-          no: 'Nein'
-          notApplicable: 'nicht zutreffend: Die {addressee} werden nicht vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen'
-        textHintYes: 'Bitte erläutern Sie, wie die freiwillige Studienteilnahme gewährleistet wird. Im Fall der Erhebung in einer geschlossenen Gruppe erläutern Sie bspw., wie sichergestellt wird, dass einzelne Anwesende unauffällig auf die Teilnahme verzichten können. Im Fall der Rekrutierung von Personen, die in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen, erläutern Sie, welche gesonderten Maßnahmen Sie zur Wahrung der Freiwilligkeit treffen.'
-        textHint: 'Bitte beschreiben und begründen Sie, wann und warum die Freiwilligkeit nicht garantiert ist.'
-      consent:
-        title: >- # other is pre (first select) respectively post (third select). Participants is children or wards in second select.
-          Wie erfolgt die {type, select,
-                            post  {nachträgliche}
-                            other {}} Einwilligung {addressee, select,
-                                                      Participants {bzw. Zustimmung}
-                                                      other        {}} in die {type, select,
-                                                                                pre   {Studienteilnahme und die}
-                                                                                other {}} Datenverarbeitung?
-        types: # Participants is children or wards
-          written: 'schriftlich'
-          digital: 'elektronisch'
-          oral: 'mündlich mit schriftlicher Dokumentation seitens einer projektbeteiligten Person'
-          noConsent: >-
-            es erfolgt keine {curAddressee, select,
-                                Participants {Zustimmung}
-                                other        {Einwilligung}}
-          notApplicable: 'nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen'
-          other: >-
-            sonstige Art der {curAddressee, select,
-                                Participants {Zustimmung}
-                                other        {Einwilligung}}
-          otherDescription: 'bitte beschreiben'
-        textHint: >-
-          Bitte begründen Sie, warum keine Einwilligung {addressee, select,
-                                                          children {bzw. Zustimmung}
-                                                          wards    {bzw. Zustimmung}
-                                                          other    {}} erfolgt.
-      terminateCons:
-        title: 'Kann die Teilnahme seitens der {addressee} jederzeit und ohne Nachteile beendet werden?'
-        headingHint: 'Der (anteilige) Verzicht auf Aufwandsentschädigung im Fall eines Abbruchs wird an anderer Stelle abgefragt und ist hier nicht als Nachteil zu benennen.'
-        textHint: 'Bitte beschreiben und begründen Sie, warum die Teilnahme nicht ohne Nachteile beendet werden kann und welche Nachteile den Teilnehmenden dadurch entstehen.'
-        participation: >-
-          Bitte beschreiben Sie auch den {addressee, select,
-                                            children {Erziehungsberechtigten}
-                                            wards    {gesetzlichen Vertretungspersonen}
-                                            other    {Teilnehmenden}}, warum die Teilnahme nicht bzw. nicht ohne Nachteile beendet werden kann.
-      terminateParticipants:
-        title: 'Wie wird mit den Daten verfahren, wenn die Studienteilnahme einer Person vorzeitig abgebrochen wird?'
-        types:
-          remove: >-
-            {information, select,
-              post  {Bei individuellem Abbruch der Studienteilnahme werden alle erhobenen Daten umgehend gelöscht und fließen nicht in die Auswertung ein.}
-              other {Bei individuellem Abbruch der Studienteilnahme werden alle erhobenen Daten umgehend gelöscht und fließen nicht in die Auswertung ein.}}
-          removePartial: >-
-            {information, select,
-              post  {Bei individuellem Abbruch der Studienteilnahme werden die bis dahin erhobenen Daten für die Auswertung genutzt.}
-              other {Bei individuellem Abbruch der Studienteilnahme werden die bis dahin erhobenen Daten für die Auswertung genutzt.}}
-          documentation: >-
-            {information, select,
-              post  {Bei individuellem Abbruch der Studienteilnahme werden die bis dahin erhobenen Daten zu Dokumentationszwecken gespeichert, fließen jedoch nicht in die Auswertung ein.}
-              other {Bei individuellem Abbruch der Studienteilnahme werden die bis dahin erhobenen Daten zu Dokumentationszwecken gespeichert, fließen jedoch nicht in die Auswertung ein.}}
-          choose: >-
-            {information, select,
-              post  {Bei individuellem Abbruch der Studienteilnahme kann die teilnehmende (bzw. deren vertretungsberechtigte) Person entscheiden, ob die bis dahin erhobenen Daten gelöscht werden oder in die Auswertung einfließen.}
-              other {Bei individuellem Abbruch der Studienteilnahme kann die teilnehmende (bzw. deren vertretungsberechtigte) Person entscheiden, ob die bis dahin erhobenen Daten gelöscht werden oder in die Auswertung einfließen.}}
-          terminateParticipantsOther: 'Sonstiges'
-        textHint: 'Bitte beschreiben Sie das Vorgehen, beispielsweise wenn Sie über einen „Abbruchbutton“ die bis dahin erhobenen Daten verwenden wollen und bei Schließen des Browserfensters alle Daten automatisch löschen.'
-      terminateCriteria:
-        title: 'Unter welchen Umständen wird die Datenerhebung durch die Projektbeteiligten vorzeitig abgebrochen?'
-        textHint: 'Im Regelfall bezieht sich dies auf den Abbruch der Datenerhebung bei einer Einzelperson. Falls es auch Kriterien für den Abbruch der gesamten Studie gibt, benennen Sie dies ebenfalls hier. Wenn kein Abbruch seitens der Projektbeteiligten während der Erhebung möglich ist, erläutern Sie dies bitte. Das Recht auf Abbruch durch die Teilnehmenden selbst und ggf. deren Vertretungspersonen bleibt davon unberührt.'
     compensation:
       title: >-
         {information, select,
@@ -1047,7 +1066,7 @@ projectdetails:
               wards    {Der Name Ihrer betreuten Person}
               other    {Ihr Name}}.
           laterEndOther: 'Sonstiges'
-          placeholder: 'bitte beschreiben'
+          placeholder: 'bitte spezifizieren'
         money:
           title: 'Die finanzielle Aufwandsentschädigung '
           immediately: 'wird sofort vor Ort ausgezahlt.'
@@ -1074,7 +1093,7 @@ projectdetails:
               phone: 'telefonisch'
               local: 'vor Ort'
               resultOther: 'Sonstiges'
-              placeholder: 'bitte beschreiben'
+              placeholder: 'bitte spezifizieren'
             end: ' bekannt gegeben.'
           title: 'Der eventuelle Gewinn '
           later: 'kann im Anschluss abgeholt werden'
@@ -1126,12 +1145,6 @@ projectdetails:
       goals:
         title: 'Hintergrund und Zielsetzung der Studie:'
         headingHint: 'Beschreiben Sie hier kurz den allgemeinen Hintergrund des Forschungsprojekts und die Ziele der konkreten Studie.'
-      procedure:
-        title: 'Ablauf:'
-        headingHint: >-
-          Beschreiben Sie hier kurz den Erhebungsablauf und die Aufgabe(n), die von den Teilnehmenden absolviert werden soll(en). {multiple, select,
-              true  {Wenn zwischen den Erhebungszeitpunkten Maßnahmen (z.B. Trainings) stattfinden, bei denen keine Daten erhoben werden, beschreiben Sie auch deren Inhalt und Dauer. Benennen Sie außerdem die Dauern der nachfolgenden Erhebungszeitpunkte.}
-              other {}}
       pro:
         title: 'Vorteile:'
         template: # other is participant in all cases
@@ -1164,7 +1177,9 @@ projectdetails:
           risks: >-
             Mit der Teilnahme {information, select,
                                 post  {waren}
-                                other {sind}} keine vorhersehbaren Nachteile oder Risiken verbunden.
+                                other {sind}} {isFinding, select,
+                                                true  {- mit Ausnahme möglicher Zufallsbefunde -}
+                                                other {}} keine vorhersehbaren Nachteile oder Risiken verbunden.
           noTemplate: 'Aufgrund der Auswahl von <a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">Belastungen oder Risiken</a> kann keine Vorlage erstellt werden.'
       findingText:
         title: 'Aufklärung über (Zufalls-)Befunde:'
@@ -1175,6 +1190,9 @@ projectdetails:
                   children {Ihrem Kind}
                   wards {der von Ihnen betreuten Person}
                   other {Ihnen}} daraus unter Umständen Nachteile entstehen, z.B. der Abschluss einer privaten Krankenversicherung oder einer Lebensversicherung erschwert werden. Bitte beachten Sie: Auch wenn von uns kein ungewöhnliches Untersuchungsergebnis wahrgenommen wird, ist dies keine Bestätigung eines bestimmten Gesundheitsbildes/-zustands; die Untersuchung dient allein Forschungszwecken und stellt bzw. ersetzt keine ärztliche Diagnose.
+      conflictText: # TODO (TW): das Feld sollte im Tool direkt nach "Hintergrund und Zielsetzung" kommen - und in der Studieninfo sollte die Überschrift "Mögliche Interessenkonflikte der Projektbeteiligten" schon sichtbar sein, auch wenn das Feld noch leer ist, damit man vorher weiß, wo sich der Text einfügt.
+        title: 'Aufklärung über Interessenkonflikte'
+        headingHint: 'Bitte legen Sie den Teilnehmenden die etwaigen Interessenkonflikte offen.'
     legal:
       hint: 'Forschende sollten im Einzelfall prüfen und abwägen, ob einer oder mehrere der folgenden Aspekte hilfreich erscheinen. Die Textentwürfe können als Basisinformation für häufig auftretende Fälle genutzt werden; eine Prüfung und Abstimmung im Einzelfall kann dadurch nicht ersetzt werden. Die Verwendung der Vorlagen erfolgt daher auf eigene Verantwortung, sie ersetzt insbesondere keine Rechtsberatung. Die Ethikkommission übernimmt keine Verantwortung für die korrekte Anwendung auf den Einzelfall und übernimmt nicht die juristische Prüfung der Formulierungen.'
       liability:
@@ -1219,7 +1237,7 @@ projectdetails:
           types:
             verified: 'Die Datenschutzerklärung ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.'
             unverified: 'Die Datenschutzerklärung ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.'
-      intro:
+      intro: 
         text:
           start: 'Das Ethiktool unterstützt Sie darin, die Datenverarbeitung in der Studie abzubilden.'
           end: |
@@ -1246,7 +1264,7 @@ projectdetails:
         separateHint: 'Üblicherweise wird eine Liste mit IP-Adressen angelegt, mittels derer z.B. geprüft wird, ob bereits teilgenommen wurde; die IPs sind aber nicht den erhobenen Daten zuordenbar.' # icon
       personal:
         maybe:
-          start: 'Aufgrund folgender Angabe(n) besteht die Vermutung, dass Sie als Teil Ihrer Forschungsdaten oder zur Organisation der Studie personenbezogene Daten verarbeiten bzw. dass Personen für gewisse Zeit noch identifizierbar sind:'
+          start: 'Aufgrund folgender Angabe(n) besteht die Vermutung, dass Sie als Teil Ihrer Forschungsdaten oder zur Organisation der Studie personenbezogene Daten verarbeiten bzw. dass Personen für gewisse Zeit noch identifizierbar sind:' 
           end: 'Bitte prüfen Sie, ob Sie im Zusammenhang mit den aufgeführten Punkten personenbezogene Daten verarbeiten, und geben Sie diese ggf. im Folgenden an. Wenn Sie unsicher sind, lassen Sie sich bitte dazu beraten.'
         sure:
           start: 'Aufgrund folgender Angabe(n) ist klar, dass die Forschungsdaten selbst personenbezogen sind oder dass zu weiteren (organisatorischen) Zwecken personenbezogene Daten verarbeitet werden:'
@@ -1410,7 +1428,7 @@ projectdetails:
       list:
         title: 'Welche personenbezogenen Daten enthält die Schlüsselliste?'
         types:
-          name: 'Name'
+          name: 'Name'  
           eMail: 'E-Mail-Adresse'
           studentNumber: 'Matrikelnummer'
           token: 'Nutzungskürzel des Rechenzentrums'
@@ -1471,7 +1489,7 @@ projectdetails:
           preprocess: 'sie unwiderruflich vorverarbeitet bzw. aufbereitet werden'
           anonymizationOther: 'Sonstiges (bitte selbst formulieren)'
           anonymizationNo: 'Die Forschungsdaten werden nicht anonymisiert'
-          placeholder: 'bitte beschreiben' # for anonymization other
+          placeholder: 'bitte spezifizieren' # for anonymization other
         hints: # icons
           convert: 'z.B. Transkription von Tonaufnahmen'
           delete: 'z.B. Löschung von IP-Adressen aus dem Forschungsdatensatz, Änderung von Personen- und Ortsnamen in einem Interview-Transkript'
@@ -1565,7 +1583,7 @@ projectdetails:
         title: 'Welche personenbezogenen Daten werden für <u>{purpose}</u> verarbeitet?'
         headingHint: 'Bitte wählen Sie alle personenbezogenen Daten, die für die gewählten Arten der Aufwandsentschädigung benötigt werden. Bedenken Sie sowohl die Abwicklung als auch die Dokumentation der Aufwandsentschädigung.' # only for compensation
         types:
-          name: 'Name'
+          name: 'Name' 
           eMail: 'E-Mail-Adresse'
           phone: 'Telefonnummer'
           address: 'Anschrift'
@@ -1596,7 +1614,7 @@ projectdetails:
             middleCodeChange: 'durch Änderung der Codes in den Forschungsdaten'
             middleCodeRemove: 'durch Löschung der Codes aus den Forschungsdaten'
             middleName: 'durch Löschung der Namen aus den Forschungsdaten'
-        immediatelyEnd: ' aufgehoben.'
+        immediatelyEnd: ' aufgehoben.' 
         laterEnd: >-
           Die Forschungsdaten werden bis zu diesem Zeitpunkt {isName, select,
                                         true  {mit Namen versehen}
@@ -1614,16 +1632,16 @@ projectdetails:
           keep: 'Bitte begründen Sie kurz, warum dies notwendig ist:'
       access:
         title: 'Wer hat Zugriff auf die personenbezogenen Daten für <u>{purpose}</u>?'
-        headingHint: "Bitte berücksichtigen Sie alle Personen/Institutionen/Dienste mit Zugriff zu personenbezogenen Daten zu irgendeinem Zeitpunkt im Forschungsprojekt. Dies umfasst beispielsweise die Erfassung und Verarbeitung von Daten durch Umfrageinstitute für das Forschungsprojekt (z.B. IP-Adressen, Kontaktdaten) sowie die Weitergabe selbst erfasster Daten an Projektbeteiligte oder Dienstleistende (z.B. zur Transkription oder Auswertung von Daten). Ebenso fällt darunter die Erfassung oder Aufbereitung von Daten mit Hilfe externer Tools wie socisurvey, mpath, Transkriptionssoftware oder die Nutzung von File-Transfer-Diensten für die Übermittlung von personenbezogenen Daten, da die Daten dafür zumindest für kurze Zeit auf Servern der Tool-Anbieter gespeichert werden.</br> Beachten Sie, dass es hier um Zugriff auf personenbezogene - nicht auf anonyme bzw. anonymisierte - Daten geht. Wenn Forschungsdaten beispielsweise nur über eine Schlüsselliste personenbeziehbar sind, sind hier nur diejenigen mit Zugang zur Schlüsselliste anzugeben. Für andere Projektbeteiligte liegen keine personenbezogenen Daten vor, sofern sie nicht durch andere Aspekte einzelne Personen aus den Daten identifizieren können.</br> Bitte beachten Sie auch, dass Zugriff auf personenbezogene Daten nur Dritten innerhalb des EWR gewährt werden darf. Wenn außerhalb des EWR auf Daten zugegriffen werden kann, ist die entsprechende Frage mit ja zu beantworten.)"
+        headingHint: "Bitte berücksichtigen Sie alle Personen/Institutionen/Dienste mit Zugriff zu personenbezogenen Daten zu irgendeinem Zeitpunkt im Forschungsprojekt. Dies umfasst beispielsweise die Erfassung und Verarbeitung von Daten durch Umfrageinstitute für das Forschungsprojekt (z.B. IP-Adressen, Kontaktdaten) sowie die Weitergabe selbst erfasster Daten an Projektbeteiligte oder Dienstleistende (z.B. zur Transkription oder Auswertung von Daten). Ebenso fällt darunter die Erfassung oder Aufbereitung von Daten mit Hilfe externer Tools wie socisurvey, mpath, Transkriptionssoftware oder die Nutzung von File-Transfer-Diensten für die Übermittlung von personenbezogenen Daten, da die Daten dafür zumindest für kurze Zeit auf Servern der Tool-Anbieter gespeichert werden.</br> Beachten Sie, dass es hier um Zugriff auf personenbezogene - nicht auf anonyme bzw. anonymisierte - Daten geht. Wenn Forschungsdaten beispielsweise nur über eine Schlüsselliste personenbeziehbar sind, sind hier nur diejenigen mit Zugang zur Schlüsselliste anzugeben. Für andere Projektbeteiligte liegen keine personenbezogenen Daten vor, sofern sie nicht durch andere Aspekte einzelne Personen aus den Daten identifizieren können.</br> Bitte beachten Sie auch, dass Zugriff auf personenbezogene Daten nur Dritten innerhalb des EWR gewährt werden darf. Wenn außerhalb des EWR auf Daten zugegriffen werden kann, ist die entsprechende Frage mit ja zu beantworten.)" 
         types:
           contributors: 'Alle Projektbeteiligten {committeeLocationGen}'
           contributorsPart: 'Einzelne Projektbeteiligte {committeeLocationGen}'
           institution: 'Nicht-Projektbeteiligte {committeeLocationGen}'
           contributorsOther: 'Projektbeteiligte von Partnerinstitutionen'
           accessExternal: 'externe Dienstleistende'
-          dataService: 'externe Software/Datendienste'
+          dataService: 'externe Software/Datendienste' 
         hints: # icons
-          placeholder: 'bitte beschreiben'
+          placeholder: 'bitte spezifizieren'
           contributors: 'Wenn nicht alle Projektbeteiligten {committeeLocationGen} Zugriff haben, wählen Sie bitte „Einzelne Projektbeteiligte“ aus und spezifizieren die Personen.'
           contributorsPart: 'Bitte geben Sie die Projektbeteiligten {committeeLocationGen} an, die zu irgendeinem Zeitpunkt Zugriff auf die personenbezogenen Daten haben.'
           institution: 'z.B. Finanzabteilung. Bitte geben Sie möglichst Funktionen/Rollen und keine konkreten Namen an, damit die Datenschutzerklärung auch bei Personalwechseln korrekt bleibt.'
@@ -1714,7 +1732,7 @@ projectdetails:
         textHint: '(optional)'
       noDocumentHint: 'Gemäß Ihrer obigen Angaben werden in der Studie keine personenbezogenen Daten verarbeitet. Daher ist die Erstellung einer Datenschutzerklärung hier nicht erforderlich.'
     dataReuse:
-      intro:
+      intro: 
         text: 'Bitte beachten Sie, dass die Fragen zur Nachnutzung erst dann sinnvoll zu stellen und zu beantworten sind, wenn die Seite „<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">Datenschutz</a>“ vollständig ausgefüllt ist. Die Informationen zur Nachnutzung müssen ggf. neu ausgefüllt werden, wenn noch erhebliche Änderungen an den Angaben zum Datenschutz vorgenommen werden.'
         confirm: 'Die obigen Informationen habe ich zur Kenntnis genommen.'
       dataReuse:
@@ -1820,8 +1838,10 @@ checkDoc:
     title: '<a href="appData/{page}">{title}</a>'
     coreData:
       projectTitleParticipation: 'Projekttitel für Teilnahmedokumente'
-      newType: 'Art des neuen Antrags'
-      description: 'Aktenzeichen'
+      reference: 'Aktenzeichen'
+      applicationProcess: # TODO (AB): Formulierung ('Antwort auf Frage nach [] fehlt.')
+        missing: 'Art des Antragsverfahrens'
+        shortDocs: 'Erstellung der Teilnahmedokumente'
       qualification: 'Antwort auf Frage nach Qualifikationsarbeit'
       name: >-
         {type, select,
@@ -1853,7 +1873,6 @@ checkDoc:
         description:
           yes: 'Beschreibung des Interessenkonflikts'
           no: 'Begründung, warum sich ein Interessenkonflikt ausschließen lässt,'
-        participants: 'Interessenkonflikte in der Studieninformation (für die Teilnehmenden)'
       support: 'Beratungs- und Unterstützungsangebote'
       guidelines: 'gewünschten Begutachtungsrichtlinien'
     votes:
@@ -1876,7 +1895,7 @@ checkDoc:
           description: 'Erläuterung, warum {committeeNom} trotz der nicht-medizinischen Zusammensetzung zuständig ist,'
   contributors:
     title: '<a href="contributors">Projektbeteiligte</a>'
-    lineTitle: 'Projektbeteiligte/r {index} ({name})'
+    lineTitle: 'Projektbeteiligte/r {index} ({name})' 
     infos:
       name: 'Name ist nicht vollständig.'
       validEmail: 'E-Mail-Adresse ist ungültig.'
@@ -1897,7 +1916,7 @@ checkDoc:
       groups:
         minAge: 'Mindestalter'
         maxAge: 'maximales Alter'
-        minAgeAppType: 'Bei Minderjährigen ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Hauptantrag</a> erforderlich.'
+        minAgeAppType: 'Bei Minderjährigen ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Vollantrag</a> erforderlich.'
         maxGreaterMin: 'Das maximale Alter darf nicht kleiner als das Mindestalter sein.'
         minAgeWards: 'Wenn das Mindestalter kleiner als 16 ist, muss das maximale Alter kleiner als 18 sein. Legen Sie bei Bedarf eine zweite Gruppe für die Erwachsenen an.'
         examinedPeople: 'Teilnehmende Personengruppen'
@@ -1905,7 +1924,7 @@ checkDoc:
         physicalMental: >-
           Wenn Personen mit {group, select,
                               physical {körperlichen}
-                              other    {psychischen oder kognitiven}} Erkrankungen oder Einschränkungen untersucht werden, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Hauptantrag</a> erforderlich.
+                              other    {psychischen oder kognitiven}} Erkrankungen oder Einschränkungen untersucht werden, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Vollantrag</a> erforderlich.
         closed:
           title: 'Erhebung in einer geschlossenen Gruppe'
           types: 'Arten von geschlossenen Gruppen'
@@ -1917,9 +1936,14 @@ checkDoc:
         planning: 'Fallzahlplanung'
         recruitment:
           missing: 'Arten der Rekrutierung'
-          other: 'sonstigen Rekrutierung'
-          further: 'Weitere Angaben zur Rekrutierung fehlen.'
-          dependent: 'Wenn die Teilnehmenden über Aufrufe in eigenen Lehrveranstaltungen rekrutiert werden, muss die Personengruppe „Personen in einem Abhängigkeitsverhältnis zu den Projektbeteiligten“ ausgewählt werden.'
+          description:
+            database: 'Datenbank(en)'
+            external: 'externen Rekrutierungsplattform(en)'
+            recruitmentOther: 'sonstigen Rekrutierungswege'
+          dependent: >- # other is recruitmentPrivate
+            Wenn die Teilnehmenden über Aufrufe{type, select,
+                                                  lecture { in eigenen Lehrveranstaltungen}
+                                                  other   {/Ansprache im privaten Umfeld der Projektbeteiligten}} rekrutiert werden, muss die Personengruppe „Personen in einem Abhängigkeitsverhältnis zu den Projektbeteiligten“ ausgewählt werden.
       information:
         missingPre: 'Aufklärung über Studienteilnahme'
         typePre: 'Art der Vorab-Aufklärung'
@@ -1927,7 +1951,7 @@ checkDoc:
         deceit: 'Antwort auf Frage nach nachträglicher vollständiger Aufklärung'
         deceitType: 'Art der nachträglichen vollständigen Aufklärung'
         deceitDescription: 'Begründung und Angabe, wann welche Informationen mitgeteilt werden,'
-        deceitMain: 'Wenn die {addressee} getäuscht werden, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Hauptantrag</a> erforderlich.'
+        deceitMain: 'Wenn die {addressee} getäuscht werden, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Vollantrag</a> erforderlich.'
         descriptionPre: 'Begründung für fehlende Vorab-Aufklärung'
         missingPost: 'nachträglicher Aufklärung'
         descriptionPost: 'Begründung für fehlende nachträgliche Aufklärung'
@@ -1944,46 +1968,6 @@ checkDoc:
         infoBefore: 'Vorab-Aufklärung'
         infoAfter: 'Nachträgliche Aufklärung'
         explain: 'Begründung'
-      measures:
-        measures: 'Erhebungsmethoden'
-        interventions: 'Maßnahmen'
-        otherSources: 'Daten von anderen Stellen' # für answer and description
-        loan:
-          title: 'Leihgeräten'
-          receipt: 'Empfangsbestätigung für die Leihgeräte'
-          description: 'Text für die Empfangsbestätigung für die Leihgeräte'
-          information: 'Wenn es keine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, muss die Frage nach Leihgeräten mit „Nein“ beantwortet werden.'
-        location:
-          title: 'Ort der Datenerhebung'
-          locationDescription: 'Beschreibung des Ortes der Datenerhebung'
-        presence: 'Anwesenheit von Projektbeteiligten'
-        duration:
-          measureTime: 'Reine Erhebungszeit'
-          breaks: 'Vor-/Nachbereitungszeit'
-      burdensRisks: # other is burdens/risks for contributors
-        title: >-
-          {burdensRisksType, select,
-            burdens {Belastungen}
-            risks   {Risiken}
-            other   {Belastungen/Risiken für Projektbeteiligte/Dritte}}
-        compensation: >-
-          {isNoCompensation, select,
-            true  {Begründung für fehlende}
-            other {}} Vorsichtsmaßnahmen für {burdensRisksType, select,
-                                                burdens {Belastungen}
-                                                risks   {Risiken}
-                                                other   {Belastungen/Risiken für Projektbeteiligte/Dritte}}
-        noBurdens: 'Begründung, warum keine das alltagsübliche Maß überschreitenden Belastungen erwartet werden,'
-        risksPhysical: 'Wenn die körperliche Unversehrtheit gefährdet ist, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Hauptantrag</a> erforderlich.'
-        finding:
-          title: '(Zufalls-)Befunden'
-          description: '(Zufalls-)Befunde'
-          informing: 'Umgang mit den (Zufalls-)Befunden'
-          information: 'Wenn (Zufalls-)Befunde aufgedeckt werden könnten, muss es eine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> geben.'
-        feedback:
-          title: 'Rückmeldung individueller Testergebnisse'
-          description: 'individuellen Testergebnisse'
-          feedbackInterventions: 'Wenn den Teilnehmenden die individuellen Testergebnisse rückgemeldet werden, muss dies als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventionsType" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> ebenfalls ausgewählt werden.'
       consent:
         informationToNotApplicable: >-
           Wenn es {addressee, select,
@@ -2055,8 +2039,6 @@ checkDoc:
                                                     children {bzw. Zustimmung}
                                                     wards    {bzw. Zustimmung}
                                                     other    {}}
-          presence: 'Wenn keine Projektbeteiligten bei der Erhebung <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">anwesend</a> sind, kann die Einwilligung der Teilnehmenden nicht mündlich erfolgen.'
-          finding: 'Wenn <a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#finding" data-base-route-i-ds-param="{routeIDs}">(Zufalls-)Befunde</a> auftreten können, muss eine Einwilligung erfolgen.'
         terminateCons:
           title: 'Beendigung ohne Nachteile'
           description: 'Nachteile bei vorzeitigem Abbruch'
@@ -2068,17 +2050,75 @@ checkDoc:
         terminateParticipants:
           title: 'Datenverarbeitung bei vorzeitigem Abbruch' # 'Antwort auf Frage nach [] fehlt.'
           description: 'Beschreibung der Datenverarbeitung bei vorzeitigem Abbruch' # '[] fehlt.'
-          information: >-
-              Wenn es keine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, müssen die erhobenen Daten bei vorzeitigem Abbruch entweder gelöscht werden oder die {addressee, select,
-                  children {Erziehungsberechtigten}
-                  wards    {gesetzlichen Vertretungspersonen}
-                  other    {Teilnehmenden}} müssen über die Nutzung entscheiden können.
-          noInformation: >-
-            Sie haben ausgewählt, dass es <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt. Das passt nicht dazu, dass die {addressee, select,
-                  children {Erziehungsberechtigten}
-                  wards    {gesetzlichen Vertretungspersonen}
-                  other    {Teilnehmenden}} bei vorzeitigem Abbruch über die Nutzung der Daten entscheiden können.
+          information: >- # TODO (TW) hier war vorher noch ein Zweig "noInformation": dass weder vorab noch nachträglich aufgeklärt wird, passt nicht dazu, dass man bei vorzeitigem Abbruch über die Nutzung der Daten entscheiden kann. Warum ist das gelöscht?
+            Wenn es keine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, müssen die erhobenen Daten bei vorzeitigem Abbruch entweder gelöscht werden oder die {addressee, select,
+                children {Erziehungsberechtigten}
+                wards    {gesetzlichen Vertretungspersonen}
+                other    {Teilnehmenden}} müssen über die Nutzung entscheiden können.
         terminateCriteria: 'Abbruchkriterien'
+      measures:
+        procedure: 'Ablauf'
+        measures:
+          missing: 'Erhebungsmethoden'
+          otherTypes: # TODO (TW): Formulierung ("Beschreibung der [] fehlt.") - AB: eigentlich müsste es hier "Benennung der [] fehlt" heißen - ebenso an allen anderen Stellen, an denen man "spezifizieren" und nicht "beschreiben" soll
+            measuresVideo: 'Ton- und/oder Bildaufnahmen'
+            measuresSurvey: 'Befragungen'
+            measuresInstrumental: 'apparativen Messungen'
+            otherMeasures: 'sonstigen Erhebungsmethode(n)'
+        interventions:
+          missing: 'Maßnahmen'
+          otherTypes: # TODO (TW): Formulierung ("Beschreibung der [] fehlt.") - AB: eigentlich müsste es hier "Benennung der [] fehlt" heißen - ebenso an allen anderen Stellen, an denen man "spezifizieren" und nicht "beschreiben" soll
+            feedback: 'Rückmeldung an Teilnehmende'
+            everyday: 'gezielten Herbeiführung von Alltagssituationen'
+            stimulus: 'Stimuli'
+            tasks: 'Aufgabenanforderung'
+            stimulation: 'elektrischen/magnetischen Stimulation'
+            psychological: 'psychologischen Intervention'
+            physical: 'körperlichen Belastung'
+            therapy: 'körperlichen Behandlungsmaßnahmen'
+            medical: 'verabreichten Substanzen'
+            invasive: 'invasiven Eingriffe'
+            other: 'sonstigen Maßnahme(n)'
+        otherSources: 'Daten von anderen Stellen' # für answer and description
+        loan:
+          title: 'Leihgeräten'
+          receipt: 'Empfangsbestätigung für die Leihgeräte'
+          description: 'Text für die Empfangsbestätigung für die Leihgeräte'
+          information: 'Wenn es keine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, muss die Frage nach Leihgeräten mit „Nein“ beantwortet werden.'
+        location:
+          title: 'Ort der Datenerhebung'
+          locationDescription: 'Beschreibung des Ortes der Datenerhebung'
+        presence:
+          missing: 'Anwesenheit von Projektbeteiligten'
+          consent: 'Wenn die <a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">Einwilligung mündlich</a> erfolgt, müssen Projektbeteiligte bei der Erhebung anwesend sein.'
+        duration:
+          measureTime: 'Reine Erhebungszeit'
+          breaks: 'Vor-/Nachbereitungszeit'
+      burdensRisks: # other is burdens/risks for contributors
+        title: >-
+          {burdensRisksType, select,
+            burdens {Belastungen}
+            risks   {Risiken}
+            other   {Belastungen/Risiken für Projektbeteiligte/Dritte}}
+        compensation: >-
+          {isNoCompensation, select,
+            true  {Begründung für fehlende}
+            other {}} Vorsichtsmaßnahmen für {burdensRisksType, select,
+                                                burdens {Belastungen}
+                                                risks   {Risiken}
+                                                other   {Belastungen/Risiken für Projektbeteiligte/Dritte}}
+        noBurdens: 'Begründung, warum keine das alltagsübliche Maß überschreitenden Belastungen erwartet werden,'
+        risksPhysical: 'Wenn die körperliche Unversehrtheit gefährdet ist, ist ein <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#newTypeDiv">Vollantrag</a> erforderlich.'
+        finding:
+          title: '(Zufalls-)Befunden'
+          description: '(Zufalls-)Befunde'
+          informing: 'Umgang mit den (Zufalls-)Befunden'
+          information: 'Wenn (Zufalls-)Befunde aufgedeckt werden könnten, muss es eine <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> geben.'
+          consent: 'Wenn (Zufalls-)Befunde aufgedeckt werden könnten, muss eine <a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">Einwilligung</a> erfolgen.'
+        feedback:
+          title: 'Rückmeldung individueller Testergebnisse'
+          description: 'individuellen Testergebnisse'
+          feedbackInterventions: 'Wenn den Teilnehmenden die individuellen Testergebnisse rückgemeldet werden, muss dies als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventionsType" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> ebenfalls ausgewählt werden.'
       compensation:
         missing: 'Angaben zur Art der Aufwandsentschädigung'
         information: >-
@@ -2140,10 +2180,10 @@ checkDoc:
       texts:
         intro: 'Einleitung fehlt.'
         goals: 'Hintergrund und Zielsetzung der Studie'
-        procedure: 'Ablauf'
         pro: 'Vorteile'
         con: 'Beschreibung der Nachteile fehlt.'
         findingText: 'Aufklärung über (Zufalls-)Befunde fehlt.'
+        conflictText: 'Aufklärung über Interessenkonflikte fehlt.'
       legal:
         missing: >- # other is insurance
           {type, select,
@@ -2286,6 +2326,9 @@ checkDoc:
           video: 'Wenn als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, muss bei der Frage nach Personenbezug der Forschungsdaten ausgewählt werden, dass die Forschungsdaten selbst personenbezogen sind.'
           measuresToVideo: 'Wenn als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, müssen Tonaufnahmen, Fotos und/oder Videoaufnahmen in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
           videoToMeasures: 'Wenn personenbezogene Daten in Form von Tonaufnahmen, Fotos und/oder Videoaufnahmen zur Beantwortung der Forschungsfrage verarbeitet werden, muss als <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ ausgewählt werden.'
+          otherSources:
+            create: 'Sie haben ausgewählt, dass <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individuell zuordenbare Daten von anderen Stellen</a> hinzugezogen werden. Das passt nicht dazu, dass nach Einschätzung der zuständigen Datenschutzstelle nur anonyme Daten verarbeitet werden.'
+            marking: 'Wenn <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individuell zuordenbare Daten von anderen Stellen</a> hinzugezogen werden, muss eine Kennzeichnung der Forschungsdaten mittels eines außerhalb des Projekts vergebenen Codes, mittels Name oder über eine Schlüsselliste erfolgen.'
           compensation:
             noCompensation: 'Sie haben ausgewählt, dass keine <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> vergeben wird. Das passt nicht dazu, dass personenbezogene Daten zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
             name: 'Wenn zur Vergabe der <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> der Name benötigt wird, muss der Name zum Zweck der Vergabe der Aufwandsentschädigung verarbeitet werden.'
