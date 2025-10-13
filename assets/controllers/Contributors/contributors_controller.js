@@ -11,6 +11,7 @@ export default class extends Controller {
         title: Array,
         isStudentApplicant: Boolean, // true if position of applicant is student
         positions: Object,
+        committeeStudent: Array, // committees where student is allowed position
         hasSupervisor: Boolean, // true if second contributor exists and has task 'supervision'
         isQualification: Boolean, // true if qualification question was answered with yes
         noChoice: String,
@@ -36,7 +37,7 @@ export default class extends Controller {
             let isAdd = id==='add';
             let noChoice = {'': this.noChoiceValue};
             let allowedPositions = Object.assign({},noChoice,this.positionsValue);
-            let isStudent = ['EUB','JGU'].includes(this.committeeTypeValue);
+            let isStudent = this.committeeStudentValue.includes(this.committeeTypeValue);
             if (isApplicant && (this.hasSupervisorValue || this.isQualificationValue) && this.committeeTypeValue==='EUB') { // applicant and has supervisor or qualification was answered with yes -> only PhD and eventually student
                 allowedPositions = noChoice;
                 allowedPositions[this.phdChoiceValue] = this.positionsValue[this.phdChoiceValue];

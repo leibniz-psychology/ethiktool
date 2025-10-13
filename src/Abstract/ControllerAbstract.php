@@ -937,7 +937,7 @@ abstract class ControllerAbstract extends AbstractController
      * @return bool true is a supervisor is needed, false otherwise
      */
     protected function checkSupervisor(string $committeeType, ?string $position, array $coreDataArray): bool {
-        return $committeeType===self::committeeEUB ? in_array($position ?? '',[self::positionsStudent,self::positionsPhd]) && $this->getQualification($coreDataArray) : $position===self::positionsStudent;
+        return $committeeType===self::committeeEUB ? in_array($position ?? '',[self::positionsStudent,self::positionsPhd]) && $this->getQualification($coreDataArray) : $position===self::positionsStudent && in_array($committeeType,self::committeeSupervisor);
     }
 
     /** Checks if the qualification question was answered with yes.

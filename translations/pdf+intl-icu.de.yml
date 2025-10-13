@@ -34,22 +34,16 @@ noBox: '[entfällt]'
 or: ' oder '
 
 paragraphHeadings:
-  appType: 'Antragsdaten und Projektbeteiligte'
-  examinedPeople: 'Personengruppen'
-  information: 'Aufklärung'
-  voluntary: 'Einwilligung und Abbruch'
-  measures: 'Datenerhebung'
-  measuresSub: 'Informationen zu Ablauf, Ort und Dauer der Datenerhebung finden sich {informationHint}.'
-  burdens: 'Belastungen/Risiken und Aufwandsentschädigung'
-  processing: 'Datenschutz und Nachnutzung der Daten'
+  methods: 'Methodisches Vorgehen'
+  burdens: 'Belastungen und Risiken'
+  criteria: 'Bedingungen der Teilnahme'
+  processing: 'Datenverarbeitung'
 
 boxHeadings: # key: heading of the box. keySub: sub heading inside the box if additional inputs may be necessary
   coreData:
-    appType: 'Antragstyp'
-    appTypeSub: 'Das Votum soll sich auf eine Begutachtung nach folgenden Richtlinien beziehen:'
     projectTitle: 'Titel des Forschungsprojekts'
     projectTitleSub: 'Titel für die Teilnahmedokumente:'
-    projectDates: 'Geplante Projektlaufzeit'
+    support: 'Für das Forschungsprojekt in Anspruch genommene Beratungs- und Unterstützungsangebote'
     funding: 'Quelle(n) der Finanzierung'
     conflict: 'Besteht bei den Projektbeteiligten ein Interessenkonflikt aufgrund von persönlichen Interessen oder aufgrund von Interessen Dritter?'
     conflictSub: >-
@@ -57,16 +51,29 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
         0     {Darstellung des Interessenkonflikts und Erläuterung des Umgangs damit:}
         1     {Begründung, wodurch sich Interessenkonflikte ausschließen lassen:}
         other {}}
-    support: 'Für das Forschungsprojekt in Anspruch genommene Beratungs- und Unterstützungsangebote'
+    participantDescription: 'Die Interessenkonflikte werden in der Studieninformation wie folgt beschrieben:'
+    projectDates: 'Geplante Projektlaufzeit'
   contributors: 'Weitere Projektbeteiligte'
   contributorsTasks: 'Funktion der Projektbeteiligten im Projekt'
+  summary: 'Zusammenfassung des Forschungsprojekts'
   votes:
     otherVote: 'Wurde dieses Forschungsprojekt schon einmal von einer anderen Ethikkommission begutachtet?'
+    otherVoteSub: >-
+      {result, select,
+        positive {Warum ist eine neue Begutachtung erforderlich?}
+        negative {Wie lautete die Begründung der anderen Ethikkommission?}
+        noVote   {Warum ist eine neue Begutachtung erforderlich?}
+        other    {}}
     instVote: 'Wurde ein ähnliches eigenes Forschungsprojekt schon einmal von {committeeDat} begutachtet?'
+    instVoteSub: >-
+      {type, select,
+         resubmission {Im Vergleich zum ursprünglichen Antrag gibt es folgende Änderungen:}
+         other        {Die zentralen Gemeinsamkeiten sowie Unterschiede zum damaligen Antrag sind wie folgt:}}
   medicine:
     medicine: 'Wird medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt, die ggf. nach Arzneimittelgesetz (AMG) oder Medizinproduktegesetz (MPDG) oder anderen gesetzlichen Vorgaben bewertet werden muss?'
+    medicineSub: 'Beschreibung:'
     physician: 'Sind Ärztinnen oder Ärzte unter den Projektbeteiligten?'
-  summary: 'Zusammenfassung des Forschungsprojekts'
+    physicianSub: 'Warum ist aus Ihrer Sicht trotz der nicht-medizinischen Zusammensetzung {committeeNom} zuständig?'
   projectdetails:
     hint: >-
       Die Eingaben zu diesem Feld {noBox, select,
@@ -85,52 +92,22 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     overview: 'Übersicht über die Studien, Gruppen und Zeitpunkte'
     examinedPeople: 'Welche Personen sollen untersucht werden?'
     examinedPeopleSub: 'Beschreibung der Personengruppen:'
-    closed: 'Findet die Erhebung in einer geschlossenen Gruppe statt?'
     sampleSize: 'Wie viele Personen sollen in die jeweiligen Zeitpunkte eingeschlossen werden?'
     sampleSizeSub: 'Weitere Angaben zur Stichprobengröße:'
     sampleSizePlan: 'Auf welcher Basis wurde die Fallzahlplanung durchgeführt?'
     recruitment: 'Wie werden die Teilnehmenden rekrutiert?'
     recruitmentSub: 'Weitere Angaben zur Rekrutierung:'
-    information: 'Wird vorab darüber aufgeklärt, dass eine Studienteilnahme erfolgt?'
-    preContent: 'Wie umfassend ist die Vorab-Aufklärung hinsichtlich der Ziele, Inhalte und Methoden der Studie?'
-    preComplete: 'Wird die vollständige Aufklärung später nachgeholt (d.h. werden die Vorab-Informationen ergänzt bzw. richtiggestellt)?'
-    preCompleteSub: 'Form der nachträglichen vollständigen Aufklärung:'
-    post: 'Wird nachträglich darüber aufgeklärt, dass an einer Studie teilgenommen wurde?'
-    attendance: >-
-      Sind die {children, select,
-                  true  {Erziehungsberechtigten}
-                  other {}} {wards, select,
-                              true  {{children, select,
-                                        true  {bzw.}
-                                        other {}} gesetzlichen Vertretungspersonen}
-                              other {{children, select,
-                                        true  {}
-                                        other {Erziehungsberechtigten bzw. gesetzlichen Vertretungspersonen}}}} bei der Erhebung anwesend?
-    voluntary: 'Erfolgt die Teilnahme freiwillig?'
-    voluntarySub: 'Begründung(en):'
-    consent: >-
-      Wie erfolgt die Einwilligung {isAssent, select,
-                                      true  {bzw. Zustimmung}
-                                      other {}} in die {isPre, select,
-                                                          true  {Studienteilnahme und}
-                                                          other {}} Datenverarbeitung?
-    consentSub: >-
-      Begründung für fehlende {anyConsentNo, select,
-                                true  {Einwilligung}
-                                other {}} {anyAssentNo, select,
-                                            true  {{anyConsentNo, select,
-                                                      true  {bzw.}
-                                                      other {}} Zustimmung}
-                                            other {}}:
-    terminateCons: 'Kann die Teilnahme jederzeit und ohne Nachteile beendet werden?'
-    terminateConsSub: 'Begründung und ggf. Beschreibung der Nachteile im Falle eines vorzeitigen Abbruchs:'
-    terminateCriteria: 'Unter welchen Umständen wird die Datenerhebung durch die Projektbeteiligten vorzeitig abgebrochen?'
     measures: 'Mittels welcher Erhebungsmethode(n) werden Daten von den Teilnehmenden erfasst?'
     measuresSub: 'Beschreibung der Erhebungsmethoden:'
     interventions: 'Welchen gezielten Maßnahmen werden die Teilnehmenden im Rahmen der Studiendurchführung ausgesetzt?'
     interventionsSub: 'Beschreibung der Maßnahmen:'
     otherSources: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
-    presence: 'Sind Projektbeteiligte bei der Erhebung anwesend?'
+    feedback: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
+    feedbackSub: 'Beschreibung von Art und Rahmung der Rückmeldungen:'
+    loan: 'Werden Geräte (z.B. Handy, Tablet, Sensor-Kit) an die Teilnehmenden ausgegeben?'
+    procedure: 'Der Ablauf wird in der Studieninformation wie folgt beschrieben:'
+    duration: 'Dauer'
+    location: 'Ort'
     burdens: 'Welchen Belastungen werden die Teilnehmenden ausgesetzt, die über das im Alltag zu erwartende Maß hinausgehen?'
     burdensSub: >-
       {burdens, select,
@@ -146,7 +123,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     risksCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     burdensRisksContributors: 'Werden die Projektbeteiligten oder unbeteiligte Dritte Belastungen bzw. Risiken ausgesetzt, die über das im Alltag zu erwartende Maß hinausgehen?'
     burdensRisksContributorsSub: 'Beschreibung der Belastungen bzw. Risiken' 
-    burdensRisksContributorsCompensation: 'Sind bezogen auf die in dem vorherigen Feld genannten Belastungen bzw. Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
+    burdensRisksContributorsCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Belastungen bzw. Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     burdensRisksDescription: >- # if both questions are not answered yet, both will be named
       Die {burdens, select,
             true  {Belastungen /}
@@ -155,15 +132,65 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                         other {}} Nachteile werden in der Studieninformation wie folgt beschrieben:
     finding: 'Kann es passieren, dass die verwendeten Erhebungsmethoden bei einzelnen Teilnehmenden klinisch relevante (Zufalls-)Befunde aufdecken?'
     findingSub: 'Wie wird mit aufgetretenen (Zufalls-)Befunden umgegangen?'
-    feedback: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
-    feedbackSub: 'Beschreibung von Art und Rahmung der Rückmeldungen:'
-    compensationVoluntary: 'Aufwandsentschädigung'
+    criteria: 'Welche Ein- und Ausschlusskriterien gelten für die Studienteilnahme?'
+    criteriaSub: 'Eine Teilnahme an der Studie ist nicht möglich, wenn ...'
+    attendance: >-
+      Sind die {children, select,
+                  true  {Erziehungsberechtigten}
+                  other {}} {wards, select,
+                              true  {{children, select,
+                                        true  {bzw.}
+                                        other {}} gesetzlichen Vertretungspersonen}
+                              other {{children, select,
+                                        true  {}
+                                        other {Erziehungsberechtigten bzw. gesetzlichen Vertretungspersonen}}}} bei der Erhebung anwesend?
+    information: 'Wird vorab darüber aufgeklärt, dass eine Studienteilnahme erfolgt?'
+    informationSub: 'Werden die Teilnahmedokumente in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?'
+    preContent: 'Wie umfassend ist die Vorab-Aufklärung hinsichtlich der Ziele, Inhalte und Methoden der Studie?'
+    preComplete: 'Wird die vollständige Aufklärung später nachgeholt (d.h. werden die Vorab-Informationen ergänzt bzw. richtiggestellt)?'
+    preCompleteSub: 'Form der nachträglichen vollständigen Aufklärung:'
+    post: 'Wird nachträglich darüber aufgeklärt, dass an einer Studie teilgenommen wurde?'
+    postSub: 'Werden die Teilnahmedokumente in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?'
+    voluntary: 'Erfolgt die Teilnahme freiwillig?'
+    voluntarySub: 'Begründung, inwiefern die Freiwilligkeit nicht garantiert ist:'
+    voluntaryYes: 'Wie wird die freiwillige Studienteilnahme trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis) gewährleistet?'
+    closed: 'Findet die Erhebung in einer geschlossenen Gruppe statt?'
+    consent: >-
+      Wie erfolgt die Einwilligung {isAssent, select,
+                                      true  {bzw. Zustimmung}
+                                      other {}} in die {isPre, select,
+                                                          true  {Studienteilnahme und}
+                                                          other {}} Datenverarbeitung?
+    consentSub: >-
+      Begründung für fehlende {anyConsentNo, select,
+                                true  {Einwilligung}
+                                other {}} {anyAssentNo, select,
+                                            true  {{anyConsentNo, select,
+                                                      true  {bzw.}
+                                                      other {}} Zustimmung}
+                                            other {}}:
+    compensation: 'Welche Aufwandsentschädigung erhalten die Teilnehmenden?'
+    compensationSub: 'Aufwandsentschädigung bei vorzeitigem Abbruch:'
+    compensationVoluntary: 'Ist die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet?'
     compensationVoluntarySub: >-
       {isCompensationVoluntary, select,
         true  {Begründung der Gefährdung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung; sonstige}
         other {Sonstige}} Erläuterungen zur Aufwandsentschädigung:
+    terminateCons: 'Kann die Teilnahme jederzeit und ohne Nachteile beendet werden?'
+    terminateConsSub: 'Begründung und ggf. Beschreibung der Nachteile im Falle eines vorzeitigen Abbruchs:'
+    presence: 'Sind Projektbeteiligte bei der Erhebung anwesend?'
+    terminateCriteria: 'Unter welchen Umständen wird die Datenerhebung durch die Projektbeteiligten vorzeitig abgebrochen?'
     processing: 'Beschreibung der Datenverarbeitung'
-    dataReuse: 'Werden die Forschungsdaten nachgenutzt?'
+    create: 'Erstellung der Datenschutzerklärung'
+    responsibility: 'Wer trägt die Verantwortung für die Verarbeitung der personenbezogenen Daten gemäß DS-GVO?'
+    transferOutside: 'Werden personenbezogene Daten an Dritte außerhalb des EWR weitergegeben („Drittlandtransfer“)?'
+    dataOnline: 'Werden im Rahmen der Online-Erhebung IP-Adressen erfasst?'
+    dataOnlineSub: 'Wie erfolgt die Verarbeitung der IP-Adressen?'
+    marking: 'Wie werden die Forschungsdaten gekennzeichnet?'
+    markingSub: 'Begründung, warum die Kennzeichnung mit Klarnamen erfolgt:'
+    dataReuse: 'Werden die Forschungsdaten anderen zur Nachnutzung zur Verfügung gestellt?'
+    dataReuseSelf: 'Werden die Forschungsdaten zur eigenen Nachnutzung verwendet?'
+    dataReuseHow: 'Wie bzw. wem werden die Forschungsdaten zur Verfügung gestellt?'
 
 boxSubHeadings:
   projectdetails:
@@ -194,77 +221,58 @@ addresseePrefix: >-
               other    {}}}}
 
 # application
-informationHint: >- # used for placeholder 'informationHint'
-  {anyDocs, select,
-    true  {in der Studieninformation}
-    other {}}{anyNoDocs, select,
-               true  {{anyDocs, select,
-                         true  { bzw.}
-                         other {}} auf der Seite „Teilnahmedokumente“}
-               other {}}
 coreData:
   appType:
-    new: 'Neuer Antrag'
-    extended: 'Erweiterungsantrag'
-    resubmission: 'Wiedervorlage'
-  qualification: ' (Das Forschungsprojekt wird ausschließlich im Rahmen der eigenen Qualifikationsarbeit (Bachelor-/Masterarbeit/Promotion) durchgeführt.)'
+    title: 'Antragstyp:'
+    types:
+      new: >- # other is TUC and test committee
+        Neuer Antrag {committeeType, select,
+                        EUB {}
+                        JGU {}
+                        DLR {}
+                        other {({newType, select,
+                                short {Kurzantrag}
+                                main  {Hauptantrag}
+                                other {}})}}
+      extended: 'Erweiterungsantrag'
+      resubmission: 'Wiedervorlage'
+      short: ' (Kurzantrag)'
+      main: ' (Hauptantrag)'
+  guidelines: 'Das Votum soll sich auf eine Begutachtung nach folgenden Richtlinien beziehen:'
+  applicant:
+    name: 'Name'
+    professorship: 'Arbeitsgruppe'
+    qualification: ' (Das Forschungsprojekt wird ausschließlich im Rahmen der eigenen Qualifikationsarbeit (Bachelor-/Masterarbeit/Promotion) durchgeführt.)'
   projectDates:
     start: 'Von: '
     end: 'Bis: '
     next: 'nächstmöglicher Zeitpunkt '
     started: 'Die Datenerhebung hat bereits begonnen. '
     startedDescription: |
-
-
+      
+      
       Beschreibung des Stands der Datenerhebung:
-  conflict: 'Für die Teilnehmenden wird der Interessenkonflikt in der Studieninformation offengelegt.'
+
+summary: 'Zusammenfassung des Forschungsprojekts'
 
 votes:
   otherVote:
-    committee: >-
-
-
-      Damalige Kommission:
-    result: |
-      
+    committee: "\n\nDamalige Kommission:"
+    result: >-
       Ergebnis der damaligen Begutachtung: {result, select,
-                                    positive {positives Votum
-      
-                                              Warum ist eine neue Begutachtung erforderlich?}
-                                    negative {negatives Votum
-      
-                                              Wie lautete die Begründung der anderen Ethikkommission?}
-                                    noVote   {kein Votum: Forschungsprojekt wurde als nicht begutachtungsrelevant eingestuft
-      
-                                              Warum ist eine neue Begutachtung erforderlich?}
-                                    other    {}}
+                                              positive {positives Votum}
+                                              negative {negatives Votum}
+                                              noVote   {kein Votum: Forschungsprojekt wurde als nicht begutachtungsrelevant eingestuft}
+                                              other    {}}
+    pdf: 'Am Ende des Antrags befindet sich das Ergebnisschreiben der anderen Ethikkommission oder eine von der antragstellenden Person erstellte PDF-Datei mit näheren Erläuterungen.'
   instVote:
-    reference: >-
-      
-      
-      Aktenzeichen:
-    description: |
-      
-      
-      {type, select,
-         resubmission {Im Vergleich zum ursprünglichen Antrag gibt es folgende Änderungen:}
-         other        {Die zentralen Gemeinsamkeiten sowie Unterschiede zum damaligen Antrag sind wie folgt:}}
+    reference: "\n\nAktenzeichen:"
 
 medicine:
-  medicine: |
-    
-    
-    Beschreibung:
   physician: >-
-    
-    
-    Warum ist aus Ihrer Sicht trotz der nicht-medizinischen Zusammensetzung {committeeNom} zuständig?
-    
     {result, select,
       0     {Die beteiligten Ärztinnen bzw. Ärzte können von einer Ausnahmeregelung zur berufsrechtlichen und berufsethischen Beratungspflicht durch eine medizinische Ethikkommission Gebrauch machen: }
       other {}}
-
-summary: 'Zusammenfassung des Forschungsprojekts'
 
 contributors:
   title: '(Weitere) Projektbeteiligte'
@@ -288,23 +296,11 @@ projectdetails:
                     other {}}
     measureTimePoint: 'ein Zeitpunkt'
   pdf:
-    examinedPeople: 'Die genauen Ein- und Ausschlusskriterien finden sich {informationHint}.'
     measures: 'Ergänzende Materialien zu den Erhebungsmethoden befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
     interventions: 'Ergänzende Materialien zu den Maßnahmen befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
     otherSources: 'Ergänzende Materialien zu den hinzugezogenen Daten anderer Stellen befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
-    burdens: 'Für die Teilnehmenden werden die Belastungen im Feld „Nachteile/Risiken“ der Studieninformation beschrieben.'
-    risks: 'Für die Teilnehmenden werden die Risiken im Feld „Nachteile/Risiken“ der Studieninformation beschrieben.'
     information: 'Die übersetzten Teilnahmedokumente befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
     post: 'Die übersetzten Teilnahmedokumente befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
-    compensationVoluntary: 'Informationen zur Aufwandsentschädigung finden sich {informationHint}.'
-    processing: >- # TODO (AB): Formulierung, wenn anyDocs und anyNoDocs "true" sind - AB: die Kombination kann derzeit noch nicht erfüllt sein, richtig? Gemeint ist der Fall, dass die Antragstellenden sich die Dokumente erzeugen lassen, aber nicht zur Begutachtung vorlegen sollen? Klingt auf jeden Fall widersprüchlich; für den Fall, dass Dokumente erzeugt aber nicht zur Begutachtung vorgelegt werden, müssten wir die Formulierung noch abwandeln.
-      {anyDocs, select,
-        true  {Genaue Informationen zur Datenverarbeitung finden sich in der Anlage zur Datenverarbeitung als Teil der Studieninformation}
-        other {}}{anyNoDocs, select,
-                    true  {{anyDocs, select,
-                              true  { bzw. es wurden vom Ethiktool für die Begutachtung}
-                              other {Für die Begutachtung wurden vom Ethiktool}} keine Teilnahmedokumente und daher auch keine Datenschutzerklärung erzeugt (vgl. Seite „Teilnahmedokumente“)}
-                    other {}}.
   custom:
     levelNames: >- # for the levelNamesString placeholder in the following keys
       {numLevels, plural,
@@ -329,24 +325,16 @@ projectdetails:
     otherSources: 'Auf der/den nächsten Seite(n) finden sich ergänzende Materialien zu den hinzugezogenen Daten anderer Stellen{levelNamesString}.'
     dataPrivacy: >-
       {create, select,
-        separate      {Die Datenschutzerklärung {levelNamesString} wurde selbst erstellt. {verification, select,
-                                                                        verified   {Sie ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.}
-                                                                        unverified {Sie ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.}
-                                                                        other      {}} Sie findet sich inkl. Einwilligungserklärung auf der/den nächsten Seite/n.}
+        separate      {Die Datenschutzerklärung {levelNamesString} wurde selbst erstellt (vgl. Feld 52 des Antragsformulars). Sie findet sich inkl. Einwilligungserklärung auf der/den nächsten Seite/n.}
         anonymous     {Gemäß der {savePDF, select,
-                                    true  {Angaben im Ethiktool}
-                                    other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
+                                   true  {Angaben im Ethiktool}
+                                   other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} (vgl. Feld 52 des Antragsformulars) werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
         separateLater {Gemäß der {savePDF, select,
                                     true  {Angaben im Ethiktool}
-                                    other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} erfolgt die detaillierte Klärung der Datenverarbeitung einem späteren Zeitpunkt. Daher wurde vom Ethiktool keine Datenschutzerklärung {levelNamesString} erstellt.}
+                                    other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} (vgl. Feld 52 des Antragsformulars) erfolgt die detaillierte Klärung der Datenverarbeitung einem späteren Zeitpunkt. Daher wurde vom Ethiktool keine Datenschutzerklärung {levelNamesString} erstellt.}
         other         {{personal, select,
                           anonymous {Gemäß der Angaben im Ethiktool werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
-                          other     {Aufgrund von folgenden Besonderheiten im Umgang mit dem Daten (gemäß Angaben im Ethiktool) konnte die Datenschutzerklärung {levelNamesString} nicht mit dem Ethiktool erstellt werden:
-                            {createOther} Daher wurde die Datenschutzerklärung selbst erstellt. Sie findet sich inkl. Einwilligungserklärung auf der/den nächsten Seite/n.}}}}
-    createOther:
-      responsibility: 'Verantwortlich ist nicht allein die {committeeLocation}.'
-      transferOutside: 'Es werden personenbezogene Daten an Dritte außerhalb des EWR weitergegeben.'
-      marking: 'Die Forschungsdaten werden gekennzeichnet, aber keine der im Ethiktool auswählbaren Optionen bildet das Vorgehen in der Studie vollständig ab.'
+                          other     {Aufgrund von Besonderheiten im Umgang mit dem Daten (gemäß Angaben im Ethiktool) kann die Datenschutzerklärung {levelNamesString} nicht mit dem Ethiktool erstellt werden. Daher wurde die Datenschutzerklärung selbst erstellt. Sie findet sich inkl. Einwilligungserklärung auf der/den nächsten Seite/n.}}}}
   groups:
     examined:
       title: >-
@@ -382,7 +370,6 @@ projectdetails:
       flyer: 'Aushänge und Flyer'
       lecture: 'Aufrufe in eigenen Lehrveranstaltungen'
       lectureOther: 'Aufrufe in Lehrveranstaltungen nicht-projektbeteiligter Personen'
-      recruitmentPrivate: 'Aufrufe/Ansprache im privaten Umfeld der Projektbeteiligten'
       media: 'Social Media'
       news: 'Zeitungsannoncen'
       database: 'Datenbank(en)'
@@ -399,43 +386,22 @@ projectdetails:
                     writtenOral {schriftlich mit mündlicher Erläuterung}
                     oral        {mündlich}
                     other       {{description}}}
-    documentTranslation: 'Die Teilnahmedokumente werden in leichte bzw. einfache Sprache und/oder eine Fremdsprache übersetzt, und zwar: {description}.'
     preContent: >-
       {chosen, select,
         complete {Die {addressee} werden vollständig aufgeklärt.}
         partial  {Mindestens eine Information wird nicht erwähnt, d.h., die {addressee} werden unvollständig aufgeklärt.}
         deceit   {Mindestens eine Information an die {addressee} ist falsch, d.h. sie werden explizit getäuscht.}
         other    {}}
-  consent:
-    voluntary: >-
-      {chosen, select,
-        yes           {Ja}
-        no            {Nein}
-        notApplicable {nicht zutreffend: Die {addressee} werden nicht vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
-        other         {}}
-    voluntaryDescription:
-      yes: "• Erläuterung zur Sicherstellung der Freiwilligkeit trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis):\n"
-      no: "• Begründung, inwiefern die Freiwilligkeit nicht garantiert ist:\n"
-    consent: >-
-       {chosen, select,
-        written       {schriftlich}
-        digital       {elektronisch}
-        oral          {mündlich mit schriftlicher Dokumentation seitens einer projektbeteiligten Person}
-        no            {Es erfolgt keine {addresseeType, select,
-                                          participants {Einwilligung}
-                                          other        {Zustimmung}}.}
-        notApplicable {nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
-        other         {auf folgende Art: {otherDescription}}}
   measures:
     measuresTypes:
       measuresObservation: 'Beobachtung des Verhaltens der Teilnehmenden durch eine projektbeteiligte Person'
-      measuresVideo: 'Ton- und/oder Bildaufnahmen'
-      measuresSurvey: 'Befragungen'
+      measuresVideo: 'Ton- und/oder Bildaufnahmen (Audio/Video/Foto)'
+      measuresSurvey: 'Befragungen (z.B. Interviews, Fragebögen)'
       measuresInstrumental: 'apparative Messungen'
       otherMeasures: 'sonstige Erhebungsmethode(n)'
     interventionsTypes:
       noIntervention: 'keine gezielten Maßnahmen, nur anfallende Daten'
-      interventionsSurvey: 'Es werden Fragen gestellt (siehe Erhebungsmethoden)'
+      interventionsSurvey: 'Es werden Fragen gestellt'
       feedback: 'Rückmeldung an Teilnehmende'
       everyday: 'gezielte Herbeiführung von Alltagssituationen'
       stimulus: 'Präsentation von Stimuli'
@@ -447,6 +413,32 @@ projectdetails:
       medical: 'Verabreichung von Substanzen'
       invasive: 'invasive Eingriffe'
       other: 'sonstige Maßnahme(n)'
+    survey: >-
+      Details zu den Fragebögen finden sich in der Beschreibung der Erhebungsmethoden im vorherigen Feld{numInterventions, plural,
+                                                                                                                =1    {, keine Maßnahme im engeren Sinn}
+                                                                                                                other {}}.
+    duration: >-
+      Die Gesamtdauer der {multiple, select,
+                            true  {heutigen}
+                            other {}} Untersuchung beträgt erfahrungsgemäß etwa {total, select,
+                                                                                  1     {1 Minute}
+                                                                                  other {{total} Minuten}}{breaks, select,
+                                                                                                            0     {.}
+                                                                                                            other {, davon {measureTime, select,
+                                                                                                                              1     {1 Minute}
+                                                                                                                              other {{measureTime} Minuten}} reine Erhebungszeit und {breaks, select,
+        1     {1 Minute}
+        other {{breaks} Minuten}} Vor- und Nachbereitungszeit sowie Pausenzeiten.}}
+    location:
+      start: >-
+        Die Untersuchung {information, select,
+                            post  {fand}
+                            other {findet}} {location, select,
+                                              intern {in Räumlichkeiten {committeeLocationGen} statt, und zwar }
+                                              extern {in Räumlichkeiten externer Kooperationspartner statt, und zwar }
+                                              online {online über die Plattform }
+                                              other  {}}
+      end: ' statt.' # only for online
   burdensRisks:
     burdens:
       noBurdens: 'keine Belastungen'
@@ -474,111 +466,23 @@ projectdetails:
                         wards    {gesetzlichen Vertretungspersonen}
                         other    {Teilnehmenden}} können in der Einwilligung auswählen, ob sie über aufgetretene (Zufalls-)Befunde informiert werden möchten. (Mitteilung optional)}
         other   {}}
-  compensationVoluntary: 'Ist die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet?'
-  dataReuse:
-    yes: 'Ja (siehe Abschnitt „Datenschutz und Datennutzung“ der Studieninformation)'
-    dataReuse: >- # other selection is personal
-      Ja, {selection, select,
-             anonymous  {anonyme Forschungsdaten}
-             anonymized {Forschungsdaten in anonymisierter Form}
-             other      {personenbezogene Forschungsdaten}} werden {reuseType, select,
-                            class0 {öffentlich zugänglich gemacht.}
-                            class1 {Dritten unter Standardbedingungen, wie z.B. Bestätigung ausschließlich wissenschaftlicher Nutzung, zugänglich gemacht.}
-                            class2 {Dritten über individualisierte Nutzungsverträge zugänglich gemacht.}
-                            class3 {Dritten nur unter datenschutzrechtlich gebotenen Einschränkungen (z.B. online über einen entsprechend abgesicherten Kanal oder vor Ort in einem Forschungsdatenzentrum) im Rahmen eines individuellen Vertrags zugänglich gemacht.}
-                            other  {}} Dies erfolgt unter Nutzung von {description}.
-    dataReuseSelf: 'Ja, aber nur für die eigene Nachnutzung. Anderen werden die Forschungsdaten nicht zugänglich gemacht.'
-    no: 'Nein, die Daten werden weder selbst nachgenutzt noch anderen für die Nachnutzung zugänglich gemacht.'
-
-# participation
-participation:
-  projectTitleHeader: >-
-    <a href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitle{isDifferent, select,
-        true  {Participation}
-        other {}}">Forschungsprojekt</a> „{projectTitle}“
-  marking: >-
-    Schwarze Schriftfarbe kennzeichnet vom Ethiktool automatisch erzeugten Text. Blaue Schriftfarbe kennzeichnet selbst formulierten Text. {savePDF, select,
-      true  {Für die tatsächliche Verwendung der Teilnahmedokumente stehen die PDF-Dateien ohne farbliche Markierung im Ordner „{singleDocsName}“ zur Verfügung.}
-      other {}}
-  oral: 'Die Aufklärung zur Studienteilnahme erfolgt mündlich. Sie orientiert sich an den hier verschriftlichten Informationen.'
-  headings:
-    goals: 'Hintergrund und Zielsetzung der Studie'
-    conflict: 'Mögliche Interessenkonflikte der Projektbeteiligten'
-    procedure: 'Studienablauf'
-    finding: 'Zufallsbefunde'
-    compensation: 'Aufwandsentschädigung'
-    pro: 'Vor- und Nachteile der Teilnahme'
-    criteria: 'Ein- und Ausschlusskriterien für die Teilnahme'
-    voluntary: 'Freiwilligkeit und Rücktrittsrecht'
-    dataPrivacy: 'Datenschutz und Datennutzung'
-    contact: 'Ansprechpersonen für Rückfragen'
-  noInformation:
-    title: 'Teilnahmedokumente'
-    start: >-
-      Das Ethiktool hat {numLevels, plural,
-                          =0    {}
-                          other {für}} {levelNames} keine Studieninformation für die {addressee, select,
-                                                                                        children {Erziehungsberechtigen}
-                                                                                        wards    {gesetzlichen Vertretungspersonen}
-                                                                                        other    {Teilnehmenden}} erstellt, weil
-    information: >-
-      die {addressee, select,
-            children {Erziehungsberechtigen}
-            wards    {gesetzlichen Vertretungspersonen}
-            other    {Teilnehmenden}} nicht {savePDF, select,
-                                              true  {vorab darüber aufgeklärt}
-                                              other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">vorab darüber aufgeklärt</a>}} werden, dass {addressee, select,
-                                                                                    children {ihre Kinder}
-                                                                                    wards    {die von ihnen betreuten Personen}
-                                                                                    other    {sie}} an einer Studie teilnehmen (vgl. Feld 38 des Antragsformulars), und auch nicht {savePDF, select,
-                        true  {nachträglich darüber aufgeklärt}
-                        other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preNo" data-base-route-i-ds-param="{routeIDs}">nachträglich darüber aufgeklärt</a>}} werden, dass {addressee, select,
-            children {ihre Kinder}
-            wards    {die betreuten Personen}
-            other    {sie}} an einer Studie teilgenommen haben (vgl. Feld 41 des Antragsformulars).
-    funding: 'sich das Forschungsvorhaben noch im Stadium der Beantragung von Fördermitteln befindet und die Teilnahmedokumente bei deren Bewilligung nachgereicht werden.'
-    projectStart: 'es sich um eine Begutachtung nach Beginn der Datenerhebung handelt und daher die Teilnahmedokumente schon existieren.'
-    short: 'bei der zuständigen Ethikkommission für die Begutachtung von Kurzanträgen keine Vorlage von Teilnahmedokumente vorgesehen ist.' # TODO (TW) hier möglichst "der zuständigen Ethikkommission" durch den Namen der tatsächlichen Ethikkommission {committeeDat} ersetzen
-    end: " Aus diesem Grund wurde auch keine Datenschutzerklärung erstellt. Folgende Informationen, die sonst in die Teilnahmedokumente übernommen worden wären, sind für die Begutachtung zu berücksichtigen:\n\n"
-  projectTitle:
-  title: >-
-    {information, select,
-      post  {Studieninformation}
-      other {Studieninformation}}
-  intro:
-    leader:
-      title: '<b>Projektleitung:</b>'
-      text: 'Die Gesamtverantwortung für diese Studie liegt bei '
-    contributors: 'Zudem sind folgende Personen an der Studie beteiligt: {contributors}.'
-    funding: >-
-      {isQualiFunding, select,
-        true  {Die Studie findet im Rahmen einer Qualifikationsarbeit statt und hat keine gesonderte Finanzierung.}
-        other {Die Studie wird finanziert durch {funding}.}}
-  location: 'Ort'
-  locationContent:
-    start: >-
-      Die Untersuchung {information, select,
-                          post  {fand}
-                          other {findet}} {location, select,
-                                            intern {in Räumlichkeiten {committeeLocationGen} statt, und zwar }
-                                            extern {in Räumlichkeiten externer Kooperationspartner statt, und zwar }
-                                            online {online über die Plattform }
-                                            other  {}}
-    end: ' statt.' # only for online
-  procedure: 'Ablauf und Inhalt der Erhebung'
-  duration: 'Dauer'
-  durationContent: >-
-    Die Gesamtdauer der {multiple, select,
-                          true  {heutigen}
-                          other {}} Untersuchung beträgt erfahrungsgemäß etwa {total, select,
-                                                                                1     {1 Minute}
-                                                                                other {{total} Minuten}}{breaks, select,
-                                                                                                          0     {.}
-                                                                                                          other {, davon {measureTime, select,
-                                                                                                                            1     {1 Minute}
-                                                                                                                            other {{measureTime} Minuten}} reine Erhebungszeit und {breaks, select,
-      1     {1 Minute}
-      other {{breaks} Minuten}} Vor- und Nachbereitungszeit sowie Pausenzeiten.}}
+  consent:
+    voluntary: >-
+      {chosen, select,
+        yes           {Ja}
+        no            {Nein}
+        notApplicable {nicht zutreffend: Die {addressee} werden nicht vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
+        other         {}}
+    consent: >-
+      {chosen, select,
+        written       {schriftlich}
+        digital       {elektronisch}
+        oral          {mündlich mit schriftlicher Dokumentation seitens einer projektbeteiligten Person}
+        no            {Es erfolgt keine {addresseeType, select,
+                                          participants {Einwilligung}
+                                          other        {Zustimmung}}.}
+        notApplicable {nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
+        other         {auf folgende Art: {otherDescription}}}
   compensation:
     start: >- # other in addressee select is participants
       {information, select,
@@ -593,7 +497,7 @@ participation:
                                                                 =0    {}
                                                                 =1    {}
                                                                 other {wahlweise }}
-    # added empty lines to have same line numbers in all translation files.
+  # added empty lines to have same line numbers in all translation files.
 
 
 
@@ -644,7 +548,85 @@ participation:
           children {Der Name Ihres Kindes}
           wards    {Der Name Ihrer betreuten Person}
           other    {Ihr Name}}.
-    moneyFurther: >-
+  dataPrivacy: 
+    create: >- # other is not yet answered 
+      {type, select,
+        tool          {{personal, select,
+                          anonymous {Die Datenverarbeitung wurde mit Hilfe des Ethiktools abgebildet. Die Angaben auf der Seite „Datenschutz“ lassen darauf schließen, dass nur anonyme Daten verarbeitet werden und keine Datenschutzerklärung notwendig ist.}
+                          other     {Die Datenschutzerklärung wurde mit Hilfe des Ethiktools erstellt.}}}
+        noTool        {Aufgrund von Besonderheiten im Umgang mit den Daten (gemäß Angaben auf der Seite „Datenschutz“) kann die Datenschutzerklärung nicht mit dem Ethiktool erstellt werden. Daher wurde die Datenschutzerklärung selbst erstellt.}
+        separate      {Die Datenschutzerklärung wurde selbst erstellt. {verification, select,
+                                                                          verified   {Sie ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.}
+                                                                          unverified {Sie ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.}
+                                                                          other      {}}}
+        anonymous     {Nach Einschätzung der zuständigen Datenschutzstelle werden nur anonyme Daten verarbeitet. Eine Datenschutzerklärung ist nicht notwendig.}
+        separateLater {Die Datenverarbeitung wird zu einem späteren Zeitpunkt im Detail geklärt. Eine separat erstelle Datenschutzerklärung wird dann von den zuständigen Stellen geprüft.}
+        notApplicable {nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
+        other         {}}
+    marking: # all other marking options are in 'participation'
+      no: 'Die Forschungsdaten werden nicht individuell gekennzeichnet.'
+      other: 'Die Forschungsdaten werden gekennzeichnet, aber keine der im Ethiktool auswählbaren Optionen bildet das Vorgehen in der Studie vollständig ab.'
+
+# participation
+participation:
+  projectTitleHeader: >-
+    <a href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitle{isDifferent, select,
+        true  {Participation}
+        other {}}">Forschungsprojekt</a> „{projectTitle}“
+  marking: >-
+    Schwarze Schriftfarbe kennzeichnet vom Ethiktool automatisch erzeugten Text. Blaue Schriftfarbe kennzeichnet selbst formulierten Text. {savePDF, select,
+      true  {Für die tatsächliche Verwendung der Teilnahmedokumente stehen die PDF-Dateien ohne farbliche Markierung im Ordner „{singleDocsName}“ zur Verfügung.}
+      other {}}
+  oral: 'Die Aufklärung zur Studienteilnahme erfolgt mündlich. Sie orientiert sich an den hier verschriftlichten Informationen.'
+  headings:
+    goals: 'Hintergrund und Zielsetzung der Studie'
+    conflict: 'Mögliche Interessenkonflikte der Projektbeteiligten'
+    procedure: 'Studienablauf'
+    finding: 'Zufallsbefunde'
+    compensation: 'Aufwandsentschädigung'
+    pro: 'Vor- und Nachteile der Teilnahme'
+    criteria: 'Ein- und Ausschlusskriterien für die Teilnahme'
+    voluntary: 'Freiwilligkeit und Rücktrittsrecht'
+    dataPrivacy: 'Datenschutz und Datennutzung'
+    contact: 'Ansprechpersonen für Rückfragen'
+  noInformation: >-
+    Das Ethiktool hat {numLevels, plural,
+                        =0    {}
+                        other {für}} {levelNames} keine Studieninformation für die {addressee, select,
+                                                                                        children {Erziehungsberechtigen}
+                                                                                        wards    {gesetzlichen Vertretungspersonen}
+                                                                                        other    {Teilnehmenden}} erstellt, weil die {addressee, select,
+      children {Erziehungsberechtigen}
+      wards    {gesetzlichen Vertretungspersonen}
+      other    {Teilnehmenden}} nicht {savePDF, select,
+                                        true  {vorab darüber aufgeklärt}
+                                        other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">vorab darüber aufgeklärt</a>}} werden, dass {addressee, select,
+                                                                              children {ihre Kinder}
+                                                                              wards    {die von ihnen betreuten Personen}
+                                                                              other    {sie}} an einer Studie teilnehmen (vgl. Feld 38 des Antragsformulars), und auch nicht
+                {savePDF, select,
+                  true  {nachträglich darüber aufgeklärt}
+                  other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">nachträglich darüber aufgeklärt</a>}} werden, dass {addressee, select,
+      children {ihre Kinder}
+      wards    {die betreuten Personen}
+      other    {sie}} an einer Studie teilgenommen haben (vgl. Feld 41 des Antragsformulars).
+  projectTitle:
+  title: >-
+    {information, select,
+      post  {Studieninformation}
+      other {Studieninformation}}
+  intro:
+    leader:
+      title: '<b>Projektleitung:</b>'
+      text: 'Die Gesamtverantwortung für diese Studie liegt bei '
+    contributors: 'Zudem sind folgende Personen an der Studie beteiligt: {contributors}.'
+    funding: >-
+      {isQualiFunding, select,
+        true  {Die Studie findet im Rahmen einer Qualifikationsarbeit statt und hat keine gesonderte Finanzierung.}
+        other {Die Studie wird finanziert durch {funding}.}}
+  procedure: 'Ablauf und Inhalt der Erhebung'
+  compensation:
+    start: >-
       {isMoneyHours, select,
               true  {{isMoney, select,
                         true  {Der genaue Wert der finanziellen Aufwandsentschädigung}
@@ -664,10 +646,8 @@ participation:
                                                                    children {erhält Ihr Kind}
                                                                    wards    {erhält die von Ihnen betreute Person}
                                                                    other    {erhalten Sie}} {terminateCons, select,
-                                                                                              true  {jedoch}
-                                                                                              other {außerdem}} {isDuration, select,
-                                                          true  {keine Aufwandsentschädigung. Dies begründet sich wie folgt: }
-                                                          other {aufgrund der kurzen Dauer der Untersuchung keine Aufwandsentschädigung.}}}
+                                                                                              true {jedoch}
+                                                                                              other {außerdem}} keine Aufwandsentschädigung. Dies begründet sich wie folgt: }
                                                       other    {}}
   proCon:
     pro: 'Vorteile/Nutzen'
@@ -677,20 +657,12 @@ participation:
                   other {}}
   criteria:
     include: >- # other is participant
-      {information, select,
-        post  {Wir haben {addressee, select,
-                           children {Ihr Kind}
-                           wards    {die von Ihnen betreute Person}
-                           other    {Sie}} ausgewählt, weil}
-        other {{addressee, select,
-                 children {Ihr Kind kann}
-                 wards    {Die von Ihnen betreute Person kann}
-                 other    {Sie können}} an der Studie teilnehmen, wenn}}
+      {type, select,
+        children {Ihr Kind kann}
+        wards    {Die von Ihnen betreute Person kann}
+        other    {Sie können}} an der Studie teilnehmen, wenn
     finding: 'Sie damit einverstanden sind, dass wir Sie ggf. über eine Auffälligkeit (Zufallsbefund) informieren'
-    exclude: >-
-      {information, select,
-        post  {und weil nicht zutrifft, dass}
-        other {Eine Teilnahme an der Studie ist nicht möglich, wenn}}
+    exclude: 'Eine Teilnahme an der Studie ist nicht möglich, wenn'
   voluntary:
     pre: >-
       {terminateCons, select,
@@ -931,10 +903,15 @@ dataPrivacy:
                 Web: https://www.uni-bielefeld.de}
           JGU  {Johannes Gutenberg-Universität Mainz
                 55099 Mainz}
+          DLR  {Deutsches Zentrum für Luft- und Raumfahrt e. V. (DLR)
+                Linder Höhe
+                51147 Köln
+                Web: https://www.dlr.de}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
                  Web: https://www.test-institution.de}}
+  # added empty line to have same line numbers in all translation files.
     infos:
       name: 'Name: '
       eMail: 'E-Mail: '
@@ -953,6 +930,8 @@ dataPrivacy:
           JGU   {Tel.: 06131 39-20065
                  E-Mail: datenschutz@uni-mainz.de
                  Web: https://www.uni-mainz.de/datenschutz/}
+          DLR   {Tel.: +49 2203 601-0
+                 E-Mail: datenschutz@dlr.de}
           other {Tel.: 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1124,6 +1103,11 @@ dataPrivacy:
                55116 Mainz
                Tel.: 06131 8920-0
                E-Mail: poststelle@datenschutz.rlp.de}
+        DLR   {Bundesbeauftragte für den Datenschutz und die Informationsfreiheit (BfDI)
+               Graurheindorfer Straße 153
+               53117 Bonn
+               Tel.: +49 (0)228-997799-0
+               E-Mail: poststelle@bfdi.bund.de}
         other {}}
     textEnd: "\n\nSollten Sie Fragen zur Datenverarbeitung in dieser Studie haben, wenden Sie sich gern an die verantwortlichen Projektbeteiligten (siehe Abschnitt 1)."
 
@@ -1168,16 +1152,16 @@ consent:
   noConsent: >-
     Das Ethiktool hat {numLevels, plural,
                             =0    {}
-                            other {für {levelNames}}} keine Einwilligung für {addressee, select,
+                            other {für {levelNames}}} keinen Einwilligungstext für {addressee, select,
                                                                                 children {die Erziehungsberechtigen}
                                                                                 wards    {die gesetzlichen Vertretungspersonen}
                                                                                 other    {Teilnehmenden}} erstellt, da {savePDF, select,
                     true  {{consent, select,
                              no    {keine Einwilligung erfolgt (vgl. Feld 44 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
-                             other {die Einwilligung auf eine andere Art ({description}) erfolgt (vgl. Feld 44 des Antragsformulars).}}}
+                             other {die Einwilligung auf andere Weise erfolgt ({description}; vgl. Feld 44 des Antragsformulars).}}}
                     other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">{consent, select,
                          no    {keine Einwilligung</a> erfolgt (vgl. Feld 44 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
-                         other {die Einwilligung auf eine andere Art</a> ({description}) erfolgt (vgl. Feld 44 des Antragsformulars).}}}}
+                         other {die Einwilligung auf andere Weise</a> erfolgt ({description}; vgl. Feld 44 des Antragsformulars).}}}}
   title: >-
     {information, select,
       post  {Nachträgliche Einwilligung in die Datenverarbeitung}
@@ -1290,144 +1274,6 @@ completeForm:
       yes: 'Ja'
       no: 'Nein'
       unclear: 'Unklar'
-      restricted: 'Eingeschränkt'
-    linking: # other in reviewProcess select is short. answer-keys must equal the 'types' keys. If order of boxes changes, numbers have to be updated here, too
-      information: >-
-        {answer, select,
-          no    { (siehe Feld {isNotPre, select,
-                                true  {21}
-                                other {}}{isIncomplete, select,
-                                            true  {{isNotPre, select,
-                                                      true  {/}
-                                                      other {}}22}
-                                            other {}})}
-          other {}}
-      voluntary: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    unclear    { (siehe Feld {isVoluntary, select,
-                                                true  {26}
-                                                other {}}{isConsent, select,
-                                                            true  {{isVoluntary, select,
-                                                                      true  {/}
-                                                                      other {}}27}
-                                                            other {}})}
-                    restricted { (siehe Feld 42)}
-                    no         { (siehe Feld 26)}
-                    other      {}}}
-          other {{answer, select,
-                    unclear { (siehe Feld 17)}
-                    other   {}}}}
-      terminateCons: >-
-        {answer, select,
-          unclear {{reviewProcessSub, select,
-                      S2    { (siehe Studieninformation)}
-                      F3    { (siehe {information, select,
-                                        noPost {{isTerminateCons, select,
-                                                  true  {Feld 28}
-                                                  other {}}{isDuration, select,
-                                                              true  {{isTerminateCons, select,
-                                                                        true  { /}
-                                                                        other {}} Seite „Teilnahmedokumente“}
-                                                              other {}}}
-                                        other  {Studieninformation}})}
-                      other { (siehe Seite „Teilnahmedokumente“)}}}
-          no      {{reviewProcessSub, select,
-                      F3    { (siehe {information, select,
-                                        noPost {{isTerminateCons, select,
-                                                  true  {Feld 28}
-                                                  other {}}{isDuration, select,
-                                                              true  {{isTerminateCons, select,
-                                                                        true  { /}
-                                                                        other {}} Seite „Teilnahmedokumente“}
-                                                              other {}}}
-                                        other  {Studieninformation}})}
-                      other { (siehe Seite „Teilnahmedokumente“)}}}
-          other   {}}
-      examinedPeople: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    yes     { (siehe Feld 16)}
-                    unclear { (siehe Feld 16)}
-                    other   {}}}
-          other {{answer, select,
-                    unclear { (siehe Feld 14)}
-                    other   {}}}}
-      wards: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    unclear { (siehe Feld 16)}
-                    no      { (siehe Feld 16)}
-                    other   {}}}
-          other {{answer, select,
-                    unclear { (siehe Feld 14)}
-                    other   {}}}}
-      preContent: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    yes     { (siehe Feld 22/23)}
-                    unclear { (siehe Feld 21/24)}
-                    other   {}}}
-          other {}}
-      burdens: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    yes     { (siehe Feld {burdens, select,
-                                            true  {34/35}
-                                            other {}}{isBurdensRisksContributors, select,
-                                                        true  {{burdens, select,
-                                                                  true  {, }
-                                                                  other {}}38/39}
-                                                        other {}})}
-                    other   {}}}
-          other {}}
-      risks: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    yes     { (siehe Feld {risks, select,
-                                            true  {36/37}
-                                            other {}}{isBurdensRisksContributors, select,
-                                                        true  {{risks, select,
-                                                                  true  {, }
-                                                                  other {}}38/39}
-                                                        other {}})}
-                    other   {}}}
-          other {}}
-      finding: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    yes   { (siehe Feld 40)}
-                    other {}}}
-          other {}}
-      otherSources: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    yes   { (siehe Feld 32)}
-                    other {}}}
-          other {}}
-      conflict: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    yes   { (siehe Feld 8)}
-                    other {}}}
-          other {}}
-      medicine: >-
-        {reviewProcess, select,
-          full  {{answer, select,
-                    yes   { (siehe Feld {isMedicine, select,
-                                          true  {12}
-                                          other {}}{isPhysician, select,
-                                                      true  {{isMedicine, select,
-                                                                true  {/}
-                                                                other {}}13}
-                                                      other {}})}
-                    other {}}}
-          other {}}
-      dataPrivacy: >-
-        {answer, select,
-          yes     { (siehe Anlage zur Datenverarbeitung)}
-          unclear { (siehe Seite „Datenschutz“)}
-          other   {}}
     headings:
       information: 'Aufklärung'
       voluntary: 'Freiwilligkeit'
@@ -1439,20 +1285,18 @@ completeForm:
       risks: 'Risiken'
       finding: '(Zufalls-)Befunde'
       dataPrivacy: 'Personenbezogene Daten'
-      otherSources: 'Daten anderer Stellen'
       conflict: 'Interessenkonflikt'
       medicine: 'Medizinbezug'
     information: 'Eine vollständige Vorab-Aufklärung ist gewährleistet.'
     voluntary: 'Die Freiwilligkeit der Teilnahme ist gewährleistet.'
     terminateCons: 'Die Teilnahme kann jederzeit ohne Nachteile beendet werden.'
     examinedPeople: 'An der Studie nehmen Personen teil, die in Bezug auf den Forschungsgegenstand einer vulnerablen Gruppe angehören.'
-    wards:  'An der Studie nehmen nur Personen teil, die selbst ihre Einwilligung geben können.'
+    wards:  'An der Studie nehmen Personen teil, die nicht selbst ihre Einwilligung geben können.'
     preContent: 'Die Studienteilnahme beinhaltet eine aktive, gezielte Täuschung.'
     burdens: 'Die Studie beinhaltet Belastungen, die über das im Alltag zu erwartende Maß hinausgehen.'
     risks: 'Die Studie beinhaltet Gefährdungen oder Risiken für einzelne Personen.'
     finding: 'In der Studie werden u.U. klinisch relevante (Zufalls-)Befunde aufgedeckt.'
-    dataPrivacy: 'In der Studie findet eine relevante Verarbeitung personenbezogener Daten statt.'
-    otherSources: 'Es werden individuell zuordenbare Daten anderer Stellen hinzugezogen.'
+    dataPrivacy: 'In der Studie werden personenbezogene Daten verarbeitet.'
     conflict: 'Bei den Projektbeteiligten besteht ein Interessenkonflikt in Bezug auf das Forschungsprojekt.'
     medicine: 'Das Forschungsprojekt beinhaltet Aspekte nach AMG/MPG/MPDG und/oder Ärztinnen bzw. Ärzte sind projektbeteiligt.'
 
@@ -1471,3 +1315,4 @@ logo:
   TUC: 'Logo der Technischen Universität Chemnitz'
   EUB: 'Logo der Universität Bielefeld'
   JGU: 'Logo der Johannes Gutenberg-Universität Mainz'
+  DLR: 'Logo des Deutschen Zentrums für Luft- und Raumfahrt'

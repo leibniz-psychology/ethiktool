@@ -119,6 +119,7 @@ class ContributorsController extends ControllerAbstract
              'contributorsArray' => $contributorsArray,
              'institutionLabel' => [$this->translateString($institution.'Applicant'),$this->translateString($institution)],
              'phoneLabel' => [$this->translateString($phone), $this->translateString($phone.'Optional')],
+             'committeeStudent' => self::committeeStudent,
              'positions' => $positionsTranslated],
             'contributors.contributors'));
     }

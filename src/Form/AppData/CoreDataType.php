@@ -28,14 +28,10 @@ class CoreDataType extends TypeAbstract
             $this->addRadioGroup($builder,self::applicationNewType,$this->translateArray($tempPrefix,[self::appTypeShort,'main']),$tempPrefix.'label');
         }
         $this->addFormElement($builder,self::descriptionNode,'text',$appTypePrefix.'reference');
-        // qualification
-        if ($isEUB) {
-            $this->addBinaryRadio($builder,self::qualification,$translationPrefix.self::qualification.'.title',);
-        }
         // applicant info
         $tempPrefix = 'multiple.position.';
         $dummyParams = $options[self::dummyParams];
-        foreach (array_merge([''],in_array($this->committeeType,self::committeeStudent) ? [self::supervisor] : []) as $applicant) {
+        foreach (array_merge([''],in_array($this->committeeType,self::committeeSupervisor) ? [self::supervisor] : []) as $applicant) {
             foreach (self::applicantContributorsInfosTypes as $info) {
                 if ($info!==self::position) {
                     $this->addFormElement($builder, $info.$applicant, 'text');
@@ -46,10 +42,14 @@ class CoreDataType extends TypeAbstract
                 }
             }
         }
-        if ($isEUB) {
+        if ($isEUB || $this->committeeType===self::committeeDLR) {
             $startPrefix = $translationPrefix.'project.start.';
             // project start
             $this->addCheckboxTextfield($builder,self::projectStartBegun,$startPrefix.'begun',$startPrefix.self::textHint);
+        }
+        if ($isEUB) {
+            // qualification
+            $this->addBinaryRadio($builder,self::qualification,$translationPrefix.self::qualification.'.title',);
             // guidelines
             $this->addCheckboxTextfield($builder,self::guidelinesNode, $translationPrefix.self::guidelinesNode.'.choice');
         }
@@ -188,7 +188,7 @@ class CoreDataType extends TypeAbstract
         // applicant info
         $position = $forms[self::position]->getData();
         $isEUB = $this->committeeType===self::committeeEUB;
-        foreach (array_merge([self::applicant],$isEUB && in_array($position,[self::positionsStudent,self::positionsPhd]) && $isQualification || !$isEUB && $position===self::positionsStudent ? [self::supervisor] : []) as $type) {
+        foreach (array_merge([self::applicant],$isEUB && in_array($position,[self::positionsStudent,self::positionsPhd]) && $isQualification || !$isEUB && $position===self::positionsStudent && in_array($this->committeeType,self::committeeSupervisor) ? [self::supervisor] : []) as $type) {
             $tempArray = [];
             $suffix = $type===self::supervisor ? self::supervisor : '';
             foreach (self::applicantContributorsInfosTypes as $info) {

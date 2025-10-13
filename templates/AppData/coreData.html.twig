@@ -95,12 +95,12 @@
             <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
                 {{ formRender.addCheckbox(content.projectStartNext, {'target': [coreDataController,'projectStartNext']}) }}
             </div>
-            {% if isEUB %}
+            {% if content.projectStartBegun is defined %}
                 {# data collection has already been started #}
                 <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
                     {{ formRender.addCheckbox(content.projectStartBegun,{'target': [coreDataController,'projectStartBegun']}) }}
                     <div {{ stimulus_target(coreDataController,'projectStartBegunText') }}>
-                        {{ formRender.addHint(startPrefix~'hint') }}
+                        {{ formRender.addHint(startPrefix~'hint',{'params': committeeParams}) }}
                         {{ formRender.addTextfield(content.projectStartBegunText,fontNormal) }}
                     </div>
                 </div>
