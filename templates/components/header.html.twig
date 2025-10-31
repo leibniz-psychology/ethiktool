@@ -37,10 +37,10 @@
             </div>
         </div>
     </header>
-    <div style="{{ background }} height: 48px">
+    <div style="{{ background }}">
         {% set isUpdate = update is not same as '' %}
         <div class="{{ flexRowClasses }} mx-auto bg-white flex-wrap align-content-center winWidth" style="{{ maxWidth }} min-height: 48px; max-height: max-content; justify-content: center">
-            <span class="mt-0 {% if isUpdate %} borderHint {% endif %}" style="border-color: red !important; color: red">{{ isUpdate ? ('header.update.'~update)|trans }}</span>
+            <span class="mt-0 {% if isUpdate %} borderHint {% endif %}" style="border-color: red !important; color: red">{{ isUpdate ? (('header.update.'~update)|trans)|nl2br }}</span>
         </div>
     </div>
 </div>

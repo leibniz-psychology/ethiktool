@@ -127,6 +127,8 @@ header: # alternative texts for logos
     update:
       before: 'In wenigen Minuten (montags gegen 8 Uhr) beginnt die wöchentliche Wartung des Ethiktools. Bitte speichern Sie Ihren Ethikantrag und setzen Sie ihn später fort.'
       during: 'Momentan findet die wöchentliche Wartung des Ethiktools statt. Bitte arbeiten Sie ab 8:30 Uhr an Ihrem Ethikantrag weiter.'
+      upgradeBefore: 'Am Mittwoch, dem 29.10.2025, finden in der Zeit von 9 Uhr bis 14 Uhr (MESZ) Wartungsarbeiten am Server statt. In diesem Zeitraum kann es zu Einschränkungen der Erreichbarkeit des Ethiktools kommen.'
+      upgradeDuring: 'Momentan finden Wartungsarbeiten am Server statt (bis 14 Uhr MESZ). Es kann zu Einschränkungen der Erreichbarkeit des Ethiktools kommen. Bitte setzen Sie die Arbeit an Ihrem Ethikantrag später fort.'
 
 committee:
   committeeNom: >-
@@ -272,7 +274,7 @@ main:
     Weitere Informationen finden Sie in den Abschnitten „Über uns“ und „Über das Ethiktool“. Bitte beachten Sie die technischen Hinweise und die Nutzungsbedingungen des Ethiktools.
     Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
 
-    <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz oder an der Universität Bielefeld ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet; die Ethikkommission des Psychologischen Instituts der JGU Mainz befindet sich bereits im Beta-Stadium.
+    <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz oder an der Universität Bielefeld ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet; die Ethikkommissionen des Psychologischen Instituts der JGU Mainz und des Deutschen Zentrums für Luft- und Raumfahrt befinden sich bereits im Beta-Stadium.
     
     Über „Neuer Antrag“ können Sie die Antragserstellung für die entsprechende Kommission beginnen.
     Über „Antrag laden“ können Sie eine vorhandene XML-Datei eines zuvor im Ethiktool erstellten Antrags laden und weiter bearbeiten. </i>
@@ -2429,6 +2431,7 @@ quit:
   buttons:
     quit: 'Ethiktool beenden'
     backToMain: 'Zurück zum Ethiktool'
+  quit: 'Sie haben das Ethiktool ordnungsgemäß beendet. Ethiktool-bezogene Formularinhalte wurden aus Ihrem Browser-Cache entfernt. Vielen Dank für die Nutzung des Ethiktools.'
 
 # header modals
 aboutUs:

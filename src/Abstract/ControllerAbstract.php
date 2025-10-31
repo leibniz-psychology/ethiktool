@@ -159,10 +159,15 @@ abstract class ControllerAbstract extends AbstractController
         $session = $request->getSession();
         $committeeParams = $session->get(self::committeeParams) ?? [self::committeeType => 'noCommittee', self::toolVersionAttr => self::toolVersion];
         try { // set times for maintenance messages
-            $date = $this->getCurrentTime();
+            $currentTime = $this->getCurrentTime();
+            $date = $currentTime;
             $timeString = strtotime($date->format('H:i:s'));
-            $startTime = strtotime('8:00:00');
-            $date = $date->format('l')==='Monday' ? ($timeString>=strtotime('7:30:00') && $timeString<$startTime ? 'before' : ($timeString>=$startTime && $timeString<strtotime('8:30:00') ? 'during' : '')) : '';
+            $date = $date->format('l')==='Monday' ? ($timeString>=strtotime('7:30:00') ? ($timeString<strtotime('8:00:00') ? 'before' : ($timeString<strtotime('8:30:00') ? 'during' : '')) : '') : '';
+            // upgrade
+            if ($date==='') {
+                $currentUnix = $currentTime->format('U');
+                $date = $currentUnix>=mktime(8,30,0,10,27,25) ? ($currentUnix<mktime(9,0,0,10,29,25) ? 'upgradeBefore' : ($currentUnix<mktime(14,00,0,10,29,25) ? 'upgradeDuring' : '')) : '';
+            }
         }
         catch (\Throwable $throwable) {
             return [];

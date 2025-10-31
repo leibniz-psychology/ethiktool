@@ -127,6 +127,8 @@ header: # alternative texts for logos
     update:
       before: 'Weekly maintenance of the Ethiktool is about to take place (on Mondays at around 8 am). Please save your ethics proposal and resume later.'
       during: 'Weekly maintenance of the Ethiktool is ongoing. Please resume working on your ethics proposal at about 8:30 am.'
+      upgradeBefore: 'On Wednesday, 29th of October 2025, server maintenance is scheduled to take place between 9 am and 2 pm (CEST). Accessibility of the Ethiktool may be limited during this period.'
+      upgradeDuring: 'Server maintenance is ongoing (until 2 pm CEST). Accessibility of the Ethiktool may be limited. Please resume working on your ethics proposal later.'
 
 committee:
   committeeNom: >-
@@ -271,7 +273,7 @@ main:
     Further information is available in the sections “About us“ and “About the Ethiktool“. Please note the “Technical Information“ and “Terms of Use“ for the Ethiktool.
     You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
 
-    <i>Please note: In the current project phase, the Ethiktool is intended for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites; the Ethics Committee of the Department of Psychology of JGU Mainz is already in the beta stage.
+    <i>Please note: In the current project phase, the Ethiktool is intended for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites; the Ethics Committees of the Department of Psychology of JGU Mainz and of the German Aerospace Center are already in the beta stage.
 
     You can start creating an application for the respective committee via the “New proposal“ option.
     You can load and edit an existing XML file created by the Ethiktool via “Load proposal”.</i>
@@ -2429,6 +2431,7 @@ quit:
   buttons:
     quit: 'Leave the Ethiktool'
     backToMain: 'Back to the Ethiktool'
+  quit: 'You successfully terminated the Ethiktool. Any Ethiktool-related form content was removed from your browser cache. Thank you for using the Ethiktool.'
 
 # header modals
 aboutUs:
