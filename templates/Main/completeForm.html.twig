@@ -41,7 +41,7 @@
             {% if pdf is not same as [] %}
                 <div class="mt-8">
                     {{ formRender.addHeading(titlesPrefix~'pdf') }}
-                    <div class="MetaData-Label">{{ (translationPrefix~'pdf.text')|trans }}</div>
+                    <div class="MetaData-Label">{{ (translationPrefix~'pdf.text')|trans(committeeParams)|raw }}</div>
                     {% if pdf.votes is defined %}
                         {{ _self.addPDF(content.votes,completeFormController) }}
                     {% endif %}

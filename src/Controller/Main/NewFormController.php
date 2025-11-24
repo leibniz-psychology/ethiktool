@@ -74,6 +74,7 @@ class NewFormController extends ControllerAbstract
                     $coreDataNode->addChild(self::projectTitle);
                     $this->addChosenNode($coreDataNode,self::projectTitleParticipation);
                     $this->addChosenNode($coreDataNode,self::applicationType);
+                    $this->addChosenNode($coreDataNode,self::applicationProcessNode);
                     if ($isEUB) {
                         $coreDataNode->addChild(self::qualification);
                     }
@@ -113,9 +114,11 @@ class NewFormController extends ControllerAbstract
                     $session->set(self::fileName, $data[self::fileName]);
                     $session->set(self::contributorsSessionName, [[0 => $this->xmlToArray($xml->{self::contributorsNodeName}->{self::contributorNode})]]); // save contributors in session
                     $session->set(self::docName,[$xml->asXML()]); // save xml-document in session
+                    $session->set(self::reviewProcess,$this->getReviewShortDefault($committeeType));
                     $session->set(self::newForm,'');
                     return $this->redirectToRoute('app_main');
-                } catch (DOMException | Exception $e) { // Exception is for SimpleXMLElement
+                }
+                catch (DOMException | Exception $e) { // Exception is for SimpleXMLElement
                     return $this->setErrorAndRedirect($session);
                 }
             }

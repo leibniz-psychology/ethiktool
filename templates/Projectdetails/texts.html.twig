@@ -6,8 +6,8 @@
     {% set introTemplate, introHint, isTransfer = 'introTemplateText', 'introHint', transferInfo is not same as [] %}
     <div>
         {{ formRender.addHint(translationPrefix~'hint') }}
-        {# intro, goals and procedure #}
-        {% for type in ['intro', 'goals', 'procedure'] %}
+        {# intro and goals #}
+        {% for type in ['intro', 'goals'] %}
             {% set isIntro, widget = type is same as 'intro', content[type] %}
             {% set name = widget.vars.name %}
             <div class="mt-8 {% if isIntro %} grid {% endif %}" id="{{ type }}">
@@ -18,9 +18,15 @@
                     <div id="{{ introHint }}" style="{{ boolToDisplay(not isIntroTemplate) }}; grid-row: 2">{{ formRender.addHint(translationPrefix~'intro.headingHint') }}</div>
                     <div class="template" id="{{ introTemplate }}" style="{{ boolToDisplay(isIntroTemplate) }}; grid-row: 2">{{ introTemplateText|raw }}</div> {# intro template containts project title #}
                 {% endif %}
-                {{ formRender.addCountableTextfield(widget,maxCharsIntroGoalsProcedure,transferArray|merge(not isIntro ? {'hint': [[translationPrefix~type~'.'~headingHint,{'multiple': boolToString(true in multipleStudyGroupMeasure)}]]} : {'template': template, 'templateClass' : true, 'visible': not isIntroTemplate, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,introTemplate,[name~'Div',name~'Count',introHint]|merge(isTransfer ? [name~'PDF'] : [])]], 'isGrid': true}]})) }}
+                {{ formRender.addCountableTextfield(widget,maxCharsIntroGoals,transferArray|merge(not isIntro ? {'hint': [[translationPrefix~type~'.'~headingHint,{'multiple': boolToString(true in multipleStudyGroupMeasure)}]]} : {'template': template, 'templateClass' : true, 'visible': not isIntroTemplate, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,introTemplate,[name~'Div',name~'Count',introHint]|merge(isTransfer ? [name~'PDF'] : [])]], 'isGrid': true}]})) }}
             </div>
         {% endfor %}
+        {# conflict text #}
+        {% if content.conflictText is defined %}
+            <div class="mt-8" id="conflictText">
+                {{ formRender.addCountableTextfield(content.conflictText,maxCharsConflict,transferArray|merge({'hint': [[translationPrefix~'conflictText.headingHint']]})) }}
+            </div>
+        {% endif %}
         {# pro and con #}
         {% set templatePrefix = translationPrefix~'pro.template.' %}
         {% for type in ['pro', 'con'] %}

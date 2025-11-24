@@ -71,12 +71,13 @@
     </div>
 {% endmacro %}
 
-{% macro addHeading(heading, savePDF) %}
+{% macro addHeading(heading, savePDF, addBorder = true) %}
     {# Adds a main heading. Input arguments:
         headingKey: translated heading
         savePDF:    if true, the pdf will be saved on disk
+        addBorder:  if true, a border will be added around the heading
     #}
-    <div class="pdfHeadingCenter pdfHeadingMain {% if not savePDF %}previewXLarge{% endif %}" style="page-break-inside: avoid">{{ heading|raw }}</div>
+    <div class="pdfHeadingCenter pdfHeadingMain {% if addBorder %} pdfBorderMain {% endif %} {% if not savePDF %}previewXLarge{% endif %}" style="page-break-inside: avoid">{{ heading|raw }}</div>
 {% endmacro %}
 
 {% macro addSignature(savePDF, addressee, addName = false) %}

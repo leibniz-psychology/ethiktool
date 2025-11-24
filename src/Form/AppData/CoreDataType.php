@@ -19,15 +19,34 @@ class CoreDataType extends TypeAbstract
         $translationPrefix = 'coreData.';
         $this->committeeType = $options[self::committeeType];
         $isEUB = $this->committeeType===self::committeeEUB;
+        // project title
         $this->addFormElement($builder, self::projectTitle, 'textarea', $translationPrefix.'projectTitle');
         $this->addRadioGroup($builder,self::projectTitleParticipation,self::projectTitleTypes,$translationPrefix.self::projectTitleParticipation.'.title',self::projectTitleParticipation.self::descriptionCap);
-        $appTypePrefix = $translationPrefix.'appType.';
-        $this->addRadioGroup($builder,self::applicationType,self::applicationTypes,$appTypePrefix.'title');
-        if (in_array($this->committeeType,[self::committeeTUC,'testCommittee'])) {
-            $tempPrefix = $appTypePrefix.'new.';
-            $this->addRadioGroup($builder,self::applicationNewType,$this->translateArray($tempPrefix,[self::appTypeShort,'main']),$tempPrefix.'label');
+        // application type
+        $tempPrefix = $translationPrefix.'appType.';
+        $this->addRadioGroup($builder,self::applicationType,self::applicationTypes,$tempPrefix.'title');
+        $this->addFormElement($builder,self::descriptionNode,'text',$tempPrefix.'reference');
+        // application process
+        $this->addRadioGroup($builder,self::applicationProcessNode,self::applicationProcessTypes,$translationPrefix.self::applicationProcessNode.'.title');
+        if (in_array($this->committeeType,self::reviewShortChoose)) { // participation documents are not reviewed, but applicants can choose to create for themselves
+            $this->addBinaryRadio($builder,self::shortDocsNode);
         }
-        $this->addFormElement($builder,self::descriptionNode,'text',$appTypePrefix.'reference');
+        // project dates
+        $this->addFormElement($builder, self::projectStart, 'date');
+        $this->addFormElement($builder, self::projectStartNext, 'checkbox', $translationPrefix.'project.next');
+        $this->addFormElement($builder, self::projectEnd, 'date');
+        // funding
+        $tempPrefix = $translationPrefix.'funding.'.self::textHintPlural.'.';
+        $fundingStateChoices = $this->translateArray($translationPrefix.'funding.fundingState.',['granted',self::fundingRequested]);
+        foreach (self::fundingTypes as $key => $value) {
+            $this->addFormElement($builder,$key,'checkbox',$value);
+            if ($key!==self::fundingQuali) {
+                $this->addFormElement($builder,$this->appendText($key),'textarea',hint: $tempPrefix.$key);
+            }
+            if (in_array($key,self::fundingResearchExternal)) {
+                $this->addRadioGroup($builder,$key.'FundingState',$fundingStateChoices);
+            }
+        }
         // applicant info
         $tempPrefix = 'multiple.position.';
         $dummyParams = $options[self::dummyParams];
@@ -53,25 +72,8 @@ class CoreDataType extends TypeAbstract
             // guidelines
             $this->addCheckboxTextfield($builder,self::guidelinesNode, $translationPrefix.self::guidelinesNode.'.choice');
         }
-        // project dates
-        $this->addFormElement($builder, self::projectStart, 'date');
-        $this->addFormElement($builder, self::projectStartNext, 'checkbox', $translationPrefix.'project.next');
-        $this->addFormElement($builder, self::projectEnd, 'date');
-        // funding
-        $tempPrefix = $translationPrefix.'funding.'.self::textHintPlural.'.';
-        $fundingStateChoices = $this->translateArray($translationPrefix.'funding.fundingState.',['granted','requested']);
-        foreach (self::fundingTypes as $key => $value) {
-            $this->addFormElement($builder,$key,'checkbox',$value);
-            if ($key!==self::fundingQuali) {
-                $this->addFormElement($builder,$this->appendText($key),'textarea',hint: $tempPrefix.$key);
-            }
-            if (in_array($key,self::fundingResearchExternal)) {
-                $this->addRadioGroup($builder,$key.'FundingState',$fundingStateChoices);
-            }
-        }
         // conflict
         $this->addBinaryRadio($builder,self::conflictNode,$translationPrefix.'conflict.'.'title',self::conflictNode.self::descriptionCap);
-        $this->addFormElement($builder,self::participantDescription,'textarea');
         // support
         foreach (array_diff_key(self::supportTypes,!$isEUB ? [self::supportCenter => ''] : []) as $key => $value) {
             $this->addFormElement($builder,$key,'checkbox',$value);
@@ -86,34 +88,14 @@ class CoreDataType extends TypeAbstract
 
     public function mapDataToForms(mixed $viewData, Traversable $forms): void {
         $forms = iterator_to_array($forms);
+        // project title
         $forms[self::projectTitle]->setData($viewData[self::projectTitle]);
-        $tempArray = $viewData[self::projectTitleParticipation];
-        $forms[self::projectTitleParticipation]->setData($tempArray[self::chosen]);
-        $forms[self::projectTitleParticipation.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode));
-        $tempArray = $viewData[self::applicationType];
-        $type = $tempArray[self::chosen];
-        $forms[self::applicationType]->setData($type);
-        if (array_key_exists(self::descriptionNode,$tempArray)) {
-            $forms[$type===self::appNew ? self::applicationNewType : self::descriptionNode]->setData($tempArray[self::descriptionNode]);
-        }
-        if (array_key_exists(self::qualification,$forms)) {
-            $forms[self::qualification]->setData($viewData[self::qualification]);
-        }
-        // applicant infos
-        foreach (array_merge([self::applicant],array_key_exists(self::supervisor,$viewData) ? [self::supervisor] : []) as $type) {
-            $tempArray = $viewData[$type];
-            $suffix = $type===self::supervisor ? self::supervisor : '';
-            foreach (self::applicantContributorsInfosTypes as $info) {
-                $forms[$info.$suffix]->setData($tempArray[$info]);
-            }
-            // position
-            $tempVal = $tempArray[self::position];
-            if ($tempVal!=='') {
-                $tempBool = array_key_exists($tempVal,self::positionsTypes);
-                $forms[self::position.$suffix]->setData($tempBool ? $tempVal : self::positionOther);
-                $forms[$this->appendText(self::position.$suffix)]->setData($tempBool ? '' : $tempVal);
-            }
-        }
+        // project title participation
+        $this->setChosenArray($forms,$viewData,self::projectTitleParticipation,[self::descriptionNode => self::projectTitleParticipation.self::descriptionCap]);
+        // application type
+        $this->setChosenArray($forms,$viewData,self::applicationType,[self::descriptionNode],false);
+        // application process
+        $this->setChosenArray($forms,$viewData,self::applicationProcessNode,[self::shortDocsNode],false);
         // project dates
         try {
             $tempArray = $viewData[self::projectStart];
@@ -142,11 +124,27 @@ class CoreDataType extends TypeAbstract
                 $forms[$key.'FundingState']->setData($source[self::fundingStateNode]);
             }
         }
+        // qualification
+        if (array_key_exists(self::qualification,$forms)) {
+            $forms[self::qualification]->setData($viewData[self::qualification]);
+        }
+        // applicant infos
+        foreach (array_merge([self::applicant],array_key_exists(self::supervisor,$viewData) ? [self::supervisor] : []) as $type) {
+            $tempArray = $viewData[$type];
+            $suffix = $type===self::supervisor ? self::supervisor : '';
+            foreach (self::applicantContributorsInfosTypes as $info) {
+                $forms[$info.$suffix]->setData($tempArray[$info]);
+            }
+            // position
+            $tempVal = $tempArray[self::position];
+            if ($tempVal!=='') {
+                $tempBool = array_key_exists($tempVal,self::positionsTypes);
+                $forms[self::position.$suffix]->setData($tempBool ? $tempVal : self::positionOther);
+                $forms[$this->appendText(self::position.$suffix)]->setData($tempBool ? '' : $tempVal);
+            }
+        }
         // conflict
-        $tempArray = $viewData[self::conflictNode];
-        $forms[self::conflictNode]->setData($tempArray[self::chosen]);
-        $forms[self::conflictNode.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode));
-        $forms[self::participantDescription]->setData($this->getArrayValue($tempArray,self::participantDescription));
+        $this->setChosenArray($forms,$viewData,self::conflictNode,[self::descriptionNode => self::conflictNode.self::descriptionCap]);
         // support
         foreach ($viewData[self::supportNode] ?: [] as $key => $value) {
             $forms[$key]->setData(true);
@@ -165,20 +163,48 @@ class CoreDataType extends TypeAbstract
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
         $forms = iterator_to_array($forms);
+        // project title
         $newData = [self::projectTitle => $forms[self::projectTitle]->getData()];
-        $tempVal = $forms[self::projectTitleParticipation]->getData();
-        $tempArray = [self::chosen => $tempVal];
-        if ($tempVal===self::projectTitleDifferent) {
-            $tempArray[self::descriptionNode] = $forms[self::projectTitleParticipation.self::descriptionCap]->getData();
+        // get application process, project start and funding to determine review process
+        $isBegun = $this->getFormData($forms,self::projectStartBegun,false); // true if data collection has already begun
+        $isRequested = false;
+        $fundingArray = [];
+        foreach (self::fundingTypes as $key => $value) {
+            if ($forms[$key]->getData()) { // source was selected
+                $isFundingQuali = $key===self::fundingQuali;
+                $fundingArray[$key] = !$isFundingQuali ? [self::descriptionNode => $forms[$this->appendText($key)]->getData()] : ''; // text in the text field
+                if ($isFundingQuali) { // if fundingQuali is checked immediately before/after any of the other checkboxes is checked (i.e., the second of these two is checked before the page was reloaded after submission), keep only the fundingQuali key
+                    break;
+                }
+                elseif (array_key_exists($key.'FundingState',$forms)) {
+                    $tempVal = $forms[$key.'FundingState']->getData(); // granted or requested
+                    $fundingArray[$key][self::fundingStateNode] = $tempVal;
+                    $isRequested = $isRequested || $tempVal===self::fundingRequested;
+                }
+            }
         }
-        $newData[self::projectTitleParticipation] = $tempArray;
-        $tempVal = $forms[self::applicationType]->getData();
-        $tempArray = [self::chosen => $tempVal];
-        $isNewType = $tempVal===self::appNew && array_key_exists(self::applicationNewType,$forms);
-        if ($isNewType || $tempVal===self::appExtended || $tempVal===self::appResubmission) {
-            $tempArray[self::descriptionNode] = $forms[$isNewType ? self::applicationNewType : self::descriptionNode]->getData();
+        $isNeitherBegunRequested = !($isBegun || $isRequested);
+        $applicationProcessArray = $this->getChosenArray($forms,self::applicationProcessNode,self::reviewProcessShort, $isNeitherBegunRequested ? [self::shortDocsNode] : [],false);
+        $isFull = $applicationProcessArray[self::chosen]===self::reviewProcessFull;
+        $hasShortDocs = $isNeitherBegunRequested && array_key_exists(self::shortDocsNode,$applicationProcessArray);
+        // project title participation
+        if ($isFull && $isNeitherBegunRequested || !$isFull && (!$hasShortDocs && $isNeitherBegunRequested || $hasShortDocs && $applicationProcessArray[self::shortDocsNode]===0)) { // participation documents may be created
+            $newData[self::projectTitleParticipation] = $this->getChosenArray($forms,self::projectTitleParticipation,self::projectTitleDifferent,[self::descriptionNode => self::projectTitleParticipation.self::descriptionCap]);
         }
-        $newData[self::applicationType] = $tempArray;
+        // application type
+        $newData[self::applicationType] = $this->getChosenArray($forms,self::applicationType,self::appExtendedResubmission,[self::descriptionNode],false);
+        // application process
+        $newData[self::applicationProcessNode] = $applicationProcessArray;
+        // project dates
+        $tempArray = [self::chosen => (!$forms[self::projectStartNext]->getData() && !$isBegun) ? $this->getDate($forms[self::projectStart]->getData()) : '0'];
+        if ($isBegun) {
+            $tempArray[self::descriptionNode] = $forms[$this->appendText(self::projectStartBegun)]->getData();
+        }
+        $newData[self::projectStart] = $tempArray;
+        $newData[self::projectEnd] = $this->getDate($forms[self::projectEnd]->getData());
+        // funding
+        $newData[self::funding] = $fundingArray ?: '';
+        // qualification
         $isQualification = array_key_exists(self::qualification,$forms); // true if question exists
         $qualification = $isQualification ? $forms[self::qualification]->getData() : '';
         if ($isQualification) {
@@ -206,38 +232,11 @@ class CoreDataType extends TypeAbstract
             $tempArray[self::position] = $position;
             $newData[$type] = $tempArray;
         }
-        // project dates
-        $isBegun = $this->getFormData($forms,self::projectStartBegun,false);
-        $tempArray = [self::chosen => (!$forms[self::projectStartNext]->getData() && !$isBegun) ? $this->getDate($forms[self::projectStart]->getData()) : '0'];
-        if ($isBegun) {
-            $tempArray[self::descriptionNode] = $forms[$this->appendText(self::projectStartBegun)]->getData();
-        }
-        $newData[self::projectStart] = $tempArray;
-        $newData[self::projectEnd] = $this->getDate($forms[self::projectEnd]->getData());
-        // funding
-        $fundingArray = [];
-        foreach (self::fundingTypes as $key => $value) {
-            if ($forms[$key]->getData()) { // source was selected
-                $isFundingQuali = $key===self::fundingQuali;
-                $fundingArray[$key] = !$isFundingQuali ? [self::descriptionNode => $forms[$this->appendText($key)]->getData()] : ''; // text in the text field
-                if ($isFundingQuali) { // if fundingQuali is checked immediately before/after any of the other checkboxes is checked (i.e., the second of these two is checked before the page was reloaded after submission), keep only the fundingQuali key
-                    break;
-                }
-                elseif (array_key_exists($key.'FundingState',$forms)) {
-                    $fundingArray[$key][self::fundingStateNode] = $forms[$key.'FundingState']->getData(); // granted or requested
-                }
-            }
-        }
-        $newData[self::funding] = $fundingArray ?: '';
         // conflict
         $chosen = $forms[self::conflictNode]->getData();
-        $tempVal = $chosen===0;
         $tempArray = [self::chosen => $chosen];
-        if ($tempVal || $chosen===1 && array_intersect(array_keys($fundingArray),self::fundingResearchExternal)!==[]) {
+        if ($chosen===0 || $chosen===1 && $isFull && array_intersect(array_keys($fundingArray),self::fundingResearchExternal)!==[]) {
             $tempArray[self::descriptionNode] = $forms[self::conflictNode.self::descriptionCap]->getData();
-            if ($tempVal) {
-                $tempArray[self::participantDescription] = $forms[self::participantDescription]->getData();
-            }
         }
         $newData[self::conflictNode] = $tempArray;
         // support

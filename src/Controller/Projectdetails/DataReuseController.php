@@ -23,7 +23,7 @@ class DataReuseController extends ControllerAbstract
         $translationPrefix = 'projectdetails.pages.'.self::dataReuseNode.'.';
         $dataReuseHowPrefix = $translationPrefix.self::dataReuseHowNode.'.';
         // check data privacy
-        $parameters = $this->getPrivacyReuse($this->xmlToArray($measure->{self::privacyNode}));
+        $parameters = $this->getPrivacyReuse($this->xmlToArray($measure->{self::privacyNode}[0]));
         $isPurposeReuse = $parameters['isPurposeReuse'];
         // data reuse how icons
         $dataReuseHowIconArray = [];

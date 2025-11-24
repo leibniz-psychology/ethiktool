@@ -2,22 +2,25 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set translationPrefix, measuresController, location = 'projectdetails.pages.measures.', 'Projectdetails--measures', content.location %}
-    {% set measuresInterventionsPrefix, locationPrefix, locationValue = translationPrefix~'measuresInterventions.', translationPrefix~'location.', location.vars.value %}
-    {% set measuresHintPrefix, interventionsHintPrefix = measuresInterventionsPrefix~'measures.textHints.', measuresInterventionsPrefix~'interventions.textHints.' %}
-    {% set measuresSentence, durationPrefix, noLocation, locationHint = (measuresHintPrefix~'description')|trans, translationPrefix~'duration.', 'multiple.choiceTextHint'|trans, (locationPrefix~'textHint')|trans %}
-    {% set multipleParam, totalName, durationStart, measureTime, breaks = {'multiple': boolToString(true in multipleStudyGroupMeasure)}, 'total', durationPrefix~'total', durationPrefix~'measureTime', durationPrefix~'breaks' %}
+    {% set translationPrefix, measuresController, location, hasProcedure = 'projectdetails.pages.measures.', 'Projectdetails--measures', content.location ?? '', content.procedure is defined %}
+    {% set measuresInterventionsPrefix, locationPrefix, locationValue = translationPrefix~'measuresInterventions.', translationPrefix~'location.', location.vars.value ?? '' %}
+    {% set measuresHintPrefix, durationPrefix, noLocation, locationHint, isInformation = measuresInterventionsPrefix~'measures.textHints.', translationPrefix~'duration.', 'multiple.choiceTextHint'|trans, (locationPrefix~'textHint')|trans, information in ['pre','post',''] %}
+    {% set measuresSentence, multipleParam, totalName, durationStart, measureTime, breaks = (measuresHintPrefix~'description')|trans, {'multiple': boolToString(true in multipleStudyGroupMeasure)}, 'total', durationPrefix~'total', durationPrefix~'measureTime', durationPrefix~'breaks' %}
     <div {{ stimulus_controller(measuresController,{
             'measuresTypes': measuresTypes,
             'measuresDescription': [(measuresHintPrefix~'noSelection')|trans,measuresSentence,measuresSentence~(measuresHintPrefix~'survey')|trans],
             'interventionsTypes': interventionsTypes,
-            'interventionsDescription': (interventionsHintPrefix~'description')|trans,
-            'interventionsSurvey': [(interventionsHintPrefix~'defaultStart')|trans, (interventionsHintPrefix~'defaultEnd')|trans],
             'location': locationValue,
             'locationHint': [noLocation, locationHint],
             'locationInput': textInputs|slice(1),
             'duration': {(totalName): [durationStart|trans(multipleParam|merge({'time': 1})), durationStart|trans(multipleParam|merge({'time': 0}))], 'measureTime': [measureTime|trans({'time': 1}), measureTime|trans({'time': 0})], 'breaks': [breaks|trans({'time': 1}), breaks|trans({'time': 0})]}
     }) }}>
+        {# procedure #}
+        {% if hasProcedure %}
+            <div id="procedure">
+                {{ formRender.addCountableTextfield(content.procedure,maxCharsProcedure,{'hint': [[(translationPrefix~'procedure.'~headingHint)|trans({'multiple': boolToString(true in multipleStudyGroupMeasure)})~(isInformation ? ' '~('multiple.wording')|trans({'addressee': addresseeString}))]]}|merge(isInformation ? {'transfer': [isInformation ? transferInfo : [''],'']} : {})) }}
+            </div>
+        {% endif %}
         {# measures and interventions #}
         {% set noIntervention, hintsPrefix = 'noIntervention', measuresInterventionsPrefix~'hints.' %}
         {% for type in ['measures','interventions'] %}
@@ -25,24 +28,32 @@
             {% set curTypes = isInterventions ? interventionsTypes : measuresTypes %}
             {% set params, typePrefix ,selection = {'type': type}, measuresInterventionsPrefix~type~'.', getAnySelected(content,curTypes,isInterventions ? noIntervention) %}
             {% set isNoIntervention, surveyOption, description, typesWoFirst = selection[0], type~'Survey', type~'Description', curTypes|slice(1) %}
-            <div {% if isInterventions %} class="mt-8" {% endif %} id="{{ type~'Type' }}" {{ stimulus_action(measuresController,'setMeasuresInterventions','change') }}>
+            <div {% if hasProcedure or isInterventions %} class="mt-8" {% endif %} id="{{ type~'Type' }}" {{ stimulus_action(measuresController,'setMeasuresInterventions','change') }}>
                 {{ formRender.addHeading(measuresInterventionsPrefix~'title',{'params': params, 'headingHint': [[typePrefix~'headingHint',routeIDsParam]]}) }}
                 <div class="MetaData-Widget mt-2" {% if isInterventions %} {{ stimulus_action('base','setMultiCheckbox','change',{'single': noIntervention, 'multiCheck': typesWoFirst}) }} {% endif %}>
                     {{ formRender.addCheckboxGroup(content,curTypes,{
                         'contTargets': {(surveyOption): [measuresController,surveyOption]}|
-                        merge(isInterventions ? {noIntervention: [measuresController,noIntervention]} : {})}|
+                            merge(isInterventions ? {noIntervention: [measuresController,noIntervention]} : {}),
+                        'other': measuresInterventionsOther[type]}|
                         merge(isInterventions and (isNoIntervention or selection[1]) ? {'targets': isNoIntervention ? typesWoFirst : [noIntervention]} : {})) }}
                 </div>
                 {{ formRender.addHint(hintsPrefix~'selection',{'target': [measuresController,type~'BurdensRisks'], 'params': params|merge(routeIDsParam)}) }}
-                <div {{ stimulus_target(measuresController,description~'Div') }}>{{ formRender.addTextfield(content[description], fontNormal|merge({'attributes': {'style': 'height: '~textHeight}, 'contTarget': [measuresController,description], 'hint': typePrefix~'.textHints.description'})) }}</div> {# hint text is set in controller, but must not be empty here #}
-                <div {% if isInterventions %} {{ stimulus_target(measuresController,'interventionsPDF') }} {% endif %}>
-                    <div class="mt-4">
-                        {{ formRender.addHint(hintsPrefix~'pdf',{'params': params}) }}
+                {% if content[description] is defined %}
+                    <div {{ stimulus_target(measuresController,description~'Div') }}>
+                        {{ formRender.addTextfield(content[description], fontNormal|merge(
+                            {'attributes': {'style': 'height: '~textHeight},
+                             'hint': typePrefix~'textHints.description'}|
+                            merge(not isInterventions ? {'contTarget': [measuresController,description]} : {}))) }}
+                    </div> {# hint text may be set in controller, but must not be empty here #}
+                    <div {% if isInterventions %} {{ stimulus_target(measuresController,'interventionsPDF') }} {% endif %}>
+                        <div class="mt-4">
+                            {{ formRender.addHint(hintsPrefix~'pdf',{'params': params}) }}
+                        </div>
+                        <div class="MetaData-Widget">
+                            {{ formRender.addCheckbox(content[type~'PDF'], {'labelParams': {'type': type}}) }}
+                        </div>
                     </div>
-                    <div class="MetaData-Widget">
-                        {{ formRender.addCheckbox(content[type~'PDF'], {'labelParams': {'type': type}}) }}
-                    </div>
-                </div>
+                {% endif %}
             </div>
         {% endfor %}
         {# other sources #}
@@ -50,7 +61,9 @@
         <div class="mt-8" id="otherSources">
             {{ formRender.renderButtons(otherSources,{'hint': [tempPrefix], 'stimVisible': {'values': [['0',otherSourcesDiv]]}}) }}
             <div id="{{ otherSourcesDiv }}" style="{{ boolToDisplay(otherSources.vars.value is same as '0') }}">
-                {{ formRender.addTextfield(content.otherSourcesDescription,fontNormal|merge({'attributes': textHeightLong, 'hint': [translationPrefix~'otherSources'], 'transfer': [transferInfo,addresseeType]})) }}
+                {{ formRender.addTextfield(content.otherSourcesDescription,fontNormal|
+                    merge({'attributes': textHeightLong, 'hint': [translationPrefix~'otherSources']})|
+                    merge(isInformation and reviewProcess not in ['fullBegun','fullRequested'] ? {'transfer': [transferInfo,addresseeType]} : {})) }}
                 {{ formRender.addHint(tempPrefix~'hint',{'params': routeIDsParam}) }}
                 <div class="mt-4">
                     {{ formRender.addHint(tempPrefix~'pdf.hint') }}
@@ -61,47 +74,53 @@
             </div>
         </div>
         {# loan #}
-        {% set loan, receipt, apparatusHint = content.loan, content.receipt, textInputs['apparatus'] %}
-        {% set receiptVars = receipt.vars %}
-        {% set receiptValue, loanReceiptDiv, loanTemplate = receiptVars.value, 'receiptDiv', 'loanTemplate' %}
-        <div class="mt-8" id="loan" {{ stimulus_action(measuresController,'setInputHints','change') }}>
-            {{ formRender.renderButtons(loan,{'stimVisible': {'values': [['0',loanReceiptDiv]]}, 'contTarget': ['loan0',measuresController,'loanYes']}) }}
-            <div class="mt-4" id="{{ loanReceiptDiv }}" style="{{ boolToDisplay(loan.vars.value is same as '0') }}">
-                <div class="MetaData-Label">{{ form_label(receipt,null,labelDummy) }}</div>
-                {{ formRender.renderButtons(receipt,noHeading|merge({'text': [content.receiptText,{'transfer': [['consent'],addresseeType], 'visibility': receiptValue is same as 'text'}], 'stimVisible': {'values': [['template',loanTemplate],['text',receiptVars.name~'TextDiv']]}})) }}
-                <div class="template" id="{{ loanTemplate }}" style="{{ boolToDisplay(receiptValue is same as 'template') }}">{{ (translationPrefix~'loan.template')|trans }}</div>
+        {% if content.loan is defined %}
+            {% set loan, receipt, apparatusHint = content.loan, content.receipt, textInputs['apparatus'] %}
+            {% set receiptVars = receipt.vars %}
+            {% set receiptValue, loanReceiptDiv, loanTemplate = receiptVars.value, 'receiptDiv', 'loanTemplate' %}
+            <div class="mt-8" id="loan" {{ stimulus_action(measuresController,'setInputHints','change') }}>
+                {{ formRender.renderButtons(loan,{'stimVisible': {'values': [['0',loanReceiptDiv]]}, 'contTarget': ['loan0',measuresController,'loanYes']}) }}
+                <div class="mt-4" id="{{ loanReceiptDiv }}" style="{{ boolToDisplay(loan.vars.value is same as '0') }}">
+                    <div class="MetaData-Label">{{ form_label(receipt,null,labelDummy) }}</div>
+                    {{ formRender.renderButtons(receipt,noHeading|merge({'text': [content.receiptText,{'transfer': [['consent'],addresseeType], 'visibility': receiptValue is same as 'text'}], 'stimVisible': {'values': [['template',loanTemplate],['text',receiptVars.name~'TextDiv']]}})) }}
+                    <div class="template" id="{{ loanTemplate }}" style="{{ boolToDisplay(receiptValue is same as 'template') }}">{{ (translationPrefix~'loan.template')|trans }}</div>
+                </div>
+                {% if apparatusHint is not same as '' %}
+                    {{ formRender.addHint(apparatusHint,{'target': [measuresController,'loanInputHint'], 'remove': true}) }} {# hint text is set in controller, but must not be empty here #}
+                {% endif %}
             </div>
-            {% if apparatusHint is not same as '' %}
-                {{ formRender.addHint(apparatusHint,{'target': [measuresController,'loanInputHint'], 'remove': true}) }} {# hint text is set in controller, but must not be empty here #}
-            {% endif %}
-        </div>
+        {% endif %}
         {# location #}
-        {% set isLocation, bothHint = locationValue is not same as '', textInputs['both'] %}
-        <div class="mt-8" id="location">
-            {{ formRender.addHeading(locationPrefix~'title') }}
-            <div class="MetaData-Label">{{ (locationPrefix~'start')|trans({'information': information}) }}{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
-            {{ formRender.renderButtons(location,noHeading|merge({
-                'text': [content.locationDescription,{'attributes': {'disabled': not isLocation}, 'contTarget': [measuresController,'locationDescription'], 'hint': isLocation ? locationHint : noLocation}],
-                'stim': [measuresController,'setLocation'],
-                'icons': {'locationother': locationPrefix~'otherHint'},
-                'labelParams': committeeParams})) }}
-            <div class="MetaData-Label mb-4" style="{{ boolToDisplay(locationValue is same as 'online') }}" {{ stimulus_target(measuresController,'locationEnd') }}>{{ (locationPrefix~'end')|trans }}</div>
-            {% if bothHint is not same as '' %}
-                {{ formRender.addHint(bothHint,{'target': [measuresController,'locationInputHint'], 'remove': true}) }} {# hint text is set in controller, but must not be empty here. If 'both' is
-                 emtpy, then 'insuranceWay' will also be empty, but not vice versa #}
-            {% endif %}
-            {% if textInputOnline is not same as '' %} {# the previous hint and this one can not be shown at the same time #}
-                {{ formRender.addHint(textInputOnline,{'target': [measuresController,'onlineHint'], 'remove': true}) }}
-            {% endif %}
-        </div>
+        {% if location is not same as '' %}
+            {% set isLocation, bothHint = locationValue is not same as '', textInputs['both'] %}
+            <div class="mt-8" id="location">
+                {{ formRender.addHeading(locationPrefix~'title') }}
+                <div class="MetaData-Label">{{ (locationPrefix~'start')|trans({'information': information}) }}{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
+                {{ formRender.renderButtons(location,noHeading|merge({
+                    'text': [content.locationDescription,{'attributes': {'disabled': not isLocation}, 'contTarget': [measuresController,'locationDescription'], 'hint': isLocation ? locationHint : noLocation}],
+                    'stim': [measuresController,'setLocation'],
+                    'icons': {'locationother': locationPrefix~'otherHint'},
+                    'labelParams': committeeParams})) }}
+                <div class="MetaData-Label mb-4" style="{{ boolToDisplay(locationValue is same as 'online') }}" {{ stimulus_target(measuresController,'locationEnd') }}>{{ (locationPrefix~'end')|trans }}</div>
+                {% if bothHint is not same as '' %}
+                    {{ formRender.addHint(bothHint,{'target': [measuresController,'locationInputHint'], 'remove': true}) }} {# hint text is set in controller, but must not be empty here. If 'both' is
+                     emtpy, then 'insuranceWay' will also be empty, but not vice versa #}
+                {% endif %}
+                {% if textInputOnline is not same as '' %} {# the previous hint and this one can not be shown at the same time #}
+                    {{ formRender.addHint(textInputOnline,{'target': [measuresController,'onlineHint'], 'remove': true}) }}
+                {% endif %}
+            </div>
+        {% endif %}
         {# presence #}
-        {{ formRender.renderButtons(content.presence,{'hint': [translationPrefix~'presence.'], 'addDiv': ['presence']}) }}
+        {% if content.presence is defined %}
+            {{ formRender.renderButtons(content.presence,{'hint': [translationPrefix~'presence.'], 'addDiv': ['presence']}) }}
+        {% endif %}
         {# duration #}
         <div class="mt-8" id="duration" {{ stimulus_action(measuresController,'setDuration','change') }}>
             {{ formRender.addHeading(durationPrefix~'title',{'params': multipleParam}) }}
             <div class="MetaData-Label">
                 <span id="{{ totalName }}"></span> {# text is set in controller #}
-                {% if information in ['pre',''] %}
+                {% if isInformation %}
                     {{ formRender.addPDFhint(transferInfo,'') }}
                 {% endif %}
             </div>
@@ -114,6 +133,9 @@
                 </div>
             {% endfor %}
             {{ formRender.addHint(durationPrefix~'hint') }}
+            {% if textInputCompensation is not same as '' %}
+                {{ formRender.addHint(textInputCompensation,{'target': [measuresController,'compensationHint'], 'remove': true}) }}
+            {% endif %}
         </div>
         {{ formRender.addSubmitButtons() }}
     </div> {# entire form including stimulus controller #}

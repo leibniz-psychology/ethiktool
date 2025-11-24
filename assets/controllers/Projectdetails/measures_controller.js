@@ -1,16 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
-import { checkTextareaInput, getSelected, setElementVisibility, setHint } from "../multiFunction";
+import {getSelected, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsDescription','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','measureTime','breaks'];
+    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','measureTime','breaks','compensationHint'];
 
     static values = {
         measuresTypes: Array,
         measuresDescription: Array, // 0: nothing selected, 1: at least one measure selected, 2: at least one measure selected including survey
         interventionsTypes: Array,
-        interventionsDescription: String,
-        interventionsSurvey: Array, // 0: survey sentence, 1: no intervention in a strict sense
         location: String,
         locationHint: Array, // 0: please choose, 1: hint if answer is chosen
         locationInput: Object, // 0: insurance way, 1: apparatus and insurance way
@@ -20,7 +18,9 @@ export default class extends Controller {
     connect() {
         this.interventionsTypesWoNo = this.interventionsTypesValue.slice(1);
         this.setMeasuresInterventions();
-        this.setInputHints(); // needs to be called on connect() in case the page is reloaded by the user
+        if (this.hasLocationDescriptionTarget || this.hasLoanInputTarget) {
+            this.setInputHints(); // needs to be called on connect() in case the page is reloaded by the user
+        }
         this.setDuration();
     }
 
@@ -69,17 +69,17 @@ export default class extends Controller {
         let [anyIntervention,numInterventions] = getSelected(this.interventionsTypesWoNo);
         // measures
         setElementVisibility(this.measuresBurdensRisksTarget,anyMeasure); // hint for burdens/risks
-        setHint(this.measuresDescriptionDivTarget.firstElementChild.firstElementChild,this.measuresDescriptionValue[!anyMeasure ? 0 : (this.measuresSurveyTarget.checked ? 2 : 1)]); // hint above text field
-        this.measuresDescriptionTarget.disabled = !anyMeasure;
+        setElementVisibility('measuresSurveyText',isMeasuresSurvey); // text field for description of survey
+        if (this.hasMeasuresDescriptionTarget) {
+            setHint(this.measuresDescriptionDivTarget.firstElementChild.firstElementChild,this.measuresDescriptionValue[!anyMeasure ? 0 : (this.measuresSurveyTarget.checked ? 2 : 1)]); // hint above text field
+            this.measuresDescriptionTarget.disabled = !anyMeasure;
+        }
         // interventions
-        let isOnlySurvey = numInterventions===1 && isInterventionsSurvey;
-        let isNotOnlySurvey = anyIntervention && !isOnlySurvey;
         setElementVisibility(this.interventionsBurdensRisksTarget,anyIntervention); // hint for burdens/risks
-        setElementVisibility(this.interventionsDescriptionDivTarget,anyIntervention); // div containing text field and hint above text field
-        let surveyStart = this.interventionsSurveyValue[0];
-        setHint(this.interventionsDescriptionDivTarget.firstElementChild.firstElementChild,isOnlySurvey ? surveyStart+this.interventionsSurveyValue[1] : this.interventionsDescriptionValue); // hint above text field. Only visible if at least one intervention unlike 'no intervention' is selected
-        setElementVisibility(this.interventionsDescriptionTarget,isNotOnlySurvey); // text field
-        setElementVisibility(this.interventionsPDFTarget,anyIntervention);
+        if (this.hasInterventionsDescriptionDivTarget) {
+            setElementVisibility(this.interventionsDescriptionDivTarget,anyIntervention && (numInterventions>1 || !isInterventionsSurvey)); // div containing text field and hint above text field
+            setElementVisibility(this.interventionsPDFTarget,anyIntervention);
+        }
         if (isMeasuresSurveyTarget) { // deselect and disable the 'no interventions' checkbox in case it was checked before and then measures survey was selected
             this.noInterventionTarget.checked = false;
             for (let checkbox of this.interventionsTypesWoNo) { // enable all checkboxes in case they were disabled
@@ -87,32 +87,12 @@ export default class extends Controller {
             }
             this.noInterventionTarget.disabled = anyIntervention;
         }
-        // text of text field for interventions
-        if (isNotOnlySurvey) {
-            surveyStart = surveyStart+'.';
-            let text = this.interventionsDescriptionTarget.value;
-            let startsWithDefault = text.startsWith(surveyStart);
-            if (isInterventionsSurvey && !startsWithDefault) {
-                text = surveyStart+' '+text;
-                this.abortCont = new AbortController(); // new instance for abortCont.signal.aborted set to false
-                this.interventionsDescriptionTarget.addEventListener('keydown',(event) => {
-                    event.params = {'start': this.interventionsSurveyValue[0]+'.', 'furtherAllowed': ['Space','Enter']};
-                    checkTextareaInput(event);
-                },{signal: this.abortCont.signal});
-                this.interventionsDescriptionTarget.params = {'start': surveyStart};
-            }
-            else if (!isInterventionsSurvey && startsWithDefault) {
-                text = text.replace(surveyStart,'').trim();
-                this.abortCont.abort(); // remove listener
-            }
-            this.interventionsDescriptionTarget.value = text;
-        }
     }
 
     /** Sets the hint for deleting inputs for loan and location. */
     setInputHints() {
         let isOnlineNothing = ['','online'].includes(this.locationValue);
-        let isNotLoan = !this.loanYesTarget.checked;
+        let isNotLoan = this.hasLoanYesTarget && !this.loanYesTarget.checked;
         if (this.hasLoanInputHintTarget) {
             setElementVisibility(this.loanInputHintTarget,isOnlineNothing && isNotLoan);
         }
@@ -132,9 +112,13 @@ export default class extends Controller {
         // input field checks if value is in after focus is lost, i.e., after calling this method, therefore check values here
         measureTime = isNaN(measureTime) ? 0 : (measureTime<1 ? 1 : (measureTime>999 ? 999 : measureTime));
         breaks = isNaN(breaks) ? 0 : (breaks<0 ? 0 : (breaks>999 ? 999 : breaks));
-        for (let [time,value] of Object.entries({'total': measureTime+breaks, 'measureTime': measureTime, 'breaks': breaks})) {
+        let totalTime = measureTime+breaks;
+        for (let [time,value] of Object.entries({'total': totalTime, 'measureTime': measureTime, 'breaks': breaks})) {
             let isSingular = value===1;
             document.getElementById(time).textContent = this.durationValue[time][isSingular ? 0 : 1].replace(isSingular ? '1' : '0',value===0 ? 'X' : value); // only 'total' will replace
+        }
+        if (this.hasCompensationHintTarget) {
+            setElementVisibility(this.compensationHintTarget,totalTime<=30);
         }
     }
 }

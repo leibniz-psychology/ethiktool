@@ -30,25 +30,16 @@ class VotesType extends TypeAbstract
     public function mapDataToForms(mixed $viewData, Traversable $forms): void {
         $forms = iterator_to_array($forms);
         // other vote
-        $this->setChosenArray($forms,$viewData,self::otherVote,[self::otherVoteText,self::otherVoteResult,self::otherVoteResultDescription]);
+        $this->setChosenArray($forms,$viewData,self::otherVote,[self::otherVoteText,self::otherVoteResult,self::otherVoteResultDescription],false);
         // own institution vote
-        $tempArray = $viewData[self::instVote];
-        $forms[self::instVote]->setData($this->getArrayValue($tempArray, self::chosen));
-        $forms[self::instReference]->setData($this->getArrayValue($tempArray, self::instReference));
-        $forms[self::instVoteText]->setData($this->getArrayValue($tempArray, self::instVoteText));
+        $this->setChosenArray($forms,$viewData,self::instVote,[self::instReference,self::instVoteText],false);
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
         $forms = iterator_to_array($forms);
         // other vote
-        $viewData[self::otherVote] = $this->getChosenArray($forms,self::otherVote,0,[self::otherVoteText,self::otherVoteResult,self::otherVoteResultDescription]);
+        $viewData[self::otherVote] = $this->getChosenArray($forms,self::otherVote,0,[self::otherVoteText,self::otherVoteResult,self::otherVoteResultDescription],false);
         // own institution Vote
-        $tempVal = $forms[self::instVote]->getData();
-        $tempArray = [self::chosen => $tempVal];
-        if ($tempVal===0) {
-            $tempArray[self::instReference] = $this->getFormData($forms,self::instReference,$viewData[self::instVote][self::instReference] ?? '');
-            $tempArray[self::instVoteText] = $forms[self::instVoteText]->getData();
-        }
-        $viewData[self::instVote] = $tempArray;
+        $viewData[self::instVote] = $this->getChosenArray($forms,self::instVote,0,[self::instReference,self::instVoteText],false);
     }
 }

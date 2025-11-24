@@ -1,42 +1,66 @@
 {% extends 'PDF/basePDF.html.twig' %}
 {% import 'PDF/pdfMacros.html.twig' as pdfMacros %}
 {% trans_default_domain 'pdf' %}
-{% set textPreview, style, bottomMargin = not savePDF ? 'previewSmall', 'text-align: justify; line-height: 1.5;', 'margin-bottom: 1.5rem;' %}
-{% set topMargin, pageBreakStyle = style~' margin-top: 0.25rem;', savePDF ? noPageBreakFirstLineSave : noPageBreakFirstLine %}
+{% set textPreview, style, markingTrans = not savePDF ? 'previewSmall', 'text-align: justify; line-height: 1.5;', 'participation.marking' %}
+{% set topMargin, redClasses = style~' margin-top: 0.25rem;', 'pdfOral '~textPreview %}
 {% block pdfBody %}
     {% if not savePDF %}
         {{ pdfMacros.addLine() }}
     {% endif %}
-    {% if information is not same as 'pre' and information is not same as 'post' %} {# no 'not in' because information may equal 'noPost' #}
-        <div class="{{ textPreview }} mt-8">{{ 'participation.noInformation'|trans(parameters|merge({'savePDF': savePDF ? 'true' : 'false'}))|raw }}</div>
-    {% else %}
+    {% if not hasDocs or information is same as 'noPost' %}
+        {{ pdfMacros.addHeading('participation.noInformation.title'|trans,savePDF,false) }}
+        {% if isMarkInput %}
+            <div class="{{ redClasses }}">{{ (markingTrans)|trans({'savePDF': 'false'}) }}</div>
+        {% endif %}
+        <div class="{{ textPreview }}">{{ noDocStart|raw|nl2br }}</div>
+        {{ _self.addParagraphs(content,textPreview) }}
+    {% elseif information in ['pre','post'] %}
         {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
         {{ pdfMacros.addHeading(participationHeading,savePDF) }}
         {% if isMarkInput %}
-            <div class="pdfOral {{ textPreview }}">{{ 'participation.marking'|trans(markInputParams) }}</div>
+            <div class="{{ redClasses }}">{{ (markingTrans)|trans(markInputParams) }}</div>
         {% endif %}
         {% if isOral %}
-            <div class="pdfOral {{ textPreview }}">{{ oralHint|raw }}</div>
+            <div class="{{ redClasses }}">{{ oralHint|raw }}</div>
         {% endif %}
         {# introduction #}
-        <div style="{{ bottomMargin }}">
+        <div style="margin-bottom: 1.5rem;">
             <div class="{{ textPreview }}" style="{{ style }}">{{ intro[0]|raw }}</div>
             <div class="{{ textPreview }}" style="{{ topMargin }}">{{ leaderHeading|raw }} {{ intro[1]|raw }}</div>
             {% for text in intro|slice(2) %}
                 <div class="{{ textPreview }}" style="{{ topMargin }}">{{ text|raw }}</div>
             {% endfor %}
         </div>
-        {% for heading, curContent in content %}
-            {# set the height of the heading div to cover one more line to avoid page-break immediately after the heading #}
-            <div class="{{ textPreview }}" style="font-weight: bold; {{ pageBreakStyle }}">{{ heading|raw }}</div>
-            {% set noPageBreak = curContent[1] %}
-            {% for paragraph in curContent[0] %}
-                {% if paragraph[0] is not same as '' %} {# subheading of sub-paragraph #}
-                    <div class="{{ textPreview }}" {% if not noPageBreak %} style="{{ pageBreakStyle }}" {% endif %}>{{ paragraph[0]|raw|nl2br }}</div>
-                {% endif %}
-                <div class="{{ textPreview }}" style="{{ bottomMargin~style }} {% if noPageBreak %} page-break-inside: avoid {% endif %}">{{ paragraph[1]|raw|nl2br }}</div>
-            {% endfor %}
-        {% endfor %}
-        {# consent if information is (partly) written #}
+        {{ _self.addParagraphs(content,textPreview) }}
     {% endif %}
 {% endblock %}
+
+{% macro addParagraphs(content,textPreview) %}
+    {# Adds the paragraphs. Input arguments:
+        content: heading and content of the paragraph
+        textPreview: classes of the div surrounding each paragraph
+    #}
+    {% for heading, paragraphs in content %}
+        <div class="{{ textPreview }}" style="page-break-inside: avoid; line-height: 1.5"> {# avoid page break between heading and first (sub-)paragraph #}
+            <div style="font-weight: bold; margin-bottom: 0.5rem">{{ heading|raw }}</div>
+            {{ _self.addSubParagraph(paragraphs[0],textPreview,false) }}
+        </div>
+        {% for paragraph in paragraphs|slice(1) %}
+            {{ _self.addSubParagraph(paragraph,textPreview) }}
+        {% endfor %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro addSubParagraph(paragraph,textPreview,pageBreak = true) %}
+    {# Adds a sub paragraph. Input arguments:
+        paragraph:   array of two elements: subheading and content
+        textPreview: classes of div surrounding the paragraph
+        pageBreak:   if true, page break inside the div will be avoided
+    #}
+    <div class="{{ textPreview }}" style="{% if pageBreak %}page-break-inside: avoid;{% endif %} margin-bottom: 1rem">
+        {% if paragraph[0] is not same as '' %} {# subheading of sub-paragraph #}
+        <div style="margin-bottom: 0.25rem">{{ paragraph[0]|raw|nl2br }}</div>
+        {% endif %}
+        <div style="text-align: justify; line-height: 1.5">{{ paragraph[1]|raw|nl2br }}</div>
+    </div>
+{% endmacro %}

@@ -9,7 +9,6 @@ use App\Traits\Projectdetails\ProjectdetailsTrait;
 use DateTime;
 use DOMDocument;
 use Exception;
-use Knp\Snappy\Pdf;
 use setasign\Fpdi\Fpdi;
 use setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException;
 use setasign\Fpdi\PdfParser\Filter\FilterException;
@@ -40,7 +39,7 @@ abstract class ControllerAbstract extends AbstractController
     public const submitDummy = 'submitDummy'; // name of the form element that hold the route to redirect to; needed in TypeAbstract, therefore public
     protected const landing = 'landing'; // name of the session variable
     protected const content = 'content'; // name of the variable that is passed to the template
-    private const routeOrder = ['app_coreData','app_votes','app_medicine','app_summary','app_contributors','app_landing','app_groups','app_information','app_informationII','app_informationIII','app_measures','app_burdensRisks','app_consent','app_compensation','app_texts','app_legal','app_dataPrivacy','app_dataReuse','app_contributor']; // must equal the route names
+    private const routeOrder = ['app_coreData','app_votes','app_medicine','app_summary','app_contributors','app_landing','app_groups','app_information','app_informationII','app_consent','app_measures','app_burdensRisks','app_compensation','app_texts','app_informationIII','app_legal','app_dataPrivacy','app_dataReuse','app_contributor']; // must equal the route names
     // constant variables for node names
     protected const docName = 'document'; // array of documents. Each time an input is made, a copy is added. If the page is left, all copies except the most recent one are removed.
     protected const docNameRecent = 'documentRecent'; // Same as 'document' but including changes on other pages. Will be used if the xml-file or the single documents are downloaded before the page is left, but only on pages whose inputs may affect other pages. Therefore, the key only exists on such pages.
@@ -56,7 +55,7 @@ abstract class ControllerAbstract extends AbstractController
     protected const language = 'language'; // value needs to be the same as in PageTrait
     protected static bool $savePDF = false; // indicates if the pdf should be saved
     protected static bool $isCompleteForm = false; // indicates if the complete proposal should be created
-    protected const customPDForder = [self::privacyNode, self::informationNode, self::informationIINode, self::measuresNode, self::interventionsNode, self::otherSourcesNode]; // order of custom PDFs
+    protected const customPDForder = [self::privacyNode, 'begun', self::informationNode, self::informationIINode, self::measuresNode, self::interventionsNode, self::otherSourcesNode]; // order of custom PDFs
     public const loadInput = 'loadInput'; // form element that holds the loaded xml-file; needed in TypeAbstract, therefore public
     protected const subPages = 'subPages';
     protected const label = 'label';
@@ -70,9 +69,13 @@ abstract class ControllerAbstract extends AbstractController
     protected const loadSuccess = 'loadSuccess'; // name of session variable indicating the xml was successfully loaded
     protected const errorModal = 'errorMessage'; // name of session variable indicating that an error occurred and the user was redirected to the main page
     protected const preview = 'preview'; // name of the session variable indicating the position of the preview
+    protected const quit = 'quit'; // name of session variable indicating that the proposal should be saved before quitting the tool
     protected const pageErrors = 'pageErrors'; // name of twig variable containing the errors on a single page
-    protected const isUpdateTime = 'isUpdateTime'; // name of parameter for twig
     protected const dummyString = 'dummyString'; // dummy string used as a placeholder if multiple elements are listed separated by a comma except for the last two elements
+    private const answerYes = 'yes'; // answer for brief report (same for following three variables)
+    private const answerNo = 'no';
+    private const answerUnclear = 'unclear';
+    private const answerRestricted = 'restricted';
     private Fpdi $fpdi; // used for merging PDFs
     private string $failureName;
     private PdfCollection $pdfParticipation;
@@ -142,6 +145,8 @@ abstract class ControllerAbstract extends AbstractController
         $session = $request->getSession();
         $committeeParams = $session->get(self::committeeParams) ?? [];
         $options = array_merge($options,$committeeParams,[self::committeeParams => $committeeParams]);
+        TypeAbstract::setReviewProcess($session->get(self::reviewProcess) ?? '');
+        TypeAbstract::setPage(lcfirst(str_replace('Type','',substr($type,strrpos($type,"\\")+1))));
 
         return $this->createForm($type,$data,$options)->handleRequest($request);
     }
@@ -159,22 +164,16 @@ abstract class ControllerAbstract extends AbstractController
         $session = $request->getSession();
         $committeeParams = $session->get(self::committeeParams) ?? [self::committeeType => 'noCommittee', self::toolVersionAttr => self::toolVersion];
         try { // set times for maintenance messages
-            $currentTime = $this->getCurrentTime();
-            $date = $currentTime;
+            $date = $this->getCurrentTime();
             $timeString = strtotime($date->format('H:i:s'));
             $date = $date->format('l')==='Monday' ? ($timeString>=strtotime('7:30:00') ? ($timeString<strtotime('8:00:00') ? 'before' : ($timeString<strtotime('8:30:00') ? 'during' : '')) : '') : '';
-            // upgrade
-            if ($date==='') {
-                $currentUnix = $currentTime->format('U');
-                $date = $currentUnix>=mktime(8,30,0,10,27,25) ? ($currentUnix<mktime(9,0,0,10,29,25) ? 'upgradeBefore' : ($currentUnix<mktime(14,00,0,10,29,25) ? 'upgradeDuring' : '')) : '';
-            }
         }
         catch (\Throwable $throwable) {
             return [];
         }
         $returnArray = array_merge($committeeParams,
             [self::content => $form,
-             self::isUpdateTime => $date,
+             'isUpdateTime' => $date,
              self::committeeParams => $committeeParams]);
         if ($pageTitle!=='') {
             $returnArray[self::pageTitle] = $pageTitle;
@@ -195,8 +194,6 @@ abstract class ControllerAbstract extends AbstractController
      */
     private function getProjectdetailsParameters(Request $request): array {
         $appNode = $this->getXMLfromSession($request->getSession());
-        $appTypeArray = $this->xmlToArray($appNode->{self::appDataNodeName}->{self::coreDataNode})[self::applicationType];
-        $returnArray = ['isNotMain' => $appTypeArray[self::chosen]===self::appNew && ($appTypeArray[self::descriptionNode] ?? '')===self::appTypeShort];
         $routeParams = $request->get('_route_params');
         $studyID = $routeParams[self::studyID];
         $groupID = $routeParams[self::groupID];
@@ -220,6 +217,7 @@ abstract class ControllerAbstract extends AbstractController
         $returnArray[self::participantsString] = $this->getAddresseeString($addressee,false,true,$addressee===self::addresseeParticipants);
         $returnArray[self::addresseeString] = $this->getAddresseeString($addressee);
         $returnArray[self::informationNode] = $this->getInformation($request);
+        $returnArray[self::reviewProcess] = $this->getReviewProcess($this->xmlToArray($appNode));
         return $returnArray;
     }
 
@@ -254,9 +252,8 @@ abstract class ControllerAbstract extends AbstractController
                 $submitDummy = implode("\n", $submitDummy);
             }
             if (str_contains($submitDummy, 'quit')) { // quit program
-                if ($submitDummy!=='quitModalButton') { // quit without saving or before a proposal was opened
-                    $session->clear();
-                    return $this->redirectToRoute('app_main');
+                if ($submitDummy==='quitModalButton') { // save file before quit
+                    $session->set(self::quit,'download');
                 }
                 return $this->redirectToRoute('app_quit');
             }
@@ -304,16 +301,22 @@ abstract class ControllerAbstract extends AbstractController
                                 }
                             }
                         }
-                        $this->updateXML($xml);
+                        $loadedVersion = $this->getToolVersion($xml);
+                        $this->updateXML($request,$xml);
                         $xmlArray = $this->xmlToArray($xml);
-                        $this->getErrors($request,element: $xml); // if the file is invalid, an exception is thrown
+                        $isBefore2 = str_starts_with($loadedVersion,'2');
+                        if (!$isBefore2) {
+                            $session->set('updateProcess',true); // used in core data to check if first visit after update
+                        }
+                        $session->set(self::reviewProcess,$isBefore2 ? $this->getReviewProcess($xmlArray) : self::reviewFullDocs); // if loaded file is before version 2.0.0, set fullDocs to keep all inputs. Needs to be set before getErrors() is called
                         $this->setCommittee($session, $xmlArray[self::committee], $oldLanguage);
                         $session->set(self::fileName, str_replace('.xml', '', $loadInput->getClientOriginalName()));
-                        $xml = $xml->asXML();
-                        $session->set(self::docName, [$xml]);
+                        $session->set(self::docName, [$xml->asXML()]);
                         $session->set(self::contributorsSessionName, [0 => $this->addZeroIndex($xmlArray[self::contributorsNodeName][self::contributorNode])]);
-                        $session->set(self::loadSuccess,['isMain' => $this->getStringFromBool($curRoute==='app_main')]);
-                    } catch (\Throwable $throwable) { // xml file could not be loaded
+                        $session->set(self::loadSuccess,['isMain' => $this->getStringFromBool($curRoute==='app_main'), 'isMajor' => str_starts_with($loadedVersion,'1')]);
+                        $this->getErrors($request,element: $xml); // if the file is invalid, an exception is thrown. Needs to be
+                    }
+                    catch (\Throwable $throwable) { // xml-file could not be loaded
                         $session->set(self::xmlLoad, '');
                     }
                     return $this->redirectToRoute('app_main');
@@ -333,9 +336,9 @@ abstract class ControllerAbstract extends AbstractController
                         $language = substr(trim($submitDummy[0]), strlen(self::language.':'));
                         if ($language!==$oldLanguage) { // language has changed
                             $session->set(self::language, $language);
-                            $this->setCommittee($session, $session->get(self::committeeParams)[self::committeeType] ?? '', $language);
-                            // set first inclusion criterion
+                            // set committee params and first inclusion criterion
                             if ($appNode) {
+                                $this->setCommittee($session, $session->get(self::committeeParams)[self::committeeType] ?? '', $language);
                                 foreach ($this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName}->{self::studyNode})) as $studyID => $study) {
                                     foreach ($this->addZeroIndex($study[self::groupNode]) as $groupID => $group) {
                                         foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureID => $measure) {
@@ -419,57 +422,83 @@ abstract class ControllerAbstract extends AbstractController
                             $nextRoute = 'app_landing';
                             $session->set(self::landing, ['page' => self::appDataNodeName]);
                         }
-                        else { // page unlike landing and core data
-                            $isReuseOnly = $curRoute==='app_dataReuse' && !$this->getMultiStudyGroupMeasure($appNode);
-
-                            $nextVal = $isNext && ($isContributors || $isReuseOnly);
+                        else { // neither landing nor core data and previous
                             $addVal = $isNext ? 1 : -1;
-                            if ($nextVal || $isNext && $curRoute==='app_contributor' || $isPrevious && $curRoute==='app_groups') { // groups or last page of current measure time point or contributors
-                                if ($isNext && $isReuseOnly) { // $curRoute is data reuse and contributor page is not active
-                                    $nextRoute = 'app_checkDoc';
+                            $curRouteIndex = array_search($curRoute, self::routeOrder); // can not be the index of app_landing at this point
+                            $nextRoute = self::routeOrder[$curRouteIndex+$addVal] ?? '';
+                            $isContributor = $curRoute==='app_contributor';
+                            $isLastPage = $isContributor;
+                            $isGroupsPrevious = $curRoute==='app_groups' && $isPrevious;
+                            $hasNotMultiple = !$this->getMultiStudyGroupMeasure($appNode);
+                            if (!$isGroupsPrevious && !$isContributor && $curRouteIndex>array_search('app_landing', self::routeOrder)) { // current route is a projectdetails page
+                                $measureArray = $this->xmlToArray($this->getMeasureTimePointNode($appNode, $routeParams)); // time point of the currently active page
+                                while ($nextRoute!=='' && $measureArray[substr($nextRoute, 4)]==='') { // next page is not active
+                                    $curRouteIndex += $addVal;
+                                    $nextRoute = self::routeOrder[$curRouteIndex] ?? '';
                                 }
-                                elseif ($isNext && $isContributors) { // $curRoute is contributors -> next page is projectdetails overview
-                                    $nextRoute = 'app_landing';
-                                    $session->set(self::landing, ['page' => self::projectdetailsNodeName]);
+                                if ($nextRoute==='app_contributor' && $hasNotMultiple) { // if only one time point exists, contributor page has content, but is not active
+                                    $nextRoute = '';
                                 }
-                                else { // groups or last page of current measure time point
-                                    $hasNextPrevious = false;
-                                    $newID = $routeParams[self::measureID]+$addVal;
-                                    $newRouteParams = array_merge($routeParams,[self::measureID => $newID]);
-                                    if ($newID>0 && $this->getMeasureTimePointNode($appNode, $newRouteParams)!==null) { // next/previous measure time point exists
+                                $isLastPage = $nextRoute===''; // true if current route is last active page on current measure time point
+                            }
+                            $isLastPageNext = $isNext && $isLastPage;
+                            if ($isLastPageNext && $hasNotMultiple) { // last active page and only one measure time point
+                                $nextRoute = 'app_checkDoc';
+                            }
+                            elseif ($isNext && $isContributors) { // contributors
+                                $nextRoute = 'app_landing';
+                                $session->set(self::landing, ['page' => self::projectdetailsNodeName]);
+                            }
+                            elseif ($isLastPageNext || $isGroupsPrevious) { // groups or last active page of current measure time point
+                                $hasNextPrevious = false;
+                                $newID = $routeParams[self::measureID]+$addVal;
+                                $newRouteParams = array_merge($routeParams,[self::measureID => $newID]);
+                                if ($newID>0 && $this->getMeasureTimePointNode($appNode, $newRouteParams)!==null) { // next/previous measure time point exists
+                                    $hasNextPrevious = true;
+                                }
+                                else {
+                                    $studies = $this->addZeroIndex($this->xmlToArray($appNode)[self::projectdetailsNodeName][self::studyNode]);
+                                    $newID = $routeParams[self::groupID]+$addVal;
+                                    $newRouteParams = array_merge($routeParams,[self::groupID => $newID, self::measureID => 1]); // first measure time point of next/previous group
+                                    if ($newID>0 && $this->getMeasureTimePointNode($appNode, $newRouteParams)!==null) { // a group exists before/after the current group
                                         $hasNextPrevious = true;
+                                        if ($isPrevious) {
+                                            $newRouteParams = array_merge($newRouteParams,[self::measureID => count($this->addZeroIndex($this->addZeroIndex($studies[$routeParams[self::studyID]-1][self::groupNode])[$newID-1][self::measureTimePointNode]))]); // last measure time point of previous group
+                                        }
                                     }
                                     else {
-                                        $studies = $this->addZeroIndex($this->xmlToArray($appNode)[self::projectdetailsNodeName][self::studyNode]);
-                                        $newID = $routeParams[self::groupID]+$addVal;
-                                        $newRouteParams = array_merge($routeParams,[self::groupID => $newID, self::measureID => 1]); // first measure time point of next/previous group
-                                        if ($newID>0 && $this->getMeasureTimePointNode($appNode, $newRouteParams)!==null) { // a group exists before/after the current group
+                                        $newID = $routeParams[self::studyID]+$addVal;
+                                        $newRouteParams = array_merge($routeParams,[self::studyID => $newID, self::groupID => 1, self::measureID => 1]); // first measure time point of first group of next/previous study
+                                        if ($newID>0 && $this->getMeasureTimePointNode($appNode, $newRouteParams)!==null) { // a study exists before/after the current study
                                             $hasNextPrevious = true;
                                             if ($isPrevious) {
-                                                $newRouteParams = array_merge($newRouteParams,[self::measureID => count($this->addZeroIndex($this->addZeroIndex($studies[$routeParams[self::studyID]-1][self::groupNode])[$newID-1][self::measureTimePointNode]))]); // last measure time point of previous group
+                                                $groupArray = $this->addZeroIndex($studies[$newID][self::groupNode]);
+                                                $groupID = count($groupArray);
+                                                $newRouteParams = array_merge($newRouteParams,[self::groupID => $groupID, self::measureID => count($this->addZeroIndex($groupArray[$groupID-1][self::measureTimePointNode]))]); // last measure time point of last group of previous study
                                             }
                                         }
-                                        else {
-                                            $newID = $routeParams[self::studyID]+$addVal;
-                                            $newRouteParams = array_merge($routeParams,[self::studyID => $newID, self::groupID => 1, self::measureID => 1]); // first measure time point of first group of next/previous study
-                                            if ($newID>0 && $this->getMeasureTimePointNode($appNode, $newRouteParams)!==null) { // a study exists before/after the current study
-                                                $hasNextPrevious = true;
-                                                if ($isPrevious) {
-                                                    $groupArray = $this->addZeroIndex($studies[$newID][self::groupNode]);
-                                                    $groupID = count($groupArray);
-                                                    $newRouteParams = array_merge($newRouteParams,[self::groupID => $groupID, self::measureID => count($this->addZeroIndex($groupArray[$groupID-1][self::measureTimePointNode]))]); // last measure time point of last group of previous study
-                                                }
-                                            }
-                                        }
-                                    }
-                                    $nextRoute = $isNext ? ($hasNextPrevious ? 'app_groups' : 'app_checkDoc') : ($hasNextPrevious ? 'app_contributor' : 'app_landing');
-                                    $routeParams = $hasNextPrevious ? $newRouteParams : ($isPrevious ? [self::studyID => 1, self::groupID => 1, self::measureID => 1] : []);
-                                    if ($nextRoute==='app_landing') {
-                                        $session->set(self::landing, array_merge($routeParams, ['page' => self::projectdetailsNodeName]));
                                     }
                                 }
+                                if ($isNext) {
+                                    $nextRoute = $hasNextPrevious ? 'app_groups' : 'app_checkDoc';
+                                }
+                                elseif ($hasNextPrevious) { // groups and previous study / group / measure time point exists
+                                    $measureTimePointArray = $this->xmlToArray($this->getMeasureTimePointNode($appNode,$newRouteParams)); // time point where the next page wil be opened
+                                    $newIndex = count(self::routeOrder)-1;
+                                    while ($measureTimePointArray[substr(self::routeOrder[$newIndex],4)]==='') { // page is not active
+                                        --$newIndex;
+                                    }
+                                    $nextRoute = self::routeOrder[$newIndex];
+                                }
+                                else {
+                                    $nextRoute = 'app_landing';
+                                }
+                                $routeParams = $hasNextPrevious ? $newRouteParams : ($isPrevious ? [self::studyID => 1, self::groupID => 1, self::measureID => 1] : []);
+                                if ($nextRoute==='app_landing') {
+                                    $session->set(self::landing, array_merge($routeParams, ['page' => self::projectdetailsNodeName]));
+                                }
                             }
-                            else { // $curRoute is a projectdetails subpage unlike groups and unlike the last page of the current measure time point
+                            else { // $curRoute is a projectdetails subpage unlike groups (and 'previous' was clicked) and unlike the last page of the current measure time point
                                 $curRouteIndex = array_search($curRoute, self::routeOrder); // can not be the index of app_landing at this point
                                 $nextRoute = self::routeOrder[$curRouteIndex+$addVal] ?? '';
                                 if ($curRouteIndex>array_search('app_landing', self::routeOrder)) {
@@ -502,6 +531,7 @@ abstract class ControllerAbstract extends AbstractController
                                 $docs = $session->get($docType); // all documents
                                 if ($docs!==null && count($docs)>1) {
                                     $session->set($docType, array_slice($docs, 0, count($docs) - 1));
+                                    $session->set(self::reviewProcess,$this->getReviewProcess($this->xmlToArray($this->getXMLfromSession($session,getRecent: true))));
                                 }
                             }
                             if ($isCoreData || $isContributors) { // remove most recent contributors array
@@ -523,6 +553,9 @@ abstract class ControllerAbstract extends AbstractController
                         else {
                             if ($route!=='' && $route!==$curRoute) { // go to another page
                                 $this->resetDocContributors($session, $isCoreDataContributors);
+                            }
+                            elseif (!$hasAppNodeNew) { // on some pages, creation of appNodeNew depends also on the review process, i.e., it may be set, but not updated; therefore, remove 'docNameRecent' to always get the 'docName' appNode while still on the page
+                                $session->remove(self::docNameRecent);
                             }
                             $routeParams = ['_locale' => $routeParams['_locale']]; // if current route is a projectdetails page and next is a non-projectdetails page, remove IDs
                             if (count($submitDummy)>1) { // a link was clicked and additional parameters are passed
@@ -580,7 +613,8 @@ abstract class ControllerAbstract extends AbstractController
             $returnArray = [self::label => $this->translateString($tempVal.'title'),self::route => 'app_landing',self::subPages => $tempArray, self::error => CheckDocClass::getDocumentCheck($request,self::appDataNodeName)];
         }
         else {
-            $appNode = $this->getXMLfromSession($request->getSession());
+            $session = $request->getSession();
+            $appNode = $this->getXMLfromSession($session);
             $studies = $this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]);
             if ($studyID===null) { // overview of studies
                 $returnArray = $this->setOverview($request,$studies,self::studyNode,$cutName,[]);
@@ -596,6 +630,8 @@ abstract class ControllerAbstract extends AbstractController
                         $returnArray = $this->setOverview($request,$measureTimePoints,self::measureTimePointNode,$cutName,[self::studyID => $studyID+1, self::groupID => $groupID+1]);
                     }
                     else { // overview of one measure time point
+                        $reviewProcess = $session->get(self::reviewProcess);
+                        $hasDocs = in_array($reviewProcess,self::reviewDocs);
                         $prefix = 'pages.projectdetails.';
                         $measure = $measureTimePoints[$measureID];
                         $routeIDs = [self::studyID => $studyID+1, self::groupID => $groupID+1, self::measureID => $measureID+1];
@@ -603,19 +639,21 @@ abstract class ControllerAbstract extends AbstractController
                         $isPre = $information===self::pre;
                         $sidebarSuffix = $cutName ? 'Sidebar' : ''; // use abbreviation for information pages only in sidebar
                         $returnArray = [];
-                        foreach ([self::groupsNode,self::informationNode,self::informationIINode,self::informationIIINode,self::measuresNode,self::burdensRisksNode,self::consentNode,self::compensationNode,self::textsNode,self::legalNode,self::privacyNode,self::dataReuseNode,self::contributorNode] as $page) {
+                        foreach ([self::groupsNode,self::informationNode,self::informationIINode,self::consentNode,self::measuresNode,self::burdensRisksNode,self::compensationNode,self::textsNode,self::informationIIINode,self::legalNode,self::privacyNode,self::dataReuseNode,self::contributorNode] as $page) {
                             $route = match ($page) {
                                 self::informationIINode => $this->getAddressee($measure[self::groupsNode])!==self::addresseeParticipants ? 'app_informationII' : '',
-                                self::informationIIINode => $this->getInformationIII($measure[self::informationNode]) ? 'app_informationIII' : '',
-                                self::textsNode => ($isPre || $information===self::post) ? 'app_texts' : '',
-                                self::legalNode => ($isPre && ($this->getAnyConsent($measure[self::consentNode]) || $this->getTemplateChoice($this->getLoanReceipt($measure[self::measuresNode][self::loanNode])))) ? 'app_legal' : '',
-                                self::contributorNode => (count($studies)>1 || count($groups)>1 || count($measureTimePoints)>1) ? 'app_contributor' : '',
+                                self::textsNode => $hasDocs && ($isPre || $information===self::post) ? 'app_texts' : '',
+                                self::informationIIINode => $hasDocs && $this->getInformationIII($measure[self::informationNode]) ? 'app_informationIII' : '',
+                                self::legalNode => $hasDocs && ($isPre && ($this->getAnyConsent($measure[self::consentNode]) || $this->getTemplateChoice($this->getLoanReceipt($measure[self::measuresNode][self::loanNode] ?? [])))) ? 'app_legal' : '',
+                                self::privacyNode => in_array($reviewProcess,self::reviewTypePages[self::privacyNode]) ? 'app_dataPrivacy' : '',
+                                self::dataReuseNode => in_array($reviewProcess,self::reviewTypePages[self::dataReuseNode]) ? 'app_dataReuse' : '',
+                                self::contributorNode => $hasDocs && (count($studies)>1 || count($groups)>1 || count($measureTimePoints)>1) ? 'app_contributor' : '',
                                 default => 'app_'.$page};
                             $returnArray[] =
                                 [self::label => $this->translateString($prefix.$page.(str_contains($page,self::informationNode) ? $sidebarSuffix : '')),
                                  self::route => $route,
                                  self::routeIDs => $routeIDs,
-                                 self::error => CheckDocClass::getDocumentCheck($request,$page,routeIDs: $routeIDs)];
+                                 self::error => $route!=='' && CheckDocClass::getDocumentCheck($request,$page,routeIDs: $routeIDs)];
                         }
                     }
                 }
@@ -656,20 +694,21 @@ abstract class ControllerAbstract extends AbstractController
         return $returnArray;
     }
 
-    /** Checks if any compensation is awarded by a certain type
+    /** Checks if any compensation is awarded by a certain type.
      * @param array|string $compensation array containing the compensation
      * @param string $type type of awarding to be checked. Defaults to 'code'
      * @return bool true if any compensation is awarded later by a certain type, false otherwise
      */
     protected function checkCompensationAwarding(array|string $compensation, string $type = 'code'): bool {
-        $compensation = $compensation[self::compensationTypeNode] ?? '';
+        $compensationTypes = $compensation[self::compensationTypeNode] ?? '';
         $isCompensationAwarding = false;
         $isLater = in_array($type,['code','name']);
         $deliverTypes = ['eMail','mail','phone'];
-        if ($compensation!=='' && !array_key_exists(self::compensationNo,$compensation)) { // at least one type except 'no compensation' was selected
-            foreach ($compensation as $name => $data) {
-                if ($name!==self::compensationOther) {
-                    $awarding = $data[self::awardingNode];
+        if ($compensationTypes!=='' && !array_key_exists(self::compensationNo,$compensationTypes)) { // at least one type except 'no compensation' was selected
+            foreach ($compensationTypes as $name => $value) {
+                $awardingKey = $name.self::awardingNode;
+                if ($name!==self::compensationOther && array_key_exists($awardingKey,$compensation)) {
+                    $awarding = $compensation[$awardingKey];
                     $chosen = $awarding[self::chosen];
                     if ($isLater) {
                         $isCompensationAwarding = array_key_exists(self::laterTypesName,$awarding) && $awarding[self::laterTypesName]===$type;
@@ -803,8 +842,8 @@ abstract class ControllerAbstract extends AbstractController
      * @return string 'pre' if pre information is chosen, 'post' if pre information is answered with no and post information is answered with yes, 'noPre' if pre information is answered with no and no post information is chosen, 'noPost' if pre and post information are answered with no, empty string otherwise (i.e., no pre information is chosen)
      */
     protected function getInformationString(array $information): string {
-        $pre = $information[self::chosen];
-        $post = $pre==='1' ? $information[self::informationAddNode][self::chosen] : '';
+        $pre = $information[self::pre];
+        $post = $pre==='1' ? $information[self::post][self::chosen] : '';
         return $pre==='0' ? self::pre : ($pre==='1' ? ($post==='0' ? self::post : ($post==='1' ? 'noPost' : 'noPre')) : '');
     }
 
@@ -848,15 +887,16 @@ abstract class ControllerAbstract extends AbstractController
     protected function getConTemplateText(array $measureArray, bool $addDescription = true, bool $addNoTemplate = false, array $routeParams = [], bool $addTemplate = false, bool $markInput = false): string {
         $information = $this->getInformationString($measureArray[self::informationNode]);
         $returnString = '';
-        if (in_array($information,[self::pre,self::post])) { // information is given
+        if (in_array($information,self::prePostArray)) { // information is given
             $conArray = $measureArray[self::textsNode][self::conNode] ?? '';
             if ($conArray!=='') {
                 $isTemplate = $conArray[self::conTemplate]==='1';
-                $isBurdensRisks = $this->getBurdensRisks($measureArray[self::burdensRisksNode]);
+                $burdensRisksArray = $measureArray[self::burdensRisksNode];
+                $isBurdensRisks = $this->getBurdensRisks($burdensRisksArray);
                 if ($isTemplate || $addTemplate) {
                     $translationPrefix = 'projectdetails.pages.texts.con.template.';
                     if (!$isBurdensRisks) { // add no burdens/risks
-                        $returnString .= ' '.$this->translateString($translationPrefix.self::risksNode,[self::informationNode => $information]);
+                        $returnString .= ' '.$this->translateString($translationPrefix.self::risksNode,[self::informationNode => $information, 'isFinding' => $this->getStringFromBool($burdensRisksArray[self::findingNode][self::chosen]==='0')]);
                     }
                     if ($addNoTemplate && $returnString==='') { // add sentence that no template could be created
                         $returnString = $this->translateString($translationPrefix.'noTemplate',['routeIDs' => '{&quot;'.self::studyID.'&quot;:'.'&quot;'.$routeParams[self::studyID].'&quot;, &quot;'.self::groupID.'&quot;:&quot;'.$routeParams[self::groupID].'&quot;, &quot;'.self::measureID.'&quot;:&quot;'.$routeParams[self::measureID].'&quot;}']);
@@ -872,15 +912,15 @@ abstract class ControllerAbstract extends AbstractController
 
     /** Creates a string indicating the duration or an int indicating the total time.
      * @param array $durations array containing the durations
-     * @param bool $isMultiple true if multiple measure time points exist
      * @param bool $returnTotal if true, the total time is returned
+     * @param bool $isMultiple true if multiple measure time points exist. May only be provided if $returnTotal is false
      * @return string|int duration string if $returnTotal ist false, the total time otherwise
      */
-    protected function getDuration(array $durations, bool $isMultiple, bool $returnTotal = false): string|int {
+    protected function getDuration(array $durations, bool $returnTotal = true, bool $isMultiple = true): string|int {
         $measureTime = $this->getIntFromString($durations[self::durationMeasureTime],0);
         $breaks = $this->getIntFromString($durations[self::durationBreaks],0);
         $total = $breaks+$measureTime;
-        return $returnTotal ? $total : $this->translateStringPDF('projectdetails.measures.duration',['multiple' => $this->getStringFromBool($isMultiple), 'total' => $total===0 ? 'X' : $total, self::durationMeasureTime => $measureTime>0 ? $measureTime : 'X', self::durationBreaks => $breaks]);
+        return $returnTotal ? $total : $this->translateStringPDF('participation.durationContent',['multiple' => $this->getStringFromBool($isMultiple), 'total' => $total===0 ? 'X' : $total, self::durationMeasureTime => $measureTime>0 ? $measureTime : 'X', self::durationBreaks => $breaks]);
     }
 
     /** Checks if burdens or risks except 'noBurdens' and 'noRisks' are selected.
@@ -993,14 +1033,21 @@ abstract class ControllerAbstract extends AbstractController
      * @param Session $session current session
      * @param bool $isXML if true, the xml-file should be downloaded, a zip file containing the xml-file and pdf-files otherwise
      * @param Request|null $request if the complete proposal should be downloaded, the request
+     * @param bool $getSecondLast if true, the second most recent xml-file will be downloaded, i.e., if the review process changes and the xml-file with the information before the change should be downloaded. Therefore, may only be true if $isXML is true
      * @return Response Response containing the download
      */
-    protected function getDownloadResponse(Session $session, bool $isXML = true, Request $request = null): Response {
+    protected function getDownloadResponse(Session $session, bool $isXML = true, Request $request = null, bool $getSecondLast = false): Response {
         $filename = $session->get(self::fileName);
         $filenameExt = $filename.'.xml';
         $filename .= '_';
         $xml = $this->createDOM();
-        $xmlToSave = $this->getXMLfromSession($session,getRecent: true);
+        if ($isXML && $getSecondLast) {
+            $tempArray = $session->get(self::docNameRecent); // must exist at this point
+            $xmlToSave = simplexml_load_string($tempArray[count($tempArray)-2]);
+        }
+        else {
+            $xmlToSave = $this->getXMLfromSession($session,getRecent: true);
+        }
         // add date to xml
         $currentDate = $this->getCurrentTime();
         $curDate = $currentDate->format('Y-m-d H:i:s');
@@ -1074,6 +1121,9 @@ abstract class ControllerAbstract extends AbstractController
                 !$isXML ? ['Content-Length' => filesize($zipName)] : []));
         if (!$isXML) {
             unlink($zipName);
+        }
+        elseif ($session->has(self::quit)) { // prevent downloading again if on page 'quit' and page is reloaded
+            $session->set(self::quit,'');
         }
         return $returnResponse;
     }
@@ -1199,7 +1249,7 @@ abstract class ControllerAbstract extends AbstractController
 
     /** Gets the position of the preview scrollbar.
      * @param Session $session current session
-     * @return int position of the preview scrollbar or 0 if the session variable cannot be foun
+     * @return int position of the preview scrollbar or 0 if the session variable cannot be found
      */
     protected function getPreviewScroll(Session $session): int {
         $scrollPoss = (int) ($session->get(self::preview) ?? 0);
@@ -1269,6 +1319,235 @@ abstract class ControllerAbstract extends AbstractController
         return $text!=='' ? ($addSpan ? '<span class="markInput">' : '').$text.($addSpan ? '</span>' : '') : '';
     }
 
+    /** Creates the brief report.
+     * @param Session $session current session
+     * @param bool $getReviewError if true, return whether any information in the brief report makes a full review process necessary
+     * @return array|bool if $getReviewError is true, true if the review process that results from the inputs is unequal to the selected review process, otherwise an array: keys: translated lines of the brief report (i.e., first column), values: array of two elements: 0: translated answers (i.e., second column), 1: whether the answer should be colored
+     */
+    protected function getBriefReport(Session $session, bool $getReviewError = true): array|bool {
+        $appNode = $this->getXMLfromSession($session,getRecent: true);
+        $reviewProcess = $session->get(self::reviewProcess);
+        $isReviewFull = str_contains($reviewProcess,self::reviewProcessFull);
+        $isFullDocs = $reviewProcess===self::reviewFullDocs;
+        $isReviewFullParam = ['isFull' => $this->getStringFromBool($isReviewFull)];
+        $parameters = array_merge($isReviewFullParam,['reviewProcess' => $reviewProcess]);
+        // brief report
+        $allBriefReports = []; // 0: heading, 1: array, keys: questions, values: 0: answer, 1: if true, answer will be displayed in red
+        $headingTrans = [];
+        foreach ([self::studyNode,self::groupNode,self::measureTimePointNode] as $type) {
+            $headingTrans[$type] = $this->translateString('projectdetails.headings.'.$type).' ';
+        }
+        $studyArray = $this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]);
+        $multipleStudies = count($studyArray)>1;
+        $noUnclear = [self::answerNo,self::answerUnclear];
+        $appDataArray = $this->xmlToArray($appNode->{self::appDataNodeName});
+        $medicineArray = $appDataArray[self::medicine];
+        $coreDataArray = $appDataArray[self::coreDataNode];
+        $tempVal = $coreDataArray[self::conflictNode][self::chosen];
+        $allShort = $tempVal==='1'; // gets false if any question is either not yet answered or answered such that a full proposal is required
+        $briefReport = [$this->getBriefReportHeading(self::conflictNode) => $this->getBriefReportAnswer(self::conflictNode,$tempVal==='0' ? self::answerYes : self::answerNo,$parameters,$getReviewError)];
+        $isMedicinePhysician = false;
+        foreach ([self::medicine,self::physicianNode] as $type) {
+            $tempVal = $medicineArray[$type][self::chosen];
+            $allShort = $allShort && $tempVal==='1';
+            $tempVal = $tempVal==='0';
+            $isMedicinePhysician = $isMedicinePhysician || $tempVal;
+            $parameters['is'.ucfirst($type)] = $this->getStringFromBool($tempVal);
+        }
+        $briefReport[$this->getBriefReportHeading(self::medicine)] = $this->getBriefReportAnswer(self::medicine,$isMedicinePhysician ? self::answerYes : self::answerNo,$parameters,$getReviewError);
+        $conflictMedicine = $briefReport;
+        $briefReport = [];
+        $tempArray = array_values($conflictMedicine);
+        $anyFull = $getReviewError && (($tempArray[0][0] || $tempArray[1][0])); // (gets) true if any information makes a full review process necessary
+        $anyUnclear = false; // gets true if any information is 'unclear'
+        if (!($getReviewError && $anyFull)) { // check projectdetails only if conflict and medicine are 'no'
+            foreach ($studyArray as $studyID => $study) {
+                $heading = $multipleStudies ? [self::studyNode => $headingTrans[self::studyNode].($studyID + 1)] : [];
+                $groupArray = $this->addZeroIndex($study[self::groupNode]);
+                $multipleGroups = count($groupArray)>1;
+                foreach ($groupArray as $groupID => $group) {
+                    if ($multipleGroups) {
+                        $heading[self::groupNode] = $headingTrans[self::groupNode].($groupID + 1);
+                    } else {
+                        unset($heading[self::groupNode]);
+                    }
+                    $measureArray = $this->addZeroIndex($group[self::measureTimePointNode]);
+                    $multipleMeasureTimePoints = count($measureArray)>1;
+                    foreach ($measureArray as $measureID => $measureTimePoint) {
+                        if ($multipleMeasureTimePoints) {
+                            $heading[self::measureTimePointNode] = $headingTrans[self::measureTimePointNode].($measureID + 1);
+                        } else {
+                            unset($heading[self::measureTimePointNode]);
+                        }
+                        $informationArray = $measureTimePoint[self::informationNode];
+                        $information = $this->getInformationString($informationArray);
+                        $parameters[self::informationNode] = $information;
+                        $informationIIArray = $measureTimePoint[self::informationIINode];
+                        $isInformationII = $informationIIArray!=='';
+                        $informationII = $isInformationII ? $this->getInformationString($informationIIArray) : '';
+                        $allInformation = [$information, $informationII];
+                        // information -> no need to check for informationII because 'examined' will falsify $allShort anyway if informationII is active
+                        $preContentChosen = $informationArray[self::preContent] ?? '';
+                        $allShort = $allShort && $preContentChosen===self::complete;
+                        $preContent = [$preContentChosen, $isInformationII ? ($informationIIArray[self::preContent] ?? '') : ''];
+                        $isNotPre = array_diff($allInformation, ['', self::pre])!==[];
+                        $parameters['isNotPre'] = $this->getStringFromBool($isNotPre);
+                        $isIncomplete = array_intersect($preContent, self::preContentIncomplete)!==[];
+                        $parameters['isIncomplete'] = $this->getStringFromBool($isIncomplete);
+                        $briefReport[$this->getBriefReportHeading(self::informationNode)] = $this->getBriefReportAnswer(self::informationNode, $isNotPre || $isIncomplete ? self::answerNo : self::answerYes, $parameters, $getReviewError, $noUnclear);
+                        // voluntary -> no need to check for chosen2 because if it exists, 'examined' will falsify $allShort anyway
+                        $consentArray = $measureTimePoint[self::consentNode];
+                        $tempArray = $consentArray[self::consentNode];
+                        $consentChosen = $tempArray[self::chosen];
+                        $isConsentOther = in_array(self::consentOther, [$consentChosen, $tempArray[self::chosen2Node] ?? '']);
+                        $tempArray = $consentArray[self::voluntaryNode];
+                        $voluntary = [$tempArray[self::chosen], $tempArray[self::chosen2Node] ?? 'yes'];
+                        $isVoluntary = in_array(self::voluntaryNotApplicable, $voluntary) || array_key_exists(self::voluntaryYesDescription, $tempArray);
+                        $compensationArray = $measureTimePoint[self::compensationNode];
+                        $allShort = $allShort && $compensationArray[self::compensationTypeNode]!=='';
+                        $parameters['isVoluntary'] = $this->getStringFromBool($isVoluntary);
+                        $parameters['isConsent'] = $this->getStringFromBool($isConsentOther);
+                        $compensationVoluntary = $compensationArray[self::compensationVoluntaryNode][self::chosen] ?? '';
+                        $allShort = $allShort && array_diff($voluntary, ['yes'])===[] && (!array_key_exists(self::compensationVoluntaryNode, $compensationArray) || $compensationVoluntary==='1') && in_array($consentChosen, self::consentTypesAny);
+                        $briefReport[$this->getBriefReportHeading(self::voluntaryNode)] = $this->getBriefReportAnswer(self::voluntaryNode, in_array(self::voluntaryConsentNo, $voluntary)
+                            ? self::answerNo
+                            : ($compensationVoluntary==='0' // compensation may compromise voluntariness
+                                ? self::answerRestricted
+                                : ($isVoluntary || // voluntariness not applicable, closed group or dependent
+                                $isConsentOther // consent is 'other'
+                                    ? self::answerUnclear : self::answerYes)), $parameters, $getReviewError, [self::answerUnclear, self::answerRestricted, self::answerNo]);
+                        // terminate cons
+                        $measuresArray = $measureTimePoint[self::measuresNode];
+                        $isLonger30 = $this->getDuration($measuresArray[self::durationNode])>30;
+                        $compensationTerminate = $compensationArray[self::terminateNode][self::chosen] ?? '';
+                        $isNoCompensationTerminate = $compensationTerminate===self::terminateNothing;
+                        $terminateCons = $consentArray[self::terminateConsNode][self::chosen];
+                        $isTerminateCons = $terminateCons==='1';
+                        $isShorter30Terminate = !$isLonger30 && $isNoCompensationTerminate;
+                        $parameters['isTerminateCons'] = $this->getStringFromBool($isTerminateCons);
+                        $parameters['isDuration'] = $this->getStringFromBool($isShorter30Terminate);
+                        $isInformation = in_array($information,self::prePostArray);
+                        $parameters['isFullInformation'] = $this->getStringFromBool($isFullDocs && $isInformation);
+                        $parameters['isDocHint'] = $this->getStringFromBool(!($isTerminateCons && !$isShorter30Terminate && (!$isInformation || !$isFullDocs)));
+                        $allShort = $allShort && $terminateCons==='0' && (!array_key_exists(self::terminateNode, $compensationArray) || in_array($compensationTerminate, self::terminateTypes));
+                        $briefReport[$this->getBriefReportHeading(self::terminateConsNode)] = $this->getBriefReportAnswer(self::terminateConsNode, $isTerminateCons || $isLonger30 && $isNoCompensationTerminate // cons if withdrawal or duration>30min and no compensation if withdrawal
+                            ? self::answerNo
+                            : ($compensationTerminate===self::terminateOther || $isShorter30Terminate // other compensation if withdrawal or duration at most 30 minutes and no compensation if withdrawal
+                                ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, $noUnclear);
+                        // examined
+                        $groupsArray = $measureTimePoint[self::groupsNode];
+                        $examinedArray = $groupsArray[self::examinedPeopleNode];
+                        $examinedArray = is_array($examinedArray) ? $examinedArray : []; // if not an array, then is must be an empty string, i.e., nothing chosen yet
+                        $minAge = $groupsArray[self::minAge];
+                        $isMinAge = $minAge!=='';
+                        $isUnder18 = $isMinAge && $minAge<18;
+                        $isOnlyHealthyDependentOther = array_diff_key($examinedArray, [self::healthyExaminedNode => '', self::dependentExaminedNode => '', 'otherPeople' => ''])===[];
+                        $isOther = array_key_exists('otherPeople', $examinedArray);
+                        $allShort = $allShort && $isMinAge && !$isUnder18 && $isOnlyHealthyDependentOther && (!$isOther || count($examinedArray)>1);
+                        $briefReport[$this->getBriefReportHeading(self::examinedPeopleNode)] = $this->getBriefReportAnswer(self::examinedPeopleNode, !$isOnlyHealthyDependentOther // people other than healthy, dependent, and other are examined
+                            ? self::answerYes
+                            : ($isOther || // only other is selected
+                            $isUnder18 // underage
+                                ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
+                        // wards -> no need to set $allShort because checks for wards are implicitly included in checks for examined
+                        $briefReport[$this->getBriefReportHeading(self::wardsExaminedNode)] = $this->getBriefReportAnswer(self::wardsExaminedNode, array_key_exists(self::wardsExaminedNode, $examinedArray) ? self::answerNo : ($isUnder18 ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, $noUnclear);
+                        // pre content -> no need to set $allShort because checks for pre content are implicitly included in checked for information
+                        $briefReport[$this->getBriefReportHeading(self::preContent)] = $this->getBriefReportAnswer(self::preContent, in_array(self::deceit, $preContent) // deceit was chosen
+                            ? self::answerYes
+                            : (array_intersect($allInformation, [self::post, 'noPost'])!==[] // no information is given
+                                ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
+                        // burdens and risks
+                        $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
+                        $tempVal = $burdensRisksArray[self::burdensRisksContributorsNode][self::chosen];
+                        $isBurdensRisksContributors = $tempVal==='0';
+                        $allShort = $allShort && $tempVal==='1';
+                        $parameters['isBurdensRisksContributors'] = $this->getStringFromBool($isBurdensRisksContributors);
+                        foreach ([self::burdensNode, self::risksNode] as $type) {
+                            $tempArray = $burdensRisksArray[$type][$type.'Type'];
+                            $isChosen = is_array($tempArray);
+                            $isCurrent = $isChosen && array_diff_key($tempArray, [($type===self::burdensNode ? self::noBurdens : self::noRisks) => ''])!==[];
+                            $allShort = $allShort && $isChosen && !$isCurrent;
+                            $parameters['is'.ucfirst($type)] = $this->getStringFromBool($isCurrent);
+                            $briefReport[$this->getBriefReportHeading($type)] = $this->getBriefReportAnswer($type, $isBurdensRisksContributors || $isCurrent ? self::answerYes : self::answerNo, $parameters, $getReviewError);
+                        }
+                        // finding
+                        $tempVal = $burdensRisksArray[self::findingNode][self::chosen];
+                        $allShort = $allShort && $tempVal==='1';
+                        $briefReport[$this->getBriefReportHeading(self::findingNode)] = $this->getBriefReportAnswer(self::findingNode, $tempVal==='0' ? self::answerYes : self::answerNo, $parameters, $getReviewError);
+                        // data privacy -> no set of $allShort because data privacy is only relevant for full proposals
+                        if ($isReviewFull) {
+                            $dataPrivacyArray = $measureTimePoint[self::privacyNode];
+                            if (array_key_exists(self::createNode, $dataPrivacyArray)) {
+                                $create = $dataPrivacyArray[self::createNode][self::chosen];
+                                $isTool = $create===self::createTool;
+                                $responsibility = $dataPrivacyArray[self::responsibilityNode] ?? '';
+                                $marking = $dataPrivacyArray[self::markingNode][self::chosen] ?? '';
+                                $isMarkingOther = $marking===self::markingOther; // marking can not be created by the tool
+                                $answer = $create===self::createSeparate || // personal data are collected, but document should not be created by the tool
+                                          $isTool && (!$isMarkingOther && $responsibility!==self::privacyNotApplicable || // if responsibility does not equal 'not applicable', personal data are collected
+                                          in_array($dataPrivacyArray[self::dataPersonalNode] ?? '',self::dataPersonal)) // research data are personal
+                                         ? self::answerYes
+                                         : (in_array($create,[self::createSeparateLater,self::privacyNotApplicable]) || // data privacy is checked later or no information is given
+                                            $isTool && $isMarkingOther // marking can not be created by the tool
+                                                ? self::answerUnclear : self::answerNo);
+                            } else { // data collection has already begun or funding is requested
+                                $answer = self::answerUnclear;
+                            }
+                            if (!$getReviewError) { // add only if brief report gets created to avoid using the answer for checking if the correct application process is chosen
+                                $briefReport[$this->getBriefReportHeading(self::privacyNode)] = $this->getBriefReportAnswer(self::privacyNode, $answer, $parameters, $getReviewError);
+                            }
+                        }
+                        // other sources
+                        $tempVal = $measuresArray[self::otherSourcesNode][self::chosen];
+                        $allShort = $allShort && $tempVal==='1';
+                        $briefReport[$this->getBriefReportHeading(self::otherSourcesNode)] = $this->getBriefReportAnswer(self::otherSourcesNode, $tempVal==='0' ? self::answerYes : self::answerNo, $parameters, $getReviewError);
+                        // add question to time point
+                        $allBriefReports[] = ['heading' => implode(', ', $heading), 'content' => array_merge($briefReport, $conflictMedicine)];
+                        if ($getReviewError) {
+                            foreach ($briefReport as $values) {
+                                $anyFull = $anyFull || $values[0];
+                                $anyUnclear = $anyUnclear || $values[1];
+                            }
+                        }
+                        if ($getReviewError && $anyFull) { // at least one information makes a full review process necessary
+                            break(3);
+                        }
+                    }
+                }
+            } // foreach study
+        } // if !(getReviewError && anyFull)
+        return $getReviewError ? ($coreDataArray[self::applicationProcessNode][self::chosen]!=='' && str_contains($reviewProcess,self::reviewProcessFull) && !$anyFull && !$anyUnclear && $allShort || str_contains($reviewProcess,self::reviewProcessShort) && $anyFull) : $allBriefReports;
+    }
+
+    /** Creates a heading for the brief report (i.e., first columns)
+     * @param string $key translation key
+     * @return string translated heading
+     */
+    private function getBriefReportHeading(string $key): string {
+        $tempPrefix = 'completeForm.briefReport.';
+        return '<b>'.$this->translateStringPDF($tempPrefix.'headings.'.$key).":</b>\n".$this->translateStringPDF($tempPrefix.$key);
+    }
+
+    /** Get an answer for a brief report.
+     * @param string $key key to be used for the translation
+     * @param string $answer answer to the question
+     * @param array $parameters parameters for the translation
+     * @param bool $getFull if true, return whether the answer is in $coloredAnswers but unequal to 'unclear'
+     * @param array $coloredAnswers if $answer equals any of these answers, the answer will be displayed in red
+     * @return array if $getFull is false: 0: whether the answer is in coloredAnswers but unequal to 'unclear', 1: whether the answer is 'unclear'. If getColored is true: array of two elements: 0: translated answer (i.e., second column), 1: whether the answer is in $coloredAnswers
+     */
+    private function getBriefReportAnswer(string $key, string $answer, array $parameters, bool $getFull, array $coloredAnswers = [self::answerYes,self::answerUnclear]): array {
+        $tempPrefix = 'completeForm.briefReport.';
+        $isColored = in_array($answer,$coloredAnswers);
+        if ($getFull) {
+            $isUnclear = $answer===self::answerUnclear;
+            return [$isColored && !$isUnclear,$isUnclear];
+        }
+        else {
+            return [$this->translateStringPDF($tempPrefix.'types.'.$answer).$this->translateStringPDF($tempPrefix.'linking.'.$key,(array_merge($parameters,['answer' => $answer]))),$isColored];
+        }
+    }
+
     // functions involving xml
 
     /** Replaces all '<' in the values of the input with '&lt;'.
@@ -1297,43 +1576,47 @@ abstract class ControllerAbstract extends AbstractController
      * @return array array with following parameters: bool isAnonymized: whether personal research data are anonymized, bool isPurposeReuse: whether personal research data are kept for reuse, bool dataReuse: whether the privacy document should is/can be created by the tool ('tool') or not ('noTool'), string personal: how the data is processed
      */
     protected function getPrivacyReuse(array $privacyArray): array {
-        $create = $privacyArray[self::createNode][self::chosen];
-        $isAnonymous = $create==='anonymous';
-        $isTool = $create===self::createTool && in_array($privacyArray[self::responsibilityNode] ?? '',['',self::responsibilityOnlyOwn,self::privacyNotApplicable]) && in_array($privacyArray[self::transferOutsideNode] ?? '',['','no',self::privacyNotApplicable]) && ($privacyArray[self::markingNode][self::chosen] ?? '')!==self::markingOther;
-        $personal = $isAnonymous ? 'anonymous' : 'noTool';
-        $isAnonymized = false;
-        $isPurposeReuse = false;
-        if ($isTool) {
-            if (in_array($privacyArray[self::dataPersonalNode] ?? '',self::dataPersonal)) { // research data are/may be personal
-                $anonymizationArray = $privacyArray[self::anonymizationNode];
-                $isAnonymized = $anonymizationArray!=='' && !array_key_exists(self::anonymizationNo,$anonymizationArray); // also true if not yet answered
-                if (array_key_exists(self::personalKeepNode,$privacyArray)) {
-                    $personalKeep = $privacyArray[self::personalKeepNode];
-                    $isPurposeReuse = $personalKeep!=='' && array_key_exists(self::personalKeepReuse,$personalKeep);
-                }
-                if ($isAnonymized) { // personal research data are anonymized
-                    $isStorageDelete = ($privacyArray[self::storageNode][self::chosen] ?? '')===self::storageDelete;
-                    if ($isStorageDelete) { // original data are deleted immediately
-                        $personal = 'immediately';
+        $returnParams = ['personal' => 'noTool', 'isAnonymized' => false, 'isPurposeReuse' => false, self::dataReuseNode => 'noTool'];
+        if (array_key_exists(self::createNode,$privacyArray)) {
+            $create = $privacyArray[self::createNode][self::chosen];
+            $isAnonymous = $create==='anonymous';
+            $isTool = $create===self::createTool && in_array($privacyArray[self::responsibilityNode] ?? '', ['', self::responsibilityOnlyOwn, self::privacyNotApplicable]) && in_array($privacyArray[self::transferOutsideNode] ?? '', ['', 'no', self::privacyNotApplicable]) && ($privacyArray[self::markingNode][self::chosen] ?? '')!==self::markingOther;
+            $returnParams[self::dataReuseNode] = $isTool || $isAnonymous ? 'tool' : 'noTool';
+            $isPurposeReuse = false;
+            if ($isTool) {
+                if (in_array($privacyArray[self::dataPersonalNode] ?? '', self::dataPersonal)) { // research data are/may be personal
+                    if (array_key_exists(self::personalKeepNode, $privacyArray)) {
+                        $personalKeep = $privacyArray[self::personalKeepNode];
+                        $isPurposeReuse = $personalKeep!=='' && array_key_exists(self::personalKeepReuse, $personalKeep);
+                        $returnParams['isPurposeReuse'] = $isPurposeReuse;
                     }
-                    else { // original data are kept
-                        $personal = $isPurposeReuse ? 'purpose' : 'keep';
+                    $anonymizationArray = $privacyArray[self::anonymizationNode];
+                    if ($anonymizationArray!=='' && !array_key_exists(self::anonymizationNo, $anonymizationArray)) { // personal research data are anonymized (also true if not yet answered
+                        $returnParams['isAnonymized'] = true;
+                        $isStorageDelete = ($privacyArray[self::storageNode][self::chosen] ?? '')===self::storageDelete;
+                        if ($isStorageDelete) { // original data are deleted immediately
+                            $personal = 'immediately';
+                        } else { // original data are kept
+                            $personal = $isPurposeReuse ? 'purpose' : 'keep';
+                        }
+                    } else { // no anonymization of personal research data
+                        $personal = $isPurposeReuse ? 'purpose' : 'personal';
                     }
+                } else { // research data are anonymous
+                    $isMarkingPersonal = false;
+                    foreach ([self::markingNode, self::markingNode.self::markingSuffix] as $marking) {
+                        $tempArray = $privacyArray[$marking] ?? [];
+                        $isMarkingPersonal = $isMarkingPersonal || ($tempArray[self::chosen] ?? '')===self::markingName || in_array($tempArray[self::codePersonal] ?? '', self::markingDataResearchTypes);
+                    }
+                    $personal = $isMarkingPersonal ? 'marking' : 'anonymous';
                 }
-                else  { // no anonymization of personal research data
-                    $personal = $isPurposeReuse ? 'purpose' : 'personal';
-                }
+                $returnParams['personal'] = $personal;
             }
-            else { // research data are anonymous
-                $isMarkingPersonal = false;
-                foreach ([self::markingNode,self::markingNode.self::markingSuffix] as $marking) {
-                    $tempArray = $privacyArray[$marking] ?? [];
-                    $isMarkingPersonal = $isMarkingPersonal || ($tempArray[self::chosen] ?? '')===self::markingName || in_array($tempArray[self::codePersonal] ?? '',self::markingDataResearchTypes);
-                }
-                $personal = $isMarkingPersonal ? 'marking' : 'anonymous';
+            elseif ($isAnonymous) {
+                $returnParams['personal'] = 'anonymous';
             }
         }
-        return ['isAnonymized' => $isAnonymized, 'isPurposeReuse' => $isPurposeReuse, self::dataReuseNode => $isTool || $isAnonymous ? 'tool' : 'noTool', 'personal' => $personal ];
+        return $returnParams;
     }
 
     /** Checks if there are multiple studies, groups, or measure time points.
@@ -1374,7 +1657,7 @@ abstract class ControllerAbstract extends AbstractController
      */
     protected function getProjectTitleParticipants(Session $session, bool $getDifferent = false): string|array {
         $coreDataArray = $this->xmlToArray($this->getXMLfromSession($session,getRecent: true)->{self::appDataNodeName}->{self::coreDataNode});
-        $tempArray = $coreDataArray[self::projectTitleParticipation];
+        $tempArray = $coreDataArray[self::projectTitleParticipation] ?? [];
         $projectTitle = $tempArray[self::descriptionNode] ?? $coreDataArray[self::projectTitle];
         return !$getDifferent ? $projectTitle : [$projectTitle,array_key_exists(self::descriptionNode,$tempArray)];
     }
@@ -1454,8 +1737,8 @@ abstract class ControllerAbstract extends AbstractController
             return false;
         }
         $nextRoute = explode("\n",$submitDummy);
-        $nextRoute = trim($nextRoute[str_contains($nextRoute[0],self::preview) ? 1 : 0]); // first entry may be the position of the preview scrollbar
-        $isLeave = substr($nextRoute,4)!==$route && ($submitDummy==='' || !in_array($nextRoute,['undo','download','documents',''])); // route in submitDummy starts with 'app_'
+        $nextRoute = trim($nextRoute[str_contains($nextRoute[0],self::preview) ? 1 : 0]); // first entry (and maybe the second, too) may be the position of the preview scrollbar
+        $isLeave = substr($nextRoute,4)!==$route && ($submitDummy==='' || !in_array($nextRoute,['undo','download','documents',''])); // route in submitDummy starts with 'app_' (first check); check submitDummy in case the preview line exists twice
         if ($isLeave) {
             $session->remove(self::docNameRecent);
         }
@@ -1556,6 +1839,7 @@ abstract class ControllerAbstract extends AbstractController
             $allElements = $session->get($type);
             $session->set($type,[$allElements[count($allElements)-1]]);
         }
+        $session->remove(self::docNameRecent);
     }
 
     /** Removes the temporary files.
@@ -1587,42 +1871,265 @@ abstract class ControllerAbstract extends AbstractController
 
     // methods involving xml
 
-    /** Updates the xml-file
+    /** Updates the xml-file.
+     * @param Request $request
      * @param SimpleXMLElement $xml loaded xml-file
      * @return void
      */
-    private function updateXML(SimpleXMLElement $xml): void {
-        $loadedVersion = explode('.',(string)($xml->attributes()->{self::toolVersionAttr}));
+    private function updateXML(Request $request, SimpleXMLElement $xml): void {
+        $loadedVersion = explode('.',$this->getToolVersion($xml));
         $major = $loadedVersion[0];
         $minor = $loadedVersion[1];
-        if ($major==='1' && $minor<'3') {
+        $isMinorSmaller3 = $minor<'3';
+        $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
+        if ($major==='1') { // updates for version before 2.0.0
             $this->setToolVersion($xml); // update attribute
+            $conflictNode = $coreDataNode->{self::conflictNode};
+            $isConflict = (string) $conflictNode->{self::chosen}==='0';
+            if ($isConflict) { // remove participant description because it is moved to texts
+                $conflictDescription = (string) $conflictNode->{'participantDescription'};
+                $this->removeElement('participantDescription',$conflictNode);
+            }
+            $appTypeNode = $coreDataNode->{self::applicationType};
+            if (((string) $appTypeNode->{self::chosen})===self::appNew && in_array((string) $xml->{self::committee},[self::committeeTUC,'testCommittee'])) { // TUC or test committee -> remove old application type
+                $this->removeElement(self::descriptionNode,$appTypeNode); // remove node containing the application type
+            }
+            $this->insertElementBefore(self::applicationProcessNode,$coreDataNode->{$this->checkElement(self::qualification,$coreDataNode) ? self::qualification : self::applicant},[self::chosen]);
             foreach ($xml->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
                     foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
-                        if ($minor<'2') { // updates for versions before 1.2.1
-                            // compensation
-                            $compensationNode = $measureTimePointNode->{self::compensationNode};
-                            if ($compensationNode->{self::terminateNode}->getName()!=='') { // compensation is given -> add node
-                                $this->insertElementBefore(self::compensationVoluntaryNode,$compensationNode->{self::compensationTextNode});
+                        // updates for version before 2.0.0
+                        // groups (update of nodes)
+                        $groupsNode = $measureTimePointNode->{self::groupsNode};
+                        $groupsNodeDom = dom_import_simplexml($groupsNode);
+                        $criteriaNode = $groupsNode->{self::criteriaNode};
+                        $criteriaNodeDom = dom_import_simplexml($criteriaNode);
+                        foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
+                            $groupsNodeDom->insertBefore(dom_import_simplexml($criteriaNode->{$type}),$criteriaNodeDom);
+                        }
+                        $this->removeElement(self::criteriaNode,$groupsNode);
+                        $recruitmentNode = $groupsNode->{self::recruitment};
+                        $recruitmentArray = $this->xmlToArray($recruitmentNode);
+                        $this->removeAllChildNodes($recruitmentNode);
+                        $tempArray = $recruitmentArray['recruitmentTypes'];
+                        if ($tempArray!=='') {
+                            foreach ($tempArray as $selection => $description) {
+                                $recruitmentNode->addChild($selection,$description);
+                            }
+                            $groupsNode->addChild(self::recruitmentFurther,$recruitmentArray[self::descriptionNode]);
+                        }
+                        // information(II) (update of nodes)
+                        foreach ([self::informationNode,self::informationIINode] as $page) {
+                            $informationNode = $measureTimePointNode->{$page};
+                            $informationArray = $this->xmlToArray($informationNode);
+                            if ($informationArray!==[]) {
+                                $this->removeAllChildNodes($informationNode);
+                                $pre = $informationArray[self::chosen];
+                                $informationNode->addChild(self::pre,$pre);
+                                $description = $informationArray[self::descriptionNode] ?? '';
+                                $additional = $informationArray['additional'] ?? [];
+                                $additionalChosen = $additional[self::chosen] ?? '';
+                                $additionalDescription = $additional[self::descriptionNode] ?? '';
+                                if ($pre==='0') { // pre information
+                                    $informationNode->addChild(self::preType,$description);
+                                    $informationNode->addChild(self::preContent,$additionalChosen);
+                                    if (in_array($additionalChosen,self::preContentIncomplete)) { // partial or deceit
+                                        $preCompleteNode = $informationNode->addChild(self::preComplete); // pre complete
+                                        $complete = $additional[self::complete] ?? '';
+                                        $preCompleteNode->addChild(self::chosen,$complete);
+                                        if ($complete==='0') {
+                                            $preCompleteNode->addChild(self::preCompleteType,$additional[self::preCompleteType]); // type of pre compelte
+                                        }
+                                        $preCompleteNode->addChild(self::descriptionNode,$additionalDescription);
+                                    }
+                                }
+                                elseif ($pre==='1') {
+                                    $informationNode->addChild(self::preText,$description);
+                                    $informationNode->addChild(self::post,$additionalChosen); // post information
+                                    if ($additionalChosen!=='') {
+                                        $informationNode->addChild(self::descriptionNode,$additionalDescription); // type of post information or description
+                                    }
+                                }
+                                if (array_key_exists(self::attendanceNode,$informationArray)) {
+                                    $informationNode->addChild(self::attendanceNode,$informationArray[self::attendanceNode]);
+                                }
+                                if (array_key_exists(self::documentTranslationNode,$informationArray)) {
+                                    $tempArray = $informationArray[self::documentTranslationNode];
+                                    $documentTranslationNode = $this->addChosenNode($informationNode,self::documentTranslationNode);
+                                    $documentTranslationNode->{self::chosen} = $tempArray[self::chosen];
+                                    if (array_key_exists(self::descriptionNode,$tempArray)) {
+                                        $documentTranslationNode->addChild(self::descriptionNode,$tempArray[self::descriptionNode]);
+                                    }
+                                    if (array_key_exists(self::documentTranslationPDF,$tempArray)) { // pdf should be added
+                                        $informationNode->addChild(self::documentTranslationPDF);
+                                    }
+                                }
                             }
                         }
-                        // updates for versions before 1.3.0
-                        // information
+                        // consent (update of nodes)
+                        $consentNode = $measureTimePointNode->{self::consentNode};
+                        $terminateConsNode = $consentNode->{self::terminateConsNode}; // terminate cons
+                        if ($this->checkElement(self::terminateConsParticipationNode,$terminateConsNode)) {
+                            $this->insertElementBefore(self::terminateConsParticipationNode,$consentNode->{self::terminateParticipantsNode});
+                            $consentNode->{self::terminateConsParticipationNode} = (string) $terminateConsNode->{self::terminateConsParticipationNode};
+                            $this->removeElement(self::terminateConsParticipationNode,$terminateConsNode);
+                        }
+                        // measures (update of nodes)
+                        $measuresNode = $measureTimePointNode->{self::measuresNode};
+                        foreach ([self::measuresNode,self::interventionsNode] as $type) {
+                            $curNode = $measuresNode->{$type};
+                            $followingNode = $measuresNode->{$type===self::measuresNode ? self::interventionsNode : self::otherSourcesNode};
+                            $tempVal = $type.'PDF';
+                            foreach ([self::descriptionNode => $type.self::descriptionCap,$tempVal => $tempVal] as $node => $newNode) {
+                                if ($this->checkElement($node,$curNode)) {
+                                    $this->insertElementBefore($newNode,$followingNode); // move node behind 'type' node
+                                    $measuresNode->{$newNode} = (string) $curNode->{$node};
+                                }
+                            }
+                            $typeArray = $this->xmlToArray($curNode->{$type.'Type'}[0]);
+                            $this->removeAllChildNodes($curNode);
+                            if ($typeArray!==[]) {
+                                foreach ($typeArray as $selection => $value) { // set 'typeType' children as children of 'type'
+                                    $curNode->addChild($selection);
+                                }
+                            }
+
+                        }
+                        // burdensRisks (update of nodes)
+                        $burdensRisksNode = $measureTimePointNode->{self::burdensRisksNode};
+                        $burdensNode = $burdensRisksNode->{self::burdensNode};
+                        if ($burdensNode->{self::burdensTypesNode}->{self::noBurdens}->getName()!=='') { // 'no burdens' is selected
+                            $this->insertElementBefore(self::burdensNoDescription,$burdensRisksNode->{self::risksNode});
+                            $burdensRisksNode->{self::burdensNoDescription} = (string) $burdensNode->{self::descriptionNode};
+                            $this->removeElement(self::descriptionNode,$burdensNode);
+                        }
+                        // compensation (update of nodes)
+                        $compensationNode = $measureTimePointNode->{self::compensationNode}[0];
+                        $compensationArray = $this->xmlToArray($compensationNode);
+                        $selections = $compensationArray[self::compensationTypeNode];
+                        if ($selections!=='' && !array_key_exists(self::compensationNo,$selections)) { // at least one type except 'no compensation' was selected
+                            $tempArray = [self::compensationTypeNode => []];
+                            foreach ($selections as $selection => $infos) {
+                                $tempArray[self::compensationTypeNode] = array_merge($tempArray[self::compensationTypeNode],[$selection => '']); // 'type' key only contains the selections
+                                $tempVal = $selection.self::descriptionCap;
+                                $tempArray[$tempVal] = $infos; // separate array for further information about selection
+                                if ($selection===self::compensationMoney) {
+                                    $tempArray[self::moneyFurther] = $infos[self::moneyFurther];
+                                }
+                                unset($tempArray[$tempVal][self::awardingNode]);
+                                $tempArray[$selection.self::awardingNode] = $infos[self::awardingNode]; // separate array for awarding of selection
+                            }
+                            $tempArray[self::terminateNode] = $compensationArray[self::terminateNode];
+                            $compensationVoluntary = $compensationArray[self::compensationVoluntaryNode] ?? ''; // may not exist depending on the loaded version
+                            $tempArray[self::compensationVoluntaryNode] = array_merge([self::chosen => $compensationVoluntary], $compensationVoluntary==='0' ? [self::descriptionNode => ''] : []);
+                            $tempArray[self::compensationTextNode] = $compensationArray[self::compensationTextNode];
+                            $this->arrayToXml($tempArray,$compensationNode);
+                        }
+                        // data privacy
+                        $this->removeElement(self::dataReuseNode,$measureTimePointNode->{self::privacyNode}); // was mistakenly created in addMeasurement
+                        // in version 1.2.1, compensationVoluntary was added. As the structure of the compensation nodes has changed in version 2.0.0, the compensationVoluntary node was already added there and therefore does not need to be added here (i.e., no need for a check of $minor<'2')
                         $informationNode = $measureTimePointNode->{self::informationNode};
-                        $pre = (string) $informationNode->{self::chosen};
-                        $isPre = $pre==='0';
-                        if ($isPre || $pre==='1' && ((string) $informationNode->{self::informationAddNode}->{self::chosen})==='0') { // either pre or post information -> add question for document translation
-                            $this->addChosenNode($informationNode,self::documentTranslationNode);
+                        if ($isMinorSmaller3) { // updates for versions before 1.3.0
+                            // information -> must be updated after updating the nodes
+                            $pre = (string) $informationNode->{self::pre};
+                            $isPre = $pre==='0';
+                            if ($isPre || $pre==='1' && ((string) $informationNode->{self::post})==='0') { // either pre or post information -> add question for document translation
+                                $this->addChosenNode($informationNode,self::documentTranslationNode);
+                            }
+                            // consent
+                            if (!$isPre) { // no pre information -> remove description for participants
+                                $this->removeElement(self::terminateConsParticipationNode,$consentNode);
+                            }
                         }
-                        // consent
-                        if (!$isPre) { // no pre information -> remove description for participants
-                            $this->removeElement(self::terminateConsParticipationNode,$measureTimePointNode->{self::consentNode}->{self::terminateConsNode});
+                        // groups
+                        $groupsArray = $this->xmlToArray($groupsNode);
+                        $examined = $groupsArray[self::examinedPeopleNode];
+                        $minAge = $groupsArray[self::minAge];
+                        if (($minAge==='' || intval($minAge)>17) && ($examined==='' || count($examined)===1 && array_key_exists(self::healthyExaminedNode,$examined))) { // remove people description node
+                            $this->removeElement(self::peopleDescription,$groupsNode);
                         }
+                        // measures
+                        $textsNode = $measureTimePointNode->{self::textsNode};
+                        $hasTexts = count($textsNode->children())>0;
+                        // move procedure node from texts to measures
+                        $this->insertElementBefore(self::procedureNode,$measuresNode->{self::measuresNode});
+                        if ($hasTexts) {
+                            $measuresNode->{self::procedureNode} = (string) $textsNode->{self::procedureNode};
+                        }
+                        $this->removeElement(self::procedureNode,$textsNode);
+                        // total duration at most 30 minutes -> remove terminate description
+                        $terminateNode = $compensationNode->{self::terminateNode};
+                        if ($terminateNode->getName()!=='' && $this->xmlToArray($terminateNode)[self::chosen]===self::terminateNothing && $this->getDuration($this->xmlToArray($measuresNode->{self::durationNode}))<=30) {
+                            $this->removeElement(self::descriptionNode,$terminateNode);
+                        }
+                        // texts
+                        if ($hasTexts && $isConflict) { // add conflict description
+                            $textsNode->addChild(self::conflictTextNode,$conflictDescription);
+                        }
+                        $this->updateNodesByReviewProcess($request,$measureTimePointNode,self::reviewFullDocs); // set full docs to avoid removing a lot of inputs
                     } // foreach measure time point
                 } // foreach group
             } // foreach study
-        } // if major===1 and minor<2
+        } // if major===1
+    }
+
+    /** Gets the tool version from the xml-file.
+     * @param SimpleXMLElement $xml root node of the xml-file
+     * @return string tool version
+     */
+    protected function getToolVersion(SimpleXMLElement $xml): string {
+        return (string)($xml->attributes()->{self::toolVersionAttr});
+    }
+
+    /** Gets the type of review process.
+     * @param array $application array containing all information about the application
+     * @return string type of review process
+     */
+    protected function getReviewProcess(array $application): string {
+        $coreDataArray = $application[self::appDataNodeName][self::coreDataNode];
+        $applicationProcessArray = $coreDataArray[self::applicationProcessNode];
+        $appType = $applicationProcessArray[self::chosen]; // short or full
+        $isRequested = false; // gets true if only requested funding exists
+        $fundingArray = $coreDataArray[self::funding];
+        if ($fundingArray!=='' && array_diff(array_keys($fundingArray),self::fundingResearchExternal)===[]) {
+            $isRequested = true;
+            foreach ($fundingArray as $funding) {
+                $isRequested = $isRequested && $funding[self::fundingStateNode]===self::fundingRequested;
+            }
+        }
+        $reviewProcess = '';
+        if ($appType!=='') {
+            $projectStartArray = $coreDataArray[self::projectStart];
+            $reviewProcess = $projectStartArray[self::chosen]==='0' && array_key_exists(self::descriptionNode,$projectStartArray)
+                ? $appType.'Begun'
+                : ($isRequested
+                    ? $appType.'Requested'
+                    : ($appType===self::reviewProcessFull
+                        ? self::reviewFullDocs
+                        : (array_key_exists(self::shortDocsNode,$applicationProcessArray)
+                            ? ($applicationProcessArray[self::shortDocsNode]==='0' ? self::reviewShortService : self::reviewShortNoDocs)
+                            : self::reviewShortDocs)));
+        }
+        if ($reviewProcess==='') {
+            $reviewProcess = $this->getReviewShortDefault($application[self::committee]);
+        }
+        return $reviewProcess;
+    }
+
+    /** Checks if the current review process may contain participation documents.
+     * @param Session $session current session
+     * @return bool true if the current review process may contain participation documents, false otherwise
+     */
+    protected function getReviewDocs(Session $session): bool {
+        return in_array($session->get(self::reviewProcess),self::reviewDocs);
+    }
+
+    /** Gets the default short application type
+     * @param string $committeeType committee type
+     * @return string default short application type
+     */
+    protected function getReviewShortDefault(string $committeeType): string {
+        return in_array($committeeType,self::reviewShortChoose) ? self::reviewShortNoDocs : self::reviewShortDocs;
     }
 
     /** Sets the string for the first inclusion criterion.
@@ -1632,16 +2139,18 @@ abstract class ControllerAbstract extends AbstractController
      */
     protected function setFirstInclusion(SimpleXMLElement $groups, string $locale): void {
         $groupsArray = $this->xmlToArray($groups);
-        $minAge = $groupsArray[self::minAge];
-        $minAge = (int) ($minAge!=='' ? $minAge : -2);
-        $maxAge = (int)($groupsArray[self::maxAge]); // will be 0 if empty
-        $maxAge = $maxAge===0 ? -2 : $maxAge;
-        $limit = $maxAge===-1 ? 'noUpperLimit' : ($minAge===$maxAge || in_array(-2,[$minAge,$maxAge]) ? 'sameLimit' : 'limits');
-        $firstInclusion = $this->getFirstInclusion($this->getAddressee($groupsArray),$limit,$minAge,$maxAge,$locale);
-        if ($minAge===-2) {
-            $firstInclusion = substr_replace($firstInclusion,$maxAge>0 ? $maxAge : 'X' ,strpos($firstInclusion,'-2'),2);
+        if (array_key_exists(self::criteriaIncludeNode,$groupsArray)) {
+            $minAge = $groupsArray[self::minAge];
+            $minAge = (int) ($minAge!=='' ? $minAge : -2);
+            $maxAge = (int)($groupsArray[self::maxAge]); // will be 0 if empty
+            $maxAge = $maxAge===0 ? -2 : $maxAge;
+            $limit = $maxAge===-1 ? 'noUpperLimit' : ($minAge===$maxAge || in_array(-2,[$minAge,$maxAge]) ? 'sameLimit' : 'limits');
+            $firstInclusion = $this->getFirstInclusion($this->getAddressee($groupsArray),$limit,$minAge,$maxAge,$locale);
+            if ($minAge===-2) {
+                $firstInclusion = substr_replace($firstInclusion,$maxAge>0 ? $maxAge : 'X' ,strpos($firstInclusion,'-2'),2);
+            }
+            $groups->{self::criteriaIncludeNode}->{self::criteriaNode}->{self::criteriaIncludeNode.'0'} = $firstInclusion;
         }
-        $groups->{self::criteriaNode}->{self::criteriaIncludeNode}->{self::criteriaNode}->{self::criteriaIncludeNode.'0'} = $firstInclusion;
     }
 
     /** Adds the legal nodes to the xml-document. Which nodes are added depends on the consent, the location and the loan question.
@@ -1650,25 +2159,193 @@ abstract class ControllerAbstract extends AbstractController
      * @return void
      */
     protected function addLegalNodes(SimpleXMLElement $legalNode, array $measureArray): void {
-        if ($measureArray[self::informationNode][self::chosen]==='0') { // information is pre
+        if ($measureArray[self::informationNode][self::pre]==='0') { // information is pre
             $measuresArray = $measureArray[self::measuresNode];
             $loanArray = $measuresArray[self::loanNode];
             $isConsent = $this->getAnyConsent($measureArray[self::consentNode][self::consentNode][self::chosen]);
             $isLocationPresence = $isConsent && !in_array($measuresArray[self::locationNode][self::chosen],[self::locationOnline,'']);
             $legalNodes = [];
-            if ($legalNode->{self::liabilityNode}->getName()==='' && $isConsent) { // consent is given
-                $legalNodes = [self::liabilityNode,self::insuranceNode];
+            if (!$this->checkElement(self::liabilityNode,$legalNode) && $isConsent) { // consent is given
+                $legalNodes = [self::liabilityNode,'insurance'];
             }
-            if ($legalNode->{self::apparatusNode}->getName()==='' && ($isLocationPresence || $isConsent && $loanArray[self::chosen]==='0' || $this->getTemplateChoice($this->getLoanReceipt($loanArray)))) { // in presence or loan with consent or with receipt
+            if (!$this->checkElement(self::apparatusNode,$legalNode) && ($isLocationPresence || $isConsent && $loanArray[self::chosen]==='0' || $this->getTemplateChoice($this->getLoanReceipt($loanArray)))) { // in presence or loan with consent or with receipt
                 $legalNodes[] = self::apparatusNode;
             }
-            if ($legalNode->{self::insuranceWayNode}->getName()==='' && $isLocationPresence) { // consent is given and in presence
+            if (!$this->checkElement(self::insuranceWayNode,$legalNode) && $isLocationPresence) { // consent is given and in presence
                 $legalNodes[] = self::insuranceWayNode;
             }
             foreach ($legalNodes as $type) {
                 $this->addChosenNode($legalNode,$type);
             }
         }
+    }
+
+    /** Updates the nodes of measure time point
+     * @param Request $request
+     * @param SimpleXMLElement $measureTimePointNode node containing the information about the current measure time point
+     * @param string $reviewProcess type of review process
+     * @return void
+     */
+    protected function updateNodesByReviewProcess(Request $request, SimpleXMLElement $measureTimePointNode, string $reviewProcess): void {
+        foreach (self::reviewQuestions as $page => $pageNodes) { // keys: page names, values: array of questions with review types
+            $pageNode = $measureTimePointNode->{$page};
+            if (!in_array($reviewProcess,self::reviewTypePages[$page])) { // no question is asked on the current page
+                $this->removeAllChildNodes($pageNode);
+            }
+            else { // at least one question is asked on the current page
+                $lastIndex = count($pageNodes)-1; // index of last question
+                $pageNodeKeys = array_keys($pageNodes);
+                $pageDependencies = self::pageDependencies[$page] ?? []; // keys: questions, values: array of dependencies when the question is asked and children that are added to the question
+                foreach (array_reverse($pageNodes) as $node => $reviewTypes) { // keys: questions, values: review types
+                    $isAsked = in_array($reviewProcess,$reviewTypes);
+                    $hasElement = $this->checkElement($node,$pageNode);
+                    if (!$isAsked && $hasElement) { // question was asked, but is not asked now -> remove node
+                        $this->removeElement($node,$pageNode);
+                    }
+                    elseif ($isAsked && !$hasElement) { // question was not asked, but is asked now -> add node
+                        // check if any dependencies exist
+                        $curDependencies = $pageDependencies[$node] ?? [];
+                        $createNode = true;
+                        if (($curDependencies[0] ?? [])!==[]) { // at least one dependency exists
+                            $dependencies = $curDependencies[0];
+                            $dependencies = is_array($dependencies[0]) ? $dependencies : [$dependencies];
+                            $values = $curDependencies[1];
+                            $values = is_array($values) ? $values : [$values];
+                            $isOr = $curDependencies[3] ?? false; // true if any of the dependencies must be true
+                            $createNode = !$isOr; // gets true if node should be created
+                            foreach ($dependencies as $index => $dependency) {
+                                $curNode = $measureTimePointNode->{$dependency[0]}; // page node of current dependency
+                                $depIndex = 1;
+                                $lastDepIndex = count($dependency)-1;
+                                while ($depIndex<=$lastDepIndex && $curNode!==null) {
+                                    $curNode = $curNode->{$dependency[$depIndex]};
+                                    ++$depIndex;
+                                }
+                                $curValues = $values[$index];
+                                $hasValue = $curNode!==null && $curNode->getName()!=='' && in_array((string) $curNode,is_array($curValues) ? $curValues : [$curValues]);
+                                if ($isOr) {
+                                    $createNode = $createNode || $hasValue;
+                                }
+                                else {
+                                    $createNode = $createNode && $hasValue;
+                                }
+                            }
+                        }
+                        if ($createNode) { // node should be created
+                            $index = array_search($node,$pageNodeKeys); // index of question
+                            $isNextAsked = false; // gets true for the first question following the current one that is also asked
+                            while ($index<$lastIndex && !$isNextAsked) {
+                                ++$index;
+                                $nextKey = $pageNodeKeys[$index];
+                                $isNextAsked = in_array($reviewProcess,$pageNodes[$nextKey]) && $this->checkElement($nextKey,$pageNode);
+                            }
+                            if ($index>=$lastIndex && !$isNextAsked) { // last question on page
+                                $nodeAfter = $pageNode->addChild('dummy');
+                            }
+                            else { // another question after the current one is also asked
+                                $nodeAfter = $pageNode->{$pageNodeKeys[$index]};
+                            }
+                            $children = $curDependencies[2] ?? [];
+                            $this->insertElementBefore($node,$nodeAfter,is_array($children) ? $children : [$children]);
+                            $this->removeElement('dummy',$pageNode);
+                        }
+                    } // elseif (isAsked && !hasElement)
+                } // foreach pageNodes
+            } // else (at least one question asked)
+        } // foreach reviewQuestions
+        // remove nodes that depend on different inputs (e.g., A and [B or C]) -> They do (still) exist if they may exist for the review process
+        $groupsNode = $measureTimePointNode->{self::groupsNode};
+        $consentNode = $measureTimePointNode->{self::consentNode};
+        $compensationNode = $measureTimePointNode->{self::compensationNode};
+        if ($this->getShortBegunRequested($request)) { // if creation of participation document can be chosen, but data collection has already begun or funding is requested, intermediate page must have the same information as for shortService and shortNoDocs, i.e., some nodes that were created need to be removed again
+            $this->removeElement(self::criteriaIncludeNode,$groupsNode);
+            $this->removeElement(self::criteriaExcludeNode,$groupsNode);
+            $this->removeElement(self::locationNode,$measureTimePointNode->{self::measuresNode});
+            $this->removeElement(self::terminateParticipantsNode,$consentNode);
+            $compensationTypesArray = $this->xmlToArray($compensationNode[0])[self::compensationTypeNode];
+            if ($compensationTypesArray!=='' && !array_key_exists(self::compensationNo,$compensationTypesArray)) {
+                foreach (array_keys($compensationTypesArray) as $compensation) {
+                    $this->removeElement($compensation.self::descriptionCap,$compensationNode);
+                    $this->removeElement($compensation.self::awardingNode,$compensationNode);
+                    if ($compensation===self::compensationMoney) {
+                        $this->removeElement(self::moneyFurther,$compensationNode);
+                    }
+                }
+            }
+        }
+        if ($this->checkElement(self::criteriaIncludeNode,$groupsNode)) { // add (not remove) first inclusion criterion if old review process was shortNoDocs
+            $include = $groupsNode->{self::criteriaIncludeNode}->{self::criteriaNode};
+            $firstInclude = self::criteriaIncludeNode.'0';
+            if (!$this->checkElement($firstInclude,$include)) {
+                $include->addChild($firstInclude);
+                $this->setFirstInclusion($groupsNode, $request->getLocale());
+            }
+        }
+        $informationNode = $measureTimePointNode->{self::informationNode};
+        $isPre = $this->checkElement(self::pre,$informationNode) && ((string) $informationNode->{self::pre})==='0';
+        $legalNode = $measureTimePointNode->{self::legalNode}; // legal nodes are not changed if the review process changes
+        $hasLegal = count($legalNode->children())>0;
+        if (!$isPre) {
+            // legal
+            if ($hasLegal) {
+                $this->removeAllChildNodes($legalNode);
+            }
+        }
+        elseif (!$hasLegal && in_array($reviewProcess,self::reviewTypePages[self::legalNode])) {
+            $this->addLegalNodes($legalNode,$this->xmlToArray($measureTimePointNode));
+        }
+        // nodes that exist if any information is given
+        if ($isPre || $this->checkElement(self::post,$informationNode) && ((string) $informationNode->{self::post}->{self::chosen})==='0') {
+            // finding text
+            if (((string) $measureTimePointNode->{self::burdensRisksNode}->{self::findingNode}->{self::chosen})!=='0') {
+                $this->removeElement(self::findingTextNode,$measureTimePointNode->{self::textsNode});
+            }
+            // terminate cons participation
+            if (((string) $consentNode->{self::terminateConsNode}->{self::chosen})!=='1') {
+                $this->removeElement(self::terminateConsParticipationNode,$consentNode);
+            }
+        }
+        // data privacy
+        $privacyNode = $measureTimePointNode->{self::privacyNode}[0];
+        if ($this->checkElement(self::markingNode,$privacyNode) && ((string) $privacyNode->{self::markingNode}->{self::chosen})===self::markingOther) {
+            foreach ([self::dataResearchNode,self::anonymizationNode,self::storageNode,self::personalKeepNode,self::accessNode,self::purposeFurtherNode,self::processingFurtherNode] as $nodeName) { // remove all nodes that may have been created, but not needed because marking is 'other'
+                $this->removeElement($nodeName,$privacyNode);
+            }
+        }
+        $compensationArray = $this->xmlToArray($compensationNode[0]);
+        $selections = $compensationArray[self::compensationTypeNode] ?? '';
+        $hasCode = false; // gets true if any awarding is by code
+        if ($selections!=='' && !array_key_exists(self::compensationNo,$selections)) {
+            foreach (array_keys($selections) as $selection) {
+                $hasCode = $hasCode || ($compensationArray[$selection.self::awardingNode][self::laterTypesName] ?? '')==='code';
+            }
+        }
+        if (!$hasCode || $this->checkElement(self::purposeResearchNode,$privacyNode) && $this->checkElement(self::purposeCompensation,$privacyNode->{self::purposeResearchNode})) { // purpose of marking is compensation or no code is used for awarding
+            $this->removeElement(self::codeCompensationNode,$privacyNode);
+        }
+        // data reuse
+        $dataReuseNode = $measureTimePointNode->{self::dataReuseNode};
+        $personalParams = $this->getPrivacyReuse($this->xmlToArray($privacyNode));
+        $isPersonalPurpose = ($personalParams['personal'] ?? 'noTool')==='purpose';
+        $isAnonymized = $personalParams['isAnonymized'] ?? false;
+        if ($isPersonalPurpose && !$isAnonymized) {
+            $this->removeElement(self::dataReuseNode,$dataReuseNode);
+        }
+        if ($this->checkElement(self::dataReuseNode,$dataReuseNode) && !in_array((string) $dataReuseNode->{self::dataReuseNode},self::dataReuseTypesYes)) {
+            $this->removeElement(self::dataReuseHowNode,$dataReuseNode);
+        }
+        if (!($isPersonalPurpose && $isAnonymized)) {
+            $this->removeElement(self::dataReuseHowNode.'reuse',$dataReuseNode);
+        }
+    }
+
+    /** Checks whether the review process is 'shortBegun' or 'shortRequested' and the committee allows to choose whether documents should be created for short proposals.
+     * @param Request $request
+     * @return bool true if the review process is 'shortBegun' or 'shortRequested' and committee allows to choose whether documents should be created for short proposals, false otherwise
+     */
+    protected function getShortBegunRequested(Request $request): bool {
+        $session = $request->getSession();
+        return in_array($this->getCommitteeType($session),self::reviewShortChoose) && in_array($session->get(self::reviewProcess),[self::reviewShortBegun,self::reviewShortRequested]);
     }
 
     /** Adds or sets the attribute to the root node containing the tool version.
@@ -1718,8 +2395,8 @@ abstract class ControllerAbstract extends AbstractController
             foreach ($children as $child) {
                 $newNode->appendChild($ownerDoc->createElement($child));
             }
-        } catch (\DOMException $e) {
         }
+        catch (\DOMException $e) {}
     }
 
     /** Checks if an xml-element exists and if so, removes it.

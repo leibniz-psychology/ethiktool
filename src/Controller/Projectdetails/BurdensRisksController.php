@@ -25,7 +25,7 @@ class BurdensRisksController extends ControllerAbstract
         $textsArray = $this->xmlToArray($measureNode->{self::textsNode});
         $isTexts = $textsArray!==[];
         if ($isTexts && !$session->has(self::docNameRecent)) {
-            $session->set(self::docNameRecent,$session->get(self::docNameRecent));
+            $session->set(self::docNameRecent,$session->get(self::docName));
         }
         $burdensRisksNode = $measureNode->{self::burdensRisksNode};
         [$textInputCon,$textInputFinding] = ['',''];

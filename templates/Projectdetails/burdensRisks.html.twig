@@ -3,28 +3,22 @@
 
 {% block content %}
     {% set translationPrefix, inputDiv, isTextInput, contributors = 'projectdetails.pages.burdensRisks.', 'InputDiv', textInputCon is not same as '', content.burdensRisksContributors %}
-    {% set textHintTrans, isNoBurdens, isContributorsSelected = translationPrefix~'textHint', content.noBurdens.vars.checked, contributors.vars.value is same as '0' %}
-    {% set textInputParam = (isTextInput ? [[['noBurdens','noRisks'],['burdens'~inputDiv,'risks'~inputDiv]]] : []) %}
+    {% set isContributorsSelected, textInputParam = contributors.vars.value is same as '0', (isTextInput ? [[['noBurdens','noRisks'],['burdens'~inputDiv,'risks'~inputDiv]]] : []) %}
     {# burdens, risks, and burdens/risks for contributors #}
     <div>
         {% for type in ['burdens','risks','burdensRisksContributors'] %}
             {% set isBurdens, isBurdensRisks, checkboxes = type is same as 'burdens', type is not same as 'burdensRisksContributors', checkboxTypes[type] ?? [] %}
-            {% set typePrefix, checkboxesWoNo, typeParam = translationPrefix~type~'.', checkboxes|slice(1), {'type': type} %}
-            {% set hintsPrefix, anySelected = typePrefix~'hints.', getAnySelected(content,checkboxesWoNo)[1] %}
-            {% set hintBurdensNothing, hintBurdensNo, hintDescription = (hintsPrefix~'missing')|trans, (hintsPrefix~'noBurdens')|trans, textHintTrans|trans(typeParam) %}
-            {% set noID, descriptionDiv, compensationDiv = 'no'~(type|capitalize), type~'DescriptionDiv', type~'CompensationDiv' %}
+            {% set typePrefix, checkboxesWoNo, typeParam, hasBurdensNoDescription = translationPrefix~type~'.', checkboxes|slice(1), {'type': type}, isBurdens and content.burdensNoDescription is defined %}
+            {% set anySelected, noID, descriptionDiv, compensationDiv = getAnySelected(content,checkboxesWoNo)[1], 'no'~(type|capitalize), type~'DescriptionDiv', type~'CompensationDiv' %}
             <div {% if not isBurdens %} class="mt-8" {% endif %} id="{{ type~'Type' }}">
-                {{ formRender.addHeading(typePrefix~'title',{'headingHint': [[hintsPrefix~'headingHint']]}) }}
+                {{ formRender.addHeading(typePrefix~'title',{'headingHint': [[typePrefix~'hints.headingHint']]}) }}
                 {% if isBurdensRisks %}
                     <div class="MetaData-Widget mt-2"
-                            {{ stimulus_action('base',isBurdens ? 'setCheckboxTextfield' : 'setMultiCheckbox','change',{
+                            {{ stimulus_action('base','setMultiCheckbox','change',{
                                 'single': noID,
-                                'multiCheck': checkboxesWoNo}|
-                                merge(isBurdens
-                                    ? {'checkboxes': [checkboxes,descriptionDiv,[isBurdens ? hintBurdensNothing,hintDescription,isBurdens ? hintBurdensNo],noID], 'setMulti': 'true'}
-                                    : {}))|
+                                'multiCheck': checkboxesWoNo})|
                             stimulus_action('base','setVisibility','change',{
-                                'multi': [[checkboxesWoNo,[compensationDiv]|merge(not isBurdens ? [descriptionDiv] : [])]]|
+                                'multi': [[checkboxesWoNo,[descriptionDiv,compensationDiv]]]|merge(hasBurdensNoDescription ? [['noBurdens','burdensNoDescriptionDiv']] : [])|
                                 merge(textInputParam),
                                 'setOr': [0]}) }}>
                         {{ formRender.addCheckboxGroup(content,checkboxes,{'icons': iconArrays[type]}|merge(anySelected or content[noID].vars.checked ? {'targets': anySelected ? [noID] : checkboxesWoNo} : {})) }}
@@ -32,10 +26,16 @@
                 {% else %}
                     <div class="mt-2" {{ stimulus_action('base','setVisibility','change',{'values': [['0',[descriptionDiv,compensationDiv]]]}) }}>{{ formRender.renderButtons(contributors,noHeading) }}</div>
                 {% endif %}
+                {# description #}
                 {{ formRender.addTextfield(content[type~'Description'],fontNormal|merge({
-                    'visibility': isBurdensRisks ? isBurdens or anySelected : isContributorsSelected,
-                    'hint': not isBurdens or anySelected ? hintDescription : (isNoBurdens ? hintBurdensNo : hintBurdensNothing),
-                    'attributes': textHeightLong|merge(isBurdens ? {'disabled': not anySelected and not isNoBurdens} : {})})) }}
+                    'visibility': isBurdensRisks ? anySelected : isContributorsSelected,
+                    'hint': translationPrefix~'textHint',
+                    'textHintParams': typeParam,
+                    'attributes': textHeightLong})) }}
+                {# description of no burdens #}
+                {% if hasBurdensNoDescription %}
+                    {{ formRender.addTextfield(content.burdensNoDescription,fontNormal|merge({'visibility': content.noBurdens.vars.checked})) }}
+                {% endif %}
                 {# compensation #}
                 <div class="mt-4" id="{{ compensationDiv }}" style="{{ boolToDisplay(isBurdensRisks ? anySelected : isContributorsSelected) }}">
                     {% set compensation, compensationPrefix = content[type~'Compensation'], translationPrefix~'compensation.textHints.' %}
@@ -74,8 +74,10 @@
             {% endif %}
         </div>
         {# feedback #}
-        {% set feedback = content.feedback %}
-        {{ formRender.renderButtons(feedback,{'text': [content.feedbackDescription,fontNormal|merge({'visibility': feedback.vars.value is same as '0'})], 'hint': [translationPrefix~'feedback.'], 'stimVisible': {'values': [['0','feedbackDescriptionDiv']]}, 'addDiv': ['feedback']}) }}
+        {% if content.feedback is defined %}
+            {% set feedback = content.feedback %}
+            {{ formRender.renderButtons(feedback,{'text': [content.feedbackDescription,fontNormal|merge({'visibility': feedback.vars.value is same as '0'})], 'hint': [translationPrefix~'feedback.'], 'stimVisible': {'values': [['0','feedbackDescriptionDiv']]}, 'addDiv': ['feedback']}) }}
+        {% endif %}
         {{ formRender.addSubmitButtons() }}
     </div> {# entire form #}
 {% endblock %}

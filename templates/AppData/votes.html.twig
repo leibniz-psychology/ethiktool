@@ -19,9 +19,9 @@
         {# own institution vote #}
         <div class="mt-8" id="instVote">
             {% set instVote, reference, instVoteText, appParams = content.instVote, content.reference, content.instVoteText, {'type': appType} %}
-            {% set isVisible, hintDiv, isNotMain = instVote.vars.value is same as '0', 'hintDiv', appType in ['extended','resubmission'] %}
-            {% set textParams, isHint = fontNormal|merge({'visibility': isVisible}), isNotMain or appType is same as 'new' %}
-            {{ formRender.renderButtons(instVote,{'text': [reference,textParams|merge({'attributes': {'style': 'width: 20rem'}})|merge(isNotMain ? targetParam : {})], 'stimVisible': {'values': [['0',[reference.vars.name~'Div',instVoteText.vars.name~'Div']|merge(isHint ? [hintDiv] : [])]]}}|merge(isHint ? {'hintButtons': [[translationPrefix~'instVote.hint.'~(isNotMain ? 'notMain' : 'main'),appParams|merge(committeeParams),[]],hintDiv,isVisible]} : {})|merge(isNotMain ? {'target': 'instVote1'} : {})) }}
+            {% set isVisible, hintDiv, isNotNew = instVote.vars.value is same as '0', 'hintDiv', appType in exReArray %}
+            {% set textParams, isHint = fontNormal|merge({'visibility': isVisible}), isNotNew or appType is same as 'new' %}
+            {{ formRender.renderButtons(instVote,{'text': [reference,textParams|merge({'attributes': {'style': 'width: 20rem'}})|merge(isNotNew ? targetParam : {})], 'stimVisible': {'values': [['0',[reference.vars.name~'Div',instVoteText.vars.name~'Div']|merge(isHint ? [hintDiv] : [])]]}}|merge(isHint ? {'hintButtons': [[translationPrefix~'instVote.hint.'~(isNotNew ? 'notMain' : 'main'),appParams|merge(committeeParams),[]],hintDiv,isVisible]} : {})|merge(isNotNew ? {'target': 'instVote1'} : {})) }}
             {{ formRender.addTextfield(instVoteText,textParams|merge({'attributes': textHeightLong, 'textHintParams': appParams})) }}
         </div>
         {# buttons #}

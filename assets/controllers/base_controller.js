@@ -1,6 +1,12 @@
 import {Controller} from "@hotwired/stimulus";
-import {Modal} from "bootstrap";
-import {checkTextareaInput, getSelected, sanitizeString, setElementVisibility, setHint} from "./multiFunction";
+import {
+    checkTextareaInput,
+    getSelected,
+    sanitizeString,
+    setElementVisibility,
+    setHint,
+    showModal
+} from "./multiFunction";
 
 export default class extends Controller {
 
@@ -33,9 +39,9 @@ export default class extends Controller {
                 let target = event.target;
                 let type = target.type;
                 if (target.id!=='loadInput') {
-                    if (this.submitDummyTarget.value !== 'load' && type !== 'number' && type !== 'file') { // if a file is loaded, the type is checked first. If a spinner input is changed, the validity is checked first.
+                    if (this.submitDummyTarget.value!=='load' && type!=='number' && type!=='file') { // if a file is loaded, the type is checked first. If a spinner input is changed, the validity is checked first.
                         let id = target.id;
-                        if (!(this.routeValue.includes('landing') && (id.includes('Text') || id === 'landing_copy') || id.includes('language'))) {
+                        if (!(this.routeValue.includes('landing') && (id.includes('Text') || id==='landing_copy') || id.includes('language'))) {
                             this.submitDummyTarget.value = '';
                             await this.submitForm(event);
                         }
@@ -55,7 +61,9 @@ export default class extends Controller {
             })
         }
         this.addSidebarPreviewListener();
-        this.addListener();
+        if (this.hasLoadInputTarget) {
+            this.addListener();
+        }
     }
 
     // methods that are called from a template
@@ -321,8 +329,11 @@ export default class extends Controller {
                 this.previewTarget.parentNode.replaceChild(html.querySelector('#preview'),this.previewTarget);
                 this.previewTarget.scrollTop = this.previewValue;
             }
-            for (let backdrop of document.getElementsByClassName('modal-backdrop')) { // if submission was made inside a modal, remove the backdrop
-                backdrop.remove();
+            let url = response.url;
+            if (url.includes('contributors') || url.includes('landing')) {
+                for (let backdrop of document.getElementsByClassName('modal-backdrop')) { // if submission was made inside a modal, remove the backdrop
+                    backdrop.remove();
+                }
             }
             let scrollPositions = [];
             for (let element of document.getElementsByTagName('textarea')) { // get scroll positions of text areas
@@ -384,16 +395,6 @@ export default class extends Controller {
         setElementVisibility(count.nextElementSibling,isGreater);
     }
 
-    /** Opens a modal. If the passed argument is an event, it must have a parameter 'target' indicating the id of the modal.
-     * @param element Either the target modal or an event
-     */
-    showModal(element) {
-        if (element.target!==undefined) { // element is an event
-            element = document.getElementById(element.params.target);
-        }
-        (new Modal(element)).show();
-    }
-
     // methods that are called from within this class
 
     /** (De)actives the 'undo' button. */
@@ -432,10 +433,8 @@ export default class extends Controller {
         // hint above headings of the application pdf preview
         for (let heading of document.getElementsByClassName('inputPage')) {
             let clickableHeading = heading.getElementsByClassName('inputPageHeading')[0]; // the classes exist only once inside the respective element
-            clickableHeading.addEventListener('click', (event) => {
-                // if (event.currentTarget===heading) { // make hint visible only if clicked on heading
-                    heading.getElementsByTagName('span')[0].style.opacity = '1';
-                // }
+            clickableHeading.addEventListener('click', () => {
+                heading.getElementsByTagName('span')[0].style.opacity = '1';
             });
             clickableHeading.addEventListener('mouseleave', () => {
                 heading.getElementsByTagName('span')[0].style.opacity = '0';
@@ -539,12 +538,23 @@ export default class extends Controller {
         return false;
     }
 
+    /** Calls showModal() in multifunction.
+     * @param element Either the target modal or an event
+     */
+    showModal(element) {
+        showModal(element);
+    }
+
     /** Submits the form with the formTarget.
      * @param dummyVal if not an empty string, value the submitDummyTarget gets set to
      */
     formSubmit(dummyVal = '') {
-        this.submitDummyTarget.value = 'preview:' + (this.hasPreviewTarget ? this.previewTarget.scrollTop : '') + "\n" + this.submitDummyTarget.value;
-        if (dummyVal !== '') {
+        let submitDummy = this.submitDummyTarget.value;
+        if (submitDummy.startsWith('preview')) {
+            submitDummy = submitDummy.split("\n").slice(1).join("\n");
+        }
+        this.submitDummyTarget.value = 'preview:'+(this.hasPreviewTarget ? this.previewTarget.scrollTop : '')+"\n"+submitDummy;
+        if (dummyVal!=='') {
             let split = this.submitDummyTarget.value.split("\n");
             let isPage = false;
             for (let [key, value] of Object.entries(split)) {
@@ -553,7 +563,7 @@ export default class extends Controller {
                     isPage = true;
                 }
             }
-            this.submitDummyTarget.value = split.join("\n") + (!isPage ? dummyVal : '');
+            this.submitDummyTarget.value = split.join("\n")+(!isPage ? dummyVal : '');
         }
         this.formTarget.submit();
     }

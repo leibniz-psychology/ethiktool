@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
-import { setElementVisibility } from "../multiFunction";
+import {setElementVisibility} from "../multiFunction";
 
 export default class extends Controller {
 

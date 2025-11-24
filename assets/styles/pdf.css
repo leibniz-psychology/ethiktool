@@ -83,10 +83,13 @@
 }
 
 .pdfHeadingMain {
-    border: 2px dashed black;
     font-size: xx-large;
     font-weight: bold;
     margin-bottom: 1em;
+}
+
+.pdfBorderMain {
+    border: 2px dashed black;
 }
 
 .pdfHeadingNumber {
@@ -166,7 +169,6 @@ tr {
     border-collapse: collapse;
     width: 90%;
     margin-left: 5%;
-    margin-top: 0.5rem;
 }
 
 .briefBorder td {

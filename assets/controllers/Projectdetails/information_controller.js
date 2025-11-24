@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import { setElementVisibility, setHint } from "../multiFunction";
+import {setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
@@ -60,7 +60,12 @@ export default class extends Controller {
             }
         }
         let isPost = this.preNoTarget.checked && this.postYesTarget.checked;
-        setElementVisibility(this.preTextTarget.nextElementSibling,isPost);
-        setElementVisibility(this.documentTranslationTarget,this.preValue==='0' || isPost);
+        let pdf = this.preTextTarget.nextElementSibling;
+        if (pdf!==null) {
+            setElementVisibility(pdf,isPost);
+        }
+        if (this.hasDocumentTranslationTarget) {
+            setElementVisibility(this.documentTranslationTarget,this.preValue==='0' || isPost);
+        }
     }
 }

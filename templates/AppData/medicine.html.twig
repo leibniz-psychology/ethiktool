@@ -2,18 +2,20 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set medicine, medicineDescription, textStyle = content.medicine, content.medicineDescription, fontNormal|merge({'attributes': {'style': 'height: '~textHeight}}) %}
+    {% set medicine, medicineDescription, textStyle = content.medicine, content.medicineDescription ?? '', fontNormal|merge({'attributes': {'style': 'height: '~textHeight}}) %}
     <div>
         {# medicine #}
         <div id="medicine">
-            {{ formRender.renderButtons(medicine,{'stimVisible': {'values': [['0',medicineDescription.vars.name~'Div']]}, 'text': [medicineDescription,textStyle|merge({'hint': 'medicine.medicine.textHint', 'textHintParams': committeeParams, 'visibility': medicine.vars.value is same as '0'})]}) }}
+            {{ formRender.renderButtons(medicine, medicineDescription is not same as '' ? {'stimVisible': {'values': [['0',medicineDescription.vars.name~'Div']]}, 'text': [medicineDescription,textStyle|merge({'hint': 'medicine.medicine.textHint', 'textHintParams': committeeParams, 'visibility': medicine.vars.value is same as '0'})]} : {}) }}
         </div>
         {# physician #}
-        {% set physician, physicianDescription, description, descriptionDiv = content.physician, content.physicianDescription, content.description, 'physicianDescriptionDiv' %}
-        {% set isNoChoice = physicianDescription.vars.value is same as '' %}
+        {% set physician, physicianDescription, description, descriptionDiv = content.physician, content.physicianDescription ?? '', content.description ?? '', 'physicianDescriptionDiv' %}
         <div class="mt-8" id="physician">
             {{ formRender.renderButtons(physician,{'stimVisible': {'values': [['0',descriptionDiv]]}}) }}
-            {{ formRender.renderButtons(physicianDescription,{'stim': ['base','setWidgetByValue',{'widgetValue': ['',description.vars.name,hintArray]}], 'text': [description,textStyle|merge({'hint': isNoChoice ? 'multiple.choiceTextHint' : hintArray[0]})|merge(isNoChoice ? {'target': true} : {})], 'addDiv': [descriptionDiv,boolToDisplay(physician.vars.value is same as '0')]}) }}
+            {% if physicianDescription is not same as '' %}
+                {% set isNoChoice = physicianDescription.vars.value is same as '' %}
+                {{ formRender.renderButtons(physicianDescription,{'stim': ['base','setWidgetByValue',{'widgetValue': ['',description.vars.name,hintArray]}], 'text': [description,textStyle|merge({'hint': isNoChoice ? 'multiple.choiceTextHint' : hintArray[0]})|merge(isNoChoice ? {'target': true} : {})], 'addDiv': [descriptionDiv,boolToDisplay(physician.vars.value is same as '0')]}) }}
+            {% endif %}
         </div>
         {# buttons #}
         {{ formRender.addSubmitButtons() }}

@@ -28,11 +28,14 @@ class InformationType extends TypeAbstract
             $this->addBinaryRadio($builder,self::attendanceNode,$pagePrefix.self::attendanceNode,options: [self::labelParams => $addresseeParam]);
         }
         // document translation
-        if ($dummyParams['isInformation']) {
+        $reviewProcess = $dummyParams[self::reviewProcess];
+        if ($dummyParams['isInformation'] && str_contains($reviewProcess,self::reviewProcessFull)) {
             $tempPrefix = $pagePrefix.self::documentTranslationNode.'.';
             $this->addBinaryRadio($builder,self::documentTranslationNode,$tempPrefix.'title');
             $this->addFormElement($builder,self::documentTranslationNode.self::descriptionCap,'text',hint: $tempPrefix.self::textHint);
-            $this->addFormElement($builder,self::documentTranslationPDF,'checkbox',$tempPrefix.'pdf.title');
+            if ($reviewProcess===self::reviewFullDocs) {
+                $this->addFormElement($builder,self::documentTranslationPDF,'checkbox',$tempPrefix.'pdf.title');
+            }
         }
         // dummy forms
         $this->addDummyForms($builder);
@@ -41,21 +44,28 @@ class InformationType extends TypeAbstract
 
     public function mapDataToForms(mixed $viewData, Traversable $forms): void {
         $forms = iterator_to_array($forms);
-        $pre = $viewData[self::chosen];
+        $pre = $viewData[self::pre];
         $forms[self::pre]->setData($pre);
-        if ($pre!='') {
-            $isPre = $pre==='0';
-            $forms[$isPre ? self::preType : self::preText]->setData($viewData[self::descriptionNode]); // type or explanation
-            $tempArray = $viewData[self::informationAddNode];
-            $contentChosen = $tempArray[self::chosen]; // content or post
-            $forms[$isPre ? self::preContent : self::post]->setData($contentChosen);
-            if (in_array($contentChosen,self::preContentIncomplete)) {
-                $forms[self::preComplete]->setData($tempArray[self::complete]);
-                $forms[self::preCompleteType]->setData($this->getArrayValue($tempArray,self::preCompleteType));
-                $forms[self::preCompleteText]->setData($tempArray[self::descriptionNode]);
+        if ($pre!=='') {
+            if ($pre==='0') {
+                if (array_key_exists(self::preType,$forms)) {
+                    $forms[self::preType]->setData($viewData[self::preType]); // type of pre information
+                }
+                // pre content
+                $tempVal = $viewData[self::preContent];
+                $forms[self::preContent]->setData($tempVal);
+                if (in_array($tempVal,self::preContentIncomplete)) { // partial or deceit
+                    $this->setChosenArray($forms,$viewData,self::preComplete,[self::preCompleteType => self::preCompleteType,self::descriptionNode => self::preCompleteText]); // complete post
+                }
             }
-            elseif (!$isPre && $contentChosen!=='') { // no pre information and selection of post information
-                $forms[$contentChosen==='0' ? self::postType : self::postText]->setData($tempArray[self::descriptionNode]);
+            elseif ($pre==='1') {
+                $forms[self::preText]->setData($viewData[self::preText]); // description
+                $tempArray = $viewData[self::post];
+                $tempVal = $tempArray[self::chosen];
+                $forms[self::post]->setData($tempVal);
+                if ($tempVal!=='') {
+                    $forms[$tempVal==='0' ? self::postType : self::postText]->setData($tempArray[self::descriptionNode]);
+                }
             }
         }
         // attendance
@@ -63,55 +73,57 @@ class InformationType extends TypeAbstract
             $forms[self::attendanceNode]->setData($viewData[self::attendanceNode]);
         }
         // document translation
-        if (array_key_exists(self::documentTranslationNode,$viewData)) {
-            $tempArray = $viewData[self::documentTranslationNode];
-            $forms[self::documentTranslationNode]->setData($tempArray[self::chosen]);
-            $forms[self::documentTranslationNode.self::descriptionCap]->setData($tempArray[self::descriptionNode] ?? '');
-            $forms[self::documentTranslationPDF]->setData(array_key_exists(self::documentTranslationPDF,$tempArray));
+        $this->setChosenArray($forms,$viewData,self::documentTranslationNode,[self::descriptionNode => self::documentTranslationNode.self::descriptionCap]);
+        if (array_key_exists(self::documentTranslationPDF,$forms)) {
+            $forms[self::documentTranslationPDF]->setData(array_key_exists(self::documentTranslationPDF,$viewData));
         }
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
         $forms = iterator_to_array($forms);
         $pre = $forms[self::pre]->getData();
-        $post = $forms[self::post]->getData();
-        $newData[self::chosen] = $pre;
-        $tempArray = [self::chosen => ''];
-        $isPre = $pre===0; // selection was yes
-        if ($pre!==null) { // a selection was made
-            $newData[self::descriptionNode] = $forms[$isPre ? self::preType : self::preText]->getData(); // type or explanation
-            $contentChosen = $isPre ? $forms[self::preContent]->getData() : $post; // content or post
-            $tempArray[self::chosen] = $contentChosen;
-            if ($isPre) {
-                if (in_array($contentChosen,self::preContentIncomplete)) { // pre information and incomplete/wrong information
-                    $chosen = $forms[self::preComplete]->getData(); // complete information afterward
-                    $tempArray[self::complete] = $chosen;
-                    if ($chosen===0) {
-                        $tempArray[self::preCompleteType] = $forms[self::preCompleteType]->getData();
-                    }
-                    $tempArray[self::descriptionNode] = $forms[self::preCompleteText]->getData();
-                }
+        $isPre = $pre===0;
+        $isPost = false;
+        $newData = [self::pre => $pre];
+        if ($isPre) { // pre information
+            if (array_key_exists(self::preType,$forms)) {
+                $newData[self::preType] = $forms[self::preType]->getData(); // type of pre information
             }
-            elseif ($contentChosen!==null) { // no pre information and selection of post information
-                $tempArray[self::descriptionNode] = $forms[$contentChosen===0 ? self::postType : self::postText]->getData();
+            // pre content
+            $tempVal = $forms[self::preContent]->getData();
+            $newData[self::preContent] = $tempVal;
+            if (in_array($tempVal,self::preContentIncomplete)) { // partial or deceit
+                $tempVal = $forms[self::preComplete]->getData(); // complete post
+                $tempArray = [self::chosen => $tempVal];
+                if ($tempVal!==null) {
+                    if ($tempVal===0) {
+                        $tempArray[self::preCompleteType] = $forms[self::preCompleteType]->getData(); // type of complete post
+                    }
+                    $tempArray[self::descriptionNode] = $forms[self::preCompleteText]->getData(); // description of which information is given when
+                }
+                $newData[self::preComplete] = $tempArray;
             }
         }
-        $newData[self::informationAddNode] = $tempArray;
+        elseif ($pre===1) {
+            $newData[self::preText] = $forms[self::preText]->getData(); // description
+            $tempVal = $forms[self::post]->getData();
+            $tempArray = [self::chosen => $tempVal];
+            $isPost = $tempVal===0;
+            if ($tempVal!==null) {
+                $tempArray[self::descriptionNode] = $forms[$isPost ? self::postType : self::postText]->getData(); // type of post information or description
+            }
+            $newData[self::post] = $tempArray;
+        }
         // attendance
         if (array_key_exists(self::attendanceNode,$forms)) {
             $newData[self::attendanceNode] = $forms[self::attendanceNode]->getData();
         }
         // document translation
-        if (array_key_exists(self::documentTranslationNode,$forms) && ($isPre || $post===0)) {
-            $tempVal = $forms[self::documentTranslationNode]->getData();
-            $tempArray = [self::chosen => $tempVal];
-            if ($tempVal===0) {
-                $tempArray[self::descriptionNode] = $forms[self::documentTranslationNode.self::descriptionCap]->getData();
-                if ($forms[self::documentTranslationPDF]->getData()) {
-                    $tempArray[self::documentTranslationPDF] = '';
-                }
+        if (array_key_exists(self::documentTranslationNode,$forms) && ($isPre || $isPost)) {
+            $newData[self::documentTranslationNode] = $this->getChosenArray($forms,self::documentTranslationNode,0,[self::descriptionNode => self::documentTranslationNode.self::descriptionCap]);
+            if ($newData[self::documentTranslationNode][self::chosen]===0 && array_key_exists(self::documentTranslationPDF,$forms) && $forms[self::documentTranslationPDF]->getData()) {
+                $newData[self::documentTranslationPDF] = '';
             }
-            $newData[self::documentTranslationNode] = $tempArray;
         }
         $viewData = $newData;
     }

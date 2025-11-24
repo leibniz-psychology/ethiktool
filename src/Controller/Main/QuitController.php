@@ -13,23 +13,33 @@ class QuitController extends ControllerAbstract
     #[Route('/quit', name: 'app_quit')]
     public function showQuit(Request $request): Response {
         $session = $request->getSession();
-        if ($session->get(self::docName)===null) { // page was opened before a proposal was created/loaded
-            return $this->redirectToRoute('app_main');
+        $hasQuitSession = $session->has(self::quit); // true if file should be or was downloaded
+        if (!$hasQuitSession) { // quit without saving
+            $session->clear();
         }
 
-        $quit = $this->createForm(QuitType::class)->handleRequest($request);
+        $quit = $this->createForm(QuitType::class,options: [self::dummyParams => [self::quit => $hasQuitSession]])->handleRequest($request);
         if ($quit->isSubmitted()) {
             $data = $request->request->all()['quit'];
-            if (array_key_exists('dummy',$data)) { // save file before quit
-                return $this->getDownloadResponse($session);
+            if (count($data)===1) { // save file before quit or language was changed
+                if (!str_contains($data['submitDummy'],self::language)) { // save file before quit
+                    return $this->getDownloadResponse($session);
+                }
+                else {
+                    if ($hasQuitSession) {
+                        $session->set(self::quit,'');
+                    }
+                    return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($session));
+                }
+            }
+            elseif (array_key_exists('backToMain',$data)) {
+              return $this->redirectToRoute('app_main');
             }
             else { // quit software
-                if (array_key_exists('quit',$data)) { // quit after saving file
-                    $session->clear();
-                }
-                return $this->redirectToRoute('app_main');
+                $session->remove(self::quit);
+                return $this->redirectToRoute('app_quit');
             }
         }
-        return $this->render('Main/quit.html.twig', [self::pageTitle => 'quit', self::content => $quit]);
+        return $this->render('Main/quit.html.twig', $this->setRenderParameters($request,$quit,[self::pageTitle => 'quit', self::content => $quit, self::quit => $hasQuitSession ? 'download' : self::quit, 'hasDownload' => $hasQuitSession && $session->get(self::quit)==='download']));
     }
 }

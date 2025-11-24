@@ -6,5 +6,5 @@
     {% if not savePDF %}
         {{ pdfMacros.addLine() }}
     {% endif %}
-    <div {% if not savePDF %} class="previewSmall" {% endif %}>{{ content|raw }}</div>
+    <div {% if not savePDF %} class="previewSmall" {% endif %}>{{ content|raw|nl2br }}</div>
 {% endblock %}

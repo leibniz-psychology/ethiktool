@@ -12,7 +12,7 @@
         <div class="MetaData-Label">
             {{ dataReuseHint|raw }}
         </div>
-        {% set isReuseTwice, dataReuseValue, isFirstHowPublic = content.dataReuseHowreuse is defined, 'noTool', content.dataReuseHow.vars.value not in ['','own'] %}
+        {% set isReuseTwice, dataReuseValue = content.dataReuseHowreuse is defined, 'noTool' %}
         {% for suffix in ['','reuse'] %}
             {% set isSecond = suffix is same as 'reuse' %}
             {% if content.dataReuse is defined and (not isReuseTwice and suffix is same as '' or isReuseTwice and isSecond)  %}
@@ -20,7 +20,7 @@
                 {% set dataReuse = content.dataReuse %}
                 {% set dataReuseValue, selfDiv = dataReuse.vars.value,'dataReuseSelf' %}
                 <div class="mt-8" id="dataReuse">
-                    {{ formRender.renderButtons(dataReuse,{'hint': [translationPrefix~'dataReuse.'], 'stimVisible': {'values': [[['yes','anonymous','anonymized','personal'],'dataReuseHow'~(isReuseTwice ? 'reuse' : '')~'Div'],['no',selfDiv]]}}) }}
+                    {{ formRender.renderButtons(dataReuse,{'hint': [translationPrefix~'dataReuse.'], 'stimVisible': {'values': [['no',selfDiv]]|merge(content.dataReuseHow is defined ? [[['yes','anonymous','anonymized','personal'],'dataReuseHow'~(isReuseTwice ? 'reuse' : '')~'Div']]  :[])}}) }}
                     {# data reuse self #}
                     {{ formRender.renderButtons(content.dataReuseSelf,{'addDiv': [selfDiv,boolToDisplay(dataReuseValue is same as 'no')]}) }}
                 </div>

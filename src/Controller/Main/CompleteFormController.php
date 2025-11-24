@@ -41,6 +41,8 @@ class CompleteFormController extends ControllerAbstract
         [$tempArray,$names] = [[],[]]; // $names: all names of studies and groups -> studies: key 0: name, key 1: groups. Same for groups and measure time points
         $studies = $this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]);
         $isMultiple = [self::studyNode => count($studies)>1,self::groupNode => false,self::measureTimePointNode => false]; // each value gets true if multiple studies, groups, or measure time points exist.
+        $reviewProcess = $session->get(self::reviewProcess);
+        $isBegun = in_array($reviewProcess,[self::reviewShortBegun,self::reviewFullBegun]); // true if data collection has already begun
         foreach ($studies as $studyID => $study) {
             $names[$studyID][0] = $study[self::nameNode];
             $groups = $this->addZeroIndex($study[self::groupNode]);
@@ -53,26 +55,40 @@ class CompleteFormController extends ControllerAbstract
                     $names[$studyID][1][$groupID][1][$measureID] = [];
                     $informationIIArray = $measureTimePoint[self::informationIINode];
                     $isInformationII = $this->checkInformation($informationIIArray);
+                    $addresseeParam = [self::addressee => $this->getAddressee($measureTimePoint[self::groupsNode])];
                     $pdfArray = [];
+                    if ($isBegun) {
+                        $pdfArray['begun'] = $addresseeParam;
+                    }
                     $informationArray = $measureTimePoint[self::informationNode];
-                    if ($this->checkInformation($informationArray) || // information of participants or third party
+                    $isInformation = $this->checkInformation($informationArray);
+                    if ($isInformation || // information of participants or third party
                         $isInformationII) { // information of participants if third party
                         $anyDoc = 'true';
                     }
-                    if (array_key_exists(self::documentTranslationPDF,$informationArray[self::documentTranslationNode] ?? [])) {
+                    if (array_key_exists(self::documentTranslationPDF,$informationArray)) {
                         $pdfArray[self::informationNode] = [];
                     }
                     if ($isInformationII) {
-                       $pdfArray[self::informationIINode] = [self::informationNode => $this->getInformationString($informationIIArray), self::addressee => $this->getAddressee($measureTimePoint[self::groupsNode])]; // must be 'pre' or 'post' at this point
+                       $pdfArray[self::informationIINode] = array_merge($addresseeParam,[self::informationNode => $this->getInformationString($informationIIArray)]); // must be 'pre' or 'post' at this point
                     }
                     $measuresArray = $measureTimePoint[self::measuresNode];
-                    foreach ([self::measuresNode,self::interventionsNode,self::otherSourcesNode] as $type) {
-                        if (array_key_exists($type.'PDF',$measuresArray[$type])) {
+                    foreach ([self::measuresNode,self::interventionsNode] as $type) {
+                        if (array_key_exists($type.'PDF',$measuresArray)) {
                             $pdfArray[$type] = [];
                         }
                     }
-                    if ($this->getPrivacyNoTool($measureTimePoint[self::privacyNode])) {
+                    if (array_key_exists(self::otherSourcesPDF,$measuresArray[self::otherSourcesNode])) {
+                        $pdfArray[self::otherSourcesNode] = [];
+                    }
+                    $privacyArray = $measureTimePoint[self::privacyNode];
+                    if ($privacyArray!=='' && array_key_exists(self::createNode,$privacyArray) && ($privacyArray[self::createNode][self::chosen]===self::createSeparate || in_array($privacyArray[self::responsibilityNode] ?? '',['onlyOther','multiple','private']) || ($privacyArray[self::transferOutsideNode] ?? '')==='yes' || ($privacyArray[self::markingNode][self::chosen] ?? '')===self::markingOther)) {
                         $pdfArray[self::privacyNode] = [];
+                    }
+                    foreach ($pdfArray as $key => $value) {
+                        if (!in_array($reviewProcess,self::reviewTypesPDF[$key]) || $key==='begun' && !$isInformation) { // add pdf only if applicable for the current review process and in case of 'fullBegun' if any information is given
+                            unset($pdfArray[$key]);
+                        }
                     }
                     if ($pdfArray!==[]) {
                         $tempArray[$studyID][$groupID][$measureID] = $pdfArray;
@@ -87,7 +103,7 @@ class CompleteFormController extends ControllerAbstract
         $translationPrefix = 'completeForm.';
         $privacyPrefix = $translationPrefix.self::consentFurther.'.';
         $consentContent = $this->translateString($translationPrefix.'consent.text',array_merge($parameters,['position' => $coreDataArray[self::applicant][self::position], 'anyDoc' => $anyDoc]));
-        $consentFurtherText = $this->translateString($privacyPrefix.'text',array_merge($parameters,['isExRe' => $this->getStringFromBool(in_array($appTypeArray[self::chosen],[self::appExtended,self::appResubmission])), 'reference' => str_replace('<','&lt;',$appTypeArray[self::descriptionNode] ?? '')])); // prevent opening tags in user-entered text
+        $consentFurtherText = $this->translateString($privacyPrefix.'text',array_merge($parameters,['isExRe' => $this->getStringFromBool(in_array($appTypeArray[self::chosen],self::appExtendedResubmission)), 'reference' => str_replace('<','&lt;',$appTypeArray[self::descriptionNode] ?? '')])); // prevent opening tags in user-entered text
         // $firstPage: keys: text to be shown: values: array for a checkbox: 0: whether the checkbox should be checked, 1: text next to the checkbox
         $firstPage = [$consentContent => [$completeFormArray[self::consent],$this->translateString($translationPrefix.self::consent.'.confirm')],$consentFurtherText => [$completeFormArray[self::consentFurther],$this->translateString($privacyPrefix.'consent')]]; // first page of the pdf (preview)
 
@@ -124,6 +140,6 @@ class CompleteFormController extends ControllerAbstract
      * @return bool true if pre or post information, false otherwise
      */
     private function checkInformation(array|string $information): bool {
-        return $information!=='' && ($information[self::chosen]==='0' || $information[self::informationAddNode][self::chosen]==='0');
+        return $information!=='' && ($information[self::pre]==='0' || ($information[self::post][self::chosen] ?? '')==='0');
     }
 }

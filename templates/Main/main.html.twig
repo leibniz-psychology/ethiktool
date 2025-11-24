@@ -13,6 +13,6 @@
         {{ ('main.text'~(committeeParams.committeeType not in ['noCommittee',''] ? '' : 'NoCommittee'))|trans(committeeParams)|raw|nl2br }}
     </div>
     {% if isErrorOrXml %}
-        {{ include('components/infoModal.html.twig',{'modalID': error, 'prefix': 'multiple.loadMessage.'~error~'.', 'params': params}) }}
+        {{ include('components/'~(not isMajor ? 'info' : 'redirect')~'Modal.html.twig',{'modalID': error, 'prefix': 'multiple.loadMessage.'~error~'.', 'params': params, 'link': 'app_coreData', 'hash': '#applicationProcess'}) }}
     {% endif %}
 {% endblock %}

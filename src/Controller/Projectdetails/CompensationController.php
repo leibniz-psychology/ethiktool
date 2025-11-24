@@ -23,13 +23,17 @@ class CompensationController extends ControllerAbstract
             return $this->redirectToRoute('app_main');
         }
         $compensationNode = $measure->{self::compensationNode}[0];
-        $isCodeCompensationLoad = $this->checkCompensationAwarding($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::compensationNode}));
-        // check if inputs were made for the code compensation question on data privacy
-        $inputArray = $this->setInputArray();
-        if ($this->checkInput($this->xmlToArray($measure)[self::privacyNode][self::codeCompensationNode] ?? '',[self::chosen => ''])) {
-            $this->addInputPage('pages.projectdetails.',self::privacyNode,$inputArray);
+        $hasDocs = $this->getReviewDocs($session);
+        $isCodeCompensationLoad = $this->checkCompensationAwarding($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::compensationNode}[0]));
+        $textInput = '';
+        if ($hasDocs) {
+            // check if inputs were made for the code compensation question on data privacy
+            $inputArray = $this->setInputArray();
+            if ($this->checkInput($this->xmlToArray($measure)[self::privacyNode][self::codeCompensationNode] ?? '',[self::chosen => ''])) {
+                $this->addInputPage('pages.projectdetails.',self::privacyNode,$inputArray);
+            }
+            $textInput = $this->setInputHint($inputArray);
         }
-        $textInput = $this->setInputHint($inputArray);
         $translationPrefix = 'projectdetails.pages.'.self::compensationNode.'.';
         // get date for later text hint
         try {
@@ -38,32 +42,35 @@ class CompensationController extends ControllerAbstract
         catch (\Throwable $throwable) {
             $date = '';
         }
+        $isDurationParam = ['isDuration' => $this->getDuration($this->xmlToArray($measure->{self::measuresNode}->{self::durationNode}))>30];
 
-        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request);
+        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request,[self::dummyParams => array_merge($isDurationParam,['hasDetails' => !$this->getShortBegunRequested($request)])]);
         if ($compensation->isSubmitted()) {
             $data = $this->getDataAndConvert($compensation,$compensationNode);
-            [$appNodeNew,$measureNodeNew] = $this->getClonedMeasureTimePoint($appNode,$routeParams);
-            $isCodeCompensation = $this->checkCompensationAwarding($data);
-            $privacyNode = $measureNodeNew->{self::privacyNode};
-            if (!$isCodeCompensationLoad && $isCodeCompensation) { // eventually add nodes
-                $privacyArray = $this->xmlToArray($privacyNode);
-                $tempArray = $privacyArray[self::purposeResearchNode] ?? '';
-                if (array_key_exists(self::dataPersonalNode,$privacyArray) && ($tempArray==='' || !array_key_exists(self::purposeCompensation,$tempArray))) { // add nodes
-                    $this->addChosenNode($privacyNode,self::codeCompensationNode);
+            if ($hasDocs) {
+                [$appNodeNew,$measureNodeNew] = $this->getClonedMeasureTimePoint($appNode,$routeParams);
+                $isCodeCompensation = $this->checkCompensationAwarding($data);
+                $privacyNode = $measureNodeNew->{self::privacyNode};
+                if (!$isCodeCompensationLoad && $isCodeCompensation) { // eventually add nodes
+                    $privacyArray = $this->xmlToArray($privacyNode);
+                    $tempArray = $privacyArray[self::purposeResearchNode] ?? '';
+                    if (array_key_exists(self::dataPersonalNode,$privacyArray) && ($tempArray==='' || !array_key_exists(self::purposeCompensation,$tempArray))) { // add nodes
+                        $this->addChosenNode($privacyNode,self::codeCompensationNode);
+                    }
+                }
+                elseif ($isCodeCompensationLoad && !$isCodeCompensation) { // remove nodes
+                    $this->removeElement(self::codeCompensationNode,$privacyNode);
                 }
             }
-            elseif ($isCodeCompensationLoad && !$isCodeCompensation) { // remove nodes
-                $this->removeElement(self::codeCompensationNode,$privacyNode);
-            }
             $isNotLeave = !$this->getLeavePage($compensation,$session,self::compensationNode);
-            return $this->saveDocumentAndRedirect($request,$isNotLeave ? $appNode : $appNodeNew, $isNotLeave ? $appNodeNew : null);
+            return $this->saveDocumentAndRedirect($request,!$hasDocs || $isNotLeave ? $appNode : $appNodeNew, $hasDocs && $isNotLeave ? $appNodeNew : null); // $appNodeNew is only defined is $hasDocs is true
         }
         $tempPrefix = $translationPrefix.self::compensationTextNode.'.textHint';
         return $this->render('Projectdetails/compensation.html.twig',
-            $this->setRenderParameters($request,$compensation,
+            $this->setRenderParameters($request,$compensation,array_merge($isDurationParam,
                 ['types' => self::compensationTypes,
                  'textInput' => $textInput,
                  'laterDate' => ['date' => $date],
-                 'otherHints' => [$this->translateString($tempPrefix),$this->translateString($tempPrefix.'Optional')]],'projectdetails.compensation',true));
+                 'otherHints' => [$this->translateString($tempPrefix),$this->translateString($tempPrefix.'Optional')]]),'projectdetails.compensation',true));
     }
 }

@@ -11,50 +11,58 @@ class CompensationType extends TypeAbstract
 {
     use ProjectdetailsTrait;
 
+    private bool $isDuration; // true if total duration is greater than 30 minutes
+
     public function buildForm(FormBuilderInterface $builder, array $options): void {
         $translationPrefix = 'projectdetails.pages.compensation.';
         $typesPrefix = $translationPrefix.'types.';
         $textHintPrefix = $typesPrefix.self::textHintPlural.'.';
         $awardingPrefix = $translationPrefix.self::awardingNode.'.';
+        $dummyParams = $options[self::dummyParams];
+        $this->isDuration = $dummyParams['isDuration'];
         // types
-        $this->addCheckboxGroup($builder,self::compensationTypes,$typesPrefix,self::compensationOther.self::descriptionCap,$textHintPrefix.self::compensationOther);
-        foreach (array_diff(self::compensationTypes,[self::compensationNo]) as $type) {
-            if ($type!==self::compensationMoney) {
-                $this->addFormElement($builder,$type.self::descriptionCap,'text',hint: $textHintPrefix.$type);
+        $this->addCheckboxGroup($builder,self::compensationTypes,$typesPrefix);
+        if ($dummyParams['hasDetails']) { // details and awarding may not be asked even if the review process says so
+            $this->addFormElement($builder,self::compensationOther.self::descriptionCap,'text',hint: $textHintPrefix.self::compensationOther);
+            foreach (array_diff(self::compensationTypes, [self::compensationNo]) as $type) {
+                if ($type!==self::compensationMoney) {
+                    $this->addFormElement($builder, $type.self::descriptionCap, 'text', hint: $textHintPrefix.$type);
+                }
+                // awarding
+                if ($type!==self::compensationOther) {
+                    $this->addRadioGroup($builder, $type.self::awardingNode, self::awardingTypes[$type]);
+                    $this->addFormElement($builder, $type.'otherDescription', 'text', options: $this->getPlaceholder($awardingPrefix.$type.'.'.$type.'OtherPlaceholder')); // other type
+                    $this->addFormElement($builder, $type.self::awardingLater.self::descriptionCap, 'text'); // later description
+                    $this->addRadioGroup($builder, $type.self::laterTypesName, self::laterTypes); // later types
+                    $this->addFormElement($builder, $type.self::laterOtherDescription, 'text', options: $this->getPlaceholder($awardingPrefix.'laterEnd.placeholder')); // description of later type other
+                }
+                if (in_array($type, [self::compensationMoney, self::compensationLottery])) { // external description
+                    $this->addFormElement($builder, $type.'externalDescription', 'text');
+                }
             }
-            // awarding
-            if ($type!==self::compensationOther) {
-                $this->addRadioGroup($builder,self::awardingNode.$type,self::awardingTypes[$type]);
-                $this->addFormElement($builder,$type.'otherDescription','text', options: $this->getPlaceholder($awardingPrefix.$type.'.'.$type.'OtherPlaceholder')); // other type
-                $this->addFormElement($builder,$type.self::awardingLater.self::descriptionCap,'text'); // later description
-                $this->addRadioGroup($builder,$type.self::laterTypesName,self::laterTypes); // later types
-                $this->addFormElement($builder,$type.self::laterOtherDescription,'text',options: $this->getPlaceholder($awardingPrefix.'laterEnd.placeholder')); // description of later type other
+            // further widgets if money is selected
+            $this->addBinaryRadio($builder, self::moneyFurther, $translationPrefix.self::compensationMoney.'.title', self::moneyFurther.self::descriptionCap);
+            // further awarding widgets
+            $tempPrefix = $awardingPrefix.self::compensationLottery.'.result.';
+            $this->addFormElement($builder, self::lotteryStart.self::descriptionCap, 'text', hint: $tempPrefix.self::textHint); // description of lottery start in awarding
+            $this->addRadioGroup($builder, self::lotteryStart, self::lotteryTypes); // start of lottery
+            $this->addFormElement($builder, self::lotteryStartOtherDescription, 'text', options: $this->getPlaceholder($tempPrefix.'types.placeholder')); // description of lottery start other option
+            $this->addRadioGroup($builder, 'lotterydeliver'.self::descriptionCap, self::lotteryDeliverTypes); // deliver types for lottery
+            $this->addRadioGroup($builder, 'voucherdeliver'.self::descriptionCap, self::voucherDeliverTypes); // deliver types for voucher
+            $this->addFormElement($builder, self::awardingOtherDescription, 'text', hint: $awardingPrefix.self::compensationOther.'.'.self::textHint);
+            foreach ([self::compensationMoney, self::compensationHours] as $type) {
+                $this->addFormElement($builder, $type.self::valueSuffix, $type===self::compensationMoney ? 'money' : 'text', $typesPrefix.$type.'EndDefault');
+                $this->addRadioGroup($builder, $type.self::amountSuffix, self::valueTypes);
             }
-            if (in_array($type,[self::compensationMoney,self::compensationLottery])) { // external description
-                $this->addFormElement($builder,$type.'externalDescription','text');
-            }
-        }
-        // further widgets if money is selected
-        $this->addBinaryRadio($builder,self::moneyFurther,$translationPrefix.self::compensationMoney.'.title',self::moneyFurther.self::descriptionCap);
-        // further awarding widgets
-        $tempPrefix = $awardingPrefix.self::compensationLottery.'.result.';
-        $this->addFormElement($builder,self::lotteryStart.self::descriptionCap,'text', hint: $tempPrefix.self::textHint); // description of lottery start in awarding
-        $this->addRadioGroup($builder,self::lotteryStart,self::lotteryTypes); // start of lottery
-        $this->addFormElement($builder,self::lotteryStartOtherDescription,'text',options: $this->getPlaceholder($tempPrefix.'types.placeholder')); // description of lottery start other option
-        $this->addRadioGroup($builder,'lotterydeliver'.self::descriptionCap,self::lotteryDeliverTypes); // deliver types for lottery
-        $this->addRadioGroup($builder,'voucherdeliver'.self::descriptionCap,self::voucherDeliverTypes); // deliver types for voucher
-        $this->addFormElement($builder,self::awardingOtherDescription,'text', hint: $awardingPrefix.self::compensationOther.'.'.self::textHint);
-        foreach ([self::compensationMoney,self::compensationHours] as $type) {
-            $this->addFormElement($builder,$type.self::valueSuffix, $type===self::compensationMoney ? 'money' : 'text',$typesPrefix.$type.'EndDefault');
-            $this->addRadioGroup($builder,$type.self::amountSuffix,self::valueTypes);
         }
         // terminate
         $tempPrefix = $translationPrefix.self::terminateNode.'.';
-        $this->addRadioGroup($builder,self::terminateNode,$this->translateArray($tempPrefix.'types.',array_merge(['complete','partial'],self::terminateTypesDescription)),$tempPrefix.'title',self::terminateNode.self::descriptionCap);
+        $this->addRadioGroup($builder,self::terminateNode,$this->translateArray($tempPrefix.'types.',array_merge(self::terminateTypes,[self::terminateNothing,self::terminateOther])),$tempPrefix.'title',self::terminateNode.self::descriptionCap);
         // compensation voluntary
-        $this->addBinaryRadio($builder,self::compensationVoluntaryNode,$translationPrefix.self::compensationVoluntaryNode.'.title');
+        $tempPrefix = $translationPrefix.self::compensationVoluntaryNode.'.';
+        $this->addBinaryRadio($builder,self::compensationVoluntaryNode,$tempPrefix.'title',self::compensationVoluntaryNode.self::descriptionCap,$tempPrefix.self::textHint);
         // further description
-        $this->addFormElement($builder,self::compensationTextNode,'textarea');
+        $this->addFormElement($builder,self::compensationTextNode,'textarea',hint: $translationPrefix.self::compensationTextNode.'.'.self::textHint);
         // dummy forms
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);
@@ -66,48 +74,51 @@ class CompensationType extends TypeAbstract
         $this->setSelectedCheckboxes($forms,$tempArray);
         if ($tempArray!=='' && !array_key_exists(self::compensationNo,$tempArray)) {
             // types
+            $hasDescription = array_key_exists(self::compensationMoney.self::valueSuffix,$forms);
+            $hasAwarding = array_key_exists(self::compensationMoney.self::awardingNode,$forms);
             foreach ($tempArray as $selection => $value) {
                 $isMoney = $selection===self::compensationMoney;
-                if ($isMoney || $selection===self::compensationHours) {
-                    $this->setSpinner($forms,$value,$selection.self::valueSuffix,$isMoney ? self::descriptionNode : self::hourAdditionalNode2);
-                    $forms[$selection.self::amountSuffix]->setData($value[self::moneyHourAdditionalNode]);
-                    if ($isMoney) {
-                        $moneyFurtherArray = $value[self::moneyFurther];
-                        $forms[self::moneyFurther]->setData($moneyFurtherArray[self::chosen]);
-                        $forms[self::moneyFurther.self::descriptionCap]->setData($this->getArrayValue($moneyFurtherArray,self::descriptionNode));
+                $description = $selection.self::descriptionCap;
+                if ($hasDescription) {
+                    $descriptionArray = $viewData[$description];
+                    if ($isMoney || $selection===self::compensationHours) {
+                        $this->setSpinner($forms,$descriptionArray,$selection.self::valueSuffix,$isMoney ? self::descriptionNode : self::hourAdditionalNode2);
+                        $forms[$selection.self::amountSuffix]->setData($descriptionArray[self::moneyHourAdditionalNode]);
+                        if ($isMoney) {
+                            $this->setChosenArray($forms,$viewData,self::moneyFurther,[self::descriptionNode => self::moneyFurther.self::descriptionCap]);
+                        }
                     }
-                }
-                if (!$isMoney) {
-                    $forms[$selection.self::descriptionCap]->setData($value[self::descriptionNode]);
-                }
-                // awarding
-                $isNotCompensationOther = $selection!==self::compensationOther;
-                $awarding = $value[self::awardingNode];
-                $chosen = $awarding[self::chosen];
-                $forms[$isNotCompensationOther ? self::awardingNode.$selection : self::awardingOtherDescription]->setData($chosen);
-                if ($selection===self::compensationLottery) { // when and how the result is communicated
-                    $tempVal = self::lotteryStart.self::descriptionCap;
-                    $forms[$tempVal]->setData($awarding[$tempVal]);
-                    $forms[self::lotteryStart]->setData($awarding[self::lotteryStart]);
-                    $forms[self::lotteryStartOtherDescription]->setData($this->getArrayValue($awarding,self::lotteryStartOtherDescription));
-                }
-                $description = $selection.$chosen.self::descriptionCap;
-                if ($chosen!=='' && array_key_exists($description,$forms)) { // if an empty string, $description could be equivalent to the description field of the selection
-                    $forms[$description]->setData($this->getArrayValue($awarding,self::descriptionNode));
-                }
-                if ($isNotCompensationOther && $chosen===self::awardingLater) {
-                    $forms[$selection.self::laterTypesName]->setData($awarding[self::laterTypesName]); // information that is needed
-                    $forms[$selection.self::laterOtherDescription]->setData($this->getArrayValue($awarding,self::laterOtherDescription));
-                }
+                    if (!$isMoney) {
+                        $forms[$description]->setData($descriptionArray[self::descriptionNode]);
+                    }
+                    // awarding
+                    $isNotCompensationOther = $selection!==self::compensationOther;
+                    if ($hasAwarding) {
+                        $tempVal = $selection.self::awardingNode;
+                        $awarding = $viewData[$tempVal];
+                        $chosen = $awarding[self::chosen];
+                        if ($isNotCompensationOther) {
+                            $description = self::lotteryStart.self::descriptionCap;
+                            $this->setChosenArray($forms,$viewData,$tempVal,array_merge([self::laterTypesName => $selection.self::laterTypesName,self::laterOtherDescription => $selection.self::laterOtherDescription],$selection===self::compensationLottery ? [$description => $description,self::lotteryStart => self::lotteryStart,self::lotteryStartOtherDescription => self::lotteryStartOtherDescription] : [])); // lottery: when and how the result is communicated
+                        }
+                        else {
+                            $forms[self::awardingOtherDescription]->setData($chosen);
+                        }
+                        $description = $selection.$chosen.self::descriptionCap;
+                        if ($chosen!=='' && array_key_exists($description,$forms)) { // if an empty string, $description could be equivalent to the description field of the selection
+                            $forms[$description]->setData($this->getArrayValue($awarding,self::descriptionNode));
+                        }
+                    } // hasAwarding
+                } // hasDescription
             }
             // terminate
-            $tempArray = $viewData[self::terminateNode];
-            $forms[self::terminateNode]->setData($tempArray[self::chosen]);
-            $forms[self::terminateNode.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode));
+            $this->setChosenArray($forms,$viewData,self::terminateNode,[self::descriptionNode => self::terminateNode.self::descriptionCap]);
             // compensation Voluntary
-            $forms[self::compensationVoluntaryNode]->setData($this->getArrayValue($viewData,self::compensationVoluntaryNode));
+            $this->setChosenArray($forms,$viewData,self::compensationVoluntaryNode,[self::descriptionNode => self::compensationVoluntaryNode.self::descriptionCap]);
             // further description
-            $forms[self::compensationTextNode]->setData($viewData[self::compensationTextNode]);
+            if (array_key_exists(self::compensationTextNode,$forms)) {
+                $forms[self::compensationTextNode]->setData($viewData[self::compensationTextNode]);
+            }
         }
     }
 
@@ -117,70 +128,73 @@ class CompensationType extends TypeAbstract
         $newData = [self::compensationTypeNode => $tempArray];
         if ($tempArray!==[] && !array_key_exists(self::compensationNo,$tempArray)) {
             // types
+            $hasDescription = array_key_exists(self::compensationMoney.self::valueSuffix,$forms); // true if further inputs need to be made
+            $hasAwarding = array_key_exists(self::compensationMoney.self::awardingNode,$forms);
             foreach ($tempArray as $selection => $value) {
-                $isMoney = $selection===self::compensationMoney;
-                $isHours = $selection===self::compensationHours;
-                $description = $forms[$selection.($isMoney ? self::valueSuffix : self::descriptionCap)]->getData();
-                if ($isMoney) {
-                    $description = $this->checkMinMax($description);
-                }
-                $tempData = [self::descriptionNode => $description];
-                if ($isMoney || $isHours) {
-                    $amount = $forms[$selection.self::amountSuffix]->getData();
-                    $tempData[self::moneyHourAdditionalNode] = $amount;
+                if ($hasDescription) {
+                    $isMoney = $selection===self::compensationMoney;
+                    $isHours = $selection===self::compensationHours;
+                    $description = $forms[$selection.($isMoney ? self::valueSuffix : self::descriptionCap)]->getData();
+                    if ($isMoney) {
+                        $description = $this->checkMinMax($description);
+                    }
+                    $tempData = [self::descriptionNode => $description];
+                    if ($isMoney || $isHours) {
+                        $amount = $forms[$selection.self::amountSuffix]->getData();
+                        $tempData[self::moneyHourAdditionalNode] = $amount;
+                        if ($isHours && $amount===self::amountFlat) {
+                            $tempData[self::hourAdditionalNode2] = $this->checkMinMax($forms[self::compensationHours.self::valueSuffix]->getData());
+                        }
+                    }
+                    $newData[$selection.self::descriptionCap] = $tempData;
                     if ($isMoney) { // question if value can change during the study
-                        $tempVal = $forms[self::moneyFurther]->getData();
-                        $moneyFurtherArray = [self::chosen => $tempVal];
-                        if ($tempVal===0) {
-                            $moneyFurtherArray[self::descriptionNode] = $forms[self::moneyFurther.self::descriptionCap]->getData();
+                        $newData[self::moneyFurther] = $this->getChosenArray($forms,self::moneyFurther,0,[self::descriptionNode => self::moneyFurther.self::descriptionCap]);
+                    }
+                    // awarding
+                    $awarding = $selection.self::awardingNode;
+                    if ($hasAwarding) {
+                        $isNotCompensationOther = $selection!==self::compensationOther;
+                        $chosen = $forms[$isNotCompensationOther ? $awarding : self::awardingOtherDescription]->getData();
+                        $awardingData = [self::chosen => $chosen];
+                        if ($selection===self::compensationLottery) { // when and how the result is communicated
+                            $tempVal = self::lotteryStart.self::descriptionCap;
+                            $awardingData[$tempVal] = $forms[$tempVal]->getData();
+                            $tempVal = $forms[self::lotteryStart]->getData();
+                            $awardingData[self::lotteryStart] = $tempVal;
+                            if ($tempVal===self::lotteryResultOther) {
+                                $awardingData[self::lotteryStartOtherDescription] = $forms[self::lotteryStartOtherDescription]->getData();
+                            }
                         }
-                        $tempData[self::moneyFurther] = $moneyFurtherArray;
-                    }
-                    if ($isHours && $amount===self::amountFlat) {
-                        $tempData[self::hourAdditionalNode2] = $this->checkMinMax($forms[self::compensationHours.self::valueSuffix]->getData());
-                    }
-                }
-                // awarding
-                $isNotCompensationOther = $selection!==self::compensationOther;
-                $chosen = $forms[$isNotCompensationOther ? self::awardingNode.$selection : self::awardingOtherDescription]->getData();
-                $awardingData = [self::chosen => $chosen];
-                if ($selection===self::compensationLottery) { // when and how the result is communicated
-                    $tempVal = self::lotteryStart.self::descriptionCap;
-                    $awardingData[$tempVal] = $forms[$tempVal]->getData();
-                    $tempVal = $forms[self::lotteryStart]->getData();
-                    $awardingData[self::lotteryStart] = $tempVal;
-                    if ($tempVal===self::lotteryResultOther) {
-                        $awardingData[self::lotteryStartOtherDescription] = $forms[self::lotteryStartOtherDescription]->getData();
-                    }
-                }
-                if ($isNotCompensationOther && $chosen!==null) {
-                    $description = $selection.$chosen.self::descriptionCap;
-                    if (array_key_exists($description,$forms)) {
-                        $awardingData[self::descriptionNode] = $forms[$description]->getData();
-                    }
-                    if ($chosen===self::awardingLater) {
-                        $laterChosen = $forms[$selection.self::laterTypesName]->getData(); // information that is needed
-                        $awardingData[self::laterTypesName] = $laterChosen;
-                        if ($laterChosen===self::laterEndOther) { // other information is needed
-                            $awardingData[self::laterOtherDescription] = $forms[$selection.self::laterOtherDescription]->getData();
+                        if ($isNotCompensationOther && $chosen!==null) {
+                            $description = $selection.$chosen.self::descriptionCap;
+                            if (array_key_exists($description,$forms)) {
+                                $awardingData[self::descriptionNode] = $forms[$description]->getData();
+                            }
+                            if ($chosen===self::awardingLater) {
+                                $laterChosen = $forms[$selection.self::laterTypesName]->getData(); // information that is needed
+                                $awardingData[self::laterTypesName] = $laterChosen;
+                                if ($laterChosen===self::laterEndOther) { // other information is needed
+                                    $awardingData[self::laterOtherDescription] = $forms[$selection.self::laterOtherDescription]->getData();
+                                }
+                            }
                         }
-                    }
-                }
-                $tempData[self::awardingNode] = $awardingData;
-                $tempArray[$selection] = $tempData;
+                        $newData[$awarding] = $awardingData;
+                    } // hasAwarding
+                } // hasDescription
             }
-            $newData[self::compensationTypeNode] = $tempArray;
             // terminate
             $tempVal = $forms[self::terminateNode]->getData();
             $tempArray = [self::chosen => $tempVal];
-            if (in_array($tempVal,self::terminateTypesDescription)) {
+            if ($tempVal===self::terminateNothing && $this->isDuration || $tempVal===self::terminateOther) {
                 $tempArray[self::descriptionNode] = $forms[self::terminateNode.self::descriptionCap]->getData();
             }
             $newData[self::terminateNode] = $tempArray;
             // compensation voluntary
-            $newData[self::compensationVoluntaryNode] = $forms[self::compensationVoluntaryNode]->getData();
+            $newData[self::compensationVoluntaryNode] = $this->getChosenArray($forms,self::compensationVoluntaryNode,0,[self::descriptionNode => self::compensationVoluntaryNode.self::descriptionCap]);
             // further description
-            $newData[self::compensationTextNode] = $forms[self::compensationTextNode]->getData();
+            if (array_key_exists(self::compensationTextNode,$forms)) {
+                $newData[self::compensationTextNode] = $forms[self::compensationTextNode]->getData();
+            }
         }
         $viewData = $newData;
     }

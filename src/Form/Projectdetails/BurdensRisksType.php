@@ -24,6 +24,7 @@ class BurdensRisksType extends TypeAbstract
             }
             $this->addBinaryRadio($builder,$type.'Compensation', $translationPrefix.'compensation.title',$type.'CompensationDescription',options: [self::labelParams => ['type' => $type]]);
         }
+        $this->addFormElement($builder,self::burdensNoDescription,'textarea',hint: $translationPrefix.self::burdensNode.'.hints.'.self::noBurdens);
         // finding
         $tempPrefix = $translationPrefix.self::findingNode.'.';
         $this->addBinaryRadio($builder,self::findingNode,$tempPrefix.'title',self::descriptionNode,$tempPrefix.self::textHint);
@@ -46,43 +47,48 @@ class BurdensRisksType extends TypeAbstract
             $forms[$type.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode));
             $this->setCompensation($forms,$tempArray,$type);
         }
+        if (array_key_exists(self::burdensNoDescription,$forms)) {
+            $forms[self::burdensNoDescription]->setData($viewData[self::burdensNoDescription] ?? '');
+        }
         // burdensRisksContributors
-        $tempArray = $viewData[self::burdensRisksContributorsNode];
-        $forms[self::burdensRisksContributorsNode]->setData($tempArray[self::chosen]);
-        $forms[self::burdensRisksContributorsNode.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode));
-        $this->setCompensation($forms,$tempArray,self::burdensRisksContributorsNode);
-        $this->setChosenArray($forms,$viewData,self::findingNode,[self::descriptionNode,self::informingNode]); // finding
-        $this->setChosenArray($forms,$viewData,self::feedbackNode,[self::descriptionNode => self::feedbackNode.self::descriptionCap],true);
+        $this->setChosenArray($forms,$viewData,self::burdensRisksContributorsNode,[self::descriptionNode => self::burdensRisksContributorsNode.self::descriptionCap]);
+        $this->setCompensation($forms,$viewData[self::burdensRisksContributorsNode],self::burdensRisksContributorsNode);
+        // finding
+        $this->setChosenArray($forms,$viewData,self::findingNode,[self::descriptionNode,self::informingNode],false);
+        // feedback
+        $this->setChosenArray($forms,$viewData,self::feedbackNode,[self::descriptionNode => self::feedbackNode.self::descriptionCap]);
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
         $forms = iterator_to_array($forms);
+        $newData = [];
         // burdens and risks
         foreach ([self::burdensNode,self::risksNode] as $type) {
             $isBurdens = $type===self::burdensNode;
             $selected = $this->getSelectedCheckboxes($forms,$isBurdens ? self::burdensTypes : self::risksTypes);
             $isNotNo = !array_key_exists($isBurdens ? self::noBurdens : self::noRisks,$selected);
             $tempArray = [$type.'Type' => $selected];
-            if ($selected!==[]) {
-                if ($isBurdens || $isNotNo) {
-                    $tempArray[self::descriptionNode] = $forms[$type.self::descriptionCap]->getData();
-                }
-                if ($isNotNo) {
-                    $tempArray[self::burdensRisksCompensationNode] = $this->getCompensation($forms,$type);
-                }
+            $isAnySelected = $selected!==[];
+            if ($isAnySelected && $isNotNo) { // any type except 'no' is selected
+                $tempArray[self::descriptionNode] = $forms[$type.self::descriptionCap]->getData();
+                $tempArray[self::burdensRisksCompensationNode] = $this->getCompensation($forms,$type);
             }
-            $viewData[$type] = $tempArray;
+            $newData[$type] = $tempArray;
+            if ($isBurdens && array_key_exists(self::burdensNoDescription,$forms) && $isAnySelected && !$isNotNo) { // 'no burdens' is selected
+                $newData[self::burdensNoDescription] = $forms[self::burdensNoDescription]->getData();
+            }
         }
         // burdensRisksContributors
-        $tempVal = $forms[self::burdensRisksContributorsNode]->getData();
-        $tempArray = [self::chosen => $tempVal];
-        if ($tempVal===0) {
-            $tempArray[self::descriptionNode] = $forms[self::burdensRisksContributorsNode.self::descriptionCap]->getData();
+        $tempArray = $this->getChosenArray($forms,self::burdensRisksContributorsNode,0,[self::descriptionNode => self::burdensRisksContributorsNode.self::descriptionCap]);
+        if ($tempArray[self::chosen]===0) {
             $tempArray[self::burdensRisksCompensationNode] = $this->getCompensation($forms,self::burdensRisksContributorsNode);
         }
-        $viewData[self::burdensRisksContributorsNode] = $tempArray;
-        $viewData[self::findingNode] = $this->getChosenArray($forms,self::findingNode,0,[self::descriptionNode,self::informingNode]); // finding
-        $viewData[self::feedbackNode] = $this->getChosenArray($forms,self::feedbackNode,0,[self::descriptionNode => self::feedbackNode.self::descriptionCap],true);
+        $newData[self::burdensRisksContributorsNode] = $tempArray;
+        $newData[self::findingNode] = $this->getChosenArray($forms,self::findingNode,0,[self::descriptionNode,self::informingNode],false); // finding
+        if (array_key_exists(self::feedbackNode,$forms)) { // feedback
+            $newData[self::feedbackNode] = $this->getChosenArray($forms,self::feedbackNode,0,[self::descriptionNode => self::feedbackNode.self::descriptionCap]);
+        }
+        $viewData = $newData;
     }
 
     /** Sets the compensation.
@@ -92,10 +98,10 @@ class BurdensRisksType extends TypeAbstract
      * @return void
      */
     private function setCompensation(array $forms, array $viewData, string $type): void {
-        $compensation = $viewData[self::burdensRisksCompensationNode] ?? [];
         $compensationNode = $type.'Compensation';
-        $forms[$compensationNode]->setData($this->getArrayValue($compensation,self::chosen));
-        $forms[$compensationNode.self::descriptionCap]->setData($this->getArrayValue($compensation,self::descriptionNode));
+        $tempArray = $viewData[self::burdensRisksCompensationNode] ?? [];
+        $forms[$compensationNode]->setData($this->getArrayValue($tempArray,self::chosen));
+        $forms[$compensationNode.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode));
     }
 
     /** Gets the compensation data.
@@ -105,6 +111,6 @@ class BurdensRisksType extends TypeAbstract
      */
     private function getCompensation(array $forms, string $type): array {
         $compensationNode = $type.'Compensation';
-        return [self::chosen => $forms[$compensationNode]->getData(), self::descriptionNode => $forms[$compensationNode.self::descriptionCap]->getData()];
+        return $this->getChosenArray($forms,$compensationNode,null,[self::descriptionNode => $compensationNode.self::descriptionCap]);
     }
 }

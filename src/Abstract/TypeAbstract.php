@@ -2,6 +2,7 @@
 
 namespace App\Abstract;
 
+use App\Traits\ReviewProcessTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -19,18 +20,38 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /** Contains all methods that are used by several forms (*Type class). Therefore, it extends AbstractType. All form classes inherit this class. */
 abstract class TypeAbstract extends AbstractType implements DataMapperInterface
 {
+    use ReviewProcessTrait;
+
     public static TranslatorInterface $translator;
     protected const labelParams = 'label_translation_parameters'; // key in the $options array for translation parameters of the label
     protected const attrParams = 'attr_translation_parameters'; // key in tne $options array for translation parameters of attributes
     // variables for translation keys of hints
     protected const textHint = 'textHint'; // above text fields
     protected const textHintPlural = 'textHints'; // above text fields
+    private static string $reviewProcess = ''; // type of review process
+    private static string $page = ''; // current page for which form elements are created
 
     public function __construct(TranslatorInterface $translator) {
         self::$translator = $translator;
     }
 
     // functions
+
+    public static function getReviewProcess(): string {
+        return self::$reviewProcess;
+    }
+
+    public static function setReviewProcess(string $reviewProcess): void {
+        self::$reviewProcess = $reviewProcess;
+    }
+
+    public static function getPage(): string {
+        return self::$page;
+    }
+
+    public static function setPage(string $page): void {
+        self::$page = $page;
+    }
 
     /** Checks for each value in \$keys if the key in \$forms exists and if so, adds a key to an array with the value being either empty or the value of another form field.
      * @param array $forms Form element holding the data
@@ -54,18 +75,20 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
 
     /** Creates an array with the key 'chosen' and the value from \$forms[\$chosenKey]. If the value equals \$selection, then for each element in \$furtherElements, another element is added to the array.
      * @param array $forms Form element holding the data
-     * @param string $chosenKey key(s) to be checked in $forms
-     * @param int|string $selection value where further elements are added to the array
-     * @param array $furtherElements further elements that are added to the array. Keys: either numerical or keys to be used for the array. Values: keys in $forms
+     * @param string $chosenKey key to be checked in $forms
+     * @param int|string|array|null $selection value where further elements are added to the array. If an array, the checked key must have one of these values. If null, further elements are always added
+     * @param array $furtherElements further elements that are added to the array. Keys: either numerical or keys to be used for the array. Values: keys in $forms. They are only added if they exist in $forms.
      * @param bool $useKeys if true, then the keys in \$furtherElements are used as keys for the further elements in the array, otherwise the values in $furtherElements are used as keys
      * @return array array with a 'chosen' keys and eventually further keys
      */
-    protected function getChosenArray(array $forms, string $chosenKey, int|string $selection, array $furtherElements, bool $useKeys = false): array {
+    protected function getChosenArray(array $forms, string $chosenKey, int|string|array|null $selection, array $furtherElements, bool $useKeys = true): array {
         $chosen = $forms[$chosenKey]->getData();
         $returnArray = ['chosen' => $chosen];
-        if ($chosen===$selection) {
+        if ($selection===null || $chosen!==null &&  in_array($chosen,is_array($selection) ? $selection : [$selection])) {
             foreach ($furtherElements as $key => $formKey) {
-                $returnArray[$useKeys ? $key : $formKey] = $forms[$formKey]->getData();
+                if (array_key_exists($formKey,$forms)) {
+                    $returnArray[$useKeys ? $key : $formKey] = $forms[$formKey]->getData();
+                }
             }
         }
         return $returnArray;
@@ -196,35 +219,38 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      */
     protected function addFormElement(FormBuilderInterface $builder, string $name, string $class, string|bool $label = false, array $options = [], string $hint = ''): void {
 
-        $classType = null;
-        $addOptions = array_merge(['label' => $label, 'required' => false, self::labelParams => $options[self::labelParams] ?? [], self::attrParams => $options[self::attrParams] ?? []], ['attr' => ['placeholder' => str_contains($class,'text') ? $hint : false, 'autocomplete' => 'off']]);
-        switch ($class) {
-            case 'choice':
-                $builder->add($name, ChoiceType::class, array_merge(['choices' => $options['choices'], 'empty_data' => '', 'expanded' => $options['expanded'] ?? false, 'multiple' => $options['multiple'] ?? false, 'placeholder' => $hint ?: false],$addOptions));
-                break;
-            case 'date':
-                $builder->add($name, DateType::class, array_merge(['empty_data' => '','widget' => 'single_text', 'model_timezone' => 'Europe/Berlin'],$addOptions));
-                break;
-            case 'checkbox':
-                $builder->add($name,CheckboxType::class, $addOptions);
-                break;
-            case 'spinner':
-                $builder->add($name,NumberType::class,array_merge(['html5' => true],array_merge($addOptions,['attr' => ['style' => 'min-width: auto', 'min' => $options['min'], 'max' => $options['max']]])));
-                break;
-            case 'submit':
-                $builder->add($name,SubmitType::class,['label' => $label, self::labelParams => $options[self::labelParams] ?? []]); // no additional options for submit buttons
-                break;
-            case 'text':
-                $classType = TextType::class;
-                break;
-            case 'textarea':
-                $classType = TextareaType::class;
-                break;
-            case 'money': // currently only used once in compensation
-                $classType = MoneyType::class;
-        }
-        if ($classType) {
-            $builder->add($name, $classType, array_merge(['empty_data' => ''],$addOptions,$options));
+        $page = self::getPage();
+        if (in_array(self::getReviewProcess(),self::formTypeQuestions[$page][$name] ?? []) || $name==='submitDummy' || in_array($page,['newForm','landing','contributor','completeForm','quit'])) {
+            $classType = null;
+            $addOptions = array_merge(['label' => $label, 'required' => false, self::labelParams => $options[self::labelParams] ?? [], self::attrParams => $options[self::attrParams] ?? []], ['attr' => ['placeholder' => str_contains($class,'text') ? $hint : false, 'autocomplete' => 'off']]);
+            switch ($class) {
+                case 'choice':
+                    $builder->add($name, ChoiceType::class, array_merge(['choices' => $options['choices'], 'empty_data' => '', 'expanded' => $options['expanded'] ?? false, 'multiple' => $options['multiple'] ?? false, 'placeholder' => $hint ?: false],$addOptions));
+                    break;
+                case 'date':
+                    $builder->add($name, DateType::class, array_merge(['empty_data' => '','widget' => 'single_text', 'model_timezone' => 'Europe/Berlin'],$addOptions));
+                    break;
+                case 'checkbox':
+                    $builder->add($name,CheckboxType::class, $addOptions);
+                    break;
+                case 'spinner':
+                    $builder->add($name,NumberType::class,array_merge(['html5' => true],array_merge($addOptions,['attr' => ['style' => 'min-width: auto', 'min' => $options['min'], 'max' => $options['max']]])));
+                    break;
+                case 'submit':
+                    $builder->add($name,SubmitType::class,['label' => $label, self::labelParams => $options[self::labelParams] ?? []]); // no additional options for submit buttons
+                    break;
+                case 'text':
+                    $classType = TextType::class;
+                    break;
+                case 'textarea':
+                    $classType = TextareaType::class;
+                    break;
+                case 'money': // currently only used once in compensation
+                    $classType = MoneyType::class;
+            }
+            if ($classType) {
+                $builder->add($name, $classType, array_merge(['empty_data' => ''],$addOptions,$options));
+            }
         }
     }
 
@@ -267,7 +293,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
         }
     }
 
-    /** Sets a form element by getting the value from the 'chosen' key of \$array. For each element in \$furtherElements, further form elements are set.
+    /** Sets a form element by getting the value from the 'chosen' key of \$array. For each element in \$furtherElements, further form elements are set. All keys are only set if they exist in $forms.
      * @param array $forms Form element holding the widgets
      * @param array $array array containing the 'chosenKey' key which has a child 'chosen' and eventually further children. Keys: either numerical or keys to be used for the array. Values: keys in $forms
      * @param string $chosenKey key of the form element to be set with the 'chosen' value
@@ -275,11 +301,15 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param bool $useKeys if true, the keys from \$furtherElements are used as the keys for \$array, otherwise the values in $furtherElements are used as keys
      * @return void
      */
-    protected function setChosenArray(array $forms, array $array, string $chosenKey, array $furtherElements, bool $useKeys = false): void {
-        $tempArray = $array[$chosenKey];
-        $forms[$chosenKey]->setData($tempArray['chosen']);
+    protected function setChosenArray(array $forms, array $array, string $chosenKey, array $furtherElements, bool $useKeys = true): void {
+        $tempArray = $array[$chosenKey] ?? [];
+        if (array_key_exists($chosenKey,$forms)) {
+            $forms[$chosenKey]->setData($this->getArrayValue($tempArray,'chosen'));
+        }
         foreach ($furtherElements as $key => $formKey) {
-            $forms[$formKey]->setData($this->getArrayValue($tempArray,$useKeys ? $key :$formKey));
+            if (array_key_exists($formKey,$forms)) {
+                $forms[$formKey]->setData($this->getArrayValue($tempArray,$useKeys ? $key : $formKey));
+            }
         }
     }
 }

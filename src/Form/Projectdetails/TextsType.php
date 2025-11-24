@@ -17,7 +17,7 @@ class TextsType extends TypeAbstract
         $this->isBurdensRisks = $dummyParams['isBurdensRisks'];
         $translationPrefix = 'projectdetails.pages.texts.';
         $templateArray = [self::introNode,self::proNode,self::conNode,self::findingTextNode];
-        foreach (array_merge([self::introNode,self::goalsNode,self::procedureNode,self::proNode,self::conNode],$dummyParams['isFinding'] ? [self::findingTextNode] : []) as  $type) {
+        foreach (array_merge([self::introNode,self::goalsNode,self::proNode,self::conNode],$dummyParams['isFinding'] ? [self::findingTextNode] : [],$dummyParams['isConflict'] ? [self::conflictTextNode] : []) as  $type) {
             $this->addFormElement($builder,$type,'textarea',$translationPrefix.$type.'.title');
             if (in_array($type,$templateArray)) {
                 $this->addFormElement($builder,$type.'Template','checkbox',$translationPrefix.'useTemplate');
@@ -36,9 +36,12 @@ class TextsType extends TypeAbstract
         $tempArray = $viewData[self::introNode];
         $forms[self::introTemplate]->setData($this->getBoolFromString($tempArray[self::introTemplate]));
         $forms[self::introNode]->setData($this->getArrayValue($tempArray,self::descriptionNode));
-        // goals and procedure
+        // goals
         $forms[self::goalsNode]->setData($viewData[self::goalsNode]);
-        $forms[self::procedureNode]->setData($viewData[self::procedureNode]);
+        // conflict text
+        if (array_key_exists(self::conflictTextNode,$viewData)) {
+            $forms[self::conflictTextNode]->setData($viewData[self::conflictTextNode]);
+        }
         // pro
         $tempArray = $viewData[self::proNode];
         $forms[self::proTemplate]->setData($this->getBoolFromString($tempArray[self::proTemplate]));
@@ -48,8 +51,8 @@ class TextsType extends TypeAbstract
         $tempArray = $viewData[self::conNode];
         $forms[self::conTemplate]->setData($this->getBoolFromString($tempArray[self::conTemplate]));
         $forms[self::conNode]->setData($this->getArrayValue($tempArray,self::descriptionNode));
-        // finding consent
-        if (array_key_exists(self::findingTextNode,$viewData)) {
+        // finding text
+        if (array_key_exists(self::findingTextNode,$forms)) {
             $tempArray = $viewData[self::findingTextNode];
             $forms[self::findingTemplate]->setData($this->getBoolFromString($tempArray[self::findingTemplate]));
             $forms[self::findingTextNode]->setData($this->getArrayValue($tempArray,self::descriptionNode));
@@ -58,13 +61,17 @@ class TextsType extends TypeAbstract
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
         $forms = iterator_to_array($forms);
-        // intro, goals and procedure
+        // intro and goals
         $tempVal = $forms[self::introTemplate]->getData();
         $tempArray = [self::introTemplate => $tempVal];
         if (!$tempVal) {
             $tempArray[self::descriptionNode] = $forms[self::introNode]->getData();
         }
-        $newData = [self::introNode => $tempArray, self::goalsNode => $forms[self::goalsNode]->getData(), self::procedureNode => $forms[self::procedureNode]->getData()];
+        $newData = [self::introNode => $tempArray, self::goalsNode => $forms[self::goalsNode]->getData()];
+        // conflict text
+        if (array_key_exists(self::conflictTextNode,$forms)) {
+            $newData[self::conflictTextNode] = $forms[self::conflictTextNode]->getData();
+        }
         // pro
         $tempVal = $forms[self::proTemplate]->getData();
         $tempArray = [self::proTemplate => $tempVal];
@@ -80,7 +87,7 @@ class TextsType extends TypeAbstract
             $tempArray[self::descriptionNode] = $forms[self::conNode]->getData();
         }
         $newData[self::conNode] = $tempArray;
-        // finding consent
+        // finding text
         if (array_key_exists(self::findingTextNode,$forms)) {
             $tempVal = $forms[self::findingTemplate]->getData();
             $newData[self::findingTextNode] = array_merge([self::findingTemplate => $tempVal],!$tempVal ? [self::descriptionNode => $forms[self::findingTextNode]->getData()] : []);

@@ -18,6 +18,9 @@ class MainController extends ControllerAbstract
     #[Route('/main', name: 'app_main')]
     public function showMain(Request $request): Response {
         $session = $request->getSession();
+        if ($session->has(self::quit)) { // if xml should be downloaded before quitting and then header is used to return to the main page, remove session variable
+            $session->remove(self::quit);
+        }
         $isXmlLoadFailure = $session->has(self::xmlLoad);
         $isError = $session->has(self::errorModal);
         $isLoadSuccess = $session->has(self::loadSuccess);
@@ -32,8 +35,10 @@ class MainController extends ControllerAbstract
         if ($main->isSubmitted()) { // language has changed, a link was clicked, the xml-file should be downloaded, or the program should be quit
             return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($session));
         }
+        $isMajor = $sessionValue['isMajor'] ?? false;
         return $this->render('Main/main.html.twig',$this->setRenderParameters($request,$main,
             ['error' => $errorModal,
-             'params' => ['oldVersion' => $sessionValue['oldVersion'] ?? '', 'newVersion' => self::toolVersion, 'isMain' => $sessionValue['isMain'] ?? '']]));
+             'isMajor' => $isMajor,
+             'params' => ['isMain' => $sessionValue['isMain'] ?? '', 'isMajor' => $this->getStringFromBool($isMajor)]]));
     }
 }

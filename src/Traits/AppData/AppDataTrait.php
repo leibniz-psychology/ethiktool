@@ -17,18 +17,19 @@ trait AppDataTrait
     protected const projectTitleNotApplicable = 'notApplicable'; // must equal one value in $projectTitleTypes
     protected const projectTitleDifferent = 'different'; // must equal one of the values in $projectTitleTypes
     protected const qualification = 'qualification';
-    protected const applicationNewType = 'appNewType';
     protected const applicant = 'applicant';
     protected const projectStart = 'projectStart';
     protected const projectEnd = 'projectEnd';
     protected const funding = 'funding';
     protected const projectStartNext = 'projectStartNext';
     protected const projectStartBegun = 'projectStartBegun';
+    protected const begunCommittees = ['EUB','DLR']; // committees where review after start of data collection is possible
     protected const appNew = 'new';
-    protected const appExtended = 'extended';
-    protected const appResubmission = 'resubmission';
-    protected const applicationTypes = ['coreData.appType.new.title' => 'new', 'coreData.appType.extended' => 'extended', 'coreData.appType.resubmission' => 'resubmission']; // values must equal the values of the preceding variables
-    protected const appTypeShort = 'short';
+    protected const applicationTypes = ['coreData.appType.type.new' => 'new', 'coreData.appType.type.extended' => 'extended', 'coreData.appType.type.resubmission' => 'resubmission', 'coreData.appType.type.resubmissionGranted' => 'resubmissionGranted']; // values must equal the values of the preceding variables
+    protected const appExtendedResubmission = ['extended','resubmission','resubmissionGranted']; // values must equal the values of $appExtended and $appResubmission
+    protected const applicationProcessNode = 'applicationProcess';
+    protected const applicationProcessTypes = ['coreData.applicationProcess.types.short' => 'short', 'coreData.applicationProcess.types.full' => 'full']; // values must equal the value of $reviewProcessShort and $reviewProcessFull in PageTrait
+    protected const shortDocsNode = 'shortDocs';
     protected const supervisor = 'supervisor';
     protected const committeeStudent = ['EUB','JGU','DLR']; // committees where position can be 'student'
     protected const committeeSupervisor = ['EUB','JGU']; // committees where a supervisor must be added if the position is student. Value must equal the values of $committeeStudent
@@ -36,8 +37,8 @@ trait AppDataTrait
     protected const fundingResearchExternal = ['fundingResearch','fundingExternal']; // must equal two keys in $fundingChoices
     protected const fundingTypes = ['fundingQuali' => 'coreData.funding.fundingQuali', 'fundingBudget' => 'coreData.funding.fundingBudget', 'fundingResearch' => 'coreData.funding.fundingResearch', 'fundingExternal' => 'coreData.funding.fundingExternal', 'fundingOther' => 'coreData.funding.fundingOther'];
     protected const fundingStateNode = 'fundingState';
+    protected const fundingRequested = 'requested';
     protected const conflictNode = 'conflict';
-    protected const participantDescription = 'participantDescription';
     protected const supportNode = 'support';
     protected const noSupport = 'noSupport'; // must equal one of the keys in $supportChoices
     protected const supportCenter = 'supportCenter'; // must equal one of the keys in $supportChoices

@@ -10,8 +10,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /** Contains all variables, functions and methods that are used by forms (*Type classes) and by controllers. Each Trait for a specific page uses this Trait. The Type and Controller classes in turn use the page-specific Trait. */
 trait PageTrait
 {
+    use ReviewProcessTrait;
+
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '1.3.7';
+    protected const toolVersion = '2.0.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -23,6 +25,20 @@ trait PageTrait
     protected const isCommitteeBeta = 'isCommitteeBeta';
     protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.testCommittee' => 'testCommittee'];
     protected const committeeTypesBeta = ['JGU','DLR']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
+    protected const reviewProcess = 'reviewProcess'; // node name for type of review process (following two variables)
+    protected const reviewProcessFull = 'full';
+    protected const reviewProcessShort = 'short';
+    protected const reviewShortNoDocs = 'shortNoDocs'; // without participant documents
+    protected const reviewShortDocs = 'shortDocs'; // with participants documents that are reviewed
+    protected const reviewShortService = 'shortService'; // with participant documents that are not reviewed
+    protected const reviewShortRequested = 'shortRequested'; // without participant documents because funding is requested
+    protected const reviewShortBegun = 'shortBegun'; // without participant documents because data collection has already started
+    protected const reviewFullRequested = 'fullRequested'; // without participant documents because funding is requested
+    protected const reviewFullBegun = 'fullBegun'; // without participant documents because data collection has already started
+    protected const reviewFullDocs = 'fullDocs'; // with participant documents
+    protected const reviewDocs = ['shortDocs','shortService','fullDocs']; // types of review processes for which participant documents are created. Must equal some of the preceding variables
+    protected const reviewShortChoose = ['EUB','testCommittee']; // committees where, for short applications, it can be chosen whether participant documents should be created
+    
     // constant variables
     /** Node name for nodes which indicate the selection of a radio button. */
     protected const chosen = 'chosen'; // for nodes whose content indicates which answer was chosen, if any

@@ -42,7 +42,7 @@
                 {{ 'pages.contributors.contributors'|trans }}
             </a>
         </div>
-        {{ _self.createSideMenu(windows.Projectdetails,isFilename,activeRoute,routeParams,0,anyError,true) }}
+        {{ _self.createSideMenu(windows.Projectdetails,isFilename,activeRoute,routeParams,0,anyError,true,false,isMultiple) }}
     </div>
     {# check document #}
     <button class="Button_primary_go NavBar mt-8" style="{{ buttonWidth }}" {% if isFilename %} {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_checkDoc'}) }} {% else %}disabled {% endif %} onclick="{{ addTracking('Button Sidebar','Check Document') }}">{{ 'navBar.checkDoc'|trans }}</button>
@@ -64,7 +64,7 @@
     {{ include('components/redirectModal.html.twig',{'modalID': quitModalID, 'prefix': quitPrefix, 'link': 'app_main', 'leftButton': quitPrefix~'leftButton', 'middleButton': quitPrefix~'middleButton', 'rightButton': quitPrefix~'rightButton'}) }}
 {% endif %}
 
-{% macro createSideMenu(window,isFilename,activeRoute,routeParams,level,anyError,isProjectdetails = false, visibility = false) %}
+{% macro createSideMenu(window,isFilename,activeRoute,routeParams,level,anyError,isProjectdetails = false, visibility = false, isMultiple = true) %}
     {# Creates the side menu for the application data and project details pages. Input arguments:
         window:           array whose keys are the labels for the menu and values are either the route to a page or an array equally to window
         isFilename:       true if an application is open, i.e., if a filename exists
@@ -74,9 +74,10 @@
         anyError:         true if any inconsistency on any page exists
         isProjectdetails: if true, the side menu for the projectdetails pages is created, otherwise for the application data
         visibility:       visibility of the surrounding div
+        isMultiple:       if true, multiple studies / groups / measure time points exist
     #}
 
-    <div class="{{ level>0 ? 'NavBar' : 'NavBarMain mt-2' }} {% if isProjectdetails and level is same as 4 or not isProjectdetails and level is same as 1 %} ms-2 me-0 mb-3 {% endif  %}" {% if level>0 %} style="{{ boolToDisplay(visibility,1) }}" {% endif %}>
+    <div class="{{ level>0 ? 'NavBar' : 'NavBarMain mt-2' }} {% if isProjectdetails and level is same as 4 or not isProjectdetails and level is same as 1 %} ms-2 me-0 mb-3 {% endif  %}" {% if level>0 %} style="{{ boolToDisplay(visibility or isProjectdetails and not isMultiple,1) }}" {% endif %}>
         {% set isActiveAppData = activeRoute in ['app_coreData','app_votes','app_medicine','app_summary'] %}
         {% for route in window %}
             {% set hasSubPages, routeIDs, curRoute = route.subPages is defined, route.routeIDs ?? {}, route.route %}
@@ -107,7 +108,7 @@
                 {% endif %}
             </div>
             {% if hasSubPages %}
-                {{ _self.createSideMenu(route.subPages,isFilename,activeRoute,routeParams,level+1,anyError,isProjectdetails,isActivePath) }}
+                {{ _self.createSideMenu(route.subPages,isFilename,activeRoute,routeParams,level+1,anyError,isProjectdetails,isActivePath,isMultiple) }}
             {% endif %}
         {% endfor %}
     </div>

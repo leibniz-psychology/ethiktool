@@ -1,22 +1,36 @@
 {% extends 'base.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
 
 {% block body %}
-    {% set prefix, attributes = 'quit.buttons.', {'attr': {'class': 'Button_primary_go'}} %}
-    {{ form_start(content,{'attr': {'novalidate': 'novalidate'}}) }}
-    <div style="display: grid">
-        <div class="border rounded-lg shadow-sm bg-mono-50" style="height:fit-content; width: fit-content; justify-self: center; max-width: 50%; margin-top: 10%">
-            <div class="MetaData-Label mb-1">{{ 'quit.download'|trans|raw }}</div>
-            <div class="MetaData-Widget mt-8 mb-2 gap-x-4 grid" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
-                {{ form_widget(content.quit,attributes) }}
-                {{ form_widget(content.backToMain,attributes) }}
-                {{ form_widget(content.dummy,{'id': 'dummy', 'attr': {'style': 'display: none'}}) }}
+    {% set attributes, request, submitDummy = {'attr': {'class': 'Button_primary_go'}}, app.request, content.submitDummy ?? '' %}
+    <div {{ stimulus_controller('base',
+        {'route': request.get('_route'),
+         'routeParams': request.get('_route_params'),
+         'preview': 0}) }}>
+        {{ include('components/header.html.twig',committeeParams|merge({'update': isUpdateTime, 'request': request})) }}
+        {{ formRender.startForm(content) }}
+        <div class="pb-5">
+            <div class="border rounded-lg shadow-sm bg-mono-50" style="height:fit-content; width: fit-content; justify-self: center; max-width: 1600px">
+                <div class="MetaData-Label mb-1">{{ ('quit.'~quit)|trans|raw|nl2br }}</div>
+                {% if content.quit is defined %}
+                    <div class="MetaData-Widget mt-8 mb-2 gap-x-4 grid" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
+                        {{ form_widget(content.quit,attributes) }}
+                        {{ form_widget(content.backToMain,attributes) }}
+                    </div>
+                {% endif %}
+                <div style="display: none">{{ form_widget(submitDummy,addTargetArray('base','submitDummy')|merge({'id': submitDummy.vars.name})) }}</div>
             </div>
         </div>
+        {% if hasDownload %}
+        <script type="text/javascript">
+            window.onload = function () {
+                document.getElementsByName('quit')[0].submit();
+            }
+        </script>
+        {% endif %}
+        {{ form_end(content) }}
     </div>
-    <script type="text/javascript">
-        window.onload = function () {
-            document.getElementById('dummy').click();
-        }
-    </script>
-    {{ form_end(content) }}
+    <footer id="page-footer" class="mt-auto">
+        {{ render(path('footer')) }}
+    </footer>
 {% endblock %}

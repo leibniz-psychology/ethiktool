@@ -25,8 +25,10 @@ class GroupsType extends TypeAbstract
         $this->addBinaryRadio($builder,self::closedNode,$tempPrefix.'title');
         $this->addCheckboxGroup($builder,self::closedTypes,$tempPrefix.'types.',self::closedOtherText,$tempPrefix.'types.placeholder');
         // criteria
-        foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
-            $this->addCheckboxTextfield($builder,$type,$translationPrefix.'criteria.'.$type.'.noCriteria');
+        if ($options[self::dummyParams]['hasCriteria']) { // criteria may not be asked even if the review process says so
+            foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
+                $this->addCheckboxTextfield($builder,$type,$translationPrefix.'criteria.'.$type.'.noCriteria');
+            }
         }
         // sample size
         $tempPrefix = $translationPrefix.'sampleSize.';
@@ -35,7 +37,7 @@ class GroupsType extends TypeAbstract
         $this->addFormElement($builder,self::sampleSizePlanNode,'textarea',hint: $tempPrefix.'plan.textHint');
         // recruitment
         $tempPrefix = $translationPrefix.'recruitment.types.';
-        $this->addCheckboxGroup($builder,self::recruitmentTypes,$tempPrefix,textHints: $tempPrefix.'otherDescription',textareaName: self::recruitmentFurther);
+        $this->addCheckboxGroup($builder,self::recruitmentTypes,$tempPrefix,$this->createPrefixArray(self::recruitmentTypesOther),array_fill_keys(self::recruitmentTypes,$tempPrefix.'otherDescription'),self::recruitmentFurther);
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);
     }
@@ -48,7 +50,7 @@ class GroupsType extends TypeAbstract
         // examined
         $this->setSelectedCheckboxes($forms,$viewData[self::examinedPeopleNode]);
         // people description
-        $forms[self::peopleDescription]->setData($viewData[self::peopleDescription]);
+        $forms[self::peopleDescription]->setData($this->getArrayValue($viewData,self::peopleDescription));
         // closed group
         $tempArray = $viewData[self::closedNode];
         $chosen = $tempArray[self::chosen];
@@ -60,68 +62,82 @@ class GroupsType extends TypeAbstract
             }
         }
         // criteria
-        $criteria = $viewData[self::criteriaNode];
-        foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
-            $tempArray = $criteria[$type];
-            $forms[$type]->setData($this->getBoolFromString($tempArray[self::noCriteriaNode]));
-            $criteriaString = '';
-            if ($criteria!=='') { // at least one criterion
-                foreach ($tempArray[self::criteriaNode] ?: [] as $criterion) {
-                    $criteriaString .= $criterion."\n";
+        if (array_key_exists(self::criteriaIncludeNode,$forms)) { // either both include and exclude or neither exist
+            foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
+                $tempArray = $viewData[$type];
+                $forms[$type]->setData($this->getBoolFromString($tempArray[self::noCriteriaNode]));
+                $criteriaString = '';
+                $tempArray = $tempArray[self::criteriaNode];
+                if ($tempArray!=='') { // at least one criterion
+                    foreach ($tempArray as $criterion) {
+                        $criteriaString .= $criterion."\n";
+                    }
                 }
+                $forms[$this->appendText($type)]->setData($criteriaString);
             }
-            $forms[$this->appendText($type)]->setData($criteriaString);
         }
         // sample size
-        $tempArray = $viewData[self::sampleSizeNode];
-        $this->setSpinner($forms,$tempArray,self::sampleSizeTotalNode);;
-        $forms[self::sampleSizeFurtherNode]->setData($tempArray[self::sampleSizeFurtherNode]);
-        $forms[self::sampleSizePlanNode]->setData($tempArray[self::sampleSizePlanNode]);
+        if (array_key_exists(self::sampleSizeTotalNode,$forms)) {
+            $tempArray = $viewData[self::sampleSizeNode];
+            $this->setSpinner($forms,$tempArray,self::sampleSizeTotalNode);;
+            $forms[self::sampleSizeFurtherNode]->setData($tempArray[self::sampleSizeFurtherNode]);
+            $forms[self::sampleSizePlanNode]->setData($tempArray[self::sampleSizePlanNode]);
+        }
         // recruitment
-        $tempArray = $viewData[self::recruitment];
-        $this->setSelectedCheckboxes($forms,$tempArray[self::recruitmentTypesNode]);
-        $forms[self::recruitmentFurther]->setData($tempArray[self::descriptionNode]);
+        $this->setSelectedCheckboxes($forms,$viewData[self::recruitment],array_combine(self::recruitmentTypesOther,$this->createPrefixArray(self::recruitmentTypesOther)));
+        if (array_key_exists(self::recruitmentFurther,$forms)) {
+            $forms[self::recruitmentFurther]->setData($viewData[self::recruitmentFurther]);
+        }
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
         $forms = iterator_to_array($forms);
         // age
         $minAge = $forms[self::minAge]->getData();
-        $viewData[self::minAge] = $minAge;
-        $viewData[self::maxAge] = $forms[self::unlimited]->getData() ? '-1' : $forms[self::maxAge]->getData();
+        $newData = [self::minAge => $minAge];
+        $newData[self::maxAge] = $forms[self::unlimited]->getData() ? '-1' : $forms[self::maxAge]->getData();
         $tempArray = $this->getSelectedCheckboxes($forms,self::examinedTypes);
         if ($minAge!==null && $minAge<16) { // if min age is smaller than 16, wards is selected, but disabled, i.e., is not get submitted
             $tempArray = array_merge($tempArray,[self::wardsExaminedNode => '']);
         }
-        $viewData[self::examinedPeopleNode] = $tempArray;
+        $newData[self::examinedPeopleNode] = $tempArray;
         // people description
-        $viewData[self::peopleDescription] = $tempArray!==[] ? $forms[self::peopleDescription]->getData() : '';
+        $numSelected = count($tempArray);
+        if ($minAge<18 || $numSelected>1 || $numSelected===1 && !array_key_exists(self::healthyExaminedNode,$tempArray)) {
+            $newData[self::peopleDescription] = $forms[self::peopleDescription]->getData();
+        }
         // closed group
         $chosen = $forms[self::closedNode]->getData();
-        $viewData[self::closedNode] = array_merge([self::chosen => $chosen],$chosen===0 ? [self::closedTypesNode => $this->getSelectedCheckboxes($forms,self::closedTypes,[self::closedOther => self::closedOtherText])] : []);
+        $newData[self::closedNode] = array_merge([self::chosen => $chosen],$chosen===0 ? [self::closedTypesNode => $this->getSelectedCheckboxes($forms,self::closedTypes,[self::closedOther => self::closedOtherText])] : []);
         // criteria
-        // if checked, text area is disabled, i.e., not submitted
-        $criteria = [];
-        foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
-            $noCriteria = $forms[$type]->getData();
-            $tempArray = [self::noCriteriaNode => $noCriteria];
-            $curCriteria = $noCriteria ? ($type===self::criteriaIncludeNode ? $viewData[self::criteriaNode][self::criteriaIncludeNode][self::criteriaNode][self::criteriaIncludeNode.'0'] : '') : $forms[$this->appendText($type)]->getData();
-            $criteriaArray = ''; // if no criteria, add an empty string and not an empty array
-            if ($curCriteria!=='') {
-                $criteriaArray = [];
-                foreach (explode("\n",$curCriteria) as $index => $criterion) {
-                    $criteriaArray[$type.$index] = trim($criterion);
+        if (array_key_exists(self::criteriaIncludeNode,$forms)) { // either both include and exclude or neither exist
+            // if checked, text area is disabled, i.e., not submitted
+            foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
+                $noCriteria = $forms[$type]->getData();
+                $tempArray = [self::noCriteriaNode => $noCriteria];
+                $curCriteria = $noCriteria ? ($type===self::criteriaIncludeNode ? $viewData[self::criteriaIncludeNode][self::criteriaNode][self::criteriaIncludeNode.'0'] : '') : $forms[$this->appendText($type)]->getData();
+                $criteriaArray = ''; // if no criteria, add an empty string and not an empty array
+                if ($curCriteria!=='') {
+                    $criteriaArray = [];
+                    foreach (explode("\n",$curCriteria) as $index => $criterion) {
+                        $criteriaArray[$type.$index] = trim($criterion);
+                    }
                 }
+                $tempArray[self::criteriaNode] = $criteriaArray;
+                $newData[$type] = $tempArray;
             }
-            $tempArray[self::criteriaNode] = $criteriaArray;
-            $criteria[$type] = $tempArray;
         }
-        $viewData[self::criteriaNode] = $criteria;
         // sample size
-        $viewData[self::sampleSizeNode] = [self::sampleSizeTotalNode => $forms[self::sampleSizeTotalNode]->getData(),
-                                          self::sampleSizeFurtherNode => $forms[self::sampleSizeFurtherNode]->getData(),
-                                          self::sampleSizePlanNode => $forms[self::sampleSizePlanNode]->getData()];
+        if (array_key_exists(self::sampleSizeTotalNode,$forms)) {
+            $newData[self::sampleSizeNode] = [self::sampleSizeTotalNode => $forms[self::sampleSizeTotalNode]->getData(),
+                                              self::sampleSizeFurtherNode => $forms[self::sampleSizeFurtherNode]->getData(),
+                                              self::sampleSizePlanNode => $forms[self::sampleSizePlanNode]->getData()];
+        }
         // recruitment
-        $viewData[self::recruitment] = [self::recruitmentTypesNode => $this->getSelectedCheckboxes($forms,self::recruitmentTypes), self::descriptionNode => $forms[self::recruitmentFurther]->getData() ?? ''];
+        $newData[self::recruitment] = $this->getSelectedCheckboxes($forms,self::recruitmentTypes,array_combine(self::recruitmentTypesOther,$this->createPrefixArray(self::recruitmentTypesOther)));
+        if (array_key_exists(self::recruitmentFurther,$forms)) {
+            $newData[self::recruitmentFurther] = $forms[self::recruitmentFurther]->getData();
+        }
+        $viewData = $newData;
     }
 }

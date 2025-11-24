@@ -24,9 +24,7 @@ class LegalType extends TypeAbstract
     public function mapDataToForms(mixed $viewData, Traversable $forms): void {
         $forms = iterator_to_array($forms);
         foreach (self::legalTypes as $type) {
-            if (array_key_exists($type,$viewData)) {
-                $this->setChosenArray($forms,$viewData,$type,[self::descriptionNode => $this->appendText($type)],true);
-            }
+            $this->setChosenArray($forms,$viewData,$type,[self::descriptionNode => $this->appendText($type)]);
         }
     }
 
@@ -34,7 +32,7 @@ class LegalType extends TypeAbstract
         $forms = iterator_to_array($forms);
         foreach (self::legalTypes as $type) {
             if (array_key_exists($type,$viewData)) {
-                $viewData[$type] = $this->getChosenArray($forms,$type,self::templateText,[self::descriptionNode => $this->appendText($type)],true);
+                $viewData[$type] = $this->getChosenArray($forms,$type,self::templateText,[self::descriptionNode => $this->appendText($type)]);
             }
         }
     }

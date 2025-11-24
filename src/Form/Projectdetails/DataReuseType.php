@@ -18,7 +18,7 @@ class DataReuseType extends TypeAbstract
         // confirm
         $this->addFormElement($builder,self::confirmIntroNode,'checkbox',$translationPrefix.self::introNode.'.confirm');
         $isDataReuseHowTwice = $personal==='purpose' && $dummyParams['isAnonymized'];
-        if (in_array($personal,['personal','immediately','keep','marking','anonymous']) || $isDataReuseHowTwice || $personal==='noTool') {
+        if (in_array($personal,['personal','immediately','keep','marking','anonymous','noTool']) || $isDataReuseHowTwice) {
             $headingParams = [self::labelParams => $personalParam];
             // data reuse
             $this->addRadioGroup($builder,self::dataReuseNode,self::dataReuseTypes[$dummyParams[self::dataReuseNode]],$dummyParams['dataReuseHeading'][$isDataReuseHowTwice ? self::personalKeepReuse : '']);
@@ -30,9 +30,6 @@ class DataReuseType extends TypeAbstract
         $isNotPurposeReuse = !$dummyParams['isPurposeReuse'];
         foreach (array_merge([''],$isDataReuseHowTwice ? [self::personalKeepReuse] : []) as $suffix) {
             $tempVal = self::dataReuseHowNode.$suffix;
-            if ($suffix===self::personalKeepReuse) { // anonymized research data
-                $personalParam['personal'] = 'keep'; // use one of the keys for anonymized data, but not 'keep'
-            }
             $this->addRadioGroup($builder,$tempVal,array_diff(self::dataReuseHowTypes,$isNotPurposeReuse || $suffix===self::personalKeepReuse ? self::dataReuseHowOwn : []));
             $this->addFormElement($builder,$tempVal.self::descriptionCap,'text',hint: $hint);
         }
@@ -54,11 +51,7 @@ class DataReuseType extends TypeAbstract
         // data reuse how
         foreach (['',self::personalKeepReuse] as $suffix) {
             $tempVal = self::dataReuseHowNode.$suffix;
-            if (array_key_exists($tempVal, $viewData)) {
-                $tempArray = $viewData[$tempVal];
-                $forms[$tempVal]->setData($this->getArrayValue($tempArray,self::chosen));
-                $forms[$tempVal.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode));
-            }
+            $this->setChosenArray($forms,$viewData,$tempVal,[self::descriptionNode => $tempVal.self::descriptionCap]);
         }
     }
 
@@ -83,14 +76,9 @@ class DataReuseType extends TypeAbstract
             $isReuseHowTwice = array_key_exists(self::dataReuseHowNode.self::personalKeepReuse,$forms);
             foreach (['',self::personalKeepReuse] as $suffix) {
                 $dataReuseHow = self::dataReuseHowNode.$suffix;
-                $isReuseOther = in_array($dataReuse,['yes','anonymous','anonymized','personal']);
+                $isReuseOther = in_array($dataReuse,self::dataReuseTypesYes);
                 if (array_key_exists($dataReuseHow, $forms) && ($suffix==='' && ($isReuseHowTwice || $isReuseOther | !$isReuseAsked) || $isReuseOther)) {
-                    $chosen = $forms[$dataReuseHow]->getData();
-                    $tempArray = [self::chosen => $chosen];
-                    if ($chosen!=='own') {
-                        $tempArray[self::descriptionNode] = $forms[$dataReuseHow.self::descriptionCap]->getData();
-                    }
-                    $newData[$dataReuseHow] = $tempArray;
+                    $newData[$dataReuseHow] = $this->getChosenArray($forms,$dataReuseHow,['','class0','class1','class2','class3'],[self::descriptionNode => $dataReuseHow.self::descriptionCap]);
                 }
             }
         }

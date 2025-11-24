@@ -32,11 +32,13 @@ class ConsentType extends TypeAbstract
         $this->addBinaryRadio($builder,self::terminateConsNode,$tempPrefix.'title',self::terminateConsNode.self::descriptionCap,$tempPrefix.self::textHint,[self::labelParams => [self::addressee => $this->translateString('projectdetails.addressee.'.($isNotParticipants ? ($dummyParams['isAttendance'] ? 'both' : 'participants') : 'thirdParties').'.'.$addressee)]]);
         $information = $options[self::informationNode];
         if ($information===self::pre) {
-            $this->addFormElement($builder,self::terminateConsNode.self::terminateConsParticipationNode,'textarea',hint: $translationPrefix.self::terminateConsNode.'.participation');
+            $this->addFormElement($builder,self::terminateConsParticipationNode,'textarea',hint: $translationPrefix.self::terminateConsNode.'.participation');
         }
         // termination by participants
-        $tempPrefix = $translationPrefix.self::terminateParticipantsNode.'.';
-        $this->addRadioGroup($builder,self::terminateParticipantsNode,self::terminateParticipantsTypes,$tempPrefix.'title',$this->appendText(self::terminateParticipantsNode),$tempPrefix.self::textHint,[self::labelParams => [self::informationNode => $information]]);
+        if ($dummyParams['hasTerminateParticipants']) { // terminate by participants may not be asked even if the review process says so
+            $tempPrefix = $translationPrefix.self::terminateParticipantsNode.'.';
+            $this->addRadioGroup($builder,self::terminateParticipantsNode,self::terminateParticipantsTypes,$tempPrefix.'title',$this->appendText(self::terminateParticipantsNode),$tempPrefix.self::textHint,[self::labelParams => [self::informationNode => $information]]);
+        }
         // termination criteria
         $this->addFormElement($builder,self::terminateCriteriaNode,'textarea',hint: $translationPrefix.'terminateCriteria.'.self::textHint);
         // dummy forms
@@ -47,28 +49,21 @@ class ConsentType extends TypeAbstract
     public function mapDataToForms(mixed $viewData, Traversable $forms): void {
         $forms = iterator_to_array($forms);
         // voluntary and consent
+        $otherDescription = self::consentOtherDescription.'Participants';
         foreach ([self::voluntaryNode,self::consentNode] as $type) {
-            $tempArray = $viewData[$type];
-            $forms[$type]->setData($tempArray[self::chosen]);
-            foreach (array_merge([''],array_key_exists(self::chosen2Node,$tempArray) ? ['Participants'] : []) as $addressee) {
-                $forms[$type.$addressee]->setData($tempArray[$addressee==='' ? self::chosen : self::chosen2Node]);
-                $otherDescription = self::consentOtherDescription.$addressee;
-                $forms[$otherDescription]->setData($tempArray[$otherDescription] ?? '');
-            }
-            if (array_key_exists(self::descriptionNode,$tempArray)) {
-                $forms[$type.self::descriptionCap]->setData($tempArray[self::descriptionNode]);
-            }
-            if ($type===self::voluntaryNode && array_key_exists(self::voluntaryYesDescription,$tempArray)) {
-                $forms[self::voluntaryYesDescription]->setData($tempArray[self::voluntaryYesDescription]);
-            }
+            $this->setChosenArray($forms,$viewData,$type,array_merge([self::chosen2Node => $type.'Participants', self::descriptionNode => $type.self::descriptionCap],$type===self::voluntaryNode ? [self::voluntaryYesDescription => self::voluntaryYesDescription] : [$otherDescription => $otherDescription]));
         }
-        // terminate with disadvantages
-        $tempVal = self::terminateConsNode.self::terminateConsParticipationNode;
-        $this->setChosenArray($forms,$viewData,self::terminateConsNode,array_merge([self::descriptionNode => self::terminateConsNode.self::descriptionCap],array_key_exists($tempVal,$forms) ? [self::terminateConsParticipationNode => $tempVal] : []),true);
+        // terminate cons
+        $this->setChosenArray($forms,$viewData,self::terminateConsNode,[self::descriptionNode => self::terminateConsNode.self::descriptionCap]);
+        if (array_key_exists(self::terminateConsParticipationNode,$forms)) {
+            $forms[self::terminateConsParticipationNode]->setData($this->getArrayValue($viewData,self::terminateConsParticipationNode));
+        }
         // termination by participants
-        $this->setChosenArray($forms,$viewData,self::terminateParticipantsNode,[self::descriptionNode => $this->appendText(self::terminateParticipantsNode)],true);
+        $this->setChosenArray($forms,$viewData,self::terminateParticipantsNode,[self::descriptionNode => $this->appendText(self::terminateParticipantsNode)]);
         // terminate criteria
-        $forms[self::terminateCriteriaNode]->setData($viewData[self::terminateCriteriaNode]);
+        if (array_key_exists(self::terminateCriteriaNode,$forms)) {
+            $forms[self::terminateCriteriaNode]->setData($viewData[self::terminateCriteriaNode]);
+        }
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
@@ -91,17 +86,19 @@ class ConsentType extends TypeAbstract
             }
             $newData[$type] = $tempArray;
         }
-        // terminate with disadvantages
-        $tempArray = $this->getChosenArray($forms,self::terminateConsNode,1,[self::descriptionNode => self::terminateConsNode.self::descriptionCap],true);
-        $tempVal = self::terminateConsNode.self::terminateConsParticipationNode;
-        if ($tempArray[self::chosen]===1 && array_key_exists($tempVal,$forms)) {
-            $tempArray[self::terminateConsParticipationNode] = $forms[self::terminateConsNode.self::terminateConsParticipationNode]->getData();
+        // terminate cons
+        $newData[self::terminateConsNode] = $this->getChosenArray($forms,self::terminateConsNode,1,[self::descriptionNode => self::terminateConsNode.self::descriptionCap]);
+        if ($newData[self::terminateConsNode][self::chosen]===1 && array_key_exists(self::terminateConsParticipationNode,$forms)) { // answer was 'no'
+            $newData[self::terminateConsParticipationNode] = $forms[self::terminateConsParticipationNode]->getData();
         }
-        $newData[self::terminateConsNode] = $tempArray;
         // termination by participants
-        $newData[self::terminateParticipantsNode] = $this->getChosenArray($forms,self::terminateParticipantsNode,self::terminateParticipantsOther,[self::descriptionNode => $this->appendText(self::terminateParticipantsNode)],true);
+        if (array_key_exists(self::terminateParticipantsNode,$forms)) {
+            $newData[self::terminateParticipantsNode] = $this->getChosenArray($forms,self::terminateParticipantsNode,self::terminateParticipantsOther,[self::descriptionNode => $this->appendText(self::terminateParticipantsNode)]);
+        }
         // terminate criteria
-        $newData[self::terminateCriteriaNode] = $forms[self::terminateCriteriaNode]->getData();
+        if (array_key_exists(self::terminateCriteriaNode,$forms)) {
+            $newData[self::terminateCriteriaNode] = $forms[self::terminateCriteriaNode]->getData();
+        }
         $viewData = $newData;
     }
 }

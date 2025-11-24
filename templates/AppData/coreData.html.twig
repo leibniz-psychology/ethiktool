@@ -2,12 +2,15 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set committeeType = committeeParams['committeeType'] %}
+    {% set committeeType, appProcess = committeeParams['committeeType'], content.applicationProcess %}
     {% set isEUB, style, projectLength, translationPrefix, coreDataController = committeeType is same as 'EUB', 'max-width: 60rem', {'maxLength': 200}, 'coreData.', 'AppData--coreData' %}
     {% set conflictPrefix, conflictHint = translationPrefix~'conflict.', 'conflictHintDiv' %}
     {% set conflictYesDescription = (conflictPrefix~'yes')|trans %}
     <div {{ stimulus_controller(coreDataController, {
             'committeeType': committeeType,
+            'applicationProcess': appProcess.vars.value,
+            'reviewProcess': reviewProcess,
+            'reviewProcessLoad': reviewProcessLoad,
             'positions': positions,
             'noChoice': 'multiple.choiceTextHint'|trans,
             'conflictHint': [conflictYesDescription,(conflictPrefix~'no')|trans],
@@ -20,24 +23,104 @@
         </div>
         {# project title for participation documents #}
         {% set projectTitlePart, description = content.projectTitleParticipation, content.projectTitleParticipationDescription %}
-        {{ formRender.renderButtons(projectTitlePart,{'hint': [translationPrefix~'projectTitleParticipation.'], 'text': [description,{'attributes': projectLength, 'visibility': projectTitlePart.vars.value is same as 'different', 'transfer': [transferInfo,'participants']}], 'stimVisible': {'values': [['different', description.vars.name~'Div']]}, 'addDiv': ['projectTitleParticipation']}) }}
+        <div class="mt-8" id="projectTitleParticipation" {{ stimulus_target(coreDataController,'projectTitleParticipation') }}>
+            {{ formRender.renderButtons(projectTitlePart,{'hint': [translationPrefix~'projectTitleParticipation.'], 'text': [description,{'attributes': projectLength, 'visibility': projectTitlePart.vars.value is same as 'different', 'transfer': [transferInfo,'participants']}], 'stimVisible': {'values': [['different', description.vars.name~'Div']]}}) }}
+        </div>
         {# application type #}
-        {% set appType, description, isNewType = content.appType, content.description, content.appNewType is defined %}
-        {% set appValue, exRe, exReDiv, newTypeDiv = appType.vars.value, ['extended','resubmission'], 'exReDiv', 'newTypeDiv' %}
+        {% set appType, description = content.appType, content.description %}
+        {% set tempPrefix, exRe, exReDiv = translationPrefix~'appType.', ['extended','resubmission','resubmissionGranted'], 'exReDiv' %}
         <div class="mt-8" id="appType">
-            {{ formRender.renderButtons(appType,[]|merge({'stimVisible': {'values': [[exRe,exReDiv]]|merge(isNewType ? [['new',newTypeDiv]] : [])}})) }}
-            {% if isNewType %}
-                {% set appNewType = content.appNewType %}
-                <div id="{{ newTypeDiv }}" style="{{ boolToDisplay(appValue is same as 'new') }}">
-                    <div class="MetaData-Label mt-4">{{ form_label(appNewType,null,labelDummy) }}</div>
-                    {{ formRender.renderButtons(appNewType,noHeading) }}
-                </div>
-            {% endif %}
-            <div class="mt-2" id="{{ exReDiv }}" style="{{ boolToDisplay(appValue in exRe) }}">
+            {{ formRender.renderButtons(appType,{'hint': [tempPrefix,committeeParams], 'stimVisible': {'values': [[exRe,exReDiv]]}}) }}
+            <div class="mt-2" id="{{ exReDiv }}" style="{{ boolToDisplay(appType.vars.value in exRe) }}">
                 {{ form_label(description,null,addLabelClass('MetaData-Label')) }}
                 <div class="MetaData-Widget" style="width: 20rem">{{ form_widget(description,textInputAttr) }}</div>
-                {{ formRender.addHint(translationPrefix~'appType.hint') }}
+                {{ formRender.addHint(tempPrefix~'hint') }}
             </div>
+        </div>
+        {# application process #}
+        <div class="mt-8" id="applicationProcess" {{ stimulus_action(coreDataController,'setReviewProcessWidgets','change') }}>
+            {{ formRender.renderButtons(appProcess,{'hint': [translationPrefix~'applicationProcess.'], 'contTarget': ['applicationProcessfull',coreDataController,'applicationFull']}) }}
+            {% if content.shortDocs is defined %}
+                <div class="mt-4" id="shortDocs" {{ stimulus_target(coreDataController,'shortDocs') }}>
+                    <div class="MetaData-Label">{{ (translationPrefix~'shortDocs')|trans(committeeParams) }}</div>
+                    {{ formRender.renderButtons(content.shortDocs,noHeading|merge({'contTarget': ['shortDocs0',coreDataController,'shortDocsYes']})) }}
+                </div>
+            {% endif %}
+        </div>
+        {# project start  #}
+        {% set projectStart, tempPrefix, anyRequested, fundingKeys = content.projectStart, translationPrefix~'project.', false, funding|keys %}
+        {% set startPrefix, begun, hasBegunInput = tempPrefix~'start.', content.projectStartBegun ?? '', textInputRequested is not same as '' %}
+        {% if hasBegunInput %}
+            {% for widget in fundingKeys %}
+                {% set anyRequested = anyRequested or content[widget].vars.checked and (content[widget~'FundingState'].vars.value ?? '') is same as 'requested' %}
+            {% endfor %}
+        {% endif %}
+        {% set begunInputParams = hasBegunInput ? {'target': [coreDataController,'requestedInput'], 'remove': true, 'visible': not begun.vars.checked and anyRequested} : {} %}
+        <div class="mt-8" id="projectDates">
+            {{ formRender.addHeading(tempPrefix~'title') }}
+            {{ form_label(projectStart,(startPrefix~'title')|trans({'{committeeType}': committeeType})~':',addLabelClass('MetaData-Label')) }}
+            <div class="MetaData-Widget" style="height: min-content; width: fit-content" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
+                {{ form_widget(projectStart,{'attr': {'lang': 'en'}|merge(addTarget(coreDataController,'projectStart'))}) }}
+            </div>
+            {# project start next #}
+            <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
+                {{ formRender.addCheckbox(content.projectStartNext, {'target': [coreDataController,'projectStartNext']}) }}
+            </div>
+            {% if content.projectStartBegun is defined %}
+                {# data collection has already been started #}
+                <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
+                    {{ formRender.addCheckbox(begun,{'target': [coreDataController,'projectStartBegun']}) }}
+                    <div {{ stimulus_target(coreDataController,'projectStartBegunText') }}>
+                        {{ formRender.addHint(startPrefix~'hint',{'params': committeeParams}) }}
+                        {{ formRender.addTextfield(content.projectStartBegunText,fontNormal) }}
+                    </div>
+                </div>
+                {% if hasBegunInput %}
+                    {{ formRender.addHint(textInputRequested,begunInputParams) }}
+                {% endif %}
+            {% endif %}
+            {# project end #}
+            {% set projectEnd, tempPrefix = content.projectEnd, tempPrefix~'end.' %}
+            <div id="projectEnd">{{ form_label(projectEnd,(tempPrefix~'title')|trans~':',addLabelClass('MetaData-Label mt-4')) }}</div>
+            <div class="MetaData-Widget" style="width: fit-content">
+                {{ form_widget(projectEnd) }}
+            </div>
+            {{ formRender.addHint(tempPrefix~'hint') }}
+        </div>
+        {# funding #}
+        <div class="mt-8" id="funding">
+            <div class="grid" style="grid-template-columns: minmax(min-content,max-content) min-content">{{ formRender.addHeading(translationPrefix~'funding.title') }}
+                <div class="align-self-center" style="margin-left: -1.5rem;">{{ formRender.addPDFhint(transferInfo,'participants') }}</div>
+            </div>
+            {% set noFunding = 'fundingQuali' %}
+            {% set selection, anyRequested = getAnySelected(content,fundingKeys,noFunding), false %}
+            {% set noSelected, anySelected = selection[0], selection[1] %}
+            <div class="MetaData-Widget" style="{{ style }}" {{ stimulus_action('base','setMultiCheckbox','change',{'single': noFunding, 'multiCheck': fundingKeys|slice(1)})|stimulus_action(coreDataController,'setReviewProcessWidgets','change') }}>
+                {% for widget in fundingKeys %}
+                    {% set curWidget, fundingState = content[widget], widget~'FundingState' %}
+                    {% set vars = curWidget.vars %}
+                    {% set isChecked, name = vars.checked, vars.name %}
+                    {% set isFunding, textDiv = name is not same as noFunding, name~'Div' %}
+                    <div {% if isFunding %} {{ stimulus_action('base','setVisibility','change',{'multi': [[name,textDiv]]})|stimulus_action(coreDataController,'setConflict','change') }} {% endif %} {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>
+                        {{ formRender.addCheckbox(curWidget, {'disable': not isFunding and anySelected or isFunding and noSelected, 'target': [coreDataController,name]}) }}
+                    </div>
+                    {% if isFunding %}
+                        <div class="mb-4" id="{{ textDiv }}" style="{{ boolToDisplay(isChecked) }}; margin-top: -1rem">
+                            {{ formRender.addTextfield(content[widget~'Text'],fontNormal) }}
+                            {% if content[fundingState] is defined %}
+                                {% set fundingStateWidget = content[fundingState] %}
+                                {% set anyRequested = anyRequested or isChecked and fundingStateWidget.vars.value is same as 'requested' %}
+                                <div class="mb-2" id="{{ widget~'fundingStateDiv' }}" style="margin-top:-0.5rem">
+                                    {{ formRender.renderButtons(fundingStateWidget,noHeading|merge({'contTarget': [fundingState~'requested',coreDataController,widget~'Requested']})) }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% if hasBegunInput %}
+                {{ formRender.addHint(textInputRequested,begunInputParams) }}
+            {% endif %}
         </div>
         {# qualification #}
         {% if content.qualification is defined %}
@@ -82,72 +165,21 @@
                 </div>
             {% endfor %}
         </div>
-        {# project start  #}
-        {% set projectStart, tempPrefix = content.projectStart, translationPrefix~'project.' %}
-        {% set startPrefix = tempPrefix~'start.' %}
-        <div class="mt-8" id="projectDates">
-            {{ formRender.addHeading(tempPrefix~'title') }}
-            {{ form_label(projectStart,(startPrefix~'title')|trans({'{committeeType}': committeeType})~':',addLabelClass('MetaData-Label')) }}
-            <div class="MetaData-Widget" style="height: min-content; width: fit-content" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
-                {{ form_widget(projectStart,{'attr': {'lang': 'en'}|merge(addTarget(coreDataController,'projectStart'))}) }}
-            </div>
-            {# project start next #}
-            <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
-                {{ formRender.addCheckbox(content.projectStartNext, {'target': [coreDataController,'projectStartNext']}) }}
-            </div>
-            {% if content.projectStartBegun is defined %}
-                {# data collection has already been started #}
-                <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
-                    {{ formRender.addCheckbox(content.projectStartBegun,{'target': [coreDataController,'projectStartBegun']}) }}
-                    <div {{ stimulus_target(coreDataController,'projectStartBegunText') }}>
-                        {{ formRender.addHint(startPrefix~'hint',{'params': committeeParams}) }}
-                        {{ formRender.addTextfield(content.projectStartBegunText,fontNormal) }}
-                    </div>
-                </div>
-            {% endif %}
-            {# project end #}
-            {% set projectEnd, tempPrefix = content.projectEnd, tempPrefix~'end.' %}
-            <div id="projectEnd">{{ form_label(projectEnd,(tempPrefix~'title')|trans~':',addLabelClass('MetaData-Label mt-4')) }}</div>
-            <div class="MetaData-Widget" style="width: fit-content">
-                {{ form_widget(projectEnd) }}
-            </div>
-            {{ formRender.addHint(tempPrefix~'hint') }}
-        </div>
-        {# funding #}
-        <div class="mt-8" id="funding">
-            <div class="grid" style="grid-template-columns: minmax(min-content,max-content) min-content">{{ formRender.addHeading(translationPrefix~'funding.title') }}
-                <div class="align-self-center" style="margin-left: -1.5rem;">{{ formRender.addPDFhint(transferInfo,'participants') }}</div>
-            </div>
-            {% set fundingKeys, noFunding = funding|keys, 'fundingQuali' %}
-            {% set selection = getAnySelected(content,fundingKeys,noFunding) %}
-            {% set noSelected, anySelected = selection[0], selection[1] %}
-            <div class="MetaData-Widget" style="{{ style }}" {{ stimulus_action('base','setMultiCheckbox','change',{'single': noFunding, 'multiCheck': fundingKeys|slice(1)}) }}>
-                {% for widget in fundingKeys %}
-                    {% set curWidget = content[widget] %}
-                    {% set vars = curWidget.vars %}
-                    {% set isChecked, name = vars.checked, vars.name %}
-                    {% set isFunding, textDiv = name is not same as noFunding, name~'Div' %}
-                    <div {% if isFunding %} {{ stimulus_action('base','setVisibility','change',{'multi': [[name,textDiv]]})|stimulus_action(coreDataController,'setConflict','change') }} {% endif %} {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>
-                        {{ formRender.addCheckbox(curWidget, {'disable': not isFunding and anySelected or isFunding and noSelected}|merge(name in ['fundingResearch','fundingExternal'] ? {'target': [coreDataController,name]} : {})) }}
-                    </div>
-                    {% if isFunding %}
-                        <div class="mb-4" id="{{ textDiv }}" style="{{ boolToDisplay(isChecked) }}; margin-top: -1rem">
-                            {{ formRender.addTextfield(content[widget~'Text'],fontNormal) }}
-                            {% if content[widget~'FundingState'] is defined %}
-                                <div class="mb-2" id="{{ widget~'fundingStateDiv' }}" style="margin-top:-0.5rem">
-                                    {{ formRender.renderButtons(content[widget~'FundingState'],noHeading) }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </div>
         {# conflict #}
-        {% set conflictTextHeight = fontNormal|merge({'attributes': textHeightLong}) %}
+        {% set conflict, hasTextInput = content.conflict, textInputConflict is not same as '' %}
         <div class="mt-8" id="conflict">
-            {{ formRender.renderButtons(content.conflict,{'hint': [conflictPrefix], 'text': [content.conflictDescription,conflictTextHeight|merge({'hint': conflictYesDescription, 'textHintID': conflictHint})], 'stim': [coreDataController,'setConflict'], 'contTarget': ['conflict1',coreDataController,'conflictNo']}) }} {# correct hint is set in controller, but must not be empty here #}
-            {{ formRender.addTextfield(content.participantDescription,conflictTextHeight|merge({'transfer': [transferInfo,'participants'], 'hint': conflictPrefix~'participants'})) }}
+            {{ formRender.renderButtons(conflict,{
+                'hint': [conflictPrefix],
+                'text': [content.conflictDescription,
+                    fontNormal|merge({
+                    'attributes': textHeightLong,
+                    'hint': conflictYesDescription,
+                    'textHintID': conflictHint})],
+                'stim': [coreDataController,'setConflict'],
+                'contTarget': ['conflict1',coreDataController,'conflictNo']}) }} {# correct hint is set in controller, but must not be empty here #}
+            {% if hasTextInput %}
+                {{ formRender.addHint(textInputConflict,{'target': [coreDataController,'conflictInput'], 'remove': true, 'visible': conflict.vars.value is same as '1'}) }}
+            {% endif %}
         </div>
         {# support #}
         {% set tempPrefix = translationPrefix~'support.' %}
@@ -184,6 +216,10 @@
                 </div>
             </div>
         {% endif %}
+    {# modals if review process changes #}
+    {% for modal in modals %}
+        {{ include('components/redirectModal.html.twig',modal) }}
+    {% endfor %}
     </div> {# entire form including stimulus controller #}
     {# buttons #}
     {{ formRender.addSubmitButtons() }}

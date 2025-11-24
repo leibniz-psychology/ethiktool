@@ -37,8 +37,6 @@ trait ProjectdetailsTrait
     protected const unlimited = 'unlimited';
     protected const examinedPeopleNode = 'examinedPeople';
     protected const healthyExaminedNode = 'healthy'; // must equal one value in $examinedPeople
-    protected const physicalExaminedNode = 'physical'; // must equal one value in $examinedPeople
-    protected const mentalExaminedNode = 'mental'; // must equal one value in $examinedPeople
     protected const wardsExaminedNode = 'wards'; // must equal one value in $examinedPeople
     protected const dependentExaminedNode = 'dependent'; // must equal one value in $examinedPeople
     protected const examinedTypes = ['healthy', 'physical', 'mental', 'medical', 'institutional','wards','vulnerable','dependent','otherPeople'];
@@ -57,14 +55,11 @@ trait ProjectdetailsTrait
     protected const sampleSizeFurtherNode = 'furtherParticulars';
     protected const sampleSizePlanNode = 'sampleSizePlan';
     protected const recruitment = 'recruitment';
-    protected const recruitmentTypesNode = 'recruitmentTypes';
-    protected const recruitmentTypes = ['mailing','flyer','lecture','lectureOther','media','news','database','external','multiplier','recruitmentOther'];
-    protected const recruitmentLecture = 'lecture'; // must equal one value in $recruitmentTypes
-    protected const recruitmentOther = 'recruitmentOther'; // must equal one value in $recruitmentTypes
+    protected const recruitmentTypes = ['mailing','flyer','lecture','lectureOther','recruitmentPrivate','media','news','database','external','multiplier','recruitmentOther'];
+    protected const recruitmentTypesOther = ['database','external','recruitmentOther']; // values must equal the values in $recruitmentTypes
     protected const recruitmentFurther = 'recruitmentFurther';
     // information(II)
     protected const informationNode = 'information';
-    protected const informationAddNode = 'additional';
     protected const informationIINode = 'informationII';
     protected const informationTypes = ['projectdetails.pages.information.type.written' => 'written', 'projectdetails.pages.information.type.writtenOral' => 'writtenOral', 'projectdetails.pages.information.type.oral' => 'oral'];
     protected const pre = 'pre'; // pre information
@@ -80,6 +75,7 @@ trait ProjectdetailsTrait
     // widget names for no
     protected const preText = 'preText';
     protected const post = 'post';
+    protected const prePostArray = ['pre','post'];
     protected const postType = 'postType';
     protected const postText = 'postText';
     // other widgets
@@ -89,47 +85,6 @@ trait ProjectdetailsTrait
     // informationIII
     protected const informationIIINode = 'informationIII';
     protected const informationIIIInputsTypes = ['goals' => 'checkDoc.projectdetails.pages.informationIII.goals', 'infoBefore' => 'checkDoc.projectdetails.pages.informationIII.infoBefore', 'infoAfter' => 'checkDoc.projectdetails.pages.informationIII.infoAfter', 'explain' => 'checkDoc.projectdetails.pages.informationIII.explain'];
-    // measures
-    protected const measuresNode = 'measures'; // used for page and for question on page
-    protected const measuresTypesNode = 'measuresType';
-    protected const measuresVideo = 'measuresVideo'; // must equal one key in measureTypes
-    protected const measuresTypes = ['measuresObservation','measuresVideo','measuresSurvey','measuresInstrumental','otherMeasures'];
-    protected const measuresPDF = 'measuresPDF';
-    protected const locationNode = 'location';
-    protected const locationOnline = 'online';
-    protected const interventionsNode = 'interventions';
-    protected const interventionsTypesNode = 'interventionsType';
-    protected const noIntervention = 'noIntervention'; // must equal one key in interventionsTypes
-    protected const interventionsSurvey = 'interventionsSurvey'; // must equal one key in interventionsTypes
-    protected const interventionsTypes = ['noIntervention','interventionsSurvey','feedback','everyday','stimulus','tasks','stimulation','psychological','physical','therapy','medical','invasive','other'];
-    protected const interventionsPDF = 'interventionsPDF';
-    protected const otherSourcesNode = 'otherSources';
-    protected const otherSourcesPDF = 'otherSourcesPDF';
-    protected const loanNode = 'loan';
-    protected const loanReceipt = 'receipt';
-    protected const presenceNode = 'presence';
-    protected const durationNode = 'duration';
-    protected const durationTypes = ['measureTime', 'breaks']; // must equal the values of the following two variables
-    protected const durationMeasureTime = 'measureTime';
-    protected const durationBreaks = 'breaks';
-    // burdens/risks
-    protected const burdensRisksNode = 'burdensRisks';
-    protected const burdensNode = 'burdens';
-    protected const burdensTypesNode = 'burdensType';
-    protected const noBurdens = 'noBurdens'; // must equal one of the values in burdensTypes
-    protected const burdensTypes = ['noBurdens','physical', 'mental', 'emotional', 'sensitive', 'otherBurdens'];
-    protected const risksNode = 'risks';
-    protected const risksTypesNode = 'risksType';
-    protected const noRisks = 'noRisks'; // must equal one of the values in risksTypes
-    protected const risksIntegrity = 'risksIntegrity'; // must equal one of the values in risksTypes
-    protected const risksTypes = ['noRisks','risksPhysical', 'risksIntegrity', 'risksMental', 'risksEmotional', 'risksSocial', 'otherRisks'];
-    protected const burdensRisksContributorsNode = 'burdensRisksContributors';
-    protected const burdensRisksCompensationNode = 'compensation';
-    protected const informingNode = 'informing';
-    protected const informingAlways = 'always';
-    protected const informingConsent = 'consent';
-    protected const findingNode = 'finding';
-    protected const feedbackNode = 'feedback';
     // consent
     protected const consentNode = 'consent';
     protected const voluntaryNode = 'voluntary';
@@ -151,6 +106,49 @@ trait ProjectdetailsTrait
     protected const terminateParticipantsTypes = ['projectdetails.pages.consent.terminateParticipants.types.remove' => 'remove', 'projectdetails.pages.consent.terminateParticipants.types.removePartial' => 'removePartial', 'projectdetails.pages.consent.terminateParticipants.types.documentation' => 'documentation', 'projectdetails.pages.consent.terminateParticipants.types.choose' => 'choose', 'projectdetails.pages.consent.terminateParticipants.types.terminateParticipantsOther' => 'terminateParticipantsOther'];
     protected const terminateCriteriaNode = 'terminateCriteria';
     protected const chosen2Node = 'chosen2';
+    // measures
+    protected const procedureNode = 'procedure';
+    protected const measuresNode = 'measures'; // used for page and for question on page
+    protected const measuresDescription = 'measuresDescription';
+    protected const measuresVideo = 'measuresVideo'; // must equal one key in measureTypes
+    protected const measuresTypes = ['measuresObservation','measuresVideo','measuresSurvey','measuresInstrumental','otherMeasures'];
+    protected const measuresPDF = 'measuresPDF';
+    protected const locationNode = 'location';
+    protected const locationTypes = ['intern','extern','online','other'];
+    protected const locationOnline = 'online'; // must equal one value in $locationTypes
+    protected const interventionsNode = 'interventions';
+    protected const interventionsDescription = 'interventionsDescription';
+    protected const noIntervention = 'noIntervention'; // must equal one key in interventionsTypes
+    protected const interventionsTypes = ['noIntervention','interventionsSurvey','feedback','everyday','stimulus','tasks','stimulation','psychological','physical','therapy','medical','invasive','other'];
+    protected const measuresInterventionsOther = ['measures' => ['measuresVideo','measuresSurvey','measuresInstrumental','otherMeasures'], 'interventions' => ['feedback','everyday','stimulus','tasks','stimulation','psychological','physical','therapy','medical','invasive','other']]; // values must equal the values in $measuresTypes and $interventionsTypes
+    protected const interventionsPDF = 'interventionsPDF';
+    protected const otherSourcesNode = 'otherSources';
+    protected const otherSourcesPDF = 'otherSourcesPDF';
+    protected const loanNode = 'loan';
+    protected const loanReceipt = 'receipt';
+    protected const presenceNode = 'presence';
+    protected const durationNode = 'duration';
+    protected const durationTypes = ['measureTime', 'breaks']; // must equal the values of the following two variables
+    protected const durationMeasureTime = 'measureTime';
+    protected const durationBreaks = 'breaks';
+    // burdens/risks
+    protected const burdensRisksNode = 'burdensRisks';
+    protected const burdensNode = 'burdens';
+    protected const burdensTypesNode = 'burdensType';
+    protected const noBurdens = 'noBurdens'; // must equal one of the values in burdensTypes
+    protected const burdensTypes = ['noBurdens','physical', 'mental', 'emotional', 'sensitive', 'otherBurdens'];
+    protected const burdensNoDescription = 'burdensNoDescription';
+    protected const risksNode = 'risks';
+    protected const risksTypesNode = 'risksType';
+    protected const noRisks = 'noRisks'; // must equal one of the values in risksTypes
+    protected const risksTypes = ['noRisks','risksPhysical', 'risksIntegrity', 'risksMental', 'risksEmotional', 'risksSocial', 'otherRisks'];
+    protected const burdensRisksContributorsNode = 'burdensRisksContributors';
+    protected const burdensRisksCompensationNode = 'compensation';
+    protected const informingNode = 'informing';
+    protected const informingAlways = 'always';
+    protected const informingConsent = 'consent';
+    protected const findingNode = 'finding';
+    protected const feedbackNode = 'feedback';
     // compensation
     protected const compensationNode = 'compensation';
     protected const compensationTypeNode = 'type';
@@ -169,7 +167,9 @@ trait ProjectdetailsTrait
     protected const amountSuffix = 'Amount';
     protected const amountFlat = 'flat';
     protected const terminateNode = 'terminate';
-    protected const terminateTypesDescription = ['nothing','terminateOther']; // terminate types for which a description must be given
+    protected const terminateTypes = ['complete','partial']; // terminate types for which a compensation is definitely given
+    protected const terminateNothing = 'nothing';
+    protected const terminateOther = 'terminateOther';
     protected const moneyHourAdditionalNode = 'additional';
     protected const hourAdditionalNode2 = 'additional2';
     protected const moneyFurther = 'moneyFurther';
@@ -196,7 +196,6 @@ trait ProjectdetailsTrait
     protected const introNode = 'intro';
     protected const introTemplate = 'introTemplate';
     protected const goalsNode = 'goals';
-    protected const procedureNode = 'procedure';
     protected const proNode = 'pro';
     protected const proTemplate = 'proTemplate';
     protected const proTemplateText = 'proTemplateText';
@@ -204,10 +203,10 @@ trait ProjectdetailsTrait
     protected const conTemplate = 'conTemplate';
     protected const findingTextNode = 'findingText';
     protected const findingTemplate = 'findingTextTemplate';
+    protected const conflictTextNode = 'conflictText';
     // legal
     protected const legalNode = 'legal';
     protected const liabilityNode = 'liability';
-    protected const insuranceNode = 'insurance';
     protected const apparatusNode = 'apparatus';
     protected const insuranceWayNode = 'insuranceWay';
     protected const legalTypes = ['liability','insurance','apparatus','insuranceWay']; // must equal the values of the preceding variables
@@ -218,6 +217,7 @@ trait ProjectdetailsTrait
     protected const createNode = 'create';
     protected const createTool = 'tool'; // must equal one value in $createTypes
     protected const createSeparate = 'separate'; // must equal one value in $createTypes
+    protected const createSeparateLater = 'separateLater'; // must equal one value in $createTypes
     protected const createTypes = ['projectdetails.pages.dataPrivacy.create.types.tool' => 'tool', 'projectdetails.pages.dataPrivacy.create.types.separate' => 'separate', 'projectdetails.pages.dataPrivacy.create.types.anonymous' => 'anonymous', 'projectdetails.pages.dataPrivacy.create.types.separateLater' => 'separateLater', 'projectdetails.pages.dataPrivacy.create.types.notApplicable' => 'notApplicable'];
     protected const createVerificationNode = 'verification';
     protected const verificationTypes = ['projectdetails.pages.dataPrivacy.create.verification.types.verified' => 'verified', 'projectdetails.pages.dataPrivacy.create.verification.types.unverified' => 'unverified'];
@@ -240,6 +240,7 @@ trait ProjectdetailsTrait
     protected const dataPersonalNode = 'dataPersonal'; // question whether research data are personal
     protected const dataPersonalTypes = ['projectdetails.pages.dataPrivacy.dataPersonal.types.personal' => 'personal', 'projectdetails.pages.dataPrivacy.dataPersonal.types.personalMaybe' => 'personalMaybe', 'projectdetails.pages.dataPrivacy.dataPersonal.types.personalNo' => 'personalNo'];
     protected const dataPersonalMaybe = 'personalMaybe'; // must equal one value in $dataPersonalTypes
+    protected const dataPersonalNo = 'personalNo'; // must equal one value in $dataPersonalTypes
     protected const dataPersonal = ['personal','personalMaybe']; // values must equal the values in $dataPersonalTypes
     protected const markingNode = 'marking'; // how the research data are marked
     protected const markingTypes = ['projectdetails.pages.dataPrivacy.marking.types.external' => 'external', 'projectdetails.pages.dataPrivacy.marking.types.internal' => 'internal', 'projectdetails.pages.dataPrivacy.marking.types.name' => 'name', 'projectdetails.pages.dataPrivacy.marking.types.no' => 'no', 'projectdetails.pages.dataPrivacy.marking.types.other' => 'other']; // values must equal the values of the following variables
@@ -312,7 +313,6 @@ trait ProjectdetailsTrait
     protected const accessContributorsOther = 'contributorsOther'; // must equal one value in $accessTypes
     protected const accessOthers = ['contributorsPart','institution']; // values must equal the values of $accessTypes
     protected const accessOrderProcessing = ['contributorsOther','accessExternal','dataService']; // values must equal the values of $accessTypes. Access types for which order processing is asked
-    protected const transferNode = 'transfer';
     protected const orderProcessingNode = 'orderProcessing';
     protected const orderProcessingKnownNode = 'orderProcessingKnown';
     protected const orderProcessingKnownTypes = ['projectdetails.pages.dataPrivacy.orderProcessingKnown.types.knownYes' => 'knownYes','projectdetails.pages.dataPrivacy.orderProcessingKnown.types.knownPart' => 'knownPart', 'projectdetails.pages.dataPrivacy.orderProcessingKnown.types.knownNo' => 'knownNo'];
@@ -332,6 +332,7 @@ trait ProjectdetailsTrait
     // data reuse
     protected const dataReuseNode = 'dataReuse'; // used for page and for question on page
     protected const dataReuseTypes = ['tool' => ['projectdetails.pages.dataReuse.dataReuse.types.yes' => 'yes', 'projectdetails.pages.dataReuse.dataReuse.types.no' => 'no'], 'noTool' => ['projectdetails.pages.dataReuse.dataReuse.types.anonymous' => 'anonymous', 'projectdetails.pages.dataReuse.dataReuse.types.anonymized' => 'anonymized', 'projectdetails.pages.dataReuse.dataReuse.types.personal' => 'personal', 'projectdetails.pages.dataReuse.dataReuse.types.no' => 'no']]; // one element if privacy document should/can be created by the tool and one if not
+    protected const dataReuseTypesYes = ['yes','anonymous','anonymized','personal']; // all 'yes' options for data reuse. Values must equal the values of sub-arrays of $dataReuseTypes
     protected const dataReuseHowNode = 'dataReuseHow';
     protected const dataReuseHowTypes = ['projectdetails.pages.dataReuse.dataReuseHow.types.class0' => 'class0', 'projectdetails.pages.dataReuse.dataReuseHow.types.class1' => 'class1', 'projectdetails.pages.dataReuse.dataReuseHow.types.class2' => 'class2', 'projectdetails.pages.dataReuse.dataReuseHow.types.class3' => 'class3', 'projectdetails.pages.dataReuse.dataReuseHow.types.own' => 'own'];
     protected const dataReuseHowOwn = ['projectdetails.pages.dataReuse.dataReuseHow.types.own' => 'own']; // must equal one entry in $dataReuseHowTypes
@@ -392,19 +393,11 @@ trait ProjectdetailsTrait
      * @return bool true if inputs in informationIII are necessary, false otherwise
      */
     protected function getInformationIII(array|string $information): bool {
-        if ($information!=='' && $information[self::chosen]=='0') {
-            $information = $information[self::informationAddNode];
-            return in_array($information[self::chosen],self::preContentIncomplete) && $information[self::complete]=='0';
+        if ($information!=='' && $information[self::pre]=='0') {
+            $preContent = $information[self::preContent];
+            return in_array($preContent,self::preContentIncomplete) && $information[self::preComplete][self::chosen]=='0';
         }
         return false;
-    }
-
-    /** Checks whether the data privacy document is not or can not be created by the tool.
-     * @param array $privacyArray array containing the data privacy data
-     * @return bool true if a self-formulated pdf must be added, false otherwise
-     */
-    protected function getPrivacyNoTool(array $privacyArray): bool {
-        return $privacyArray[self::createNode][self::chosen]===self::createSeparate || in_array($privacyArray[self::responsibilityNode] ?? '',['onlyOther','multiple','private']) || ($privacyArray[self::transferOutsideNode] ?? '')==='yes' || ($privacyArray[self::markingNode][self::chosen] ?? '')===self::markingOther;
     }
 
     /** Adds a prefix to each element in the array.
@@ -444,25 +437,27 @@ trait ProjectdetailsTrait
                 $newNode = $newNode->addChild(self::measureTimePointNode);
             }
             // groups
-            $groupNode = $newNode->addChild(self::groupsNode);
-            $this->addChildNodes($groupNode,[self::minAge,self::maxAge,self::examinedPeopleNode,self::peopleDescription]);
-            $criteria = $groupNode->addChild(self::criteriaNode);
-            $includeNode = $criteria->addChild(self::criteriaIncludeNode);
+            $groupsNode = $newNode->addChild(self::groupsNode);
+            $this->addChildNodes($groupsNode,[self::minAge,self::maxAge,self::examinedPeopleNode,self::peopleDescription]);
+            $includeNode = $groupsNode->addChild(self::criteriaIncludeNode);
             $this->addChildNodes($includeNode,[self::noCriteriaNode,self::criteriaNode]);
             $includeNode->{self::criteriaNode}->addChild(self::criteriaIncludeNode.'0',str_replace('0','X',$this->translateString('projectdetails.pages.groups.criteria.include.addressee',[self::addressee => 'other', 'limits' => 'sameLimit', 'minAge' => '0'])));
-            $this->addChildNodesChosen($groupNode,[self::closedNode]);
-            $this->addChildNodes($criteria->addChild(self::criteriaExcludeNode),[self::noCriteriaNode,self::criteriaNode]);
-            $this->addChildNodes($groupNode->addChild(self::sampleSizeNode),[self::sampleSizeTotalNode,self::sampleSizeFurtherNode,self::sampleSizePlanNode]);
-            $this->addChildNodes($groupNode->addChild(self::recruitment),[self::recruitmentTypesNode,self::descriptionNode]);
+            $this->addChildNodesChosen($groupsNode,[self::closedNode]);
+            $this->addChildNodes($groupsNode->addChild(self::criteriaExcludeNode),[self::noCriteriaNode,self::criteriaNode]);
+            $this->addChildNodes($groupsNode->addChild(self::sampleSizeNode),[self::sampleSizeTotalNode,self::sampleSizeFurtherNode,self::sampleSizePlanNode]);
+            $this->addChildNodes($groupsNode,[self::recruitment,self::recruitmentFurther]);
             // information(II)
-            $this->addInformationSubNodes($newNode->addChild(self::informationNode));
+            $newNode->addChild(self::informationNode)->addChild(self::pre);
             $newNode->addChild(self::informationIINode);
-            // informationIII
-            $newNode->addChild(self::informationIIINode);
+            // consent
+            $consentNode = $newNode->addChild(self::consentNode);
+            $this->addChildNodesChosen($consentNode,[self::voluntaryNode,self::consentNode]);
+            $this->addChosenNode($consentNode,self::terminateConsNode);
+            $this->addChosenNode($consentNode,self::terminateParticipantsNode);
+            $consentNode->addChild(self::terminateCriteriaNode);
             // measures
             $measuresNode = $newNode->addChild(self::measuresNode);
-            $this->addChildNodes($measuresNode->addChild(self::measuresNode),[self::measuresTypesNode,self::descriptionNode]);
-            $this->addChildNodes($measuresNode->addChild(self::interventionsNode),[self::interventionsTypesNode]);
+            $this->addChildNodes($measuresNode,[self::procedureNode,self::measuresNode,self::measuresDescription,self::interventionsNode]);
             $this->addChosenNode($measuresNode,self::otherSourcesNode);
             $this->addChosenNode($measuresNode,self::loanNode);
             $this->addChosenNode($measuresNode,self::locationNode)->addChild(self::descriptionNode);
@@ -474,23 +469,18 @@ trait ProjectdetailsTrait
             $this->addChildNodes($burdensRisksNode->addChild(self::risksNode),[self::risksTypesNode]);
             $this->addChosenNode($burdensRisksNode,self::burdensRisksContributorsNode);
             $this->addChildNodesChosen($burdensRisksNode,[self::findingNode,self::feedbackNode]);
-            // consent
-            $consentNode = $newNode->addChild(self::consentNode);
-            $this->addChildNodesChosen($consentNode,[self::voluntaryNode,self::consentNode]);
-            $this->addChosenNode($consentNode,self::terminateConsNode);
-            $this->addChosenNode($consentNode,self::terminateParticipantsNode);
-            $consentNode->addChild(self::terminateCriteriaNode);
             // compensation
             $newNode->addChild(self::compensationNode)->addChild(self::compensationTypeNode);
             // texts
             $newNode->addChild(self::textsNode);
+            // informationIII
+            $newNode->addChild(self::informationIIINode);
             // legal
             $newNode->addChild(self::legalNode);
             // data privacy
             $privacyNode = $newNode->addChild(self::privacyNode);
             $privacyNode->addChild(self::processingNode);
             $this->addChosenNode($privacyNode,self::createNode);
-            $privacyNode->addChild(self::dataReuseNode);
             // data reuse
             $newNode->addChild(self::dataReuseNode)->addChild(self::confirmIntroNode);
             // contributor (Beteiligte)
@@ -499,16 +489,6 @@ trait ProjectdetailsTrait
                 $contributor->addChild($task);
             }
         }
-    }
-
-    /** Adds a 'chosen', a 'description', and an 'additional' node.
-     * @param SimpleXMLElement $element Node where the children get appended.
-     * @return void
-     */
-    protected function addInformationSubNodes(SimpleXMLElement $element): void {
-        $element->addChild(self::chosen);
-        $element->addChild(self::descriptionNode);
-        $element->addChild(self::informationAddNode)->addChild(self::chosen);
     }
 
     /** For each value in $nodes, a child of \$element with the same name is created. This child is added another 'chosen' child.

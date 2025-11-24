@@ -1,16 +1,19 @@
 import { Controller } from "@hotwired/stimulus";
-import {setElementVisibility, setHint} from "../multiFunction";
+import {setElementVisibility, setHint, showModal} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['qualificationYes','applicantPosition','supervisorPosition','supervisorDiv','projectStart','projectStartNext','projectStartBegun','projectStartBegunText','fundingResearch','fundingExternal','conflictNo'];
+    static targets = ['projectTitleParticipation','applicationFull','shortDocs','shortDocsYes','qualificationYes','applicantPosition','supervisorPosition','supervisorDiv','projectStart','projectStartNext','projectStartBegun','projectStartBegunText','fundingQuali','fundingBudget','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','fundingOther','requestedInput','conflictNo','conflictInput'];
 
     static values = {
         committeeType: String,
         positions: Array, // 0: positions without qualification, 1: positions with qualification, 2: positions for supervisor (not used), 3: all positions translated
         noChoice: String,
         conflictHint: Array, // 0: description for yes, 1: description for no
-        conflictHintName: String // id of the hint div
+        conflictHintName: String, // id of the hint div
+        applicationProcess: String,
+        reviewProcess: String, // current review process
+        reviewProcessLoad: String, // review process on page load
     }
 
     connect() {
@@ -19,9 +22,11 @@ export default class extends Controller {
         this.studentPhd = [this.studentValue,this.phdValue];
         this.positionOtherValue = 'positionOther';
         this.conflictYesTarget = document.getElementById(this.conflictNoTarget.id.replace('1','0')); // renderButtons allows only one target; therefore, get the other by using the id
+        this.applicationProcessLoadValue = this.reviewProcessLoadValue.includes('full') ? 'full' : 'short';
         this.setApplicantSupervisor();
-        this.setProjectStart();
+        this.setProjectStart(false);
         this.setConflict();
+        // this.setReviewProcessWidgets(null,false);
     }
 
     // methods that are called from the template
@@ -42,8 +47,10 @@ export default class extends Controller {
 
     // methods that are called from the template or from within this class
 
-    /** Sets the visibility of the project start widgets. */
-    setProjectStart() {
+    /** Sets the visibility of the project start widgets.
+     * @param checkModal if true, a modal may be displayed if the review process has changed
+     * */
+    setProjectStart(checkModal = true) {
         let isNext = this.projectStartNextTarget.checked;
         let isBegun = this.hasProjectStartBegunTarget && this.projectStartBegunTarget.checked;
         setElementVisibility(this.projectStartTarget.parentElement,!(isNext || isBegun));
@@ -52,6 +59,7 @@ export default class extends Controller {
             setElementVisibility(this.projectStartBegunTarget.parentElement,!isNext);
             setElementVisibility(this.projectStartBegunTextTarget,isBegun);
         }
+        this.setReviewProcessWidgets(null,checkModal);
     }
 
     /** Sets the visibility of the supervisor div as well as the positions for the applicant and supervisor and the phone label for the applicant. */
@@ -79,9 +87,92 @@ export default class extends Controller {
     /** Sets the conflict widgets. */
     setConflict() {
         let isConflict = this.conflictYesTarget.checked;
-        setElementVisibility('conflictDescriptionDiv',isConflict || this.conflictNoTarget.checked && (this.fundingResearchTarget.checked || this.fundingExternalTarget.checked));
+        this.setConflictDescription();
         setHint(this.conflictHintNameValue,this.conflictHintValue[isConflict ? 0 : 1]);
-        setElementVisibility('participantDescriptionDiv',isConflict);
+        if (this.hasConflictInputTarget) {
+            setElementVisibility(this.conflictInputTarget,!isConflict);
+        }
+    }
+
+    /** Sets the visibility of widgets that depend on the review process. */
+    setReviewProcessWidgets(event = null, checkModal = true) {
+        let isShortDocs = false; // gets true if selection on shortDocs question invoked the method
+        if (event!==null) {
+            let target = event.target;
+            let id = target.id;
+            if (id.includes('applicationProcess')) {
+                this.applicationProcessValue = target.value;
+            }
+            else if (id.includes('shortDocs')) { // selection on shortDocs question invoked the method
+                isShortDocs = true;
+            }
+        }
+        let isFull = this.applicationProcessValue==='full';
+        let isBegun = this.hasProjectStartBegunTarget && this.projectStartBegunTarget.checked;
+
+        let isResearch = this.fundingResearchTarget.checked;
+        let isExternal = this.fundingExternalTarget.checked;
+        let isResearchRequested = isResearch && this.fundingResearchRequestedTarget.checked;
+        let isExternalRequested = isExternal && this.fundingExternalRequestedTarget.checked;
+        let isRequested = !(this.fundingQualiTarget.checked || this.fundingBudgetTarget.checked || this.fundingOtherTarget.checked) && (isResearchRequested && isExternalRequested || isResearchRequested && !isExternal || isExternalRequested && !isResearch);
+        let isBegunRequested = isBegun || isRequested;
+        setElementVisibility(this.projectTitleParticipationTarget,isFull
+            ? (!isBegunRequested)
+            : (!this.hasShortDocsYesTarget && !isBegunRequested || this.hasShortDocsYesTarget && this.shortDocsYesTarget.checked));
+        this.setConflictDescription();
+        let oldProcess = this.reviewProcessValue; // review process before a change has been made
+        if (this.applicationProcessValue!=='') { // get review process after a change has been made
+            this.reviewProcessValue = isBegun
+                ? this.applicationProcessValue+'Begun'
+                : (isRequested ? this.applicationProcessValue+'Requested' :
+                    isFull
+                        ? 'fullDocs'
+                        : (this.hasShortDocsYesTarget
+                            ? (this.shortDocsYesTarget.checked ? 'shortService' : 'shortNoDocs')
+                            : 'shortDocs'));
+        }
+        // set visibility of short docs question
+        if (this.hasShortDocsTarget) {
+            setElementVisibility(this.shortDocsTarget,this.applicationProcessValue==='short' && !isBegunRequested);
+        }
+        // check if modal needs to be opened
+        if (checkModal && this.applicationProcessValue!=='') {
+            let modalID = ''; // id of modal to be opened
+            let docsProcesses = ['fullDocs','shortDocs','shortService'];
+            if (this.applicationProcessLoadValue==='full' && oldProcess.includes('full') && !isFull) { // any full to any short
+                modalID = this.reviewProcessLoadValue==='fullDocs' && oldProcess==='fullDocs' ? 'fullShort' // fullDocs to shortDocs, fullDocs to shortNoDocs
+                    : 'begunRequestedShort'; // fullBegun or fullRequested to any short
+            }
+            else if (docsProcesses.includes(this.reviewProcessLoadValue)) { // docs are created on page load
+                if (docsProcesses.includes(oldProcess) && isBegunRequested) {
+                    modalID = 'docs'+(isBegun ? 'Begun' : 'Requested'); // fullDocs to fullBegun, fullDocs to fullRequested, shortDocs to shortBegun, shortDocs to shortRequested, shortService to shortBegun, shortService to shortRequested
+                }
+                else if (oldProcess==='shortService' && this.reviewProcessValue==='shortNoDocs') {
+                    modalID = 'shortShort'; // shortService to shortNoDocs
+                }
+            }
+            if (modalID!=='' && (!isShortDocs || modalID==='shortShort')) {
+                let modal = document.getElementById(modalID);
+                if (modal!==null) { // if no information is given, modal may not exist
+                    showModal(document.getElementById(modalID));
+                    let button = document.getElementById(modalID+'Button');
+                    button.addEventListener('click', () => {
+                        button.nextElementSibling.click(); // close the modal
+                    });
+                }
+            }
+        }
+        if (this.hasRequestedInputTarget) {
+            let isVisible = !isBegun && isRequested;
+            for (let target of this.requestedInputTargets) {
+                setElementVisibility(target,isVisible);
+            }
+        }
+    }
+
+    /** Sets the visibility of the conflict description div. */
+    setConflictDescription() {
+        setElementVisibility('conflictDescriptionDiv',this.conflictYesTarget.checked || this.conflictNoTarget.checked && (this.fundingResearchTarget.checked || this.fundingExternalTarget.checked) && this.applicationFullTarget.checked)
     }
 
     // methods that are called from within this class

@@ -7,43 +7,52 @@ export default class extends Controller {
 
     static values = {
         compensationTypes: Array, // without 'no compensation'
-        terminateHint: Array // 0: no compensation, 1: other
+        terminateHint: Array, // 0: no compensation, 1: other
+        isDuration: Boolean // true if total duration is greater than 30 minutes
     }
 
     connect() {
         this.setCompensation();
-        for (let type of this.compensationTypesValue) {
-            this.setAwarding(type);
+        if (document.getElementById('moneyawardingDiv')!==null) {
+            for (let type of this.compensationTypesValue) {
+                this.setAwarding(type);
+            }
         }
     }
 
     /** Sets the compensation widgets. */
     setCompensation() {
         setElementVisibility(this.compensationDivTarget,getSelected(this.compensationTypesValue)[0]);
-        for (let type of this.compensationTypesValue) {
-            let isMoney = type==='money';
-            let isChecked = document.getElementById(type).checked;
-            if (!isMoney) {
-                setElementVisibility(type+'DescriptionDiv',isChecked);
-            }
-            if (isMoney || type==='hours') {
-                setElementVisibility(type+'Amount',isChecked);
-                if (isMoney) {
-                    setElementVisibility(this.moneyFurtherTarget,isChecked);
-                    setElementVisibility(this.moneyMiddleTarget,isChecked); // text between label and spinner
-                    setElementVisibility(this.moneyValueTarget,isChecked);
-                    setElementVisibility(this.moneyEndSpecificTarget,this.moneyAmountRealTarget.checked);  // text between currency symbol and full stop
+        let hasAwarding = document.getElementById('moneyawardingDiv')!==null;
+        if (this.hasMoneyFurtherTarget || hasAwarding) {
+            for (let type of this.compensationTypesValue) {
+                let isChecked = document.getElementById(type).checked;
+                if (this.hasMoneyFurtherTarget) { // if money further is defined, all other elements are also defined
+                    let isMoney = type==='money';
+                    if (!isMoney) {
+                        setElementVisibility(type+'DescriptionDiv', isChecked);
+                    }
+                    if (isMoney || type==='hours') {
+                        setElementVisibility(type+'Amount', isChecked);
+                        if (isMoney) {
+                            setElementVisibility(this.moneyFurtherTarget, isChecked);
+                            setElementVisibility(this.moneyMiddleTarget, isChecked); // text between label and spinner
+                            setElementVisibility(this.moneyValueTarget, isChecked);
+                            setElementVisibility(this.moneyEndSpecificTarget, this.moneyAmountRealTarget.checked);  // text between currency symbol and full stop
+                        } else {
+                            setElementVisibility(this.hoursValueDivTarget, this.hoursAmountFlatTarget.checked, 2);
+                            let isOneHour = this.hoursValueTarget.value==='1';
+                            setElementVisibility(this.hoursEndDefaultTarget, !isOneHour);
+                            setElementVisibility(this.hoursEndSpecificTarget, isOneHour);
+                        }
+                    }
                 }
-                else {
-                    setElementVisibility(this.hoursValueDivTarget,this.hoursAmountFlatTarget.checked,2);
-                    let isOneHour = this.hoursValueTarget.value==='1';
-                    setElementVisibility(this.hoursEndDefaultTarget,!isOneHour);
-                    setElementVisibility(this.hoursEndSpecificTarget,isOneHour);
+                if (hasAwarding) {
+                    setElementVisibility(type+'awardingDiv',isChecked); // question for (de)selected type
                 }
             }
-            setElementVisibility('awarding'+type+'Div',isChecked); // question for (de)selected type
+            this.setInputHint();
         }
-        this.setInputHint();
     }
 
     /** Sets the terminate widget.
@@ -53,7 +62,7 @@ export default class extends Controller {
         let value = event.target.value;
         let isNothing = value==='nothing';
         let descriptionDiv = document.getElementById('terminateDescriptionDiv');
-        setElementVisibility(descriptionDiv,isNothing || value==='terminateOther');
+        setElementVisibility(descriptionDiv,isNothing && this.isDurationValue || value==='terminateOther');
         setHint(descriptionDiv,this.terminateHintValue[isNothing ? 0 : 1]);
     }
 

@@ -24,9 +24,10 @@ class GroupsController extends ControllerAbstract
         }
         $measureArray = $this->xmlToArray($measureNode);
         $groupsNode = $measureNode->{self::groupsNode};
+        $hasCriteria = $this->checkElement(self::criteriaIncludeNode,$groupsNode);
         $addresseeLoad = $this->getAddressee($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::groupsNode})); // addressee on page load
         $isWards = $addresseeLoad!==self::addresseeParticipants;
-        $consentArray = $this->xmlToArray($measureNode->{self::consentNode});
+        $consentArray = $measureArray[self::consentNode];
         $voluntaryArray = $consentArray[self::voluntaryNode];
         $isClosedDependentLoad = array_key_exists(self::voluntaryYesDescription,$voluntaryArray);
         $textInput = '';
@@ -41,7 +42,7 @@ class GroupsController extends ControllerAbstract
             }
             $participants = [self::addressee => $this->translateString($addresseePrefix.'participants.'.$addresseeLoad)];
             // informationII
-            if ($this->checkInput($measureArray[self::informationIINode],[self::chosen => '2'])) {
+            if ($this->checkInput($measureArray[self::informationIINode],[self::pre => ''])) {
                 $this->addInputPage($translationPrefix,self::informationIINode,$inputArray,$participants);
             }
             // consent
@@ -58,25 +59,28 @@ class GroupsController extends ControllerAbstract
         // get all possible first inclusion sentences. Resulting array looks like follows: 0: min age equals 1, 1: min age unequal to 1. In each array: 0: max age equals 1, 1: max age unequal 1. In each array: 0: participants, 1: children, 2: wards. In each array: 0: no upper limit, 1: same limit, 2: different limits. The non-singular min age value is 0 and the non-singular max age value is 101.
         $locale = $request->getLocale();
         [$criteriaHint,$includeStart,$firstInclude] = [[],[],[]];
-        foreach ([1,0] as $minAge) {
-            $minArray = [];
-            foreach ([1,101] as $maxAge) {
-                $maxArray = [];
-                foreach ([self::addresseeParticipants,self::addresseeChildren,self::addresseeWards] as $addressee) {
-                    $criteriaHint[] = $this->translateString('multiple.wording',[self::addressee => $this->translateString($thirdPartiesPrefix.$addressee)]);
-                    $includeStart[] = $this->translateString('projectdetails.pages.'.self::groupsNode.'.'.self::criteriaNode.'.include.start',[self::addressee => $addressee]);
-                    $tempArray = [];
-                    foreach (['noUpperLimit','sameLimit','limits'] as $limit) {
-                        $tempArray[] = $this->getFirstInclusion($addressee,$limit,$minAge,$maxAge,$locale);
-                    }
-                    $maxArray[] = $tempArray;
-                } // addressee
-                $minArray[] = $maxArray;
-            } // max age
-            $firstInclude[] = $minArray;
-        } // min age
+        if ($hasCriteria) {
+            $informationParam = [self::informationNode => $this->getInformation($appNode,$routeParams)];
+            foreach ([1,0] as $minAge) {
+                $minArray = [];
+                foreach ([1,101] as $maxAge) {
+                    $maxArray = [];
+                    foreach ([self::addresseeParticipants,self::addresseeChildren,self::addresseeWards] as $addressee) {
+                        $criteriaHint[] = $this->translateString('multiple.wording',[self::addressee => $this->translateString($thirdPartiesPrefix.$addressee)]);
+                        $includeStart[] = $this->translateString('projectdetails.pages.'.self::groupsNode.'.'.self::criteriaNode.'.include.start',array_merge($informationParam,[self::addressee => $addressee]));
+                        $tempArray = [];
+                        foreach (['noUpperLimit','sameLimit','limits'] as $limit) {
+                            $tempArray[] = $this->getFirstInclusion($addressee,$limit,$minAge,$maxAge,$locale);
+                        }
+                        $maxArray[] = $tempArray;
+                    } // addressee
+                    $minArray[] = $maxArray;
+                } // max age
+                $firstInclude[] = $minArray;
+            } // min age
+        }
 
-        $groups = $this->createFormAndHandleRequest(GroupsType::class,$this->xmlToArray($groupsNode),$request);
+        $groups = $this->createFormAndHandleRequest(GroupsType::class,$this->xmlToArray($groupsNode),$request,[self::dummyParams => ['hasCriteria' => $hasCriteria]]);
         if ($groups->isSubmitted()) {
             $data = $this->getDataAndConvert($groups,$groupsNode);
             $this->setFirstInclusion($groupsNode,$locale);
@@ -95,11 +99,12 @@ class GroupsController extends ControllerAbstract
                 // informationII
                 $this->removeAllChildNodes($informationIINode);
                 // consent
+                $voluntaryArray[self::chosen2Node] = ''; // remove any selection for children/wards (for voluntary yes check)
                 foreach ($nodesArray as $curNode) {
                     $elementArray = $this->xmlToArray($curNode);
                     if (array_key_exists(self::chosen2Node,$elementArray)) {
                         $this->removeElement(self::chosen2Node,$curNode);
-                        if ($elementArray[self::chosen]!==self::voluntaryConsentNo && $this->checkElement(self::descriptionNode,$curNode)) {
+                        if ($elementArray[self::chosen]!==self::voluntaryConsentNo) {
                             $this->removeElement(self::descriptionNode,$curNode);
                         }
                     }
@@ -110,7 +115,7 @@ class GroupsController extends ControllerAbstract
                 // information
                 $informationNode->addChild(self::attendanceNode);
                 // informationII
-                $this->addInformationSubNodes($informationIINode);
+                $informationIINode->addChild(self::pre);
                 // consent
                 foreach ($nodesArray as $curNode) { // insert 'chosen2' node
                     if (array_key_exists(self::descriptionNode,$this->xmlToArray($curNode))) { // description node exists
@@ -124,11 +129,10 @@ class GroupsController extends ControllerAbstract
             // voluntary yes description in consent
             $examined = $data[self::examinedPeopleNode];
             $isClosedDependent = $examined!=='' && array_key_exists(self::dependentExaminedNode,$examined) || $data[self::closedNode][self::chosen]===0;
-            $isVoluntary = in_array('yes',[$voluntaryArray[self::chosen],$voluntaryArray[self::chosen2Node] ?? '']);
-            if ($isClosedDependentLoad && !$isClosedDependent && $isVoluntary) { // remove node
+            if (!in_array('yes',[$voluntaryArray[self::chosen],$voluntaryArray[self::chosen2Node] ?? '']) || $isClosedDependentLoad && !$isClosedDependent) { // remove node -> if 'wards' group was deselected, $voluntaryArray may not contain 'yes' anymore
                 $this->removeElement(self::voluntaryYesDescription,$voluntaryNode);
             }
-            elseif (!$isClosedDependentLoad && $isClosedDependent && $isVoluntary) { // add node
+            elseif (!$isClosedDependentLoad && $isClosedDependent) { // add node
                 $voluntaryNode->addChild(self::voluntaryYesDescription);
             }
             $isNotLeave = !$this->getLeavePage($groups,$session,self::groupsNode);
@@ -143,6 +147,7 @@ class GroupsController extends ControllerAbstract
              'firstInclude' => $firstInclude,
              'textInput' => $textInput,
              'textInputVoluntary' => $textInputVoluntary,
-             'recruitmentTypes' => self::recruitmentTypes],'projectdetails.groups',true));
+             'recruitmentTypes' => self::recruitmentTypes,
+             'recruitmentTypesOther' => self::recruitmentTypesOther],'projectdetails.groups',true));
     }
 }
