@@ -11,7 +11,8 @@ class GroupsType extends TypeAbstract
 {
     use ProjectdetailsTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $translationPrefix = 'projectdetails.pages.groups.';
         // age
         $tempPrefix = $translationPrefix.'age.';
@@ -19,7 +20,7 @@ class GroupsType extends TypeAbstract
         $this->addFormElement($builder,self::maxAge,'spinner',$tempPrefix.self::maxAge,options: $this->setMinMax(1,100));
         $this->addFormElement($builder,self::unlimited,'checkbox',$tempPrefix.'unlimited');
         // examined
-        $this->addCheckboxGroup($builder,self::examinedTypes,$translationPrefix.'examined.',textareaName: self::peopleDescription);
+        $this->addCheckboxGroup($builder,self::examinedTypes,$translationPrefix.'examined.types.',textareaName: self::peopleDescription);
         // closed group
         $tempPrefix = $translationPrefix.'closed.';
         $this->addBinaryRadio($builder,self::closedNode,$tempPrefix.'title');
@@ -42,7 +43,8 @@ class GroupsType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         // age
         $this->setSpinner($forms,$viewData,[self::minAge,self::maxAge],exclude: '-1');
@@ -90,7 +92,8 @@ class GroupsType extends TypeAbstract
         }
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         // age
         $minAge = $forms[self::minAge]->getData();

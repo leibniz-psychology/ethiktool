@@ -25,7 +25,7 @@
                 {% endfor %}
                 {# project title #}
                 <div {% if not savePDF %} class="previewSmall" {% endif %} style="word-break: break-word; margin-top: 0.25rem">
-                    {{ ('participation.projectTitleHeader'|trans({'projectTitle': projectTitle['projectTitle'], 'isDifferent': projectTitle['isDifferent']},'pdf')~levelNames)|raw }}
+                    {{ ('participation.projectTitleHeader'|trans({'projectTitle': projectTitle['projectTitle'], 'savePDF': savePDF ? 'true' : 'false', 'isDifferent': projectTitle['isDifferent']},'pdf')~levelNames)|raw }}
                 </div>
                 {{ _self.addDate(savePDF,isComplete) }}
             </div>

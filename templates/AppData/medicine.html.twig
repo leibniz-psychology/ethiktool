@@ -13,8 +13,8 @@
         <div class="mt-8" id="physician">
             {{ formRender.renderButtons(physician,{'stimVisible': {'values': [['0',descriptionDiv]]}}) }}
             {% if physicianDescription is not same as '' %}
-                {% set isNoChoice = physicianDescription.vars.value is same as '' %}
-                {{ formRender.renderButtons(physicianDescription,{'stim': ['base','setWidgetByValue',{'widgetValue': ['',description.vars.name,hintArray]}], 'text': [description,textStyle|merge({'hint': isNoChoice ? 'multiple.choiceTextHint' : hintArray[0]})|merge(isNoChoice ? {'target': true} : {})], 'addDiv': [descriptionDiv,boolToDisplay(physician.vars.value is same as '0')]}) }}
+                {% set physicianDescriptionValue = physicianDescription.vars.value %}
+                {{ formRender.renderButtons(physicianDescription,{'stim': ['base','setWidgetByValue',{'widgetValue': ['',description.vars.name,hintArray]}], 'text': [description,textStyle|merge({'hint': hintArray[physicianDescriptionValue]})|merge(physicianDescriptionValue is same as '' ? {'target': true} : {})], 'addDiv': [descriptionDiv,boolToDisplay(physician.vars.value is same as '0')]}) }}
             {% endif %}
         </div>
         {# buttons #}

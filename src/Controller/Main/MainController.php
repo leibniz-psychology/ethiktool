@@ -11,12 +11,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class MainController extends ControllerAbstract
 {
     #[Route('/', name: 'app_home')] // if the url is entered without the page, i.e., only with locale or without anything
-    public function showHome(Request $request): Response {
+    public function showHome(Request $request): Response
+    {
         return $this->redirectToRoute('app_main');
     }
 
     #[Route('/main', name: 'app_main')]
-    public function showMain(Request $request): Response {
+    public function showMain(Request $request): Response
+    {
         $session = $request->getSession();
         if ($session->has(self::quit)) { // if xml should be downloaded before quitting and then header is used to return to the main page, remove session variable
             $session->remove(self::quit);

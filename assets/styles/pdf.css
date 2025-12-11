@@ -3,6 +3,10 @@
     line-height: 1.5;
 }
 
+.linkInternal::after {
+
+}
+
 .pdfBox {
     page-break-inside: avoid;
     margin-bottom: 2em;
@@ -106,8 +110,28 @@
 
 .pdfHeading a, .pdfHeadingCenter a, .previewSmall a, div a {
     font-family: inherit;
+}
+
+.linkNormal {
     text-decoration: none;
     color: inherit;
+}
+
+.previewSmall a::after {
+    position: relative;
+    top: 0.125rem;
+    display: inline-block;
+    overflow: hidden;
+    width: 1rem;
+    height: 1rem;
+    background:
+    url("../images/link-in.svg"
+    param(--color theme("colors.mono.900")))
+left center no-repeat;
+    content: "(external link)";
+    text-indent: 1rem;
+    white-space: nowrap;
+    background-size: 100% !important;
 }
 
 i.pdfHeading {
@@ -142,10 +166,6 @@ i.pdfHeading {
 .noPageBreak {
     page-break-inside: avoid;
     margin: 0;
-}
-
-.markInput {
-    color: blue;
 }
 
 .tableWidth tr {

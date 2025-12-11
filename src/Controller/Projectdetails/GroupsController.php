@@ -14,7 +14,8 @@ class GroupsController extends ControllerAbstract
     use ProjectdetailsTrait;
 
     #[Route(self::routePrefix.'groups', name: 'app_groups')]
-    public function showGroups(Request $request): Response {
+    public function showGroups(Request $request): Response
+    {
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session,setRecent: true);
         $routeParams = $request->get('_route_params');
@@ -110,8 +111,7 @@ class GroupsController extends ControllerAbstract
                     }
                 }
                 $this->removeElement(self::consentOtherDescription.'Participants',$consentNode);
-            }
-            elseif (!$isWards && !$isParticipant) { // add necessary nodes
+            } elseif (!$isWards && !$isParticipant) { // add necessary nodes
                 // information
                 $informationNode->addChild(self::attendanceNode);
                 // informationII
@@ -120,8 +120,7 @@ class GroupsController extends ControllerAbstract
                 foreach ($nodesArray as $curNode) { // insert 'chosen2' node
                     if (array_key_exists(self::descriptionNode,$this->xmlToArray($curNode))) { // description node exists
                         $this->insertElementBefore(self::chosen2Node,$curNode->{self::descriptionNode});
-                    }
-                    else {
+                    } else {
                         $curNode->addChild(self::chosen2Node);
                     }
                 }
@@ -131,8 +130,7 @@ class GroupsController extends ControllerAbstract
             $isClosedDependent = $examined!=='' && array_key_exists(self::dependentExaminedNode,$examined) || $data[self::closedNode][self::chosen]===0;
             if (!in_array('yes',[$voluntaryArray[self::chosen],$voluntaryArray[self::chosen2Node] ?? '']) || $isClosedDependentLoad && !$isClosedDependent) { // remove node -> if 'wards' group was deselected, $voluntaryArray may not contain 'yes' anymore
                 $this->removeElement(self::voluntaryYesDescription,$voluntaryNode);
-            }
-            elseif (!$isClosedDependentLoad && $isClosedDependent) { // add node
+            } elseif (!$isClosedDependentLoad && $isClosedDependent) { // add node
                 $voluntaryNode->addChild(self::voluntaryYesDescription);
             }
             $isNotLeave = !$this->getLeavePage($groups,$session,self::groupsNode);

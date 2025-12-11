@@ -11,7 +11,8 @@ class DataPrivacyType extends TypeAbstract
 {
     use ProjectdetailsTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $translationPrefix = 'projectdetails.pages.dataPrivacy.';
         $dummyParams = $options[self::dummyParams] ?? [];
         // processing
@@ -118,9 +119,9 @@ class DataPrivacyType extends TypeAbstract
             }
         }
         // order processing description
-        $tempPrefix = $translationPrefix.self::orderProcessingDescriptionNode.'.';
+        $tempPrefix = $translationPrefix.self::orderProcessingDescriptionNode.'.hints.';
         foreach (self::orderProcessingKnownTexts as $text) {
-            $this->addFormElement($builder,$text,'textarea',hint: $this->translateString($tempPrefix.'text.'.$text).($text!==self::orderProcessingNode.'Start' ? '' : ' ... ').' ('.$this->translateString($tempPrefix.'hints.'.$text).')');
+            $this->addFormElement($builder,$text,'textarea',hint: $tempPrefix.$text);
         }
         // relatable
         $this->addCheckboxGroup($builder,self::relatableTypes,$translationPrefix.self::relatableNode.'.types.');
@@ -142,7 +143,8 @@ class DataPrivacyType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         // processing
         if (array_key_exists(self::processingNode,$forms)) {
@@ -281,7 +283,8 @@ class DataPrivacyType extends TypeAbstract
         } // 'create' exists
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         $newData = [];
         if (array_key_exists(self::processingNode,$forms)) {
@@ -308,7 +311,7 @@ class DataPrivacyType extends TypeAbstract
                         $isResearch = false;
                         if (array_key_exists(self::dataOnlineNode, $forms)) {
                             $newData[self::dataOnlineNode] = $this->getChosenArray($forms, self::dataOnlineNode, self::dataOnlineTechnical, [self::descriptionNode => self::dataOnlineProcessingNode]);
-                            $tempVal = $forms[self::dataOnlineNode]===self::dataOnlineTechnical ? $forms[self::dataOnlineProcessingNode]->getData() : '';
+                            $tempVal = $forms[self::dataOnlineNode]->getData()===self::dataOnlineTechnical ? $forms[self::dataOnlineProcessingNode]->getData() : '';
                             $isLinked = $tempVal===self::dataOnlineProcessingLinked;
                             $isResearch = $tempVal===self::dataOnlineProcessingResearch;
                         }
@@ -416,7 +419,6 @@ class DataPrivacyType extends TypeAbstract
                             // If to any purpose a description is added (i.e., getSelectedCheckboxes() contains 'other' key(s)), they must be saved separately.
                             foreach (array_merge($isMarking ? [self::purposeResearchNode => $purpose] : [], $isPurposeFurther ? [self::purposeFurtherNode => $purposeFurther] : []) as $questionName => $question) {
                                 $isPurposeFurther = $questionName===self::purposeFurtherNode;
-                                $prefix = $isPurposeFurther ? self::purposeFurtherNode : '';
                                 foreach ($question as $purposeType => $value) { // $value is an empty string
                                     $purposeWoPrefix = str_replace(self::purposeFurtherNode, '', $purposeType);
                                     if ($purposeWoPrefix!==self::purposeNo) {
@@ -509,7 +511,8 @@ class DataPrivacyType extends TypeAbstract
      * @param string $purposeWoPrefix purpose for which the widgets are set
      * @return void
      */
-    private function setAccess(array $forms, array|string $accessArray, string $purposeWoPrefix): void {
+    private function setAccess(array $forms, array|string $accessArray, string $purposeWoPrefix): void
+    {
         $this->setSelectedCheckboxes($forms, $accessArray, $this->createPrefixArray(self::accessOthers, $purposeWoPrefix));
         if ($accessArray!=='') {
             foreach ($accessArray as $type => $accessQuestions) {
@@ -534,7 +537,8 @@ class DataPrivacyType extends TypeAbstract
      * @param string $purposeWoPrefix purpose for which the questions are checked
      * @return array 0: array containing the access and eventually the order processing questions 1: true if any order processing known question was answered with yes, false otherwise
      */
-    private function getAccess(array $forms, string $purposeWoPrefix): array {
+    private function getAccess(array $forms, string $purposeWoPrefix): array
+    {
         $accessSelected = $this->getSelectedCheckboxes($forms, $this->prefixArray(self::accessTypes, $purposeWoPrefix), $this->createPrefixArray(self::accessOthers, $purposeWoPrefix));
         $accessKeys = array_keys($accessSelected);
         $anyKnown = false;

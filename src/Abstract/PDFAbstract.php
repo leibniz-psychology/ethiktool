@@ -17,7 +17,8 @@ class PDFAbstract extends ControllerAbstract
     protected static bool $isPageLink; // type of page where the heading is linked to, e.g., application data
     protected static string $routeIDs = '';
 
-    public function __construct(TranslatorInterface $translator, Pdf $pdf) {
+    public function __construct(TranslatorInterface $translator, Pdf $pdf)
+    {
         parent::__construct($translator);
         self::$pdf = $pdf;
     }
@@ -30,7 +31,8 @@ class PDFAbstract extends ControllerAbstract
      * @param string $fragment fragment to be added to the link.
      * @return string converted string
      */
-    protected function addHeadingLink(string $string, array $parameters = [], string $fragment = ''): string {
+    protected function addHeadingLink(string $string, array $parameters = [], string $fragment = ''): string
+    {
         $string = $this->translateStringPDF($string,$parameters);
         if (!self::$savePDF && self::$isPageLink && $fragment!==self::dummyString) {
             $string = $this->convertStringToLink($string,self::$linkedPage,self::$routeIDs,$fragment);
@@ -46,7 +48,8 @@ class PDFAbstract extends ControllerAbstract
      * @param string $name name of the pdf file
      * @return void
      */
-    protected function generatePDF(Session $session, string $html, string $name): void {
+    protected function generatePDF(Session $session, string $html, string $name): void
+    {
         self::$pdf->generateFromHtml($html,self::tempFolder.'/'.$name.$session->getId().'.pdf',overwrite: true); // add session ID to avoid overwriting if multiple users generate simultaneously
     }
 }

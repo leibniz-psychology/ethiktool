@@ -14,7 +14,8 @@ class DataReuseController extends ControllerAbstract
     use ProjectdetailsTrait;
 
     #[Route(self::routePrefix.'dataReuse', name: 'app_dataReuse')]
-    public function showDataReuse(Request $request): Response{
+    public function showDataReuse(Request $request): Response
+    {
         $routeParams = $request->get('_route_params');
         $measure = $this->getMeasureTimePointNode($request,$routeParams);
         if ($measure===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened

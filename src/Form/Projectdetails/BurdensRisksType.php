@@ -11,15 +11,15 @@ class BurdensRisksType extends TypeAbstract
 {
     use ProjectdetailsTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $translationPrefix = 'projectdetails.pages.burdensRisks.';
         // burdens/risks
         foreach ([self::burdensNode,self::risksNode,self::burdensRisksContributorsNode] as $type) {
             $description = $type.self::descriptionCap;
             if ($type!==self::burdensRisksContributorsNode) {
                 $this->addCheckboxGroup($builder, $type===self::burdensNode ? self::burdensTypes : self::risksTypes, $translationPrefix.$type.'.types.', textareaName: $description);
-            }
-            else {
+            } else {
                 $this->addBinaryRadio($builder,$type,textareaName: $description);
             }
             $this->addBinaryRadio($builder,$type.'Compensation', $translationPrefix.'compensation.title',$type.'CompensationDescription',options: [self::labelParams => ['type' => $type]]);
@@ -38,7 +38,8 @@ class BurdensRisksType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         // burdens and risks
         foreach ([self::burdensNode,self::risksNode] as $type) {
@@ -59,7 +60,8 @@ class BurdensRisksType extends TypeAbstract
         $this->setChosenArray($forms,$viewData,self::feedbackNode,[self::descriptionNode => self::feedbackNode.self::descriptionCap]);
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         $newData = [];
         // burdens and risks
@@ -97,7 +99,8 @@ class BurdensRisksType extends TypeAbstract
      * @param string $type must equal 'burdens', 'risks', or 'burdensRisksContributors'
      * @return void
      */
-    private function setCompensation(array $forms, array $viewData, string $type): void {
+    private function setCompensation(array $forms, array $viewData, string $type): void
+    {
         $compensationNode = $type.'Compensation';
         $tempArray = $viewData[self::burdensRisksCompensationNode] ?? [];
         $forms[$compensationNode]->setData($this->getArrayValue($tempArray,self::chosen));
@@ -109,7 +112,8 @@ class BurdensRisksType extends TypeAbstract
      * @param string $type must equal 'burdens', 'risks', or 'burdensRisksContributors'
      * @return array array with the compensation data
      */
-    private function getCompensation(array $forms, string $type): array {
+    private function getCompensation(array $forms, string $type): array
+    {
         $compensationNode = $type.'Compensation';
         return $this->getChosenArray($forms,$compensationNode,null,[self::descriptionNode => $compensationNode.self::descriptionCap]);
     }

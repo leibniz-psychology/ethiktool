@@ -46,7 +46,6 @@ multiple:
   charCount: 'Number of characters:'
   charCountHint: 'The recommended maximum number of characters has been exceeded. It is possible to submit the proposal despite exceeding this number; nevertheless, please check whether you can shorten the description without compromising important information for the ethics review.'
   optional: '(optional)'
-  appHint: 'Warning: <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData">full proposal</a> is necessary!'
   wording: 'Please address your descriptions directly to the {addressee}.'
   inputHint: >-
     The text entered here is transferred verbatim to the {type, select,
@@ -113,6 +112,11 @@ multiple:
       Due to the change you just made, on {pages, plural,
                       =1    {page {page}}
                       other {pages {page}}} no inputs regarding {inputs} are necessary anymore. Any entries there will be deleted as soon as you leave the current page.
+  namely: >-
+    {namely, select,
+      true  {..., namely ...}
+      false {..., thus in all probability ...}
+      other {{namely}}}
   infos:
     name: 'First and last name'
     institution: 'Institution/department'
@@ -201,7 +205,7 @@ newForm: # placed immediately after 'committee' to have the committee names all 
     title: 'Password:'
     modal:
       title: 'Wrong password.'
-      text: 'The password you entered for accessing the beta stage is not corret.'
+      text: 'The password you entered for accessing the beta stage is not correct.'
   hints:
     filename: 'This name is displayed in the navigation area. It is also suggested as file name.'
     committee: 'Please select the ethics committee you will submit the proposal to.'
@@ -475,7 +479,7 @@ coreData:
     fundingOther: 'other source(s)'
     textHints:
       fundingBudget: 'Please name the faculty/department/research group(s).'
-      fundingResearch: 'Please name organisation(s)/foundation(s), e.g., DFG, BMFTR, EU, ERC, VolkswagenStiftung.'
+      fundingResearch: 'Please name organisation(s)/foundation(s) (e.g., DFG, BMFTR, EU, ERC, VolkswagenStiftung).'
       fundingExternal: 'Please name source(s).'
       fundingOther: 'Please specify.'
     fundingState:
@@ -489,7 +493,7 @@ coreData:
     title: 'Responsibility for the proposal'
     applicant: 'Applicant'
     supervisor: 'Responsible supervisor'
-    hint: 'These data are transferred to page “<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“. Additional roles/tasks can be added there.'
+    hint: 'These data are transferred to page “<a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“. Additional roles/tasks can be added there.'
   conflict:
     title: 'Is there a conflict of interest for any of the project contributors due to personal interests or due to interests of third parties?'
     headingHint: 'There is a conflict of interest if the research process could be affected by your own interests or by interests of third parties or if the independence of scientific judgement could be compromised. Typical examples of potential conflicts of interests include the evaluation of an own product, sponsored research to evaluate other''s products, or research on societally delicate topics under the influence of lobbyism or of strong own opinions. Conflicts of interests can arise from multiple factors, such as family- or friendship-related, financial or social factors, or from economic or personal relationships to sponsors or collaborators. If there is a conflict of interest, the nature of the conflict and how it is handled must be explained. Please note that potential conflicts of interest must also be disclosed to the participants.'
@@ -532,9 +536,9 @@ votes:
         resubmissionGranted {Please briefly describe the changes made relative to the original proposal, especially if there are changes beyond the completion of the documents after funding has been granted. The generation of participant documents does not need to be specifically mentioned.}
         other               {Please briefly name the key similarities and then describe the differences relative to the previous proposal.}}
     hint:
-      main: 'Please check whether an amendment can be submitted instead of a new proposal. This is recommended if only few changes are made relative to the research project declared as similar. You can change the proposal type on page “<a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#appType">core data</a>“.'
+      main: 'Please check whether an amendment can be submitted instead of a new proposal. This is recommended if only few changes are made relative to the research project declared as similar. You can change the proposal type on page “<a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#appType">core data</a>“.'
       notMain: >-
-        As you selected <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#appType">proposal type</a> “{type, select,
+        As you selected <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#appType">proposal type</a> “{type, select,
           extended {amendment}
           other    {resubmission}}“, this question must be answered with “yes“. The case number entered there is automatically adopted. {type, select,
             extended {Please note that amendments can only be submitted for research projects that have received a positive vote from {committeeDat}.}
@@ -557,7 +561,9 @@ medicine:
       types:
         exception: 'The involved physicians can make use of an exception to the compulsory professional and ethical counselling by a medical ethics committee.'
         other: 'other justification'
-      textHint: 'Please justify why you deem the ethics committee responsible despite its non-medical constitution. If applicable, name the relevant section(s) of the professional code of conduct of the responsible federal state medical association.'
+      textHints:
+        exception: 'Please justify why you deem the ethics committee responsible despite its non-medical constitution. If applicable, name the relevant section(s) of the professional code of conduct of the responsible federal state medical association.'
+        other: 'Please justify why you deem the ethics committee responsible despite its non-medical constitution. If applicable, explain the role of the involved physicians in more detail.'
 
 summary:
   heading: '(setting the context for the ethics evaluation)'
@@ -637,18 +643,20 @@ projectdetails:
         minAge: 'minimum age'
         maxAge: 'maximum age'
         unlimited: 'unlimited'
-      wardsHint: 'The selected groups include participants who cannot give consent themselves. Further information and documents are therefore required for the legal guardians. If you also want to examine individuals who are capable of giving consent themselves, please create an additional group on the <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-route-i-ds-param="{studyID}" data-base-page-param="Projectdetails">overview page of this study</a>.'
+      wardsHint: 'The selected groups include participants who cannot give consent themselves. Further information and documents are therefore required for the legal guardians. If you also want to examine individuals who are capable of giving consent themselves, please create an additional group on the <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-route-i-ds-param="{studyID}" data-base-page-param="Projectdetails">overview page of this study</a>.'
       examined:
         title: 'Which group(s) shall be investigated?'
-        healthy: 'healthy individuals'
-        physical: 'individuals with physical illnesses or impairments'
-        mental: 'individuals with mental illnesses or impairments (e.g., individuals with learning difficulties or depressive disorder)'
-        medical: 'individuals in medical or psychotherapeutic treatment'
-        institutional: 'institutionalised individuals (e.g., prisoners, psychiatric in-patients)'
-        wards: 'individuals incapable of giving consent (e.g., children and adolescents, persons with severe dementia)'
-        vulnerable: 'individuals in particularly vulnerable (life) situations (e.g., persons from a conflict/war zone, refugees)'
-        dependent: 'individuals in a dependent relationship to project contributors (e.g., students of own university courses, own employees, family members/friends)'
-        otherPeople: 'other groups'
+        headingHint: 'Please choose all participant groups that are being studied at this time point of the study and for which you have not created a separate group in the menu. Please select only those characteristics that are relevant to the research question. For example, if you specifically want to examine individuals with physical illnesses, the corresponding category must be selected; if, on the other hand, you assume that a large online sample will happen to also include some individuals with physical illnesses, the category does not have to be selected.'
+        types:
+          healthy: 'healthy individuals'
+          physical: 'individuals with physical illnesses or impairments'
+          mental: 'individuals with mental illnesses or impairments (e.g., individuals with learning difficulties or depressive disorder)'
+          medical: 'individuals in medical or psychotherapeutic treatment'
+          institutional: 'institutionalised individuals (e.g., prisoners, psychiatric in-patients)'
+          wards: 'individuals incapable of giving consent (e.g., children and adolescents, persons with severe dementia)'
+          vulnerable: 'individuals in particularly vulnerable (life) situations (e.g., persons from a conflict/war zone, refugees)'
+          dependent: 'individuals in a dependent relationship to project contributors (e.g., students of own university courses, own employees, family members/friends)'
+          otherPeople: 'other groups'
         healthyIcon: 'Choose this option if you are not intending to recruit individuals with specific conditions or impairments.'
         description: 'Exact description of the group(s). If applicable, you can also describe which information/instruments are used to check or ensure that individuals belong to the target group(s) (inclusion/exclusion criteria).'
       closed:
@@ -717,7 +725,7 @@ projectdetails:
         title: 'Sample size'
         total:
           title: 'How many individuals from the selected groups shall be included in this time point of the study?'
-          textHint: 'This refers to the number of individuals on whom data will be collected (incl. buffer for piloting, possible exclusion from the analysis, etc.)'
+          textHint: 'This refers to the number of individuals on whom data will be collected (incl. buffer for piloting, possible exclusion from the analysis, etc.).'
         furtherParticulars: '(optional) Further information on the sample size (e.g., distribution of the total number across different sub-groups)'
         plan:
           title: 'How was the sample size chosen?'
@@ -734,16 +742,12 @@ projectdetails:
           news: 'newspaper announcements'
           database: 'database(s)'
           external: 'external recruiting service(s)'
-          multiplier: 'dissemination via multipliers (e.g. schools, sports associations)'
+          multiplier: 'dissemination via multipliers (e.g., schools, sports associations)'
           recruitmentOther: 'other ways of recruitment'
           otherDescription: 'please specify'
         recruitmentFurther:
           missing: 'Please choose at least one way of recruitment.'
           description: 'Please describe the ways of recruitment in detail, e.g., which specific recruiting service is used, where social media calls are placed.'
-      hints:
-        examined: 'Please choose all participant groups that are being studied at this time point of the study and for which you have not created a separate group in the menu. Please select only those characteristics that are relevant to the research question. For example, if you specifically want to examine individuals with physical illnesses, the corresponding category must be selected; if, on the other hand, you assume that a large online sample will happen to also include some individuals with physical illnesses, the category does not have to be selected.' # heading hint
-        informationII: '<i>Please enter additional information on pages “<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Part.Information</a>“, “<a href="informationII" data-action="base#setDummySubmit" data-base-url-param="app_informationII" data-base-route-i-ds-param="{routeIDs}">Part.InformationII</a>“ and “<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent" data-base-route-i-ds-param="{routeIDs}">Consent</a>“.</i>'
-        age: 'A <a href="{path}" data-action="base#setDummySubmit" data-base-url-param="app_coreData">full proposal</a> is required for studies involving minors!'
     information:
       type:
         title: >-
@@ -760,7 +764,7 @@ projectdetails:
           title: 'To what extent are the {addressee} informed about the aims, content and methods before the start of the study?'
           hints:
             headingHint: 'This refers to key information about the study. This includes a clear presentation of the research objectives, data collection procedures, and participant''s tasks for the respective target group(s). Not disclosing the hypothesis does not count as incomplete information. If the given information is both incomplete and includes deliberate deception, please choose deception.'
-            informationIII: 'Please enter the texts for the debriefing on page “<a href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII" data-base-route-i-ds-param="{routeIDs}">Debriefing</a>“.'
+            informationIII: 'Please enter the texts for the debriefing on page “<a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII" data-base-route-i-ds-param="{routeIDs}">Debriefing</a>“.'
           type:
             complete: 'The {addressee} are fully informed.'
             partial: 'At least one core piece of information is not mentioned, that is, the {addressee} are informed incompletely.'
@@ -872,7 +876,7 @@ projectdetails:
           selection: >-
             If burdens or risks for the participants may arise as a result of {type, select,
                   measures {data collection methods}
-                  other    {measures/interventions}}, please enter these on page “<a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param={routeIDs}>Burdens/risks</a>“ and describe them in detail.
+                  other    {measures/interventions}}, please enter these on page “<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param={routeIDs}>Burdens/risks</a>“ and describe them in detail.
           pdf: >-
             If you would like to add supplementary materials as a PDF file when completing the ethics proposal (e.g., {type, select,
                 measures {questionnaires, interview guides, observation protocols, pictures of equipment}
@@ -908,7 +912,7 @@ projectdetails:
             invasive: 'invasive interventions'
             other: 'other measure(s)'
           description: 'please specify'
-          headingHint: 'Please enter all measures/interventions specifically applied to participants for the purpose of the study. The term “measures“ is deliberately used in a very broad sense, ranging from asking a question all the way up to long-term interventions. Many measures are associated with the need to check inclusion and exclusion criteria (e.g., to ensure the safety of participants). Such criteria should be listed under “<a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">Inclusion and exclusion criteria</a>“. If inclusion and exclusion criteria are recorded or documented beyond the self-report as part of the consent, please describe their measurement under data collection methods.'
+          headingHint: 'Please enter all measures/interventions specifically applied to participants for the purpose of the study. The term “measures“ is deliberately used in a very broad sense, ranging from asking a question all the way up to long-term interventions. Many measures are associated with the need to check inclusion and exclusion criteria (e.g., to ensure the safety of participants). Such criteria should be listed under “<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">Inclusion and exclusion criteria</a>“. If inclusion and exclusion criteria are recorded or documented beyond the self-report as part of the consent, please describe their measurement under data collection methods.'
           textHints:
             description: 'Please describe the selected measures in more detail.'
         pdf: >- # other is interventions
@@ -917,9 +921,9 @@ projectdetails:
                                                         other    {interventions/measures}}.
       otherSources:
         title: 'Will individually traceable data from other sources be added?'
-        headingHint: 'This refers to data of individual persons that is already available at other sources and will be linked with the data of this study to supplement the own research data (e.g. health data, assessments from psychotherapy/medical treatment/training). A comparison of aggregated data (e.g., summarized results of another study) with the data recorded here does not constitute an addition of data from other sources.'
-        textHint: 'Please describe which data will be used from which sources. Please also describe the basis that allows for data transfer (e.g. joint responsibility, release from confidentiality).'
-        hint: 'In the annex on data processing, you will need to describe the identifiers (e.g., name or code) used to merge the data as well as the person-related data of the other sources that will become part of the research data or of the data for further purposes beyond the research question. If necessary, additional documents (e.g. release from confidentiality) must be added.'
+        headingHint: 'This refers to data of individual persons that is already available at other sources and will be linked with the data of this study to supplement the own research data (e.g., health data, assessments from psychotherapy/medical treatment/training). A comparison of aggregated data (e.g., summarized results of another study) with the data recorded here does not constitute an addition of data from other sources.'
+        textHint: 'Please describe which data will be used from which sources. Please also describe the basis that allows for data transfer (e.g., joint responsibility, release from confidentiality).'
+        hint: 'In the annex on data processing, you will need to describe the identifiers (e.g., name or code) used to merge the data as well as the person-related data of the other sources that will become part of the research data or of the data for further purposes beyond the research question. If necessary, additional documents (e.g., release from confidentiality) must be added.'
         pdf:
           hint: 'If you would like to add supplementary materials (e.g., release from confidentiality) as a PDF file when completing the ethics proposal, please indicate this here.'
           text: 'I want to add supplementary materials on data retrieval from other sources.'
@@ -938,7 +942,7 @@ projectdetails:
           extern: 'at the facilities of external partners, namely ...'
           online: 'online, using the platform ...'
           other: 'other (please insert location)'
-        otherHint: 'If two data collection methods are planned consecutively at different locations, this can be described here. If data collection is distributed across several time points at different locations, please check whether a study structure with multiple time points should be created under unter "project details“.'
+        otherHint: 'If two data collection methods are planned consecutively at different locations, this can be described here. If data collection is distributed across several time points at different locations, please check whether a structure with multiple time points should be created on the <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-route-i-ds-param="{routeIDs}" data-base-page-param="Projectdetails">overview page of this group</a>.'
         end: ''
         textHint: 'Please add information on the location of data collection. Make sure your wording complements the sentence above.'
       presence:
@@ -1001,7 +1005,7 @@ projectdetails:
           physical: 'e.g., through exertion, extraction of biospecimen, the mere duration of the activity'
           mental: 'e.g., through concentration requirements, duration of the activity'
           emotional: 'e.g., aversive stimuli, short-term induction of negative emotions, deception with personal relevance'
-          sensitive: 'questions that invade privacy (e.g. about political beliefs, illegal behaviour, health, sexual preferences)'
+          sensitive: 'questions that invade privacy (e.g., about political beliefs, illegal behaviour, health, sexual preferences)'
       risks:
         title: 'Which potential dangers or risks does participation involve?'
         hints:
@@ -1026,7 +1030,7 @@ projectdetails:
           headingHint: 'This refers, for example, to emotional stress for individuals collecting the data or other risks that arise for project contributors from their role (e.g., travelling to war zones or areas of conflict). Please also consider potential burdens/risks for uninvolved third parties, for example due to collisions during studies in public spaces.'
       finding:
         title: 'Might the applied data collection methods reveal clinically relevant (incidental) findings in individual participants?'
-        headingHint: 'When using imaging procedures, but also during clinical diagnostic interviews in psychological studies, (incidental) findings/suspected diagnoses or unexpected findings may occur that have potential health or reproductive significance for individual participants. This includes both incidental findings, i.e. a deviation from the norm or a change that becomes apparent in the course of scientific research but goes beyond the actual aim of the study (e.g. an anomaly in brain scans), and deviations from the norm that arise in the course of the research objective (e.g. indications of suicidality in diagnostic interviews, findings about deficits from language assessments).'
+        headingHint: 'When using imaging procedures, but also during clinical diagnostic interviews in psychological studies, (incidental) findings/suspected diagnoses or unexpected findings may occur that have potential health or reproductive significance for individual participants. This includes both incidental findings, i.e. a deviation from the norm or a change that becomes apparent in the course of scientific research but goes beyond the actual aim of the study (e.g., an anomaly in brain scans), and deviations from the norm that arise in the course of the research objective (e.g., indications of suicidality in diagnostic interviews, findings about deficits from language assessments).'
         textHint: 'Please describe which incidental findings might occur.'
         informing:
           title: 'How are incidental findings handled?'
@@ -1038,7 +1042,7 @@ projectdetails:
           types:
             always: 'The {addressee} are informed of any (incidental) findings that occur. (notification mandatory)'
             consent: 'The {addressee} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)'
-          hint: 'Because you chose that notification is mandatory, the <a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">inclusion criteria</a> automatically contain that participation requires consent to be informed.'
+          hint: 'Because you chose that notification is mandatory, the <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">inclusion criteria</a> automatically contain that participation requires consent to be informed.'
       feedback:
         title: 'Do participants receive feedback on their individual test results?'
         headingHint: 'Feedback on individual test results should be carefully considered - especially in case of personally relevant test content. Please consider that feedback may include negative or worrying results. Feedback should only be given if the project contributors are experienced in framing individual results. Please also note that feedback on individual test results is likely to require personal data linked to the collected research data. Alternatively, a general report can be provided (this is also likely to require personal data, but this does not have to be linked to the individual research data).'
@@ -1090,7 +1094,7 @@ projectdetails:
       awarding:
         title: 'How is the compensation technically granted?'
         dateFormat: "F j, Y" # for laterTextHint
-        laterTextHint: '..., namely ... (please specify date/time and name/position/place, e.g. “from {date} in the secretary''s office“)'
+        laterTextHint: 'Please specify date/time and name/position/place (e.g., “from {date} in the secretary''s office“).'
         laterEnd: # other is participants in select
           title: 'This requires the following information: '
           code: >-
@@ -1111,7 +1115,7 @@ projectdetails:
           later: 'can be collected later'
           transfer: 'will be transferred later.'
           external: 'will be paid via an external provider'
-          externalTextHint: '..., namely ... (please name the provider)'
+          externalTextHint: 'Please name the provider.'
           moneyOther: 'other'
           moneyOtherPlaceholder: 'Please describe the process'
         hours:
@@ -1124,7 +1128,7 @@ projectdetails:
         lottery:
           result:
             start: 'The result of the raffle will be announced '
-            textHint: 'Please specify date/time, e.g. “after termination of data collection, probably at the end of August“'
+            textHint: 'Please specify date/time (e.g., “after termination of data collection, probably at the end of August“)'
             types:
               eMail: 'by e-mail'
               mail: 'by regular mail'
@@ -1141,7 +1145,7 @@ projectdetails:
             eMail: 'by e-mail.'
             local: 'on site.'
           external: 'is subsequently issued via an external provider'
-          externalTextHint: '..., namely ... (please name the provider)'
+          externalTextHint: 'Please name the provider.'
           lotteryOther: 'other'
           lotteryOtherPlaceholder: 'Please describe the process'
         voucher:
@@ -1221,7 +1225,7 @@ projectdetails:
                                                     other {}} {information, select,
                                                                 post  {were}
                                                                 other {are}} associated with the participation.
-          noTemplate: 'Due to selection of <a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">burdens and risks</a> no template can be generated.'
+          noTemplate: 'Due to selection of <a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">burdens and risks</a> no template can be generated.'
       findingText:
         title: 'Information about incidental findings:'
         template: >-
@@ -1313,7 +1317,7 @@ projectdetails:
           separate: 'IP addresses are stored separately from the research data'
           linked: 'IP addresses are linked with the research data via an allocation list'
           research: 'IP addresses are stored within the research dataset'
-        separateHint: 'Usually, a list of IP addresses is created, which allows e.g. to check whether someone has already participated; the IPs are, however, not linked with the collected data.' # icon
+        separateHint: 'Usually, a list of IP addresses is created, which allows, e.g., to check whether someone has already participated; the IPs are, however, not linked with the collected data.' # icon
       personal:
         maybe:
           start: 'Based on the following answer(s), it seems likely that you are processing personal data as part of your research data or for organisational purposes or that persons remain identifiable for a certain period of time:'
@@ -1322,22 +1326,22 @@ projectdetails:
           start: 'Based on the following answer(s), it seems obvious that the research data are person-related themselves or that personal data are processed for further (organisational) purposes:'
           end: 'Please indicate all personal data that are being processed in the following parts.'
         types:
-          closed: '<a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">Data collection in closed group</a>: Even if the processing of personal data is not intended, the possibility of identifying single persons might be difficult to exclude in view of the type and amount of collected data. For example, when asking many sociodemographic questions in a closed group, rare values or combinations of values can make individuals identifiable.'
-          recruitmentDatabase: '<a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#recruitment" data-base-route-i-ds-param="{routeIDs}">Recruiting via database(s)</a>: Possibly, personal data stored in the database are being used and thus also processed for the current study.'
-          recruitmentExternal: '<a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#recruitment" data-base-route-i-ds-param="{routeIDs}">Recruiting via external recruiting service(s)</a>: Possibly, personal data stored by the recruiting service are being used and thus also processed for the current study.'
-          measuresVideo: '<a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Data collection method</a>: recordings or pictures (audio/video/photo)'
-          otherSources: '<a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">Data from other sources</a>: Adding of individually traceable data'
-          loan: '<a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#loan" data-base-route-i-ds-param="{routeIDs}">Handing out devices to participants</a>: Possibly, personal data are processed to confirm having received the device.'
-          online: '<a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">Online data collection</a>: Possibly, personal data (in particular IP addresses) are processed for technical quality assurance.'
-          finding: '<a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#finding" data-base-route-i-ds-param="{routeIDs}">Clinically relevant incidental findings</a>: Possibly, personal data are processed to inform participants about incidental findings, especially when the information is not given immediately but at a later point in time.'
-          feedback: '<a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#feedback" data-base-route-i-ds-param="{routeIDs}">Communicating individual test results to participants</a>: Possibly, personal data are processed to inform participants about individual results, especially when feedback is not given immediately but at a later point in time.'
+          closed: '<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">Data collection in closed group</a>: Even if the processing of personal data is not intended, the possibility of identifying single persons might be difficult to exclude in view of the type and amount of collected data. For example, when asking many sociodemographic questions in a closed group, rare values or combinations of values can make individuals identifiable.'
+          recruitmentDatabase: '<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#recruitment" data-base-route-i-ds-param="{routeIDs}">Recruiting via database(s)</a>: Possibly, personal data stored in the database are being used and thus also processed for the current study.'
+          recruitmentExternal: '<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#recruitment" data-base-route-i-ds-param="{routeIDs}">Recruiting via external recruiting service(s)</a>: Possibly, personal data stored by the recruiting service are being used and thus also processed for the current study.'
+          measuresVideo: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Data collection method</a>: recordings or pictures (audio/video/photo)'
+          otherSources: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">Data from other sources</a>: Adding of individually traceable data'
+          loan: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#loan" data-base-route-i-ds-param="{routeIDs}">Handing out devices to participants</a>: Possibly, personal data are processed to confirm having received the device.'
+          online: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">Online data collection</a>: Possibly, personal data (in particular IP addresses) are processed for technical quality assurance.'
+          finding: '<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#finding" data-base-route-i-ds-param="{routeIDs}">Clinically relevant incidental findings</a>: Possibly, personal data are processed to inform participants about incidental findings, especially when the information is not given immediately but at a later point in time.'
+          feedback: '<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#feedback" data-base-route-i-ds-param="{routeIDs}">Communicating individual test results to participants</a>: Possibly, personal data are processed to inform participants about individual results, especially when feedback is not given immediately but at a later point in time.'
           compensation:
             immediately: >- # other is voucher for type
-              <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, {type, select,
+              <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, {type, select,
                 money   {financial, issuing}
                 other   {voucher, issuing}} on-site: Possibly, personal data are processed for confirming the receipt.
             later: >- # other is voucher for type and other for later
-              <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, {type, select,
+              <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, {type, select,
                 money   {financial, retrieval}
                 hours   {participation hours, confirmation}
                 lottery {raffle, retrieval}
@@ -1347,23 +1351,23 @@ projectdetails:
                                                                   other {{description}}}{later, select,
                                                                                           name  {}
                                                                                           other {: Possibly, personal data are processed for confirming the receipt.}}
-            transfer: '<a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, financial, bank transfer'
+            transfer: '<a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, financial, bank transfer'
             external: >- # other is lottery
-              <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, {type, select,
+              <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, {type, select,
                 money {financial}
                 other {raffle}}, via external provider: Possibly, personal data are processed for transferring the data to the external provider.
-            post: '<a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, participation hours, automatically booked: Possibly, personal data (e.g. code/name) are processed to execute the automatic booking.'
+            post: '<a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, participation hours, automatically booked: Possibly, personal data (e.g., code/name) are processed to execute the automatic booking.'
             lotteryResult: >- # other is phone
-              <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, raffle, information by {type, select,
+              <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, raffle, information by {type, select,
                                       eMail {e-mail}
                                       mail  {regular mail}
                                       other {phone}}.
             deliver: >- # other is mail
-              <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, raffle, delivery by {type, select,
+              <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, raffle, delivery by {type, select,
                                           eMail {e-mail}
                                           other {regular mail}}.
             other: >- # other is voucher
-              <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, {type, select,
+              <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Compensation</a>, {type, select,
                 money   {financial}
                 hours   {participation hours}
                 lottery {raffle}
@@ -1425,7 +1429,7 @@ projectdetails:
             Due to your selection, the data privacy statement cannot be generated via the Ethiktool. Please contact the responsibly data protection authorities. {addPDF, select,
                 true  {When completing the ethics proposal, you will be asked to add the data privacy statement (“annex on data processing“) as a PDF file.}
                 other {}}
-          textHintExternal: '..., namely ... (please give origin or descriptor of the code, e.g., prolific ID, SONA ID, university user account ID, clinic ID)'
+          textHintExternal: 'Please give origin or descriptor of the code (e.g., prolific ID, SONA ID, university user account ID, clinic ID).'
           textHintMarkingName: 'Labelling research data with participants'' names should generally be avoided. Please justify why you intend to label the data with participants'' names.'
         code: 'Could the code be related to individual persons?'
         external: # sub-question for external
@@ -1549,7 +1553,7 @@ projectdetails:
           convert: 'e.g., transcription of audio recordings'
           delete: 'e.g., deleting IP addresses from the research dataset, changing names and places in an interview transcript'
           alienate: 'e.g., irreversible change of voice, face, or other identifiable properties'
-          preprocess: 'e.g. transforming structural brain data'
+          preprocess: 'e.g., transforming structural brain data'
           anonymizationOther: 'e.g., if other techniques of anonymization are necessary or if the techniques shall be explained to participants (or their legal guardians) in different wording. Removing the (e.g., code-based) link between research data and other data is queried further down.'
       storage:
         title: 'What is being stored, and for how long?'
@@ -1557,7 +1561,7 @@ projectdetails:
           delete: 'The original data are deleted immediately after applying the anonymization technique'
           keep: 'The original data or other documents from which personal identifiability can be retrieved, are stored for a longer period of time.'
         keepHint: 'Removing a possible (e.g., code-based) link between research data and other data is queried further down. If the link is not removed, or if personal identifiability remains by other means, choose this option.'
-        textHint: '..., thus in all probability ... (please give time period relative to project phase or specific time point, e.g., 5 weeks after completing data collection, by the end of the year)'
+        textHint: 'Please give time period relative to project phase or specific time point (e.g., 5 weeks after completing data collection, by the end of the year).'
       personalKeep:
         title: 'For which purpose are the data stored with personal identifiability? For how long?'
         types:
@@ -1576,7 +1580,7 @@ projectdetails:
           documentation: 'Please carefully weigh scientific quality assurance against data protection.'
           teaching: 'This refers to use of the data by students for practice purposes. In case of (partially) public presentation of the data during teaching, please choose the purpose “exemplary demonstration“.'
           demonstration: 'This refers to any form of publication or (partially) public presentation, e.g., in a talk for research or teaching purposes or as supplementary video material for a publication.'
-          textHint: 'please indicate period of storage for the given purpose (e.g., for two years, without limitation)'
+          textHint: 'Please indicate period of storage for the given purpose (e.g., for two years, without limitation).'
       personalKeepConsent:
         title: 'Is the consent to data storage with personal identifiability for <u>{type}</u> mandatory or optional?'
         headingHint: '“Mandatory“ means that study participation is impossible without consenting to data storage in personally identifiable form. “Optional“ means that participants (or their legal guardians) can decide independently about study participation and about data storage in personally identifiable form.'
@@ -1655,12 +1659,12 @@ projectdetails:
         headingHint: 'If you use two types of labelling, please consider that the link may be removed only after both labels cannot be related to the research data anymore.'
         start: 'The link of the research data with personal data for the purpose of {purpose} is removed '
         types:
-          markingRemoveImmediately: 'immediately after the purpose is fulfilled'
-          markingRemoveLater: 'at a later point in time'
+          markingRemoveImmediately: 'immediately after the purpose is fulfilled, thus in all probability ...'
+          markingRemoveLater: 'at a later point in time, namely ...'
         textHints:
           missing: 'Please choose an answer.'
-          markingRemoveImmediately: '..., thus in all probability ... (please give time period relative to project phase or specific time point, e.g., 5 weeks after completing data collection, by the end of the year)'
-          markingRemoveLater: '..., namely ... (please give time period relative to project phase or specific time point, e.g., 5 weeks after completing data collection, by the end of the year)'
+          markingRemoveImmediately: 'Please give time period relative to project phase or specific time point (e.g., 5 weeks after completing data collection, by the end of the year).'
+          markingRemoveLater: 'Please give time period relative to project phase or specific time point (e.g., 5 weeks after completing data collection, by the end of the year).'
           laterDescription: 'Please justify briefly why this is necessary:'
         middle:
           title: 'How is the link between research data and personal data removed?'
@@ -1683,7 +1687,7 @@ projectdetails:
           keep: 'not deleted.'
           keepFurther: 'deleted by the project contributors immediately after the purpose is fulfilled. Other bodies store the data for a longer period of time following legal retention periods (e.g., payment verifications).'
         textHints:
-          immediately: '..., thus in all probability ... (please give time period relative to project phase or specific time point, e.g., 5 weeks after completing data collection, by the end of the year)'
+          immediately: 'Please give time period relative to project phase or specific time point (e.g., 5 weeks after completing data collection, by the end of the year).'
           keep: 'Please justify briefly why this is necessary:'
       access:
         title: 'Who has access to the personal data for <u>{purpose}</u>?'
@@ -1726,7 +1730,7 @@ projectdetails:
           orderProcessingMiddle: " involves the following data processors:\n"
           orderProcessingEnd: "\nFor this service, the following data are processed: "
         hints: # icons
-          orderProcessingStart: 'Please describe the service, e.g., contacting, data collection, transcription of interviews, analysis of hair and saliva samples.'
+          orderProcessingStart: 'Please describe the service (e.g., contacting, data collection, transcription of interviews, analysis of hair and saliva samples).'
           orderProcessingMiddle: 'Please insert name and address of data processor(s).'
           orderProcessingEnd: 'Please list all involved data categories (e.g., IP addresses, audio recordings, saliva samples).'
       codeCompensation: # logic must be the same as for marking
@@ -1741,12 +1745,14 @@ projectdetails:
                                           children {children or legal guardians}
                                           wards    {supervised individuals or legal guardians}
                                           other    {participants}} themselves or by the project contributors within this research project.
-          textHintCodeExternal: '..., namely ... (please give origin or descriptor of the code, e.g., prolific ID, SONA ID, university user account ID, clinic ID)'
+          textHintCodeExternal: 'Please give origin or descriptor of the code (e.g., prolific ID, SONA ID, university user account ID, clinic ID).'
         code: 'Could the code be related to individual persons?'
         codeExternal: # sub-question for codeExternal
           types:
             anonymous: 'The code itself does not allow inference on specific persons. The mapping of codes to personally identifying information (e.g., name) is possible only for the institution or body that assigned the code originally. Information on the handling of personal data is available there.'
             generation: 'No data are stored that allow direct inference on specific persons. However, the structure of the code (e.g., including parts of the name or of the date of birth) could enable the identification of individual persons by project contributors with little additional knowledge.'
+          hints:
+            generation: 'This option is only plausible in closed groups. If a person (e.g., teacher) has additional knowledge about the participating group (e.g., school or university class) and knows, for example, that only one name begins with a certain letter or that a certain month of birth is only present once in the group, this person can map the code back to individual participants with their knowledge.'
         codeInternal: # sub-question for codeInternal
           title: 'How is the code generated?'
           types:
@@ -1782,21 +1788,23 @@ projectdetails:
                     wards    {supervised individuals or legal guardians}
                     other    {participants}}. Identification is possible only for persons who know the code.
               generation: 'No data are stored that allow direct inference on specific persons. However, the structure of the code (e.g., including parts of the name or of the date of birth) could enable the identification of individual persons by project contributors with little additional knowledge.'
+            hints:
+              generation: 'This option is only plausible in closed groups. If a person (e.g., teacher) has additional knowledge about the participating group (e.g., school or university class) and knows, for example, that only one name begins with a certain letter or that a certain month of birth is only present once in the group, this person can map the code back to individual participants with their knowledge.'
       processingFurther:
         title: 'Further description of processing personal data'
         textHint: '(optional)'
       noDocumentHint: 'According to your above selections, no personal data are processed in the study. Therefore, generating a detailed data privacy statement is not needed here.'
     dataReuse:
       intro:
-        text: 'Please note that the questions on data re-use can only be asked and answered in a meaningful way when the page “<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“ is completed. You might need to redo the entries on data re-use if substantial changes regarding data privacy are made.'
+        text: 'Please note that the questions on data re-use can only be asked and answered in a meaningful way when the page “<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“ is completed. You might need to redo the entries on data re-use if substantial changes regarding data privacy are made.'
         confirm: 'I have taken note of the above information.'
       dataReuse:
         hint:
-          anonymous: 'According to your selections on page “<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the research data are anonymous.'
-          marking: 'According to your selections on page “<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the research data are anonymized by removing labels from them or by destroying/deleting the allocation list.'
-          immediately: 'According to your selections on page “<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the person-related research data are deleted immediately after anonymizing them.'
-          keep: 'According to your selections on page “<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the person-related research data are stored, but not for the purpose of re-using them.'
-          personal: 'According to your selections on page “<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the person-related research data are stored, but not for the purpose of re-using them.'
+          anonymous: 'According to your selections on page “<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the research data are anonymous.'
+          marking: 'According to your selections on page “<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the research data are anonymized by removing labels from them or by destroying/deleting the allocation list.'
+          immediately: 'According to your selections on page “<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the person-related research data are deleted immediately after anonymizing them.'
+          keep: 'According to your selections on page “<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the person-related research data are stored, but not for the purpose of re-using them.'
+          personal: 'According to your selections on page “<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the person-related research data are stored, but not for the purpose of re-using them.'
           noTool: '' # key must exist for technical reasons. Also used if first question in data privacy (create) is not yet answered
         title: >- # other is anonymous in second select
            Are{personal, select,
@@ -1827,7 +1835,7 @@ projectdetails:
                         personal    {person-related research data}
                         other       {anonymous research data}} employed for re-use by the project contributors (e.g., re-analysis for other research questions)?
       dataReuseHow:
-        hint: 'According to your selections on page “<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the person-related research data are stored for the purpose of re-using them.' # above heading
+        hint: 'According to your selections on page “<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the person-related research data are stored for the purpose of re-using them.' # above heading
         title: >- # other is anonymous in select
           How and with whom are the {personal, select,
                                                   immediately {anonymized research data}
@@ -1857,12 +1865,12 @@ projectdetails:
           own: ' not made available to others, but employed for own re-use.'
         descriptionStart: ' This is done by using '
         hints: # icons except keys textHint and hint
-          textHint: 'Please name a data archive, research data center or repository for data sharing, e.g. OSF, Zenodo, PsychArchives/the RDC at ZPID'
+          textHint: 'Please name a data archive, research data center or repository for data sharing (e.g., OSF, Zenodo, PsychArchives/the RDC at ZPID).'
           class0: 'broadest class of data access (“Zugriffsklasse 0“ according to the “Open Science“ committee of the DGPs)'
           class1: 'standardized access restrictions (“Zugriffsklasse 1“ according to the “Open Science“ committee of the DGPs)'
           class2: 'individualized access restrictions (“Zugriffsklasse 2“ according to the “Open Science“ committee of the DGPs)'
           class3: 'most restrictive class of data access (“Zugriffsklasse 3“ according to the “Open Science“ committee of the DGPs)'
-          hint: 'Please check whether the chosen repository supports the chosen type of data re-use (e.g., some repositories do not allow for certain classes of data access, some do not support sharing personal data). If only part of the research data shall be shared for re-use, this can be specified here, e.g. “PsychArchives. Sharing does not extend to sociodemographic data“.' # hint below text field
+          hint: 'Please check whether the chosen repository supports the chosen type of data re-use (e.g., some repositories do not allow for certain classes of data access, some do not support sharing personal data). If only part of the research data shall be shared for re-use, this can be specified here, e.g., “PsychArchives. Sharing does not extend to sociodemographic data“.' # hint below text field
     contributor:
       title: 'Which project contributors perform which roles in the study?'
       selected: 'This role was not selected for any project contributor.'
@@ -1873,9 +1881,9 @@ checkDoc:
   noError: |
     The technical check has not revealed any missing or incorrect entries. However, please check your entries carefully, as not all discrepancies can be detected automatically.
     
-    You can now generate the documents for submission to {committeeAcc} by selecting “<a href="completeForm">complete proposal</a>“.
+    You can now generate the documents for submission to {committeeAcc} by selecting “<a class="linkInternal" href="completeForm">complete proposal</a>“.
   reviewMissing: >-
-    <span class="errorStyle">At least one choice regarding <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">the type of review process{hasBegun, select,
+    <span class="errorStyle">At least one choice regarding <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">the type of review process{hasBegun, select,
               true  {, the beginning of data collection}
               other {}} and the funding source(s)</a> is missing. These choices have strong impact on the extent of further required inputs. Please make the missing choices first before proceeding with further questions.</span>
   errorPage: "Missing or <span class=\"errorStyle\">incorrect</span> input:\n\n"
@@ -1899,13 +1907,13 @@ checkDoc:
   reviewProcess: >-
     You selected “{isFull, select,
         true  {full}
-        other {short}} proposal“ for the <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">review process</a>. However, due to the information you provided in the Ethiktool, a {isFull, select,
+        other {short}} proposal“ for the <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">review process</a>. However, due to the information you provided in the Ethiktool, a {isFull, select,
         true  {short proposal is sufficient}
         other {full proposal is required}}. Please change the type of review process to {isFull, select,
                                                                                   true  {short}
                                                                                   other {full}} proposal“.
   appData:
-    title: '<a href="appData/{page}">{title}</a>'
+    title: '<a class="linkInternal" href="appData/{page}">{title}</a>'
     coreData:
       projectTitleParticipation: 'project title for participant documents'
       reference: 'case number'
@@ -1967,7 +1975,7 @@ checkDoc:
           chosen: 'Answer to question why {committeeNom} is responsible despite the involvement of physicians'
           description: 'Explanation why {committeeNom} is responsible despite the involvement of physicians'
   contributors:
-    title: '<a href="contributors">Project contributors</a>'
+    title: '<a class="linkInternal" href="contributors">Project contributors</a>'
     lineTitle: 'project contributor {index} ({name})'
     infos:
       name: 'Name is incomplete.'
@@ -2039,7 +2047,7 @@ checkDoc:
                    wards    {, for the {participant, select,
                                        thirdParty {legal guardians,}
                                        other      {supervised individuals,}}}
-                   other    {}} no <a href="{page}" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_{page}{type, select,
+                   other    {}} no <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_{page}{type, select,
                        consent   {">prior information and no after-the-fact information </a> is provided, the question regarding the type of {participant, select,
                                                       thirdParty {consent}
                                                       other      {assent}}}
@@ -2057,8 +2065,8 @@ checkDoc:
                                                                                     thirdParty {legal guardians}
                                                                                     other {supervised individuals}}}
                                                                other    {}}. {type, select,
-                          consent {This is possible only if <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is provided.}
-                          other   {This is possible only if the question regarding <a href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> is answered with “no“.}}
+                          consent {This is possible only if <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is provided.}
+                          other   {This is possible only if the question regarding <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> is answered with “no“.}}
         voluntary:
           title: 'voluntariness'
           voluntaryParticipants: 'voluntariness for participants'
@@ -2117,12 +2125,12 @@ checkDoc:
           title: 'data handling in case of withdrawal from participation' # 'Answer to question about [] is missing.'
           description: 'data handling in case of withdrawal from participation' # 'Description of [] is missing.'
           information: >-
-            If no <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the collected data must either be deleted or the {addressee, select,
+            If no <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the collected data must either be deleted or the {addressee, select,
                 children {legal guardians}
                 wards    {legal guardians}
                 other    {participants}} must choose whether the collected data shall be used or not in case of individual withdrawal.
           noInformation: >-
-            You selected that <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is given. This is incompatible with the selection that the {addressee, select,
+            You selected that <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is given. This is incompatible with the selection that the {addressee, select,
                   children {legal guardians}
                   wards    {legal guardians}
                   other    {participants}} can choose whether the collected data shall be used or not in case of individual withdrawal.
@@ -2155,13 +2163,13 @@ checkDoc:
           title: 'loan devices'
           receipt: 'confirmation sheet for the loaned devices'
           description: 'Text for confirmation sheet for the loaned devices'
-          information: 'If no <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the question regarding loaned devices must be answered with “no“.'
+          information: 'If no <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the question regarding loaned devices must be answered with “no“.'
         location:
           title: 'location of data collection'
           locationDescription: 'description of the location of data collection'
         presence:
           missing: 'presence of project contributors'
-          consent: 'If <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">oral consent</a> is given, project contributors must be present during data collection.'
+          consent: 'If <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">oral consent</a> is given, project contributors must be present during data collection.'
         duration:
           measureTime: 'Data collection time (net)'
           breaks: 'preparation/follow-up time'
@@ -2183,19 +2191,19 @@ checkDoc:
           title: 'incidental findings'
           description: 'incidental findings'
           informing: 'handling of incidental findings'
-          information: 'If incidental findings might be revealed, <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> must be provided.'
-          consent: 'If incidental findings might be revealed, <a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">consent</a> must be obtained.'
+          information: 'If incidental findings might be revealed, <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> must be provided.'
+          consent: 'If incidental findings might be revealed, <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">consent</a> must be obtained.'
         feedback:
           title: 'feedback on individual test results'
           description: 'individual test results'
-          feedbackInterventions: 'If participants receive feedback on their individual test results, the corresponding option must be selected in the <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventionsType" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a> section as well.'
+          feedbackInterventions: 'If participants receive feedback on their individual test results, the corresponding option must be selected in the <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventionsType" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a> section as well.'
       compensation:
         missing: 'information on the type of compensation'
         information: >-
           If there is {addressee, select,
                         children {neither prior nor after-the-fact information}
                         wards    {neither prior nor after-the-fact information}
-                        other    {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a>}}, no compensation can be given.
+                        other    {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a>}}, no compensation can be given.
         type:
           money:
             missing: 'amount of compensation'
@@ -2247,7 +2255,7 @@ checkDoc:
         presence: >- # other is hours
            {compensation, select,
              money {If financial compensation shall be paid}
-             other {If participation hours shall be certified}} immediately on site, project contributors must be <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">present during data collection</a>.
+             other {If participation hours shall be certified}} immediately on site, project contributors must be <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">present during data collection</a>.
       texts:
         intro: 'introduction is missing.'
         goals: 'background and goals/aims of the study'
@@ -2277,17 +2285,17 @@ checkDoc:
         processing: 'data processing' # 'Description of [] is missing.'
         create:
           missing: 'generating the data privacy statement'
-          informationToNotApplicable: 'If there is <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information<a>, the question about generating the data privacy statement must be answered with “not applicable“.'
+          informationToNotApplicable: 'If there is <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information<a>, the question about generating the data privacy statement must be answered with “not applicable“.'
           notApplicableToInformation: 'You selected “not applicable“ for the question about generating the data privacy statement. This is possibly only if <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is provided.'
           support: >-
             If{isVerified, select,
                 true  { the data privacy statement has been checked and approved by the responsible data protection authorities}
-                other {, according to the judgment of the responsible data protection authorities, the study includes only anonymous data}}, the <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">data protection officer or Data Protection and Information Security Coordinator (DISK)</a> must be have been consulted.
+                other {, according to the judgment of the responsible data protection authorities, the study includes only anonymous data}}, the < class="linkInternal"a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">data protection officer or Data Protection and Information Security Coordinator (DISK)</a> must be have been consulted.
         verification: 'Information about approval of data privacy statement by the responsible data protection authorities' # '[] is missing.'
         confirmIntro: 'Confirmation of notice on data protection' # '[] is missing.'
         responsibility:
           missing: 'responsibility for processing personal data'
-          qualification: 'If one individual is privately responsible for the processing of personal data, the question about <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#qualification">qualification work</a> must be answered with “yes“.'
+          qualification: 'If one individual is privately responsible for the processing of personal data, the question about <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#qualification">qualification work</a> must be answered with “yes“.'
         transferOutside: 'transmission of personal data outside of the EEA'
         responsibilityTotransferOutside: 'If the question about responsibility for processing personal data is answered with “not applicable“, the question about transmission of personal data outside of the EEA must also be answered with “not applicable“.'
         transferOutsideToresponsibility: 'If the question about transmission of personal data outside of the EEA is answered with “not applicable“, the question about responsibility for processing personal data must also be answered with “not applicable“.'
@@ -2392,29 +2400,29 @@ checkDoc:
           transferOutsideToPersonal: 'Selecting “not applicable“ with respect to transmitting personal data outside of the EEA is possible only if no personal data are processed whatsoever.'
           personalTotransferOutside: 'If no personal data are processed, the question on transmitting personal data outside of the EEA must be answered with “not applicable“.'
           ip:
-            noOnline: 'You selected that data collection does not take place <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">online</a>. This is incompatible with the selection of “IP addresses“ in the list of person-related data for answering the research question.'
+            noOnline: 'You selected that data collection does not take place <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">online</a>. This is incompatible with the selection of “IP addresses“ in the list of person-related data for answering the research question.'
             ipNo: 'If no IP addresses are registered within the online data collection, “IP address“ must not be selected in the list of person-related data for answering the research question.'
-            ipList: 'You selected that the allocation list contains IP addresses. This is only plausible if IP addresses are collected within an <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">online study</a> and linked with the research data for the purpose of technical support.'
+            ipList: 'You selected that the allocation list contains IP addresses. This is only plausible if IP addresses are collected within an <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures" data-base-route-i-ds-param="{routeIDs}">online study</a> and linked with the research data for the purpose of technical support.'
             ipResearch: 'If IP addresses are registered for answering the research question, “IP address“ must be selected in the list of person-related data for answering the research question.'
             ipTechnical: 'If IP addresses are registered for technical support purposes only, “IP address“ must not be selected in the list of person-related data for answering the research question.'
             linkedMarking: 'If IP addresses can be linked with the research data, the research data must be labelled with an allocation list, and “IP address“ must be chosen amongst the personal data contained in the allocation list.'
-          closed: 'Identifying individual persons from the structure of the code is plausible only with <a href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">data collection in a closed group</a>.'
-          video: 'If “recordings or pictures“ are selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, the question on person-related character of the research data must be answered by selecting that the research data themselves are person-related.'
-          measuresToVideo: 'If “recordings or pictures“ are selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, person-related data in terms of audio/video recordings or photos must be processed for answering the research question.'
-          videoToMeasures: 'If person-related data in terms of audio/video recordings or photos are processed for answering the research question, “recordings or pictures“ must be selected as <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>.'
+          closed: 'Identifying individual persons from the structure of the code is plausible only with <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">data collection in a closed group</a>.'
+          video: 'If “recordings or pictures“ are selected as <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, the question on person-related character of the research data must be answered by selecting that the research data themselves are person-related.'
+          measuresToVideo: 'If “recordings or pictures“ are selected as <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, person-related data in terms of audio/video recordings or photos must be processed for answering the research question.'
+          videoToMeasures: 'If person-related data in terms of audio/video recordings or photos are processed for answering the research question, “recordings or pictures“ must be selected as <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>.'
           otherSources:
-            create: 'You chose that <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individually traceable data from other sources</a> are added. This is incompatible with the selection that, according to the responsible data protection authorities, the study includes only anonymous data.'
-            marking: 'If <a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individually traceable data from other sources</a> are added, an allocation list must be used, or the research data must be labelled with the name or with a code that was or is assigned outside of the project.'
+            create: 'You chose that <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individually traceable data from other sources</a> are added. This is incompatible with the selection that, according to the responsible data protection authorities, the study includes only anonymous data.'
+            marking: 'If <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individually traceable data from other sources</a> are added, an allocation list must be used, or the research data must be labelled with the name or with a code that was or is assigned outside of the project.'
           compensation:
-            noCompensation: 'You selected that no <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a> is granted for participation. This is incompatible with the selection that personal data are processed for the purpose of issuing the compensation.'
-            name: 'If the name is needed for retrieving the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, the name must be processed for the purpose of issuing the compensation.'
-            nameMarking: 'If the name is needed for retrieving the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must involve the name or there must be an allocation list that contains the name.'
-            eMail: 'If issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves e-mail contact, the e-mail address must be processed for the purpose of issuing the compensation.'
-            phone: 'If issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves phone calls, the phone number must be processed for the purpose of issuing the compensation.'
-            transfer: 'If the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> is issued via bank transfer, name and IBAN must be processed for the purpose of issuing the compensation.'
-            mail: 'If issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves regular mail, name and postal address must be processed for the purpose of issuing the compensation.'
-            code: 'You selected that issuing the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves a person-related code. This is incompatible with the selection that no person-related data are processed for the purpose of issuing the compensation.'
-            codeMarking: 'If a code is needed for retrieving the <a href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must consist in a code.'
+            noCompensation: 'You selected that no <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a> is granted for participation. This is incompatible with the selection that personal data are processed for the purpose of issuing the compensation.'
+            name: 'If the name is needed for retrieving the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, the name must be processed for the purpose of issuing the compensation.'
+            nameMarking: 'If the name is needed for retrieving the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must involve the name or there must be an allocation list that contains the name.'
+            eMail: 'If issuing the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves e-mail contact, the e-mail address must be processed for the purpose of issuing the compensation.'
+            phone: 'If issuing the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves phone calls, the phone number must be processed for the purpose of issuing the compensation.'
+            transfer: 'If the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> is issued via bank transfer, name and IBAN must be processed for the purpose of issuing the compensation.'
+            mail: 'If issuing the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves regular mail, name and postal address must be processed for the purpose of issuing the compensation.'
+            code: 'You selected that issuing the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a> involves a person-related code. This is incompatible with the selection that no person-related data are processed for the purpose of issuing the compensation.'
+            codeMarking: 'If a code is needed for retrieving the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must consist in a code.'
       dataReuse:
         confirmIntro: 'Confirmation of notice on data re-use' # '[] is missing.'
         dataReuse: 'Answer to question whether research data are shared with others for re-use' # '[] is missing.
@@ -2429,14 +2437,14 @@ checkDoc:
       contributor:
         mandatory: >-
           No {type, select,
-                missing {contributor was chosen for the “{task}“ function because on page “<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“, this role was not selected for any of the contributors.}
+                missing {contributor was chosen for the “{task}“ function because on page “<a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“, this role was not selected for any of the contributors.}
                 other   {project contributor was selected for the “{task}“ function.}}
         task: >-
-          The role “{task}“ of the {numContributor, plural,
-                                        =1    {<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">project contributor</a> }
-                                        other {<a href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">project contributors</a>}} {contributor} was not selected for any data collection time point.
-  projectTitleToInformation: 'If at least one <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a> involves prior or after-the-fact information, the answer to question about <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for participant documents</a> must not be “not applicable“.'
-  informationToProjectTitle: 'If there is no prior information or after-the-fact information for any <a href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a>, the answer to question about <a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for participant documents</a> must be “not applicable“.'
+          The role “{task}“ of the <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors"> {numContributor, plural,
+                                        =1    {project contributor</a> }
+                                        other {project contributors</a>}} {contributor} was not selected for any data collection time point.
+  projectTitleToInformation: 'If at least one <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a> involves prior or after-the-fact information, the answer to question about <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for participant documents</a> must not be “not applicable“.'
+  informationToProjectTitle: 'If there is no prior information or after-the-fact information for any <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a>, the answer to question about <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for participant documents</a> must be “not applicable“.'
 
 completeForm:
   titles:
@@ -2516,14 +2524,16 @@ completeForm:
       dataPrivacy: 'Data privacy statement'
     upload: 'Choose PDF file'
   finish:
-    title: 'complete preparation'
-    text: >-
-      The complete proposal is now prepared for submission. A ZIP file “{fileName}_completeApplication_{curDate}.zip“ is generated, which contains all the necessary documents for submission, namely the PDF file with the complete proposal and the corresponding XML file. Please do not make any further changes to the PDF file or in the Ethiktool. Please send the PDF file with the corresponding XML file to {committeeAcc} at {committeeType, select,
-      TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
-      EUB   {ethikkommission@uni-bielefeld.de}
-      JGU   {ethikkommission-psychologie@uni-mainz.de}
-      DLR   {ethik@dlr.de}
-      other {e-mail address of {committeeGen}}}. Would you like to complete the preparation now?
+    title: 'Download complete proposal'
+    text:
+      start: 'The complete proposal can now be downloaded:'
+      end: >-
+        A ZIP file “{fileName}_completeApplication_{curDate}.zip“ is generated, which contains all the necessary documents for submission, namely the PDF file with the complete proposal and the corresponding XML file. Please check all contents of the PDF file carefully. If any changes are necessary, implement these only within the Ethiktool, and then download the complete proposal (PDF and XML file) again. Do <b>not</b> modify the PDF file with any other software. If all entries in the complete proposal are correct, please send the PDF file with the corresponding XML file to {committeeAcc} at {committeeType, select,
+        TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
+        EUB   {ethikkommission@uni-bielefeld.de}
+        JGU   {ethikkommission-psychologie@uni-mainz.de}
+        DLR   {ethik@dlr.de}
+        other {the e-mail address of {committeeGen}}}.
 
 quitModal:
   title: 'Quit editing this proposal'

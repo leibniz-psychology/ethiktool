@@ -3,7 +3,7 @@ import {setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['preNo','preText','preComplete','preCompleteType','preCompleteText','postYes','postText','documentTranslation'];
+    static targets = ['preTypeOral','preNo','preText','preComplete','preCompleteType','preCompleteText','postYes','postTypeOral','postText','documentTranslation'];
 
     static values = {
         pre: String,
@@ -59,13 +59,33 @@ export default class extends Controller {
                 this.preValue = target.value;
             }
         }
-        let isPost = this.preNoTarget.checked && this.postYesTarget.checked;
         let pdf = this.preTextTarget.nextElementSibling;
         if (pdf!==null) {
+            let isPost = this.getPost();
             setElementVisibility(pdf,isPost);
+            let hasMarkInput = this.preTextTarget.classList.contains('markInput');
+            if (isPost && !hasMarkInput) {
+                this.preTextTarget.classList.add('markInput');
+            } else if (!isPost && hasMarkInput) {
+                this.preTextTarget.classList.remove('markInput');
+            }
         }
+        this.setDocumentTranslation();
+    }
+
+    /** Sets the visibility of the document translation question. */
+    setDocumentTranslation() {
         if (this.hasDocumentTranslationTarget) {
-            setElementVisibility(this.documentTranslationTarget,this.preValue==='0' || isPost);
+            setElementVisibility(this.documentTranslationTarget,this.preValue==='0' && !this.preTypeOralTarget.checked || this.getPost() && !this.postTypeOralTarget.checked);
         }
+    }
+
+    // methods that are called from within this class
+
+    /** Returns whether post information is given.
+     * @returns {*} true if post information is given, false otherwise.
+     */
+    getPost() {
+        return this.preNoTarget.checked && this.postYesTarget.checked;
     }
 }

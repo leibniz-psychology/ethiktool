@@ -70,8 +70,7 @@ export function setHint(element, text = null) {
     let isElement = element.target===undefined;
     if (!isElement) { // element is an event
         element = element.target.parentElement;
-    }
-    else if ((typeof element)==='string') {
+    } else if ((typeof element)==='string') {
         element = document.getElementById(element);
     }
     let children = element.children;
@@ -102,23 +101,20 @@ export function setHint(element, text = null) {
             // let lastSpace = checkHTMLvalidity(text,text.substring(0,Math.ceil(parsedLength*0.66)).lastIndexOf(' '));
             innerHTML = text.substring(0,lastSpace);
             remainingElement.innerHTML = ' '+text.substring(lastSpace).replaceAll('<br></br>','<br>').trim(); // will throw an error in the console if text contains invalid html
-        }
-        else {
+        } else {
             innerHTML = text;
             if (numChildren===3) {
                 firstChild.nextElementSibling.remove();
                 firstChild.nextElementSibling.remove();
             }
         }
-    }
-    else { // event
+    } else { // event
         let secondChild = children[1]; // symbol to extend/collapse
         secondChild.classList.toggle('hintCollapsed');
         secondChild.classList.toggle('hintExpanded');
         if (secondChild.classList.contains('hintCollapsed')) { // text was collapsed
             innerHTML = text.substring(0,checkHTMLvalidity(text, text.substring(0, visibleLength).lastIndexOf(' ')));
-        }
-        else { // text was extended
+        } else { // text was extended
             innerHTML = text+children[2].innerHTML;
         }
     }

@@ -30,7 +30,8 @@ class NewFormController extends ControllerAbstract
     private const wrongPassword = 'wrongPassword'; // session variable indicating that a wrong password was entered
 
     #[Route('/newForm', name: 'app_newForm')]
-    public function showNewForm(Request $request): Response {
+    public function showNewForm(Request $request): Response
+    {
         $session = $request->getSession();
         if ($session->get(self::docName)!==null) { // page was opened after a proposal was created/loaded, but not by the button in the sidebar
             return $this->redirectToRoute('app_main');
@@ -117,22 +118,18 @@ class NewFormController extends ControllerAbstract
                     $session->set(self::reviewProcess,$this->getReviewShortDefault($committeeType));
                     $session->set(self::newForm,'');
                     return $this->redirectToRoute('app_main');
-                }
-                catch (DOMException | Exception $e) { // Exception is for SimpleXMLElement
+                } catch (DOMException | Exception) { // Exception is for SimpleXMLElement
                     return $this->setErrorAndRedirect($session);
                 }
-            }
-            elseif (array_key_exists('backToMain',$response)) { // "abort" was clicked
+            } elseif (array_key_exists('backToMain',$response)) { // "abort" was clicked
                 $this->resetTemp($session);
                 return $this->redirectToRoute('app_main');
-            }
-            elseif (str_contains($submitDummy,self::language)) { // one of the language elements was clicked
+            } elseif (str_contains($submitDummy,self::language)) { // one of the language elements was clicked
                 $newLanguage = substr(trim(explode("\n",$submitDummy)[1] ?? ''), strlen(self::language.':'));
                 $this->setTemp($session,$data);
                 $session->set(self::language, $newLanguage);
                 return $this->redirectToRoute('app_newForm',['_locale' => $newLanguage]);
-            }
-            else { // "quit" was clicked or a proposal was loaded -> all other buttons that lead to other pages are disabled
+            } else { // "quit" was clicked or a proposal was loaded -> all other buttons that lead to other pages are disabled
                 return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($request->getSession())); // save the same document again
             }
         } // if ($general->isSubmitted())
@@ -144,7 +141,8 @@ class NewFormController extends ControllerAbstract
      * @param array $data array containing the data
      * @return void
      */
-    private function setTemp(Session $session, array $data): void {
+    private function setTemp(Session $session, array $data): void
+    {
         $session->set(self::filenameTemp, $data[self::fileName]);
         $session->set(self::committeeTemp,$data[self::committee]);
     }
@@ -153,7 +151,8 @@ class NewFormController extends ControllerAbstract
      * @param Session $session current session
      * @return void
      */
-    private function resetTemp(Session $session): void {
+    private function resetTemp(Session $session): void
+    {
         $session->set(self::filenameTemp,'');
         $session->set(self::committeeTemp,'');
     }

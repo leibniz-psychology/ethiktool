@@ -14,7 +14,8 @@ class CompleteFormType extends TypeAbstract
     use CompleteFormTrait;
     use AppDataTrait; // for votes PDF
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $translationPrefix = 'completeForm.';
         // consent
         $this->addCheckboxTextfield($builder,self::consent,$translationPrefix.self::consent.'.confirm');
@@ -49,7 +50,8 @@ class CompleteFormType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         // consent
         $forms[self::consent]->setData($viewData[self::consent]==='1');
@@ -69,7 +71,8 @@ class CompleteFormType extends TypeAbstract
         $forms[self::consentFurther]->setData($viewData[self::consentFurther]==='1');
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         // consent
         $viewData[self::consent] = $forms[self::consent]->getData();
@@ -94,7 +97,8 @@ class CompleteFormType extends TypeAbstract
      * @param array $parameters parameters for the translation
      * @return void
      */
-    private function addPDFfield(FormBuilderInterface $builder, string $name, string $label, array $parameters = []): void {
+    private function addPDFfield(FormBuilderInterface $builder, string $name, string $label, array $parameters = []): void
+    {
         $builder->add($name,FileType::class,['required' => false, 'label' => $label, self::labelParams => $parameters]);
     }
 }

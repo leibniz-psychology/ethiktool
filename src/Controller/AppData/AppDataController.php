@@ -20,7 +20,8 @@ class AppDataController extends ControllerAbstract
 
     // routes
     #[Route('/appData/coreData', name: 'app_coreData')]
-    public function showCoreData(Request $request): Response {
+    public function showCoreData(Request $request): Response
+    {
         $session = $request->getSession();
         $committeeType = $this->getCommitteeType($session);
         if ($committeeType==='') { // page was opened before a proposal was created/loaded
@@ -139,13 +140,11 @@ class AppDataController extends ControllerAbstract
                     }
                 }
                 $this->updateContributor($contributorsArray,$data,self::supervisor);
-            }
-            else {
+            } else {
                 if (count($contributorsArray)>count($this->getContributors($session,true))) { // supervisor was added after entering the page, but position (and qualification) do no longer lead to supervisor-> remove supervisor
                     unset($contributorsArray[1]);
                     $contributorsArray = array_values($contributorsArray); // re-indexing
-                }
-                elseif ($isStudentPhd) { // supervisor was existent on page load, but due to changes no supervisor is needed anymore -> remove supervision as task
+                } elseif ($isStudentPhd) { // supervisor was existent on page load, but due to changes no supervisor is needed anymore -> remove supervision as task
                     unset($contributorsArray[1][self::taskNode][self::supervisorNode]);
                 }
             }
@@ -168,8 +167,7 @@ class AppDataController extends ControllerAbstract
                             if (count($textsNode->children())>0) {
                                 if ($isConflictNew) { // add conflictText node
                                     $textsNode->addChild(self::conflictTextNode);
-                                }
-                                else { // remove conflictText node
+                                } else { // remove conflictText node
                                     $this->removeElement(self::conflictTextNode,$textsNode);
                                 }
                             }
@@ -199,7 +197,8 @@ class AppDataController extends ControllerAbstract
     }
 
     #[Route('/appData/votes', name: 'app_votes')]
-    public function showVotes(Request $request): Response {
+    public function showVotes(Request $request): Response
+    {
         $appNode = $this->getXMLfromSession($request->getSession());
         if (!$appNode) { // page was opened before a proposal was created/loaded
             return $this->redirectToRoute('app_main');
@@ -227,13 +226,16 @@ class AppDataController extends ControllerAbstract
     }
 
     #[Route('/appData/medicine', name: 'app_medicine')]
-    public function showMedicine(Request $request): Response {
+    public function showMedicine(Request $request): Response
+    {
+        $tempPrefix = self::medicine.'.'.self::physicianNode.'.'.self::descriptionNode.'.textHints.';
         return $this->createFormAndHandleSubmit(MedicineType::class,$request,[self::appDataNodeName,self::medicine],
-            ['hintArray' => $this->createStringArray(['0','1'],'medicine.physician.description.textHint')]);
+            ['hintArray' => ['' => $this->translateString('multiple.choiceTextHint'),$this->translateString($tempPrefix.'exception'),$this->translateString($tempPrefix.'other')]]);
     }
 
     #[Route('/appData/summary', name: 'app_summary')]
-    public function showSummary(Request $request): Response {
+    public function showSummary(Request $request): Response
+    {
         return $this->createFormAndHandleSubmit(SummaryType::class,$request,[self::appDataNodeName,self::summary],
             ['maxChars' => 3000,
              self::pageTitle => 'appData.summaryPage']);
@@ -246,7 +248,8 @@ class AppDataController extends ControllerAbstract
      * @param array $data array containing the submitted data
      * @param string $type must equal 'applicant' or 'supervisor'
      */
-    private function updateContributor(array &$contributors, array $data, string $type): void {
+    private function updateContributor(array &$contributors, array $data, string $type): void
+    {
         $dataType = $data[$type];
         $tempArray = [];
         foreach (self::applicantContributorsInfosTypes as $info) {
@@ -254,13 +257,11 @@ class AppDataController extends ControllerAbstract
         }
         if ($type===self::applicant) {
             $contributors[0][self::infosNode] = $tempArray;
-        }
-        else { // supervisor
+        } else { // supervisor
             $tasks = $contributors[1][self::taskNode] ?? '';
             if ($tasks!=='' && array_key_exists(self::supervisorNode,$tasks)) { // supervisor already exists
                 $contributors[1][self::infosNode] = $tempArray;
-            }
-            else { // supervisor does not exist -> add as second contributor
+            } else { // supervisor does not exist -> add as second contributor
                 $this->addSupervisor($contributors,$tempArray);
             }
         }

@@ -14,16 +14,12 @@ class CompleteFormController extends ControllerAbstract
 {
     use CompleteFormTrait, AppDataTrait;
     #[Route('/completeForm', name: 'app_completeForm')]
-    public function showCompleteForm(Request $request): Response {
+    public function showCompleteForm(Request $request): Response
+    {
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session);
-        try {
-            if (!($appNode && $this->getErrors($request,returnCheck: true))) { // page was opened before a proposal was created/loaded or with missing/erroneous inputs
-                return $this->redirectToRoute('app_main');
-            }
-        }
-        catch (\Throwable $throwable) {
-            return $this->setErrorAndRedirect($session);
+        if (!($appNode && $this->getErrors($request,returnCheck: true))) { // page was opened before a proposal was created/loaded or with missing/erroneous inputs
+            return $this->redirectToRoute('app_main');
         }
         $pdfFilename = '';
         if ($session->has(self::pdfLoad)) {
@@ -114,10 +110,11 @@ class CompleteFormController extends ControllerAbstract
             if (count($response)===1 && str_contains($response['complete_form'][self::submitDummy],'finish')) { // complete proposal should be created
                 self::$savePDF = true;
                 self::$isCompleteForm = true;
-                $this->forward('App\Controller\PDF\CompletePDFController::createPDF',['additional' => $firstPage]);
+                $this->forward('App\Controller\PDF\CompletePDFController::createPDF',['additional' => [$consentContent => $firstPage[$consentContent], str_replace('<a href','<a class="linkNormal" href',$consentFurtherText) => $firstPage[$consentFurtherText]]]); // remove marking of links
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
         }
+        $tempPrefix = $translationPrefix.'finish.text.';
         return $this->render('Main/completeForm.html.twig',
             $this->setRenderParameters($request,$completeForm,
                 [self::pageTitle => 'completeForm.title',
@@ -131,7 +128,7 @@ class CompleteFormController extends ControllerAbstract
                  'pdf' => $pdf,
                  'names' => $names,
                  'isMultiple' => $isMultiple,
-                 'finishText' => $this->translateString($translationPrefix.'finish.text',array_merge($parameters,[self::fileName => $session->get(self::fileName), 'curDate' => $this->getCurrentTime()->format('Ymd')])),
+                 'finishText' => [$this->translateString($tempPrefix.'start'),$this->translateString($tempPrefix.'end',array_merge($parameters,[self::fileName => $session->get(self::fileName), 'curDate' => $this->getCurrentTime()->format('Ymd')]))],
                   self::isCommitteeBeta => $parameters[self::isCommitteeBeta]],'completeForm',addErrors: false));
     }
 
@@ -139,7 +136,8 @@ class CompleteFormController extends ControllerAbstract
      * @param array|string $information information array
      * @return bool true if pre or post information, false otherwise
      */
-    private function checkInformation(array|string $information): bool {
+    private function checkInformation(array|string $information): bool
+    {
         return $information!=='' && ($information[self::pre]==='0' || ($information[self::post][self::chosen] ?? '')==='0');
     }
 }

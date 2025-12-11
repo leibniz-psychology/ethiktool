@@ -14,7 +14,8 @@ class ContributorController extends ControllerAbstract
     use ContributorsTrait;
 
     #[Route(self::routePrefix.'contributor', name: 'app_contributor')]
-    public function showContributor(Request $request): Response {
+    public function showContributor(Request $request): Response
+    {
         $tasks = array_combine(self::tasksNodes,array_fill(0,count(self::tasksNodes),[]));
         $session = $request->getSession();
         if (!$session->has(self::docName) || !$this->getMultiStudyGroupMeasure($this->getXMLfromSession($session))) {

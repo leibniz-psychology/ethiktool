@@ -15,7 +15,8 @@ class CoreDataType extends TypeAbstract
 
     private string $committeeType;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $translationPrefix = 'coreData.';
         $this->committeeType = $options[self::committeeType];
         $isEUB = $this->committeeType===self::committeeEUB;
@@ -54,8 +55,7 @@ class CoreDataType extends TypeAbstract
             foreach (self::applicantContributorsInfosTypes as $info) {
                 if ($info!==self::position) {
                     $this->addFormElement($builder, $info.$applicant, 'text');
-                }
-                else {
+                } else {
                     $this->addFormElement($builder, self::position.$applicant, 'choice',options: ['choices' => array_flip($dummyParams[$applicant===self::supervisor ? self::supervisor : self::applicant])],hint: self::choiceTextHint);
                     $this->addFormElement($builder, $this->appendText(self::position.$applicant), 'text',hint: $tempPrefix.'otherDefault');
                 }
@@ -86,7 +86,8 @@ class CoreDataType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         // project title
         $forms[self::projectTitle]->setData($viewData[self::projectTitle]);
@@ -110,8 +111,7 @@ class CoreDataType extends TypeAbstract
             }
             $tempVal = $viewData[self::projectEnd];
             $forms[self::projectEnd]->setData($tempVal!=='' ? new DateTime($viewData[self::projectEnd]) : null);
-        }
-        catch (Exception $e) {
+        } catch (Exception) {
             // do not set dates if exception occurs
         }
         // funding
@@ -161,7 +161,8 @@ class CoreDataType extends TypeAbstract
         }
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         // project title
         $newData = [self::projectTitle => $forms[self::projectTitle]->getData()];
@@ -175,8 +176,7 @@ class CoreDataType extends TypeAbstract
                 $fundingArray[$key] = !$isFundingQuali ? [self::descriptionNode => $forms[$this->appendText($key)]->getData()] : ''; // text in the text field
                 if ($isFundingQuali) { // if fundingQuali is checked immediately before/after any of the other checkboxes is checked (i.e., the second of these two is checked before the page was reloaded after submission), keep only the fundingQuali key
                     break;
-                }
-                elseif (array_key_exists($key.'FundingState',$forms)) {
+                } elseif (array_key_exists($key.'FundingState',$forms)) {
                     $tempVal = $forms[$key.'FundingState']->getData(); // granted or requested
                     $fundingArray[$key][self::fundingStateNode] = $tempVal;
                     $isRequested = $isRequested || $tempVal===self::fundingRequested;
@@ -224,8 +224,7 @@ class CoreDataType extends TypeAbstract
             $position = $forms[self::position.$suffix]->getData();
             if ($type===self::applicant && $isQualification && !in_array($position,[self::positionsStudent,self::positionsPhd])) { // reset position if qualification question has changed to yes
                 $position = '';
-            }
-            elseif ($position===self::positionOther) {
+            } elseif ($position===self::positionOther) {
                 $otherPosition = $forms[$this->appendText(self::position.$suffix)]->getData();
                 $position = $otherPosition ?: self::positionOther;
             }
@@ -262,7 +261,8 @@ class CoreDataType extends TypeAbstract
      * @param DateTime|null $dateTime date that will be converted to a string
      * @return string the date as a string or an empty string if $dateTime is null
      */
-    private function getDate(?DateTime $dateTime): string {
+    private function getDate(?DateTime $dateTime): string
+    {
         return !is_null($dateTime) ? $dateTime->format('Y-m-d') : '';
     }
 }

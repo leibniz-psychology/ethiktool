@@ -23,7 +23,7 @@
         {% endfor %}
         {# conflict text #}
         {% if content.conflictText is defined %}
-            <div class="mt-8" id="conflictText">
+            <div class="mt-8" id="conflict">
                 {{ formRender.addCountableTextfield(content.conflictText,maxCharsConflict,transferArray|merge({'hint': [[translationPrefix~'conflictText.headingHint']]})) }}
             </div>
         {% endif %}
@@ -43,7 +43,7 @@
                     {% if isPro %}
                         <div class="template">{{ form_label(templateText) }}</div>
                         <div class="grid" style="grid-template-columns: auto min-content">
-                            <div class="MetaData-Widget pe-0">{{ form_widget(templateText) }}</div>
+                            <div class="MetaData-Widget pe-0">{{ form_widget(templateText,{'attr': addClass('markInput') }) }}</div>
                             <div class="pt-1" style="margin-right: 0.3rem">{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
                         </div>
                         <div class="template">{{ (templatePrefix~'middle')|trans }}</div>
@@ -63,7 +63,7 @@
             {% set findingText, template = content.findingText, content.findingTextTemplate %}
             {% set name, templateVars, templateDiv = findingText.vars.name, template.vars, 'findingTemplateDiv' %}
             {% set isTemplate = templateVars.checked %}
-            <div class="mt-8 grid" id="findingText">
+            <div class="mt-8 grid" id="finding">
                 <div class="template" id="{{ templateDiv }}" style="{{ boolToDisplay(isTemplate) }}; grid-row: 2">{{ (translationPrefix~'findingText.template')|trans({'consent': boolToString(isConsent), 'addressee': addresseeType}) }}</div>
                 {{ formRender.addCountableTextfield(findingText,maxCharsFinding,{'transfer': [['consent',information],addresseeType], 'visible': not isTemplate, 'template': template, 'templateClass' : true, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,templateDiv,[name~'Div',name~'Count']|merge(isTransfer ? [name~'PDF'] : [])]], 'isGrid': true}]}) }}
             </div>

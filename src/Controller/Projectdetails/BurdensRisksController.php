@@ -14,7 +14,8 @@ class BurdensRisksController extends ControllerAbstract
     use ProjectdetailsTrait;
 
     #[Route(self::routePrefix.'burdensRisks', name: 'app_burdensRisks')]
-    public function showBurdensRisks(Request $request): Response {
+    public function showBurdensRisks(Request $request): Response
+    {
         $session = $request->getSession();
         $routeParams = $request->get('_route_params');
         $appNode = $this->getXMLfromSession($session); // no setRecent because first it needs to be checked if docNameRecent needs to be set
@@ -70,8 +71,7 @@ class BurdensRisksController extends ControllerAbstract
                 $isDescription = array_key_exists(self::descriptionNode,$conArray);
                 if ($isBurdensRisks && !$isDescription) {
                     $conNode->addChild(self::descriptionNode);
-                }
-                elseif (!$isBurdensRisks && $conArray[self::conTemplate]==='1' && $isDescription) {
+                } elseif (!$isBurdensRisks && $conArray[self::conTemplate]==='1' && $isDescription) {
                     $this->removeElement(self::descriptionNode,$conNode);
                 }
                 // update finding consent
@@ -79,8 +79,7 @@ class BurdensRisksController extends ControllerAbstract
                 $isFindingConsent = array_key_exists(self::findingTextNode,$textsArray);
                 if ($isFinding && !$isFindingConsent) {
                     $this->addChildNodes($textsNode->addChild(self::findingTextNode),[self::findingTemplate,self::descriptionNode]);
-                }
-                elseif (!$isFinding && $isFindingConsent) {
+                } elseif (!$isFinding && $isFindingConsent) {
                     $this->removeElement(self::findingTextNode,$textsNode);
                 }
             }

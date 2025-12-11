@@ -14,7 +14,8 @@ class LegalController extends ControllerAbstract
     use ProjectdetailsTrait;
 
     #[Route(self::routePrefix.'legal', name: 'app_legal')]
-    public function showLegal(Request $request): Response {
+    public function showLegal(Request $request): Response
+    {
         $measureNode = $this->getMeasureTimePointNode($this->getXMLfromSession($request->getSession()),$request->get('_route_params'));
         if ($measureNode===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
             return $this->redirectToRoute('app_main');

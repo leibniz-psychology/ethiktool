@@ -51,6 +51,8 @@ export default class extends Controller {
         }
         let isFinish = this.consentTarget.checked && this.biasInput && allAdded && this.consentFurtherTarget.checked;
         this.finishTarget.disabled = !isFinish;
-        setElementVisibility(this.finishTextTarget,isFinish);
+        for (let finishTarget of this.finishTextTargets) {
+            setElementVisibility(finishTarget,isFinish);
+        }
     }
 }

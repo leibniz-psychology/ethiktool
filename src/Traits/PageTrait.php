@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '2.0.0';
+    protected const toolVersion = '2.1.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -82,7 +82,8 @@ trait PageTrait
      * @param Session $session current session
      * @return string committee type
      */
-    protected function getCommitteeType(Session $session): string {
+    protected function getCommitteeType(Session $session): string
+    {
         return $session->get(self::committeeParams)[self::committeeType] ?? '';
     }
 
@@ -92,16 +93,9 @@ trait PageTrait
      * @param string $suffix string to be added at the end
      * @return string concatenated IDs
      */
-    protected function concatIDs(array $ids,string $prefix = '', string $suffix = ''): string {
+    protected function concatIDs(array $ids,string $prefix = '', string $suffix = ''): string
+    {
         return $prefix.$ids[0].'_'.$ids[1].'_'.$ids[2].$suffix;
-    }
-
-    /** Appends 'Text' at the end of the string.
-     * @param string $string string which gets appended
-     * @return string $string with 'Text' appended
-     */
-    protected function appendText(string $string): string {
-        return $string.'Text';
     }
 
     /** Adds a child to \$element with the name \$name. To this new node a child with the name 'chosen' is added.
@@ -109,7 +103,8 @@ trait PageTrait
      * @param string $name name of the new child
      * @return SimpleXMLElement the node with the name $name
      */
-    protected function addChosenNode(SimpleXMLElement $element, string $name): SimpleXMLElement {
+    protected function addChosenNode(SimpleXMLElement $element, string $name): SimpleXMLElement
+    {
         $returnNode = $element->addChild($name);
         $returnNode->addChild(self::chosen);
         return $returnNode;
@@ -121,7 +116,8 @@ trait PageTrait
      * @return string converted string
      * @throws \DateMalformedStringException if an exception occurs during creation of the DateTime element
      */
-    protected function convertDate(string|DateTime $dateString, bool $noTime = true): string {
+    protected function convertDate(string|DateTime $dateString, bool $noTime = true): string
+    {
         if ($dateString!=='') {
             if (is_string($dateString)) {
                 $dateString = new DateTime($dateString);
@@ -134,7 +130,8 @@ trait PageTrait
     /** Returns the Berlin timezone
      * @return \DateTimeZone Berlin timezone
      */
-    protected function getTimezone(): \DateTimeZone {
+    protected function getTimezone(): \DateTimeZone
+    {
         return new \DateTimeZone('Europe/Berlin');
     }
 
@@ -143,7 +140,8 @@ trait PageTrait
      * @param int|string $default value that should be returned if string is empty or null
      * @return int|string converted string or $default if string is empty or null
      */
-    protected function getIntFromString(?string $string, int|string $default = ''): int|string {
+    protected function getIntFromString(?string $string, int|string $default = ''): int|string
+    {
         return ($string==='' || $string===null) ? $default : (int)($string);
     }
 
@@ -151,7 +149,8 @@ trait PageTrait
      * @param string $string string to be converted
      * @return bool true if the string equals 'true' or '1', false otherwise
      */
-    protected function getBoolFromString(string $string): bool {
+    protected function getBoolFromString(string $string): bool
+    {
         return $string==='true' || $string==='1';
     }
 
@@ -159,7 +158,8 @@ trait PageTrait
      * @param bool $bool bool o be converted
      * @return string 'true' or 'false'
      */
-    protected function getStringFromBool(bool $bool): string {
+    protected function getStringFromBool(bool $bool): string
+    {
         return $bool ? 'true' : 'false';
     }
 
@@ -169,7 +169,8 @@ trait PageTrait
      * @param string $valuePrefix if not an empty string, the values of the return array are the values prefixed by this string, otherwise suffixed by 'Text'
      * @return array array with the keys and values
      */
-    protected function createPrefixArray(array $array, string $prefix = '', string $valuePrefix = ''): array {
+    protected function createPrefixArray(array $array, string $prefix = '', string $valuePrefix = ''): array
+    {
         $returnArray = [];
         foreach ($array as $value) {
             $prefixedValue = $prefix.$value;
@@ -178,13 +179,23 @@ trait PageTrait
         return $returnArray;
     }
 
+    /** Appends 'Text' at the end of the string.
+     * @param string $string string which gets appended
+     * @return string $string with 'Text' appended
+     */
+    protected function appendText(string $string): string
+    {
+        return $string.'Text';
+    }
+
     /** Adds 'Div' to a string.
      * @param string $string string where 'Div' gets appended
      * @param bool $addMiddle if false, only 'Div' will be appended
      * @param bool $addText if true, 'Text' will be added before 'Div', otherwise 'Description'. Only used if $addMiddle is true
      * @return string $string with 'Div' appended
      */
-    private function addDiv(string $string, bool $addMiddle = false, bool $addText = true): string {
+    private function addDiv(string $string, bool $addMiddle = false, bool $addText = true): string
+    {
         return $string.($addMiddle ? ($addText ? 'Text' : self::descriptionCap) : '').'Div';
     }
 
@@ -194,7 +205,8 @@ trait PageTrait
      * @param bool $flip if true, then keys and values are flipped
      * @return array keys: concatenation of \$prefix and each value in \$values, values: $values
      */
-    protected function translateArray(string $prefix, array $values, bool $flip = false): array {
+    protected function translateArray(string $prefix, array $values, bool $flip = false): array
+    {
         $returnArray = [];
         foreach ($values as $value) {
             $returnArray[$prefix.$value] = $value;
@@ -208,7 +220,8 @@ trait PageTrait
      * @param string $domain domain to be used for the translation. Defaults to 'messages'
      * @return string the translated string
      */
-    protected function translateString(string $string, array $parameters = [], string $domain = 'messages'): string {
+    protected function translateString(string $string, array $parameters = [], string $domain = 'messages'): string
+    {
         return self::$translator->trans($string, $parameters,$domain);
     }
 }

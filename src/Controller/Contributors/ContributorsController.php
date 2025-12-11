@@ -15,7 +15,8 @@ class ContributorsController extends ControllerAbstract
     use ContributorsTrait, AppDataTrait; // AppDataTrait for updating the applicant in coreData
 
     #[Route('/contributors', name: 'app_contributors')]
-    public function showContributors(Request $request): Response {
+    public function showContributors(Request $request): Response
+    {
         $session = $request->getSession();
         $allContributorsArrays = $session->get(self::contributorsSessionName); // all contributors arrays
         if ($allContributorsArrays===null) { // page was opened before a proposal was created/loaded
@@ -64,8 +65,7 @@ class ContributorsController extends ControllerAbstract
                     $newData[self::taskNode] = $tasks;
                     if (str_contains($submitType,'add')) { // new contributor -> str_contains because route will also be in this string
                         $contributorsArray = array_merge($contributorsArray, [count($contributorsArray) => $newData]);
-                    }
-                    else { // contributor was edited
+                    } else { // contributor was edited
                         if ($isApplicantOrSupervisor) { // applicant or supervisor
                             $newData[self::taskNode] = array_merge([$isApplicant ? self::applicationNode : self::supervisorNode => ''],$newData[self::taskNode]); // add applicant as task
                         }
@@ -86,15 +86,13 @@ class ContributorsController extends ControllerAbstract
                             if (!$isStudentOld && $isStudent) { // position was changed such that a supervisor is needed
                                 $this->insertElementBefore(self::supervisor,$coreDataNode->{self::projectStart},self::applicantContributorsInfosTypes);
                                 $this->addSupervisor($contributorsArray);
-                            }
-                            elseif ($isStudentOld && !$isStudent) { // position was changed such that no supervisor is needed anymore
+                            } elseif ($isStudentOld && !$isStudent) { // position was changed such that no supervisor is needed anymore
                                 unset($contributorsArray[1][self::taskNode][self::supervisorNode]);
                                 $this->removeElement(self::supervisor,$coreDataNode);
                             }
                         }
                     }
-                }
-                else { // contributor was removed
+                } else { // contributor was removed
                     unset($contributorsArray[$id]);
                     $contributorsArray = array_values($contributorsArray); // re-indexing
                 }

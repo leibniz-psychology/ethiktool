@@ -7,7 +7,7 @@ heading: >-
 header: |
   Erstellt mit Ethiktool Version {toolVersion}
   {savePDF, select,
-    true  {<a class="no-linkout" href="https://ethiktool.org/" target="_blank">https://ethiktool.org/</a>}
+    true  {<a class="no-linkout linkNormal" href="https://ethiktool.org/" target="_blank">https://ethiktool.org/</a>}
     other {https://ethiktool.org/}}
   letzte Änderung am Ethikantrag:
 
@@ -106,7 +106,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     information: 'Wird vorab darüber aufgeklärt, dass eine Studienteilnahme erfolgt?'
     preContent: 'Wie umfassend ist die Vorab-Aufklärung hinsichtlich der Ziele, Inhalte und Methoden der Studie?'
     preComplete: 'Wird die vollständige Aufklärung später nachgeholt (d.h. werden die Vorab-Informationen ergänzt bzw. richtiggestellt)?'
-    preCompleteSub: 'Form der nachträglichen vollständigen Aufklärung:'
+    preCompleteSub: 'Begründung des Vorgehens und Angabe, wann welche Informationen mitgeteilt werden:'
     post: 'Wird nachträglich darüber aufgeklärt, dass an einer Studie teilgenommen wurde?'
     attendance: >-
       Sind die {children, select,
@@ -327,7 +327,7 @@ projectdetails:
         separate      {Die Datenschutzerklärung {levelNamesString} wurde selbst erstellt. {verification, select,
                                                                         verified   {Sie ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.}
                                                                         unverified {Sie ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.}
-                                                                        other      {}} Sie findet sich inkl. Einwilligungserklärung auf der/den nächsten Seite/n.}
+                                                                        other      {}} Sie findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}
         anonymous     {Gemäß der {savePDF, select,
                                     true  {Angaben im Ethiktool}
                                     other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
@@ -336,8 +336,8 @@ projectdetails:
                                     other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} erfolgt die detaillierte Klärung der Datenverarbeitung einem späteren Zeitpunkt. Daher wurde vom Ethiktool keine Datenschutzerklärung {levelNamesString} erstellt.}
         other         {{personal, select,
                           anonymous {Gemäß der Angaben im Ethiktool werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
-                          other     {Aufgrund von folgenden Besonderheiten im Umgang mit dem Daten (gemäß Angaben im Ethiktool) konnte die Datenschutzerklärung {levelNamesString} nicht mit dem Ethiktool erstellt werden:
-                            {createOther} Daher wurde die Datenschutzerklärung selbst erstellt. Sie findet sich inkl. Einwilligungserklärung auf der/den nächsten Seite/n.}}}}
+                          other     {Aufgrund von folgenden Besonderheiten im Umgang mit dem Daten (gemäß Angaben im Ethiktool) kann die Datenschutzerklärung {levelNamesString} nicht mit dem Ethiktool erstellt werden:
+                            {createOther} Daher wurde die Datenschutzerklärung selbst erstellt. Sie findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}}}}
     createOther:
       responsibility: 'Verantwortlich ist nicht allein die {committeeLocation}.'
       transferOutside: 'Es werden personenbezogene Daten an Dritte außerhalb des EWR weitergegeben.'
@@ -488,11 +488,13 @@ projectdetails:
 # participation
 participation:
   projectTitleHeader: >-
-    <a href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitle{isDifferent, select,
-        true  {Participation}
-        other {}}">Forschungsprojekt</a> „{projectTitle}“
+    {savePDF, select,
+      true  {Forschungsprojekt}
+      other {<a class="linkInternal" href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitle{isDifferent, select,
+                        true  {Participation}
+                        other {}}">Forschungsprojekt</a>}} „{projectTitle}“
   marking: >-
-    Schwarze Schriftfarbe kennzeichnet vom Ethiktool automatisch erzeugten Text. Blaue Schriftfarbe kennzeichnet selbst formulierten Text. {savePDF, select,
+    Schwarze Schriftfarbe kennzeichnet vom Ethiktool automatisch erzeugten Text. Grüne Schriftfarbe kennzeichnet selbst formulierten Text. {savePDF, select,
       true  {Für die tatsächliche Verwendung der Teilnahmedokumente stehen die PDF-Dateien ohne farbliche Markierung im Ordner „{singleDocsName}“ zur Verfügung.}
       other {}}
   oral: 'Die Aufklärung zur Studienteilnahme erfolgt mündlich. Sie orientiert sich an den hier verschriftlichten Informationen.'
@@ -804,7 +806,7 @@ participation:
                                             other    {{addressee, select,
                                                         children {dem Namen Ihres Kindes versehen. }
                                                         wards    {dem Namen der von Ihnen betreuten Person versehen. }
-                                                        other    {Ihrem Namen versehen.}}}}
+                                                        other    {Ihrem Namen versehen. }}}}
       external:
         types:
           anonymous: 'Der Code selbst lässt keinen Rückschluss auf konkrete Personen zu. Die Zuordnung des Codes zu personenidentifizierenden Daten ist nur der Stelle möglich, die den Code ursprünglich vergeben hat. Informationen zum Umgang mit den personenbezogenen Daten sind dort erhältlich.'

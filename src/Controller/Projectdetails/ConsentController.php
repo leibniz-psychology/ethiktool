@@ -14,7 +14,8 @@ class ConsentController extends ControllerAbstract
     use ProjectdetailsTrait;
 
     #[Route(self::routePrefix.'consent', name: 'app_consent')]
-    public function showConsent(Request $request): Response {
+    public function showConsent(Request $request): Response
+    {
         $session = $request->getSession();
         $routeParams = $request->get('_route_params');
         $information = $this->getInformation($request);
@@ -43,8 +44,7 @@ class ConsentController extends ControllerAbstract
                     foreach (array_diff(self::legalTypes,$isLoanReceipt ? [self::apparatusNode] : []) as $type) {
                         $this->removeElement($type,$legalNode);
                     }
-                }
-                elseif (!$isConsentOld && $isConsent) { // add nodes
+                } elseif (!$isConsentOld && $isConsent) { // add nodes
                     $this->addLegalNodes($legalNode,$this->xmlToArray($measureNodeNew));
                 }
             }

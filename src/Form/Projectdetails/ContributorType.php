@@ -12,7 +12,8 @@ class ContributorType extends TypeAbstract
 {
     use ContributorsTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         foreach ($options[self::dummyParams][self::taskNode] as $task) {
             foreach ($task as $key => $value) {
                 $this->addFormElement($builder,$key,'checkbox',$value);
@@ -22,7 +23,8 @@ class ContributorType extends TypeAbstract
         $this->addDummyForms($builder);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         foreach (self::tasksNodes as $tasksNode) {
             $tasks = $viewData[$tasksNode];
@@ -34,7 +36,8 @@ class ContributorType extends TypeAbstract
         }
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         $viewData = array_combine(self::tasksNodes,array_fill(0,count(self::tasksNodes),''));
         $noForms = [self::language,ControllerAbstract::submitDummy,ControllerAbstract::loadInput];
@@ -57,7 +60,8 @@ class ContributorType extends TypeAbstract
      * @param bool $returnString if true, then the substring from to start to first digit (exclusive) is returned, else the substring from first digit (inclusive) to end as an int
      * @return string|int either the part before the digit(s) or the digit(s), depending on $returnString
      */
-    private function splitStringByInt(string $input, bool $returnString = true): string|int {
+    private function splitStringByInt(string $input, bool $returnString = true): string|int
+    {
         $intPos = strcspn($input,'0123456789');
         return $returnString ? substr($input,0,$intPos) : (int)(substr($input,$intPos));
     }

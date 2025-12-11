@@ -14,7 +14,8 @@ class MeasuresController extends ControllerAbstract
     use ProjectdetailsTrait;
 
     #[Route(self::routePrefix.'measures', name: 'app_measures')]
-    public function showMeasures(Request $request): Response {
+    public function showMeasures(Request $request): Response
+    {
         $session = $request->getSession();
         $routeParams = $request->get('_route_params');
         $isPre = $this->getInformation($request)===self::pre;
@@ -103,15 +104,13 @@ class MeasuresController extends ControllerAbstract
                     // remove nodes if necessary
                     if ($isApparatusOld && !$isApparatus) { // remove node
                         $this->removeElement(self::apparatusNode,$legalNode);
-                    }
-                    elseif (!$isApparatusOld && $isApparatus) { // add node
+                    } elseif (!$isApparatusOld && $isApparatus) { // add node
                         $this->addChosenNode($legalNode,self::apparatusNode);
                     }
                     if ($isConsent) {
                         if ($isLocationNotOnlineOld && !$isLocationNotOnline) { // remove node
                             $this->removeElement(self::insuranceWayNode,$legalNode);
-                        }
-                        elseif (!$isLocationNotOnlineOld && $isLocationNotOnline) { // add node
+                        } elseif (!$isLocationNotOnlineOld && $isLocationNotOnline) { // add node
                             $this->addChosenNode($legalNode,self::insuranceWayNode);
                         }
                     }
@@ -121,13 +120,12 @@ class MeasuresController extends ControllerAbstract
                 if ($isLocationOnlineOld && $isLocationNotOnline) { // remove node -> if $isLocationOnlineOld is true, $location can not be null
                     $this->removeElement(self::dataOnlineNode,$dataPrivacyNode);
                     if ($this->checkElement(self::purposeResearchNode,$dataPrivacyNode)) {
-                        $this->removeElement('technical',$dataPrivacyNode->{self::purposeResearchNode});
+                        $this->removeElement(self::purposeTechnical,$dataPrivacyNode->{self::purposeResearchNode});
                     }
                     if ($this->checkElement(self::purposeFurtherNode,$dataPrivacyNode)) {
-                        $this->removeElement('technicalFurther',$dataPrivacyNode->{self::purposeFurtherNode});
+                        $this->removeElement(self::purposeFurtherNode.self::purposeTechnical,$dataPrivacyNode->{self::purposeFurtherNode});
                     }
-                }
-                elseif (!$isLocationOnlineOld && $isLocationOnline && $this->checkElement(self::dataPersonalNode,$dataPrivacyNode)) { // add node -> only if privacy document should (and can) be created with tool
+                } elseif (!$isLocationOnlineOld && $isLocationOnline && $this->checkElement(self::dataPersonalNode,$dataPrivacyNode)) { // add node -> only if privacy document should (and can) be created with tool
                     $this->insertElementBefore(self::dataOnlineNode,$dataPrivacyNode->{self::dataPersonalNode},[self::chosen]);
                 }
             }
@@ -137,8 +135,7 @@ class MeasuresController extends ControllerAbstract
                 $terminateNode = $measureNodeNew->{self::compensationNode}->{self::terminateNode};
                 if ($isDurationOld && !$isDurationNew) { // duration was longer than 30 minutes, but now is not -> remove node
                     $this->removeElement(self::descriptionNode,$terminateNode);
-                }
-                elseif (!$isDurationOld && $isDurationNew) { // duration was at most 30 minutes, but is now longer -> add node
+                } elseif (!$isDurationOld && $isDurationNew) { // duration was at most 30 minutes, but is now longer -> add node
                     $terminateNode->addChild(self::descriptionNode);
                 }
             }

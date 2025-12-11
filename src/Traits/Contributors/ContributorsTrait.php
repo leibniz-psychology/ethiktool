@@ -32,7 +32,8 @@ trait ContributorsTrait
      * @param array $infos infos about the supervisor
      * @return void
      */
-    protected function addSupervisor(array &$contributors, array $infos = []): void {
+    protected function addSupervisor(array &$contributors, array $infos = []): void
+    {
         if ($infos===[]) {
             $infos = array_combine(self::applicantContributorsInfosTypes,array_fill(0,count(self::applicantContributorsInfosTypes),''));
         }
@@ -48,7 +49,8 @@ trait ContributorsTrait
      * @param boolean $supervisorAdded true if the supervisor was added as the second contributor, false otherwise
      * @return void
      */
-    protected function updateProjectdetailsContributor(Request $request, SimpleXMLElement $appNode, int|string $id, array $tasks, bool $isRemoved, bool $supervisorAdded = false): void {
+    protected function updateProjectdetailsContributor(Request $request, SimpleXMLElement $appNode, int|string $id, array $tasks, bool $isRemoved, bool $supervisorAdded = false): void
+    {
         $projectdetailsNode = $appNode->{self::projectdetailsNodeName};
         $isMulti = $this->getMultiStudyGroupMeasure($appNode);
         if ($isMulti) {
@@ -76,8 +78,7 @@ trait ContributorsTrait
                     }
                 }
             }
-        }
-        else { // one study with one group with one measure time point -> select all tasks
+        } else { // one study with one group with one measure time point -> select all tasks
             $this->setProjectdetailsContributor($request, $appNode);
         }
     }
@@ -87,7 +88,8 @@ trait ContributorsTrait
      * @param array $contributorArray keys: indices of the contributors, values: infos and tasks of the contributor
      * @return void
      */
-    protected function addAllContributorsNodes(SimpleXMLElement $appNode, array $contributorArray): void {
+    protected function addAllContributorsNodes(SimpleXMLElement $appNode, array $contributorArray): void
+    {
         $contributorsNode = $appNode->{self::contributorsNodeName};
         $this->removeAllChildNodes($contributorsNode);
         foreach ($contributorArray as $contributor) {
@@ -100,7 +102,8 @@ trait ContributorsTrait
      * @param array $contributor array containing two sub-arrays, one for the infos and one for the tasks
      * @return void
      */
-    protected function addContributor(SimpleXMLElement $element, array $contributor): void {
+    protected function addContributor(SimpleXMLElement $element, array $contributor): void
+    {
         $node = $element->addChild(self::contributorNode);
         $infosNode = $node->addChild(self::infosNode);
         $tempArray = $contributor[self::infosNode];

@@ -14,7 +14,8 @@ class CompensationController extends ControllerAbstract
     use ProjectdetailsTrait;
 
     #[Route(self::routePrefix.'compensation', name: 'app_compensation')]
-    public function showCompensation(Request $request): Response {
+    public function showCompensation(Request $request): Response
+    {
         $routeParams = $request->get('_route_params');
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session);
@@ -38,8 +39,7 @@ class CompensationController extends ControllerAbstract
         // get date for later text hint
         try {
             $date = (new \DateTime())->add(new \DateInterval('P6M'))->format($this->translateString($translationPrefix.self::awardingNode.'.dateFormat'));
-        }
-        catch (\Throwable $throwable) {
+        } catch (\Throwable) {
             $date = '';
         }
         $isDurationParam = ['isDuration' => $this->getDuration($this->xmlToArray($measure->{self::measuresNode}->{self::durationNode}))>30];
@@ -57,8 +57,7 @@ class CompensationController extends ControllerAbstract
                     if (array_key_exists(self::dataPersonalNode,$privacyArray) && ($tempArray==='' || !array_key_exists(self::purposeCompensation,$tempArray))) { // add nodes
                         $this->addChosenNode($privacyNode,self::codeCompensationNode);
                     }
-                }
-                elseif ($isCodeCompensationLoad && !$isCodeCompensation) { // remove nodes
+                } elseif ($isCodeCompensationLoad && !$isCodeCompensation) { // remove nodes
                     $this->removeElement(self::codeCompensationNode,$privacyNode);
                 }
             }

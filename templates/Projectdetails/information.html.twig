@@ -26,7 +26,7 @@
         </div>
         <div id="{{ preYes }}" class="mt-8" style="{{ boolToDisplay(preValue is same as '0') }}" {{ stimulus_target(informationController,'preContent') }}>
             {% if content.preType is defined %}
-                {{ _self.addType(true,content.preType,isInformationIIhint,addresseeType,'preType') }}
+                {{ _self.addType(true,content.preType,isInformationIIhint,addresseeType,'preType',[informationController]) }}
             {% endif %}
             {# pre content #}
             {% set preContentSelection = preContent.vars.value %}
@@ -56,7 +56,7 @@
                     merge(textInputPost is not same as '' ? [postHint] : [])]]},
                 'removeHint': [[textInputPost],postHint,isPostNo]}|
                 merge(isInformation ? {'contTarget': ['post0',informationController,'postYes']} : {})) }}
-            {{ _self.addType(isPreNo and postValue is same as '0',content.postType,isInformationIIhint,addresseeType,postType) }}
+            {{ _self.addType(isPreNo and postValue is same as '0',content.postType,isInformationIIhint,addresseeType,postType,[informationController]) }}
         </div>
         {# attendance #}
         {% if content.attendance is defined %}
@@ -89,18 +89,19 @@
     {{ formRender.addPreview([studyID,groupID,measureID]) }}
 {% endblock %}
 
-{% macro addType(visible, form, addPDF, addresseeType, id, target = [])  %}
+{% macro addType(visible, form, addPDF, addresseeType, id, target)  %}
     {# Adds a grid with a label asking for the type of information. Next it a group of radio buttons with the types are rendered. If pdf is not null, a button for selecting a pdf file is rendered, together with a div displaying the filename and an icon. Input arguments:
       visible:       true if the div should be visible, false otherwise
       form:          form with the types
       pdf:           if true, a hint is added that, when completing the application, a pdf must be uploaded
       addresseeType: addressee
       id:            id of the surrounding div
-      target:        if provided, an array of two elements: stimulus controller and target name
+      target:        if provided, an array of one or two elements: stimulus controller and target name. If only one element is provided, it will be added to the renderButtons() call.
     #}
-    <div id="{{ id }}" style="{{ boolToDisplay(visible) }}" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}>
+    {% set name, stimCont = form.vars.name, target[0] %}
+    <div id="{{ id }}" style="{{ boolToDisplay(visible) }}" {% if target[1] is defined %} {{ stimulus_target(stimCont,target[1]) }} {% endif %}>
         <div class="MetaData-Label mt-4">{{ form_label(form,null,labelDummy) }}</div>
-        {{ formRender.renderButtons(form, noHeading) }}
+        {{ formRender.renderButtons(form, noHeading|merge(name is not same as 'preCompleteType' ? {'contTarget': [name~'oral',stimCont,name~'Oral'], 'stim': [stimCont,'setDocumentTranslation']} : {})) }}
         {% if addPDF %}
             {% set prefix = 'projectdetails.addressee.' %}
             <div>{{ formRender.addHint('projectdetails.pages.information.pdf',{'params': {'addressee': (prefix~'thirdParties.'~addresseeType)|trans, 'participant': (prefix~'participants.'~addresseeType)|trans}}) }}</div>

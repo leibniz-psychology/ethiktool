@@ -12,7 +12,8 @@ class TextsType extends TypeAbstract
     use ProjectdetailsTrait;
 
     private bool $isBurdensRisks;
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $dummyParams = $options[self::dummyParams];
         $this->isBurdensRisks = $dummyParams['isBurdensRisks'];
         $translationPrefix = 'projectdetails.pages.texts.';
@@ -30,7 +31,8 @@ class TextsType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         // intro
         $tempArray = $viewData[self::introNode];
@@ -59,7 +61,8 @@ class TextsType extends TypeAbstract
         }
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         // intro and goals
         $tempVal = $forms[self::introTemplate]->getData();

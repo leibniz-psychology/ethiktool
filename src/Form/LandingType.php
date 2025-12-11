@@ -9,7 +9,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 class LandingType extends TypeAbstract
 {
     use LandingTrait;
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $attributes = $options['attr'];
         if ($attributes[self::isProjectdetails] && !$attributes[self::isMeasure]) { // is $attributes[self::isMeasure] is true, then $isGroup is also true
             $this->addFormElement($builder,self::copy,'choice',options: ['choices' => $options[self::dummyParams] [self::dropdownChoices]],hint: self::choiceTextHint);

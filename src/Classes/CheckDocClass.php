@@ -75,7 +75,8 @@ class CheckDocClass extends ControllerAbstract
      * @return string|bool if \$page is an empty string and \$returnCheck is true: true is no errors were found, false otherwise; otherwise: string with errors or message that no errors were found
      * @throws Exception if an error occurs during the check
      */
-    public static function getDocumentCheck(Request $request, string $page = '', bool $returnCheck = false, SimpleXMLElement|bool $element = null, bool $onlyError = true, array $routeIDs = []): string|bool {
+    public static function getDocumentCheck(Request $request, string $page = '', bool $returnCheck = false, SimpleXMLElement|bool $element = null, bool $onlyError = true, array $routeIDs = []): string|bool
+    {
         $checkDoc = new CheckDocClass(self::$translator);
         $session = $request->getSession();
         // set variables
@@ -105,8 +106,7 @@ class CheckDocClass extends ControllerAbstract
         // check document
         if ($element!==null) {
             return $checkDoc->checkDocument($request,$element);
-        }
-        else {
+        } else {
             if ($session->has(self::docName)) {
                 if ($page==='') {
                     $returnVal = $checkDoc->checkDocument($request);
@@ -114,8 +114,7 @@ class CheckDocClass extends ControllerAbstract
                         $returnVal = $returnVal===$checkDoc->getNoError();
                     }
                     return $returnVal;
-                }
-                else {
+                } else {
                     try {
                         $routeParams = $hasRouteIDs ? $routeIDs : $request->get('_route_params');
                         if (array_key_exists(self::measureID,$routeParams)) { // check of a projectdetails page
@@ -235,13 +234,11 @@ class CheckDocClass extends ControllerAbstract
                             $checkDoc->addReviewProcessError();
                         }
                         return !$onlyError ? $checkDoc->getReviewMissing().trim($checkDoc->translateString('checkDoc.'.($checkDoc->checkLabel==='' ? 'noErrorPage' : 'errorPage'),['page' => $page, 'type' => $type]).$checkDoc->checkLabel) : $checkDoc->anyError;
-                    }
-                    catch (\Throwable $throwable) {
+                    } catch (\Throwable) {
                         return $returnCheck ? false : '';
                     }
                 }
-            }
-            else {
+            } else {
                 return false;
             }
         }
@@ -253,14 +250,15 @@ class CheckDocClass extends ControllerAbstract
      * @return string string containing the errors
      * @throws Exception if an error occurs during the check
      */
-    private function checkDocument(Request $request, SimpleXMLElement|bool $appNode = null): string {
+    private function checkDocument(Request $request, SimpleXMLElement|bool $appNode = null): string
+    {
         try {
             $session = $request->getSession();
             if ($appNode===null) {
                 $appNode = $this->getXMLfromSession($session,getRecent: true);
             }
             if (!$appNode) { // no proposal is open
-                return false;
+                return '';
             }
             $this->addPageHash = true;
             $this->appArray = $this->xmlToArray($appNode);
@@ -365,8 +363,7 @@ class CheckDocClass extends ControllerAbstract
                                 $this->addCheckLabelString($translationPage,'', ['numContributor' => 1, 'task' => $task, 'contributor' => $contributor[$index][self::infosNode][self::nameNode]]);
                                 $anyError = true;
                             }
-                        }
-                        else {
+                        } else {
                             foreach ($value as $index => $description) {
                                 $tempString .= ', '.$contributor[$index][self::infosNode][self::nameNode]; // name of the contributor
                             }
@@ -385,8 +382,7 @@ class CheckDocClass extends ControllerAbstract
                 $tempVal = $this->coreDataArray[self::projectTitleParticipation][self::chosen] ?? '';
                 if ($tempVal===self::projectTitleNotApplicable && $anyInformation) {
                     $this->addCheckLabelString('checkDoc.projectTitleToInformation');
-                }
-                elseif (!$anyInformation && !in_array($tempVal,['',self::projectTitleNotApplicable])) {
+                } elseif (!$anyInformation && !in_array($tempVal,['',self::projectTitleNotApplicable])) {
                     $this->addCheckLabelString('checkDoc.informationToProjectTitle');
                 }
             }
@@ -399,9 +395,8 @@ class CheckDocClass extends ControllerAbstract
             if ($this->checkLabel==='') {
                 $this->checkLabel = $this->getNoError();
             }
-        }
-        catch (\Throwable $throwable) { // catches exceptions and error
-            throw new Exception();
+        } catch (\Throwable) {
+            return '';
         }
         return $this->getReviewMissing().$this->checkLabel;
     }
@@ -412,7 +407,8 @@ class CheckDocClass extends ControllerAbstract
      * @param array $array array containing all studies or all groups of a study
      * @return array all groups of the current study if $type equals 'study', all time points for the current group otherwise
      */
-    private function setStudyGroup(string $type, int $id, array $array): array {
+    private function setStudyGroup(string $type, int $id, array $array): array
+    {
         $nextLevel = $type===self::studyNode ? self::groupNode : self::measureTimePointNode;
         $this->IDs[$type] = $id+1;
         $this->addProjectdetailsTitle(subPage: $type);
@@ -428,7 +424,8 @@ class CheckDocClass extends ControllerAbstract
      * @return void
      * @throws \DateMalformedStringException
      */
-    private function checkCoreData(bool $setTitle = true): void {
+    private function checkCoreData(bool $setTitle = true): void
+    {
         $this->addAppDataTitle(self::coreDataNode,$setTitle);
         $translationPrefix = self::appDataPrefix.self::coreDataNode.'.';
         $coreDataArray = $this->appDataArray[self::coreDataNode];
@@ -475,8 +472,7 @@ class CheckDocClass extends ControllerAbstract
             $end = (new DateTime($end))->setTime(0,0);
             if ($end<=$today) {
                 $this->addCheckLabelString($translationPrefix.'end',self::projectEnd);
-            }
-            elseif ($validStart && $end<$start) { // $start and $end are either both or neither empty strings
+            } elseif ($validStart && $end<$start) { // $start and $end are either both or neither empty strings
                 $this->addCheckLabelString($translationPrefix.'endBeforeStart','projectDates');
             }
         }
@@ -487,8 +483,7 @@ class CheckDocClass extends ControllerAbstract
         $isFundingQuali = $isFunding && array_key_exists(self::fundingQuali,$tempArray);
         if (!$isFunding) {
             $this->addCheckLabelString($this->translateString($fundingPrefix.'title').$this->translateString(self::missingSingle),self::funding,colorRed: false);
-        }
-        else {
+        } else {
             $allFundingState = true;
             $anyRequested = false;
             $tempPrefix = $translationPrefix.self::funding.'.';
@@ -545,7 +540,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkVotes(bool $setTitle = true): void {
+    private function checkVotes(bool $setTitle = true): void
+    {
         $this->addAppDataTitle(self::voteNode,$setTitle);
         $translationPrefix = self::appDataPrefix.self::voteNode.'.';
         $voteArray = $this->appDataArray[self::voteNode];
@@ -569,7 +565,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkMedicine(bool $setTitle = true): void {
+    private function checkMedicine(bool $setTitle = true): void
+    {
         $this->addAppDataTitle(self::medicine,$setTitle);
         $translationPrefix = self::appDataPrefix.self::medicine.'.';
         $tempPrefix = $translationPrefix.self::medicine.'.';
@@ -589,7 +586,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkSummary(bool $setTitle = true): void {
+    private function checkSummary(bool $setTitle = true): void
+    {
         $this->addAppDataTitle(self::summary,$setTitle);
         $this->checkMissingContent($this->appDataArray[self::summary],[self::descriptionNode => 'pages.appData.summary'],hash: self::summary);
         $this->setAppDataTitle($setTitle);
@@ -598,7 +596,8 @@ class CheckDocClass extends ControllerAbstract
     /** Checks for errors on the contributors page.
      * @return void
      */
-    private function checkContributors(): void {
+    private function checkContributors(): void
+    {
         $windowArray = $this->appArray[self::contributorsNodeName][self::contributorNode];
         if (array_key_exists(self::infosNode,$windowArray)) { // one contributor
             $windowArray = [0 => $windowArray];
@@ -632,8 +631,7 @@ class CheckDocClass extends ControllerAbstract
             $numTasks = $tasks==='' ? 0 : count($tasks);
             if ($numTasks===0 || $numTasks===1 && ($index===0 || $index===1 && $isStudentPhd)) { // contributor does not have any task
                 $this->addCheckLabelString($tasksPrefix.'missing',parameters: $parameter);
-            }
-            else {
+            } else {
                 foreach ($tasks as $key => $value) { // key: node name, value: empty or description of 'other'
                     if ($key===self::tasksTypes[self::otherTask] && $value==='') { // other task description is empty
                         $this->addCheckLabelString($tasksPrefix.'missingOther',parameters: $parameter,colorRed: false);
@@ -653,7 +651,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkGroups(bool $setTitle = true): void {
+    private function checkGroups(bool $setTitle = true): void
+    {
         $this->addProjectdetailsTitle(setTitle: $setTitle, subPage: self::measureTimePointNode);
         $translationPage = self::projectdetailsPrefix.self::groupsNode.'.';
         $this->addProjectdetailsTitle(self::groupsNode,$setTitle);
@@ -721,7 +720,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkInformation(string $page, bool $setTitle = true): void {
+    private function checkInformation(string $page, bool $setTitle = true): void
+    {
         $this->addProjectdetailsTitle($page,$setTitle);
         $pageArray = $this->measure[$page];
         if ($pageArray!=='') { // if informationII and not active, $pageArray is an empty string
@@ -735,16 +735,14 @@ class CheckDocClass extends ControllerAbstract
                     $tempVal = $pageArray[self::preContent]; // pre content
                     if ($tempVal==='') {
                         $this->addCheckLabelString($translationStart.'preContent',self::preContent,colorRed: false);
-                    }
-                    elseif ($tempVal!==self::complete) { // partial or deceit
+                    } elseif ($tempVal!==self::complete) { // partial or deceit
                         $tempArray = $pageArray[self::preComplete];
                         $this->checkMissingTextfieldEmpty($tempArray,$translationStart.self::deceit,$translationStart.'deceitDescription',self::preComplete,false,hashDescription: $this->addDiv(self::preComplete,true)); // complete post-information and description of information given
                         if (array_key_exists(self::preCompleteType,$tempArray)) {
                             $this->checkMissingChosen($tempArray,$translationStart.'deceitType',null,'completePostType',true,self::preCompleteType);
                         }
                     }
-                }
-                elseif ($pre===1) { // answer was no
+                } elseif ($pre===1) { // answer was no
                     $this->checkMissingContent($pageArray,[self::preText => $translationStart.'descriptionPre'],hash: $this->addDiv(self::pre,true));
                     $tempArray = $pageArray[self::post];
                     if ($this->checkMissingTextfield($tempArray,2,1,$translationStart.'missingPost','preNo',$translationStart.'descriptionPost',$this->addDiv(self::post,true))===0) { // post-information
@@ -769,7 +767,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkConsent(bool $setTitle = true): void {
+    private function checkConsent(bool $setTitle = true): void
+    {
         $this->addProjectdetailsTitle(self::consentNode,$setTitle);
         $translationPage = self::projectdetailsPrefix.self::consentNode.'.';
         $pageArray = $this->measure[self::consentNode];
@@ -864,7 +863,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkMeasures(bool $setTitle = true): void {
+    private function checkMeasures(bool $setTitle = true): void
+    {
         $this->addProjectdetailsTitle(self::measuresNode,$setTitle);
         $pageArray = $this->measure[self::measuresNode];
         $translationPage = self::projectdetailsPrefix.self::measuresNode.'.';
@@ -921,7 +921,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkBurdensRisks(bool $setTitle = true): void {
+    private function checkBurdensRisks(bool $setTitle = true): void
+    {
         $this->addProjectdetailsTitle(self::burdensRisksNode,$setTitle);
         $translationPage = self::projectdetailsPrefix.self::burdensRisksNode.'.';
         $title = $translationPage.'title';
@@ -967,7 +968,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkCompensation(bool $setTitle = true): void {
+    private function checkCompensation(bool $setTitle = true): void
+    {
         $this->addProjectdetailsTitle(self::compensationNode,$setTitle);
         $translationPage = self::projectdetailsPrefix.self::compensationNode.'.';
         $pageArray = $this->measure[self::compensationNode];
@@ -1055,7 +1057,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkTexts(bool $setTitle = true): void {
+    private function checkTexts(bool $setTitle = true): void
+    {
         $pageArray = $this->measure[self::textsNode];
         if ($pageArray!=='') {
             $this->addProjectdetailsTitle(self::textsNode,$setTitle);
@@ -1096,7 +1099,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkInformationIII(bool $setTitle = true): void {
+    private function checkInformationIII(bool $setTitle = true): void
+    {
         $informationIII = $this->measure[self::informationIIINode];
         if ($informationIII!=='') { // input needs to be made on informationIII page
             $this->addProjectdetailsTitle(self::informationIIINode,$setTitle);
@@ -1109,7 +1113,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkLegal(bool $setTitle = true): void {
+    private function checkLegal(bool $setTitle = true): void
+    {
         $pageArray = $this->measure[self::legalNode];
         if ($pageArray!=='') {
             $this->addProjectdetailsTitle(self::legalNode,$setTitle);
@@ -1125,7 +1130,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkDataPrivacy(bool $setTitle = true): void {
+    private function checkDataPrivacy(bool $setTitle = true): void
+    {
         // data privacy
         $pageArray = $this->measure[self::privacyNode];
         if ($pageArray!=='') {
@@ -1547,8 +1553,7 @@ class CheckDocClass extends ControllerAbstract
                             }
                         }
                     }
-                } // if isTool || isSeparate
-                elseif ($isCreateAnonymous && $isOtherSources) { // other sources -> create selection can not be that the study includes only anonymous data
+                } elseif ($isCreateAnonymous && $isOtherSources) { // other sources -> create selection can not be that the study includes only anonymous data
                     $this->addCheckLabelString($furtherOtherSourcesPrefix.self::createNode, parameters: $this->routeIDs);
                 }
             } // if create node exists
@@ -1560,7 +1565,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkDataReuse(bool $setTitle = true): void {
+    private function checkDataReuse(bool $setTitle = true): void
+    {
         $pageArray = $this->measure[self::dataReuseNode];
         if ($pageArray!=='') {
             $translationPage = self::projectdetailsPrefix.self::dataReuseNode.'.';
@@ -1603,7 +1609,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function checkContributor(bool $setTitle = true): void {
+    private function checkContributor(bool $setTitle = true): void
+    {
         $pageArray = $this->measure[self::contributorNode];
         if (in_array(false,$this->isOne) && $pageArray!=='') {
             $this->addProjectdetailsTitle(self::contributorNode,$setTitle);
@@ -1614,8 +1621,7 @@ class CheckDocClass extends ControllerAbstract
                 if (in_array($task,self::tasksMandatory) && !$isTask) { // task is mandatory
                     $isTaskAvailable = $this->isMandatory[$task]; // true if task was not selected for at least one contributor on 'contributors' page
                     $this->addCheckLabelString($translationPage.'mandatory',$isTaskAvailable ? $task : '', ['task' => $this->translateString(self::tasksTypes[$task]), 'type' => !$isTaskAvailable ? 'missing' : 'other'],!$isTaskAvailable);
-                }
-                elseif ($isTask) {
+                } elseif ($isTask) {
                     $tasksCopy = &$this->contributorTasks[$task]; // contributor of the current task. key: contributor index, value: empty or other description
                     foreach ($tempArray as $index) {
                         if (array_key_exists($index,$tasksCopy)) { // remove the current task from the current contributor if it is the first measure time point where the task is selected
@@ -1631,7 +1637,8 @@ class CheckDocClass extends ControllerAbstract
     /** Sets the variables needed for the projectdetails pages of checkDocument().
      * @return void
      */
-    private function setProjectdetailsVariables(): void {
+    private function setProjectdetailsVariables(): void
+    {
         $this->routeIDs = ['routeIDs' => $this->createRouteIDs($this->IDs)];
         $tempArray = $this->appArray[self::projectdetailsNodeName];
         foreach ([self::studyNode,self::groupNode,self::measureTimePointNode] as $type) {
@@ -1672,7 +1679,8 @@ class CheckDocClass extends ControllerAbstract
     /** Creates the string saying that no errors were found.
      * @return string translated string
      */
-    private function getNoError(): string {
+    private function getNoError(): string
+    {
         return $this->translateString('checkDoc.noError',$this->committeeParam);
     }
 
@@ -1685,7 +1693,8 @@ class CheckDocClass extends ControllerAbstract
      * @param string $type type to be checked. Must equal 'burdens' or 'risks'
      * @return bool true if at least one option except 'no' is selected, false otherwise
      */
-    private function checkBurdensRisksErrors(array $pageArray, string $page, string $typeKey, string $type): bool {
+    private function checkBurdensRisksErrors(array $pageArray, string $page, string $typeKey, string $type): bool
+    {
         $typeParam = ['burdensRisksType' => $type];
         $params = array_merge($typeParam,['type' => $this->translateString(self::projectdetailsPrefix.self::burdensRisksNode.'.title',$typeParam)]);
         $isSelected = $this->checkMissingChildren($pageArray,$typeKey,self::missingTypes,$params);
@@ -1710,7 +1719,8 @@ class CheckDocClass extends ControllerAbstract
      * @param string $missingDescription translation key if any of the two questions is answered such that a description is needed or if consent and other is selected
      * @return array first element: answer of first addressee. Second element: answer of second addressee, if any
      */
-    private function checkVoluntaryConsent(array $pageArray, string $type, string $missingChosen, string $missingChosenParticipants, string $missingDescription): array {
+    private function checkVoluntaryConsent(array $pageArray, string $type, string $missingChosen, string $missingChosenParticipants, string $missingDescription): array
+    {
         $returnArray = [$this->checkMissingChosen($pageArray,$missingChosen,null,$type,true), ''];
         $returnArray[1] = $this->isTwoAddressees ? $this->checkMissingChosen($pageArray,$missingChosenParticipants,null,$type.'TypeParticipants',true,self::chosen.'2') : '';
         $otherDescriptionTrans = $missingDescription.'Other';
@@ -1735,7 +1745,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $checkBoth if true, both directions of the dependency are checked, otherwise only the not applicable -> no personal data direction
      * @return void
      */
-    private function checkResponsibilityTransfer(string $responsibility, string $transferOutside, bool $hasPersonal, bool $allPersonalAnswered = true, bool $checkBoth = false): void {
+    private function checkResponsibilityTransfer(string $responsibility, string $transferOutside, bool $hasPersonal, bool $allPersonalAnswered = true, bool $checkBoth = false): void
+    {
         // responsibility/transferOutside not applicable <-> no personal data
         $translationPrefix = self::projectdetailsPrefix.self::privacyNode.'.further.';
         foreach ([self::responsibilityNode => $responsibility, self::transferOutsideNode => $transferOutside] as $type => $selection) {
@@ -1743,8 +1754,7 @@ class CheckDocClass extends ControllerAbstract
             $isNotApplicable = $selection===self::privacyNotApplicable;
             if ($isNotApplicable && $allPersonalAnswered && $hasPersonal) {
                 $this->addCheckLabelString($translationPrefix.$type.'ToPersonal');
-            }
-            elseif ($checkBoth && $allPersonalAnswered && !$hasPersonal && $isAnswered && !$isNotApplicable) {
+            } elseif ($checkBoth && $allPersonalAnswered && !$hasPersonal && $isAnswered && !$isNotApplicable) {
                 $this->addCheckLabelString($translationPrefix.'personalTo'.$type);
             }
         }
@@ -1757,7 +1767,8 @@ class CheckDocClass extends ControllerAbstract
      * @param string $type must equal 'applicant' or 'supervisor
      * @return void
      */
-    private function checkApplicantSupervisor(array $pageArray, string $type): void {
+    private function checkApplicantSupervisor(array $pageArray, string $type): void
+    {
         $applicant = $pageArray[$type];
         $translationPrefix = self::appDataPrefix.self::coreDataNode.'.';
         $parameters = ['type' => $type];
@@ -1790,7 +1801,8 @@ class CheckDocClass extends ControllerAbstract
      * @param array $params parameters for the translation
      * @return void
      */
-    private function checkBurdensRisksCompensation(array $pageArray, string $type, array $params): void {
+    private function checkBurdensRisksCompensation(array $pageArray, string $type, array $params): void
+    {
         $compensation = $pageArray[self::burdensRisksCompensationNode];
         $compensationString = self::projectdetailsPrefix.self::burdensRisksNode.'.compensation';
         $typePrefix = $type.'Compensation';
@@ -1807,7 +1819,8 @@ class CheckDocClass extends ControllerAbstract
      * @param array $purposeParam translation parameters
      * @return void
      */
-    private function checkAccess(array $pageArray, string $purposeNameWoPrefix, array $purposeParam): void {
+    private function checkAccess(array $pageArray, string $purposeNameWoPrefix, array $purposeParam): void
+    {
         $privacyPrefix = 'checkDoc.projectdetails.pages.dataPrivacy.';
         $accessPrefix = $privacyPrefix.self::accessNode.'.';
         if ($this->checkMissingChildrenOther($pageArray, self::accessNode, $accessPrefix.'missing', array_combine($this->prefixArray(self::accessOthers, $purposeNameWoPrefix), $this->prefixArray(self::accessOthers, $accessPrefix)), $purposeParam,hash: self::accessNode.$purposeNameWoPrefix)) {
@@ -1828,8 +1841,7 @@ class CheckDocClass extends ControllerAbstract
                     // order processing known
                     if ($chosen==='0') {
                         $this->checkMissingContent($accessQuestions,[self::orderProcessingKnownNode => $privacyPrefix.self::orderProcessingKnownNode],parameter: $typeParam,hash: $this->addDiv($accessKey.self::orderProcessingKnownNode));
-                    }
-                    elseif (in_array($accessWoPrefix,$accessYes) && $chosen==='1') { // if external, order processing must be answered with 'yes'
+                    } elseif (in_array($accessWoPrefix,$accessYes) && $chosen==='1') { // if external, order processing must be answered with 'yes'
                         $this->addCheckLabelString($tempPrefix.'externalService',parameters: $typeParam);
                     }
                 }
@@ -1852,7 +1864,8 @@ class CheckDocClass extends ControllerAbstract
      * @param array $parameters parameters for the translation keys
      * @return int|string the value of the 'chosen' element if it is a number or a string, otherwise \$maxVal if not null
      */
-    private function checkMissingTextfield(array $element, ?int $maxVal, int|string $selected, string $chosenDescription, string $hash, string $description = '', string $hashDescription = '', bool $addDescription = false, string $descriptionKey = self::descriptionNode, array $parameters = []): int|string {
+    private function checkMissingTextfield(array $element, ?int $maxVal, int|string $selected, string $chosenDescription, string $hash, string $description = '', string $hashDescription = '', bool $addDescription = false, string $descriptionKey = self::descriptionNode, array $parameters = []): int|string
+    {
         $curSel = $this->checkMissingChosen($element,$chosenDescription,$maxVal,$hash,true,parameters: $parameters);
         if ($curSel===$selected) {
             $this->checkMissingContent($element,[$descriptionKey => $description],$addDescription,parameter: $parameters,hash: $hashDescription!=='' ? $hashDescription : $this->addDiv($hash,true,false));
@@ -1872,7 +1885,8 @@ class CheckDocClass extends ControllerAbstract
      * @param array $parameters parameters for the translation
      * @return string the value of the 'chosen' element
      */
-    private function checkMissingTextfieldEmpty(array $element, string $chosenDescription, string $description, string $hash, bool $addDescription = true, string $chosenKey = self::chosen, string $descriptionKey = self::descriptionNode, string $hashDescription = '', array $parameters = []): string {
+    private function checkMissingTextfieldEmpty(array $element, string $chosenDescription, string $description, string $hash, bool $addDescription = true, string $chosenKey = self::chosen, string $descriptionKey = self::descriptionNode, string $hashDescription = '', array $parameters = []): string
+    {
         $chosen = $this->checkMissingChosen($element,$chosenDescription,null,$hash,name: $chosenKey,parameters: $parameters);
         if ($chosen!=='') {
             $this->checkMissingContent($element,[$descriptionKey => $description],$addDescription,parameter: $parameters,hash: $hashDescription!=='' ? $hashDescription : $this->addDiv($hash,true,false));
@@ -1890,7 +1904,8 @@ class CheckDocClass extends ControllerAbstract
      * @param string $hash id of element to be linked to for the checkMissingChildren() call. If empty, $key will be used
      * @return bool true if the element has children, false otherwise
      */
-    private function checkMissingChildrenOther(array $element, string $key, string $message, array $other = [], array $params = [], bool $addDescription = true, string $hash  = ''): bool {
+    private function checkMissingChildrenOther(array $element, string $key, string $message, array $other = [], array $params = [], bool $addDescription = true, string $hash  = ''): bool
+    {
         $returnBool = $this->checkMissingChildren($element,$key,$message,$params,$hash);
         if ($returnBool && $other!==[]) {
             $children = $element[$key];
@@ -1912,7 +1927,8 @@ class CheckDocClass extends ControllerAbstract
      * @param string $hash id of element to be linked to. If empty, $key will be used
      * @return bool true if the element has children, false otherwise
      */
-    private function checkMissingChildren(array $element, string $key, string $message, array $parameters = [], string $hash = ''): bool {
+    private function checkMissingChildren(array $element, string $key, string $message, array $parameters = [], string $hash = ''): bool
+    {
         if ($element[$key]==='') {
             $this->addCheckLabelString($this->translateString($message,$parameters).$this->translateString(self::missingPrefix.'multiple'),$hash!== '' ? $hash : $key,colorRed: false);
             return false;
@@ -1931,7 +1947,8 @@ class CheckDocClass extends ControllerAbstract
      * @param string $lineTitle string that is added at the beginning of the error message. Must be translated. May only be used if \$addPrefix is false
      * @return int|string the value of the array element if it is a number in the range, \$maxVal otherwise. If \$maxVal is null, the value as a string
      */
-    private function checkMissingChosen(array $element, string $question, ?int $maxVal, string $hash, bool $addPrefix = false, string $name = self::chosen, array $parameters = [], string $lineTitle = ''): int|string {
+    private function checkMissingChosen(array $element, string $question, ?int $maxVal, string $hash, bool $addPrefix = false, string $name = self::chosen, array $parameters = [], string $lineTitle = ''): int|string
+    {
         $curVal = $element[$name] ?? '';
         $curValAsInt = (int)($curVal); // if $curVal is a string, 0 is returned
         $returnVal = $curValAsInt;
@@ -1949,7 +1966,8 @@ class CheckDocClass extends ControllerAbstract
     /** Creates the hint saying that inputs for project start and/or funding are missing.
      * @return string hint
      */
-    private function getReviewMissing(): string {
+    private function getReviewMissing(): string
+    {
         $projectStartArray = $this->coreDataArray[self::projectStart];
         $fundingArray = $this->coreDataArray[self::funding];
         $isFunding = false;
@@ -1988,7 +2006,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $addHash if true, a link will be added
      * @return void
      */
-    private function checkMissingContent(array $element, array $inArray, bool $addDescription = false, string $default = '', string $lineTitle = '', array $parameter = [], string $hash = '', bool $addHash = true): void {
+    private function checkMissingContent(array $element, array $inArray, bool $addDescription = false, string $default = '', string $lineTitle = '', array $parameter = [], string $hash = '', bool $addHash = true): void
+    {
         $missingString = '';
         $countMissing = 0;
         $firstMissing = '';
@@ -2016,7 +2035,8 @@ class CheckDocClass extends ControllerAbstract
      * @param string $title title to add. Must be a valid key in the translation file
      * @return void
      */
-    private function addTitle(string $title): void {
+    private function addTitle(string $title): void
+    {
         $translated = $this->translateString($title);
         $this->curWindow = $translated;
         $this->checkLabel .= $translated.":\n\n";
@@ -2028,7 +2048,8 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be added above the errors
      * @return void
      */
-    private function addAppDataTitle(string $subPage, bool $setTitle = true): void {
+    private function addAppDataTitle(string $subPage, bool $setTitle = true): void
+    {
         $this->linkedPage = $this->addPageHash ? $subPage : '';
         if ($setTitle) {
             $this->curPage = $this->curWindow.' - '.$this->translateString(self::appDataPrefix.'title', ['page' => $subPage, 'title' => $this->translateString('pages.appData.'.$subPage)])."\n";
@@ -2043,15 +2064,15 @@ class CheckDocClass extends ControllerAbstract
      * @param string|null $subPage which heading to add. Must equal 'study', 'group' or 'measureTimePoint'. Null if $pageName is empty.
      * @return void
      */
-    private function addProjectdetailsTitle(string $pageName = '', bool $setTitle = true, ?string $subPage = null): void {
+    private function addProjectdetailsTitle(string $pageName = '', bool $setTitle = true, ?string $subPage = null): void
+    {
         if ($setTitle) {
             if ($pageName!=='') {
                 $this->linkedPage = $this->addPageHash ? $pageName : '';
                 $this->curPage = $this->curSubPageHeading.$this->convertStringToLink($this->translateString('pages.projectdetails.'.$pageName), $pageName, $this->routeIDs[self::routeIDs]).':';
                 $this->checkLabel .= $this->curPage."\n";
                 $this->anyMissing = false;
-            }
-            elseif ($subPage===self::measureTimePointNode) {
+            } elseif ($subPage===self::measureTimePointNode) {
                 $isOneStudy = $this->isOne[self::studyNode];
                 $studyName = $this->studyGroupName[self::studyNode];
                 $groupName = $this->studyGroupName[self::groupNode];
@@ -2069,14 +2090,14 @@ class CheckDocClass extends ControllerAbstract
      * @param string|null $subPage which heading to remove if there is no error. Must equal 'study', 'group', or 'measureTimePoint'. Null if errors on a single page are checked
      * @return void
      */
-    private function setProjectdetailsTitle(bool $setTitle = true, ?string $subPage = null): void {
+    private function setProjectdetailsTitle(bool $setTitle = true, ?string $subPage = null): void
+    {
         if ($setTitle) {
             if ($subPage===null) {
                 if ($this->anyMissing) {
                     $this->anyWindowMissing = true;
                     $this->checkLabel .= "\n";
-                }
-                else {
+                } else {
                     $this->checkLabel = str_replace($this->curPage."\n", '', $this->checkLabel);
                 }
             }
@@ -2087,13 +2108,13 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $setTitle if true, the page title will be checked
      * @return void
      */
-    private function setAppDataTitle(bool $setTitle = true): void {
+    private function setAppDataTitle(bool $setTitle = true): void
+    {
         if ($setTitle) {
             if ($this->anyMissing) {
                 $this->checkLabel .= "\n";
                 $this->anyWindowMissing = true;
-            }
-            else {
+            } else {
                 $this->checkLabel = str_replace($this->curPage, '', $this->checkLabel);
             }
         }
@@ -2102,7 +2123,8 @@ class CheckDocClass extends ControllerAbstract
     /** Checks if there is an error on any page of the current group by checking \$anyWindowMissing and if not, the heading from \$checkLabel is removed.
      * @return void
      */
-    private function setTitle(): void {
+    private function setTitle(): void
+    {
         if (!$this->anyWindowMissing) {
             $this->checkLabel = trim(str_replace($this->curWindow.":\n",'',$this->checkLabel))."\n\n";
         }
@@ -2113,7 +2135,8 @@ class CheckDocClass extends ControllerAbstract
     /** Adds the error message that the wrong review process is selected to $checkLabel.
      * @return void
      */
-    private function addReviewProcessError(): void {
+    private function addReviewProcessError(): void
+    {
         $tempVal = $this->checkLabel;
         $this->checkLabel = '';
         $this->addCheckLabelString('checkDoc.'.self::reviewProcess,parameters: ['isFull' => $this->getStringFromBool(str_contains($this->reviewProcess,self::reviewProcessFull))]);
@@ -2127,11 +2150,12 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $colorRed if true, a span with color style red will be added around the string. May only be used if the resulting string contains the entire message for this line. Additionally, $anyError will be set to true
      * @return void
      */
-    private function addCheckLabelString(string $label, string $hash = '', array $parameters = [], bool $colorRed = true): void {
+    private function addCheckLabelString(string $label, string $hash = '', array $parameters = [], bool $colorRed = true): void
+    {
         $hasHash = $hash!=='';
         $labelTrans = ucfirst($this->translateString($label,$parameters));
         $label = ($colorRed ? '<span style="color: red">' : '').
-            ($hasHash ? ($this->addPageHash ? $this->convertStringToLink($labelTrans,$this->linkedPage,$this->routeIDs[self::routeIDs] ?? '',$hash,true) : '<a href="'.$this->linkedPage.'#'.$hash.'" style="color: inherit">'.$labelTrans.'</a>') : $labelTrans).
+            ($hasHash ? ($this->addPageHash ? $this->convertStringToLink($labelTrans,$this->linkedPage,$this->routeIDs[self::routeIDs] ?? '',$hash) : '<a class="linkInternal" href="'.$this->linkedPage.'#'.$hash.'">'.$labelTrans.'</a>') : $labelTrans).
             ($colorRed ? '</span>' : '');
         $this->checkLabel .= "<li>".ucfirst($label)."</li>";
         $this->anyMissing = true;

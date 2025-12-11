@@ -3,7 +3,7 @@
 
 {% block content %}
     {% set translationPrefix, groupsController = 'projectdetails.pages.groups.', 'Projectdetails--groups' %}
-    {% set hintPrefix, examinedPrefix = translationPrefix~'hints.', translationPrefix~'examined.' %}
+    {% set examinedPrefix = translationPrefix~'examined.' %}
     <div {{ stimulus_controller(groupsController,{
             'wardsHint': textInput,
             'examined': examined,
@@ -13,7 +13,7 @@
             'firstIncludeSentence': (content.includeText.vars.value ?? '')|trim|split("\n")[0]
     }) }}>
         <div id="examinedPeopleDiv">
-            {{ formRender.addHeading(examinedPrefix~'title',{'headingHint': [[hintPrefix~'examined']]}) }}
+            {{ formRender.addHeading(examinedPrefix~'title',{'headingHint': [[examinedPrefix~'headingHint']]}) }}
             {# age #}
             {% set unlimited = content.unlimited %}
             <div {{ stimulus_action(groupsController,'setExamined','change') }}>
@@ -64,7 +64,7 @@
         {% if content.include is defined %} {# either both include and exclude or neither exist #}
             {% set addresseeParam, tempPrefix, classes, criteriaTransfer = {'addressee': addresseeType, 'information': information}, translationPrefix~'criteria.', 'MetaData-Label mt-4', [information in ['pre',''] ? transferInfo : [''],''] %}
             <div class="mt-8" id="criteria" {{ stimulus_action(groupsController,'setCriteria','input') }}>
-                <div {{ stimulus_target(groupsController,'criteriaHint') }}>{{ formRender.addHeading(tempPrefix~'title',{'headingHint': [['multiple.wording',addresseeParam]]}) }}</div>
+                <div {{ stimulus_target(groupsController,'criteriaHint') }}>{{ formRender.addHeading(tempPrefix~'title',{'headingHint': [['multiple.wording',addresseeParam]]}) }}</div> {# heading hint italic to be different from the start of the following sentence #}
                 {% for type in ['include','exclude'] %}
                     {% set textField, prefix, isInclude = content[type~'Text'], tempPrefix~type~'.', type is same as 'include' %}
                     <div class="{{ classes }}" id="{{ type~'Start' }}" style="margin-bottom: -1rem" {% if isInclude %} {{ stimulus_target(groupsController,'includeStart') }} {% endif %}>{{ (prefix~'start')|trans(addresseeParam) }}</div>

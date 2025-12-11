@@ -11,7 +11,8 @@ class NewFormType extends TypeAbstract
 {
     use PageTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $committeTypes = array_flip(self::committeeTypes);
         foreach ($committeTypes as $type => $translation) {
             $committeTypes[$type] = $this->translateString($translation).(in_array($type,self::committeeTypesBeta) ? ' (Beta)' : '');

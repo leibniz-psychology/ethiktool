@@ -13,7 +13,8 @@ class CheckDocController extends ControllerAbstract
 {
     /** @throws Exception if the document check fails */
     #[Route('/checkDoc', name: 'app_checkDoc')]
-    public function showCheckDoc(Request $request): Response {
+    public function showCheckDoc(Request $request): Response
+    {
         $appNode = $this->getXMLfromSession($request->getSession());
         if (!$appNode) { // page was opened before a proposal was created/loaded
             return $this->redirectToRoute('app_main');

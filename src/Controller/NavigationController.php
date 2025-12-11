@@ -16,7 +16,8 @@ class NavigationController extends ControllerAbstract
     use ProjectdetailsTrait; // for route parameter
 
     /** @throws Exception if the document check fails */
-    public function showNavigation(Request $request): Response {
+    public function showNavigation(Request $request): Response
+    {
         $windows = [self::appDataNodeName => '', self::contributorsNodeName => '', self::projectdetailsNodeName => ''];
         $session = $request->getSession();
         $hasDoc = $session->has(self::docName);
@@ -40,8 +41,7 @@ class NavigationController extends ControllerAbstract
                 $projectDetailsArray[$studyIndex][self::subPages] = $studyArray;
             }
             $windows[self::projectdetailsNodeName] = [[self::label => $this->translateString('pages.projectdetails.title'), self::route => 'app_landing', self::subPages => $projectDetailsArray, self::error => CheckDocClass::getDocumentCheck($request,self::projectdetailsNodeName)]];
-        }
-        else {
+        } else {
             foreach ($windows as $page => $value) {
                 $isNotContributors = $page!==self::contributorsNodeName;
                 $windows[$page] = [[self::label => $this->translateString('pages.'.lcfirst($page).($isNotContributors ? '.title' : '.contributors')), self::route => '']];
@@ -74,14 +74,14 @@ class NavigationController extends ControllerAbstract
      * @param array|string $windows array to be checked
      * @return bool true if an 'error' key exists and is true, false otherwise
      */
-    private function checkAnyError(array|string $windows): bool {
+    private function checkAnyError(array|string $windows): bool
+    {
         if (!is_array($windows)) {
             return false;
         }
         if (array_key_exists(self::error,$windows)) {
             return $windows[self::error] ?: (array_key_exists(self::subPages, $windows) && $this->checkAnyError($windows[self::subPages]));
-        }
-        else {
+        } else {
             foreach ($windows as $page) {
                 if ($this->checkAnyError($page)) {
                     return true;

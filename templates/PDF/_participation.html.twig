@@ -25,7 +25,7 @@
         {% endif %}
         {# introduction #}
         <div style="margin-bottom: 1.5rem;">
-            <div class="{{ textPreview }}" style="{{ style }}">{{ intro[0]|raw }}</div>
+            <div class="{{ textPreview }}" style="{{ style }}">{{ intro[0]|raw|nl2br }}</div>
             <div class="{{ textPreview }}" style="{{ topMargin }}">{{ leaderHeading|raw }} {{ intro[1]|raw }}</div>
             {% for text in intro|slice(2) %}
                 <div class="{{ textPreview }}" style="{{ topMargin }}">{{ text|raw }}</div>

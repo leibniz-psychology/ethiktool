@@ -44,8 +44,7 @@ export default class extends Controller {
                 if (isStudent) {
                     allowedPositions[this.studentChoiceValue] = this.positionsValue[this.studentChoiceValue];
                 }
-            }
-            else {
+            } else {
                 if (isSupervisor || isApplicant && !isStudent) { // applicant and supervisor must not be student
                     delete allowedPositions[this.studentChoiceValue];
                 }
@@ -74,8 +73,7 @@ export default class extends Controller {
                     if (curInfo==='position' && curValue!=='' && (curValue===positionOtherTextName || !positionsKeys.includes(curValue))) { // 'other position'
                         this.positionTarget.value = this.positionOtherValue;
                         this.positionOtherTarget.value = curValue;
-                    }
-                    else if (curValue!==undefined) { // phone may be optional
+                    } else if (curValue!==undefined) { // phone may be optional
                         document.getElementById(curInfo).value = curValue;
                     }
                 }
@@ -84,8 +82,7 @@ export default class extends Controller {
                     document.getElementById(task).checked = tasks[task]!==undefined;
                 }
                 this.taskOtherDescriptionTarget.value = this.taskOtherTarget.checked ? tasks['other'] : '';
-            }
-            else {
+            } else {
                 this.idValue = this.contributorsValue.length;
             }
             this.modalLabelTarget.textContent = this.titleValue[isAdd ? 0 : 1];
@@ -161,17 +158,14 @@ export default class extends Controller {
             if (info==='name') {
                 tempVal = value.split(' ').length===1;
                 setElementVisibility(this.nameErrorTarget,value!=='' && tempVal,1);
-            }
-            else if (info==='eMail') {
+            } else if (info==='eMail') {
                 // local: start with letter, then any number of any character except §ß`"()\€[]. domain: start with letter, then any number of letters and digits, then a dot, than only letters, but at least two
                 tempVal = !this.getInputValidityEmpty(value,/^[a-zA-Z]+[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]*@[a-zA-Z]+[a-zA-Z0-9-.]*[.][a-zA-Z]{2,}$/);
                 setElementVisibility(this.eMailErrorTarget,tempVal,1);
-            }
-            else if (isPhone) {
+            } else if (isPhone) {
                 tempVal = !this.getInputValidityEmpty(value,/^\+?([0-9][\s\/-]?)+[0-9]+$/); // optionally starting with a '+', then at least two numbers. After each number (except the last), optionally a separator space, '/', or '-'
                 setElementVisibility(this.phoneErrorTarget,tempVal,1);
-            }
-            else if (info==='position' && value===this.positionOtherValue) {
+            } else if (info==='position' && value===this.positionOtherValue) {
                 tempVal = this.positionOtherTarget.value.trim()==='';
             }
             disabled |= tempVal;

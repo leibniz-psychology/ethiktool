@@ -81,8 +81,7 @@ export default class extends Controller {
             let value = target.value;
             if (id.includes(this.secondString)) {
                 this.markingSecondValue = value;
-            }
-            else {
+            } else {
                 this.markingValue = value;
             }
             // set visibility of privacy questions
@@ -110,8 +109,7 @@ export default class extends Controller {
         let value = event.target.value;
         if (event.target.id.includes(this.secondString)) {
             this.internalSecondValue = value;
-        }
-        else {
+        } else {
             this.internalValue = value;
         }
         this.setList();
@@ -124,8 +122,7 @@ export default class extends Controller {
         let value = event.target.value;
         if (event.target.id.includes(this.secondString)) {
             this.externalSecondValue = value;
-        }
-        else {
+        } else {
             this.externalValue = value;
         }
         this.setList();
@@ -138,8 +135,7 @@ export default class extends Controller {
         let value = event.target.value;
         if (event.target.id.includes(this.secondString)) {
             this.patternSecondValue = value;
-        }
-        else {
+        } else {
             this.patternValue = value;
         }
         this.setList();
@@ -152,8 +148,7 @@ export default class extends Controller {
         let value = event.target.value;
         if (event.target.id.includes(this.secondString)) {
             this.ownSecondValue = value;
-        }
-        else {
+        } else {
             this.ownValue = value;
         }
         this.setList();
@@ -166,8 +161,7 @@ export default class extends Controller {
         let value = event.target.value;
         if (event.target.id.includes(this.secondString)) {
             this.contributorsSecondValue = value;
-        }
-        else {
+        } else {
             this.contributorsValue = value;
         }
         this.setList();
@@ -191,7 +185,7 @@ export default class extends Controller {
             let isChecked = target.checked;
             let contributorsID = purpose+'contributors';
             if ([purpose+'contributorsPart',purpose+'institution'].includes(id)) {
-                setElementVisibility(id+'Text',isChecked);
+                setElementVisibility(id+'Text',isChecked,1);
             }
             // enable/disable first two options
             let contributors = document.getElementById(contributorsID);
@@ -223,13 +217,11 @@ export default class extends Controller {
             isResponsibility = target.id.includes('responsibility');
             if (isResponsibility) {
                 this.responsibilityValue = value;
-            }
-            else {
+            } else {
                 this.transferOutsideValue = value;
             }
             setElementVisibility(isResponsibility ? this.responsibilityHintTarget: this.transferOutsideHintTarget,isResponsibility ? this.responsibilityValues.includes(this.responsibilityValue) : this.transferOutsideValue==='yes');
-        }
-        else { // on connect
+        } else { // on connect
             setElementVisibility(this.responsibilityHintTarget,this.responsibilityValues.includes(this.responsibilityValue));
             setElementVisibility(this.transferOutsideHintTarget,this.transferOutsideValue==='yes');
         }
@@ -250,11 +242,19 @@ export default class extends Controller {
     setMarkingHints() {
         for (let [type, markingValue] of (Object.entries({'marking': this.markingValue, 'markingSecond': this.markingSecondValue}))) {
             let isExternal = markingValue===this.externalString;
-            let isText = isExternal || markingValue===this.nameString;
             let description = document.getElementById(type+'DescriptionDiv');
-            setElementVisibility(description,isText);
-            setElementVisibility(description.lastElementChild.lastElementChild,isText && isExternal); // pdf symbol. Text field must have been created with addTextfield()
-            setHint(description.firstElementChild,this.markingHintsValue[isExternal ? 0 : 1]);
+            setElementVisibility(description,isExternal || markingValue===this.nameString);
+            description = description.firstElementChild; // 'namely'
+            setElementVisibility(description,isExternal);
+            description = description.nextElementSibling // hint above text field;
+            setHint(description,this.markingHintsValue[isExternal ? 0 : 1]); // hint above text field
+            description = description.firstElementChild; // span element of hint
+            let hasHintClass = description.classList.contains('hint');
+            if (isExternal && !hasHintClass) {
+                description.classList.add('hint');
+            } else if (!isExternal && hasHintClass) {
+                description.classList.remove('hint');
+            }
         }
     }
 

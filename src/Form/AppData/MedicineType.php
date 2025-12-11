@@ -11,7 +11,8 @@ class MedicineType extends TypeAbstract
 {
     use AppDataTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $this->addBinaryRadio($builder,self::medicine, 'medicine.medicine.heading',self::medicine.self::descriptionCap);
         $translationPrefix = 'medicine.physician.';
         $this->addBinaryRadio($builder,self::physicianNode,$translationPrefix.'title');
@@ -22,7 +23,8 @@ class MedicineType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         $this->setChosenArray($forms,$viewData,self::medicine,[self::descriptionNode => self::medicine.self::descriptionCap]);
         $tempArray = $viewData[self::physicianNode];
@@ -32,7 +34,8 @@ class MedicineType extends TypeAbstract
         $forms[self::descriptionNode]->setData($this->getArrayValue($tempArray,self::descriptionNode));
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         $viewData[self::medicine] = $this->getChosenArray($forms,self::medicine,0,[self::descriptionNode => self::medicine.self::descriptionCap]);
         $chosen = $forms[self::physicianNode]->getData();

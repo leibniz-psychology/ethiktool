@@ -11,7 +11,8 @@ class LegalType extends TypeAbstract
 {
     use ProjectdetailsTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $dummyParams = $options[self::dummyParams];
         $isReceipt = $dummyParams['isReceipt'];
         foreach ($dummyParams['legalKeys'] as $type) {
@@ -21,14 +22,16 @@ class LegalType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         foreach (self::legalTypes as $type) {
             $this->setChosenArray($forms,$viewData,$type,[self::descriptionNode => $this->appendText($type)]);
         }
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         foreach (self::legalTypes as $type) {
             if (array_key_exists($type,$viewData)) {

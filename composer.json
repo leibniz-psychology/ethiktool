@@ -12,6 +12,7 @@
         "ext-simplexml": "*",
         "ext-zip": "^1.21",
         "doctrine/orm": "^2.15",
+        "gravitymedia/ghostscript": "v2.4",
         "knplabs/knp-snappy-bundle": "^1.10",
         "symfony/asset": "6.3.*",
         "symfony/console": "6.3.*",

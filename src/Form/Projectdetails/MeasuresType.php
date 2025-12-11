@@ -11,7 +11,8 @@ class MeasuresType extends TypeAbstract
 {
     use ProjectdetailsTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $translationPrefix = 'projectdetails.pages.measures.';
         // procedure
         $tempPrefix = $translationPrefix.self::procedureNode.'.';
@@ -47,7 +48,8 @@ class MeasuresType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         // procedure
         if (array_key_exists(self::procedureNode,$forms)) {
@@ -83,7 +85,8 @@ class MeasuresType extends TypeAbstract
         $this->setSpinner($forms,$viewData[self::durationNode],self::durationTypes);
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         $newData = [];
         // procedure

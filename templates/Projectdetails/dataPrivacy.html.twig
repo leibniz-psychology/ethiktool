@@ -7,8 +7,8 @@
     {% if hasCreate %}
         {% set privacyController, dataPersonal, storage, addresseeParam, markingFurther = 'Projectdetails--privacy', content.dataPersonal, content.storage, {'addressee': addresseeType}, content.markingFurther %}
         {% set createValue, dataResearchPrefix, markingPrefix, markingRemovePrefix, markingFirstValue, markingFurtherValue, noResponsibilityHint, storageValue = create.vars.value, translationPrefix~'dataResearch.', translationPrefix~'marking.', translationPrefix~'markingRemove.', content.marking.vars.value, markingFurther.vars.value, translationPrefix~'responsibility.hints.noHint', storage.vars.value %}
-        {% set dataOnline, dataOnlineProcessing, addPDFparam = content.dataOnline ?? null, content.dataOnlineProcessing ?? null, {'addPDF': boolToString(reviewProcess in ['fullDocs','shortDocs'])} %}
-        {% set isDataOnline, markingHintsPrefix, laterEnd, divParam, transferParam, labelParamsCommittee = dataOnline is not same as null, markingPrefix~'hints.', markingRemovePrefix~'laterEnd', {'addDiv': ['']}, {'transfer': [transferData,addresseeType]}, {'labelParams': committeeParams} %}
+        {% set dataOnline, dataOnlineProcessing, addPDFparam, transferArray = content.dataOnline ?? null, content.dataOnlineProcessing ?? null, {'addPDF': boolToString(reviewProcess in ['fullDocs','shortDocs'])}, [transferData,addresseeType] %}
+        {% set isDataOnline, markingHintsPrefix, laterEnd, divParam, transferParam, labelParamsCommittee, transferOtherParam = dataOnline is not same as null, markingPrefix~'hints.', markingRemovePrefix~'laterEnd', {'addDiv': ['']}, {'transfer': transferArray}, {'labelParams': committeeParams}, {'transferOther': transferArray} %}
         {% set descriptionHintsPrefix, anonymizationTypesWoNo = markingHintsPrefix~'textHint', anonymizationTypes|slice(0,(anonymizationTypes|length)-1) %}
         {% set descriptionHints, labelParams = [(descriptionHintsPrefix~'External')|trans,(descriptionHintsPrefix~'MarkingName')|trans], {'labelParams': addresseeParam} %}
     {% endif %}
@@ -144,7 +144,7 @@
                                     {% endif %}
                                     <div {% if isFirst %} class="mt-2" {% endif %} {{ stimulus_action(privacyController,'setMarking','change') }}> {# correct hint for text field is set in controller #}
                                         {{ formRender.renderButtons(marking,noHeading|merge({
-                                            'text': [description,transferParam|merge(fontNormal)|merge({'hint': descriptionHints[0]})],
+                                            'text': [description,transferParam|merge({'hint': descriptionHints[0], 'addNamely': 'true'})],
                                             'stimVisible': {'values': [[externalNameArray,description.vars.name~'Div'],['external',externalDiv],['internal',internalDiv]]|merge(isFirst ? [['other',otherDiv],[furtherValues,furtherDiv]] : [])},
                                             'icons': {(markingString~'external'): externalIcon, (markingString~'internal'): internalIcon, (markingString~'no'): noIcon}})) }}
                                     </div>
@@ -183,7 +183,7 @@
                             {# list #}
                             <div class="mt-8" id="list" {{ stimulus_target(privacyController,'listDiv') }}>
                                 {{ formRender.addHeading(translationPrefix~'list.title') }}
-                                {{ formRender.addCheckboxGroup(content,listTypes,divParam|merge({'other': ['listOther']})) }}
+                                {{ formRender.addCheckboxGroup(content,listTypes,divParam|merge(transferOtherParam)|merge({'other': ['listOther']})) }}
                             </div>
                             {# data research #}
                             {% set tempPrefix = dataResearchPrefix~'hints.dataSpecial.' %}
@@ -203,7 +203,7 @@
                                                 {{ formRender.addCheckbox(widget,checkbox in iconKeys ? {'checkIcon': [dataResearchIcons[checkbox]]} : {}) }}
                                             </div>
                                             {% if isTextfield %}
-                                                <div class="MetaData-Widget" id="{{ description.vars.name }}" style="{{ boolToDisplay(widget.vars.checked,1) }}; grid-template-columns: auto min-content">{{ form_widget(description) }}{{ formRender.addPDFhint(transferData,addresseeType) }}</div>
+                                                <div class="MetaData-Widget" id="{{ description.vars.name }}" style="{{ boolToDisplay(widget.vars.checked,1) }}; grid-template-columns: auto min-content">{{ form_widget(description,{'attr': addClass('markInput')}) }}{{ formRender.addPDFhint(transferData,addresseeType) }}</div>
                                             {% endif %}
                                         {% endfor %}
                                     {% endfor %}
@@ -216,7 +216,7 @@
                                 {{ formRender.addHeading(tempPrefix~'title') }}
                                 <div class="MetaData-Label">{{ (tempPrefix~'start')|trans~'...' }}{{ formRender.addPDFhint(transferData,addresseeType) }}</div>
                                 <div class="MetaData-Widget" {{ stimulus_action('base','setMultiCheckbox','change',{'single': 'anonymizationNo', 'multiCheck': anonymizationTypes|slice(0,(anonymizationTypes|length)-1)})|stimulus_action(privacyController,'setPersonalWidgets','change') }}>
-                                    {{ formRender.addCheckboxGroup(content,anonymizationTypes,{'other': ['anonymizationOther'], 'icons': iconArrayAnonymization, 'contTargets': {'anonymizationNo': [privacyController,'anonymizationNo']}}|merge(isNo or anySelected[1] ? {'targets': isNo ? anonymizationTypesWoNo : ['anonymizationNo']} : {})) }}
+                                    {{ formRender.addCheckboxGroup(content,anonymizationTypes,{'other': ['anonymizationOther'], 'icons': iconArrayAnonymization, 'contTargets': {'anonymizationNo': [privacyController,'anonymizationNo']}}|merge(transferOtherParam)|merge(isNo or anySelected[1] ? {'targets': isNo ? anonymizationTypesWoNo : ['anonymizationNo']} : {})) }}
                                 </div>
                             </div>
                             {# storage #}
@@ -224,7 +224,7 @@
                             <div class="mt-8" id="storage" {{ stimulus_target(privacyController,'storage') }}>
                                 <div {{ stimulus_action(privacyController,'setStorage','change') }}>
                                     {{ formRender.renderButtons(storage,{
-                                        'text': [description,transferParam|merge({'visibility': storageValue is same as 'delete'})],
+                                        'text': [description,transferParam|merge({'visibility': storageValue is same as 'delete', 'addNamely': 'false'})],
                                         'stimVisible': {'values': [['delete',description.vars.name~'Div'],['keep',personalKeepDiv]]},
                                         'icons': {'storagekeep': tempPrefix~'keepHint'}}) }}
                                 </div>
@@ -259,7 +259,7 @@
                             <div class="mt-8" id="accessdataPersonal" {{ stimulus_target(privacyController,'dataPersonalAccess') }}>
                                 {{ formRender.addHeading(accessTitle,accessHeadingParam|merge({'params': {'purpose': purposeDataTrans['dataPersonal']}})) }}
                                 <div class="MetaData-Widget mb-4 mt-2" {{ stimulus_action(privacyController,'setAccess','change',{'purpose': 'dataPersonal'}) }}>
-                                    {{ formRender.addCheckboxGroup(content,accessTypes['dataPersonal'],labelParamsCommittee|merge({
+                                    {{ formRender.addCheckboxGroup(content,accessTypes['dataPersonal'],labelParamsCommittee|merge(transferOtherParam)|merge({
                                         'icons': iconArrayAccess['dataPersonal'],
                                         'other': ['dataPersonalcontributorsPart','dataPersonalinstitution'],
                                         'targets': contributorsVars.checked ? [contributorsPartVars.name] : (contributorsPartVars.checked ? [contributorsVars.name] : [])})) }}
@@ -298,7 +298,7 @@
                                     {% if purpose is not same as 'technical' %}
                                         <div class="mt-8" id="{{ purpose~'purposeData' }}">
                                             {{ formRender.addHeading(translationPrefix~'purposeData.title',purposeParamHeading|merge(purpose is same as 'compensation' ? {'headingHint': [[tempPrefix~'headingHint']]} : {})) }}
-                                            <div class="mt-2">{{ formRender.addCheckboxGroup(content,purposeDataNames[purpose],divParam|merge({'other': [purpose~'purposeDataOther']}),[transferData,addresseeType]) }}</div>
+                                            <div class="mt-2">{{ formRender.addCheckboxGroup(content,purposeDataNames[purpose],divParam|merge(transferOtherParam)|merge({'other': [purpose~'purposeDataOther']}),[transferData,addresseeType]) }}</div>
                                         </div>
                                     {% endif %}
                                     {# marking remove #}
@@ -338,7 +338,7 @@
                                         {{ formRender.addHeading(tempPrefix~'title',purposeParamHeadingGen|merge({'headingHint': [[tempPrefix~'headingHint',purposeParam]]})) }}
                                         <div class="MetaData-Label mt-4">{{ (tempPrefix~'start')|trans({'purpose': ('dataPrivacy.processing.purposeTypes.'~purpose)|trans([],'pdf')})~' ...' }}</div> {# use pdf translation to avoid brackets for technical #}
                                         {{ formRender.renderButtons(personalRemove,noHeading|merge({
-                                            'text': [content[purpose~'personalRemoveDescription'],transferParam|merge({'visibility': value is same as immediately})],
+                                            'text': [content[purpose~'personalRemoveDescription'],transferParam|merge({'visibility': value is same as immediately, 'addNamely': 'false'})],
                                             'stimVisible': {'values': [[immediately,personalRemoveString~'DescriptionDiv'],[keep,descriptionString~'Div']]}
                                         })) }}
                                         {{ formRender.addTextfield(content[descriptionString],transferParam|merge({'visibility': value is same as keep})) }}
@@ -348,7 +348,7 @@
                                     <div class="mt-8" id="{{ 'access'~purpose }}">
                                         {{ formRender.addHeading(accessTitle,accessHeadingParam|merge(purposeParamHeading)) }}
                                         <div class="MetaData-Widget mb-4" {{ stimulus_action(privacyController,'setAccess','change',{'purpose': purpose}) }}>
-                                            {{ formRender.addCheckboxGroup(content,accessTypes[purpose],labelParamsCommittee|merge({
+                                            {{ formRender.addCheckboxGroup(content,accessTypes[purpose],labelParamsCommittee|merge(transferOtherParam)|merge({
                                                 'icons': iconArrayAccess[purpose],
                                                 'other': [purpose~'contributorsPart',purpose~'institution'],
                                                 'targets': contributorsVars.checked ? [contributorsPartVars.name] : (contributorsPartVars.checked ? [contributorsVars.name] : [])})) }}
@@ -364,8 +364,9 @@
                             {% set tempPrefix = translationPrefix~'orderProcessingDescription.' %}
                             <div class="mt-8" id="orderProcessingDescription" {{ stimulus_target(privacyController,'orderProcessingDescription') }}>
                                 {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
+                                {% set tempPrefix = tempPrefix~'text.' %}
                                 {% for textPart in orderProcessingKnownTexts %}
-                                    {{ formRender.addTextfield(content[textPart],transferParam|merge(fontNormal)) }}
+                                    {{ formRender.addTextfield(content[textPart],transferParam|merge({'addNamely': (tempPrefix~textPart)|trans~(textPart is same as 'orderProcessingStart' ? ' ...')})) }}
                                 {% endfor %}
                             </div>
                             {# code compensation #}
@@ -375,11 +376,11 @@
                                 {% set isExternal = value is same as 'codeExternal' %}
                                 <div class="mt-8" id="codeCompensation" {{ stimulus_target(privacyController,'compensationCode') }}>
                                     {{ formRender.renderButtons(compensation,labelParams|merge({
-                                        'text': [content.codeCompensationDescription,transferParam|merge({'visibility': isExternal})],
+                                        'text': [content.codeCompensationDescription,transferParam|merge({'visibility': isExternal, 'addNamely': 'true'})],
                                         'stimVisible': {'values': [['codeExternal',['codeCompensationDescriptionDiv',externalDiv]],['codeInternal',internalDiv]]},
                                         'icons': {'codeCompensationcodeExternal': tempPrefix~'External', 'codeCompensationcodeInternal': tempPrefix~'Internal'}})) }}
                                     {# personal data of code for codeExternal #}
-                                    {{ formRender.renderButtons(content.codeCompensationexternal,{'addDiv': [externalDiv,boolToDisplay(isExternal)]}) }}
+                                    {{ formRender.renderButtons(content.codeCompensationexternal,{'addDiv': [externalDiv,boolToDisplay(isExternal)], 'icons': {'codeCompensationexternalgeneration': codePrefix~'codeExternal.hints.generation'}}) }}
                                     {# code internal #}
                                     {% set internalPrefix, internal = codePrefix~'codeInternal.', content.codeInternal %}
                                     {% set tempPrefix, internalValue = internalPrefix~'hints.', internal.vars.value %}
@@ -390,8 +391,9 @@
                                         {# personal data of code for codeInternal #}
                                         {% for type in ['pattern','contributors'] %}
                                             {{ formRender.renderButtons(content['codeCompensation'~type], labelParams|merge({
-                                                'addDiv': ['code'~type~'Div',boolToDisplay(internalValue is same as type)]})|
-                                                merge(type is same as 'pattern' ? {'icons': {'codeCompensationpatterngeneration': internalPrefix~'pattern.hints.generation'}} : {})) }}
+                                                'addDiv': ['code'~type~'Div',boolToDisplay(internalValue is same as type)],
+                                                'icons': {('codeCompensation'~type~'generation'): internalPrefix~type~'.hints.generation'}})
+                                                ) }}
                                         {% endfor %}
                                     </div>
                                 </div>

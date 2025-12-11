@@ -37,19 +37,23 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
 
     // functions
 
-    public static function getReviewProcess(): string {
+    public static function getReviewProcess(): string
+    {
         return self::$reviewProcess;
     }
 
-    public static function setReviewProcess(string $reviewProcess): void {
+    public static function setReviewProcess(string $reviewProcess): void
+    {
         self::$reviewProcess = $reviewProcess;
     }
 
-    public static function getPage(): string {
+    public static function getPage(): string
+    {
         return self::$page;
     }
 
-    public static function setPage(string $page): void {
+    public static function setPage(string $page): void
+    {
         self::$page = $page;
     }
 
@@ -60,7 +64,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $exclusive if provided and the respective key in $forms is selected, no further keys are checked
      * @return array keys: all values in \$keys which exist in \$forms, values: empty strings except the key \$otherID, if selected
      */
-    protected function getSelectedCheckboxes(array $forms, array $keys, array $otherIDs = [], string $exclusive = ''): array {
+    protected function getSelectedCheckboxes(array $forms, array $keys, array $otherIDs = [], string $exclusive = ''): array
+    {
         $returnArray = [];
         foreach ($keys as $key) {
             if ($this->getFormData($forms,$key,false)) { // checkbox was selected
@@ -81,7 +86,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param bool $useKeys if true, then the keys in \$furtherElements are used as keys for the further elements in the array, otherwise the values in $furtherElements are used as keys
      * @return array array with a 'chosen' keys and eventually further keys
      */
-    protected function getChosenArray(array $forms, string $chosenKey, int|string|array|null $selection, array $furtherElements, bool $useKeys = true): array {
+    protected function getChosenArray(array $forms, string $chosenKey, int|string|array|null $selection, array $furtherElements, bool $useKeys = true): array
+    {
         $chosen = $forms[$chosenKey]->getData();
         $returnArray = ['chosen' => $chosen];
         if ($selection===null || $chosen!==null &&  in_array($chosen,is_array($selection) ? $selection : [$selection])) {
@@ -94,22 +100,14 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
         return $returnArray;
     }
 
-    /** Checks if a key exists in an array. If so, it returns the value, otherwise an empty string.
-     * @param $array array array where the key is searched
-     * @param $key string key to be searched
-     * @return string the value of the key if it exists, otherwise an empty string
-     */
-    protected function getArrayValue(array $array, string $key): string {
-        return $array[$key] ?? '';
-    }
-
     /** Checks if \$key exists in $forms and if so, gets the data from it.
      * @param array $forms array containing the form data
      * @param string $key key to be checked
      * @param mixed $default value that is returned if $key does not exist
      * @return mixed data from \$key or an empty string if \$key does not exist
      */
-    protected function getFormData(array $forms, string $key, mixed $default = ''): mixed {
+    protected function getFormData(array $forms, string $key, mixed $default = ''): mixed
+    {
         return array_key_exists($key,$forms) ? $forms[$key]->getData() : $default;
     }
 
@@ -118,7 +116,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param int $max value for the 'max' key
      * @return array array with two keys and values
      */
-    protected function setMinMax(int|float $min, int $max): array {
+    protected function setMinMax(int|float $min, int $max): array
+    {
         return ['min' => $min, 'max' => $max];
     }
 
@@ -131,7 +130,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $textHint text that is displayed above the text field if nothing was entered
      * @return void
      */
-    protected function addCheckboxTextfield(FormBuilderInterface $builder, string $name, string $label, string $textHint = ''): void {
+    protected function addCheckboxTextfield(FormBuilderInterface $builder, string $name, string $label, string $textHint = ''): void
+    {
         $this->addFormElement($builder,$name,'checkbox',$label);
         $this->addFormElement($builder,$name.'Text','textarea',hint: $textHint);
     }
@@ -145,7 +145,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param array $options additional options that are passed to the FormBuilder
      * @return void
      */
-    protected function addBinaryRadio(FormBuilderInterface $builder, string $name, string|bool $label = false, string $textareaName = '', string $textHint = '', array $options = []): void {
+    protected function addBinaryRadio(FormBuilderInterface $builder, string $name, string|bool $label = false, string $textareaName = '', string $textHint = '', array $options = []): void
+    {
         $this->addRadioGroup($builder,$name,['buttons.yes' => 0, 'buttons.no' => 1],$label,$textareaName,$textHint,$options);
     }
 
@@ -159,7 +160,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param array $options additional options that are passed to the FormBuilder
      * @return void
      */
-    protected function addRadioGroup(FormBuilderInterface $builder, string $name, array $choices, string|bool $label = false, string $textareaName = '', string $textHint = '', array $options = []): void {
+    protected function addRadioGroup(FormBuilderInterface $builder, string $name, array $choices, string|bool $label = false, string $textareaName = '', string $textHint = '', array $options = []): void
+    {
         $this->addFormElement($builder,$name,'choice',$label,array_merge(['choices' => $choices, 'expanded' => true],$options));
         if ($textareaName!=='') {
             $this->addFormElement($builder,$textareaName,'textarea',hint: $textHint);
@@ -178,7 +180,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param array $options additional options for the checkboxes
      * @return void
      */
-    protected function addCheckboxGroup(FormBuilderInterface $builder, array $names, string $translationKey, string|array $otherNames = [], string|array $textHints = [], string $textareaName = '', string $textareaTextHint = '', array $labelNames = [], array $options = []): void {
+    protected function addCheckboxGroup(FormBuilderInterface $builder, array $names, string $translationKey, string|array $otherNames = [], string|array $textHints = [], string $textareaName = '', string $textareaTextHint = '', array $labelNames = [], array $options = []): void
+    {
         if ($labelNames===[]) {
             $labelNames = $names;
         }
@@ -203,7 +206,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param FormBuilderInterface $builder FormBuilder where the element is created
      * @return void
      */
-    protected function addDummyForms(FormBuilderInterface $builder): void {
+    protected function addDummyForms(FormBuilderInterface $builder): void
+    {
         $this->addFormElement($builder,ControllerAbstract::submitDummy,'textarea');
         $builder->add(ControllerAbstract::loadInput,FileType::class,['empty_data' => '', 'required' => false, 'attr' => ['type' => 'file', 'accept' => '.xml']]);
     }
@@ -217,8 +221,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $hint hint that is placed above a text field (will be passed as the placeholder to the template) or the placeholder a radio button group
      * @return void
      */
-    protected function addFormElement(FormBuilderInterface $builder, string $name, string $class, string|bool $label = false, array $options = [], string $hint = ''): void {
-
+    protected function addFormElement(FormBuilderInterface $builder, string $name, string $class, string|bool $label = false, array $options = [], string $hint = ''): void
+    {
         $page = self::getPage();
         if (in_array(self::getReviewProcess(),self::formTypeQuestions[$page][$name] ?? []) || $name==='submitDummy' || in_array($page,['newForm','landing','contributor','completeForm','quit'])) {
             $classType = null;
@@ -259,7 +263,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param array|string $data keys: keys to be set to true in \$forms, values: if the key equals \$otherId, the value for the \$otherDescription element, empty otherwise
      * @param array $otherIDs if not empty, sets other form elements. Keys: keys in $data, values: id of the form element to be set
      */
-    protected function setSelectedCheckboxes(array $forms, array|string $data, array $otherIDs = []): void {
+    protected function setSelectedCheckboxes(array $forms, array|string $data, array $otherIDs = []): void
+    {
         if ($data!=='') {
             foreach ($data as $key => $value) {
                 $forms[$key]->setData(true);
@@ -278,7 +283,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $exclude if provided, value where the elements in $forms are not set
      * @return void
      */
-    protected function setSpinner(array $forms, array $data, array|string $keys, array|string $dataKeys = [], string $exclude = ''): void {
+    protected function setSpinner(array $forms, array $data, array|string $keys, array|string $dataKeys = [], string $exclude = ''): void
+    {
         $keys = is_string($keys) ? [$keys] : $keys;
         if ($dataKeys===[]) {
             $dataKeys = $keys;
@@ -301,7 +307,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param bool $useKeys if true, the keys from \$furtherElements are used as the keys for \$array, otherwise the values in $furtherElements are used as keys
      * @return void
      */
-    protected function setChosenArray(array $forms, array $array, string $chosenKey, array $furtherElements, bool $useKeys = true): void {
+    protected function setChosenArray(array $forms, array $array, string $chosenKey, array $furtherElements, bool $useKeys = true): void
+    {
         $tempArray = $array[$chosenKey] ?? [];
         if (array_key_exists($chosenKey,$forms)) {
             $forms[$chosenKey]->setData($this->getArrayValue($tempArray,'chosen'));
@@ -311,5 +318,15 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
                 $forms[$formKey]->setData($this->getArrayValue($tempArray,$useKeys ? $key : $formKey));
             }
         }
+    }
+
+    /** Checks if a key exists in an array. If so, it returns the value, otherwise an empty string.
+     * @param $array array array where the key is searched
+     * @param $key string key to be searched
+     * @return string the value of the key if it exists, otherwise an empty string
+     */
+    protected function getArrayValue(array $array, string $key): string
+    { // added here because it is called by the preceding function
+        return $array[$key] ?? '';
     }
 }

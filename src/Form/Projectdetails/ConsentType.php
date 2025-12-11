@@ -11,7 +11,8 @@ class ConsentType extends TypeAbstract
 {
     use ProjectdetailsTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $dummyParams = $options[self::dummyParams];
         $addressee = $options[self::addresseeType];
         $isNotParticipants = $addressee!==self::addresseeParticipants;
@@ -46,7 +47,8 @@ class ConsentType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         // voluntary and consent
         $otherDescription = self::consentOtherDescription.'Participants';
@@ -66,7 +68,8 @@ class ConsentType extends TypeAbstract
         }
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         foreach ([self::voluntaryNode,self::consentNode] as $type) {
             $tempArray = [];

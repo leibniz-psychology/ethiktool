@@ -8,7 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class QuitType extends TypeAbstract
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         self::setPage('quit');
         if ($options['dummy']['quit']) {
             foreach (['quit', 'backToMain'] as $button) {

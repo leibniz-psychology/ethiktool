@@ -8,7 +8,8 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
-    public function getFunctions(): array {
+    public function getFunctions(): array
+    {
         return [new TwigFunction('boolToDisplay',[$this,'boolToDisplay']),
                 new TwigFunction('boolToString',[$this,'boolToString']),
                 new TwigFunction('addDisableTarget',[$this,'addDisableTarget']),
@@ -25,7 +26,8 @@ class AppExtension extends AbstractExtension
      * @param int $display if $bool is true: 1: display is set to grid, 2: display is set to flex, otherwise to block
      * @return string 'block', 'grid', or 'flex' if $bool is true, 'none' otherwise
      */
-    public function boolToDisplay(bool $bool, int $display = 0): string {
+    public function boolToDisplay(bool $bool, int $display = 0): string
+    {
         return 'display: '.($bool ? ($display===1 ? 'grid' : ($display===2 ? 'flex' : 'block')) : 'none');
     }
 
@@ -33,7 +35,8 @@ class AppExtension extends AbstractExtension
      * @param bool $bool bool that gets converted
      * @return string string representation of the bool
      */
-    public function boolToString(bool $bool): string {
+    public function boolToString(bool $bool): string
+    {
         return $bool ? 'true' : 'false';
     }
 
@@ -41,7 +44,8 @@ class AppExtension extends AbstractExtension
      * @param bool $addAttribute if true, the array will be wrapped inside an 'attr' array
      * @return array array for the form_widget() call
      */
-    public function addDisableTarget(bool $addAttribute = false): array {
+    public function addDisableTarget(bool $addAttribute = false): array
+    {
         return  $addAttribute ? $this->addTargetArray('base','disableLoad') : $this->addTarget('base','disableLoad');
     }
 
@@ -50,7 +54,8 @@ class AppExtension extends AbstractExtension
      * @param string $target name of the target
      * @return array array for the form_widget() call
      */
-    public function addTargetArray(string $controller, string $target): array {
+    public function addTargetArray(string $controller, string $target): array
+    {
         return ['attr' => $this->addTarget($controller,$target)];
     }
 
@@ -59,7 +64,8 @@ class AppExtension extends AbstractExtension
      * @param string $target name of the target
      * @return array array for the form_widget() call
      */
-    public function addTarget(string $controller, string $target): array {
+    public function addTarget(string $controller, string $target): array
+    {
         return ['data-'.$controller.'-target' => $target];
     }
 
@@ -68,7 +74,8 @@ class AppExtension extends AbstractExtension
      * @param string $style if provided, a second key 'style' is added
      * @return array array for the form_label() cal
      */
-    public function addLabelClass(string $classname, string $style = ''): array {
+    public function addLabelClass(string $classname, string $style = ''): array
+    {
         return ['label_attr' => $this->addClass($classname,$style)];
     }
 
@@ -77,8 +84,9 @@ class AppExtension extends AbstractExtension
      * @param string $style if provided, a second key 'style' is added
      * @return array array for the form_widget() call
      */
-    public function addClass(string $classname, string $style = ''): array {
-        return array_merge(['class' => $classname], $style!=='' ? ['style' => $style] : []);
+    public function addClass(string $classname, string $style = ''): array
+    {
+        return array_merge($classname!=='' ? ['class' => $classname] : [], $style!=='' ? ['style' => $style] : []);
     }
 
     /** Checks if either the checkbox with the name 'unique' or any of the other checkboxes in keys is selected.
@@ -87,7 +95,8 @@ class AppExtension extends AbstractExtension
      * @param string $unique key whose selection means that no other key in $keys can be selected
      * @return array 0: true if 'unique' key is selected, 1: true if any of the other keys is selected, otherwise false in both cases, 2: number of selected checkboxes excluding the $unique one
      */
-    public function getAnySelected(FormView $forms, array $keys, string $unique = ''): array {
+    public function getAnySelected(FormView $forms, array $keys, string $unique = ''): array
+    {
         $anySelected = false;
         $uniqueSelected = false;
         $numSelected = 0;
@@ -96,8 +105,7 @@ class AppExtension extends AbstractExtension
             if ($key!==$unique) {
                 $anySelected = $anySelected || $isChecked;
                 $numSelected += $isChecked ? 1 : 0;
-            }
-            else {
+            } else {
                 $uniqueSelected = $isChecked;
             }
         }
@@ -110,7 +118,8 @@ class AppExtension extends AbstractExtension
      * @param string $action action. Defaults to 'click'
      * @return string onClick event
      */
-    public function addTracking(string $category, string $name, string $action = 'click'): string {
+    public function addTracking(string $category, string $name, string $action = 'click'): string
+    {
         return "_paq.push(['trackEvent', '".$category."', '".$action."', '".$name."'])";
     }
 }

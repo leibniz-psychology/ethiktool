@@ -102,8 +102,7 @@ export default class extends Controller {
             let id = target.id;
             if (id.includes('applicationProcess')) {
                 this.applicationProcessValue = target.value;
-            }
-            else if (id.includes('shortDocs')) { // selection on shortDocs question invoked the method
+            } else if (id.includes('shortDocs')) { // selection on shortDocs question invoked the method
                 isShortDocs = true;
             }
         }
@@ -142,12 +141,10 @@ export default class extends Controller {
             if (this.applicationProcessLoadValue==='full' && oldProcess.includes('full') && !isFull) { // any full to any short
                 modalID = this.reviewProcessLoadValue==='fullDocs' && oldProcess==='fullDocs' ? 'fullShort' // fullDocs to shortDocs, fullDocs to shortNoDocs
                     : 'begunRequestedShort'; // fullBegun or fullRequested to any short
-            }
-            else if (docsProcesses.includes(this.reviewProcessLoadValue)) { // docs are created on page load
+            } else if (docsProcesses.includes(this.reviewProcessLoadValue)) { // docs are created on page load
                 if (docsProcesses.includes(oldProcess) && isBegunRequested) {
                     modalID = 'docs'+(isBegun ? 'Begun' : 'Requested'); // fullDocs to fullBegun, fullDocs to fullRequested, shortDocs to shortBegun, shortDocs to shortRequested, shortService to shortBegun, shortService to shortRequested
-                }
-                else if (oldProcess==='shortService' && this.reviewProcessValue==='shortNoDocs') {
+                } else if (oldProcess==='shortService' && this.reviewProcessValue==='shortNoDocs') {
                     modalID = 'shortShort'; // shortService to shortNoDocs
                 }
             }

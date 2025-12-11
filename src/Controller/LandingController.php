@@ -19,7 +19,8 @@ class LandingController extends ControllerAbstract
     private array $isMultiple = [false,false,false];
 
     #[Route('/landing', name: 'app_landing')]
-    public function showLanding(Request $request): Response {
+    public function showLanding(Request $request): Response
+    {
         $session = $request->getSession();
         $landingArray = $session->get(self::landing);
         $title = $landingArray['page'] ?? ''; // if a link is double-clicked, the key does not exist
@@ -42,11 +43,9 @@ class LandingController extends ControllerAbstract
         if ($isProjectdetails) {
             if (!$isStudy) { // overview over studies
                 $this->setVariables(self::studyNode,$study);
-            }
-            elseif (!$isGroup) { // overview of groups
+            } elseif (!$isGroup) { // overview of groups
                 $this->setVariables(self::groupNode,$this->addZeroIndex($study[$IDs[0]][self::groupNode]));
-            }
-            elseif (!$isMeasure) { // overview of measure time points
+            } elseif (!$isMeasure) { // overview of measure time points
                 $this->setVariables(self::measureTimePointNode);
             }
         }
@@ -141,7 +140,8 @@ class LandingController extends ControllerAbstract
      * @param array $subElements array with the subelements of the current level
      * @return void
      */
-    private function setVariables(string $type, array $subElements = []): void {
+    private function setVariables(string $type, array $subElements = []): void
+    {
         $isStudy = $type===self::studyNode;
         $isMeasure = $type===self::measureTimePointNode;
         foreach ($this->pages as $index => $page) {

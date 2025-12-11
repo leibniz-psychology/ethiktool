@@ -7,7 +7,7 @@ heading: >-
 header: |
   Generated with Ethiktool version {toolVersion}
   {savePDF, select,
-    true  {<a class="no-linkout" href="https://ethiktool.org/" target="_blank">https://ethiktool.org/</a>}
+    true  {<a class="no-linkout linkNormal" href="https://ethiktool.org/" target="_blank">https://ethiktool.org/</a>}
     other {https://ethiktool.org/}}
   most recent modification of the ethics proposal:
 
@@ -106,7 +106,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     information: 'Is information about participating in a study given in advance?'
     preContent: 'How complete is the information regarding the aims, content and methods of the study?'
     preComplete: 'Will there be a debriefing (i.e., will full information be provided later)?'
-    preCompleteSub: 'Format of debriefing information:'
+    preCompleteSub: 'Justification of choice and indication which information will be given when:'
     post: 'Will information about participating in a study be given after-the-fact?'
     attendance: 'Are the legal guardians present during data collection?'
     # added empty lines to have consistent line numbers in all translation files
@@ -327,7 +327,7 @@ projectdetails:
         separate      {The data privacy statement {levelNamesString} was generated separately (i.e., outside of the Ethiktool). {verification, select,
                                                                       verified   {It has been checked and approved by the responsible data protection authorities.}
                                                                       unverified {It has not yet been approved by the responsible data protection authorities.}
-                                                                      other      {}} It can be found on the following page(s) including the consent form.}
+                                                                      other      {}} It can be found on the following page(s) (if applicable, including the consent form).}
         anonymous     {According to the {savePDF, select,
                                           true {selections made in the Ethiktool}
                                           other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
@@ -336,8 +336,8 @@ projectdetails:
                                             other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the data processing aspects will be sorted out in detail at a later point in time. Therefore, the Ethiktool did not generate a data privacy statement{levelNamesString}.}
         other         {{personal, select,
                           anonymous {According to the selections made in the Ethiktool, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
-                          other     {Due to the following characteristics of data processing (according to the selections made in the Ethiktool), the data privacy statement {levelNamesString} could not be generated with the Ethiktool:
-                            {createOther} Therefore, the data privacy statement was generated separately. It can be found on the following page(s) including the consent form.}}}}
+                          other     {Due to the following characteristics of data processing (according to the selections made in the Ethiktool), the data privacy statement {levelNamesString} cannot be generated with the Ethiktool:
+                            {createOther} Therefore, the data privacy statement was generated separately. It can be found on the following page(s) (if applicable, including the consent form.}}}}
     createOther:
       responsibility: '{committeeLocation} does not carry exclusive responsibility for processing the personal data according to EU-GDPR.'
       transferOutside: 'Personal data are transmitted to or shared with third parties outside the EAA.'
@@ -488,11 +488,13 @@ projectdetails:
 # participation
 participation:
   projectTitleHeader: >-
-    <a href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData{isDifferent, select,
-        true  {Participation}
-        other {}}">Research project</a> “{projectTitle}“
+    {savePDF, select,
+      true  {Research project}
+      other {<a class="linkInternal" href="../AppData/coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitle{isDifferent, select,
+                        true  {Participation}
+                        other {}}">Research project</a>}} “{projectTitle}“
   marking: >-
-    Black font color indicates text generated automatically by the Ethiktool. Blue font color indicates self-formulated text. {savePDF, select,
+    Black font color indicates text generated automatically by the Ethiktool. Green font color indicates self-formulated text. {savePDF, select,
       true  {For the actual use of the participation documents, the PDF files are available without coloring in the “{singleDocsName}“ folder.}
       other {}}
   oral: 'The information on the study will be given orally. It is in line with the written information provided here.'
@@ -802,9 +804,9 @@ participation:
                                                   external {a code assigned outside of the project, namely }
                                                   internal {an internal code in the project. }
                                                   other    {{addressee, select,
-                                                              children {your child's name.}
-                                                              wards    {the name of the individual under your supervision.}
-                                                              other    {your name.}}}}
+                                                              children {your child's name. }
+                                                              wards    {the name of the individual under your supervision. }
+                                                              other    {your name. }}}}
       external:
         types:
           anonymous: 'The code itself does not allow inference on specific persons. The mapping of codes to personally identifying information is possible only for the institution or body that assigned the code originally. Information on the handling of personal data is available there.'

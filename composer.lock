@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb4db9602620f706f8003847faad5c17",
+    "content-hash": "364a596a76ace08e97c96c84f0c4fc19",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -963,6 +963,66 @@
                 }
             ],
             "time": "2024-03-12T14:54:36+00:00"
+        },
+        {
+            "name": "gravitymedia/ghostscript",
+            "version": "2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/GravityMedia/Ghostscript.git",
+                "reference": "d5f8e3ed00e84f03c5c36796c2df424a9b7b1ffc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/GravityMedia/Ghostscript/zipball/d5f8e3ed00e84f03c5c36796c2df424a9b7b1ffc",
+                "reference": "d5f8e3ed00e84f03c5c36796c2df424a9b7b1ffc",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0",
+                "symfony/process": "^5.0|^6.0|^7.0"
+            },
+            "require-dev": {
+                "phing/phing": "^2.14",
+                "phpunit/phpunit": "^9.5|^10.0|^11.0",
+                "scrutinizer/ocular": "^1.3",
+                "sebastian/comparator": ">=1.2.3",
+                "symfony/finder": "^5.0|^6.0|^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GravityMedia\\Ghostscript\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Schröder",
+                    "email": "daniel.schroeder@gravitymedia.de",
+                    "homepage": "https://github.com/pCoLaSD",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Ghostscript is an object oriented Ghostscript binary wrapper for PHP.",
+            "homepage": "https://github.com/GravityMedia/Ghostscript",
+            "keywords": [
+                "ghostscript",
+                "gravitymedia"
+            ],
+            "support": {
+                "issues": "https://github.com/GravityMedia/Ghostscript/issues",
+                "source": "https://github.com/GravityMedia/Ghostscript/tree/2.4.0"
+            },
+            "time": "2024-03-13T22:28:04+00:00"
         },
         {
             "name": "knplabs/knp-snappy",

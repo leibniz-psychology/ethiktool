@@ -9,7 +9,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class FormTypeExtension extends AbstractTypeExtension
 {
 
-    public function configureOptions(OptionsResolver $resolver): void {
+    public function configureOptions(OptionsResolver $resolver): void
+    {
         $resolver->setDefaults(['information' => '', 'addresseeString' => '','participantsString' => '','addresseeType' => '', 'committeeParams' => [], 'committeeNom' => '', 'committeeGen' => '', 'committeeDat' => '', 'committeeAcc' => '', 'committeeType' => '', 'committeeLocation' => '', 'committeeLocationGen' => '', 'isCommitteeBeta' => false, 'toolVersion' => '', 'dummy' => []]);
         $resolver->setAllowedTypes('information','string');
         $resolver->setAllowedTypes('addresseeType', 'string');
@@ -28,7 +29,8 @@ class FormTypeExtension extends AbstractTypeExtension
         $resolver->setAllowedTypes('dummy', 'array');
     }
 
-    public static function getExtendedTypes(): iterable {
+    public static function getExtendedTypes(): iterable
+    {
         return [FormType::class];
     }
 }

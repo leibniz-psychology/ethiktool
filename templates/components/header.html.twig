@@ -15,8 +15,7 @@
             <div class="lg:flex flex-col justify-between align-self-center">
                 <div class="{{ flexRowClasses }} justify-end gap-3">
                     {% for modal in headerModals %}
-                        {% set title = (modal~'.title')|trans %}
-                        <a href="" data-bs-toggle="modal" data-bs-target="#{{ modal }}" title="{{ title }}">{{ title }}</a>
+                        <a href="" data-bs-toggle="modal" data-bs-target="#{{ modal }}">{{ (modal~'.title')|trans }}</a>
                     {% endfor %}
                     <span style="margin-left: 8px" class="{{ flexRowClasses }} gap-1">
                         {% for locale in appLocales %}

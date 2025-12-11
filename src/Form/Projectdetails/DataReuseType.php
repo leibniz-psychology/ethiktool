@@ -10,7 +10,8 @@ class DataReuseType extends TypeAbstract
 {
     use ProjectdetailsTrait;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $translationPrefix = 'projectdetails.pages.dataReuse.';
         $dummyParams = $options[self::dummyParams];
         $personal = $dummyParams['personal'];
@@ -38,7 +39,8 @@ class DataReuseType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, \Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, \Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         // confirm
         $forms[self::confirmIntroNode]->setData($viewData[self::confirmIntroNode]==='1');
@@ -55,7 +57,8 @@ class DataReuseType extends TypeAbstract
         }
     }
 
-    public function mapFormsToData(\Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(\Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         // confirm
         $tempVal = $forms[self::confirmIntroNode]->getData();

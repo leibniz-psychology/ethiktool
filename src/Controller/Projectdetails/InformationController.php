@@ -15,7 +15,8 @@ class InformationController extends ControllerAbstract
 
     #[Route(self::routePrefix.'information', name: 'app_information')]
     #[Route(self::routePrefix.'informationII', name: 'app_informationII')]
-    public function showInformation(Request $request): Response {
+    public function showInformation(Request $request): Response
+    {
         $session = $request->getSession();
         $routeParams = $request->get('_route_params');
         $route = substr($request->get('_route'),4); // 'information' or 'informationII'
@@ -88,8 +89,7 @@ class InformationController extends ControllerAbstract
                 $informationIIInode = $measureNodeNew->{self::informationIIINode};
                 if ($informationIIIinput && !$isInformationIII) { // remove nodes from informationIII
                     $this->removeAllChildNodes($informationIIInode);
-                }
-                elseif (!$informationIIIinput && $isInformationIII) { // add nodes to informationIII
+                } elseif (!$informationIIIinput && $isInformationIII) { // add nodes to informationIII
                     $this->addChildNodes($informationIIInode,array_keys(self::informationIIIInputsTypes));
                 }
                 $isPre = $data[self::pre]===0; // true if pre information
@@ -106,8 +106,7 @@ class InformationController extends ControllerAbstract
                 }
                 if (($isPreOld || $isPostOld) && !$isInformation) { // any information and now no information at all -> remove texts nodes
                     $this->removeAllChildNodes($textsNode);
-                }
-                elseif (!$isPreOld) {
+                } elseif (!$isPreOld) {
                     if (!$isPostOld && $isInformation) { // no information at all and now any information -> add intro, goals, pro, con, and eventually finding consent
                         $this->addChildNodes($textsNode,[self::introNode,self::goalsNode,self::proNode,self::conNode]);
                         $this->addChildNodes($textsNode->{self::introNode},[self::introTemplate,self::descriptionNode]);

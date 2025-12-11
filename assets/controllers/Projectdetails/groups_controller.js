@@ -95,8 +95,7 @@ export default class extends Controller {
             if (isWards) {
                 if (isUnder16 || isMaxAge && maxAge<18 && !isUnlimited) {
                     addressee = 1; // children
-                }
-                else {
+                } else {
                     addressee = 2; // wards
                 }
             }

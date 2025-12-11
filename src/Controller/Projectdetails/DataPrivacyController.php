@@ -14,13 +14,15 @@ class DataPrivacyController extends ControllerAbstract
     use ProjectdetailsTrait;
 
     #[Route(self::routePrefix.'dataPrivacy', name: 'app_dataPrivacy')]
-    public function showDataPrivacy(Request $request): Response {
+    public function showDataPrivacy(Request $request): Response
+    {
         $routeParams = $request->get('_route_params');
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session);
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
-        $privacyNode = $measureNode->{self::privacyNode}[0];
-        if ($measureNode===null || count($privacyNode->children())===0) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened or page is not active for the current review process (second check)
+        $hasMeasureNode = $measureNode!==null;
+        $privacyNode = $hasMeasureNode ? $measureNode->{self::privacyNode}[0] : null;
+        if (!$hasMeasureNode || count($privacyNode->children())===0) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened or page is not active for the current review process (second check)
             return $this->redirectToRoute('app_main');
         }
         $hasCreate = $this->checkElement(self::createNode,$privacyNode);

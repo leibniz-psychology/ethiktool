@@ -97,14 +97,13 @@
                 {{ formRender.addHeading(locationPrefix~'title') }}
                 <div class="MetaData-Label">{{ (locationPrefix~'start')|trans({'information': information}) }}{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
                 {{ formRender.renderButtons(location,noHeading|merge({
-                    'text': [content.locationDescription,{'attributes': {'disabled': not isLocation}, 'contTarget': [measuresController,'locationDescription'], 'hint': isLocation ? locationHint : noLocation}],
+                    'text': [content.locationDescription,{'attributes': {'disabled': not isLocation}, 'contTarget': [measuresController,'locationDescription'], 'hint': isLocation ? locationHint : noLocation, 'markInput': true}],
                     'stim': [measuresController,'setLocation'],
                     'icons': {'locationother': locationPrefix~'otherHint'},
-                    'labelParams': committeeParams})) }}
+                    'labelParams': committeeParams|merge({'routeIDs': '{&quot;studyID&quot;:&quot;'~studyID~'&quot;,&quot;groupID&quot;:&quot;'~groupID~'&quot;}'})})) }}
                 <div class="MetaData-Label mb-4" style="{{ boolToDisplay(locationValue is same as 'online') }}" {{ stimulus_target(measuresController,'locationEnd') }}>{{ (locationPrefix~'end')|trans }}</div>
                 {% if bothHint is not same as '' %}
-                    {{ formRender.addHint(bothHint,{'target': [measuresController,'locationInputHint'], 'remove': true}) }} {# hint text is set in controller, but must not be empty here. If 'both' is
-                     emtpy, then 'insuranceWay' will also be empty, but not vice versa #}
+                    {{ formRender.addHint(bothHint,{'target': [measuresController,'locationInputHint'], 'remove': true}) }} {# hint text is set in controller, but must not be empty here. If 'both' is emtpy, then 'insuranceWay' will also be empty, but not vice versa #}
                 {% endif %}
                 {% if textInputOnline is not same as '' %} {# the previous hint and this one can not be shown at the same time #}
                     {{ formRender.addHint(textInputOnline,{'target': [measuresController,'onlineHint'], 'remove': true}) }}

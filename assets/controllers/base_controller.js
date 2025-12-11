@@ -84,8 +84,7 @@ export default class extends Controller {
                     this.setUndoButton();
                 }
             });
-        }
-        else {
+        } else {
             this.formSubmit()
             this.submitDummyTarget.value = '';
         }
@@ -102,11 +101,9 @@ export default class extends Controller {
         let targetID = target.id;
         if (targetID.includes('quit')) {
             dummyVal = targetID;
-        }
-        else if (targetID.includes('nav')) { // one of the buttons on bottom of pages, except 'save'
+        } else if (targetID.includes('nav')) { // one of the buttons on bottom of pages, except 'save'
             dummyVal = target.name;
-        }
-        else {
+        } else {
             let params = event.params;
             dummyVal = params.url;
             let routeIDs = params.routeIDs;
@@ -124,8 +121,7 @@ export default class extends Controller {
                 target.nextElementSibling.click(); // click 'no' to close the modal
             }
             this.loadInputTarget.click();
-        }
-        else {
+        } else {
             this.formSubmit(dummyVal);
         }
     }
@@ -526,12 +522,10 @@ export default class extends Controller {
         if (value.endsWith('.'+type)) {
             if (isXML) {
                 this.formSubmit('load');
-            }
-            else {
+            } else {
                 return true;
             }
-        }
-        else if (value!=='') {
+        } else if (value!=='') {
             file.value = '';
             this.showModal(isXML ? this.xmlModalTarget : this.pdfModalTarget);
         }

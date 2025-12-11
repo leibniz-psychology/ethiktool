@@ -6,20 +6,18 @@
     <div {{ stimulus_controller('base',
         {'route': request.get('_route'),
          'routeParams': request.get('_route_params'),
-         'preview': 0}) }}>
+         'preview': 0}) }} class="pb-5 grid">
         {{ include('components/header.html.twig',committeeParams|merge({'update': isUpdateTime, 'request': request})) }}
         {{ formRender.startForm(content) }}
-        <div class="pb-5">
-            <div class="border rounded-lg shadow-sm bg-mono-50" style="height:fit-content; width: fit-content; justify-self: center; max-width: 1600px">
-                <div class="MetaData-Label mb-1">{{ ('quit.'~quit)|trans|raw|nl2br }}</div>
-                {% if content.quit is defined %}
-                    <div class="MetaData-Widget mt-8 mb-2 gap-x-4 grid" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
-                        {{ form_widget(content.quit,attributes) }}
-                        {{ form_widget(content.backToMain,attributes) }}
-                    </div>
-                {% endif %}
-                <div style="display: none">{{ form_widget(submitDummy,addTargetArray('base','submitDummy')|merge({'id': submitDummy.vars.name})) }}</div>
-            </div>
+        <div class="border rounded-lg shadow-sm bg-mono-50" style="height:fit-content; width: fit-content; justify-self: center; max-width: 1600px">
+            <div class="MetaData-Label mb-1">{{ ('quit.'~quit)|trans|raw|nl2br }}</div>
+            {% if content.quit is defined %}
+                <div class="MetaData-Widget mt-8 mb-2 gap-x-4 grid" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
+                    {{ form_widget(content.quit,attributes) }}
+                    {{ form_widget(content.backToMain,attributes) }}
+                </div>
+            {% endif %}
+            <div style="display: none">{{ form_widget(submitDummy,addTargetArray('base','submitDummy')|merge({'id': submitDummy.vars.name})) }}</div>
         </div>
         {% if hasDownload %}
         <script type="text/javascript">

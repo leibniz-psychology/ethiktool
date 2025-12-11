@@ -14,12 +14,14 @@ class FooterController
 {
     private HttpClientInterface $client;
 
-    public function __construct(HttpClientInterface $client) {
+    public function __construct(HttpClientInterface $client)
+    {
         $this->client = $client;
     }
 
     #[Route('/footer', name: 'footer')]
-    public function getFooterFromAssets(Request $request): Response {
+    public function getFooterFromAssets(Request $request): Response
+    {
         $content = null;
         try {
             $response = $this->client->request('GET', 'https://www.lifp.de/assets/collapsible-footer/index.php?framework=css&lang='.$request->getLocale());
@@ -27,9 +29,7 @@ class FooterController
             if ($statusCode===200) {
                 $content = $response->getContent();
             }
-        }
-        catch (ExceptionInterface $exception) {
-        }
+        } catch (ExceptionInterface) {}
         return new Response($content,200,['content-type'=>'text/html']);
     }
 }

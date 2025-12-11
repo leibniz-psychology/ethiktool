@@ -13,7 +13,8 @@ class CompensationType extends TypeAbstract
 
     private bool $isDuration; // true if total duration is greater than 30 minutes
 
-    public function buildForm(FormBuilderInterface $builder, array $options): void {
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
         $translationPrefix = 'projectdetails.pages.compensation.';
         $typesPrefix = $translationPrefix.'types.';
         $textHintPrefix = $typesPrefix.self::textHintPlural.'.';
@@ -68,7 +69,8 @@ class CompensationType extends TypeAbstract
         $builder->setDataMapper($this);
     }
 
-    public function mapDataToForms(mixed $viewData, Traversable $forms): void {
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
         $forms = iterator_to_array($forms);
         $tempArray = $viewData[self::compensationTypeNode];
         $this->setSelectedCheckboxes($forms,$tempArray);
@@ -100,8 +102,7 @@ class CompensationType extends TypeAbstract
                         if ($isNotCompensationOther) {
                             $description = self::lotteryStart.self::descriptionCap;
                             $this->setChosenArray($forms,$viewData,$tempVal,array_merge([self::laterTypesName => $selection.self::laterTypesName,self::laterOtherDescription => $selection.self::laterOtherDescription],$selection===self::compensationLottery ? [$description => $description,self::lotteryStart => self::lotteryStart,self::lotteryStartOtherDescription => self::lotteryStartOtherDescription] : [])); // lottery: when and how the result is communicated
-                        }
-                        else {
+                        } else {
                             $forms[self::awardingOtherDescription]->setData($chosen);
                         }
                         $description = $selection.$chosen.self::descriptionCap;
@@ -122,7 +123,8 @@ class CompensationType extends TypeAbstract
         }
     }
 
-    public function mapFormsToData(Traversable $forms, mixed &$viewData): void {
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
         $forms = iterator_to_array($forms);
         $tempArray = $this->getSelectedCheckboxes($forms,self::compensationTypes,exclusive: self::compensationNo);
         $newData = [self::compensationTypeNode => $tempArray];
@@ -203,7 +205,8 @@ class CompensationType extends TypeAbstract
      * @param string $text value for inner array
      * @return array placeholder array
      */
-    private function getPlaceholder(string $text): array {
+    private function getPlaceholder(string $text): array
+    {
         return ['attr' => ['placeholder' => $text]];
     }
 
@@ -211,7 +214,8 @@ class CompensationType extends TypeAbstract
      * @param float|string|null $value value to be checked
      * @return float|string $value, eventually updated
      */
-    private function checkMinMax(float|string|null $value): float|string {
+    private function checkMinMax(float|string|null $value): float|string
+    {
         $isCommaSeparator = false;
         if (gettype($value)==='string') {
             $isCommaSeparator = str_contains($value,',');
@@ -220,8 +224,7 @@ class CompensationType extends TypeAbstract
         $value = (float) $value;
         if ($value===0.0) {
             $value = '';
-        }
-        else {
+        } else {
             $isSmaller = $value<self::valueMin;
             if ($isSmaller || $value>self::valueMax) {
                 $value = $isSmaller ? self::valueMin : self::valueMax;

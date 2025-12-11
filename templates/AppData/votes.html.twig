@@ -11,8 +11,8 @@
             {{ formRender.renderButtons(otherVote,{'stimVisible': {'values': [['0',[otherVoteDiv,otherVoteDescription.vars.name~'Div']]]}, 'text': [otherVoteDescription,textInputAttr|merge(fontNormal)|merge({'visibility': isOtherVote, 'hint': tempPrefix~'committee'})]}) }}
             <div id="{{ otherVoteDiv }}" style="{{ boolToDisplay(isOtherVote) }}">
                 <div class="MetaData-Label mt-4">{{ form_label(otherVoteResult,null,labelDummy) }}</div>
-                <div {{ stimulus_action('base','setVisibility','change',{'values': [[['positive','negative'],otherVoteHint]]}) }}>
-                    {{ formRender.renderButtons(otherVoteResult,{'noHeading': true, 'text': [otherVoteResultDescription,fontNormal|merge({'hint': noOtherVoteResultSelected ? 'multiple.choiceTextHint' : otherVoteResultHeadingText[otherVoteResultValue]})|merge(noOtherVoteResultSelected ? targetParam : {})], 'stim': ['base','setWidgetByValue',{'widgetValue': ['',otherVoteResultDescription.vars.name,otherVoteResultHeadingText]}], 'hintButtons': [[tempPrefix~'explanation'],otherVoteHint,not noOtherVoteResultSelected]}) }}
+                <div {{ stimulus_action('base','setWidgetByValue','change',{'widgetValue': ['',otherVoteResultDescription.vars.name,otherVoteResultHeadingText]}) }}>
+                    {{ formRender.renderButtons(otherVoteResult,{'noHeading': true, 'text': [otherVoteResultDescription,fontNormal|merge({'hint': noOtherVoteResultSelected ? 'multiple.choiceTextHint' : otherVoteResultHeadingText[otherVoteResultValue]})|merge(noOtherVoteResultSelected ? targetParam : {})], 'stimVisible': {'values': [[['positive','negative'],otherVoteHint]]}, 'hintButtons': [[tempPrefix~'explanation'],otherVoteHint,not noOtherVoteResultSelected]}) }}
                 </div>
             </div>
         </div>

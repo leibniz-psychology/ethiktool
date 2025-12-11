@@ -11,7 +11,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class QuitController extends ControllerAbstract
 {
     #[Route('/quit', name: 'app_quit')]
-    public function showQuit(Request $request): Response {
+    public function showQuit(Request $request): Response
+    {
         $session = $request->getSession();
         $hasQuitSession = $session->has(self::quit); // true if file should be or was downloaded
         if (!$hasQuitSession) { // quit without saving
@@ -24,18 +25,15 @@ class QuitController extends ControllerAbstract
             if (count($data)===1) { // save file before quit or language was changed
                 if (!str_contains($data['submitDummy'],self::language)) { // save file before quit
                     return $this->getDownloadResponse($session);
-                }
-                else {
+                } else {
                     if ($hasQuitSession) {
                         $session->set(self::quit,'');
                     }
                     return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($session));
                 }
-            }
-            elseif (array_key_exists('backToMain',$data)) {
+            } elseif (array_key_exists('backToMain',$data)) {
               return $this->redirectToRoute('app_main');
-            }
-            else { // quit software
+            } else { // quit software
                 $session->remove(self::quit);
                 return $this->redirectToRoute('app_quit');
             }

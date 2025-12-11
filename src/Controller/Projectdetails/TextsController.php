@@ -14,7 +14,8 @@ class TextsController extends ControllerAbstract
     use ProjectdetailsTrait;
 
     #[Route(self::routePrefix.'texts', name: 'app_texts')]
-    public function showTexts(Request $request): Response {
+    public function showTexts(Request $request): Response
+    {
         $routeParams = $request->get('_route_params');
         $appNode = $this->getXMLfromSession($request->getSession());
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);

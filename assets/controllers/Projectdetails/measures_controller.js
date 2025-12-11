@@ -58,8 +58,7 @@ export default class extends Controller {
                 if (isInterventionsSurvey) {
                     this.noInterventionTarget.checked = false; // uncheck in case it was selected before
                 }
-            }
-            else if (target===this.interventionsSurveyTarget) {
+            } else if (target===this.interventionsSurveyTarget) {
                 isMeasuresSurvey = isInterventionsSurvey;
             }
             this.measuresSurveyTarget.checked = isMeasuresSurvey;

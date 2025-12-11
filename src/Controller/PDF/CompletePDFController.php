@@ -11,7 +11,8 @@ class CompletePDFController extends PDFAbstract
 {
     use CompleteFormTrait;
 
-    public function createPDF(Request $request, array $additional): Response {
+    public function createPDF(Request $request, array $additional): Response
+    {
         $session = $request->getSession();
         $completeArray = $this->xmlToArray($this->getXMLfromSession($session))[self::completeFormNodeName];
         $committeeParams = $session->get(self::committeeParams);

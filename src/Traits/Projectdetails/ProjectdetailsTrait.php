@@ -65,6 +65,7 @@ trait ProjectdetailsTrait
     protected const pre = 'pre'; // pre information
     // widget names for yes
     protected const preType = 'preType'; // type of pre information
+    protected const informationOral = 'oral';
     protected const preContent = 'preContent'; // extent of pre information
     protected const complete = 'complete';
     protected const preContentIncomplete = ['partial','deceit'];
@@ -344,7 +345,8 @@ trait ProjectdetailsTrait
      * @param Request $request
      * @return string addressee
      */
-    protected function getAddresseeFromRequest(Request $request): string {
+    protected function getAddresseeFromRequest(Request $request): string
+    {
         return $this->getAddressee($this->xmlToArray($this->getMeasureTimePointNode($request,$request->get('_route_params'))->{self::groupsNode}));
     }
 
@@ -352,7 +354,8 @@ trait ProjectdetailsTrait
      * @param array $groups array containing the groups elements
      * @return string addressee
      */
-    protected function getAddressee(array $groups): string {
+    protected function getAddressee(array $groups): string
+    {
         $examined = $groups[self::examinedPeopleNode];
         $isWards = $examined!=='' && array_key_exists(self::wardsExaminedNode,$examined);
         $maxAge = $this->getIntFromString($groups[self::maxAge],101); // if upper limit of minAge or maxAge is changed in groups template, it maybe has to be changed here, too
@@ -366,12 +369,12 @@ trait ProjectdetailsTrait
      * @param bool $onlyPronoun if \$isThirdParty is false and \$addPronoun is true, then, if true, only the pronoun is returned
      * @return string translated addressee
      */
-    protected function getAddresseeString(string $addressee, bool $isThirdParty = true, bool $addPronoun = false, bool $onlyPronoun = false): string {
+    protected function getAddresseeString(string $addressee, bool $isThirdParty = true, bool $addPronoun = false, bool $onlyPronoun = false): string
+    {
         $translationPrefix = 'projectdetails.addressee.';
         if ($onlyPronoun) {
             return $this->translateString($translationPrefix.'participants.pronoun');
-        }
-        else {
+        } else {
             $returnString = $this->translateString($translationPrefix.($isThirdParty ? 'thirdParties.' : 'participants.').$addressee);
             if ($addPronoun && $addressee!==self::addresseeParticipants) {
                 $returnString = $this->translateString($translationPrefix.'participants.pronoun'.$addressee).$this->translateString($translationPrefix.'participants.'.$addressee);
@@ -384,7 +387,8 @@ trait ProjectdetailsTrait
      * @param string $choice answer to the template question
      * @return bool true if either template or self-written text is chosen, false otherwise
      */
-    protected function getTemplateChoice(string $choice): bool {
+    protected function getTemplateChoice(string $choice): bool
+    {
         return in_array($choice,[self::template,self::templateText]);
     }
 
@@ -392,7 +396,8 @@ trait ProjectdetailsTrait
      * @param array|string $information array containing the information of the information page
      * @return bool true if inputs in informationIII are necessary, false otherwise
      */
-    protected function getInformationIII(array|string $information): bool {
+    protected function getInformationIII(array|string $information): bool
+    {
         if ($information!=='' && $information[self::pre]=='0') {
             $preContent = $information[self::preContent];
             return in_array($preContent,self::preContentIncomplete) && $information[self::preComplete][self::chosen]=='0';
@@ -405,7 +410,8 @@ trait ProjectdetailsTrait
      * @param string $prefix prefix to be added
      * @return array $array with each element prefixed
      */
-    protected function prefixArray(array $array, string $prefix): array {
+    protected function prefixArray(array $array, string $prefix): array
+    {
         return substr_replace($array,$prefix,0,0);
     }
 
@@ -418,15 +424,15 @@ trait ProjectdetailsTrait
      * @param int|null $copy index of node that should be copied (only nodes whose name equals $nodeName are counted) or null if an empty node should be created
      * @return void
      */
-    protected function addMeasurement(SimpleXMLElement $element, string $nodeName, string $nameContent, ?int $copy = null): void {
+    protected function addMeasurement(SimpleXMLElement $element, string $nodeName, string $nameContent, ?int $copy = null): void
+    {
         $isNotMeasure = $nodeName!==self::measureTimePointNode;
         if ($copy!==null) {
             $newNode = simplexml_import_dom(dom_import_simplexml($element)->appendChild(dom_import_simplexml($element->{$nodeName}[$copy])->cloneNode(true)));
             if ($isNotMeasure) {
                 $newNode->{self::nameNode} = $nameContent;
             }
-        }
-        else {
+        } else {
             $newNode = $element->addChild($nodeName);
             if ($isNotMeasure) {
                 $newNode->addChild(self::nameNode,$nameContent);
@@ -496,7 +502,8 @@ trait ProjectdetailsTrait
      * @param array $nodeNames names of the children
      * @return void
      */
-    protected function addChildNodesChosen(SimpleXMLElement $element, array $nodeNames): void {
+    protected function addChildNodesChosen(SimpleXMLElement $element, array $nodeNames): void
+    {
         foreach ($nodeNames as $name) {
             $element->addChild($name)->addChild(self::chosen);
         }

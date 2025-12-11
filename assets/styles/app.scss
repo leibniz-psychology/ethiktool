@@ -122,6 +122,11 @@ textarea {
 
 a {
     text-decoration: none;
+    color: rgb(13,110,235);
+
+    &:hover {
+        color: rgb(10,88,180);
+    }
 
     &.a_disabled { // currently only used once in navigationSidebar
         @apply bg-mono-200;
@@ -129,6 +134,43 @@ a {
         border-color: darkgray;
         color: gray;
     }
+}
+
+.linkInternal::after {
+    /* prettier-ignore */
+    background:
+            url("../images/link-in.svg"
+            param(--color theme("colors.mono.900")))
+left center no-repeat;
+    background-size: 110%;
+    @apply linkInternalIcon;
+}
+
+.linkInternal:hover::after {
+    /* prettier-ignore */
+    background:
+            url("../images/link-in.svg"
+            param(--color theme("colors.blue.500")))
+left center no-repeat;
+    background-size: 130%;
+    @apply linkInternalIcon;
+}
+
+.linkInternalIcon {
+    vertical-align: text-top;
+    @apply linkIcon;
+}
+
+.linkIcon {
+    position: relative;
+    top: 0.125rem;
+    display: inline-block;
+    overflow: hidden;
+    width: 1rem;
+    height: 1rem;
+    content: "(external link)";
+    text-indent: 1rem;
+    white-space: nowrap;
 }
 
 .borderHint {
@@ -191,6 +233,11 @@ h3.inputPageHeading:hover {
     @apply MetaData-Label bg-mono-200 mt-4;
     background-clip: content-box;
     width: fit-content;
+}
+
+.markInput { // must equal the attributes in pdf.css
+    font-style: italic;
+    color: #028702;
 }
 
 // footer
