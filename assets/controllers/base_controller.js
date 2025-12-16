@@ -1,5 +1,6 @@
 import {Controller} from "@hotwired/stimulus";
 import {
+    addExpandableListener,
     checkTextareaInput,
     getSelected,
     sanitizeString,
@@ -10,7 +11,7 @@ import {
 
 export default class extends Controller {
 
-    static targets = ['loadModal','download','load','loadInput','sidebar','content','checkDoc','preview','form','submitDummy','hint','countableText','charCount','disableLoad','undo','language','xmlModal','pdfModal','landingRemove'];
+    static targets = ['loadModal','download','load','loadInput','sidebar','content','checkDoc','preview','form','submitDummy','hint','countableText','charCount','disableLoad','undo','language','xmlModal','pdfModal','landingRemove','expandable'];
 
     static values = {
         route: String,
@@ -99,7 +100,7 @@ export default class extends Controller {
         let dummyVal = '';
         let target = this.checkElementTag(event.target); // if the target is a button, the content of it may be wrapped in a span
         let targetID = target.id;
-        if (targetID.includes('quit')) {
+        if (targetID.includes('quit') || targetID.includes('header')) {
             dummyVal = targetID;
         } else if (targetID.includes('nav')) { // one of the buttons on bottom of pages, except 'save'
             dummyVal = target.name;
@@ -116,7 +117,7 @@ export default class extends Controller {
             }
         }
         let isLoadModal = this.hasLoadModalTarget && targetID===(this.loadModalTarget.id+'Button');
-        if (isLoadModal || !this.hasLoadModalTarget && target===this.loadTarget) {
+        if (isLoadModal || !this.hasLoadModalTarget && this.hasLoadTarget && target===this.loadTarget) {
             if (isLoadModal) {
                 target.nextElementSibling.click(); // click 'no' to close the modal
             }
@@ -436,6 +437,8 @@ export default class extends Controller {
                 heading.getElementsByTagName('span')[0].style.opacity = '0';
             });
         }
+        // further expandable element
+        addExpandableListener(this.expandableTargets);
     }
 
     /** Adds all listeners to the different elements. */

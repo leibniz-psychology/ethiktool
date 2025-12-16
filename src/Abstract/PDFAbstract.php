@@ -2,8 +2,10 @@
 
 namespace App\Abstract;
 
+use App\Classes\CheckDocClass;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use Knp\Snappy\Pdf;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -38,6 +40,21 @@ class PDFAbstract extends ControllerAbstract
             $string = $this->convertStringToLink($string,self::$linkedPage,self::$routeIDs,$fragment);
         }
         return $string;
+    }
+
+    /** Creates the string indicating that the downloaded files are not the final ones.
+     * @param Request $request
+     * @param string $type must equal 'application' oder 'participation'
+     * @param bool $hasReviewDocs true if participant documents are created and reviewed, false otherwise. May only be provided if $type equals 'participation'
+     * @return string string indicating that the downloaded files are not the final ones if the single documents should be created, an empty string otherwise
+     */
+    protected function getSingleDocsHint(Request $request,string $type, bool $hasReviewDocs = true): string
+    {
+        try {
+            return self::$savePDF && !self::$isCompleteForm ? $this->translateStringPDF('singleDocuments.'.$type,['isSingleDocs' => 'true', 'isComplete' => $this->getStringFromBool(CheckDocClass::getDocumentCheck($request,returnCheck: true)), 'hasReviewDocs' => $this->getStringFromBool($hasReviewDocs)]) : '';
+        } catch (\Throwable) {
+            return '';
+        }
     }
 
     // methods

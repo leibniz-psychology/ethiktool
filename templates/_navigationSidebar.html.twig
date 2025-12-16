@@ -91,7 +91,7 @@
                 {% if route.error ?? false %}
                     <span class="{% if isCurrentActive or not hasSubPages %} mt-0 {% else %} mt-1 {% endif %}">{{ include('images/exclamation.svg') }}</span>
                 {% endif %}
-                <a class="flex {% if hasSubPages %} StudyNav-NavItem Button_navigation {% elseif isCurrentActive %} StudyNav-NavItem_active {% endif %}"
+                <a class="flex link {% if hasSubPages %} StudyNav-NavItem Button_navigation {% elseif isCurrentActive %} StudyNav-NavItem_active {% endif %}"
                    {% if isFilename and isRoute and (not isCurrentActive or curRoute is same as 'app_landing') %}
                         href="{{ path(curRoute,routeIDs) }}"
                         {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': curRoute}|merge(hasSubPages ? {'page': isProjectdetails ? 'Projectdetails' : 'AppData'} : {})) }}

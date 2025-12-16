@@ -1,5 +1,5 @@
 {% set logoSize, maxWidth, flexRowClasses, request, curLocale = 'height: 100px; width: 100px;', 'max-width: 1600px;', 'flex flex-row', app.request, request.getLocale() %}
-{% set background, flexClasses = 'background: linear-gradient(to right,#240d46 0%,#2b2171 100%);', flexRowClasses~' flex-nowrap' %}
+{% set background, flexClasses, route = 'background: linear-gradient(to right,#240d46 0%,#2b2171 100%);', flexRowClasses~' flex-nowrap', request.attributes.get('_route') %}
 {% set headerModals, infoModal = ['aboutUs','aboutTool','technicalHints','termsOfUse','contactModal'], 'components/infoModal.html.twig' %}
 <div class="bg-white relative z-20">
     <div class="mx-auto winWidth" style="{{ maxWidth }}">
@@ -20,7 +20,7 @@
                     <span style="margin-left: 8px" class="{{ flexRowClasses }} gap-1">
                         {% for locale in appLocales %}
                             <a id="{{ locale }}" {{ stimulus_target('base','language') }} {% if locale is same as curLocale %} class="font-bold text-secondary" {% endif %}
-                               href="{{ path(request.attributes.get('_route'),request.get('_route_params')) }}">{{ locale|upper }}</a>
+                               href="{{ path(route,request.get('_route_params')) }}">{{ locale|upper }}</a>
                         {% endfor %}
                     </span>
                 </div>
@@ -30,7 +30,7 @@
     <header style="{{ background}} height: 150px">
         <div class="HeaderBackground winWidth" style="height: 150px">
             <div style="width: fit-content">
-                <a href="/{{ curLocale }}" class="block mx-auto sm:w-full font-serif text-5xl text-white whitespace-nowrap">
+                <a href="/{{ curLocale }}" id="header" class="block mx-auto sm:w-full font-serif text-5xl text-white whitespace-nowrap" {% if committeeType is not same as '' and route is not same as 'app_quit' or route is same as 'app_newForm' %} {{ stimulus_action('base','setDummySubmit','click') }} {% endif %}>
                     <span class="font-semibold font-serif">{{ 'main.title'|trans }}</span>
                 </a>
             </div>

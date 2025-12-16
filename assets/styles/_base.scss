@@ -22,9 +22,32 @@ textarea {
   @apply shadow-sm outline-none ring;
 }
 
-a[href*="//"]:not([href*="https://leibniz-psychology.org"], .no-linkout)
-{
+a[href*="//"]:not([href*="https://leibniz-psychology.org"], .no-linkout) {
   @apply linkExternal;
+}
+
+a[href^="mailto"]::after {
+  /* prettier-ignore */
+  background:
+          url("../images/envelope.svg"
+          param(--color theme("colors.mono.900")))
+left center no-repeat;
+  background-size: 80%;
+  margin-left: 0.2rem;
+  @apply linkIcon;
+}
+
+a[href^="mailto"]:hover {
+  @apply linkColor;
+
+  &::after {
+    /* prettier-ignore */
+    background:
+            url("../images/envelope.svg"
+            param(--color
+            theme("colors.mono.900")))
+  left center no-repeat;
+  }
 }
 
 .linkExternal::after {
@@ -71,4 +94,8 @@ left center no-repeat;
 .previewSmallIcon {
   vertical-align: text-bottom;
   @apply linkIcon;
+}
+
+.linkColor {
+  color: rgb(10,88,180);
 }

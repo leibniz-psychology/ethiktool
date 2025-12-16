@@ -53,7 +53,7 @@ class ConsentType extends TypeAbstract
         // voluntary and consent
         $otherDescription = self::consentOtherDescription.'Participants';
         foreach ([self::voluntaryNode,self::consentNode] as $type) {
-            $this->setChosenArray($forms,$viewData,$type,array_merge([self::chosen2Node => $type.'Participants', self::descriptionNode => $type.self::descriptionCap],$type===self::voluntaryNode ? [self::voluntaryYesDescription => self::voluntaryYesDescription] : [$otherDescription => $otherDescription]));
+            $this->setChosenArray($forms,$viewData,$type,array_merge([self::chosen2Node => $type.'Participants', self::descriptionNode => $type.self::descriptionCap],$type===self::voluntaryNode ? [self::voluntaryYesDescription => self::voluntaryYesDescription] : [self::consentOtherDescription => self::consentOtherDescription,$otherDescription => $otherDescription]));
         }
         // terminate cons
         $this->setChosenArray($forms,$viewData,self::terminateConsNode,[self::descriptionNode => self::terminateConsNode.self::descriptionCap]);

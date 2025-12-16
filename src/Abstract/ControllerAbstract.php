@@ -46,7 +46,6 @@ abstract class ControllerAbstract extends AbstractController
     protected const docNameRecent = 'documentRecent'; // Same as 'document' but including changes on other pages. Will be used if the xml-file or the single documents are downloaded before the page is left, but only on pages whose inputs may affect other pages. Therefore, the key only exists on such pages.
     protected const contributorsSessionName = 'contributors'; // name of the key in the session where the most recent contributors are stored
     public const fileName = 'fileName'; // needed in NewFormType, therefore public
-    public const passwordInput = 'passwordInput'; // needed in NewFormType, therefore public
     protected const saveNodeName = 'saveDate';
     protected const pdfNodeName = 'pdfDate';
     protected const appDataNodeName = 'AppData';
@@ -373,7 +372,7 @@ abstract class ControllerAbstract extends AbstractController
                     if ($isNext && $isPrevious) { // if both buttons are clicked immediately after one another, only keep 'previous page' in case it happened on the overview page of a measure time point
                         $isNext = false;
                     }
-                    if (str_contains($submitDummy, 'backToMain')) { // 'back to Main menu' was clicked. Must equal the name of the button in twig
+                    if (str_contains($submitDummy, 'backToMain') || str_contains($submitDummy,'header')) { // 'back to Main menu' or the link in the header was clicked. In case of 'backToMain': must equal the name of the button in twig
                         $this->resetDocContributors($session, $isCoreDataContributors);
                         return $this->redirectToRoute('app_main');
                     } elseif ($isNext || $isPrevious) { // 'next page' or 'previous page' was clicked
@@ -1020,7 +1019,7 @@ abstract class ControllerAbstract extends AbstractController
                 }
                 $singleDocsFolder .= $filename;
                 $this->fpdi = new Fpdi();
-                $applicationFilename = $applicationPrefix.$sessionIDExt;
+                $applicationFilename = $applicationPrefix.(!self::$isCompleteForm ? '' : 'SingleDocs').$sessionIDExt;
                 $zip->addFromString($singleDocsFolder.$this->translateStringPDF('filenames.application').$pdfExt,(new PdfMerger(new Fpdi()))->merge((new PdfCollection())->addPdf($applicationFilename,'1-'.($this->addPDF($applicationFilename)-1)) ,PdfMerger::MODE_STRING));
                 $this->addParticipationPDFs($session);
                 $zip->addFromString($singleDocsFolder.$this->translateStringPDF('filenames.participation').$pdfExt,(new PdfMerger(new Fpdi()))->merge($this->pdfParticipation,PdfMerger::MODE_STRING)); // if single documents, with time, otherwise without
@@ -1134,7 +1133,6 @@ abstract class ControllerAbstract extends AbstractController
                     $ghostscript = new Ghostscript(['quiet' => false]);
                     $device = $ghostscript->createPdfDevice($pathname.'.pdf');
                     $device->setCompatibilityLevel(1.4);
-                    $device->setPDFFitPage();
                     $device->createProcess($pathname)->run();
                     $pathname .= '.pdf';
                 }
@@ -1159,7 +1157,8 @@ abstract class ControllerAbstract extends AbstractController
         $numPages = $this->fpdi->setSourceFile($filename);
         for ($curPage = 1; $curPage<$numPages+($removeLastPage ? 0 : 1); $curPage++) {
             $importedPage = $this->fpdi->importPage($curPage, PageBoundaries::CROP_BOX, true, true);
-            $this->fpdi->AddPage();
+            $size = $this->fpdi->getTemplateSize($importedPage);
+            $this->fpdi->AddPage($size['orientation'],[$size['width'],$size['height']]);
             $this->fpdi->useTemplate($importedPage);
         }
         return $numPages;
@@ -1975,7 +1974,7 @@ abstract class ControllerAbstract extends AbstractController
                     } // foreach measure time point
                 } // foreach group
             } // foreach study
-        } // if isMajor1 || isSmaller201
+        } // if isMajor1 || is200
     }
 
     /** Creates a string indicating the duration or an int indicating the total time.

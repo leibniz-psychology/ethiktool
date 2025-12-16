@@ -26,6 +26,14 @@
                 <div {{ stimulus_action(newFormController,'setButton','input') }}>{{ form_widget(password,addTargetArray(newFormController,'password')) }}</div>
                 <div class="MetaData-Label">{{ (hintPrefix~'password')|trans }}</div>
             {% endif %}
+            {# confirm buttons #}
+            <div id="confirmDiv" {{ stimulus_target(newFormController,'confirmDiv')|stimulus_action(newFormController,'setButton','input') }} style="grid-column: span 3">
+                {% for confirm, text in {'requirements': 'main.textRequirements','technicalHint': 'technicalHints.text'} %}
+                    {{ formRender.addExpandable('newForm.'~confirm~'.text') }}
+                    <div class="MetaData-Widget borderLight mx-4 mt-1" style="display: none">{{ (text)|trans(committeeParamsnewForm)|raw|nl2br }}</div>
+                    <div class="MetaData-Widget">{{ formRender.addCheckbox(content[confirm],{'target': [newFormController,confirm], 'labelParams': committeeParamsnewForm}) }}</div>
+                {% endfor %}
+            </div>
             <div class="grid mt-8 mb-2" style="grid-column: 2 / span 2; grid-template-columns: repeat(2,minmax(min-content,max-content))">
                 <button class="Button_primary_go me-2" type="submit" name="newFormSubmit" {{ stimulus_target(newFormController,'save') }}>{{ 'newForm.buttons.save'|trans }}</button>
                 <button class="Button_primary_go me-2" type="submit" name="backToMain">{{ 'newForm.buttons.cancel'|trans }}</button>

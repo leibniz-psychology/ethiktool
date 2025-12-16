@@ -33,7 +33,8 @@ export default class extends Controller {
             }
             bias.disabled = isNoBias;
         }
-        this.participateHintTarget.style.color = isNoBias ? 'darkgray' : 'black';
+        let isParticipate = this.participateTarget.checked;
+        this.participateHintTarget.style = 'color: '+(isNoBias ? 'darkgrey' : 'black')+'; margin-top: '+(isParticipate ? '-1' : '0.25')+'rem; margin-bottom: '+(isParticipate ? '1rem' : '0');
         this.noBiasTarget.disabled = anyBias;
         this.biasInput = isNoBias || anyBias && biasDescription;
         this.setSubmitButton();

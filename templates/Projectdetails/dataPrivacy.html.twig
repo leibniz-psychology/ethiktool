@@ -51,15 +51,17 @@
         {% endif %}
         {# create #}
         {% if hasCreate %}
-            {% set verification, pdfHint = content.verification, 'pdfHintDiv' %}
+            {% set verification, pdfHint, hasDocsReview = content.verification, 'pdfHintDiv', reviewProcess in ['shortDocs','fullDocs'] %}
             {% set verificationDiv, toolDiv = 'verificationDiv', 'toolDiv' %}
             {% set isSeparate = createValue is same as 'separate' %}
             <div {% if hasProcessing %} class="mt-8" {% endif %} id="create" {{ stimulus_action(privacyController,'setPrivacyCreate','change') }}>
                 {{ formRender.renderButtons(create,{
-                    'stimVisible': {'values': [['tool',toolDiv],['separate',[verificationDiv, pdfHint]]]},
+                    'stimVisible': {'values': [['tool',toolDiv],['separate',[verificationDiv]|merge(hasDocsReview ? [pdfHint] : [])]]},
                     'icons': {'createtool': translationPrefix~'create.toolHint'},
                     'labelParams': {'addressee': addresseeString, 'participant': participantsString}}) }}
-                {{ formRender.addHint(translationPrefix~'create.hint',{'visible': isSeparate, 'id': pdfHint}) }}
+                {% if hasDocsReview %}
+                    {{ formRender.addHint(translationPrefix~'create.hint',{'visible': isSeparate, 'id': pdfHint}) }}
+                {% endif %}
                 {{ formRender.renderButtons(verification,{'addDiv': [verificationDiv,boolToDisplay(isSeparate)]}) }}
             </div>
             <div id="{{ toolDiv }}" class="mt-8" style="{{ boolToDisplay(createValue is same as 'tool') }}">

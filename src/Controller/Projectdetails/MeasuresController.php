@@ -145,7 +145,7 @@ class MeasuresController extends ControllerAbstract
         }
         return $this->render('Projectdetails/measures.html.twig',
             $this->setRenderParameters($request,$measures,
-                ['maxCharsProcedure' => 800,
+                ['maxCharsProcedure' => 1000,
                  'measuresTypes' => self::measuresTypes,
                  'interventionsTypes' => self::interventionsTypes,
                  'measuresInterventionsOther' => self::measuresInterventionsOther,

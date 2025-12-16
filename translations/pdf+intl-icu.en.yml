@@ -207,8 +207,23 @@ addresseePrefix: >-
               wards    {Legal guardians: }
               other    {}}}}
 
+singleDocuments:
+  application: >-
+    {isSingleDocs, select,
+      true  {This is an interim document, not the final application form. {isComplete, select,
+                   true  {Please use the complete proposal file for submission to the ethics committee.}
+                   other {The entries in the Ethiktool are not yet complete or free of errors.}}}
+      other {This document is not intended for submission to the ethics committee. Please use the complete proposal file for submission.}}
+
+  participation: >-
+    This is an interim result, not a ready-to-use participant document. {isComplete, select,
+      true  {Please use the complete proposal file for submission to the ethics committee. {hasReviewDocs, select,
+                                                                                              true  {It contains the participant documents in their final form.}
+                                                                                              other {}}}
+      other {The entries in the Ethiktool are not yet complete or free of errors.}}
+
 # application
-informationHint: >-
+informationHint: >- # used for placeholder 'informationHint'
   {anyDocs, select,
     true  {in the study information sheet}
     other {}}{anyNoDocs, select,
@@ -346,18 +361,22 @@ projectdetails:
     examined:
       title: >-
         {number, plural,
-          =0    {}
+          =0    {{isWardsOnly, select,
+                   true  {Individuals}
+                   other {}}}
           =1    {}
           other {; each}} {limits, select,
-                                            noUpperLimit {of at least {minAge, plural,
-                                                                        =1    {1 year}
-                                                                        other {# years}}}
-                                            sameLimit    {of {minAge, plural,
-                                                            =1    {1 year}
-                                                            other {# years}}}
-                                            other        {between the ages of {minAge, number} and {maxAge, plural,
-                                                                                  =1    {1 year}
-                                                                                  other {# years}}}}.
+                            noUpperLimit {of at least {minAge, plural,
+                                                        =1    {1 year}
+                                                        other {# years}}}
+                            sameLimit    {of {minAge, plural,
+                                            =1    {1 year}
+                                            other {# years}}}
+                            other        {between the ages of {minAge, number} and {maxAge, plural,
+                                                                  =1    {1 year}
+                                                                  other {# years}}}}{isWardsAge, select,
+                                                                                        true  { (thus incapable of giving consent)}
+                                                                                        other {}}.
       types:
         healthy: 'healthy individuals'
         physical: 'individuals with physical illnesses or impairments'
@@ -537,7 +556,7 @@ participation:
                         other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preNo" data-base-route-i-ds-param="{routeIDs}">informed after-the-fact</a>}} that {addressee, select,
             children {their children}
             wards    {the supervised individuals}
-            other    {they}} participated in a study (see field 24 of the application form).
+            other    {they}} participated in a study (see field 24 of the application form)
     informationII:
       start: >- # other addressee is wards
         No participants documents for the {addressee, select,
@@ -550,15 +569,19 @@ participation:
               children {children}
               other    {supervised individuals}} are not informed in advance that they are participating in a study (see field 21 of the application form), nor are they informed after-the-fact that they participated in a study (see field 24 of the application form).
     funding: >-
-      the research project is still in the stage of applying for funding and {information, select,
-                noPost {because {informationSentence}}
-                other  {the participant documents will be handed in later upon funding acquisition.}}
+      {information, select,
+        noPost {because {informationSentence} and because}
+        other  {}} the research project is still in the stage of applying for funding{information, select,
+                noPost {}
+                other  { and the participant documents will be handed in later upon funding acquisition}}
     projectStart: >-
-      ethics review is requested after data collection has been started, and {information, select,
-                noPost {because {informationSentence}}
-                other  {thus the participant documents already exist.}}
-    short: '{committeeDat} does not include participant documents in their review of short proposals.'
-    end: " For the same reason, no data privacy statement was generated. The following information, which otherwise would have been transferred to the participant documents, needs to be taken into account for review:"
+      {information, select,
+        noPost {because {informationSentence} and because}
+        other  {}} ethics review is requested after data collection has been started{information, select,
+                noPost {}
+                other  {, and thus the participant documents already exist}}
+    short: '{committeeDat} does not include participant documents in their review of short proposals'
+    end: ". For the same reason, no data privacy statement was generated. The following information, which otherwise would have been transferred to the participant documents, needs to be taken into account for review:"
   projectTitle:
   title: >-
     {information, select,
@@ -853,10 +876,12 @@ participation:
         external: 'For use within this study, the research data are anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
         internal: 'For the project contributors, the research data are anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
         no: >-
-          In that process, {addressee, select,
-                              children {your child and}
-                              wards    {the individual under your supervision and}
-                              other    {}} you remain anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.
+          {isPurposeFurther, select,
+            true  {For use within this study, the research data are anonymous.}
+            other {In that process, {addressee, select,
+                                      children {your child and}
+                                      wards    {the individual under your supervision and}
+                                      other    {}} you remain anonymous.}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.
         codePersonal: '{codePersonal} '
       codePersonal: >- # for the {codePersonal} placeholder above
         Due {isName, select,
@@ -1217,10 +1242,14 @@ consent:
                                                                                         other {of {levelNames}}} because {savePDF, select,
           true  {{consent, select,
                     no    {no consent is given (see field 27 of the application form). This is justified as follows: {description}}
-                    other {consent is given in a different way ({description}; see field 27 of the application form).}}}
+                    other {consent is given in a different way ({description}; see field {isFull, select,
+                                                                                            true  {27}
+                                                                                            other {16}} of the application form).}}}
           other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">{consent, select,
                           no    {no consent</a> is given (see field 27 of the application form). This is justified as follows: {description}}
-                          other {consent is given in a different way</a> ({description}; see field 27 of the application form).}}}}
+                          other {consent is given in a different way</a> ({description}; see field {isFull, select,
+                                                                                                      true  {27}
+                                                                                                      other {16}} of the application form).}}}}
   title: >-
     {information, select,
       post  {After-the-fact declaration of consent to data processing}

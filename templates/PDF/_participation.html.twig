@@ -19,6 +19,8 @@
         {{ pdfMacros.addHeading(participationHeading,savePDF) }}
         {% if isMarkInput %}
             <div class="{{ redClasses }}">{{ (markingTrans)|trans(markInputParams) }}</div>
+        {% else %}
+            {{ pdfMacros.addSingleDocsHint(singleDocsHint) }}
         {% endif %}
         {% if isOral %}
             <div class="{{ redClasses }}">{{ oralHint|raw }}</div>

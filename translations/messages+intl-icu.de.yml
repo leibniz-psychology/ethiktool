@@ -6,7 +6,7 @@ multiple:
   loadMessage:
     newForm:
       title: 'Neuer Antrag erstellt'
-      text: 'Ein leerer Antrag wurde erstellt. Bitte beachten Sie die Voraussetzungen für die Ethikantragstellung sowie die technischen Hinweise zur Funktionalität des Ethiktools. Über den Menüpunkt „Antragsdaten“ können Sie beginnen, die Daten zu Ihrem Forschungsprojekt auszufüllen.'
+      text: 'Ein leerer Antrag wurde erstellt. Über den Menüpunkt „Antragsdaten“ können Sie beginnen, die Daten zu Ihrem Forschungsprojekt auszufüllen.'
     loadSuccess: # info modal if an xml-file was successfully loaded without being updated
       title: 'XML-Datei geladen'
       text: >-
@@ -36,7 +36,7 @@ multiple:
       text: >-
         {filename, select,
           sizeExceed  {Mindestens eine der hinzugefügten PDF-Dateien ist zu groß, oder die Gesamtgröße aller PDF-Dateien überschreitet das Maximum.}
-          other       {Die PDF-Datei „{filename}“ konnte nicht hinzugefügt werden.}} Bitte fügen Sie nur PDF-Dateien hinzu, welche kompatibel mit PDF 1.4 (Acrobat 5) sind und in Summe eine maximale Größe von 7 MB haben, und erstellen Sie den Gesamtantrag erneut. {filename, select,
+          other       {Die PDF-Datei „{filename}“ konnte nicht hinzugefügt werden.}} Bitte fügen Sie nur PDF-Dateien hinzu, die in Summe eine maximale Größe von 7 MB haben, und erstellen Sie den Gesamtantrag erneut. {filename, select,
                 sizeExceed {}
                 other      {</br></br>Sollten weitere selbst formulierte PDF-Dateien erforderlich sein, müssen diese ebenfalls neu hinzugefügt werden. Die Fehlermeldung bezieht sich nur auf die oben genannte Datei.}}
     errorMessage: # info modal if an error occurred
@@ -210,6 +210,12 @@ newForm: # placed immediately after 'committee' to have the committee names all 
     filename: 'Dieser Name wird in der Navigation angezeigt. Er wird außerdem als Dateiname vorgeschlagen.'
     committee: 'Bitte wählen Sie hier die Ethikkommission aus, bei der Sie den Antrag einreichen werden.'
     password: 'Die Ethiktool-Version für die gewählte Ethikkommission befindet sich noch im Beta-Stadium. Der Zugang ist nur mit Passwort möglich. Bitte geben Sie das Passwort ein.'
+  requirements:
+    text: 'Voraussetzungen für die Antragstellung'
+    confirm: 'Ich bestätige, dass ich die Voraussetzungen für die Antragstellung bei {committeeDat} erfülle.'
+  technicalHint:
+    text: 'Technische Hinweise'
+    confirm: 'Ich habe die technischen Hinweise zur Nutzung des Ethiktools zur Kenntnis genommen.'
   buttons:
     save: 'Antrag anlegen'
     cancel: 'Abbrechen'
@@ -296,47 +302,41 @@ main:
     
     Über „Neuer Antrag“ können Sie die Antragserstellung für die entsprechende Kommission beginnen.
     Über „Antrag laden“ können Sie eine vorhandene XML-Datei eines zuvor im Ethiktool erstellten Antrags laden und weiter bearbeiten. </i>
-  text: | # other in second select is test committee. For readability of the translation files newlines instead of br-tags are used.
+  text: >-
     <b> Sie erstellen einen Ethikantrag{committeeType, select,
                                           testCommittee {, mit dem Sie die Funktionsweise des Ethiktools testen können}
                                           other         { zur Einreichung bei {committeeDat}}}.</b>
     
+    
     {committeeType, select,
-      TUC   {Bitte beachten Sie folgende <b>Voraussetzungen für die Antragstellung:</b>
-      
-             Antragsberechtigt sind Personen, die an der Technischen Universität Chemnitz eigenständig wissenschaftlich tätig sind; das schließt Promovierende ausdrücklich ein. Die Verantwortung für die Ethikantragstellung im Fall von Studienabschlussarbeiten und anderen studentischen Forschungsprojekten liegt bei den Lehrpersonen bzw. Betreuenden.
+              EUB   {Bitte beachten Sie, dass die Dokumente für die Aufklärung der Teilnehmenden automatisch mit dem Ethiktool generiert werden und Sie die Information <b>nicht</b> vorab auf Basis des Templates auf der Ethikkommissions-Webseite vorbereiten müssen. Aus den Angaben im Tool werden automatisch die Information (Teil 1 des Templates) und die Einwilligung (Teil 2) sowie auf Wunsch auch die Angaben zum Datenschutz (Teil 3) fallspezifisch automatisch generiert. Sie erhalten ein PDF-Dokument zu Ihrer weiteren Verwendung.</br></br>}
+              other {}} Bitte beachten Sie, dass mit Erstellung des Antrags bestätigt wurde, dass die <a class="linkInternal" href data-bs-toggle="modal" data-bs-target="#technicalHints">technischen Hinweise</a> zur Kenntnis genommen wurden und dass folgende <b>Voraussetzungen für die Antragstellung</b> erfüllt sind:</br></br>
+  textRequirementsTitle: 'Voraussetzungen für die Antragstellung'
+  textRequirements: | # other in select is test committee. For readability of the translation files newlines instead of br-tags are used.
+    {committeeType, select,
+      TUC   {Antragsberechtigt sind Personen, die an der Technischen Universität Chemnitz eigenständig wissenschaftlich tätig sind; das schließt Promovierende ausdrücklich ein. Die Verantwortung für die Ethikantragstellung im Fall von Studienabschlussarbeiten und anderen studentischen Forschungsprojekten liegt bei den Lehrpersonen bzw. Betreuenden.
 
              Der Ethikantrag muss <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden; ein rückwirkendes Ethikvotum ist ausgeschlossen.
  
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden.}
-      EUB   {Bitte beachten Sie, dass die Dokumente für die Aufklärung der Teilnehmenden automatisch mit dem Ethiktool generiert werden und Sie die Information <b>nicht</b> vorab auf Basis des Templates auf der Ethikkommissions-Webseite vorbereiten müssen. Aus den Angaben im Tool werden automatisch die Information (Teil 1 des Templates) und die Einwilligung (Teil 2) sowie auf Wunsch auch die Angaben zum Datenschutz (Teil 3) fallspezifisch automatisch generiert. Sie erhalten ein PDF-Dokument zu Ihrer weiteren Verwendung.
-      
-             Bitte beachten Sie folgende <b>Voraussetzungen für die Antragstellung:</b>
-                 
-             Antragsberechtigt sind Mitglieder und Angehörige der Universität Bielefeld. Studierende können ebenfalls einen Ethikantrag für ihre Abschlussarbeit oder andere studentische Forschungsprojekte einreichen; die Lehrpersonen bzw. Betreuenden müssen den Antrag vor der Einreichung gelesen und genehmigt haben.
+      EUB   {Antragsberechtigt sind Mitglieder und Angehörige der Universität Bielefeld. Studierende können ebenfalls einen Ethikantrag für ihre Abschlussarbeit oder andere studentische Forschungsprojekte einreichen; die Lehrpersonen bzw. Betreuenden müssen den Antrag vor der Einreichung gelesen und genehmigt haben.
 
              Ein Antrag soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann die Ethikkommission eine nachträgliche Prüfung vornehmen. Weitere Informationen zur Verfahrensweise bei nachträglichen Begutachtungen finden Sie <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/faq/index.xml" target="_blank">hier</a>.
  
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethik-Kommission eingereicht werden.
              
              Forschungsprojekte mit Ärztinnen bzw. Ärzten als Projektbeteiligte müssen normalerweise durch eine medizinische Ethikkommission geprüft werden. In Einzelfällen ist eine Begutachtung durch die nicht-medizinische Ethik-Kommission der Universität Bielefeld möglich. Weitere Informationen finden Sie <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">hier</a>.}
-      JGU   {Bitte beachten Sie folgende <b>Voraussetzungen für die Antragstellung:</b>
-              
-             Antragsberechtigt sind Mitglieder des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz. Antragsberechtigt sind außerdem Forscherinnen und Forscher, die einen Antrag auf eigene Stelle (z.B. bei der DFG) vorbereiten, um im Rahmen ihres Projektes in einer Abteilung des Psychologischen Instituts der JGU Mainz zu arbeiten; in diesem Fall ist den Antragsunterlagen eine kurze Erklärung der Abteilungsleiterin bzw. des Abteilungsleiters der aufnehmenden Abteilung beizulegen.
+      JGU   {Antragsberechtigt sind Mitglieder des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz. Antragsberechtigt sind außerdem Forscherinnen und Forscher, die einen Antrag auf eigene Stelle (z.B. bei der DFG) vorbereiten, um im Rahmen ihres Projektes in einer Abteilung des Psychologischen Instituts der JGU Mainz zu arbeiten; in diesem Fall ist den Antragsunterlagen eine kurze Erklärung der Abteilungsleiterin bzw. des Abteilungsleiters der aufnehmenden Abteilung beizulegen.
              
              Der Ethikantrag muss <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden; ein rückwirkendes Ethikvotum ist ausgeschlossen.
  
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden. (Zu weiteren Eingrenzungen siehe auch: <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
-      DLR   {Bitte beachten Sie folgende <b>Voraussetzungen für die Antragstellung:</b>
-    
-             Antragsberechtigt sind Mitarbeitende des DLR; das schließt auch Studierende mit laufendem Arbeitsvertrag am DLR ein. Studierende ohne Arbeitsvertrag am DLR besprechen bitte mit einer wissenschaftlich beteiligten Person am DLR, ob diese den Ethikantrag beim DLR stellt oder ob die Ethikkommission der Universität zuständig ist, an der das Studium absolviert wird.
+      DLR   {Antragsberechtigt sind Mitarbeitende des DLR; das schließt auch Studierende mit laufendem Arbeitsvertrag am DLR ein. Studierende ohne Arbeitsvertrag am DLR besprechen bitte mit einer wissenschaftlich beteiligten Person am DLR, ob diese den Ethikantrag beim DLR stellt oder ob die Ethikkommission der Universität zuständig ist, an der das Studium absolviert wird.
              
              Ein Antrag soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann eine nachträgliche Begutachtung erfolgen. Bitte nehmen Sie in solchen Fällen vorab Kontakt zur Geschäftsstelle Forschungsethik des DLR auf und klären Sie, ob eine Ausnahmegenehmigung für die nachträgliche Begutachtung erteilt werden kann.
              
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethik-Kommission eingereicht werden. Gleiches gilt für Forschungsprojekte, an denen Ärztinnen bzw. Ärzte beteiligt sind.}
-      other {Bitte beachten Sie, dass <b>keine Einreichung des Test-Ethikantrags bei einer Ethikkommission vorgesehen ist.</b>}}
-      
-      <b>Unter „Technische Hinweise“ können Sie sich über das empfohlene Vorgehen für die Antragserstellung informieren.</b>
+      other {Sie erstellen einen Test-Ethikantrag, für den <b>keine Einreichung bei einer Ethikkommission</b> vorgesehen ist. Daher sind auch keine Voraussetzungen für die Antragstellung zu erfüllen.}}
   newFormModal:
     title: 'Wechsel zu Neuer Antrag'
     content: 'Aktuell ist ein Antrag geöffnet. Nicht gespeicherte Eingaben werden verworfen. Möchten Sie dennoch fortfahren?'
@@ -969,7 +969,7 @@ projectdetails:
             =1    {Minute}
             other {Minuten}}
           Vor- und Nachbereitungszeit sowie Pausenzeiten.
-        hint: 'Die Vor- bzw. Nachbereitungszeit umfasst auch die Zeit, die für das Lesen der relevanten Dokumente (z.B. Studieninformation) benötigt wird.'
+        hint: 'Sie können als Zeitwert auch ''0'' eintragen. Beachten Sie aber bitte, dass die Vorbereitung üblicherweise auch die Zeit umfasst, die für das Lesen der relevanten Dokumente (z.B. Studieninformation) benötigt wird.'
     burdensRisks: # other is burdens/risks for contributors
       textHint: >-
         Bitte beschreiben Sie die {type, select,
@@ -1287,7 +1287,7 @@ projectdetails:
           separateLater: 'Ich möchte die Datenverarbeitung zu einem späteren Zeitpunkt im Detail klären und eine separat erstellte Datenschutzerklärung inkl. Einwilligungserklärung von der zuständigen Datenschutzstelle prüfen lassen.'
           notApplicable: 'nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.'
         toolHint: 'Das Ethiktool stellt weitere Fragen zu Art und Umgang mit den in der Studie verarbeiteten Daten. Nur wenn personenbezogene Daten verarbeitet werden bzw. Daten in der Studie personenbeziehbar sind, wird eine Datenschutzerklärung gemäß DS-GVO („Anlage zur Datenverarbeitung“) erstellt.'
-        hint: 'Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, die Datenschutzerklärung („Anlage zur Datenverarbeitung“) inkl. Einwilligungserklärung als PDF-Datei beizufügen.'
+        hint: 'Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, die Datenschutzerklärung („Anlage zur Datenverarbeitung“), ggf. inkl. Einwilligungserklärung, als PDF-Datei beizufügen.'
         verification:
           title: 'Wurde die separat erstellte Datenschutzerklärung durch die zuständige Datenschutzstelle bereits genehmigt?'
           types:
@@ -2500,10 +2500,7 @@ completeForm:
            other {}}}}
     consent: 'Die obigen Hinweise zur Bearbeitung meines Ethikantrags habe ich zur Kenntnis genommen.'
   pdf:
-    text: >-
-      Aufgrund Ihrer Eingaben im Ethiktool ist es erforderlich, hier zusätzliche PDF-Dateien beizufügen. Bitte wählen Sie diese hier aus. Die PDFs müssen im Format Hochkant A4 vorliegen und kompatibel mit PDF 1.4 (Acrobat 5) sein; die maximale Dateigröße beträgt 7 MB. {committeeType, select,
-                EUB   {Zur Erzeugung eines kompatiblen PDFs können Sie folgendes Tool nutzen: <a href="https://pdftool.ub.unibi.de/pdf-to-pdfa?lang=de_DE" target="_blank">https://pdftool.ub.unibi.de/pdf-to-pdfa?lang=de_DE</a>. Als Einstellung muss pdf/A-1b gewählt sein.}
-                other {}}
+    text: 'Aufgrund Ihrer Eingaben im Ethiktool ist es erforderlich, Ihrem Antrag zusätzliche PDF-Dateien beizufügen. Bitte wählen Sie diese hier aus. Die maximale Dateigröße beträgt 7 MB.'
     votes: 'Ergebnisschreiben der anderen Ethikkommission'
     projectdetails:
       begun: >-
@@ -2528,7 +2525,7 @@ completeForm:
     text:
       start: 'Der Gesamtantrag kann nun heruntergeladen werden:'
       end: >-
-        Es wird eine ZIP-Datei „{fileName}_Gesamtantrag_{curDate}.zip“ erstellt, die alle nötigen Unterlagen für die Einreichung enthält, und zwar die PDF-Datei für den Gesamtantrag und die zugehörige XML-Datei. Bitte prüfen Sie die Inhalte der PDF-Datei nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend den Gesamtantrag (PDF- und XML-Datei) erneut herunter. Bearbeiten Sie die PDF-Datei <b>nicht</b> mit anderen Programmen. Wenn alle Angaben im Gesamtantrag korrekt sind, senden Sie die PDF-Datei mit der zugehörigen XML-Datei an {committeeAcc} unter {committeeType, select,
+        Es wird eine ZIP-Datei „{fileName}_Gesamtantrag_{curDate}.zip“ erstellt, die alle Unterlagen enthält (Gesamtantrag, Einzeldokumente, XML-Datei). Für die Einreichung benötigen Sie den Gesamtantrag (PDF) und die XML-Datei. Die Einzeldokumente sind für Ihre eigene Verwendung vorgesehen. Bitte prüfen Sie die Inhalte des Gesamtantrags (PDF) nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter. Bearbeiten Sie die PDF-Datei <b>nicht</b> mit anderen Programmen. Wenn alle Angaben im Gesamtantrag korrekt sind, senden Sie die PDF-Datei mit der zugehörigen XML-Datei an {committeeAcc} unter {committeeType, select,
         TUC   {ethik@tu-chemnitz.de (E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet, bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Hinweise zum Datenschutz</a>)}
         EUB   {ethikkommission@uni-bielefeld.de}
         JGU   {ethikkommission-psychologie@uni-mainz.de}
@@ -2610,6 +2607,8 @@ technicalHints:
       other         {benötigen Sie zur Einreichung bei {committeeType,select,
                                                           noCommittee {Ihrer Ethikkommission}
                                                           other       {{committeeDat}}}. Darüber hinaus erhalten Sie die Einzeldokumente der verschiedenen Antragsteile zu Ihrer eigenen Verwendung. Bitte beachten Sie, dass Sie die XML-Datei später für etwaige Überarbeitungen des Antrags benötigen.}}
+    
+    Sie haben jederzeit die Möglichkeit, sich über den Button „Einzeldokumente“ die XML-Datei sowie die Einzeldokumente der verschiedenen Antragsteile im PDF-Format herunterzuladen. Bitte beachten Sie, dass die Einzeldokumente <b>nicht</b> zur Einreichung bei der Ethikkommission vorgesehen sind.
 
     Das Ethiktool wird regelmäßig automatisch aktualisiert. Sie verwenden Version {toolVersion}; eine Versionsgeschichte finden Sie <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html" target="_blank">hier</a>.
 

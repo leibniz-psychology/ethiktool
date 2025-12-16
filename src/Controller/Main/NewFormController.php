@@ -7,6 +7,7 @@ use App\Form\Main\NewFormType;
 use App\Traits\AppData\AppDataTrait;
 use App\Traits\Main\BetaCommitteeTrait;
 use App\Traits\Main\CompleteFormTrait;
+use App\Traits\Main\NewFormTrait;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use App\Traits\Contributors\ContributorsTrait;
 use DOMException;
@@ -19,15 +20,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class NewFormController extends ControllerAbstract
 {
+    use NewFormTrait;
     use BetaCommitteeTrait; // passwords for beta committees
     use AppDataTrait; // application data
     use ContributorsTrait; // contributors
     use ProjectdetailsTrait; // project details
     use CompleteFormTrait; // complete form
-
-    private const filenameTemp = 'filenameTemp'; // used to save the entered filename if the language was changed
-    private const committeeTemp = 'committeeTemp'; // used to save the chosen committee if the language was changed
-    private const wrongPassword = 'wrongPassword'; // session variable indicating that a wrong password was entered
 
     #[Route('/newForm', name: 'app_newForm')]
     public function showNewForm(Request $request): Response
@@ -40,15 +38,23 @@ class NewFormController extends ControllerAbstract
         if ($wrongPassword) {
             $session->remove(self::wrongPassword);
         }
+        $committeeType = $session->get(self::committeeTemp) ?? '';
+        $language = $request->getLocale();
 
-        $general = $this->createFormAndHandleRequest(NewFormType::class,[self::fileName => $session->get(self::filenameTemp) ?? '', self::committee => $session->get(self::committeeTemp) ?? '', self::language => $session->get(self::language)],$request);
+        $general = $this->createFormAndHandleRequest(NewFormType::class,
+            [self::fileName => $session->get(self::fileNameTemp) ?? '',
+             self::committee => $committeeType,
+             self::requirements => $session->get(self::requirementsTemp) ?? false,
+             self::technicalHint => $session->get(self::technicalHintTemp) ?? false,
+             self::language => $session->get(self::language)],$request);
         if ($general->isSubmitted()){
             $response = $request->request->all();
             $data = $response['new_form'];
             $submitDummy = $data[self::submitDummy];
+            $languageChanged = str_contains($submitDummy,self::language); // true if language has changed
             if (array_key_exists('newFormSubmit',$response)) { // "save" was clicked
                 try {
-                    $this->resetTemp($session);
+                    $this->removeTemp($session);
                     $data = $general->getData();
                     $committeeType = $data[self::committee];
                     if (in_array($committeeType,self::committeeTypesBeta) && $data[self::passwordInput]!==self::betaPasswords[$committeeType]) {
@@ -121,19 +127,22 @@ class NewFormController extends ControllerAbstract
                 } catch (DOMException | Exception) { // Exception is for SimpleXMLElement
                     return $this->setErrorAndRedirect($session);
                 }
-            } elseif (array_key_exists('backToMain',$response)) { // "abort" was clicked
-                $this->resetTemp($session);
+            } elseif (array_key_exists('backToMain',$response) || str_contains($submitDummy,'header')) { // "abort" or the link in the header was clicked
+                $this->removeTemp($session);
                 return $this->redirectToRoute('app_main');
-            } elseif (str_contains($submitDummy,self::language)) { // one of the language elements was clicked
-                $newLanguage = substr(trim(explode("\n",$submitDummy)[1] ?? ''), strlen(self::language.':'));
-                $this->setTemp($session,$data);
+            } elseif (str_contains($submitDummy,self::quit)) { // "quit" was clicked
+                return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($request->getSession()));
+            } else { // one of the language elements was clicked or the committee dropdown has changed -> all other buttons are disabled
+                $newLanguage = $languageChanged ? substr(trim(explode("\n",$submitDummy)[1] ?? ''), strlen(self::language.':')) : $language;
                 $session->set(self::language, $newLanguage);
+                $this->setTemp($session,$data);
                 return $this->redirectToRoute('app_newForm',['_locale' => $newLanguage]);
-            } else { // "quit" was clicked or a proposal was loaded -> all other buttons that lead to other pages are disabled
-                return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($request->getSession())); // save the same document again
             }
         } // if ($general->isSubmitted())
-        return $this->render('Main/newForm.html.twig', $this->setRenderParameters($request,$general,[self::wrongPassword => $wrongPassword, 'committeeBeta' => self::committeeTypesBeta]));
+        return $this->render('Main/newForm.html.twig', $this->setRenderParameters($request,$general,
+            [self::wrongPassword => $wrongPassword,
+             'committeeBeta' => self::committeeTypesBeta,
+             self::committeeParams.self::newForm => $this->setCommittee($session,$committeeType,$language,false)])); // committee params only for the page, not for the header
     }
 
     /** Sets the temp variables for saving filename and committee.
@@ -143,17 +152,20 @@ class NewFormController extends ControllerAbstract
      */
     private function setTemp(Session $session, array $data): void
     {
-        $session->set(self::filenameTemp, $data[self::fileName]);
+        $session->set(self::fileNameTemp,$data[self::fileName]);
         $session->set(self::committeeTemp,$data[self::committee]);
+        $session->set(self::requirementsTemp,array_key_exists(self::requirements,$data));
+        $session->set(self::technicalHintTemp,array_key_exists(self::technicalHint,$data));
     }
 
-    /** Resets the temp variables for saving filename and committee.
+    /** Removes the temp variables for saving the inputs as well as tee committeeParams parameters.
      * @param Session $session current session
      * @return void
      */
-    private function resetTemp(Session $session): void
+    private function removeTemp(Session $session): void
     {
-        $session->set(self::filenameTemp,'');
-        $session->set(self::committeeTemp,'');
+        foreach ([self::fileNameTemp,self::committeeTemp,self::requirementsTemp,self::technicalHintTemp,self::committeeParams] as $temp) {
+            $session->remove($temp);
+        }
     }
 }

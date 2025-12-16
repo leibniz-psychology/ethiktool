@@ -1,7 +1,7 @@
 {% extends 'threeColumns.html.twig' %}
 {% import 'macros.html.twig' as formRender %}
 {% block content %}
-    {% set translationPrefix, completeFormController = 'completeForm.', 'Main--completeForm' %}
+    {% set translationPrefix, completeFormController, markInputParam = 'completeForm.', 'Main--completeForm', {'markInput': true} %}
     <div {{ stimulus_controller(completeFormController) }}>
         {# consent #}
         {% set titlesPrefix = translationPrefix~'titles.' %}
@@ -10,7 +10,7 @@
             {{ _self.addBorderText(consentContent) }}
             <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setSubmitButton','change') }}>{{ formRender.addCheckbox(content.consent, {'target': [completeFormController,'consent']}) }}</div>
             <div class="MetaData-Label mt-4">{{ consentHint|raw }}</div>
-            {{ formRender.addTextfield(content.consentText,fontNormal|merge({'hint': translationPrefix~'consent.notes', 'textHintParams': committeeParams})) }}
+            {{ formRender.addTextfield(content.consentText,fontNormal|merge(markInputParam)|merge({'hint': translationPrefix~'consent.notes', 'textHintParams': committeeParams})) }}
         </div>
         {# bias #}
         <div class="mt-8">
@@ -19,12 +19,12 @@
             <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setBias','input') }}>
                 {% for bias in biasTypes %}
                     <div {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>{{ formRender.addCheckbox(content[bias], {'target': [completeFormController,bias]}) }}</div>
-                    {% if bias is same as 'participate' %}
-                        <div class="MetaData-Label" {{ stimulus_target(completeFormController,'participateHint') }}>{{ (translationPrefix~'bias.hint')|trans }}</div>
-                    {% endif %}
                     {% set description = content[bias~'Description'] ?? '' %}
                     {% if description is not same as '' %}
-                        {{ formRender.addTextfield(description,{'attributes': {'style': 'margin-bottom: 1.5rem'}}) }}
+                        {{ formRender.addTextfield(description,markInputParam|merge({'attributes': {'style': 'margin-bottom: 1.5rem'}})) }}
+                    {% endif %}
+                    {% if bias is same as 'participate' %}
+                        <div class="MetaData-Label mx-1" {{ stimulus_target(completeFormController,'participateHint') }}>{{ (translationPrefix~'bias.hint')|trans }}</div>
                     {% endif %}
                 {% endfor %}
             </div>
@@ -41,7 +41,7 @@
             {% if pdf is not same as [] %}
                 <div class="mt-8">
                     {{ formRender.addHeading(titlesPrefix~'pdf') }}
-                    <div class="MetaData-Label">{{ (translationPrefix~'pdf.text')|trans(committeeParams)|raw }}</div>
+                    <div class="MetaData-Label">{{ (translationPrefix~'pdf.text')|trans }}</div>
                     {% if pdf.votes is defined %}
                         {{ _self.addPDF(content.votes,completeFormController) }}
                     {% endif %}

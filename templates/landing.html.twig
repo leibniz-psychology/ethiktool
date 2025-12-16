@@ -43,7 +43,7 @@
                 {% set isCurRoute = curRoute is not same as '' %}
                 {% set href, dummyParam = isCurRoute ? path(curRoute,routeIDs), {'route-i-ds': routeIDs, 'url': curRoute}|merge(curRoute is same as 'app_landing' ? {'page': page|capitalize} : {}) %}
                 <a {% if isCurRoute %}
-                    class="block {% if isProjectdetailsLanding %} StudyNav-SubNavItem Button_navigation justify-content-start {% if loop.index0 is same as 0 or isProjectdetailsLanding and not isMeasure %} mt-4 {% endif %} {% endif %}"
+                    class="block link {% if isProjectdetailsLanding %} StudyNav-SubNavItem Button_navigation justify-content-start {% if loop.index0 is same as 0 or isProjectdetailsLanding and not isMeasure %} mt-4 {% endif %} {% endif %}"
                     href="{{ href }}"
                     {{ stimulus_action('base','setDummySubmit','click',dummyParam) }}
                 {% endif %}
@@ -78,11 +78,8 @@
         </div>
         {# description of page part two #}
         {% if isProjectdetailsLanding %}
-            <div class="flex mt-4 clickable bg-mono-200 mx-4"{{ stimulus_target('landing','dropdownNew') }}>
-                <span class="dropdownCollapsed" style="height: 1.5rem"></span>
-                {{ (prefix~'new')|trans }}
-            </div>
-            <div style="display: none" {{ stimulus_target('landing','newDiv') }}> {# div closes in next 'if not isMeasure' #}
+            {{ formRender.addExpandable(prefix~'new') }}
+            <div style="display: none"> {# div closes in next 'if not isMeasure' #}
                 <div class="MetaData-Label mt-4">
                     {{ (prefix~'end')|trans|raw }}
                 </div>
@@ -104,7 +101,7 @@
                     {# button for copying a study, group or measure point in time #}
                     <button type="submit" id="submitCopy" class="Button_primary_act" style="grid-area: 2 / 2" {{ stimulus_action('base','submitForm','click',routeParams)|stimulus_target('landing','submitCopy') }} disabled>{{ manipulate|trans(levelParam|merge({'type': 'copy'})) }}</button>
                 </div>
-            </div> {# 'newDiv' #}
+            </div> {# div after 'addExpandable' #}
         {% endif %}
         {# modal for removing #}
         {% if isProjectdetailsLanding %}

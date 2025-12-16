@@ -435,10 +435,16 @@ class ApplicationController extends PDFAbstract
                         $isNotParticipants = $addressee!==self::addresseeParticipants; // true if two addressees
                         // examined (groups)
                         self::$linkedPage = self::groupsNode;
-                        $tempArray = $this->getSelectedCheckboxes($groupsArray[self::examinedPeopleNode], $examinedPrefix.'types.', false);
                         $minAge = $groupsArray[self::minAge];
                         $maxAge = $groupsArray[self::maxAge];
-                        $this->addBoxContent(self::examinedPeopleNode, implode(', ', $tempArray).$this->translateStringPDF($examinedPrefix.'title', ['number' => count($tempArray), 'limits' => $maxAge==='-1' ? 'noUpperLimit' : ($minAge===$maxAge ? 'sameLimit' : 'other'), self::minAge => $minAge, self::maxAge => $maxAge]), $groupsArray[self::peopleDescription] ?? '', paragraph: self::examinedPeopleNode,fragment: $this->addDiv(self::examinedPeopleNode));
+                        $examinedArray = $groupsArray[self::examinedPeopleNode];
+                        $isSmaller16 = $minAge!=='' && $minAge<16;
+                        if ($isSmaller16) {
+                            unset($examinedArray[self::wardsExaminedNode]); // if min age is below 16, wards is selected automatically
+                        }
+                        $tempArray = $this->getSelectedCheckboxes($examinedArray, $examinedPrefix.'types.', false);
+                        $numSelected = count($tempArray);
+                        $this->addBoxContent(self::examinedPeopleNode, implode(', ', $tempArray).$this->translateStringPDF($examinedPrefix.'title', ['number' => $numSelected, 'limits' => $maxAge==='-1' ? 'noUpperLimit' : ($minAge===$maxAge ? 'sameLimit' : 'other'), self::minAge => $minAge, self::maxAge => $maxAge, 'isWardsOnly' => $this->getStringFromBool($isSmaller16 && $numSelected===0), 'isWardsAge' => $this->getStringFromBool($isSmaller16)]), $groupsArray[self::peopleDescription] ?? '', paragraph: self::examinedPeopleNode,fragment: $this->addDiv(self::examinedPeopleNode));
                         // closed (groups)
                         $tempArray = $groupsArray[self::closedNode];
                         $closedTypes = $tempArray[self::closedTypesNode] ?? [];
@@ -742,8 +748,9 @@ class ApplicationController extends PDFAbstract
                 $this->addBox($projecdetailsPrefix.$title, $main, $sub, $curContent[self::subHeading] ?? '', $parameters, $curContent[self::paragraph] ?? '', !self::$isPageLink ? $inputPage : '', $fragment,paragraphHint: $curContent[self::paragraph.'Sub'] ?? false);
                 self::$isPageLink = $tempPageLink;
             } // foreach $boxContent
-            $html = $this->renderView('PDF/_application.html.twig', array_merge($committeeParam,
+            $renderParameters = array_merge($committeeParam,
                 ['heading' => $this->translateStringPDF('heading', $committeeParam),
+                    'singleDocsHint' => $this->getSingleDocsHint($request,'application'),
                     'applicantInfos' => $applicantSupervisor,
                     'applicantWidth' => $applicantWidth,
                     'contributorsInfos' => $contributorsInfos,
@@ -753,10 +760,14 @@ class ApplicationController extends PDFAbstract
                     'levelNames' => $names,
                     'levelHeading' => $levelHeading,
                     'boxContent' => $this->content,
-                    'savePDF' => self::$savePDF]));
+                    'savePDF' => self::$savePDF]);
+            $html = $this->renderView('PDF/_application.html.twig', $renderParameters);
             $htmlWithVotes = $html;
-            if (self::$savePDF && self::$isCompleteForm && $isOtherVote) {
-                $htmlWithVotes .= $this->renderView('PDF/_intermediateDocument.html.twig', array_merge($committeeParam,['savePDF' => self::$savePDF, self::content => $this->translateStringPDF($projecdetailsPrefix.'custom.'.self::voteNode)]));
+            if (self::$savePDF && self::$isCompleteForm) {
+                $this->generatePDF($session,$this->renderView('PDF/_application.html.twig', array_merge($renderParameters,['singleDocsHint' => $this->translateStringPDF('singleDocuments.application',['isSingleDocs' => 'false', 'isComplete' => 'true'])])),'applicationSingleDocs'); // add hint also in single docs of complete form
+                if ($isOtherVote) {
+                    $htmlWithVotes .= $this->renderView('PDF/_intermediateDocument.html.twig', array_merge($committeeParam,['savePDF' => self::$savePDF, self::content => $this->translateStringPDF($projecdetailsPrefix.'custom.'.self::voteNode)]));
+                }
             }
             $session->set(self::pdfApplication, $html);
             $this->forward('App\Controller\PDF\ParticipationController::createPDF', ['routeIDs' => $routeIDs]);

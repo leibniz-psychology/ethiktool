@@ -124,8 +124,8 @@ a {
     text-decoration: none;
     color: rgb(13,110,235);
 
-    &:hover {
-        color: rgb(10,88,180);
+    &:is(.linkInternal,.linkExternal,.link):hover { // avoid color change for a-tags that are used as buttons
+        @apply linkColor;
     }
 
     &.a_disabled { // currently only used once in navigationSidebar

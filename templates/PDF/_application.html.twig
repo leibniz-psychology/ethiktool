@@ -6,6 +6,8 @@
     {% set boxNumber, innerClasses = 1, 'boxInner'~(not savePDF ? ' previewSmall') %}
     {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
     <h2 class="pdfHeadingCenter {% if not savePDF %} previewXLarge {% endif %}" style="margin-bottom: 1rem;"><u style="font-family: inherit">{{ heading }}</u></h2>
+    {# single docs hint #}
+    {{ pdfMacros.addSingleDocsHint(singleDocsHint) }}
     {# application type #}
     {{ _self.addBox(boxContent[0],boxNumber,savePDF) }}
     {% set boxNumber = boxNumber+1 %}

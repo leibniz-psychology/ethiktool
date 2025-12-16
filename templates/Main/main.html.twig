@@ -1,4 +1,5 @@
 {% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
 
 {% set title = 'pages.main.title'|trans %}
 {% block title %}
@@ -8,10 +9,16 @@
     <h2 class="MetaDataGroup-Title">{{ 'pages.main.pageTitle'|trans }}</h2>
 {% endblock %}
 {% block content %}
-    {% set isErrorOrXml = error is not same as '' %} {# either the xml-file could not be loaded, was updated, or an error occurred during saveDocumentAndRedirect #}
+    {% set isErrorOrXml, prefix, hasCommittee = error is not same as '', 'main.text', committeeParams.committeeType not in ['noCommittee',''] %} {# either the xml-file could not be loaded, was updated, or an error occurred during saveDocumentAndRedirect #}
     <div class="MetaData-Label mb-2" {% if isErrorOrXml %} {{ stimulus_action('base','showModal','load@window',{'target': error}) }} {% endif %}>
-        {{ ('main.text'~(committeeParams.committeeType not in ['noCommittee',''] ? '' : 'NoCommittee'))|trans(committeeParams)|raw|nl2br }}
+        {{ (prefix~(hasCommittee ? '' : 'NoCommittee'))|trans(committeeParams)|raw|nl2br }}
     </div>
+    {% if hasCommittee %}
+        <div class="mb-2" style="margin-top: -2rem">
+            {{ formRender.addExpandable(prefix~'RequirementsTitle') }}
+            <div class="MetaData-Label mb-2" style="display: none">{{ (prefix~'Requirements')|trans(committeeParams)|raw|nl2br }}</div>
+        </div>
+    {% endif %}
     {% if isErrorOrXml %}
         {{ include('components/'~(not isMajor ? 'info' : 'redirect')~'Modal.html.twig',{'modalID': error, 'prefix': 'multiple.loadMessage.'~error~'.', 'params': params, 'link': 'app_coreData', 'hash': '#applicationProcess'}) }}
     {% endif %}

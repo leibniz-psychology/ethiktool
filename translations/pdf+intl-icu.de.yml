@@ -207,6 +207,21 @@ addresseePrefix: >-
               wards    {gesetzliche Vertretungspersonen: }
               other    {}}}}
 
+singleDocuments:
+  application: >-
+    {isSingleDocs, select,
+      true  {Es handelt sich hierbei um ein Zwischenergebnis und nicht um ein vollständiges Antragsdokument. {isComplete, select,
+                   true  {Für die Einreichung bei der Ethikkommission verwenden Sie bitte die Gesamtantrags-Datei.}
+                   other {Die Angaben im Ethiktool sind noch unvollständig oder enthalten Fehler.}}}
+      other {Dieses Dokument ist nicht zur Einreichung bei der Ethikkommission vorgesehen. Bitte verwenden Sie für die Einreichung die Gesamtantrags-Datei.}}
+
+  participation: >-
+    Es handelt sich hierbei um ein Zwischenergebnis und nicht um vollständige Teilnahmedokumente. {isComplete, select,
+      true  {Für die Einreichung bei der Ethikkommission verwenden Sie bitte die Gesamtantrags-Datei. {hasReviewDocs, select,
+                                                                                                        true  {Dort sind die Teilnahmedokumente vollständig eingebettet.}
+                                                                                                        other {}}}
+      other {Die Angaben im Ethiktool sind noch unvollständig oder enthalten Fehler.}}
+
 # application
 informationHint: >- # used for placeholder 'informationHint'
   {anyDocs, select,
@@ -346,7 +361,9 @@ projectdetails:
     examined:
       title: >-
         {number, plural,
-          =0    {}
+          =0    {{isWardsOnly, select,
+                   true  {Personen}
+                   other {}}}
           =1    {}
           other {; jeweils}} im Alter von {limits, select,
                                             noUpperLimit {mindestens {minAge, plural,
@@ -357,7 +374,9 @@ projectdetails:
                                                             other {# Jahren}}}
                                             other        {{minAge, number} bis {maxAge, plural,
                                                                                   =1    {1 Jahr}
-                                                                                  other {# Jahren}}}}.
+                                                                                  other {# Jahren}}}}{isWardsAge, select,
+                                                                                                        true  { (daher nicht einwilligungsfähig)}
+                                                                                                        other {}}.
       types:
         healthy: 'gesunde Personen'
         physical: 'Personen mit körperlichen Erkrankungen oder Einschränkungen'
@@ -537,7 +556,7 @@ participation:
                         other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preNo" data-base-route-i-ds-param="{routeIDs}">nachträglich darüber aufgeklärt</a>}} werden, dass {addressee, select,
             children {ihre Kinder}
             wards    {die betreuten Personen}
-            other    {sie}} an einer Studie teilgenommen haben (vgl. Feld 24 des Antragsformulars).
+            other    {sie}} an einer Studie teilgenommen haben (vgl. Feld 24 des Antragsformulars)
     informationII:
       start: >- # other addressee is wards
         Für die {addressee, select,
@@ -550,15 +569,19 @@ participation:
               children {Kinder}
               other    {betreuten Personen}} nicht vorab darüber aufgeklärt werden, dass sie an einer Studie teilnehmen (vgl. Feld 21 des Antragsformulars), und auch nicht nachträglich darüber aufgeklärt werden, dass sie an einer Studie teilgenommen haben (vgl. Feld 24 des Antragsformulars).
     funding: >-
-      sich das Forschungsvorhaben noch im Stadium der Beantragung von Fördermitteln befindet und {information, select,
-                noPost {weil {informationSentence}}
-                other  {die Teilnahmedokumente bei deren Bewilligung nachgereicht werden.}}
+      {information, select,
+        noPost {weil {informationSentence} und weil}
+        other  {}} sich das Forschungsvorhaben noch im Stadium der Beantragung von Fördermitteln befindet{information, select,
+                noPost {}
+                other  { und die Teilnahmedokumente bei deren Bewilligung nachgereicht werden}}
     projectStart: >-
-      es sich um eine Begutachtung nach Beginn der Datenerhebung handelt und {information, select,
-                noPost {weil {informationSentence}}
-                other  {daher die Teilnahmedokumente schon existieren.}}
-    short: 'bei {committeeDat} für die Begutachtung von Kurzanträgen keine Vorlage von Teilnahmedokumenten vorgesehen ist.'
-    end: " Aus diesem Grund wurde auch keine Datenschutzerklärung erstellt. Folgende Informationen, die sonst in die Teilnahmedokumente übernommen worden wären, sind für die Begutachtung zu berücksichtigen:"
+      {information, select,
+        noPost {weil {informationSentence} und weil}
+        other  {}} es sich um eine Begutachtung nach Beginn der Datenerhebung handelt{information, select,
+                noPost {}
+                other  { und daher die Teilnahmedokumente schon existieren}}
+    short: 'bei {committeeDat} für die Begutachtung von Kurzanträgen keine Vorlage von Teilnahmedokumenten vorgesehen ist'
+    end: ". Aus diesem Grund wurde auch keine Datenschutzerklärung erstellt. Folgende Informationen, die sonst in die Teilnahmedokumente übernommen worden wären, sind für die Begutachtung zu berücksichtigen:"
   projectTitle:
   title: >-
     {information, select,
@@ -853,10 +876,12 @@ participation:
         external: 'Für die Nutzung im Rahmen dieser Studie sind die Forschungsdaten anonym. Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
         internal: 'Für die Projektbeteiligten sind die Forschungsdaten anonym. Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
         no: >-
-          Dabei bleiben {addressee, select,
-                          children {Ihr Kind bzw.}
-                          wards    {die von Ihnen betreute Person bzw.}
-                          other    {}} Sie anonym. Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.
+          {isPurposeFurther, select,
+            true  {Für die Nutzung im Rahmen dieser Studie sind die Forschungsdaten anonym.}
+            other {Dabei bleiben {addressee, select,
+                                   children {Ihr Kind bzw.}
+                                   wards    {die von Ihnen betreute Person bzw.}
+                                   other    {}} Sie anonym.}} Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.
         codePersonal: '{codePersonal} '
       codePersonal: >- # for the {codePersonal} placeholder above
         Durch {isName, select,
@@ -1217,10 +1242,14 @@ consent:
                                                                                 other    {Teilnehmenden}} erstellt, da {savePDF, select,
                     true  {{consent, select,
                              no    {keine Einwilligung erfolgt (vgl. Feld 27 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
-                             other {die Einwilligung auf eine andere Art ({description}) erfolgt (vgl. Feld 27 des Antragsformulars).}}}
+                             other {die Einwilligung auf eine andere Art ({description}) erfolgt (vgl. Feld {isFull, select,
+                                                                                                              true  {27}
+                                                                                                              other {16}} des Antragsformulars).}}}
                     other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">{consent, select,
                          no    {keine Einwilligung</a> erfolgt (vgl. Feld 27 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
-                         other {die Einwilligung auf eine andere Art</a> ({description}) erfolgt (vgl. Feld 27 des Antragsformulars).}}}}
+                         other {die Einwilligung auf eine andere Art</a> ({description}) erfolgt (vgl. Feld {isFull, select,
+                                                                                                              true  {27}
+                                                                                                              other {16}} des Antragsformulars).}}}}
   title: >-
     {information, select,
       post  {Nachträgliche Einwilligung in die Datenverarbeitung}

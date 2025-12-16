@@ -25,13 +25,17 @@ class ParticipationController extends PDFAbstract
         $session = $request->getSession();
         $reviewProcess = $session->get(self::reviewProcess);
         $isShortService = $reviewProcess===self::reviewShortService;
-        $hasDocs = in_array($reviewProcess,self::reviewDocs) && !($isShortService && $markInput);
+        $isDocs = in_array($reviewProcess,self::reviewDocs);
+        $hasDocs = $isDocs && !($isShortService && $markInput);
         $isBegun = in_array($reviewProcess,[self::reviewShortBegun,self::reviewFullBegun]);
         $isRequested = in_array($reviewProcess,[self::reviewShortRequested,self::reviewFullRequested]);
         self::$markInput = !self::$savePDF || self::$isCompleteForm && $markInput;
+        $singleDocsHint = $this->getSingleDocsHint($request,'participation',$isDocs && !$isShortService);
         $markedSuffix = self::$markInput ? 'Marked' : ''; // suffix for pdf
         $committeeParam = $session->get(self::committeeParams);
-        $isShortChoose = str_contains($reviewProcess,self::reviewProcessShort) && in_array($committeeParam[self::committeeType],self::reviewShortChoose); // true if review process is any short and creation of participation documents can be chosen for short review processes
+        $isShort = str_contains($reviewProcess,self::reviewProcessShort);
+        $isShortChoose = $isShort && in_array($committeeParam[self::committeeType],self::reviewShortChoose); // true if review process is any short and creation of participation documents can be chosen for short review processes
+        $isFullParam = ['isFull' => $this->getStringFromBool(!$isShort)];
         $savePDFParam = ['savePDF' => self::$savePDF, 'isComplete' => self::$isCompleteForm];
         $appNode = $this->getXMLfromSession($session,getRecent: true); // if supervisor was added while on core data page, indices of contributors have changed
         $coreDataArray = $this->xmlToArray($appNode->{self::appDataNodeName})[self::coreDataNode];
@@ -125,13 +129,13 @@ class ParticipationController extends PDFAbstract
                     $isOral = (!$isNotPost ? ($postArray[self::chosen] ?? '') : $preType)===self::consentOral;
                     $isLoanReceipt = false; // loan receipt is only possible if pre information
                     [$loanReceiptParameters,$consent] = [[],[]]; // $loanReceiptParameters: parameters for the view of the loan receipt
-                    $parameters = array_merge($translationParams,[self::studyID => $multipleStudies ? $studyIDincreased : 0, self::groupID => $multipleGroups ? $groupIDincreased : 0, self::measureID => $multipleMeasures ? $measureID : 0]);
+                    $parameters = array_merge($translationParams,[self::studyID => $multipleStudies ? $studyIDincreased : 0, self::groupID => $multipleGroups ? $groupIDincreased : 0, self::measureID => $multipleMeasures ? $measureID : 0, 'singleDocsHint' => $singleDocsHint]);
                     $projectdetailsPrefix = 'projectdetails.pages.';
                     $participationPrefix = 'participation.';
                     $privacyPrefix = self::privacyNode.'.';
                     $consentPrefix = 'consent.';
                     $consentType = ''; // type of consent
-                    $noConsentParams = []; // contains consent type and description
+                    $noConsentParams = []; // contains consent type, description, and whether review process is full
                     $isConsent = false; // gets true if any consent is given
                     $isToolPersonal = false; // gets true if document should be created by the tool and personal data are collected
                     $hasCustomPDF = array_fill_keys(self::customPDForder,false); // each element gets true if a custom pdf will be added
@@ -619,6 +623,7 @@ class ParticipationController extends PDFAbstract
                         $markingSentences = trim($markingSentences); // if no marking is chosen yet, $curSentences may be only one space
                         $isDataPersonalMaybe = $dataPersonal===self::dataPersonalMaybe;
                         $tempPrefix = $translationPrefix.'markingPersonal.';
+                        $tempParams = array_merge($addresseeParam,['isPurposeFurther' => $this->getStringFromBool($isPurposeFurther)]);
                         if ($dataPersonal!=='') {
                             $isExternalInternal = $isExternal || $isInternal;
                             $isCodePersonal = in_array(true,$codePersonal);
@@ -634,10 +639,10 @@ class ParticipationController extends PDFAbstract
                                 foreach ($codePersonal as $key => $value) {
                                     $codePersonal[$key] = $this->getStringFromBool($value);
                                 }
-                                $markingSentences .= "\n".$this->translateStringPDF($tempPrefix.$dataPersonal.'.'.$tempVal,array_merge($addresseeParam,[self::codePersonal => $this->translateStringPDF($tempPrefix.self::codePersonal,$codePersonal)]));
+                                $markingSentences .= "\n".$this->translateStringPDF($tempPrefix.$dataPersonal.'.'.$tempVal,array_merge($tempParams,[self::codePersonal => $this->translateStringPDF($tempPrefix.self::codePersonal,$codePersonal)]));
                             }
                         } elseif ($privacyCreate==='anonymous') {
-                            $markingSentences .= $this->translateStringPDF($tempPrefix.self::dataPersonalNo.'.no',$addresseeParam);
+                            $markingSentences .= $this->translateStringPDF($tempPrefix.self::dataPersonalNo.'.no',$tempParams);
                         }
                         $markingSentences = trim($markingSentences);
                         $codeCompensationSentences = trim($codeCompensationSentences);
@@ -1132,7 +1137,7 @@ class ParticipationController extends PDFAbstract
                                 self::$linkedPage = self::consentNode;
                                 $curHtml .= $this->renderView('PDF/_participationConsent.html.twig',array_merge($parameters,[],$isOral ? ['isSeparate' => true] : []));
                             } elseif (in_array($consentType,[self::voluntaryConsentNo,self::consentOther])) {
-                                $curHtml .= $this->renderView(self::intermediateDocument,array_merge($parameters,[self::content => $this->translateStringPDF($consentPrefix.'noConsent',array_merge($translationParams,$noConsentParams))]));
+                                $curHtml .= $this->renderView(self::intermediateDocument,array_merge($parameters,[self::content => $this->translateStringPDF($consentPrefix.'noConsent',array_merge($translationParams,$noConsentParams,$isFullParam))]));
                             }
                             // data privacy
                             if ($isToolPersonal) {

@@ -114,3 +114,12 @@
     #}
     <div class="checkboxPDF {% if not savePDF %} checkSmall {% endif %}">{% if checked %} {{ include('images/checkmark.svg') }} {% endif %}</div>
 {% endmacro %}
+
+{% macro addSingleDocsHint(singleDocsHint) %}
+    {# Adds the hint indicating that the downloaded files are not the final ones. Input argument:
+        singleDocsHint: translated hint
+    #}
+    {% if singleDocsHint is not same as '' %}
+        <div class="pdfOral" style="font-weight: bold">{{ singleDocsHint }}</div>
+    {% endif %}
+{% endmacro %}

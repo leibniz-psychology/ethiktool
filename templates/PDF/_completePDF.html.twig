@@ -35,7 +35,7 @@
                 <div class="{{ textPreview }}" style="margin-bottom: 5rem">
                     {{ biasStart~(biasPrefix~curBias)|trans([],'messages') }}
                     {% if biasDescription is not same as '' %}
-                        <div style="margin: 0">{{ biasDescription|nl2br }}</div>
+                        <span class="markInput" style="margin: 0">{{ ("\n"~biasDescription)|nl2br }}</span>
                     {% endif %}
                 </div>
             {% endfor %}
@@ -43,7 +43,7 @@
         <div class="{{ textPreview }}" {% if isMessages and savePDF %} style="{{ savePDF ? noPageBreakFirstLine : noPageBreakFirstLine }}" {% endif %}>
             {{ (tempPrefix~'messages')|trans(committeeParams|merge({'messages': boolToString(isMessages)})) }}
             {% if isMessages %}
-                {{ ("\n"~messages)|nl2br }}
+                <span class="markInput">{{ ("\n"~messages)|nl2br }}</span>
             {% endif %}
         </div>
     </div>

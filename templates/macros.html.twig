@@ -285,6 +285,17 @@
     {% endif %}
 {% endmacro %}
 
+{% macro addExpandable(text,params = {}) %}
+    {# Adds an expandable element. The element that gets expanded must follow immediately this element. Input arguments:
+        text:   translation key for the text to be shown next to the expanded/collapsed symbol
+        params: if provided, parameters for the translation
+    #}
+    <div class="flex mt-4 clickable bg-mono-200 mx-4"{{ stimulus_target('base','expandable') }}>
+        <span class="dropdownCollapsed" style="height: 1.5rem"></span>
+        {{ (text)|trans(params) }}
+    </div>
+{% endmacro %}
+
 {% macro addSubmitButtons(pageButtons = true, disablePrevious = false, undoButton = true) %}
     {# Adds the submit buttons. It is assumed that they are placed most left. Input arguments:
         pageButtons:     if true, buttons for the previous and next page are created (currently only false in complete form)

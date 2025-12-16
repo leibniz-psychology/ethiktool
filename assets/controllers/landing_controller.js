@@ -3,20 +3,9 @@ import {mergeInput, setElementVisibility} from "./multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['edit','name','dropdownNew','newDiv','copy','submitName','submitCopy']
+    static targets = ['edit','name','copy','submitName','submitCopy']
     static values = {
         names: Array
-    }
-
-    connect() {
-        if (this.hasDropdownNewTarget) {
-            this.dropdownNewTarget.addEventListener('click', () => {
-                let dropdown = this.dropdownNewTarget.firstElementChild;
-                dropdown.classList.toggle('dropdownCollapsed');
-                dropdown.classList.toggle('dropdownExpanded');
-                this.newDivTarget.style.display = this.newDivTarget.style.display==='none' ? 'block' : 'none';
-            })
-        }
     }
 
     // methods that are called from the template

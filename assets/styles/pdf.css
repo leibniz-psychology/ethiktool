@@ -79,6 +79,11 @@
     margin-bottom: 1em;
 }
 
+.markInput { /* must equal the attributes in app.scss */
+    font-style: italic;
+    color: #028702;
+}
+
 .pdfHeadingCenter {
     display: flex;
     justify-content: center;
