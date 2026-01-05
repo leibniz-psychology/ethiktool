@@ -110,7 +110,7 @@
                             {% if content[fundingState] is defined %}
                                 {% set fundingStateWidget = content[fundingState] %}
                                 {% set anyRequested = anyRequested or isChecked and fundingStateWidget.vars.value is same as 'requested' %}
-                                <div class="mb-2" id="{{ widget~'fundingStateDiv' }}" style="margin-top:-0.5rem">
+                                <div class="mb-2" id="{{ widget~'fundingStateDiv' }}" style="margin-top: -0.5rem">
                                     {{ formRender.renderButtons(fundingStateWidget,noHeading|merge({'contTarget': [fundingState~'requested',coreDataController,widget~'Requested']})) }}
                                 </div>
                             {% endif %}
@@ -155,7 +155,7 @@
                                 {% endif %}
                             </div>
                             <div {% if isPosition %} {{ stimulus_action(coreDataController,'setProfessorshipHint','change') }} {% endif %}>
-                                {{ form_widget(widget,{'id': name, 'attr': {'style': 'width: 100%'~(isPosition ? '; text-overflow: ellipsis')}|merge(isPosition ? addClass('Button_dropdown')|merge(addTarget(coreDataController,type~'Position')) : {})}) }}
+                                {{ form_widget(widget,{'id': name, 'attr': addStyle('width: 100%'~(isPosition ? '; text-overflow: ellipsis'))|merge(isPosition ? addClass('Button_dropdown')|merge(addTarget(coreDataController,type~'Position')) : {})}) }}
                             </div>
                             {% if isPosition %}
                                 <div id="{{ positionSuffix~'Other' }}" style="grid-column: 2; {{ boolToDisplay(vars.value is same as 'positionOther') }}">{{ form_widget(content[positionSuffix~'Text']) }}</div>
@@ -197,7 +197,7 @@
                         {{ formRender.addCheckbox(curWidget, {'disable': not isSupport and anySelected or isSupport and noSelected}) }}
                     </div>
                     {% if isSupport %}
-                        {{ formRender.addTextfield(content[name~'Text'],fontNormal|merge({'visibility': vars.checked, 'attributes': {'style': 'margin-bottom: 1.5rem'}})) }}
+                        {{ formRender.addTextfield(content[name~'Text'],fontNormal|merge(addStyle('margin-bottom: 1.5rem',true))|merge({'visibility': vars.checked})) }}
                     {% endif %}
                 {% endfor %}
             </div>

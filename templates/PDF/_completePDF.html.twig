@@ -9,7 +9,7 @@
         <h2 class="{{ headingCenter }}">{{ (translationPrefix~'consent')|trans(committeeParams) }}</h2>
         {% for curContent, checkbox in content %}
             {% if curContent is not same as '' %}
-                <div class="{{ textPreview }}" style="margin-bottom: 5rem">
+                <div class="{{ textPreview }}" style="margin-bottom: 5em">
                     {{ curContent|raw|nl2br }}
                     <table class="mt-1 mb-5">
                         <tr>
@@ -32,7 +32,7 @@
         <h2 class="{{ headingCenter }}">{{ (tempPrefix~'title')|trans(committeeParams) }}</h2>
         {% if bias is not same as '' %}
             {% for curBias, biasDescription in bias %}
-                <div class="{{ textPreview }}" style="margin-bottom: 5rem">
+                <div class="{{ textPreview }}" style="margin-bottom: 5em">
                     {{ biasStart~(biasPrefix~curBias)|trans([],'messages') }}
                     {% if biasDescription is not same as '' %}
                         <span class="markInput" style="margin: 0">{{ ("\n"~biasDescription)|nl2br }}</span>

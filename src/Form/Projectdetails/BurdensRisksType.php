@@ -49,7 +49,7 @@ class BurdensRisksType extends TypeAbstract
             $this->setCompensation($forms,$tempArray,$type);
         }
         if (array_key_exists(self::burdensNoDescription,$forms)) {
-            $forms[self::burdensNoDescription]->setData($viewData[self::burdensNoDescription] ?? '');
+            $forms[self::burdensNoDescription]->setData($this->getArrayValue($viewData,self::burdensNoDescription));
         }
         // burdensRisksContributors
         $this->setChosenArray($forms,$viewData,self::burdensRisksContributorsNode,[self::descriptionNode => self::burdensRisksContributorsNode.self::descriptionCap]);

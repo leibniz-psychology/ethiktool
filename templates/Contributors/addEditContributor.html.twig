@@ -46,7 +46,7 @@
                         {% set params, addIcon = {'id': curWidget.vars.name, checkInput}, widget in tasksMandatory %}
                         <div class="flex" {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}> {# no addCheckbox because of additional attributes #}
                         {{ form_widget(curWidget,params|merge({'attr': checkInput|merge(widget is same as 'other' ? addTarget(contributorsController,'taskOther') : {})})) }}
-                        {{ form_label(curWidget,null, params|merge({'label_attr': checkLabel|merge({'style': 'vertical-align: unset'})})) }}
+                        {{ form_label(curWidget,null, params|merge({'label_attr': checkLabel|merge(addStyle('vertical-align: unset'))})) }}
                         {% if addIcon %}
                             <div>{{ formRender.addIcon((hintPrefix~'mandatory')|trans~(widget is same as 'data' ? (hintPrefix~'responsibility')|trans)) }}</div>
                         {% endif %}

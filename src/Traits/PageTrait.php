@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '2.2.0';
+    protected const toolVersion = '2.2.1';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -23,8 +23,8 @@ trait PageTrait
     protected const committeeParams = 'committeeParams';
     /** @var string name of parameter indicating if current committee type is in beta status. */
     protected const isCommitteeBeta = 'isCommitteeBeta';
-    protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.testCommittee' => 'testCommittee'];
-    protected const committeeTypesBeta = ['JGU','DLR']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
+    protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.TUD' => 'TUD', 'newForm.committee.types.testCommittee' => 'testCommittee'];
+    protected const committeeTypesBeta = ['JGU','DLR','TUD']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
     protected const reviewProcess = 'reviewProcess'; // node name for type of review process (following two variables)
     protected const reviewProcessFull = 'full';
     protected const reviewProcessShort = 'short';
@@ -37,7 +37,7 @@ trait PageTrait
     protected const reviewFullBegun = 'fullBegun'; // without participant documents because data collection has already started
     protected const reviewFullDocs = 'fullDocs'; // with participant documents
     protected const reviewDocs = ['shortDocs','shortService','fullDocs']; // types of review processes for which participant documents are created. Must equal some of the preceding variables
-    protected const reviewShortChoose = ['EUB','testCommittee']; // committees where, for short applications, it can be chosen whether participant documents should be created
+    protected const reviewShortChoose = ['EUB','TUD','testCommittee']; // committees where, for short applications, it can be chosen whether participant documents should be created
     
     // constant variables
     /** Node name for nodes which indicate the selection of a radio button. */
@@ -55,7 +55,6 @@ trait PageTrait
     protected const measureTimePointNode = 'measureTimePoint';
     protected const committeeEUB = 'EUB';
     protected const committeeTUC = 'TUC';
-    protected const committeeDLR = 'DLR';
     protected const position = 'position';
     protected const positionsStudent = 'student'; // must equal one of the keys in $positions
     protected const positionsPhd = 'phd'; // must equal one of the keys in $positions

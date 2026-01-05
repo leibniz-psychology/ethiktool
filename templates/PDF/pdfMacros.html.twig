@@ -18,14 +18,14 @@
         <div style="display: flex">
             {{ _self.addLogo(committeeType,style) }}
             {# project leader #}
-            <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-top: 0.25rem; text-align: right; margin-right: 0.5em; width: {{ committeeType is not same as 'testCommittee' ? '80%' : '100%' }}">
+            <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-top: 0.25em; text-align: right; margin-right: 0.5em; width: {{ committeeType is not same as 'testCommittee' ? '80%' : '100%' }}">
                 <div>{{ 'contributors.tasks.leader'|trans([],'messages')~':' }}</div>
                 {% for curLeader in leader %}
                     <div >{{ curLeader|raw }}</div>
                 {% endfor %}
                 {# project title #}
-                <div {% if not savePDF %} class="previewSmall" {% endif %} style="word-break: break-word; margin-top: 0.25rem">
-                    {{ ('participation.projectTitleHeader'|trans({'projectTitle': projectTitle['projectTitle'], 'savePDF': savePDF ? 'true' : 'false', 'isDifferent': projectTitle['isDifferent']},'pdf')~levelNames)|raw }}
+                <div {% if not savePDF %} class="previewSmall" {% endif %} style="word-break: break-word; margin-top: 0.25em">
+                    {{ ('participation.projectTitleHeader'|trans({'projectTitle': projectTitle['projectTitle'], 'savePDF': boolToString(savePDF), 'isDifferent': projectTitle['isDifferent']},'pdf')~levelNames)|raw }}
                 </div>
                 {{ _self.addDate(savePDF,isComplete) }}
             </div>
@@ -65,7 +65,7 @@
     #}
     <div {% if not savePDF %} class="previewSmall" {% endif %} {% if style is not same as '' %} style="{{ style }}" {% endif %}>
         {% if toolVersion is not same as '' %}
-            {{ 'header'|trans({'toolVersion': toolVersion, 'savePDF': savePDF ? 'true' : 'false'},'pdf')|raw|nl2br }}
+            {{ 'header'|trans({'toolVersion': toolVersion, 'savePDF': boolToString(savePDF)},'pdf')|raw|nl2br }}
         {% endif %}
         {{ 'now'|date('dateFormat'|trans({'noTime': boolToString(isComplete)}), 'Europe/Berlin') }}
     </div>

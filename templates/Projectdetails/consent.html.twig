@@ -25,7 +25,7 @@
                         'labelParams': (not isAddresseePart ? labelParams : labelParamsParticipants)|merge({'curAddressee': addressee}),
                         'stimVisible': {'multi': [[[optionNo]|merge(isNotParticipants ? [type~'Participantsno'] : []),description~'Div']]|merge(isConsent ? [[optionOther,'consent_otherDescription'~addressee]] : (isClosedDependent ? [[['voluntaryyes']|merge(isNotParticipants ? ['voluntaryParticipantsyes'] : []),'voluntaryYesDescriptionDiv']]: []))|merge(addTextInput and not isAddresseePart ? [[[optionNo,type~'notApplicable',optionOther],inputDiv]] : []), 'setOr': true}})) }} {# last merge is only true if addressee is an empty string #}
                     {% if isConsent %}
-                        <div class="MetaData-Widget" style="width: 20rem; margin-left: 2rem">{{ form_widget(content['otherDescription'~addressee],{'attr': {'style': boolToDisplay(value is same as 'other')}}) }}</div>
+                        <div class="MetaData-Widget" style="width: 20rem; margin-left: 2rem">{{ form_widget(content['otherDescription'~addressee],{'attr': addStyle(boolToDisplay(value is same as 'other'))}) }}</div>
                     {% endif %}
                 {% endfor %}
                 {% if isClosedDependent %}

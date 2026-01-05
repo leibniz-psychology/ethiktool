@@ -51,18 +51,18 @@
         {% endif %}
         {# create #}
         {% if hasCreate %}
-            {% set verification, pdfHint, hasDocsReview = content.verification, 'pdfHintDiv', reviewProcess in ['shortDocs','fullDocs'] %}
+            {% set hasVerification, pdfHint, reviewDocsParam = content.verification is defined, 'pdfHintDiv', {'hasReviewDocs': boolToString(reviewProcess in ['shortDocs','fullDocs'])} %}
             {% set verificationDiv, toolDiv = 'verificationDiv', 'toolDiv' %}
             {% set isSeparate = createValue is same as 'separate' %}
             <div {% if hasProcessing %} class="mt-8" {% endif %} id="create" {{ stimulus_action(privacyController,'setPrivacyCreate','change') }}>
                 {{ formRender.renderButtons(create,{
-                    'stimVisible': {'values': [['tool',toolDiv],['separate',[verificationDiv]|merge(hasDocsReview ? [pdfHint] : [])]]},
+                    'stimVisible': {'values': [['tool',toolDiv],['separate',[pdfHint]|merge(hasVerification ? [verificationDiv] : [])]]},
                     'icons': {'createtool': translationPrefix~'create.toolHint'},
-                    'labelParams': {'addressee': addresseeString, 'participant': participantsString}}) }}
-                {% if hasDocsReview %}
-                    {{ formRender.addHint(translationPrefix~'create.hint',{'visible': isSeparate, 'id': pdfHint}) }}
+                    'labelParams': reviewDocsParam|merge({'addressee': addresseeString, 'participant': participantsString})}) }}
+                {{ formRender.addHint(translationPrefix~'create.hint',{'visible': isSeparate, 'id': pdfHint, 'params': reviewDocsParam}) }}
+                {% if hasVerification %}
+                    {{ formRender.renderButtons(content.verification,{'addDiv': [verificationDiv,boolToDisplay(isSeparate)]}) }}
                 {% endif %}
-                {{ formRender.renderButtons(verification,{'addDiv': [verificationDiv,boolToDisplay(isSeparate)]}) }}
             </div>
             <div id="{{ toolDiv }}" class="mt-8" style="{{ boolToDisplay(createValue is same as 'tool') }}">
                 {% set confirm, confirmDiv, tempPrefix = content.confirmIntro, 'confirmDiv', translationPrefix~'intro.text.' %}
@@ -71,7 +71,7 @@
                 <div class="MetaData-Label">{{ (tempPrefix~'start')|trans }}</div>
                 <div class="borderHint">{{ (tempPrefix~'end')|trans|raw|nl2br }}</div>
                 <div class="MetaData-Widget" id="confirmIntroDiv" {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,confirmDiv]]}) }}>
-                    {{ formRender.addCheckbox(confirm, {'style': 'margin-top: 1rem'}) }}
+                    {{ formRender.addCheckbox(confirm, addStyle('margin-top: 1rem')) }}
                 </div>
                 {% set personalPrefix = translationPrefix~'personal.' %}
                 <div id="{{ confirmDiv }}" class="mt-8" style="{{ boolToDisplay(vars.checked) }}">
@@ -205,7 +205,7 @@
                                                 {{ formRender.addCheckbox(widget,checkbox in iconKeys ? {'checkIcon': [dataResearchIcons[checkbox]]} : {}) }}
                                             </div>
                                             {% if isTextfield %}
-                                                <div class="MetaData-Widget" id="{{ description.vars.name }}" style="{{ boolToDisplay(widget.vars.checked,1) }}; grid-template-columns: auto min-content">{{ form_widget(description,{'attr': addClass('markInput')}) }}{{ formRender.addPDFhint(transferData,addresseeType) }}</div>
+                                                <div class="MetaData-Widget" id="{{ description.vars.name }}" style="{{ boolToDisplay(widget.vars.checked,1) }}; grid-template-columns: auto min-content">{{ form_widget(description,addClass('markInput',true)) }}{{ formRender.addPDFhint(transferData,addresseeType) }}</div>
                                             {% endif %}
                                         {% endfor %}
                                     {% endfor %}
@@ -244,7 +244,7 @@
                                         <div class="grid" style="{{ topMarginButtons }} grid-template-columns: minmax(min-content,max-content) min-content" {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,[textfield.vars.name~'Div',type~'PersonalKeepConsentDiv']]]}) }}>
                                             {{ formRender.addCheckbox(widget,type is not same as 'reuse' ? {'checkIcon': [iconArrayPersonalKeep[type]]} : {}) }}
                                         </div>
-                                        {{ formRender.addTextfield(textfield,transferParam|merge({'visibility': vars.checked, 'attributes': {'style': 'margin-bottom: 2rem'}})) }}
+                                        {{ formRender.addTextfield(textfield,transferParam|merge(addStyle('margin-bottom: 2rem',true))|merge({'visibility': vars.checked})) }}
                                     {% endfor %}
                                 </div>
                                 {% if app.locale is same as 'de' %}

@@ -428,31 +428,30 @@ class CheckDocClass extends ControllerAbstract
     {
         $this->addAppDataTitle(self::coreDataNode,$setTitle);
         $translationPrefix = self::appDataPrefix.self::coreDataNode.'.';
-        $coreDataArray = $this->appDataArray[self::coreDataNode];
         // project titles
-        $this->checkMissingContent($coreDataArray,[self::projectTitle => 'coreData.projectTitle']);
+        $this->checkMissingContent($this->coreDataArray,[self::projectTitle => 'coreData.projectTitle']);
         // project title participation
-        if (array_key_exists(self::projectTitleParticipation,$coreDataArray) && in_array($this->reviewProcess,self::reviewDocs)) {
+        if (array_key_exists(self::projectTitleParticipation,$this->coreDataArray) && in_array($this->reviewProcess,self::reviewDocs)) {
             $tempVal = $translationPrefix.self::projectTitleParticipation;
-            $this->checkMissingTextfield($coreDataArray[self::projectTitleParticipation],null,self::projectTitleDifferent,$tempVal,self::projectTitleParticipation,$tempVal);
+            $this->checkMissingTextfield($this->coreDataArray[self::projectTitleParticipation],null,self::projectTitleDifferent,$tempVal,self::projectTitleParticipation,$tempVal);
         }
         // application type
-        $appTypeArray = $coreDataArray[self::applicationType];
+        $appTypeArray = $this->coreDataArray[self::applicationType];
         if (in_array($this->checkMissingChosen($appTypeArray,'coreData.appType.title',null,self::applicationType),self::appExtendedResubmission)) {
             $this->checkMissingContent($appTypeArray,[self::descriptionNode => $translationPrefix.'reference'],hash: 'exReDiv');
         }
         // application process
-        $tempArray = $coreDataArray[self::applicationProcessNode];
+        $tempArray = $this->coreDataArray[self::applicationProcessNode];
         $tempPrefix = $translationPrefix.self::applicationProcessNode.'.';
         $this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::applicationProcessNode,true);
         if (array_key_exists(self::shortDocsNode,$tempArray)) {
             $this->checkMissingContent($tempArray,[self::shortDocsNode => $tempPrefix.self::shortDocsNode]);
         }
         // project start and end
-        $tempArray = $coreDataArray[self::projectStart];
+        $tempArray = $this->coreDataArray[self::projectStart];
         $tempPrefix = 'coreData.project.';
         $this->checkMissingContent($tempArray,[self::chosen => $tempPrefix.'start.title'],parameter: $this->committeeParam,hash: 'projectDates');
-        $this->checkMissingContent($coreDataArray,[self::projectEnd => $tempPrefix.'end.title']);
+        $this->checkMissingContent($this->coreDataArray,[self::projectEnd => $tempPrefix.'end.title']);
         $start = $tempArray[self::chosen];
         $isBegun = array_key_exists(self::descriptionNode,$tempArray);
         $today = $this->getCurrentDate();
@@ -467,7 +466,7 @@ class CheckDocClass extends ControllerAbstract
         if ($isBegun) {
             $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPrefix.'begun'],hash: $this->addDiv(self::projectStartBegun,true));
         }
-        $end = $coreDataArray[self::projectEnd];
+        $end = $this->coreDataArray[self::projectEnd];
         if ($end!=='') {
             $end = (new DateTime($end))->setTime(0,0);
             if ($end<=$today) {
@@ -477,7 +476,7 @@ class CheckDocClass extends ControllerAbstract
             }
         }
         // funding
-        $tempArray = $coreDataArray[self::funding];
+        $tempArray = $this->coreDataArray[self::funding];
         $fundingPrefix = 'coreData.funding.';
         $isFunding = $tempArray!=='';
         $isFundingQuali = $isFunding && array_key_exists(self::fundingQuali,$tempArray);
@@ -504,34 +503,55 @@ class CheckDocClass extends ControllerAbstract
         }
         // qualification
         $tempPrefix = $translationPrefix.self::qualification.'.';
-        if (array_key_exists(self::qualification,$coreDataArray)) {
-            $this->checkMissingContent($coreDataArray,[self::qualification => $tempPrefix.'missing']);
-            if ($coreDataArray[self::qualification]==='1' && $isFundingQuali) { // no separate funding -> qualification yes
+        if (array_key_exists(self::qualification,$this->coreDataArray)) {
+            $this->checkMissingContent($this->coreDataArray,[self::qualification => $tempPrefix.'missing']);
+            if ($this->coreDataArray[self::qualification]==='1' && $isFundingQuali) { // no separate funding -> qualification yes
                 $this->addCheckLabelString($tempPrefix.self::funding);
             }
         }
         // applicant and supervisor
-        $this->checkApplicantSupervisor($coreDataArray,self::applicant);
-        if (array_key_exists(self::supervisor,$coreDataArray)) {
-            $this->checkApplicantSupervisor($coreDataArray,self::supervisor);
+        foreach (array_merge([self::applicant],array_key_exists(self::supervisor,$this->coreDataArray) ? [self::supervisor] : []) as $type) {
+            $applicant = $this->coreDataArray[$type];
+            $parameters = ['type' => $type];
+            $tempArray = $this->translateArray('multiple.infos.',array_diff(self::applicantContributorsInfosTypes,$type===self::applicant && $applicant[self::position]===self::positionsStudent ? [self::phoneNode] : []),true);
+            $tempArray[self::institutionInfo] = str_replace(self::institutionInfo,self::institutionInfo.'Applicant',$tempArray[self::institutionInfo]);
+            $this->checkMissingContent($applicant,$tempArray,lineTitle: 'coreData.applicant.'.$type, hash: $type);
+            $name = $applicant[self::nameNode];
+            if ($name!=='' && count(explode(' ',$name))===1) {
+                $this->addCheckLabelString($translationPrefix.self::nameNode,$type.self::nameNode,$parameters);
+            }
+            // validity of eMail
+            $tempVal = $applicant[self::eMailNode];
+            if ($tempVal!=='' && !filter_var($tempVal,FILTER_VALIDATE_EMAIL)) {
+                $this->addCheckLabelString($translationPrefix.self::eMailNode,$type.self::eMailNode,$parameters);
+            }
+            // description of 'other' position
+            if ($applicant[self::position]===self::positionOther) {
+                $this->addCheckLabelString($translationPrefix.'positionOther',$type.self::position,$parameters,false);
+            }
+            // validity of phone
+            $tempVal = $applicant[self::phoneNode];
+            if ($tempVal!=='' && preg_match("/^\+?([0-9][\s\/-]?)+[0-9]+$/",$tempVal)===0) {
+                $this->addCheckLabelString($translationPrefix.self::phoneNode,$type.self::phoneNode,$parameters);
+            }
         }
         // conflict
-        $tempArray = $coreDataArray[self::conflictNode];
+        $tempArray = $this->coreDataArray[self::conflictNode];
         $tempPrefix = $translationPrefix.self::conflictNode.'.';
         $chosen = $this->checkMissingChosen($tempArray,$tempPrefix.'title',2,self::conflictNode,true);
         if (array_key_exists(self::descriptionNode,$tempArray)) {
             $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.'description.'.($chosen===0 ? 'yes' : 'no')],hash: $this->addDiv(self::conflictNode,true,false));
         }
         // support
-        $tempArray = $coreDataArray[self::supportNode];
-        if ($this->checkMissingChildren($coreDataArray,self::supportNode,$translationPrefix.self::supportNode) && !array_key_exists(self::noSupport,$tempArray)) { // at least one support type except no support was chosen
+        $tempArray = $this->coreDataArray[self::supportNode];
+        if ($this->checkMissingChildren($this->coreDataArray,self::supportNode,$translationPrefix.self::supportNode) && !array_key_exists(self::noSupport,$tempArray)) { // at least one support type except no support was chosen
             foreach (array_keys($tempArray) as $support) {
                 $this->checkMissingContent($tempArray,[$support => 'coreData.support.type.'.$support],true,hash: $this->addDiv($support,true));
             }
         }
         // guidelines
-        if (array_key_exists(self::guidelinesNode,$coreDataArray) && $coreDataArray[self::guidelinesNode]!=='') {
-            $this->checkMissingContent($coreDataArray[self::guidelinesNode],[self::descriptionNode => $translationPrefix.self::guidelinesNode],true,hash: $this->addDiv(self::guidelinesNode,true));
+        if (array_key_exists(self::guidelinesNode,$this->coreDataArray) && $this->coreDataArray[self::guidelinesNode]!=='') {
+            $this->checkMissingContent($this->coreDataArray[self::guidelinesNode],[self::descriptionNode => $translationPrefix.self::guidelinesNode],true,hash: $this->addDiv(self::guidelinesNode,true));
         }
         $this->setAppDataTitle($setTitle);
     }
@@ -772,39 +792,73 @@ class CheckDocClass extends ControllerAbstract
         $this->addProjectdetailsTitle(self::consentNode,$setTitle);
         $translationPage = self::projectdetailsPrefix.self::consentNode.'.';
         $pageArray = $this->measure[self::consentNode];
-        // voluntary
-        $tempPrefix = $translationPage.self::voluntaryNode.'.';
-        $tempArray = $pageArray[self::voluntaryNode];
-        $voluntary = $this->checkVoluntaryConsent($tempArray,self::voluntaryNode,$tempPrefix.'title',$tempPrefix.'voluntaryParticipants',$tempPrefix.self::voluntaryNode.self::descriptionCap);
-        $voluntaryAddressee = $voluntary[0];
-        $voluntaryParticipant = $voluntary[1];
         $isPreParticipants = $this->informationII[0]===0;
-        if (array_key_exists(self::voluntaryYesDescription,$tempArray)) {
-            $this->checkMissingContent($tempArray,[self::voluntaryYesDescription => $tempPrefix.self::voluntaryYesDescription],hash: $this->addDiv(self::voluntaryYesDescription));
+        [$voluntaryAddressee,$voluntaryParticipant,$consentParticipant,$isConsentChosen,$isConsentChosenParticipant] = ['','','',false,false];
+        // voluntary and consent
+        foreach ([self::voluntaryNode,self::consentNode] as $type) {
+            $tempArray = $pageArray[$type];
+            $tempPrefix = $translationPage.$type.'.';
+            $typePrefix = $tempPrefix.$type;
+            $missingDescription = $typePrefix.self::descriptionCap;
+            $this->paramsAddressee['type'] = self::consentNode;
+            $this->paramsParticipants['type'] = self::consentNode;
+            $chosen = $this->checkMissingChosen($tempArray,$tempPrefix.'title',null,$type,true);
+            $chosenParticipant = $this->isTwoAddressees ? $this->checkMissingChosen($tempArray,$typePrefix.'Participants',null,$type.'TypeParticipants',true,self::chosen.'2') : '';
+            if (array_key_exists(self::descriptionNode,$tempArray)) { // description if answer is no
+                $this->checkMissingContent($tempArray,[self::descriptionNode => $missingDescription],parameter: $this->paramsAddressee,hash: $this->addDiv($type,true,false));
+            }
+            if ($type===self::voluntaryNode) { // voluntary
+                $voluntaryAddressee = $chosen;
+                $voluntaryParticipant = $chosenParticipant;
+                if (array_key_exists(self::voluntaryYesDescription,$tempArray)) { // description if answer is yes
+                    $this->checkMissingContent($tempArray,[self::voluntaryYesDescription => $tempPrefix.self::voluntaryYesDescription],hash: $this->addDiv(self::voluntaryYesDescription));
+                }
+                // no pre-information -> voluntary not applicable
+                if (($this->noPre && $chosen!=='' && $chosen!==self::voluntaryNotApplicable)) {
+                    $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $this->paramsAddressee);
+                }
+                if ($this->noPreParticipants && $chosenParticipant!=='' && $chosenParticipant!==self::voluntaryNotApplicable) {
+                    $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $this->paramsParticipants);
+                }
+                // voluntary not applicable -> no pre-information
+                if ($this->isPre && $chosen===self::voluntaryNotApplicable) {
+                    $this->addCheckLabelString($translationPage.'notApplicableToInformation',parameters: $this->paramsAddressee);
+                }
+                if ($isPreParticipants && $chosenParticipant===self::voluntaryNotApplicable) {
+                    $this->addCheckLabelString($translationPage.'notApplicableToInformation',parameters: $this->paramsParticipants);
+                }
+            } else { // consent
+                $otherDescriptionTrans = $missingDescription.'Other';
+                if (array_key_exists(self::consentOtherDescription,$tempArray)) { // description of 'other' type
+                    $this->checkMissingContent($tempArray,[self::consentOtherDescription => $otherDescriptionTrans],parameter: $this->paramsAddressee,hash: self::consentNode.self::consentOther);
+                }
+                $otherDescription = self::consentOtherDescription.'Participants';
+                if (array_key_exists($otherDescription,$tempArray)) { // description of 'other' type for participants
+                    $this->checkMissingContent($tempArray,[$otherDescription => $otherDescriptionTrans],parameter: $this->paramsParticipants,hash: self::consentNode.'Participants'.self::consentOther);
+                }
+                $consentParticipant = $chosen;
+                $isConsentChosen = $this->consentAddressee!=='';
+                $isConsentNotApplicable = $this->consentAddressee===self::consentNotApplicable;
+                $isConsentChosenParticipant = $chosenParticipant!=='';
+                $isConsentNotApplicableParticipant = $chosenParticipant===self::consentNotApplicable;
+                // testing both elements separately is way faster than count(array_intersect($information,[0,1]))
+                // neither pre- nor post-information -> consent not applicable
+                if ($this->noPost && $isConsentChosen && !$isConsentNotApplicable) {
+                    $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $this->paramsAddressee);
+                }
+                if ($this->noPostParticipants && $isConsentChosenParticipant && !$isConsentNotApplicableParticipant) {
+                    $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $this->paramsParticipants);
+                }
+                // consent not applicable -> neither pre- nor post-information
+                if (in_array(0,$this->information) && $isConsentChosen && $isConsentNotApplicable) {
+                    $this->addCheckLabelString($translationPage.'notApplicableToInformation',parameters: $this->paramsAddressee);
+                }
+                if (in_array(0,$this->informationII) && $isConsentChosenParticipant && $isConsentNotApplicableParticipant) {
+                    $this->addCheckLabelString($translationPage.'notApplicableToInformation',parameters: $this->paramsParticipants);
+                }
+            }
         }
-        // no pre-information -> voluntary not applicable
-        if (($this->noPre && $voluntaryAddressee!=='' && $voluntaryAddressee!==self::voluntaryNotApplicable)) {
-            $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $this->paramsAddressee);
-        }
-        if ($this->noPreParticipants && $voluntaryParticipant!=='' && $voluntaryParticipant!==self::voluntaryNotApplicable) {
-            $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $this->paramsParticipants);
-        }
-        // voluntary not applicable -> no pre-information
-        if ($this->isPre && $voluntaryAddressee===self::voluntaryNotApplicable) {
-            $this->addCheckLabelString($translationPage.'notApplicableToInformation',parameters: $this->paramsAddressee);
-        }
-        if ($isPreParticipants && $voluntaryParticipant===self::voluntaryNotApplicable) {
-            $this->addCheckLabelString($translationPage.'notApplicableToInformation',parameters: $this->paramsParticipants);
-        }
-        // consent
-        $tempPrefix = $translationPage.self::consentNode.'.';
-        $this->paramsAddressee['type'] = self::consentNode;
-        $this->paramsParticipants['type'] = self::consentNode;
-        $consentParticipant = $this->checkVoluntaryConsent($pageArray[self::consentNode],self::consentNode,$tempPrefix.'title',$tempPrefix.'consentParticipants',$tempPrefix.self::consentNode.self::descriptionCap)[1];
-        $isConsentChosen = $this->consentAddressee!=='';
-        $isConsentNotApplicable = $this->consentAddressee===self::consentNotApplicable;
-        $isConsentChosenParticipant = $consentParticipant!=='';
-        $isConsentNotApplicableParticipant = $consentParticipant===self::consentNotApplicable;
+        // checks of consistency of voluntary and consent
         // no voluntariness -> no consent
         if ($voluntaryAddressee===self::voluntaryConsentNo && $isConsentChosen && $this->consentAddressee!==self::voluntaryConsentNo) {
             $this->addCheckLabelString($tempPrefix.'voluntaryToConsent',parameters: $this->paramsAddressee);
@@ -818,21 +872,6 @@ class CheckDocClass extends ControllerAbstract
         }
         if ($isPreParticipants && $consentParticipant===self::voluntaryConsentNo && !in_array($voluntaryParticipant,['',self::voluntaryConsentNo])) {
             $this->addCheckLabelString($tempPrefix.'consentToVoluntary',parameters: $this->paramsParticipants);
-        }
-        // testing both elements separately is way faster than count(array_intersect($information,[0,1]))
-        // neither pre- nor post-information -> consent not applicable
-        if ($this->noPost && $isConsentChosen && !$isConsentNotApplicable) {
-            $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $this->paramsAddressee);
-        }
-        if ($this->noPostParticipants && $isConsentChosenParticipant && !$isConsentNotApplicableParticipant) {
-            $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $this->paramsParticipants);
-        }
-        // consent not applicable -> neither pre- nor post-information
-        if (in_array(0,$this->information) && $isConsentChosen && $isConsentNotApplicable) {
-            $this->addCheckLabelString($translationPage.'notApplicableToInformation',parameters: $this->paramsAddressee);
-        }
-        if (in_array(0,$this->informationII) && $isConsentChosenParticipant && $isConsentNotApplicableParticipant) {
-            $this->addCheckLabelString($translationPage.'notApplicableToInformation',parameters: $this->paramsParticipants);
         }
         // terminate cons
         $tempPrefix = $translationPage.self::terminateConsNode.'.';
@@ -927,13 +966,28 @@ class CheckDocClass extends ControllerAbstract
         $translationPage = self::projectdetailsPrefix.self::burdensRisksNode.'.';
         $title = $translationPage.'title';
         $pageArray = $this->measure[self::burdensRisksNode];
-        // burdens
-        $tempArray = $pageArray[self::burdensNode];
-        if ($this->checkBurdensRisksErrors($tempArray,$title,self::burdensTypesNode,self::burdensNode) && array_key_exists(self::burdensNoDescription,$pageArray)) {
-            $this->checkMissingContent($pageArray,[self::burdensNoDescription => $translationPage.'noBurdens'],hash: $this->addDiv(self::burdensNoDescription));
+        // burdens and risks
+        foreach ([self::burdensNode,self::risksNode] as $type) {
+            $tempArray = $pageArray[$type];
+            $isBurdens = $type===self::burdensNode;
+            $typeKey = $isBurdens ? self::burdensTypesNode : self::risksTypesNode;
+            $typeParam = ['burdensRisksType' => $type];
+            $params = array_merge($typeParam,['type' => $this->translateString(self::projectdetailsPrefix.self::burdensRisksNode.'.title',$typeParam)]);
+            $isSelected = $this->checkMissingChildren($tempArray,$typeKey,self::missingTypes,$params);
+            if ($isSelected) {
+                $multiArray = $tempArray[$typeKey];
+                $isNoID = array_key_exists($isBurdens ? self::noBurdens : self::noRisks,$multiArray);
+                if (!(count($multiArray)==1 && $isNoID)) {
+                    $this->checkMissingContent($tempArray,[self::descriptionNode => $title],true,parameter: $params,hash: $this->addDiv($type,true,false));
+                }
+                if (!$isNoID) {
+                    $this->checkBurdensRisksCompensation($tempArray,$type,$params);
+                }
+                if ($isBurdens && array_key_exists(self::burdensNoDescription,$tempArray)) {
+                    $this->checkMissingContent($tempArray,[self::burdensNoDescription => $translationPage.'noBurdens'],hash: $this->addDiv(self::burdensNoDescription));
+                }
+            }
         }
-        // risks
-        $this->checkBurdensRisksErrors($pageArray[self::risksNode],$title,self::risksTypesNode,self::risksNode);
         // burdensRisksContributors
         $tempArray = $pageArray[self::burdensRisksContributorsNode];
         $tempVal = $title;
@@ -1157,402 +1211,399 @@ class CheckDocClass extends ControllerAbstract
                 }
                 $isSeparate = $create===self::createSeparate;
                 $support = $this->coreDataArray[self::supportNode];
-                $isVerified = $isSeparate && $tempArray[self::descriptionNode]==='verified';
+                $isVerified = $isSeparate && ($pageArray[self::createVerificationNode] ?? '')==='verified';
                 $isCreateAnonymous = $create==='anonymous';
                 if (($isVerified || $isCreateAnonymous) && $support!=='' && !array_key_exists('supportData', $support)) { // privacy separate and verified or anonymous -> support by data privacy
                     $this->addCheckLabelString($tempPrefix.self::supportNode, parameters: ['isVerified' => $this->getStringFromBool($isVerified)]);
                 }
-                $isTool = $create===self::createTool;
-                if ($isTool || $isSeparate) {
-                    $tempVal = $isTool ? self::confirmIntroNode : self::createVerificationNode;
-                    $tempVal = $this->checkMissingChosen($tempArray, $translationPage.$tempVal, null, $this->addDiv($tempVal), name: self::descriptionNode);
-                    if ($isTool && $tempVal) {
-                        $tempPrefix = $translationPage.self::responsibilityNode.'.';
-                        $responsibility = $this->checkMissingChosen($pageArray, $tempPrefix.'missing', null, self::responsibilityNode, true, self::responsibilityNode);
-                        if ($responsibility==='private' && ($this->appDataArray[self::coreDataNode][self::qualification] ?? '')==='1') { // responsibility is private -> qualification must be answered with yes
-                            $this->addCheckLabelString($tempPrefix.self::qualification);
-                        }
-                        $transferOutside = $this->checkMissingChosen($pageArray, $translationPage.self::transferOutsideNode, null, self::transferOutsideNode, true, self::transferOutsideNode);
-                        $dataOnline = '';
-                        $dataOnlineProcessing = '';
-                        $tempArray = ['', self::privacyNotApplicable];
-                        if ($responsibility===self::privacyNotApplicable && !in_array($transferOutside, $tempArray)) { // responsibility not applicable -> transfer outside must also be not applicable
-                            $this->addCheckLabelString($translationPage.self::responsibilityNode.'To'.self::transferOutsideNode);
-                        } elseif ($transferOutside===self::privacyNotApplicable && !in_array($responsibility, $tempArray)) { // transfer outside not applicable -> responsibility must also be not applicable
-                            $this->addCheckLabelString($translationPage.self::transferOutsideNode.'To'.self::responsibilityNode);
-                        }
-                        if (in_array($responsibility, [self::responsibilityOnlyOwn, self::privacyNotApplicable]) && // responsibility
-                            in_array($transferOutside, [self::transferOutsideNo, self::privacyNotApplicable])) { // transfer outside
-                            // data online (processing)
-                            if (array_key_exists(self::dataOnlineNode, $pageArray)) {
-                                $tempArray = $pageArray[self::dataOnlineNode];
-                                $dataOnline = $this->checkMissingTextfield($tempArray, null, self::dataOnlineTechnical, $translationPage.self::dataOnlineNode, self::dataOnlineNode, $translationPage.self::dataOnlineProcessingNode, self::dataOnlineProcessingNode);
-                                $dataOnlineProcessing = $tempArray[self::descriptionNode] ?? '';
+                if ($create===self::createTool && $this->checkMissingChosen($tempArray,$translationPage.self::confirmIntroNode,null,$this->addDiv(self::confirmIntroNode),name: self::descriptionNode)==='1') { // intro was confirmed
+                    $tempPrefix = $translationPage.self::responsibilityNode.'.';
+                    $responsibility = $this->checkMissingChosen($pageArray, $tempPrefix.'missing', null, self::responsibilityNode, true, self::responsibilityNode);
+                    if ($responsibility==='private' && ($this->appDataArray[self::coreDataNode][self::qualification] ?? '')==='1') { // responsibility is private -> qualification must be answered with yes
+                        $this->addCheckLabelString($tempPrefix.self::qualification);
+                    }
+                    $transferOutside = $this->checkMissingChosen($pageArray, $translationPage.self::transferOutsideNode, null, self::transferOutsideNode, true, self::transferOutsideNode);
+                    $dataOnline = '';
+                    $dataOnlineProcessing = '';
+                    $tempArray = ['', self::privacyNotApplicable];
+                    if ($responsibility===self::privacyNotApplicable && !in_array($transferOutside, $tempArray)) { // responsibility not applicable -> transfer outside must also be not applicable
+                        $this->addCheckLabelString($translationPage.self::responsibilityNode.'To'.self::transferOutsideNode);
+                    } elseif ($transferOutside===self::privacyNotApplicable && !in_array($responsibility, $tempArray)) { // transfer outside not applicable -> responsibility must also be not applicable
+                        $this->addCheckLabelString($translationPage.self::transferOutsideNode.'To'.self::responsibilityNode);
+                    }
+                    if (in_array($responsibility, [self::responsibilityOnlyOwn, self::privacyNotApplicable]) && // responsibility
+                        in_array($transferOutside, [self::transferOutsideNo, self::privacyNotApplicable])) { // transfer outside
+                        // data online (processing)
+                        if (array_key_exists(self::dataOnlineNode, $pageArray)) {
+                            $tempArray = $pageArray[self::dataOnlineNode];
+                            $dataOnline = $this->checkMissingTextfield($tempArray, null, self::dataOnlineTechnical, $translationPage.self::dataOnlineNode, self::dataOnlineNode, $translationPage.self::dataOnlineProcessingNode, self::dataOnlineProcessingNode);
+                            $dataOnlineProcessing = $tempArray[self::descriptionNode] ?? '';
 
+                        }
+                        $dataPersonal = $this->checkMissingChosen($pageArray, $translationPage.self::dataPersonalNode, null, self::dataPersonalNode, true, self::dataPersonalNode); // data personal
+                        $hasPersonal = in_array($dataPersonal, self::dataPersonal); // true if any personal data are collected
+                        // marking
+                        $markingSecondString = self::markingNode.self::markingSuffix;
+                        $markings = [self::markingNode => '', $markingSecondString => ''];
+                        $isMarkingPersonal = false; // gets true if any marking is or may be personal
+                        $isMarkingPersonalNotGeneration = false; // gets true if any marking is by name or by code with list, or external
+                        $isMarkingAnswered = true; // gets false if any marking (sub-)question is not answered
+                        // variables indicating that a marking of a certain type is used
+                        $isMarkingName = false; // gets true if any marking is by name
+                        $isMarkingList = false; // gets true if any marking is by list
+                        $isCodeMaybe = false; // gets true if any marking is by code 'generation'
+                        $isCodeOnlyMarking = false; // gets false if any code is used only for marking of data
+                        $isCodeNoDoc = false; // gets true if any code has no further documentation
+                        foreach (array_merge([self::markingNode], array_key_exists($markingSecondString, $pageArray) ? [$markingSecondString] : []) as $marking) {
+                            $tempArray = $pageArray[$marking];
+                            $isFirstMarking = $marking===self::markingNode;
+                            $suffix = $isFirstMarking ? '' : self::markingSuffix;
+                            $markingWithSuffix = self::markingNode.$suffix;
+                            $lineTitle = $isFirstMarking ? '' : $this->translateString($translationPage.$markingWithSuffix);
+                            $tempPrefix = $translationPage.self::markingNode.'.';
+                            $markingChosen = $this->checkMissingChosen($tempArray, $tempPrefix.'title', null, $this->addDiv(self::markingNode).$suffix, lineTitle: $lineTitle);
+                            $isMarkingAnswered = $isMarkingAnswered && $markingChosen!=='';
+                            $isExternal = $markingChosen===self::markingExternal;
+                            $isName = $markingChosen===self::markingName;
+                            $isMarkingPersonal = $isMarkingPersonal || $isName;
+                            $isMarkingPersonalNotGeneration = $isMarkingPersonalNotGeneration || $isName || $isExternal;
+                            $isMarkingName = $isMarkingName || $isName;
+                            $markings[$marking] = $markingChosen;
+                            if (array_key_exists(self::descriptionNode, $tempArray)) { // can only be true if external or name
+                                $this->checkMissingContent($tempArray, [self::descriptionNode => $tempPrefix.self::descriptionNode], lineTitle: $lineTitle, parameter: ['type' => $markingChosen], hash: $this->addDiv($markingWithSuffix, true, false));
                             }
-                            $dataPersonal = $this->checkMissingChosen($pageArray, $translationPage.self::dataPersonalNode, null, self::dataPersonalNode, true, self::dataPersonalNode); // data personal
-                            $hasPersonal = in_array($dataPersonal, self::dataPersonal); // true if any personal data are collected
-                            // marking
-                            $markingSecondString = self::markingNode.self::markingSuffix;
-                            $markings = [self::markingNode => '', $markingSecondString => ''];
-                            $isMarkingPersonal = false; // gets true if any marking is or may be personal
-                            $isMarkingPersonalNotGeneration = false; // gets true if any marking is by name or by code with list, or external
-                            $isMarkingAnswered = true; // gets false if any marking (sub-)question is not answered
-                            // variables indicating that a marking of a certain type is used
-                            $isMarkingName = false; // gets true if any marking is by name
-                            $isMarkingList = false; // gets true if any marking is by list
-                            $isCodeMaybe = false; // gets true if any marking is by code 'generation'
-                            $isCodeOnlyMarking = false; // gets false if any code is used only for marking of data
-                            $isCodeNoDoc = false; // gets true if any code has no further documentation
-                            foreach (array_merge([self::markingNode], array_key_exists($markingSecondString, $pageArray) ? [$markingSecondString] : []) as $marking) {
-                                $tempArray = $pageArray[$marking];
-                                $isFirstMarking = $marking===self::markingNode;
-                                $suffix = $isFirstMarking ? '' : self::markingSuffix;
-                                $markingWithSuffix = self::markingNode.$suffix;
-                                $lineTitle = $isFirstMarking ? '' : $this->translateString($translationPage.$markingWithSuffix);
-                                $tempPrefix = $translationPage.self::markingNode.'.';
-                                $markingChosen = $this->checkMissingChosen($tempArray, $tempPrefix.'title', null, $this->addDiv(self::markingNode).$suffix, lineTitle: $lineTitle);
-                                $isMarkingAnswered = $isMarkingAnswered && $markingChosen!=='';
-                                $isExternal = $markingChosen===self::markingExternal;
-                                $isName = $markingChosen===self::markingName;
-                                $isMarkingPersonal = $isMarkingPersonal || $isName;
-                                $isMarkingPersonalNotGeneration = $isMarkingPersonalNotGeneration || $isName || $isExternal;
-                                $isMarkingName = $isMarkingName || $isName;
-                                $markings[$marking] = $markingChosen;
-                                if (array_key_exists(self::descriptionNode, $tempArray)) { // can only be true if external or name
-                                    $this->checkMissingContent($tempArray, [self::descriptionNode => $tempPrefix.self::descriptionNode], lineTitle: $lineTitle, parameter: ['type' => $markingChosen], hash: $this->addDiv($markingWithSuffix, true, false));
+                            $isInternal = $markingChosen===self::markingInternal;
+                            if ($isExternal || $isInternal) {
+                                if ($isInternal) { // how the code is created
+                                    $markingChosen = $this->checkMissingChosen($tempArray, $tempPrefix.self::markingInternal, null, 'internalCreateDiv'.$suffix, name: self::markingInternal, lineTitle: $lineTitle);
+                                    $isMarkingAnswered = $isMarkingAnswered && $markingChosen!=='';
                                 }
-                                $isInternal = $markingChosen===self::markingInternal;
-                                if ($isExternal || $isInternal) {
-                                    if ($isInternal) { // how the code is created
-                                        $markingChosen = $this->checkMissingChosen($tempArray, $tempPrefix.self::markingInternal, null, 'internalCreateDiv'.$suffix, name: self::markingInternal, lineTitle: $lineTitle);
-                                        $isMarkingAnswered = $isMarkingAnswered && $markingChosen!=='';
-                                    }
-                                    if (array_key_exists(self::codePersonal, $tempArray)) { // if internal, key may not exist
-                                        $tempVal = $this->checkMissingChosen($tempArray, $tempPrefix.self::codePersonal, null, $this->addDiv($markingChosen).$suffix, name: self::codePersonal, lineTitle: $lineTitle);
-                                        $isMarkingAnswered = $isMarkingAnswered && $tempVal!=='';
-                                        $isMarkingPersonal = $isMarkingPersonal || in_array($tempVal, self::markingDataResearchTypes); // whether the code has personal data
-                                        $isCurList = $tempVal===self::markingList;
-                                        $isMarkingPersonalNotGeneration = $isMarkingPersonalNotGeneration || $isCurList;
-                                        $isCodeMaybe = $isCodeMaybe || $tempVal===self::generation;
-                                        $isMarkingList = $isMarkingList || $isCurList;
-                                        $isCodeOnlyMarking = $isCodeOnlyMarking || $tempVal==='marking';
-                                        $isCodeNoDoc = $isCodeNoDoc || $tempVal==='anonymous';
-                                    }
+                                if (array_key_exists(self::codePersonal, $tempArray)) { // if internal, key may not exist
+                                    $tempVal = $this->checkMissingChosen($tempArray, $tempPrefix.self::codePersonal, null, $this->addDiv($markingChosen).$suffix, name: self::codePersonal, lineTitle: $lineTitle);
+                                    $isMarkingAnswered = $isMarkingAnswered && $tempVal!=='';
+                                    $isMarkingPersonal = $isMarkingPersonal || in_array($tempVal, self::markingDataResearchTypes); // whether the code has personal data
+                                    $isCurList = $tempVal===self::markingList;
+                                    $isMarkingPersonalNotGeneration = $isMarkingPersonalNotGeneration || $isCurList;
+                                    $isCodeMaybe = $isCodeMaybe || $tempVal===self::generation;
+                                    $isMarkingList = $isMarkingList || $isCurList;
+                                    $isCodeOnlyMarking = $isCodeOnlyMarking || $tempVal==='marking';
+                                    $isCodeNoDoc = $isCodeNoDoc || $tempVal==='anonymous';
                                 }
                             }
-                            if ($markings[self::markingNode]!==self::markingOther) {
-                                // marking further
-                                if (in_array($pageArray[self::markingNode][self::chosen] ?? '', self::markingValues)) {
-                                    $isMarkingAnswered = $isMarkingAnswered && $this->checkMissingChosen($pageArray, $translationPage.self::markingFurtherNode, 2, $this->addDiv(self::markingFurtherNode), true, self::markingFurtherNode)!==2;
+                        }
+                        if ($markings[self::markingNode]!==self::markingOther) {
+                            // marking further
+                            if (in_array($pageArray[self::markingNode][self::chosen] ?? '', self::markingValues)) {
+                                $isMarkingAnswered = $isMarkingAnswered && $this->checkMissingChosen($pageArray, $translationPage.self::markingFurtherNode, 2, $this->addDiv(self::markingFurtherNode), true, self::markingFurtherNode)!==2;
+                            }
+                            // two markings with name
+                            if ($isMarkingAnswered && $markings[self::markingNode]===self::markingName && $markings[$markingSecondString]===self::markingName) {
+                                $this->addCheckLabelString($translationPage.'markingName');
+                            }
+                            $hasMarkingPersonal = [self::markingList => $isMarkingList, self::generation => $isCodeMaybe, self::markingName => $isMarkingName];
+                            $allPersonalAnswered = $isMarkingAnswered && $dataPersonal!==''; // true if all questions which lead to personal data are answered
+                            $hasPersonal = $hasPersonal || $isMarkingAnswered && $isMarkingPersonal;
+                            // list
+                            $hasList = false; // gets true if any data is selected
+                            $isListName = false; // gets true if list contains name
+                            $isListIP = false; // gets true if list contains ip
+                            if (array_key_exists(self::listNode, $pageArray)) {
+                                $tempPrefix = $translationPage.self::listNode.'.';
+                                if ($this->checkMissingChildrenOther($pageArray, self::listNode, $tempPrefix.'missing', [self::listOther => $tempPrefix.self::descriptionNode])) {
+                                    $hasList = true;
+                                    $tempArray = $pageArray[self::listNode];
+                                    $isListName = array_key_exists(self::nameNode, $tempArray);
+                                    $isListIP = array_key_exists('listIP', $tempArray);
                                 }
-                                // two markings with name
-                                if ($isMarkingAnswered && $markings[self::markingNode]===self::markingName && $markings[$markingSecondString]===self::markingName) {
-                                    $this->addCheckLabelString($translationPage.'markingName');
+                            }
+                            // purposes translated -> here because data personal is also needed
+                            $purposeTrans = [];
+                            $purposeTransGen = [];
+                            foreach ($this->translateArray(self::projectdetailsPrefixTool.self::privacyNode.'.'.self::purposeResearchNode.'.typesShort.', array_merge([self::dataPersonalNode], self::allPurposeTypes), true) as $purpose => $translationKey) {
+                                $purposeTrans[$purpose] = $this->translateString($translationKey);
+                                if ($purpose!==self::dataPersonalNode) {
+                                    $purposeTransGen[$purpose] = $this->translateString(str_replace('typesShort', 'typesShortGen', $translationKey));
                                 }
-                                $hasMarkingPersonal = [self::markingList => $isMarkingList, self::generation => $isCodeMaybe, self::markingName => $isMarkingName];
-                                $allPersonalAnswered = $isMarkingAnswered && $dataPersonal!==''; // true if all questions which lead to personal data are answered
-                                $hasPersonal = $hasPersonal || $isMarkingAnswered && $isMarkingPersonal;
-                                // list
-                                $hasList = false; // gets true if any data is selected
-                                $isListName = false; // gets true if list contains name
-                                $isListIP = false; // gets true if list contains ip
-                                if (array_key_exists(self::listNode, $pageArray)) {
-                                    $tempPrefix = $translationPage.self::listNode.'.';
-                                    if ($this->checkMissingChildrenOther($pageArray, self::listNode, $tempPrefix.'missing', [self::listOther => $tempPrefix.self::descriptionNode])) {
-                                        $hasList = true;
-                                        $tempArray = $pageArray[self::listNode];
-                                        $isListName = array_key_exists(self::nameNode, $tempArray);
-                                        $isListIP = array_key_exists('listIP', $tempArray);
-                                    }
+                            }
+                            // data research
+                            $isDataResearchVideo = false; // gets true if audio, photo, or video is selected
+                            $hasDataResearch = array_key_exists(self::dataResearchNode, $pageArray);
+                            $dataResearch = [];
+                            if ($hasDataResearch) {
+                                $tempPrefix = $translationPage.self::dataResearchNode.'.';
+                                if ($this->checkMissingChildrenOther($pageArray, self::dataResearchNode, $tempPrefix.'missing', array_combine(self::dataResearchTextFieldsAll, $this->prefixArray(self::dataResearchTextFieldsAll, $tempPrefix.self::descriptionNode.'.')))) {
+                                    $dataResearch = $pageArray[self::dataResearchNode];
+                                    $isDataResearchVideo = array_intersect(array_keys($dataResearch), ['audio', 'photo', 'video'])!==[];
                                 }
-                                // purposes translated -> here because data personal is also needed
-                                $purposeTrans = [];
-                                $purposeTransGen = [];
-                                foreach ($this->translateArray(self::projectdetailsPrefixTool.self::privacyNode.'.'.self::purposeResearchNode.'.typesShort.', array_merge([self::dataPersonalNode], self::allPurposeTypes), true) as $purpose => $translationKey) {
-                                    $purposeTrans[$purpose] = $this->translateString($translationKey);
-                                    if ($purpose!==self::dataPersonalNode) {
-                                        $purposeTransGen[$purpose] = $this->translateString(str_replace('typesShort', 'typesShortGen', $translationKey));
-                                    }
+                                // anonymization
+                                if (array_key_exists(self::anonymizationNode, $pageArray)) {
+                                    $tempPrefix = $translationPage.self::anonymizationNode.'.';
+                                    $this->checkMissingChildrenOther($pageArray, self::anonymizationNode, $tempPrefix.'missing', [self::anonymizationOther => $tempPrefix.self::descriptionNode]);
                                 }
-                                // data research
-                                $isDataResearchVideo = false; // gets true if audio, photo, or video is selected
-                                $hasDataResearch = array_key_exists(self::dataResearchNode, $pageArray);
-                                $dataResearch = [];
-                                if ($hasDataResearch) {
-                                    $tempPrefix = $translationPage.self::dataResearchNode.'.';
-                                    if ($this->checkMissingChildrenOther($pageArray, self::dataResearchNode, $tempPrefix.'missing', array_combine(self::dataResearchTextFieldsAll, $this->prefixArray(self::dataResearchTextFieldsAll, $tempPrefix.self::descriptionNode.'.')))) {
-                                        $dataResearch = $pageArray[self::dataResearchNode];
-                                        $isDataResearchVideo = array_intersect(array_keys($dataResearch), ['audio', 'photo', 'video'])!==[];
-                                    }
-                                    // anonymization
-                                    if (array_key_exists(self::anonymizationNode, $pageArray)) {
-                                        $tempPrefix = $translationPage.self::anonymizationNode.'.';
-                                        $this->checkMissingChildrenOther($pageArray, self::anonymizationNode, $tempPrefix.'missing', [self::anonymizationOther => $tempPrefix.self::descriptionNode]);
-                                    }
-                                    // storage
-                                    if (array_key_exists(self::storageNode, $pageArray)) {
-                                        $tempPrefix = $translationPage.self::storageNode.'.';
-                                        $this->checkMissingTextfield($pageArray[self::storageNode], null, self::storageDelete, $tempPrefix.'missing', self::storageNode, $tempPrefix.self::descriptionNode);
-                                    }
-                                    if (array_key_exists(self::personalKeepNode, $pageArray)) {
-                                        // personal keep
-                                        $tempPrefix = $translationPage.self::personalKeepNode.'.';
-                                        if ($this->checkMissingChildren($pageArray, self::personalKeepNode, $tempPrefix.'missing')) {
-                                            $tempArray = $pageArray[self::personalKeepConsentNode] ?? [];
-                                            foreach ($pageArray[self::personalKeepNode] as $type => $description) {
-                                                $typeParam = ['type' => $this->translateString(self::projectdetailsPrefixTool.self::privacyNode.'.'.self::personalKeepNode.'.typesShort.'.$type)];
-                                                if ($description==='') {
-                                                    $this->addCheckLabelString($tempPrefix.self::descriptionNode, $this->addDiv($type, true), $typeParam, colorRed: false);
-                                                }
-                                                // personal keep consent
-                                                if ($tempArray[$type]==='') {
-                                                    $this->addCheckLabelString($translationPage.self::personalKeepConsentNode, $type.'PersonalKeepConsentDiv', $typeParam, colorRed: false);
-                                                }
+                                // storage
+                                if (array_key_exists(self::storageNode, $pageArray)) {
+                                    $tempPrefix = $translationPage.self::storageNode.'.';
+                                    $this->checkMissingTextfield($pageArray[self::storageNode], null, self::storageDelete, $tempPrefix.'missing', self::storageNode, $tempPrefix.self::descriptionNode);
+                                }
+                                if (array_key_exists(self::personalKeepNode, $pageArray)) {
+                                    // personal keep
+                                    $tempPrefix = $translationPage.self::personalKeepNode.'.';
+                                    if ($this->checkMissingChildren($pageArray, self::personalKeepNode, $tempPrefix.'missing')) {
+                                        $tempArray = $pageArray[self::personalKeepConsentNode] ?? [];
+                                        foreach ($pageArray[self::personalKeepNode] as $type => $description) {
+                                            $typeParam = ['type' => $this->translateString(self::projectdetailsPrefixTool.self::privacyNode.'.'.self::personalKeepNode.'.typesShort.'.$type)];
+                                            if ($description==='') {
+                                                $this->addCheckLabelString($tempPrefix.self::descriptionNode, $this->addDiv($type, true), $typeParam, colorRed: false);
                                             }
-                                        }
-                                    }
-                                    // access if research data is personal
-                                    if (array_key_exists(self::accessNode, $pageArray)) {
-                                        $this->checkAccess($pageArray, self::dataPersonalNode, array_merge($this->committeeParam, [self::purposeNode => $purposeTrans[self::dataPersonalNode]]));
-                                    }
-                                }
-                                // purpose research
-                                $hasPurpose = [self::purposeResearchNode => false, self::purposeFurtherNode => false];
-                                $purposeResearchArray = $pageArray[self::purposeResearchNode] ?? ''; // also empty string if exists, but not yet answered
-                                $isPurposeResearch = false; // gets true if questions exists and was answered
-                                $hasPurposeResearch = array_key_exists(self::purposeResearchNode, $pageArray); // true if question exists
-                                if ($hasPurposeResearch) { // no check of $purposeResearchArray because key may exist, but not yet answered
-                                    $tempPrefix = $translationPage.self::purposeResearchNode.'.';
-                                    $isPurposeResearch = $this->checkMissingChildren($pageArray, self::purposeResearchNode, $tempPrefix.'missing');
-                                    $isPurposeNotNo = $isPurposeResearch && !array_key_exists(self::purposeNo, $purposeResearchArray); // true if any purpose besides 'no purpose' is selected
-                                    $hasPurpose[self::purposeResearchNode] = $isPurposeNotNo;
-                                    $allPersonalAnswered = $allPersonalAnswered && $isPurposeResearch;
-                                    $hasPersonal = $hasPersonal || $isPurposeNotNo;
-                                    if ($isMarkingAnswered) {
-                                        // marking personal -> marking must have purpose besides research
-                                        if ($isMarkingPersonal && $isPurposeResearch && array_key_exists(self::purposeNo, $purposeResearchArray)) {
-                                            $this->addCheckLabelString($tempPrefix.'markingResearch');
-                                        }
-                                        // marking only for data <-> no further purpose of marking
-                                        if ($isCodeOnlyMarking && $isPurposeNotNo && !in_array(true, [$isCodeNoDoc, $isMarkingList, $isMarkingName])) {
-                                            $this->addCheckLabelString($tempPrefix.self::purposeNode);
-                                        }
-                                        // further purpose of marking is relatable or contact -> marking must be personal
-                                        if ($isPurposeResearch && !in_array(true, [$isMarkingName, $isMarkingList])) {
-                                            foreach ([self::purposeRelatable, 'contact'] as $type) {
-                                                if (array_key_exists($type, $purposeResearchArray)) {
-                                                    $this->addCheckLabelString($tempPrefix.'markingPurpose', parameters: ['type' => $type]);
-                                                }
+                                            // personal keep consent
+                                            if ($tempArray[$type]==='') {
+                                                $this->addCheckLabelString($translationPage.self::personalKeepConsentNode, $type.'PersonalKeepConsentDiv', $typeParam, colorRed: false);
                                             }
                                         }
                                     }
                                 }
-                                // purpose further
-                                $purposeFurtherArray = $pageArray[self::purposeFurtherNode] ?? ''; // also empty string if exists, but not yes answered
-                                $isPurposeFurther = $purposeFurtherArray!=='';
-                                if (array_key_exists(self::purposeFurtherNode, $pageArray)) { // no check of $purposeFurtherArray because key may exist, but not yet answered
-                                    $hasChildren = $this->checkMissingChildren($pageArray, self::purposeFurtherNode, $translationPage.self::purposeFurtherNode);
-                                    $tempVal = $hasChildren && !array_key_exists(self::purposeFurtherNode.self::purposeNo, $pageArray[self::purposeFurtherNode]);
-                                    $hasPurpose[self::purposeFurtherNode] = $tempVal;
-                                    $allPersonalAnswered = $allPersonalAnswered && $hasChildren;
-                                    $hasPersonal = $hasPersonal || $tempVal && !array_key_exists(self::purposeNo.self::purposeFurtherNode, $pageArray[self::purposeFurtherNode]);
+                                // access if research data is personal
+                                if (array_key_exists(self::accessNode, $pageArray)) {
+                                    $this->checkAccess($pageArray, self::dataPersonalNode, array_merge($this->committeeParam, [self::purposeNode => $purposeTrans[self::dataPersonalNode]]));
+                                }
+                            }
+                            // purpose research
+                            $hasPurpose = [self::purposeResearchNode => false, self::purposeFurtherNode => false];
+                            $purposeResearchArray = $pageArray[self::purposeResearchNode] ?? ''; // also empty string if exists, but not yet answered
+                            $isPurposeResearch = false; // gets true if questions exists and was answered
+                            $hasPurposeResearch = array_key_exists(self::purposeResearchNode, $pageArray); // true if question exists
+                            if ($hasPurposeResearch) { // no check of $purposeResearchArray because key may exist, but not yet answered
+                                $tempPrefix = $translationPage.self::purposeResearchNode.'.';
+                                $isPurposeResearch = $this->checkMissingChildren($pageArray, self::purposeResearchNode, $tempPrefix.'missing');
+                                $isPurposeNotNo = $isPurposeResearch && !array_key_exists(self::purposeNo, $purposeResearchArray); // true if any purpose besides 'no purpose' is selected
+                                $hasPurpose[self::purposeResearchNode] = $isPurposeNotNo;
+                                $allPersonalAnswered = $allPersonalAnswered && $isPurposeResearch;
+                                $hasPersonal = $hasPersonal || $isPurposeNotNo;
+                                if ($isMarkingAnswered) {
+                                    // marking personal -> marking must have purpose besides research
+                                    if ($isMarkingPersonal && $isPurposeResearch && array_key_exists(self::purposeNo, $purposeResearchArray)) {
+                                        $this->addCheckLabelString($tempPrefix.'markingResearch');
+                                    }
+                                    // marking only for data <-> no further purpose of marking
+                                    if ($isCodeOnlyMarking && $isPurposeNotNo && !in_array(true, [$isCodeNoDoc, $isMarkingList, $isMarkingName])) {
+                                        $this->addCheckLabelString($tempPrefix.self::purposeNode);
+                                    }
+                                    // further purpose of marking is relatable or contact -> marking must be personal
+                                    if ($isPurposeResearch && !in_array(true, [$isMarkingName, $isMarkingList])) {
+                                        foreach ([self::purposeRelatable, 'contact'] as $type) {
+                                            if (array_key_exists($type, $purposeResearchArray)) {
+                                                $this->addCheckLabelString($tempPrefix.'markingPurpose', parameters: ['type' => $type]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            // purpose further
+                            $purposeFurtherArray = $pageArray[self::purposeFurtherNode] ?? ''; // also empty string if exists, but not yes answered
+                            $isPurposeFurther = $purposeFurtherArray!=='';
+                            if (array_key_exists(self::purposeFurtherNode, $pageArray)) { // no check of $purposeFurtherArray because key may exist, but not yet answered
+                                $hasChildren = $this->checkMissingChildren($pageArray, self::purposeFurtherNode, $translationPage.self::purposeFurtherNode);
+                                $tempVal = $hasChildren && !array_key_exists(self::purposeFurtherNode.self::purposeNo, $pageArray[self::purposeFurtherNode]);
+                                $hasPurpose[self::purposeFurtherNode] = $tempVal;
+                                $allPersonalAnswered = $allPersonalAnswered && $hasChildren;
+                                $hasPersonal = $hasPersonal || $tempVal && !array_key_exists(self::purposeNo.self::purposeFurtherNode, $pageArray[self::purposeFurtherNode]);
 
-                                }
-                                // relatable and contact
-                                if (array_key_exists(self::relatableNode, $pageArray)) {
-                                    $this->checkMissingChildren($pageArray, self::relatableNode, $translationPage.self::relatableNode);
-                                }
-                                $purposeDataCompensation = []; // contains all data that is collected for purpose compensation, if selected
-                                $isMarkingRemove = [self::markingList => false, self::generation => false, self::markingName => false]; // each value gets true if any marking remove is by the respective key
-                                foreach ($hasPurpose as $purposeType => $isPurposeType) {
-                                    if ($isPurposeType) { // question was asked and at least one purpose except 'no purpose' was selected
-                                        foreach ($pageArray[$purposeType] as $purposeName => $questions) { // keys: selected purpose, values: sub-questions for selected purpose
-                                            if ($questions!=='') {
-                                                $purposeNameWoPrefix = str_replace(self::purposeFurtherNode, '', $purposeName);
-                                                $purposeParam = array_merge($this->committeeParam, ['purpose' => $purposeTrans[$purposeNameWoPrefix]]);
-                                                $purposeParamGen = ['purpose' => $purposeTransGen[$purposeNameWoPrefix]];
-                                                // purpose data
-                                                $tempPrefix = $translationPage.self::purposeDataNode.'.';
-                                                if (array_key_exists(self::purposeDataNode, $questions) && $this->checkMissingChildrenOther($questions, self::purposeDataNode, $tempPrefix.'missing', [$purposeNameWoPrefix.self::purposeDataOther => $tempPrefix.self::descriptionNode], $purposeParam, hash: $purposeNameWoPrefix.self::purposeDataNode)) {
-                                                    $tempArray = $questions[self::purposeDataNode];
-                                                    if (!array_key_exists($purposeNameWoPrefix.'name', $tempArray)) {
-                                                        foreach (['address', 'iban'] as $type) {
-                                                            if (array_key_exists($purposeNameWoPrefix.$type, $tempArray)) {
-                                                                $this->addCheckLabelString($tempPrefix.$type, parameters: $purposeParam);
-                                                            }
+                            }
+                            // relatable and contact
+                            if (array_key_exists(self::relatableNode, $pageArray)) {
+                                $this->checkMissingChildren($pageArray, self::relatableNode, $translationPage.self::relatableNode);
+                            }
+                            $purposeDataCompensation = []; // contains all data that is collected for purpose compensation, if selected
+                            $isMarkingRemove = [self::markingList => false, self::generation => false, self::markingName => false]; // each value gets true if any marking remove is by the respective key
+                            foreach ($hasPurpose as $purposeType => $isPurposeType) {
+                                if ($isPurposeType) { // question was asked and at least one purpose except 'no purpose' was selected
+                                    foreach ($pageArray[$purposeType] as $purposeName => $questions) { // keys: selected purpose, values: sub-questions for selected purpose
+                                        if ($questions!=='') {
+                                            $purposeNameWoPrefix = str_replace(self::purposeFurtherNode, '', $purposeName);
+                                            $purposeParam = array_merge($this->committeeParam, ['purpose' => $purposeTrans[$purposeNameWoPrefix]]);
+                                            $purposeParamGen = ['purpose' => $purposeTransGen[$purposeNameWoPrefix]];
+                                            // purpose data
+                                            $tempPrefix = $translationPage.self::purposeDataNode.'.';
+                                            if (array_key_exists(self::purposeDataNode, $questions) && $this->checkMissingChildrenOther($questions, self::purposeDataNode, $tempPrefix.'missing', [$purposeNameWoPrefix.self::purposeDataOther => $tempPrefix.self::descriptionNode], $purposeParam, hash: $purposeNameWoPrefix.self::purposeDataNode)) {
+                                                $tempArray = $questions[self::purposeDataNode];
+                                                if (!array_key_exists($purposeNameWoPrefix.'name', $tempArray)) {
+                                                    foreach (['address', 'iban'] as $type) {
+                                                        if (array_key_exists($purposeNameWoPrefix.$type, $tempArray)) {
+                                                            $this->addCheckLabelString($tempPrefix.$type, parameters: $purposeParam);
                                                         }
                                                     }
+                                                }
 
-                                                }
-                                                if ($purposeNameWoPrefix===self::purposeCompensation) {
-                                                    $tempArray = $questions[self::purposeDataNode];
-                                                    if ($tempArray!=='') {
-                                                        $purposeDataCompensation = array_merge($purposeDataCompensation, array_keys($tempArray));
-                                                    }
-                                                }
-                                                // marking remove
-                                                $removeUC = [self::markingList => ucfirst(self::markingList), self::generation => 'Code', self::markingName => ucfirst(self::markingName)];
-                                                if (array_key_exists(self::markingRemoveNode, $questions)) {
-                                                    $tempPrefix = $translationPage.self::markingRemoveNode.'.';
-                                                    $tempArray = $questions[self::markingRemoveNode];
-                                                    $tempVal = $purposeNameWoPrefix.self::markingRemoveNode;
-                                                    if ($this->checkMissingTextfieldEmpty($tempArray, $tempPrefix.'missing', $tempPrefix.self::descriptionNode, $this->addDiv($tempVal), false, hashDescription: $this->addDiv($tempVal, true, false), parameters: $purposeParam)!=='') {
-                                                        if (array_key_exists(self::markingRemoveMiddleNode, $tempArray)) { // middle
-                                                            if ($this->checkMissingChildren($tempArray, self::markingRemoveMiddleNode, $tempPrefix.self::markingRemoveMiddleNode, $purposeParam, $purposeNameWoPrefix.'MiddleDiv')) {
-                                                                $tempVal = implode('', array_keys($tempArray[self::markingRemoveMiddleNode]));
-                                                                foreach ($removeUC as $marking => $markingUC) {
-                                                                    $isMarkingRemove[$marking] = $isMarkingRemove[$marking] || str_contains($tempVal, $markingUC); // each selection is 'purposemiddleSelection'
-                                                                }
-                                                            }
-                                                        } else { // later description
-                                                            $this->checkMissingContent($tempArray, [self::laterDescription => $tempPrefix.self::laterDescription], parameter: $purposeParam, hash: $this->addDiv($purposeNameWoPrefix.self::laterDescription));
-                                                        }
-                                                    }
-                                                    if ($isMarkingAnswered) {
-                                                        foreach ($isMarkingRemove as $marking => $isRemove) {
-                                                            if (!$hasMarkingPersonal[$marking] && $isRemove) {
-                                                                $this->addCheckLabelString($tempPrefix.$marking, parameters: $purposeParamGen);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                // personal remove
-                                                $tempArray = $questions[self::personalRemoveNode];
-                                                $tempPrefix = $translationPage.self::personalRemoveNode.'.';
-                                                $tempVal = $purposeNameWoPrefix.self::personalRemoveNode;
-                                                $personalRemoveChosen = $this->checkMissingChosen($tempArray, $tempPrefix.'missing', null, $tempVal, true, parameters: $purposeParam);
-                                                if (array_key_exists(self::descriptionNode, $tempArray)) {
-                                                    $this->checkMissingContent($tempArray, [self::descriptionNode => $tempPrefix.str_replace($purposeNameWoPrefix, '', $personalRemoveChosen)], parameter: $purposeParam, hash: $this->addDiv($personalRemoveChosen===$purposeNameWoPrefix.self::personalRemoveImmediately ? $tempVal : $purposeNameWoPrefix.self::personalRemoveKeep, true, false));
-                                                }
-                                                // access
-                                                $this->checkAccess($questions, $purposeNameWoPrefix, $purposeParam);
                                             }
+                                            if ($purposeNameWoPrefix===self::purposeCompensation) {
+                                                $tempArray = $questions[self::purposeDataNode];
+                                                if ($tempArray!=='') {
+                                                    $purposeDataCompensation = array_merge($purposeDataCompensation, array_keys($tempArray));
+                                                }
+                                            }
+                                            // marking remove
+                                            $removeUC = [self::markingList => ucfirst(self::markingList), self::generation => 'Code', self::markingName => ucfirst(self::markingName)];
+                                            if (array_key_exists(self::markingRemoveNode, $questions)) {
+                                                $tempPrefix = $translationPage.self::markingRemoveNode.'.';
+                                                $tempArray = $questions[self::markingRemoveNode];
+                                                $tempVal = $purposeNameWoPrefix.self::markingRemoveNode;
+                                                if ($this->checkMissingTextfieldEmpty($tempArray, $tempPrefix.'missing', $tempPrefix.self::descriptionNode, $this->addDiv($tempVal), false, hashDescription: $this->addDiv($tempVal, true, false), parameters: $purposeParam)!=='') {
+                                                    if (array_key_exists(self::markingRemoveMiddleNode, $tempArray)) { // middle
+                                                        if ($this->checkMissingChildren($tempArray, self::markingRemoveMiddleNode, $tempPrefix.self::markingRemoveMiddleNode, $purposeParam, $purposeNameWoPrefix.'MiddleDiv')) {
+                                                            $tempVal = implode('', array_keys($tempArray[self::markingRemoveMiddleNode]));
+                                                            foreach ($removeUC as $marking => $markingUC) {
+                                                                $isMarkingRemove[$marking] = $isMarkingRemove[$marking] || str_contains($tempVal, $markingUC); // each selection is 'purposemiddleSelection'
+                                                            }
+                                                        }
+                                                    } else { // later description
+                                                        $this->checkMissingContent($tempArray, [self::laterDescription => $tempPrefix.self::laterDescription], parameter: $purposeParam, hash: $this->addDiv($purposeNameWoPrefix.self::laterDescription));
+                                                    }
+                                                }
+                                                if ($isMarkingAnswered) {
+                                                    foreach ($isMarkingRemove as $marking => $isRemove) {
+                                                        if (!$hasMarkingPersonal[$marking] && $isRemove) {
+                                                            $this->addCheckLabelString($tempPrefix.$marking, parameters: $purposeParamGen);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            // personal remove
+                                            $tempArray = $questions[self::personalRemoveNode];
+                                            $tempPrefix = $translationPage.self::personalRemoveNode.'.';
+                                            $tempVal = $purposeNameWoPrefix.self::personalRemoveNode;
+                                            $personalRemoveChosen = $this->checkMissingChosen($tempArray, $tempPrefix.'missing', null, $tempVal, true, parameters: $purposeParam);
+                                            if (array_key_exists(self::descriptionNode, $tempArray)) {
+                                                $this->checkMissingContent($tempArray, [self::descriptionNode => $tempPrefix.str_replace($purposeNameWoPrefix, '', $personalRemoveChosen)], parameter: $purposeParam, hash: $this->addDiv($personalRemoveChosen===$purposeNameWoPrefix.self::personalRemoveImmediately ? $tempVal : $purposeNameWoPrefix.self::personalRemoveKeep, true, false));
+                                            }
+                                            // access
+                                            $this->checkAccess($questions, $purposeNameWoPrefix, $purposeParam);
                                         }
                                     }
                                 }
-                                // order processing description
-                                if (array_key_exists(self::orderProcessingDescriptionNode, $pageArray)) {
-                                    $this->checkMissingContent($pageArray[self::orderProcessingDescriptionNode], array_combine(self::orderProcessingKnownTexts, $this->prefixArray(self::orderProcessingKnownTexts, $translationPage.self::orderProcessingDescriptionNode.'.')), true, hash: self::orderProcessingDescriptionNode);
+                            }
+                            // order processing description
+                            if (array_key_exists(self::orderProcessingDescriptionNode, $pageArray)) {
+                                $this->checkMissingContent($pageArray[self::orderProcessingDescriptionNode], array_combine(self::orderProcessingKnownTexts, $this->prefixArray(self::orderProcessingKnownTexts, $translationPage.self::orderProcessingDescriptionNode.'.')), true, hash: self::orderProcessingDescriptionNode);
+                            }
+                            // compensation code
+                            $isCompensationCode = false; // gets true if compensation code has personal data
+                            if (array_key_exists(self::codeCompensationNode, $pageArray)) {
+                                $tempArray = $pageArray[self::codeCompensationNode];
+                                $tempPrefix = $translationPage.self::codeCompensationNode.'.';
+                                $tempVal = self::codeCompensationExternal;
+                                if ($this->checkMissingTextfield($tempArray, null, self::codeCompensationExternal, $tempPrefix.'missing', self::codeCompensationNode, $tempPrefix.self::descriptionNode)===self::codeCompensationInternal) {
+                                    $tempVal = $this->checkMissingChosen($tempArray, $tempPrefix.'internal', null, $this->addDiv(self::codeCompensationInternal), true, self::codeCompensationInternal);
                                 }
-                                // compensation code
-                                $isCompensationCode = false; // gets true if compensation code has personal data
-                                if (array_key_exists(self::codeCompensationNode, $pageArray)) {
-                                    $tempArray = $pageArray[self::codeCompensationNode];
-                                    $tempPrefix = $translationPage.self::codeCompensationNode.'.';
-                                    $tempVal = self::codeCompensationExternal;
-                                    if ($this->checkMissingTextfield($tempArray, null, self::codeCompensationExternal, $tempPrefix.'missing', self::codeCompensationNode, $tempPrefix.self::descriptionNode)===self::codeCompensationInternal) {
-                                        $tempVal = $this->checkMissingChosen($tempArray, $tempPrefix.'internal', null, $this->addDiv(self::codeCompensationInternal), true, self::codeCompensationInternal);
-                                    }
-                                    if (array_key_exists(self::codeCompensationPersonal, $tempArray)) {
-                                        $isCompensationCode = $this->checkMissingChosen($tempArray, $tempPrefix.self::codeCompensationPersonal, null, 'code'.$this->addDiv($tempVal), true, self::codeCompensationPersonal)===self::generation;
-                                        $isCodeMaybe = $isCodeMaybe || $isCompensationCode;
-                                    }
+                                if (array_key_exists(self::codeCompensationPersonal, $tempArray)) {
+                                    $isCompensationCode = $this->checkMissingChosen($tempArray, $tempPrefix.self::codeCompensationPersonal, null, 'code'.$this->addDiv($tempVal), true, self::codeCompensationPersonal)===self::generation;
+                                    $isCodeMaybe = $isCodeMaybe || $isCompensationCode;
                                 }
-                                // further checks
-                                $this->checkResponsibilityTransfer($responsibility, $transferOutside, $hasPersonal, $allPersonalAnswered, true);
-                                $ipPrefix = $furtherPrefix.'ip.';
-                                $isIP = array_key_exists('ip', $dataResearch);
-                                $isDataPersonal = in_array($dataPersonal, ['', 'personal']);
-                                if ($isIP) {
-                                    // location not online -> data research must not be ip
-                                    if (!in_array($measuresArray[self::locationNode][self::chosen], ['', self::locationOnline])) {
-                                        $this->addCheckLabelString($ipPrefix.'noOnline', parameters: $this->routeIDs);
-                                    }
-                                    // no ip-addresses for online -> data research must not be ip
-                                    if ($dataOnline==='ipNo') {
-                                        $this->addCheckLabelString($ipPrefix.'ipNo');
-                                    }
+                            }
+                            // further checks
+                            $this->checkResponsibilityTransfer($responsibility, $transferOutside, $hasPersonal, $allPersonalAnswered, true);
+                            $ipPrefix = $furtherPrefix.'ip.';
+                            $isIP = array_key_exists('ip', $dataResearch);
+                            $isDataPersonal = in_array($dataPersonal, ['', 'personal']);
+                            if ($isIP) {
+                                // location not online -> data research must not be ip
+                                if (!in_array($measuresArray[self::locationNode][self::chosen], ['', self::locationOnline])) {
+                                    $this->addCheckLabelString($ipPrefix.'noOnline', parameters: $this->routeIDs);
                                 }
-                                // list has ip-addresses -> only if ip-addresses are linked to research data
-                                if ($isListIP && (!in_array($dataOnline, ['', self::dataOnlineTechnical]) || $dataOnline===self::dataOnlineTechnical && !in_array($dataOnlineProcessing, ['', self::dataOnlineProcessingLinked]))) {
-                                    $this->addCheckLabelString($ipPrefix.'ipList', parameters: $this->routeIDs);
+                                // no ip-addresses for online -> data research must not be ip
+                                if ($dataOnline==='ipNo') {
+                                    $this->addCheckLabelString($ipPrefix.'ipNo');
                                 }
-                                $isDataResearch = $dataResearch!==[];
-                                if ($dataOnline===self::dataOnlineResearch) {
-                                    if ($isDataResearch && !$isIP) { // ip-addresses for research -> ip-addresses must be selected as research data
-                                        $this->addCheckLabelString($ipPrefix.self::dataOnlineResearch);
-                                    }
-                                } elseif ($dataOnline===self::dataOnlineTechnical) {
-                                    if ($isIP) { // ip-addresses only for technical reasons -> ip-addresses must not be research data
-                                        $this->addCheckLabelString($ipPrefix.self::dataOnlineTechnical);
-                                    }
-                                    if ($dataOnlineProcessing===self::dataOnlineProcessingLinked && $isMarkingAnswered && (!$isMarkingList || $hasList && !$isListIP)) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
-                                        $this->addCheckLabelString($ipPrefix.'linkedMarking');
-                                    }
+                            }
+                            // list has ip-addresses -> only if ip-addresses are linked to research data
+                            if ($isListIP && (!in_array($dataOnline, ['', self::dataOnlineTechnical]) || $dataOnline===self::dataOnlineTechnical && !in_array($dataOnlineProcessing, ['', self::dataOnlineProcessingLinked]))) {
+                                $this->addCheckLabelString($ipPrefix.'ipList', parameters: $this->routeIDs);
+                            }
+                            $isDataResearch = $dataResearch!==[];
+                            if ($dataOnline===self::dataOnlineResearch) {
+                                if ($isDataResearch && !$isIP) { // ip-addresses for research -> ip-addresses must be selected as research data
+                                    $this->addCheckLabelString($ipPrefix.self::dataOnlineResearch);
                                 }
-                                // code generation -> closed group
-                                if ($isCodeMaybe && $this->measure[self::groupsNode][self::closedNode][self::chosen]==='1') {
-                                    $this->addCheckLabelString($furtherPrefix.self::closedNode, parameters: $this->routeIDs);
+                            } elseif ($dataOnline===self::dataOnlineTechnical) {
+                                if ($isIP) { // ip-addresses only for technical reasons -> ip-addresses must not be research data
+                                    $this->addCheckLabelString($ipPrefix.self::dataOnlineTechnical);
                                 }
-                                // video -> research data is personal
-                                $measuresTypes = $measuresArray[self::measuresNode];
-                                $isMeasures = $measuresTypes!=='';
-                                $isVideoMeasures = $isMeasures && array_key_exists(self::measuresVideo, $measuresTypes);
-                                if ($isVideoMeasures && !$isDataPersonal) {
-                                    $this->addCheckLabelString($furtherPrefix.'video', parameters: $this->routeIDs);
+                                if ($dataOnlineProcessing===self::dataOnlineProcessingLinked && $isMarkingAnswered && (!$isMarkingList || $hasList && !$isListIP)) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
+                                    $this->addCheckLabelString($ipPrefix.'linkedMarking');
                                 }
-                                // video in measures <-> audio, photo, or video for data research.
-                                if ($isMeasures && $isDataResearch) {
-                                    if ($isVideoMeasures && !$isDataResearchVideo) {
-                                        $this->addCheckLabelString($furtherPrefix.'measuresToVideo', parameters: $this->routeIDs);
-                                    } elseif ($isDataResearchVideo && !$isVideoMeasures) {
-                                        $this->addCheckLabelString($furtherPrefix.'videoToMeasures', parameters: $this->routeIDs);
-                                    }
+                            }
+                            // code generation -> closed group
+                            if ($isCodeMaybe && $this->measure[self::groupsNode][self::closedNode][self::chosen]==='1') {
+                                $this->addCheckLabelString($furtherPrefix.self::closedNode, parameters: $this->routeIDs);
+                            }
+                            // video -> research data is personal
+                            $measuresTypes = $measuresArray[self::measuresNode];
+                            $isMeasures = $measuresTypes!=='';
+                            $isVideoMeasures = $isMeasures && array_key_exists(self::measuresVideo, $measuresTypes);
+                            if ($isVideoMeasures && !$isDataPersonal) {
+                                $this->addCheckLabelString($furtherPrefix.'video', parameters: $this->routeIDs);
+                            }
+                            // video in measures <-> audio, photo, or video for data research.
+                            if ($isMeasures && $isDataResearch) {
+                                if ($isVideoMeasures && !$isDataResearchVideo) {
+                                    $this->addCheckLabelString($furtherPrefix.'measuresToVideo', parameters: $this->routeIDs);
+                                } elseif ($isDataResearchVideo && !$isVideoMeasures) {
+                                    $this->addCheckLabelString($furtherPrefix.'videoToMeasures', parameters: $this->routeIDs);
                                 }
-                                // other sources -> an external code or a person-related label (either name or code by list) must be used
-                                if ($isOtherSources && $isMarkingAnswered && !$isMarkingPersonalNotGeneration) {
-                                    $this->addCheckLabelString($furtherOtherSourcesPrefix.self::markingNode, parameters: $this->routeIDs);
+                            }
+                            // other sources -> an external code or a person-related label (either name or code by list) must be used
+                            if ($isOtherSources && $isMarkingAnswered && !$isMarkingPersonalNotGeneration) {
+                                $this->addCheckLabelString($furtherOtherSourcesPrefix.self::markingNode, parameters: $this->routeIDs);
+                            }
+                            // no compensation -> purpose must not be compensation
+                            $tempPrefix = $furtherPrefix.self::compensationNode.'.';
+                            $purposeArraysMerged = array_merge($isPurposeResearch ? $purposeResearchArray : [], $isPurposeFurther ? $purposeFurtherArray : []);
+                            $purposeArraysMergedKeys = array_keys($purposeArraysMerged);
+                            $compensation = $this->measure[self::compensationNode];
+                            $compensationTypes = $compensation[self::compensationTypeNode];
+                            $isCompensation = $compensationTypes!==''; // may also be 'no compensation'
+                            if ($isCompensation && array_key_exists(self::compensationNo, $compensationTypes) && array_intersect([self::purposeCompensation, self::purposeFurtherNode.self::purposeCompensation], $purposeArraysMergedKeys)!==[]) {
+                                $this->addCheckLabelString($tempPrefix.'noCompensation', parameters: $this->routeIDs);
+                            }
+                            // compensation by name -> purpose data eMail for purpose compensation
+                            $isNotPurposeCompensation = ($isPurposeResearch || !$hasPurposeResearch) && $isPurposeFurther && array_intersect([self::purposeCompensation, self::purposeFurtherNode.self::purposeCompensation], $purposeArraysMergedKeys)===[]; // true if purpose research either exists and was answered or does not exist, and research further was answered, and if compensation is not selected as a purpose
+                            $isCompensationData = $purposeDataCompensation!==[]; // true if any data for purpose compensation is collected
+                            // compensation by a certain type -> certain purpose data for purpose compensation
+                            $isPurposeResearchCompensation = $isPurposeResearch && array_key_exists(self::compensationNode, $purposeResearchArray);
+                            foreach (['name', 'eMail', 'phone'] as $type) {
+                                $tempVal = $this->checkCompensationAwarding($compensation, $type);
+                                if ($tempVal && ($isNotPurposeCompensation || $isCompensationData && !in_array(self::compensationNode.$type, $purposeDataCompensation))) {
+                                    $this->addCheckLabelString($tempPrefix.$type, parameters: $this->routeIDs);
                                 }
-                                // no compensation -> purpose must not be compensation
-                                $tempPrefix = $furtherPrefix.self::compensationNode.'.';
-                                $purposeArraysMerged = array_merge($isPurposeResearch ? $purposeResearchArray : [], $isPurposeFurther ? $purposeFurtherArray : []);
-                                $purposeArraysMergedKeys = array_keys($purposeArraysMerged);
-                                $compensation = $this->measure[self::compensationNode];
-                                $compensationTypes = $compensation[self::compensationTypeNode];
-                                $isCompensation = $compensationTypes!==''; // may also be 'no compensation'
-                                if ($isCompensation && array_key_exists(self::compensationNo, $compensationTypes) && array_intersect([self::purposeCompensation, self::purposeFurtherNode.self::purposeCompensation], $purposeArraysMergedKeys)!==[]) {
-                                    $this->addCheckLabelString($tempPrefix.'noCompensation', parameters: $this->routeIDs);
+                                // compensation by name and marking with purpose compensation -> either marking by name or list with name
+                                if ($type==='name' && $tempVal && $isPurposeResearchCompensation && $isMarkingAnswered && !$isMarkingName && (!$isMarkingList || $hasList && !$isListName)) {
+                                    $this->addCheckLabelString($tempPrefix.'nameMarking', parameters: $this->routeIDs);
                                 }
-                                // compensation by name -> purpose data eMail for purpose compensation
-                                $isNotPurposeCompensation = ($isPurposeResearch || !$hasPurposeResearch) && $isPurposeFurther && array_intersect([self::purposeCompensation, self::purposeFurtherNode.self::purposeCompensation], $purposeArraysMergedKeys)===[]; // true if purpose research either exists and was answered or does not exist, and research further was answered, and if compensation is not selected as a purpose
-                                $isCompensationData = $purposeDataCompensation!==[]; // true if any data for purpose compensation is collected
-                                // compensation by a certain type -> certain purpose data for purpose compensation
-                                $isPurposeResearchCompensation = $isPurposeResearch && array_key_exists(self::compensationNode, $purposeResearchArray);
-                                foreach (['name', 'eMail', 'phone'] as $type) {
-                                    $tempVal = $this->checkCompensationAwarding($compensation, $type);
-                                    if ($tempVal && ($isNotPurposeCompensation || $isCompensationData && !in_array(self::compensationNode.$type, $purposeDataCompensation))) {
-                                        $this->addCheckLabelString($tempPrefix.$type, parameters: $this->routeIDs);
-                                    }
-                                    // compensation by name and marking with purpose compensation -> either marking by name or list with name
-                                    if ($type==='name' && $tempVal && $isPurposeResearchCompensation && $isMarkingAnswered && !$isMarkingName && (!$isMarkingList || $hasList && !$isListName)) {
-                                        $this->addCheckLabelString($tempPrefix.'nameMarking', parameters: $this->routeIDs);
-                                    }
-                                }
-                                // compensation by transfer -> name and IBAN for purpose compensation
-                                if ($this->checkCompensationAwarding($compensation, 'transfer') && ($isNotPurposeCompensation || $isCompensationData && count(array_intersect([self::compensationNode.'name', self::compensationNode.'iban'], $purposeDataCompensation))!==2)) {
-                                    $this->addCheckLabelString($tempPrefix.'transfer', parameters: $this->routeIDs);;
-                                }
-                                // compensation by mail -> name and postal address for purpose compensation
-                                if ($this->checkCompensationAwarding($compensation, 'mail') && ($isNotPurposeCompensation || $isCompensationData && count(array_intersect([self::compensationNode.'name', self::compensationNode.'address'], $purposeDataCompensation))!==2)) {
-                                    $this->addCheckLabelString($tempPrefix.'mail', parameters: $this->routeIDs);
-                                }
-                                // code has personal data -> purpose must be compensation
-                                if ($isCompensationCode && $isNotPurposeCompensation) {
-                                    $this->addCheckLabelString($tempPrefix.'code', parameters: $this->routeIDs);
-                                }
-                                // compensation by code and marking with purpose compensation -> marking must be code
-                                if ($this->checkCompensationAwarding($compensation) && $isPurposeResearchCompensation && $isMarkingAnswered && !in_array(true, [$isCodeNoDoc, $isMarkingList, $isCodeMaybe])) {
-                                    $this->addCheckLabelString($tempPrefix.'codeMarking', parameters: $this->routeIDs);
-                                }
-                            } else { // marking is 'other'
-                                $this->checkResponsibilityTransfer($responsibility, $transferOutside, $hasPersonal);
-                                if (in_array($dataPersonal, ['', self::dataPersonalNo]) && ($pageArray[self::dataOnlineProcessingNode] ?? '')===self::dataOnlineProcessingLinked) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
-                                    $this->addCheckLabelString($translationPage.'further.ip.linkedMarking');
-                                }
+                            }
+                            // compensation by transfer -> name and IBAN for purpose compensation
+                            if ($this->checkCompensationAwarding($compensation, 'transfer') && ($isNotPurposeCompensation || $isCompensationData && count(array_intersect([self::compensationNode.'name', self::compensationNode.'iban'], $purposeDataCompensation))!==2)) {
+                                $this->addCheckLabelString($tempPrefix.'transfer', parameters: $this->routeIDs);;
+                            }
+                            // compensation by mail -> name and postal address for purpose compensation
+                            if ($this->checkCompensationAwarding($compensation, 'mail') && ($isNotPurposeCompensation || $isCompensationData && count(array_intersect([self::compensationNode.'name', self::compensationNode.'address'], $purposeDataCompensation))!==2)) {
+                                $this->addCheckLabelString($tempPrefix.'mail', parameters: $this->routeIDs);
+                            }
+                            // code has personal data -> purpose must be compensation
+                            if ($isCompensationCode && $isNotPurposeCompensation) {
+                                $this->addCheckLabelString($tempPrefix.'code', parameters: $this->routeIDs);
+                            }
+                            // compensation by code and marking with purpose compensation -> marking must be code
+                            if ($this->checkCompensationAwarding($compensation) && $isPurposeResearchCompensation && $isMarkingAnswered && !in_array(true, [$isCodeNoDoc, $isMarkingList, $isCodeMaybe])) {
+                                $this->addCheckLabelString($tempPrefix.'codeMarking', parameters: $this->routeIDs);
+                            }
+                        } else { // marking is 'other'
+                            $this->checkResponsibilityTransfer($responsibility, $transferOutside, $hasPersonal);
+                            if (in_array($dataPersonal, ['', self::dataPersonalNo]) && ($pageArray[self::dataOnlineProcessingNode] ?? '')===self::dataOnlineProcessingLinked) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
+                                $this->addCheckLabelString($translationPage.'further.ip.linkedMarking');
                             }
                         }
                     }
+                } elseif ($isSeparate && array_key_exists(self::createVerificationNode,$pageArray)) { // verification if create is 'separate'
+                    $this->checkMissingChosen($pageArray,$translationPage.self::createVerificationNode,null,$this->addDiv(self::createVerificationNode),name: self::createVerificationNode);
                 } elseif ($isCreateAnonymous && $isOtherSources) { // other sources -> create selection can not be that the study includes only anonymous data
                     $this->addCheckLabelString($furtherOtherSourcesPrefix.self::createNode, parameters: $this->routeIDs);
                 }
@@ -1686,57 +1737,6 @@ class CheckDocClass extends ControllerAbstract
 
     // functions for individual pages
 
-    /** Checks for errors on the burdens/risks page.
-     * @param array $pageArray array containing the elements of the questions for the type
-     * @param string $page translation key for the part of the error message that is added if the description node is empty
-     * @param string $typeKey key for the node whose children are checked
-     * @param string $type type to be checked. Must equal 'burdens' or 'risks'
-     * @return bool true if at least one option except 'no' is selected, false otherwise
-     */
-    private function checkBurdensRisksErrors(array $pageArray, string $page, string $typeKey, string $type): bool
-    {
-        $typeParam = ['burdensRisksType' => $type];
-        $params = array_merge($typeParam,['type' => $this->translateString(self::projectdetailsPrefix.self::burdensRisksNode.'.title',$typeParam)]);
-        $isSelected = $this->checkMissingChildren($pageArray,$typeKey,self::missingTypes,$params);
-        if ($isSelected) {
-            $multiArray = $pageArray[$typeKey];
-            $isNoID = array_key_exists($type===self::burdensNode ? self::noBurdens : self::noRisks,$multiArray);
-            if (!(count($multiArray)==1 && $isNoID)) {
-                $this->checkMissingContent($pageArray,[self::descriptionNode => $page],true,parameter: $params,hash: $this->addDiv($type,true,false));
-            }
-            if (!$isNoID) {
-                $this->checkBurdensRisksCompensation($pageArray,$type,$params);
-            }
-        }
-        return $isSelected;
-    }
-
-    /** Checks for errors on the voluntary or consent type question on the consent page.
-     * @param array $pageArray array whose children are checked for content
-     * @param string $type type to be checked
-     * @param string $missingChosen translation key if the 'chosen' key is empty
-     * @param string $missingChosenParticipants translation key if the question exists twice and the 'chosen2' key is empty
-     * @param string $missingDescription translation key if any of the two questions is answered such that a description is needed or if consent and other is selected
-     * @return array first element: answer of first addressee. Second element: answer of second addressee, if any
-     */
-    private function checkVoluntaryConsent(array $pageArray, string $type, string $missingChosen, string $missingChosenParticipants, string $missingDescription): array
-    {
-        $returnArray = [$this->checkMissingChosen($pageArray,$missingChosen,null,$type,true), ''];
-        $returnArray[1] = $this->isTwoAddressees ? $this->checkMissingChosen($pageArray,$missingChosenParticipants,null,$type.'TypeParticipants',true,self::chosen.'2') : '';
-        $otherDescriptionTrans = $missingDescription.'Other';
-        if (array_key_exists(self::consentOtherDescription,$pageArray)) {
-            $this->checkMissingContent($pageArray,[self::consentOtherDescription => $otherDescriptionTrans],parameter: $this->paramsAddressee,hash: self::consentNode.self::consentOtherDescription);
-        }
-        $otherDescription = self::consentOtherDescription.'Participants';
-        if (array_key_exists($otherDescription,$pageArray)) {
-            $this->checkMissingContent($pageArray,[$otherDescription => $otherDescriptionTrans],parameter: $this->paramsParticipants,hash: self::consentNode.$otherDescription);
-        }
-        if (array_key_exists(self::descriptionNode,$pageArray)) {
-            $this->checkMissingContent($pageArray,[self::descriptionNode => $missingDescription],parameter: $this->paramsAddressee,hash: $this->addDiv($type,true,false));
-        }
-        return $returnArray;
-    }
-
     /** Checks if the responsibility and transfer outside questions are answered consistently with the collected (personal) data.
      * @param string $responsibility answer to responsibility question
      * @param string $transferOutside answer to transfer outside question
@@ -1761,39 +1761,6 @@ class CheckDocClass extends ControllerAbstract
     }
 
     // methods for individual pages. Added here because at least one method calls a function defined afterward.
-
-    /** Checks the infos about the applicant or supervisor.
-     * @param array $pageArray array containing the infos
-     * @param string $type must equal 'applicant' or 'supervisor
-     * @return void
-     */
-    private function checkApplicantSupervisor(array $pageArray, string $type): void
-    {
-        $applicant = $pageArray[$type];
-        $translationPrefix = self::appDataPrefix.self::coreDataNode.'.';
-        $parameters = ['type' => $type];
-        $tempArray = $this->translateArray('multiple.infos.',array_diff(self::applicantContributorsInfosTypes,$type===self::applicant && $applicant[self::position]===self::positionsStudent ? [self::phoneNode] : []),true);
-        $tempArray[self::institutionInfo] = str_replace(self::institutionInfo,self::institutionInfo.'Applicant',$tempArray[self::institutionInfo]);
-        $this->checkMissingContent($applicant,$tempArray,lineTitle: 'coreData.applicant.'.$type, hash: $type);
-        $name = $applicant[self::nameNode];
-        if ($name!=='' && count(explode(' ',$name))===1) {
-            $this->addCheckLabelString($translationPrefix.self::nameNode,$type.self::nameNode,$parameters);
-        }
-        // validity of eMail
-        $tempVal = $applicant[self::eMailNode];
-        if ($tempVal!=='' && !filter_var($tempVal,FILTER_VALIDATE_EMAIL)) {
-            $this->addCheckLabelString($translationPrefix.self::eMailNode,$type.self::eMailNode,$parameters);
-        }
-        // description of 'other' position
-        if ($applicant[self::position]===self::positionOther) {
-            $this->addCheckLabelString($translationPrefix.'positionOther',$type.self::position,$parameters,false);
-        }
-        // validity of phone
-        $tempVal = $applicant[self::phoneNode];
-        if ($tempVal!=='' && preg_match("/^\+?([0-9][\s\/-]?)+[0-9]+$/",$tempVal)===0) {
-            $this->addCheckLabelString($translationPrefix.self::phoneNode,$type.self::phoneNode,$parameters);
-        }
-    }
 
     /** Checks for error of the compensation question on the burdens/risks page.
      * @param array $pageArray array containing the elements of the questions for the type

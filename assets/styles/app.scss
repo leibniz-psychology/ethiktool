@@ -36,7 +36,7 @@ h2,h3 {
 }
 
 li {
-    margin-left: 3rem;
+    margin-left: 1.5rem;
     text-indent: -1.1rem;
     list-style-position: inside;
 
@@ -98,7 +98,11 @@ input { /* simple text fields  (Texttype in xxxType.php. "input" tag itself is n
     width: 100%;
 }
 
-input[type="number"], .borderLight {
+.borderLight {
+    @apply border borderPadding;
+}
+
+input[type="number"] {
     @apply border;
 }
 
@@ -174,7 +178,7 @@ left center no-repeat;
 }
 
 .borderHint {
-    @apply border;
+    @apply border borderPadding;
     margin: 2rem 1.5rem 0 1.5rem;
     border-color: black !important;
 }
@@ -230,9 +234,13 @@ h3.inputPageHeading:hover {
 }
 
 .template {
-    @apply MetaData-Label bg-mono-200 mt-4;
-    background-clip: content-box;
+    @apply borderPadding bg-mono-200 mt-4 mx-4;
+    background-clip: padding-box;
     width: fit-content;
+}
+
+.borderPadding {
+    padding: 0.5rem;
 }
 
 .markInput { // must equal the attributes in pdf.css

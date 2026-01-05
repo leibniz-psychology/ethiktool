@@ -17,6 +17,7 @@ class AppExtension extends AbstractExtension
                 new TwigFunction('addTarget',[$this,'addTarget']),
                 new TwigFunction('addLabelClass',[$this,'addLabelClass']),
                 new TwigFunction('addClass',[$this,'addClass']),
+                new TwigFunction('addStyle',[$this,'addStyle']),
                 new TwigFunction('getAnySelected',[$this,'getAnySelected']),
                 new TwigFunction('addTracking',[$this,'addTracking']),];
     }
@@ -81,12 +82,25 @@ class AppExtension extends AbstractExtension
 
     /** Creates an array to be passed to the 'attr' value of the second argument of a form_widget() or the third argument of a form_label() call. The array contains one or more classes and eventually a 'style' key.
      * @param string $classname classnames
+     * @param bool $addAttr if true, the array will be wrapped in an 'attr' key
      * @param string $style if provided, a second key 'style' is added
      * @return array array for the form_widget() call
      */
-    public function addClass(string $classname, string $style = ''): array
+    public function addClass(string $classname, bool $addAttr = false, string $style = ''): array
     {
-        return array_merge($classname!=='' ? ['class' => $classname] : [], $style!=='' ? ['style' => $style] : []);
+        $returnArray = array_merge($classname!=='' ? ['class' => $classname] : [], $style!=='' ? $this->addStyle($style) : []);
+        return $addAttr ? ['attr' => $returnArray] : $returnArray;
+    }
+
+    /** Creates an array to be passed to the 'attr' value of the second argument of a form_widget(), the third argument of a form_label() call, or the 'arguments' array of a addTextfield() call. The array contains a 'style' key which is eventually wrapped in an 'attributes' key.
+     * @param string $style style
+     * @param bool $addAttributes if true, the style array is wrapped in an 'attributes' key
+     * @return string[] array for the call
+     */
+    public function addStyle(string $style, bool $addAttributes = false): array
+    {
+        $styleArray = ['style' => $style];
+        return $addAttributes ? ['attributes' => $styleArray] : $styleArray;
     }
 
     /** Checks if either the checkbox with the name 'unique' or any of the other checkboxes in keys is selected.

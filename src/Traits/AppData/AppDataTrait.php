@@ -23,7 +23,7 @@ trait AppDataTrait
     protected const funding = 'funding';
     protected const projectStartNext = 'projectStartNext';
     protected const projectStartBegun = 'projectStartBegun';
-    protected const begunCommittees = ['EUB','DLR']; // committees where review after start of data collection is possible
+    protected const begunCommittees = ['EUB','DLR','TUD']; // committees where review after start of data collection is possible
     protected const appNew = 'new';
     protected const applicationTypes = ['coreData.appType.type.new' => 'new', 'coreData.appType.type.extended' => 'extended', 'coreData.appType.type.resubmission' => 'resubmission', 'coreData.appType.type.resubmissionGranted' => 'resubmissionGranted']; // values must equal the values of the preceding variables
     protected const appExtendedResubmission = ['extended','resubmission','resubmissionGranted']; // values must equal the values of $appExtended and $appResubmission

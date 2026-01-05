@@ -40,9 +40,8 @@
                 {{ formRender.addHint(hintsPrefix~'selection',{'target': [measuresController,type~'BurdensRisks'], 'params': params|merge(routeIDsParam)}) }}
                 {% if content[description] is defined %}
                     <div {{ stimulus_target(measuresController,description~'Div') }}>
-                        {{ formRender.addTextfield(content[description], fontNormal|merge(
-                            {'attributes': {'style': 'height: '~textHeight},
-                             'hint': typePrefix~'textHints.description'}|
+                        {{ formRender.addTextfield(content[description], fontNormal|merge(addStyle('height: '~textHeight,true))|merge(
+                            {'hint': typePrefix~'textHints.description'}|
                             merge(not isInterventions ? {'contTarget': [measuresController,description]} : {}))) }}
                     </div> {# hint text may be set in controller, but must not be empty here #}
                     <div {% if isInterventions %} {{ stimulus_target(measuresController,'interventionsPDF') }} {% endif %}>

@@ -128,7 +128,7 @@ class CompleteFormController extends ControllerAbstract
                  'pdf' => $pdf,
                  'names' => $names,
                  'isMultiple' => $isMultiple,
-                 'finishText' => [$this->translateString($tempPrefix.'start'),$this->translateString($tempPrefix.'end',array_merge($parameters,[self::fileName => $session->get(self::fileName), 'curDate' => $this->getCurrentTime()->format('Ymd')]))],
+                 'finishText' => [$this->translateString($tempPrefix.'start'),$this->translateString($tempPrefix.'end.text',array_merge($parameters,[self::fileName => $session->get(self::fileName), 'curDate' => $this->getCurrentTime()->format('Ymd')]))],
                   self::isCommitteeBeta => $parameters[self::isCommitteeBeta]],'completeForm',addErrors: false));
     }
 

@@ -13,7 +13,7 @@
             'isPreComplete': isPreComplete
     }) }}>
         {# pre #}
-        {% set styleHeight = {'style': 'height: '~textHeight} %}
+        {% set styleHeight = addStyle('height: '~textHeight) %}
         {% set isPreNo, textParams = preValue is same as '1', fontNormal|merge({'attributes': styleHeight, 'textHintParams': addresseeStringParam|merge({'participant': isInformation ? participantsString : participantsStringpost})}) %}
         <div id="pre" {% if isFull %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
             {{ formRender.renderButtons(pre,{

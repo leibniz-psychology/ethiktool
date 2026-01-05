@@ -5,7 +5,7 @@
     <div style="margin: 0">
     {% set boxNumber, innerClasses = 1, 'boxInner'~(not savePDF ? ' previewSmall') %}
     {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
-    <h2 class="pdfHeadingCenter {% if not savePDF %} previewXLarge {% endif %}" style="margin-bottom: 1rem;"><u style="font-family: inherit">{{ heading }}</u></h2>
+    <h2 class="pdfHeadingCenter {% if not savePDF %} previewXLarge {% endif %}" style="margin-bottom: 1em;"><u style="font-family: inherit">{{ heading }}</u></h2>
     {# single docs hint #}
     {{ pdfMacros.addSingleDocsHint(singleDocsHint) }}
     {# application type #}
@@ -39,7 +39,7 @@
     <div class="pdfBox">
         {{ _self.addHeading(boxNumber,contributorsHeading,savePDF) }}
         <div class="{{ innerClasses }}">
-            <table {% if not savePDF %} style="font-size: 0.5rem" {% endif %}>
+            <table {% if not savePDF %} style="font-size: 0.8em" {% endif %}>
                 <tr>
                     <td style="padding-right: 1.5em; text-align: start">{{ 'multiple.infos.name'|trans([],'messages') }}</td>
                     {% for task in tasks %}
@@ -107,7 +107,7 @@
         <div class="noPageBreak">
         <h1 class="pdfHeadingCenter {% if not savePDF %} previewXLarge {% endif %}" style="margin-bottom: 1.25em; border-bottom: 1px solid black; border-top: 1px solid black; page-break-inside: avoid; page-break-after: avoid{% if savePDF %};font-size: xx-large{% endif %}">{{ boxContent['paragraph'] }}</h1>
         {% if paragraphSub is not same as '' %}
-            <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-bottom: 1rem">{{ paragraphSub }}</div>
+            <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-bottom: 1em">{{ paragraphSub }}</div>
         {% endif %}
     {% endif %}
     <div class="pdfBox {% if isNotApplicable %}colorNA{% endif %}" {% if isParagraph %} style="page-break-before: avoid"{% endif %}>

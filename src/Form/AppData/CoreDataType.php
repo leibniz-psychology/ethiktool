@@ -61,9 +61,9 @@ class CoreDataType extends TypeAbstract
                 }
             }
         }
-        if ($isEUB || $this->committeeType===self::committeeDLR) {
+        if (in_array($this->committeeType,self::begunCommittees)) {
             $startPrefix = $translationPrefix.'project.start.';
-            // project start
+            // project start begun
             $this->addCheckboxTextfield($builder,self::projectStartBegun,$startPrefix.'begun',$startPrefix.self::textHint);
         }
         if ($isEUB) {
@@ -157,7 +157,7 @@ class CoreDataType extends TypeAbstract
             $tempArray = $viewData[self::guidelinesNode];
             $isSelected = $tempArray!=='';
             $forms[self::guidelinesNode]->setData($isSelected);
-            $forms[$this->appendText(self::guidelinesNode)]->setData($tempArray[self::descriptionNode] ?? ''); // if nothing is chosen yes, tempArray is a string
+            $forms[$this->appendText(self::guidelinesNode)]->setData($tempArray[self::descriptionNode] ?? ''); // if nothing is chosen yet, tempArray is a string
         }
     }
 

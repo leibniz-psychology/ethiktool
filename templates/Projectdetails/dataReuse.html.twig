@@ -7,7 +7,7 @@
     {% set confirm, confirmDiv = content.confirmIntro, 'confirmDiv' %}
     {% set vars = confirm.vars %}
     <div class="borderHint">{{ (translationPrefix~'intro.text')|trans(routeIDsParam)|raw|nl2br }}</div>
-    <div class="MetaData-Widget" id="confirmIntroDiv" {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,confirmDiv]]}) }}>{{ formRender.addCheckbox(confirm, {'style': 'margin-top: 1rem'}) }}</div>
+    <div class="MetaData-Widget" id="confirmIntroDiv" {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,confirmDiv]]}) }}>{{ formRender.addCheckbox(confirm, addStyle('margin-top: 1rem')) }}</div>
     <div class="mt-8" id="{{ confirmDiv }}" style="{{ boolToDisplay(vars.checked) }}">
         <div class="MetaData-Label">
             {{ dataReuseHint|raw }}

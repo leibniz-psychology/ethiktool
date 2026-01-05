@@ -461,7 +461,7 @@ class ParticipationController extends PDFAbstract
                         $noConsentParams = [self::consent => $consentType, self::descriptionNode => $tempArray[self::descriptionNode] ?? ($tempArray[self::otherDescription] ?? '')];
                         $isConsent = in_array($consentType,self::consentTypesAny);
                         $tempPrefix = $participationPrefix.self::voluntaryNode.'.';
-                        $tempVal = ' '.$this->translateStringPDF($compensationTerminateTrans,array_merge($compensationTerminateParams,['isDocs' => 'true'])).$compensationTerminateDescription; // compensation terminate
+                        $tempVal = $isCompensationTerminate ? ' '.$this->translateStringPDF($compensationTerminateTrans,array_merge($compensationTerminateParams,['isDocs' => 'true'])).$compensationTerminateDescription : ''; // compensation terminate
                         $content = trim($this->translateStringPDF($tempPrefix.(!$isNotPost ? self::post : self::pre), array_merge($voluntaryParams, [
                                 self::descriptionNode => $this->addMarkInput(in_array($information, ['noPre', self::post]) ? $informationArray[self::preText] : $consentArray[self::terminateConsParticipationNode] ?? '', self::$markInput),
                                 self::attendanceNode => $this->getStringFromBool(($informationArray[self::attendanceNode] ?? '')==='0'),
@@ -476,8 +476,7 @@ class ParticipationController extends PDFAbstract
                         $createArray = $privacyArray[self::createNode];
                         $privacyCreate = $createArray[self::chosen];
                         $translationParams[self::createNode] = $privacyCreate;
-                        $description = $createArray[self::descriptionNode] ?? '';
-                        $translationParams[self::createVerificationNode] = $description; // only relevant if complete pdf is created
+                        $translationParams[self::createVerificationNode] = $createArray[self::createVerificationNode] ?? ''; // only relevant if complete pdf is created
                         $isSeparate = $privacyCreate===self::createSeparate;
                         $isSeparateLater = $privacyCreate===self::createSeparateLater;
                         $customPrivacy = $isSeparate; // (gets) true if a custom privacy document needs to be added
@@ -503,53 +502,51 @@ class ParticipationController extends PDFAbstract
                         $isPersonal = false; // gets true if personal data is collected. Also true if processing is checked later. False if research data are personal, but marking is other.
                         $createOther = ''; // list of reasons why the tool can not create the document
                         $createOtherPrefix = $customPrefix.'createOther.';
-                        if ($privacyCreate===self::createTool) {
-                            if ($description==='1') {
-                                $responsibility = $privacyArray[self::responsibilityNode];
-                                $transferOutside = $privacyArray[self::transferOutsideNode];
-                                $isOutside = $transferOutside==='yes';
-                                $isNotResponsible = in_array($responsibility,['onlyOther','multiple','private']);
-                                if (in_array($responsibility,[self::responsibilityOnlyOwn,self::privacyNotApplicable]) && in_array($transferOutside,[self::transferOutsideNo,self::privacyNotApplicable])) {
-                                    if ($hasDataResearch) {
-                                        $otherTypes = ['dataResearchOther',self::dataResearchSpecialOther];
-                                        $tempPrefix = $dataResearchPrefix.'types.';
-                                        foreach ($dataResearch as $type => $description) {
-                                            $isNotOther = !in_array($type,$otherTypes);
-                                            $translated = ($isNotOther ? $this->translateStringPDF($tempPrefix.$type) : '').($description!=='' ? $this->mergeContent([$isNotOther ? ' (' : '',$description,$isNotOther ? ')' : '']) : '');
-                                            if (in_array($type,self::dataSpecialTypes)) {
-                                                $dataResearchSpecialTrans[] = $translated;
-                                            } else {
-                                                $dataResearchTrans .= "• ".$translated."\n";
-                                            }
-                                        }
-                                        if ($dataResearchSpecialTrans!==[]) {
-                                            $dataResearchTrans .= $this->translateStringPDF($dataResearchPrefix.'dataSpecial',['isDataResearch' => $this->getStringFromBool($dataResearchTrans!=='')])."\n• ".implode("\n• ",$dataResearchSpecialTrans);
+                        if ($privacyCreate===self::createTool && $createArray[self::descriptionNode]==='1') {
+                            $responsibility = $privacyArray[self::responsibilityNode];
+                            $transferOutside = $privacyArray[self::transferOutsideNode];
+                            $isOutside = $transferOutside==='yes';
+                            $isNotResponsible = in_array($responsibility,['onlyOther','multiple','private']);
+                            if (in_array($responsibility,[self::responsibilityOnlyOwn,self::privacyNotApplicable]) && in_array($transferOutside,[self::transferOutsideNo,self::privacyNotApplicable])) {
+                                if ($hasDataResearch) {
+                                    $otherTypes = ['dataResearchOther',self::dataResearchSpecialOther];
+                                    $tempPrefix = $dataResearchPrefix.'types.';
+                                    foreach ($dataResearch as $type => $description) {
+                                        $isNotOther = !in_array($type,$otherTypes);
+                                        $translated = ($isNotOther ? $this->translateStringPDF($tempPrefix.$type) : '').($description!=='' ? $this->mergeContent([$isNotOther ? ' (' : '',$description,$isNotOther ? ')' : '']) : '');
+                                        if (in_array($type,self::dataSpecialTypes)) {
+                                            $dataResearchSpecialTrans[] = $translated;
+                                        } else {
+                                            $dataResearchTrans .= "• ".$translated."\n";
                                         }
                                     }
-                                    $dataPersonal = $privacyArray[self::dataPersonalNode];
-                                    $isDataPersonal = in_array($dataPersonal,self::dataPersonal);
-                                    $markingArray = $privacyArray[self::markingNode];
-                                    $markingChosen = $markingArray[self::chosen];
-                                    $isChosenName = $markingChosen===self::markingName;
-                                    $markingSecondArray = $privacyArray[self::markingNode.self::markingSuffix] ?? [];
-                                    $isChosenNameSecond = ($markingSecondArray[self::chosen] ?? '')===self::markingName;
-                                    $isMarkingName = $isChosenName || $isChosenNameSecond;
-                                    $isMarkingPersonal = $isChosenName || in_array($markingArray[self::codePersonal] ?? '',self::markingDataResearchTypes) || $isChosenNameSecond || in_array($markingSecondArray[self::codePersonal] ?? '',self::markingDataResearchTypes);
-                                    $isMarkingOther = $markingChosen===self::markingOther;
-                                    $customPrivacy = $customPrivacy || $isMarkingOther;
-                                    $purposeResearch = $privacyArray[self::purposeResearchNode] ?? '';
-                                    $isPurposeResearch = $purposeResearch!=='' && !array_key_exists(self::purposeNo,$purposeResearch);
-                                    $purposeFurther = $privacyArray[self::purposeFurtherNode] ?? ''; // if marking is 'other', keys does not exist
-                                    $isPurposeFurther = $purposeFurther!=='' && !array_key_exists(self::purposeFurtherNode.self::purposeNo,$purposeFurther);
-                                    $isPurpose =  $isPurposeResearch || $isPurposeFurther;
-                                    $isToolPersonal = $markingChosen!==self::markingOther && ($isDataPersonal || $isMarkingPersonal || $isPurpose);
-                                } elseif ($isNotResponsible || $isOutside) {
-                                    $customPrivacy = true;
-                                    $isPersonal = true;
-                                    foreach ([self::responsibilityNode => $isNotResponsible, self::transferOutsideNode => $isOutside] as $type => $value) { // only relevant if complete pdf is created
-                                        if ($value) {
-                                            $createOther .= "<li>".$this->translateStringPDF($createOtherPrefix.$type,$committeeParam)."</li>";
-                                        }
+                                    if ($dataResearchSpecialTrans!==[]) {
+                                        $dataResearchTrans .= $this->translateStringPDF($dataResearchPrefix.'dataSpecial',['isDataResearch' => $this->getStringFromBool($dataResearchTrans!=='')])."\n• ".implode("\n• ",$dataResearchSpecialTrans);
+                                    }
+                                }
+                                $dataPersonal = $privacyArray[self::dataPersonalNode];
+                                $isDataPersonal = in_array($dataPersonal,self::dataPersonal);
+                                $markingArray = $privacyArray[self::markingNode];
+                                $markingChosen = $markingArray[self::chosen];
+                                $isChosenName = $markingChosen===self::markingName;
+                                $markingSecondArray = $privacyArray[self::markingNode.self::markingSuffix] ?? [];
+                                $isChosenNameSecond = ($markingSecondArray[self::chosen] ?? '')===self::markingName;
+                                $isMarkingName = $isChosenName || $isChosenNameSecond;
+                                $isMarkingPersonal = $isChosenName || in_array($markingArray[self::codePersonal] ?? '',self::markingDataResearchTypes) || $isChosenNameSecond || in_array($markingSecondArray[self::codePersonal] ?? '',self::markingDataResearchTypes);
+                                $isMarkingOther = $markingChosen===self::markingOther;
+                                $customPrivacy = $customPrivacy || $isMarkingOther;
+                                $purposeResearch = $privacyArray[self::purposeResearchNode] ?? '';
+                                $isPurposeResearch = $purposeResearch!=='' && !array_key_exists(self::purposeNo,$purposeResearch);
+                                $purposeFurther = $privacyArray[self::purposeFurtherNode] ?? ''; // if marking is 'other', keys does not exist
+                                $isPurposeFurther = $purposeFurther!=='' && !array_key_exists(self::purposeFurtherNode.self::purposeNo,$purposeFurther);
+                                $isPurpose =  $isPurposeResearch || $isPurposeFurther;
+                                $isToolPersonal = $markingChosen!==self::markingOther && ($isDataPersonal || $isMarkingPersonal || $isPurpose);
+                            } elseif ($isNotResponsible || $isOutside) {
+                                $customPrivacy = true;
+                                $isPersonal = true;
+                                foreach ([self::responsibilityNode => $isNotResponsible, self::transferOutsideNode => $isOutside] as $type => $value) { // only relevant if complete pdf is created
+                                    if ($value) {
+                                        $createOther .= "<li>".$this->translateStringPDF($createOtherPrefix.$type,$committeeParam)."</li>";
                                     }
                                 }
                             }

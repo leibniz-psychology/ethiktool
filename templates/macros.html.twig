@@ -116,7 +116,7 @@
         </div>
         {% if isOther %}
             <div class="MetaData-Widget mb-1 grid" id="{{ form[id~'Text'].vars.name }}" style="grid-template-columns: auto {% if isTransferOther %} min-content {% endif %}; {{ boolToDisplay(form[id].vars.checked,1) }}">
-                {{ form_widget(form[id~'Text'],{'attr': addClass(isTransferOther ? 'markInput')}) }}
+                {{ form_widget(form[id~'Text'],addClass(isTransferOther ? 'markInput',true)) }}
                 {% if isTransferOther %}
                     {{ _self.addPDFhint(transferOther[0],transferOther[1] ?? '') }}
                 {% endif %}
@@ -160,7 +160,7 @@
         <div class="MetaData-Widget pt-0 {% if isTransfer %} pe-0 {% endif %}" id="{{ name~'Div' }}" style="grid-row: span {{ isTemplate ? 2 : 1 }}; grid-column: 1; height: {{ arguments.divHeight ?? textHeight }}; {{ isVisible }}">
             {% set style = 'grid-area: 1 / 1; height: 99%' %}
             <div class="{{ 'border'~markInputClass }}" style="background-color: white; white-space: pre-wrap; overflow-y: auto; word-break: break-word; {{ style }}"></div>
-            {{ form_widget(form,{'attr': addClass('p-0'~markInputClass, 'background-color: transparent;'~style)|merge(addTarget('base','countableText'))}) }}
+            {{ form_widget(form,{'attr': addClass('p-0'~markInputClass, false, 'background-color: transparent;'~style)|merge(addTarget('base','countableText'))}) }}
         </div>
         {% if isTransfer %}
             <div id="{{ name~'PDF' }}" class="pe-2" style="{{ isVisible }}">{{ _self.addPDFhint(transfer[0],transfer[1]) }}</div>
@@ -176,7 +176,7 @@
         {% if isTemplate %}
             {% set template = arguments.template %}
             <div {% if isTemplateClass %} class="MetaData-Widget" {% endif %} {% if stim is not same as [] %} {{ stimulus_action(stim[0],stim[1],'change',stim[2] ?? {}) }} {% endif %}>
-                {{ _self.addCheckbox(template, {'style': 'white-space: nowrap'}) }}
+                {{ _self.addCheckbox(template, addStyle('white-space: nowrap')) }}
             </div>
         {% endif %}
     </div>
@@ -248,7 +248,7 @@
             {% endif %}
             {{ _self.addHint(textHint,{'params': arguments.textHintParams ?? {}, 'id': arguments.textHintID ?? ''}|merge(arguments.fontStyle is defined ? {'hintStyle': true} : {})) }}
         {% endif %}
-        <div class="MetaData-Widget grid" style="grid-template-columns: auto {% if isTransfer %}min-content{% endif %}">{{ form_widget(form,{'id': name, 'attr': (arguments.attributes ?? {})|merge({'placeholder': '', 'class': 'MetaData-TextInput'~(isTransfer or (arguments.markInput ?? false) ? ' markInput')})|merge(arguments.target is defined ? addDisableTarget() : {})|merge(contTarget is not same as '' ? addTarget(contTarget,contTargetArray[1]) : {})}) }} {# remove placeholder if any #}
+        <div class="MetaData-Widget grid" style="grid-template-columns: auto {% if isTransfer %}min-content{% endif %}">{{ form_widget(form,{'id': name, 'attr': (arguments.attributes ?? {})|merge(addClass('MetaData-TextInput'~(isTransfer or (arguments.markInput ?? false) ? ' markInput')))|merge({'placeholder': ''})|merge(arguments.target is defined ? addDisableTarget() : {})|merge(contTarget is not same as '' ? addTarget(contTarget,contTargetArray[1]) : {})}) }} {# remove placeholder if any #}
             {% if isTransfer %}
                 {{ _self.addPDFhint(transfer[0],transfer[1]) }}
             {% endif %}

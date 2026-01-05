@@ -84,7 +84,7 @@ class ConsentType extends TypeAbstract
             if (in_array(self::voluntaryConsentNo,$tempArray)) {
                 $tempArray[self::descriptionNode] = $forms[$type.self::descriptionCap]->getData();
             }
-            if ($type===self::voluntaryNode && array_key_exists(self::voluntaryYesDescription,$forms) && in_array('yes',[$tempArray[self::chosen],$tempArray[self::chosen2Node] ?? ''])) {
+            if ($type===self::voluntaryNode && array_key_exists(self::voluntaryYesDescription,$forms) && in_array('yes',[$tempArray[self::chosen],$this->getArrayValue($tempArray,self::chosen2Node)])) {
                 $tempArray[self::voluntaryYesDescription] = $forms[self::voluntaryYesDescription]->getData();
             }
             $newData[$type] = $tempArray;

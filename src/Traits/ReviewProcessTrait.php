@@ -112,7 +112,7 @@ trait ReviewProcessTrait
         'dataPrivacy' => [
             'processing' => ['fullBegun','fullRequested','fullDocs'],
             'create' => ['shortDocs','shortService','fullDocs'],
-            'verification' => ['shortDocs','shortService','fullDocs'],
+            'verification' => ['fullDocs'],
             'responsibility' => ['shortDocs','shortService','fullDocs'],
             'transferOutside' => ['shortDocs','shortService','fullDocs'],
             'dataOnline' => ['shortDocs','shortService','fullDocs'],
@@ -503,7 +503,7 @@ trait ReviewProcessTrait
         'dataPrivacy' => [
             'processing' => ['fullBegun','fullRequested','fullDocs'],
             'create' => ['shortDocs','shortService','fullDocs'],
-            'verification' => ['shortDocs','shortService','fullDocs'],
+            'verification' => ['fullDocs'],
             'confirmIntro' => ['shortDocs','shortService','fullDocs'],
             'responsibility' => ['shortDocs','shortService','fullDocs'],
             'transferOutside' => ['shortDocs','shortService','fullDocs'],
@@ -930,7 +930,7 @@ trait ReviewProcessTrait
         // data privacy
         'dataPrivacy' => [
             'create' => [[],[],'chosen'],
-            'verification' => [['dataPrivacy','create'],'separate'],
+            'verification' => [['dataPrivacy','create','chosen'],'separate'],
             'responsibility' => [['dataPrivacy','create','description'],'1'],
             'transferOutside' => [['dataPrivacy','create','description'],'1'],
             'dataOnline' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside'],['measures','location','chosen']],[['onlyOwn','notApplicable'],['no','notApplicable'],'online'],'chosen'],

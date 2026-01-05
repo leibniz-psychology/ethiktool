@@ -2,7 +2,7 @@
 {% import 'PDF/pdfMacros.html.twig' as pdfMacros %}
 {% trans_default_domain 'pdf' %}
 {% set textPreview, style, markingTrans = not savePDF ? 'previewSmall', 'text-align: justify; line-height: 1.5;', 'participation.marking' %}
-{% set topMargin, redClasses = style~' margin-top: 0.25rem;', 'pdfOral '~textPreview %}
+{% set topMargin, redClasses = style~' margin-top: 0.25em;', 'pdfOral '~textPreview %}
 {% block pdfBody %}
     {% if not savePDF %}
         {{ pdfMacros.addLine() }}
@@ -26,7 +26,7 @@
             <div class="{{ redClasses }}">{{ oralHint|raw }}</div>
         {% endif %}
         {# introduction #}
-        <div style="margin-bottom: 1.5rem;">
+        <div style="margin-bottom: 1.5em;">
             <div class="{{ textPreview }}" style="{{ style }}">{{ intro[0]|raw|nl2br }}</div>
             <div class="{{ textPreview }}" style="{{ topMargin }}">{{ leaderHeading|raw }} {{ intro[1]|raw }}</div>
             {% for text in intro|slice(2) %}
@@ -44,7 +44,7 @@
     #}
     {% for heading, paragraphs in content %}
         <div class="{{ textPreview }}" style="page-break-inside: avoid; line-height: 1.5"> {# avoid page break between heading and first (sub-)paragraph #}
-            <div style="font-weight: bold; margin-bottom: 0.5rem">{{ heading|raw }}</div>
+            <div style="font-weight: bold; margin-bottom: 0.5em">{{ heading|raw }}</div>
             {{ _self.addSubParagraph(paragraphs[0],textPreview,false) }}
         </div>
         {% for paragraph in paragraphs|slice(1) %}
@@ -59,9 +59,9 @@
         textPreview: classes of div surrounding the paragraph
         pageBreak:   if true, page break inside the div will be avoided
     #}
-    <div class="{{ textPreview }}" style="{% if pageBreak %}page-break-inside: avoid;{% endif %} margin-bottom: 1rem">
+    <div class="{{ textPreview }}" style="{% if pageBreak %}page-break-inside: avoid;{% endif %} margin-bottom: 1em">
         {% if paragraph[0] is not same as '' %} {# subheading of sub-paragraph #}
-        <div style="margin-bottom: 0.25rem">{{ paragraph[0]|raw|nl2br }}</div>
+        <div style="margin-bottom: 0.25em">{{ paragraph[0]|raw|nl2br }}</div>
         {% endif %}
         <div style="text-align: justify; line-height: 1.5">{{ paragraph[1]|raw|nl2br }}</div>
     </div>

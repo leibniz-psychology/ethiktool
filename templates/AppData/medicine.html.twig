@@ -2,7 +2,7 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set medicine, medicineDescription, textStyle = content.medicine, content.medicineDescription ?? '', fontNormal|merge({'attributes': {'style': 'height: '~textHeight}}) %}
+    {% set medicine, medicineDescription, textStyle = content.medicine, content.medicineDescription ?? '', fontNormal|merge(addStyle('height: '~textHeight,true)) %}
     <div>
         {# medicine #}
         <div id="medicine">

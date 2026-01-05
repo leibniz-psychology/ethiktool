@@ -992,6 +992,9 @@ dataPrivacy:
                 Linder Höhe
                 51147 Köln
                 Web: https://www.dlr.de}
+          TUD  {Technische Universität Dresden
+                01062 Dresden
+                Web: https://tu-dresden.de}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1016,6 +1019,8 @@ dataPrivacy:
                  Web: https://www.uni-mainz.de/datenschutz/}
           DLR   {Tel.: +49 2203 601-0
                  E-Mail: datenschutz@dlr.de}
+          TUD   {Tel.: 0351 463-32839
+                 E-Mail: informationssicherheit@tu-dresden.de}
           other {Tel.: +49 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1192,6 +1197,11 @@ dataPrivacy:
                53117 Bonn
                Tel.: +49 (0)228-997799-0
                E-Mail: poststelle@bfdi.bund.de}
+        TUD   {Sächsische Datenschutz- und Transparenzbeauftragte
+               Postfach 11 01 32
+               01330 Dresden
+               Tel.: +49 351 85471-101
+               E-Mail: post@sdtb.sachsen.de}
         other {}}
     textEnd: "\n\nIf you have any questions on data processing within this study, please contact the responsible project contributors (see section 1)."
 
@@ -1548,3 +1558,4 @@ logo:
   EUB: 'Logo of Bielefeld University'
   JGU: 'Logo of Johannes Gutenberg University Mainz'
   DLR: 'Logo of the German Aerospace Center'
+  TUD: 'Logo of Dresden University of Technology'

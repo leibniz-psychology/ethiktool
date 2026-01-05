@@ -3,9 +3,9 @@
 
 {% block content %}
     {% set translationPrefix, noCompensation, typesWoNo, compensationController, isTextInput, transferParam, isTransfer = 'projectdetails.pages.compensation.', 'noCompensation', types|slice(1), 'Projectdetails--compensation', textInput is not same as '', {'transfer': [transferInfo,addresseeType]}, transferInfo[0] is not same as '' %}
-    {% set hasDescription, hasAwarding, markInputParam, markInputClassParam = content.moneyValue is defined, content.moneyawarding is defined, {'markInput': isTransfer}, isTransfer ? {'attr': addClass('markInput')} : {} %}
+    {% set hasDescription, hasAwarding, markInputParam, markInputClassParam = content.moneyValue is defined, content.moneyawarding is defined, {'markInput': isTransfer}, isTransfer ? addClass('markInput',true) : {} %}
     {% set selection, margins, widthStyle, terminatePrefix, addresseeTypeParam, hintParams = getAnySelected(content,types,noCompensation), 'margin-right: 0.2rem; margin-left: 0.2rem; ', 'width: fit-content;', translationPrefix~'terminate.textHint', {'addressee': addresseeType}, {'target': [compensationController,'textInput'], 'remove': true} %}
-    {% set noSelected, anySelected, valueStyle, flexCenter, terminateHints, inputMargins = selection[0], selection[1], {'style': 'width: 6rem; height: 1.75rem; '~margins}, 'flex align-items-center', [terminatePrefix|trans, (terminatePrefix~'Other')|trans], 'margin-left: -1.5rem; margin-right: -1.5rem' %}
+    {% set noSelected, anySelected, valueStyle, flexCenter, terminateHints, inputMargins = selection[0], selection[1], addStyle('width: 6rem; height: 1.75rem; '~margins), 'flex align-items-center', [terminatePrefix|trans, (terminatePrefix~'Other')|trans], 'margin-left: -1.5rem; margin-right: -1.5rem' %}
     <div {{ stimulus_controller(compensationController,{
             'compensationTypes': typesWoNo,
             'terminateHint': terminateHints,
@@ -19,7 +19,7 @@
                 {% set name, amountDiv = widget.vars.name, compensation~'Amount' %} {# amountDiv only needed for money and houres #}
                 {{ form_widget(widget, {'id': name, 'attr': checkInput|merge(isCompensation and noSelected or (not isCompensation and anySelected) ? addDisableTarget() : {})}) }}
                 {% if compensation is not same as 'money' %}
-                    {{ form_label(widget,null,{'id': name, 'label_attr': checkLabel|merge({'style': widthStyle})}) }}
+                    {{ form_label(widget,null,{'id': name, 'label_attr': checkLabel|merge(addStyle(widthStyle))}) }}
                     {% if isCompensation and hasDescription %}
                         <div id="{{ description~'Div' }}"  style="margin-top: -1rem">{{ formRender.addTextfield(content[description],markInputParam) }}</div>
                         {% if compensation is same as 'hours' %}
@@ -114,7 +114,7 @@
                                         {% set isLater, isExternal, typeValue = value is same as 'later', value is same as 'external', type~value %}
                                         {% set isLaterDeliver, typeValueParam = isLater or value is same as 'deliver', {'id': typeValue} %}
                                         <div {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>
-                                            {{ form_widget(option,typeValueParam|merge({'attr': addClass('RadioButton-Input')})) }}
+                                            {{ form_widget(option,typeValueParam|merge(addClass('RadioButton-Input',true))) }}
                                             {{ form_label(option,null,typeValueParam|merge({'label_html': true, 'label_attr': addClass('RadioButton-Label minAutoGrid me-0')})) }}
                                             {% if isLaterDeliver %}
                                                 {% set laterDeliver = content[type~(isLater ? 'laterInformation' : 'deliverDescription')] %}

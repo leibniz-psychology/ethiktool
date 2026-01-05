@@ -374,7 +374,7 @@ export default class extends Controller {
         element.value = text; // enter text in textarea in case tags were removed
         let numChars = text.trim().length; // length of text after removing html tags entered by user, but before adding the span tag
         let maxChars = parseInt(count.dataset.maxChars);
-        let spanTag = 'span style="background-color: red; margin: 0; padding: 0">';
+        let spanTag = 'span style="background-color: #f5770c66; margin: 0; padding: 0">';
         let isGreater = numChars>maxChars;
         if (isGreater) { // highlight remaining text in red
             text = text.substring(0,maxChars)+'<'+spanTag+text.substring(maxChars)+'</span>';
@@ -387,7 +387,7 @@ export default class extends Controller {
         divElement.scrollTop = element.scrollTop; // adjust scrollbar of div
         // set count display
         count.textContent = numChars.toString();
-        count.style.color = isGreater ? 'red' : 'black';
+        count.style.color = isGreater ? '#f5770c' : 'black';
         // set visibility of icon
         setElementVisibility(count.nextElementSibling,isGreater);
     }

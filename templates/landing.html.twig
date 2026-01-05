@@ -37,7 +37,7 @@
         {% set landingRouteIDs, modalID = isStudy ? {'studyID': id[0]+1}|merge(isGroup ? {'groupID': id[1]+1}|merge(isMeasure ? {'measureID': id[2]+1} : {}) : {}) : {}, 'removeModal' %}
         <div class="MetaData-Widget">
             {% set manipulatePrefix, landingIndex, width = 'landing.manipulate.', 0, 'width: 15rem' %} {# either all pages or no page links to landing #}
-            {% set minWidth, manipulate, editPrefix = {'style': width}, manipulatePrefix~'manipulate', manipulatePrefix~'edit.' %}
+            {% set minWidth, manipulate, editPrefix = addStyle(width), manipulatePrefix~'manipulate', manipulatePrefix~'edit.' %}
             {% for route in menu %}
                 {% set routeIDs, curRoute = route.routeIDs ?? {}, route.route %}
                 {% set isCurRoute = curRoute is not same as '' %}
@@ -96,7 +96,7 @@
                     <button type="submit" id="submitName" class="Button_primary_act align-self-center" style="grid-area: 1 / 2; height: fit-content" {{ stimulus_action('base','submitForm','click',routeParams)|stimulus_target('landing','submitName') }}>{{ manipulate|trans(levelParam|merge({'type': 'new'})) }}</button>
                     {# dropdown for selecting the study, group or measure point in time to be copied #}
                     <div style="grid-area: 2 / 1; {{ width }}" {{ stimulus_action('landing','setButtons','change') }}>
-                        {{ form_widget(content.copy,{'attr': addClass('Button_dropdown')|merge(addTarget('landing','copy'))|merge({'style': 'text-overflow: ellipsis'})}) }}
+                        {{ form_widget(content.copy,{'attr': addClass('Button_dropdown',false,'text-overflow: ellipsis')|merge(addTarget('landing','copy'))}) }}
                     </div>
                     {# button for copying a study, group or measure point in time #}
                     <button type="submit" id="submitCopy" class="Button_primary_act" style="grid-area: 2 / 2" {{ stimulus_action('base','submitForm','click',routeParams)|stimulus_target('landing','submitCopy') }} disabled>{{ manipulate|trans(levelParam|merge({'type': 'copy'})) }}</button>

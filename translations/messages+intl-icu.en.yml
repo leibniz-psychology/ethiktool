@@ -155,6 +155,7 @@ committee:
       EUB   {Bielefeld University Ethics Review Board}
       JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       DLR   {the Research Ethics Office of the German Aerospace Center}
+      TUD   {the Ethics Board of Dresden University of Technology}
       other {the test ethics committee}}
   committeeGen: >-
     {committee, select,
@@ -162,6 +163,7 @@ committee:
     EUB   {Bielefeld University Ethics Review Board}
     JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
     DLR   {the Research Ethics Office of the German Aerospace Center}
+    TUD   {the Ethics Board of Dresden University of Technology}
     other {the test ethics committee}}
   committeeDat: >-
     {committee, select,
@@ -169,6 +171,7 @@ committee:
       EUB   {Bielefeld University Ethics Review Board}
       JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       DLR   {the Research Ethics Office of the German Aerospace Center}
+      TUD   {the Ethics Board of Dresden University of Technology}
       other {the test ethics committee}}
   committeeAcc: >-
     {committee, select,
@@ -176,6 +179,7 @@ committee:
       EUB   {Bielefeld University Ethics Review Board}
       JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       DLR   {the Research Ethics Office of the German Aerospace Center}
+      TUD   {the Ethics Board of Dresden University of Technology}
       other {the test ethics committee}}
   committeeLocation: >-
     {committee, select,
@@ -183,6 +187,7 @@ committee:
       EUB   {Bielefeld University}
       JGU   {Johannes Gutenberg University Mainz}
       DLR   {German Aerospace Center}
+      TUD   {Dresden University of Technology}
       other {the institution of the test ethics committee}}
   committeeLocationGen: >-
     {committee, select,
@@ -190,6 +195,7 @@ committee:
       EUB   {of Bielefeld University}
       JGU   {of Johannes Gutenberg University Mainz}
       DLR   {of the German Aerospace Center}
+      TUD   {of Dresden University of Technology}
       other {of the institution of the test ethics committee}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
@@ -200,6 +206,7 @@ newForm: # placed immediately after 'committee' to have the committee names all 
       EUB: 'Bielefeld University Ethics Review Board'
       JGU: 'Ethics Committee of the Department of Psychology of JGU Mainz'
       DLR: 'Research Ethics Office of the German Aerospace Center'
+      TUD: 'Ethics Board of Dresden University of Technology'
       testCommittee: 'Test ethics committee'
   password:
     title: 'Password:'
@@ -309,7 +316,7 @@ main:
     
     
     {committeeType, select,
-              EUB   {Please note that documents for informing participants are generated automatically using the Ethtiktool and you do <b>not</b> need to prepare the information in advance based on the template on the committee's website. The information (part 1 of the template) and consent form (part 2) are automatically generated based on the details provided in the tool. If desired, the data privacy statement (part 3) can also be generated automatically on a case-by-case basis. You will receive a PDF document for further use.</br></br>}
+              EUB   {Please note that documents for informing participants are generated automatically using the Ethiktool and you do <b>not</b> need to prepare the information in advance based on the template on the website of the Ethics Review Board. The information (part 1 of the template) and consent form (part 2) are automatically generated based on the details provided in the tool. If desired, the data privacy statement (part 3) can also be generated automatically on a case-by-case basis. You will receive a PDF document for further use.</br></br>}
               other {}} Please note that creating the application involved confirmation that the <a class="linkInternal" href data-bs-toggle="modal" data-bs-target="#technicalHints">technical information</a> has been noted and that the following <b>requirements for the application</b> are fulfilled:</br></br>
   textRequirementsTitle: 'Requirements for the application'
   textRequirements: | # other in select is test committee. For readability of the translation files newlines instead of br-tags are used.
@@ -331,11 +338,16 @@ main:
              The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible.
     
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. (For further specifications, see <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
-      DLR   {Any person working at the German Aerospace Center (DLR) is eligible to apply; this also includes students with an employment contract at the DLR. Students without an employment contract must discuss with a scientific contributor to the their project working at the DLR whether this person applies for ethics approval at the DLR or whether the ethics committee of the student's home university is responsible.
+      DLR   {Any person working at the German Aerospace Center (DLR) is eligible to apply; this also includes students with an employment contract at the DLR. Students without an employment contract must discuss with a scientific contributor to their project working at the DLR whether this person applies for ethics approval at the DLR or whether the ethics committee of the student's home university is responsible.
              
              The ethics proposal should be submitted <i>before</i> the start of a research project. Retrospective review is possible only in justified exceptional cases. In such cases, please contact the Research Ethics Office of the German Aerospace Center and ask whether authorisation for retrospective review can be granted.
              
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. The same applies to research projects involving physicians as project contributors.}
+      TUD   {Eligibility criteria for applying to the Ethics Board of Dresden University of Technology After will be announced here after the official resolution on the Board's establishment.
+      
+             Furthermore, the dinstinction between proposals to the Ethics Board and proposals to the Ethics Committee of TU Dresden (for medical research) will be explained.
+             
+             The ethics proposal should be submitted <i>before</i> the start of a research project. Retrospective review is possible only in justified exceptional cases. Further instructions on how to proceed in such cases will follow.}
       other {You are creating a test ethics application that is <b>not designed to be submitted to an ethics review board</b>. Therefore, no eligibility requirements need to be fulfilled at this point.}}
   newFormModal:
     title: 'jump to new proposal'
@@ -458,11 +470,13 @@ coreData:
         {committeeType, select,
           EUB   {(Planned)}
           DLR   {(Planned)}
+          TUD   {(Planned)}
           other {Planned}} beginning of data collection
       hint: >-
         {committeeType, select,
           EUB   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
           DLR   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
+          TUD   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
           other {}}
       textHint: 'Please describe which parts of the data collection have already been completed (e.g., contacting participants, number of datasets collected) and which parts are still ongoing. Further information in the Ethiktool must be completed prospectively.'
       begun: 'Data collection has already started. Authorisation for retrospective review is needed. '
@@ -552,6 +566,7 @@ medicine:
       {committeeType, select,
         EUB   {Further information on the jurisdiction and additional documents to be submitted can be found <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">here</a>.}
         JGU   {(For further specifications, see <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
+        TUD   {A link with further information regarding the delimitation between the Ethics Board and the medical Ethics Committee of TU Dresden will follow.}
         other {}}
         If the project could lead to AMG-/MPG-/MPDG-related research in the future, please describe why you think that the currently planned research is not yet of medical nature and can thus be assessed by {committeeDat}.
   physician:
@@ -1282,12 +1297,18 @@ projectdetails:
         title: 'How do you want to generate the data privacy statement for the study?'
         types:
           tool: 'I want to indicate all aspects of data processing within the Ethiktool and - if necessary - compose a GDPR-compliant data privacy statement (“annex on data processing“) through the Ethiktool.'
-          separate: 'The study includes processing of personal data. I want to add a separately (i.e. outside of the Ethiktool) generated GDPR-compliant data privacy statement and consent form.'
+          separate: >-
+            The study includes processing of personal data. I want to {hasReviewDocs, select,
+                                                                        true  {add}
+                                                                        other {use}} a separately (i.e. outside of the Ethiktool) generated GDPR-compliant data privacy statement and consent form.
           anonymous: 'According to the judgment of the responsible data protection authorities, the study includes only anonymous data. A data privacy statement is not necessary.'
           separateLater: 'I want to sort out data processing aspects in detail at a later point in time and have a separately generated data privacy statement and consent form checked by the responsible data protection authorities at this point.'
           notApplicable: 'not applicable: The {addressee} are not informed in advance or after-the-fact that {participant} are participating in a study.'
         toolHint: 'The Ethiktool will ask further questions on the type and handling of the data that are being processed in the study. Only if specifically person-related data or data that could be related to persons are processed in the study, will a data privacy statement (“annex on data processing“) be generated according to EU-GDPR.'
-        hint: 'When completing the ethics proposal, you will be asked to add the data privacy statement (“annex on data processing“) and consent form (if applicable) as a PDF file.'
+        hint: >-
+          {hasReviewDocs, select,
+            true  {When completing the ethics proposal, you will be asked to add the data privacy statement (“annex on data processing“) and consent form (if applicable) as a PDF file.}
+            other {Please have the separately generated data privacy statement approved by the responsible data protection authority as per requirement.}}
         verification:
           title: 'Has the separately generated data privacy statement been approved by the responsible data protection authorities?'
           types:
@@ -2472,6 +2493,7 @@ completeForm:
                           EUB   {<a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/personen/index.xml" target="_blank">current composition of {committeeGen}</a>}
                           JGU   {<a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/" target="_blank">current composition of {committeeGen}</a>}
                           DLR   {<a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">current composition of {committeeGen}</a>}
+                          TUD   {current composition of {committeeGen}}
                           other {current composition of {committeeGen}}} and inform us of any possible conflicts of interest below:
     types:
       noBias: 'No member of the Ethics Committee has a conflict of interest.'
@@ -2485,6 +2507,7 @@ completeForm:
         EUB   {, available under “Regulations“ and “Rules of procedure“ at the <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">website of {committeeGen}</a>}
         JGU   {, available at <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>}
         DLR   {, available <a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">in the intranet of the DLR</a>}
+        TUD   {. These regulations will be accessible here after the official resolution on the Board's establishment}
         other {}}.
       {committeeType, select,
         EUB   {}
@@ -2524,13 +2547,21 @@ completeForm:
     title: 'Download complete proposal'
     text:
       start: 'The complete proposal can now be downloaded:'
-      end: >-
-        A ZIP file “{fileName}_completeApplication_{curDate}.zip“ is generated, which contains all documents (complete proposal, single documents, XML file). For submitting your proposal, you will need the complete proposal (PDF) and the XML file. The single documents are intended for your own use. Please check all contents of the complete proposal (PDF) carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again. Do <b>not</b> modify the PDF file with any other software. If all entries in the complete proposal are correct, please send the PDF file with the corresponding XML file to {committeeAcc} at {committeeType, select,
-        TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
-        EUB   {ethikkommission@uni-bielefeld.de}
-        JGU   {ethikkommission-psychologie@uni-mainz.de}
-        DLR   {ethik@dlr.de}
-        other {the e-mail address of {committeeGen}}}.
+      end:
+        title: 'Instructions on how to proceed'
+        text: >-
+          <li>A ZIP file “{fileName}_completeApplication_{curDate}.zip“ is generated, which contains all documents (complete proposal, single documents, XML file).</li>
+          <li>For submitting your proposal, you will need the complete proposal (PDF) and the XML file.</li>
+          <li>The single documents are intended for your own use.</li>
+          <li>Please check all contents of the complete proposal (PDF) carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>
+          <li>Do <b>not</b> modify the PDF file of the complete proposal with any other software.</li>
+          <li>If all entries in the complete proposal are correct, please send the PDF file with the corresponding XML file to {committeeAcc} at {committeeType, select,
+          TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
+          EUB   {ethikkommission@uni-bielefeld.de}
+          JGU   {ethikkommission-psychologie@uni-mainz.de}
+          DLR   {ethik@dlr.de}
+          TUD   {the yet-to-be-determined e-mail address of {committeeGen}}
+          other {the e-mail address of {committeeGen}}}.</li>
 
 quitModal:
   title: 'Quit editing this proposal'

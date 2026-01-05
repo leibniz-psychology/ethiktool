@@ -154,12 +154,9 @@ class DataPrivacyType extends TypeAbstract
             $tempArray = $viewData[self::createNode];
             $create = $tempArray[self::chosen];
             $forms[self::createNode]->setData($create);
-            $description = $this->getArrayValue($tempArray, self::descriptionNode); // either confirm intro or verification of separate pdf, if any of these two was chosen
-            $isTool = $create===self::createTool;
-            $forms[self::createVerificationNode]->setData(!$isTool ? $description : '');
-            if ($isTool) {
-                $tempVal = $description==='1';
-                $forms[self::confirmIntroNode]->setData($tempVal); // confirm
+            if ($create===self::createTool) {
+                $tempVal = $tempArray[self::descriptionNode]==='1';
+                $forms[self::confirmIntroNode]->setData($tempVal); // confirm intro
                 if ($tempVal) {
                     $responsibility = $viewData[self::responsibilityNode]; // responsibility
                     $transferOutside = $viewData[self::transferOutsideNode]; // transfer outside
@@ -267,7 +264,7 @@ class DataPrivacyType extends TypeAbstract
                         // code compensation
                         $this->setChosenArray($forms, $viewData, self::codeCompensationNode, [self::descriptionNode => self::codeCompensationNode.self::descriptionCap, self::codeCompensationInternal => self::codeCompensationInternal]);
                         $tempArray = $viewData[self::codeCompensationNode] ?? [];
-                        $tempVal = $tempArray[self::chosen] ?? '';
+                        $tempVal = $this->getArrayValue($tempArray,self::chosen);
                         if ($tempVal!=='') {
                             $internalVal = $this->getArrayValue($tempArray, self::codeCompensationInternal);
                             $isExternal = $tempVal===self::codeCompensationExternal;
@@ -279,7 +276,9 @@ class DataPrivacyType extends TypeAbstract
                         $forms[self::processingFurtherNode]->setData($this->getArrayValue($viewData, self::processingFurtherNode));
                     } // responsibility and transferOutside
                 } // confirmIntro
-            } // isTool
+            } elseif ($create===self::createSeparate && array_key_exists(self::createVerificationNode,$forms)) { // verification if create is 'separate'
+                $forms[self::createVerificationNode]->setData($viewData[self::createVerificationNode]);
+            }
         } // 'create' exists
     }
 
@@ -294,213 +293,214 @@ class DataPrivacyType extends TypeAbstract
             $create = $forms[self::createNode]->getData();
             $tempArray = [self::chosen => $create];
             $isTool = $create===self::createTool;
-            if ($isTool || $create===self::createSeparate) { // either confirm intro or verification of separate pdf
-                $tempVal = $forms[$isTool ? self::confirmIntroNode : self::createVerificationNode]->getData();
-                $tempArray[self::descriptionNode] = $tempVal;
+            $isConfirm = false;
+            if ($isTool) { // confirm intro
+                $isConfirm = $forms[self::confirmIntroNode]->getData();
+                $tempArray[self::descriptionNode] = $isConfirm;
             }
             $newData[self::createNode] = $tempArray;
-            if ($isTool) {
-                if ($tempVal) {
-                    $responsibility = $forms[self::responsibilityNode]->getData(); // responsibility
-                    $transferOutside = $forms[self::transferOutsideNode]->getData(); // transfer outside
-                    $newData[self::responsibilityNode] = $responsibility;
-                    $newData[self::transferOutsideNode] = $transferOutside;
-                    if (in_array($responsibility, [self::responsibilityOnlyOwn, self::privacyNotApplicable]) && in_array($transferOutside, [self::transferOutsideNo, self::privacyNotApplicable])) {
-                        $isLinked = false;
-                        // data online
-                        $isResearch = false;
-                        if (array_key_exists(self::dataOnlineNode, $forms)) {
-                            $newData[self::dataOnlineNode] = $this->getChosenArray($forms, self::dataOnlineNode, self::dataOnlineTechnical, [self::descriptionNode => self::dataOnlineProcessingNode]);
-                            $tempVal = $forms[self::dataOnlineNode]->getData()===self::dataOnlineTechnical ? $forms[self::dataOnlineProcessingNode]->getData() : '';
-                            $isLinked = $tempVal===self::dataOnlineProcessingLinked;
-                            $isResearch = $tempVal===self::dataOnlineProcessingResearch;
+            if ($isTool && $isConfirm) {
+                $responsibility = $forms[self::responsibilityNode]->getData(); // responsibility
+                $transferOutside = $forms[self::transferOutsideNode]->getData(); // transfer outside
+                $newData[self::responsibilityNode] = $responsibility;
+                $newData[self::transferOutsideNode] = $transferOutside;
+                if (in_array($responsibility, [self::responsibilityOnlyOwn, self::privacyNotApplicable]) && in_array($transferOutside, [self::transferOutsideNo, self::privacyNotApplicable])) {
+                    $isLinked = false;
+                    // data online
+                    $isResearch = false;
+                    if (array_key_exists(self::dataOnlineNode, $forms)) {
+                        $newData[self::dataOnlineNode] = $this->getChosenArray($forms, self::dataOnlineNode, self::dataOnlineTechnical, [self::descriptionNode => self::dataOnlineProcessingNode]);
+                        $tempVal = $forms[self::dataOnlineNode]->getData()===self::dataOnlineTechnical ? $forms[self::dataOnlineProcessingNode]->getData() : '';
+                        $isLinked = $tempVal===self::dataOnlineProcessingLinked;
+                        $isResearch = $tempVal===self::dataOnlineProcessingResearch;
+                    }
+                    // data personal
+                    $tempVal = $forms[self::dataPersonalNode]->getData();
+                    $newData[self::dataPersonalNode] = $tempVal;
+                    $isPersonal = in_array($tempVal, self::dataPersonal);
+                    $isDataResearch = $isPersonal;
+                    $markingChosen = $forms[self::markingNode]->getData();
+                    $hasFurther = in_array($markingChosen, self::markingValues); // true if further question is asked
+                    $further = $forms[self::markingFurtherNode]->getData(); // marking further
+                    // marking
+                    $isList = false;
+                    $isNameListGeneration = false; // marking name or internal/external and list/generation
+                    $isMarking = false; // internal, external, or name
+                    foreach (array_merge([''], $hasFurther && $further===0 ? [self::markingSuffix] : []) as $suffix) {
+                        $marking = self::markingNode.$suffix;
+                        $tempArray = $this->getChosenArray($forms, $marking, [self::markingExternal, self::markingName], [self::descriptionNode => self::markingNode.$suffix.self::descriptionCap]);
+                        $tempVal = $forms[$marking]->getData();
+                        $isExternal = $tempVal===self::markingExternal;
+                        $isInternal = $tempVal===self::markingInternal;
+                        $isName = $tempVal===self::nameNode;
+                        $isNameListGeneration = $isNameListGeneration || $isName;
+                        $isDataResearch = $isDataResearch || $isName;
+                        $isMarking = $isMarking || in_array(true, [$isExternal, $isInternal, $isName]);
+                        if ($isExternal || $isInternal) {
+                            $codeQuestion = true;
+                            if ($isInternal) {
+                                $tempVal = $forms[self::markingInternal.$suffix]->getData(); // how the code is created
+                                $tempArray[self::markingInternal] = $tempVal;
+                                $codeQuestion = $tempVal!==null;
+                            }
+                            if ($codeQuestion) { // whether the code has personal data
+                                $tempVal = $forms[($isExternal ? self::markingExternal : $tempVal).$suffix]->getData();
+                                $isList = $isList || $tempVal===self::markingList;
+                                $isNameListGeneration = $isNameListGeneration || in_array($tempVal, self::markingDataResearchTypes);
+                                $isDataResearch = $isDataResearch || in_array($tempVal, self::markingDataResearchTypes);
+                                $tempArray[self::codePersonal] = $tempVal;
+                            }
                         }
-                        // data personal
-                        $tempVal = $forms[self::dataPersonalNode]->getData();
-                        $newData[self::dataPersonalNode] = $tempVal;
-                        $isPersonal = in_array($tempVal, self::dataPersonal);
-                        $isDataResearch = $isPersonal;
-                        $markingChosen = $forms[self::markingNode]->getData();
-                        $hasFurther = in_array($markingChosen, self::markingValues); // true if further question is asked
-                        $further = $forms[self::markingFurtherNode]->getData(); // marking further
-                        // marking
-                        $isList = false;
-                        $isNameListGeneration = false; // marking name or internal/external and list/generation
-                        $isMarking = false; // internal, external, or name
-                        foreach (array_merge([''], $hasFurther && $further===0 ? [self::markingSuffix] : []) as $suffix) {
-                            $marking = self::markingNode.$suffix;
-                            $tempArray = $this->getChosenArray($forms, $marking, [self::markingExternal, self::markingName], [self::descriptionNode => self::markingNode.$suffix.self::descriptionCap]);
-                            $tempVal = $forms[$marking]->getData();
-                            $isExternal = $tempVal===self::markingExternal;
-                            $isInternal = $tempVal===self::markingInternal;
-                            $isName = $tempVal===self::nameNode;
-                            $isNameListGeneration = $isNameListGeneration || $isName;
-                            $isDataResearch = $isDataResearch || $isName;
-                            $isMarking = $isMarking || in_array(true, [$isExternal, $isInternal, $isName]);
-                            if ($isExternal || $isInternal) {
+                        $newData[$marking] = $tempArray;
+                    }
+                    if ($markingChosen!==self::markingOther) {
+                        $hasPersonal = $isNameListGeneration; // true is any personal data is collected
+                        if ($hasFurther) {
+                            $newData[self::markingFurtherNode] = $further;
+                        }
+                        // list
+                        if ($isList) {
+                            $newData[self::listNode] = $this->getSelectedCheckboxes($forms, self::listTypes, [self::listOther => $this->appendText(self::listOther)]);
+                        }
+                        if ($isDataResearch || $isLinked) {
+                            // data research
+                            $newData[self::dataResearchNode] = $this->getSelectedCheckboxes($forms, self::dataResearchTypesAll, array_combine(self::dataResearchTextFieldsAll, $this->createPrefixArray(self::dataResearchTextFieldsAll)));
+                        }
+                        $isNoAnonymization = false;
+                        $anonymization = [];
+                        // anonymization
+                        if ($isPersonal) {
+                            $anonymization = $this->getSelectedCheckboxes($forms, self::anonymizationTypes, [self::anonymizationOther => $this->appendText(self::anonymizationOther)], self::anonymizationNo);
+                            $newData[self::anonymizationNode] = $anonymization;
+                            $isNoAnonymization = array_key_exists(self::anonymizationNo, $anonymization);
+                        }
+                        // storage
+                        if ($isPersonal && !$isNoAnonymization && $anonymization!==[]) {
+                            $newData[self::storageNode] = $this->getChosenArray($forms, self::storageNode, self::storageDelete, [self::descriptionNode => self::storageNode.self::descriptionCap]);
+                        }
+                        if (($newData[self::storageNode][self::chosen] ?? '')==='keep' || $isNoAnonymization) {
+                            // personal keep
+                            $personalKeep = $this->getSelectedCheckboxes($forms, self::personalKeepTypes, $this->createPrefixArray(self::personalKeepTypes));
+                            $newData[self::personalKeepNode] = $personalKeep;
+                            // personal keep consent
+                            if ($personalKeep!==[]) {
+                                $tempArray = [];
+                                foreach ($personalKeep as $type => $value) {
+                                    $tempArray[$type] = str_replace($type, '', $forms[$type.self::personalKeepConsentNode]->getData());
+                                }
+                                $newData[self::personalKeepConsentNode] = $tempArray;
+                            }
+                        }
+                        // access if research data is personal
+                        $anyKnown = false;
+                        if ($isDataResearch) {
+                            [$newData[self::accessNode], $anyKnown] = $this->getAccess($forms, self::dataPersonalNode);
+                        }
+                        // purpose research
+                        [$purpose, $purposeFurther] = [[], []];
+                        if ($isMarking) {
+                            $purpose = $this->getSelectedCheckboxes($forms, self::purposeResearchTypes, exclusive: self::purposeNo);
+                        }
+                        // purpose further
+                        $isPurposeFurther = $forms[self::markingNode]->getData()!=='other';
+                        if ($isPurposeFurther) {
+                            $purposeFurther = $this->getSelectedCheckboxes($forms, $this->prefixArray(self::purposeFurtherTypes, self::purposeFurtherNode), exclusive: 'purposeFurtherpurposeNo');
+                        }
+                        // further questions for each purpose -> will be added as values of the purpose keys. E.g.:
+                        // [purposeResearch =>
+                        //      [compensation =>
+                        //          [purposeData =>
+                        //              [compensationname => '']
+                        //          ]
+                        //          [...]
+                        //      ]
+                        //  ]
+                        // If to any purpose a description is added (i.e., getSelectedCheckboxes() contains 'other' key(s)), they must be saved separately.
+                        foreach (array_merge($isMarking ? [self::purposeResearchNode => $purpose] : [], $isPurposeFurther ? [self::purposeFurtherNode => $purposeFurther] : []) as $questionName => $question) {
+                            $isPurposeFurther = $questionName===self::purposeFurtherNode;
+                            foreach ($question as $purposeType => $value) { // $value is an empty string
+                                $purposeWoPrefix = str_replace(self::purposeFurtherNode, '', $purposeType);
+                                if ($purposeWoPrefix!==self::purposeNo) {
+                                    $purposeArray = [];
+                                    $isTechnical = $purposeWoPrefix===self::purposeTechnical;
+                                    // purpose data
+                                    if (!$isTechnical) {
+                                        $other = $purposeWoPrefix.self::purposeDataOther;
+                                        $purposeArray = [self::purposeDataNode => $this->getSelectedCheckboxes($forms, $this->prefixArray(self::purposeDataTypes, $purposeWoPrefix), [$other => $this->appendText($other)])];
+                                    }
+                                    $isNotOnlyTechnical = !($isTechnical && $isResearch);
+                                    // marking remove
+                                    if ($isNotOnlyTechnical && !$isPurposeFurther && $isNameListGeneration) { // only for purpose research
+                                        $markingRemove = $purposeType.self::markingRemoveNode;
+                                        $tempArray = $this->getChosenArray($forms, $markingRemove, $this->prefixArray(array_values(self::markingRemoveTypes), $purposeType), [self::descriptionNode => $markingRemove.self::descriptionCap]);
+                                        $tempVal = $tempArray[self::chosen];
+                                        if ($tempVal!=='') {
+                                            if ($tempVal===$purposeType.self::markingRemoveLater) { // description why marking is removed later
+                                                $tempArray[self::laterDescription] = $forms[$purposeType.self::laterDescription]->getData();
+                                            } else { // how the marking is removed
+                                                $tempArray[self::markingRemoveMiddleNode] = $this->getSelectedCheckboxes($forms, $this->prefixArray(self::markingRemoveMiddleTypes, $purposeType));
+                                            }
+                                        }
+                                        $purposeArray[self::markingRemoveNode] = $tempArray;
+                                    }
+                                    // personal remove
+                                    if ($isNotOnlyTechnical) {
+                                        $personalRemove = $purposeWoPrefix.self::personalRemoveNode;
+                                        $tempVal = $forms[$personalRemove]->getData();
+                                        $tempArray = [self::chosen => $tempVal];
+                                        $isImmediately = $tempVal===$purposeWoPrefix.self::personalRemoveImmediately;
+                                        if ($isImmediately || $tempVal===$purposeWoPrefix.self::personalRemoveKeep) {
+                                            $tempArray[self::descriptionNode] = $forms[$isImmediately ? $personalRemove.self::descriptionCap : $purposeWoPrefix.self::keepDescription]->getData();
+                                        }
+                                        $purposeArray[self::personalRemoveNode] = $tempArray;
+                                        // access
+                                        [$purposeArray[self::accessNode], $tempVal] = $this->getAccess($forms, $purposeWoPrefix);
+                                        $anyKnown = $anyKnown || $tempVal;
+                                        $question[$purposeType] = $purposeArray;
+                                    }
+                                }
+                            }
+                            $newData[$questionName] = $question;
+                        }
+                        // relatable
+                        if (array_key_exists(self::purposeRelatable, $purpose)) {
+                            $newData[self::relatableNode] = $this->getSelectedCheckboxes($forms, self::relatableTypes);
+                        }
+                        // order processing description
+                        if ($anyKnown) {
+                            $tempArray = [];
+                            foreach (self::orderProcessingKnownTexts as $textPart) {
+                                $tempArray[$textPart] = $forms[$textPart]->getData();
+                            }
+                            $newData[self::orderProcessingDescriptionNode] = $tempArray;
+                        }
+                        // compensation code
+                        if (array_key_exists(self::codeCompensationNode, $forms) && $forms[self::markingNode]->getData()!==self::markingOther && !array_key_exists(self::compensationNode, $purpose)) {
+                            $tempArray = $this->getChosenArray($forms, self::codeCompensationNode, self::codeCompensationExternal, [self::descriptionNode => self::codeCompensationNode.self::descriptionCap]);
+                            $tempVal = $forms[self::codeCompensationNode]->getData();
+                            $isInternal = $tempVal===self::codeCompensationInternal;
+                            if ($tempVal===self::codeCompensationExternal || $isInternal) {
                                 $codeQuestion = true;
                                 if ($isInternal) {
-                                    $tempVal = $forms[self::markingInternal.$suffix]->getData(); // how the code is created
-                                    $tempArray[self::markingInternal] = $tempVal;
-                                    $codeQuestion = $tempVal!==null;
+                                    $tempVal = $forms[self::codeCompensationInternal]->getData();
+                                    $tempArray[self::codeCompensationInternal] = $tempVal;
+                                    $codeQuestion = in_array($tempVal, self::codeCompensationKeys);
                                 }
-                                if ($codeQuestion) { // whether the code has personal data
-                                    $tempVal = $forms[($isExternal ? self::markingExternal : $tempVal).$suffix]->getData();
-                                    $isList = $isList || $tempVal===self::markingList;
-                                    $isNameListGeneration = $isNameListGeneration || in_array($tempVal, self::markingDataResearchTypes);
-                                    $isDataResearch = $isDataResearch || in_array($tempVal, self::markingDataResearchTypes);
-                                    $tempArray[self::codePersonal] = $tempVal;
+                                if ($codeQuestion) {
+                                    $tempArray[self::codeCompensationPersonal] = $forms[self::codeCompensationNode.($isInternal ? $tempVal : 'external')]->getData();
                                 }
                             }
-                            $newData[$marking] = $tempArray;
+                            $newData[self::codeCompensationNode] = $tempArray;
                         }
-                        if ($markingChosen!==self::markingOther) {
-                            $hasPersonal = $isNameListGeneration; // true is any personal data is collected
-                            if ($hasFurther) {
-                                $newData[self::markingFurtherNode] = $further;
-                            }
-                            // list
-                            if ($isList) {
-                                $newData[self::listNode] = $this->getSelectedCheckboxes($forms, self::listTypes, [self::listOther => $this->appendText(self::listOther)]);
-                            }
-                            if ($isDataResearch || $isLinked) {
-                                // data research
-                                $newData[self::dataResearchNode] = $this->getSelectedCheckboxes($forms, self::dataResearchTypesAll, array_combine(self::dataResearchTextFieldsAll, $this->createPrefixArray(self::dataResearchTextFieldsAll)));
-                            }
-                            $isNoAnonymization = false;
-                            $anonymization = [];
-                            // anonymization
-                            if ($isPersonal) {
-                                $anonymization = $this->getSelectedCheckboxes($forms, self::anonymizationTypes, [self::anonymizationOther => $this->appendText(self::anonymizationOther)], self::anonymizationNo);
-                                $newData[self::anonymizationNode] = $anonymization;
-                                $isNoAnonymization = array_key_exists(self::anonymizationNo, $anonymization);
-                            }
-                            // storage
-                            if ($isPersonal && !$isNoAnonymization && $anonymization!==[]) {
-                                $newData[self::storageNode] = $this->getChosenArray($forms, self::storageNode, self::storageDelete, [self::descriptionNode => self::storageNode.self::descriptionCap]);
-                            }
-                            if (($newData[self::storageNode][self::chosen] ?? '')==='keep' || $isNoAnonymization) {
-                                // personal keep
-                                $personalKeep = $this->getSelectedCheckboxes($forms, self::personalKeepTypes, $this->createPrefixArray(self::personalKeepTypes));
-                                $newData[self::personalKeepNode] = $personalKeep;
-                                // personal keep consent
-                                if ($personalKeep!==[]) {
-                                    $tempArray = [];
-                                    foreach ($personalKeep as $type => $value) {
-                                        $tempArray[$type] = str_replace($type, '', $forms[$type.self::personalKeepConsentNode]->getData());
-                                    }
-                                    $newData[self::personalKeepConsentNode] = $tempArray;
-                                }
-                            }
-                            // access if research data is personal
-                            $anyKnown = false;
-                            if ($isDataResearch) {
-                                [$newData[self::accessNode], $anyKnown] = $this->getAccess($forms, self::dataPersonalNode);
-                            }
-                            // purpose research
-                            [$purpose, $purposeFurther] = [[], []];
-                            if ($isMarking) {
-                                $purpose = $this->getSelectedCheckboxes($forms, self::purposeResearchTypes, exclusive: self::purposeNo);
-                            }
-                            // purpose further
-                            $isPurposeFurther = $forms[self::markingNode]->getData()!=='other';
-                            if ($isPurposeFurther) {
-                                $purposeFurther = $this->getSelectedCheckboxes($forms, $this->prefixArray(self::purposeFurtherTypes, self::purposeFurtherNode), exclusive: 'purposeFurtherpurposeNo');
-                            }
-                            // further questions for each purpose -> will be added as values of the purpose keys. E.g.:
-                            // [purposeResearch =>
-                            //      [compensation =>
-                            //          [purposeData =>
-                            //              [compensationname => '']
-                            //          ]
-                            //          [...]
-                            //      ]
-                            //  ]
-                            // If to any purpose a description is added (i.e., getSelectedCheckboxes() contains 'other' key(s)), they must be saved separately.
-                            foreach (array_merge($isMarking ? [self::purposeResearchNode => $purpose] : [], $isPurposeFurther ? [self::purposeFurtherNode => $purposeFurther] : []) as $questionName => $question) {
-                                $isPurposeFurther = $questionName===self::purposeFurtherNode;
-                                foreach ($question as $purposeType => $value) { // $value is an empty string
-                                    $purposeWoPrefix = str_replace(self::purposeFurtherNode, '', $purposeType);
-                                    if ($purposeWoPrefix!==self::purposeNo) {
-                                        $purposeArray = [];
-                                        $isTechnical = $purposeWoPrefix===self::purposeTechnical;
-                                        // purpose data
-                                        if (!$isTechnical) {
-                                            $other = $purposeWoPrefix.self::purposeDataOther;
-                                            $purposeArray = [self::purposeDataNode => $this->getSelectedCheckboxes($forms, $this->prefixArray(self::purposeDataTypes, $purposeWoPrefix), [$other => $this->appendText($other)])];
-                                        }
-                                        $isNotOnlyTechnical = !($isTechnical && $isResearch);
-                                        // marking remove
-                                        if ($isNotOnlyTechnical && !$isPurposeFurther && $isNameListGeneration) { // only for purpose research
-                                            $markingRemove = $purposeType.self::markingRemoveNode;
-                                            $tempArray = $this->getChosenArray($forms, $markingRemove, $this->prefixArray(array_values(self::markingRemoveTypes), $purposeType), [self::descriptionNode => $markingRemove.self::descriptionCap]);
-                                            $tempVal = $tempArray[self::chosen];
-                                            if ($tempVal!=='') {
-                                                if ($tempVal===$purposeType.self::markingRemoveLater) { // description why marking is removed later
-                                                    $tempArray[self::laterDescription] = $forms[$purposeType.self::laterDescription]->getData();
-                                                } else { // how the marking is removed
-                                                    $tempArray[self::markingRemoveMiddleNode] = $this->getSelectedCheckboxes($forms, $this->prefixArray(self::markingRemoveMiddleTypes, $purposeType));
-                                                }
-                                            }
-                                            $purposeArray[self::markingRemoveNode] = $tempArray;
-                                        }
-                                        // personal remove
-                                        if ($isNotOnlyTechnical) {
-                                            $personalRemove = $purposeWoPrefix.self::personalRemoveNode;
-                                            $tempVal = $forms[$personalRemove]->getData();
-                                            $tempArray = [self::chosen => $tempVal];
-                                            $isImmediately = $tempVal===$purposeWoPrefix.self::personalRemoveImmediately;
-                                            if ($isImmediately || $tempVal===$purposeWoPrefix.self::personalRemoveKeep) {
-                                                $tempArray[self::descriptionNode] = $forms[$isImmediately ? $personalRemove.self::descriptionCap : $purposeWoPrefix.self::keepDescription]->getData();
-                                            }
-                                            $purposeArray[self::personalRemoveNode] = $tempArray;
-                                            // access
-                                            [$purposeArray[self::accessNode], $tempVal] = $this->getAccess($forms, $purposeWoPrefix);
-                                            $anyKnown = $anyKnown || $tempVal;
-                                            $question[$purposeType] = $purposeArray;
-                                        }
-                                    }
-                                }
-                                $newData[$questionName] = $question;
-                            }
-                            // relatable
-                            if (array_key_exists(self::purposeRelatable, $purpose)) {
-                                $newData[self::relatableNode] = $this->getSelectedCheckboxes($forms, self::relatableTypes);
-                            }
-                            // order processing description
-                            if ($anyKnown) {
-                                $tempArray = [];
-                                foreach (self::orderProcessingKnownTexts as $textPart) {
-                                    $tempArray[$textPart] = $forms[$textPart]->getData();
-                                }
-                                $newData[self::orderProcessingDescriptionNode] = $tempArray;
-                            }
-                            // compensation code
-                            if (array_key_exists(self::codeCompensationNode, $forms) && $forms[self::markingNode]->getData()!==self::markingOther && !array_key_exists(self::compensationNode, $purpose)) {
-                                $tempArray = $this->getChosenArray($forms, self::codeCompensationNode, self::codeCompensationExternal, [self::descriptionNode => self::codeCompensationNode.self::descriptionCap]);
-                                $tempVal = $forms[self::codeCompensationNode]->getData();
-                                $isInternal = $tempVal===self::codeCompensationInternal;
-                                if ($tempVal===self::codeCompensationExternal || $isInternal) {
-                                    $codeQuestion = true;
-                                    if ($isInternal) {
-                                        $tempVal = $forms[self::codeCompensationInternal]->getData();
-                                        $tempArray[self::codeCompensationInternal] = $tempVal;
-                                        $codeQuestion = in_array($tempVal, self::codeCompensationKeys);
-                                    }
-                                    if ($codeQuestion) {
-                                        $tempArray[self::codeCompensationPersonal] = $forms[self::codeCompensationNode.($isInternal ? $tempVal : 'external')]->getData();
-                                    }
-                                }
-                                $newData[self::codeCompensationNode] = $tempArray;
-                            }
-                            // processing further
-                            if ($isPersonal || $hasPersonal || array_diff_key(array_merge($purpose, $purposeFurther), [self::purposeNo => '', self::purposeFurtherNode.self::purposeNo => ''])!==[]) {
-                                $newData[self::processingFurtherNode] = $forms[self::processingFurtherNode]->getData();
-                            }
-                        } // markingChosen!==markingOther
-                    } // responsibility and transferOutside
-                } // confirmIntro
-            } // isTool
+                        // processing further
+                        if ($isPersonal || $hasPersonal || array_diff_key(array_merge($purpose, $purposeFurther), [self::purposeNo => '', self::purposeFurtherNode.self::purposeNo => ''])!==[]) {
+                            $newData[self::processingFurtherNode] = $forms[self::processingFurtherNode]->getData();
+                        }
+                    } // markingChosen!==markingOther
+                } // responsibility and transferOutside
+            } else if ($create==self::createSeparate && array_key_exists(self::createVerificationNode,$forms)) { // create separate
+                $newData[self::createVerificationNode] = $forms[self::createVerificationNode]->getData();
+            }
         } // 'create' exists
         $viewData = $newData;
     }

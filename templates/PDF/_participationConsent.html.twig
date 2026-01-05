@@ -23,12 +23,12 @@
                 {% set classes = 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : '') %}
                 <div class="{{ textPreview }}" style="page-break-inside: avoid">
                     {% for text in optionalConsent %}
-                        <table style="margin-bottom: 2rem">
+                        <table style="margin-bottom: 2em">
                             <tr><td class="{{ justify }}" colspan="5">{{ text }}</td></tr>
                             <tr>
                                 {% for answer in [yesTrans,noTrans] %}
-                                    <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5rem; margin-right: 0.375rem"></div></td>
-                                    <td style="width: 1px; padding-right: 1rem">{{ answer }}</td>
+                                    <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5em; margin-right: 0.375em"></div></td>
+                                    <td style="width: 1px; padding-right: 1em">{{ answer }}</td>
                                 {% endfor %}
                                 <td></td>
                             </tr>

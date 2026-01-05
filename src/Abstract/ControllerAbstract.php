@@ -901,7 +901,7 @@ abstract class ControllerAbstract extends AbstractController
      */
     protected function setPositions(Session $session): array
     {
-        $isNotStudent = !in_array($this->getCommitteeType($session),self::committeeStudent);// $this->getCommitteeType($session)!==self::committeeEUB;
+        $isNotStudent = !in_array($this->getCommitteeType($session),self::committeeStudent);
         $phdOption = [self::positionsPhd => ''];
         $studentOption = [self::positionsStudent => ''];
         $positionsTranslated = self::positionsTypes;
@@ -1715,6 +1715,7 @@ abstract class ControllerAbstract extends AbstractController
         if (self::$isCompleteForm) {
             unlink($prefix.'complete'.$suffix);
             unlink($prefix.'applicationCompleteForm'.$suffix);
+            unlink($prefix.'applicationSingleDocs'.$suffix);
         }
         unlink($prefix.'application'.$suffix);
         $prefix .= 'participation';
@@ -1745,8 +1746,10 @@ abstract class ControllerAbstract extends AbstractController
         $minor = $loadedVersion[1];
         $patch = $loadedVersion[2];
         $isMajor1 = $major==='1';
+        $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
-        $is200 = $major==='2' && $minor==='0' && $patch==='0';
+        $is200 = $isMajor2 && $minor==='0' && $patch==='0';
+        $isSmaller221 = $isMajor1 || $major==='2' && $minor<='2' && $patch<'1';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -1764,13 +1767,15 @@ abstract class ControllerAbstract extends AbstractController
             }
             $this->insertElementBefore(self::applicationProcessNode, $coreDataNode->{$this->checkElement(self::qualification, $coreDataNode) ? self::qualification : self::applicant}, [self::chosen]);
         }
-        if ($isMajor1 || $is200) {
-            $isShortNoDocs = $this->getReviewProcess($this->xmlToArray($xml))===self::reviewShortNoDocs;
+        if ($isSmaller221) {
+            $reviewProcess = $this->getReviewProcess($this->xmlToArray($xml));
+            $isShortNoDocs = $reviewProcess===self::reviewShortNoDocs;
             foreach ($xml->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
                     foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
                         $informationNode = $measureTimePointNode->{self::informationNode};
                         $measuresNode = $measureTimePointNode->{self::measuresNode};
+                        $privacyNode = $measureTimePointNode->{self::privacyNode};
                         if ($isMajor1) {
                             // updates for version before 2.0.0
                             // groups (update of nodes)
@@ -1907,7 +1912,6 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->arrayToXml($tempArray, $compensationNode);
                             }
                             // data privacy (update of nodes)
-                            $privacyNode = $measureTimePointNode->{self::privacyNode};
                             $this->removeElement(self::dataReuseNode, $privacyNode); // was mistakenly created in addMeasurement
                             if ($this->checkElement(self::dataOnlineNode,$privacyNode)) {
                                 $dataOnlineNode = $privacyNode->{self::dataOnlineNode};
@@ -1970,11 +1974,27 @@ abstract class ControllerAbstract extends AbstractController
                             if ($isShortNoDocs) {
                                 $this->insertElementBefore(self::presenceNode,$measuresNode->{self::durationNode});
                             }
+                        } // is200
+                        // updates for version before 2.2.1
+                        if ($this->checkElement(self::createNode,$privacyNode)) {
+                            $createNode = $privacyNode->{self::createNode};
+                            if (((string) $createNode->{self::chosen})===self::createSeparate) { // verification is separate node and not asked for all review types
+                                if (in_array($reviewProcess,self::reviewQuestions[self::privacyNode][self::createVerificationNode])) {
+                                    $verification = (string) $createNode->{self::descriptionNode};
+                                    if ($this->checkElement(self::createVerificationNode,$privacyNode)) { // loaded version was before 2.0.0 -> node was already added
+                                        $privacyNode->{self::createVerificationNode} = $verification;
+                                    }
+                                    else {
+                                        $privacyNode->addChild(self::createVerificationNode,$verification);
+                                    }
+                                }
+                                $this->removeElement(self::descriptionNode,$createNode);
+                            }
                         }
                     } // foreach measure time point
                 } // foreach group
             } // foreach study
-        } // if isMajor1 || is200
+        } // if isSmaller221
     }
 
     /** Creates a string indicating the duration or an int indicating the total time.
@@ -2175,6 +2195,10 @@ abstract class ControllerAbstract extends AbstractController
         }
         // nodes that exist if any information is given
         if ($isPre || $this->checkElement(self::post,$informationNode) && ((string) $informationNode->{self::post}->{self::chosen})==='0') {
+            // document translation
+            if (((string) $consentNode->{self::consent}->{self::chosen})===self::consentOral) {
+                $this->removeElement(self::documentTranslationNode,$informationNode);
+            }
             // finding text
             if (((string) $measureTimePointNode->{self::burdensRisksNode}->{self::findingNode}->{self::chosen})!=='0') {
                 $this->removeElement(self::findingTextNode,$measureTimePointNode->{self::textsNode});
