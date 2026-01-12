@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CheckDocController extends ControllerAbstract
 {
     /** @throws Exception if the document check fails */
-    #[Route('/checkDoc', name: 'app_checkDoc')]
+    #[Route('checkDoc','checkDoc')]
     public function showCheckDoc(Request $request): Response
     {
         $appNode = $this->getXMLfromSession($request->getSession());

@@ -8,5 +8,6 @@ controllers:
         namespace: App\Controller
     type: annotation
     prefix:
-        de: '/de'
-        en: '/en'
+        de: '/de/'
+        en: '/en/'
+    name_prefix: 'app_'

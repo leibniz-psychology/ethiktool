@@ -1151,7 +1151,7 @@ class ParticipationController extends PDFAbstract
                                 self::$linkedPage = self::informationNode;
                                 $pageArray = $measureTimePoint[self::informationIIINode] ?: [];
                                 $content = ['intro' => [$this->translateStringPDF($translationPrefix.'intro',$translationParams),'']];
-                                foreach (array_keys(self::informationIIIInputsTypes) as $input) {
+                                foreach (self::informationIIIInputsTypes as $input) {
                                     $content[$input] = [$this->translateStringPDF($translationPrefix.$input,$addresseeParam),$this->addMarkInput($pageArray[$input] ?? '',self::$markInput)];
                                 }
                                 $content['end'] = [$this->translateStringPDF($translationPrefix.'end',$addresseeParam),''];

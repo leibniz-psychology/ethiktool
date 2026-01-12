@@ -35,7 +35,7 @@ trait ContributorsTrait
     protected function addSupervisor(array &$contributors, array $infos = []): void
     {
         if ($infos===[]) {
-            $infos = array_combine(self::applicantContributorsInfosTypes,array_fill(0,count(self::applicantContributorsInfosTypes),''));
+            $infos = array_fill_keys(self::applicantContributorsInfosTypes,'');
         }
         $contributors = array_merge([0 => $contributors[0]],[1 => [self::infosNode => $infos, self::taskNode => [self::supervisorNode => '']]],array_key_exists(1,$contributors) ? array_combine(range(2,count($contributors)),array_values(array_slice($contributors,1))) : []);
     }

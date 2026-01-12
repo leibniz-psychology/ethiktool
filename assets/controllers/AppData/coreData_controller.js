@@ -19,7 +19,6 @@ export default class extends Controller {
     connect() {
         this.studentValue = 'student';
         this.phdValue = 'phd';
-        this.studentPhd = [this.studentValue,this.phdValue];
         this.positionOtherValue = 'positionOther';
         this.conflictYesTarget = document.getElementById(this.conflictNoTarget.id.replace('1','0')); // renderButtons allows only one target; therefore, get the other by using the id
         this.applicationProcessLoadValue = this.reviewProcessLoadValue.includes('full') ? 'full' : 'short';
@@ -38,7 +37,7 @@ export default class extends Controller {
         let target = event.target;
         let id = target.id;
         let value = target.value;
-        setElementVisibility(id+'Hint',this.studentPhd.includes(value));
+        setElementVisibility(id+'Hint',[this.studentValue,this.phdValue].includes(value));
         setElementVisibility(id+'Other',value===this.positionOtherValue);
         if (!id.includes('supervisor')) {
             this.setApplicantSupervisor();
@@ -67,7 +66,7 @@ export default class extends Controller {
         if (this.hasSupervisorDivTarget) {
             let isQualification = this.hasQualificationYesTarget && this.qualificationYesTarget.checked;
             let positionApplicant = this.applicantPositionTarget.value;
-            let isSupervisor = this.committeeTypeValue==='EUB' ? isQualification && this.studentPhd.includes(positionApplicant) : positionApplicant===this.studentValue;
+            let isSupervisor = positionApplicant===this.studentValue ||  this.committeeTypeValue==='EUB' && positionApplicant===this.phdValue;
             setElementVisibility(this.supervisorDivTarget,isSupervisor);
             this.setPositions(this.applicantPositionTarget,this.positionsValue[isQualification ? 1 : 0],positionApplicant);
             if (isSupervisor) {

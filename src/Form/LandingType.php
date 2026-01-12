@@ -16,7 +16,7 @@ class LandingType extends TypeAbstract
             $this->addFormElement($builder,self::copy,'choice',options: ['choices' => $options[self::dummyParams] [self::dropdownChoices]],hint: self::choiceTextHint);
             if (!$attributes[self::isGroup]) {
                 $isStudy = $attributes[self::isStudy];
-                $this->addFormElement($builder,self::newStudyGroupName,'text',options: ['attr' => ['placeholder' => 'landing.manipulate.placeholder'], self::attrParams => [self::isStudy => $this->getStringFromBool($isStudy)]]);
+                $this->addFormElement($builder,self::newStudyGroupName,'text',options: array_merge($this->getPlaceholder('landing.manipulate.placeholder'),[self::attrParams => [self::isStudy => $this->getStringFromBool($isStudy)]]));
                 for($curEdit=0;$curEdit<$attributes[$isStudy ? self::numGroups : self::numStudies];++$curEdit) {
                     $this->addFormElement($builder,self::editName.$curEdit,'text');
                 }

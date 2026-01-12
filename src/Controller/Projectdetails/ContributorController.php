@@ -13,10 +13,10 @@ class ContributorController extends ControllerAbstract
 {
     use ContributorsTrait;
 
-    #[Route(self::routePrefix.'contributor', name: 'app_contributor')]
+    #[Route(self::routePrefix.self::contributorNode,self::contributorNode)]
     public function showContributor(Request $request): Response
     {
-        $tasks = array_combine(self::tasksNodes,array_fill(0,count(self::tasksNodes),[]));
+        $tasks = array_fill_keys(self::tasksNodes,[]);
         $session = $request->getSession();
         if (!$session->has(self::docName) || !$this->getMultiStudyGroupMeasure($this->getXMLfromSession($session))) {
             return $this->redirectToRoute('app_main');

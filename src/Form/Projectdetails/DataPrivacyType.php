@@ -40,8 +40,7 @@ class DataPrivacyType extends TypeAbstract
         $tempPrefix = $translationPrefix.self::markingNode.'.';
         foreach (['',self::markingSuffix] as $suffix) {
             $marking = self::markingNode.$suffix;
-            $this->addRadioGroup($builder,$marking,$suffix==='' ? self::markingTypes : array_flip(array_diff_key(array_flip(self::markingTypes),[self::markingNo => '', self::markingOther => '']))); // text field is for external and name
-            $this->addFormElement($builder,$marking.self::descriptionCap,'text'); // text field is for external and name
+            $this->addRadioGroup($builder,$marking,$suffix==='' ? self::markingTypes : array_flip(array_diff_key(array_flip(self::markingTypes),[self::markingNo => '', self::markingOther => ''])),textName: $marking.self::descriptionCap); // text field is for external and name
             $this->addRadioGroup($builder,self::markingInternal.$suffix,self::internalTypes,$tempPrefix.self::markingInternal.'.title'); // how the code is created
             $title = $tempPrefix.'code';
             foreach (['external','pattern','own','contributors'] as $key) { // whether the code has personal data
@@ -62,8 +61,7 @@ class DataPrivacyType extends TypeAbstract
         $this->addCheckboxGroup($builder,self::anonymizationTypes,$tempPrefix,$this->appendText(self::anonymizationOther),[$tempPrefix.'placeholder']);
         // storage
         $tempPrefix = $translationPrefix.self::storageNode.'.';
-        $this->addRadioGroup($builder,self::storageNode,self::storageTypes,$tempPrefix.'title');
-        $this->addFormElement($builder,self::storageNode.self::descriptionCap,'text',hint: $tempPrefix.self::textHint);
+        $this->addRadioGroup($builder,self::storageNode,self::storageTypes,$tempPrefix.'title',textName: self::storageNode.self::descriptionCap,textHint: $tempPrefix.self::textHint);
         // personal keep
         $tempPrefix = $translationPrefix.self::personalKeepNode.'.';
         $hint = $tempPrefix.'hints.'.self::textHint;
@@ -71,10 +69,9 @@ class DataPrivacyType extends TypeAbstract
         $consentTitle = $translationPrefix.self::personalKeepConsentNode.'.title';
         $consentKeys = array_keys(self::personalKeepConsentTypes);
         $consentValues = array_values(self::personalKeepConsentTypes);
+        // personal keep consent
         foreach (self::personalKeepTypes as $type) {
-            $this->addFormElement($builder,$this->appendText($type),'text',hint: $hint);
-            // personal keep consent
-            $this->addRadioGroup($builder,$type.self::personalKeepConsentNode,array_combine($consentKeys,$this->prefixArray($consentValues,$type)),$consentTitle,options: [self::labelParams => ['type' => $this->translateString($tempPrefix.'typesShort.'.$type)]]);
+            $this->addRadioGroup($builder,$type.self::personalKeepConsentNode,array_combine($consentKeys,$this->prefixArray($consentValues,$type)),$consentTitle,textName: $this->appendText($type),textHint: $hint,options: [self::labelParams => ['type' => $this->translateString($tempPrefix.'typesShort.'.$type)]]);
         }
         // purpose research
         $this->addCheckboxGroup($builder,self::purposeResearchTypes,$translationPrefix.self::purposeResearchNode.'.types.');
@@ -94,14 +91,12 @@ class DataPrivacyType extends TypeAbstract
                 // marking remove
                 if ($type!=='contactResult') {
                     $tempPrefix = $translationPrefix.self::markingRemoveNode.'.';
-                    $this->addRadioGroup($builder, $type.self::markingRemoveNode, array_combine(array_keys(self::markingRemoveTypes), $this->prefixArray(array_values(self::markingRemoveTypes), $type)), textareaName: $type.self::laterDescription, textHint: $tempPrefix.self::textHintPlural.'.'.self::laterDescription);
-                    $this->addFormElement($builder, $type.self::markingRemoveNode.self::descriptionCap, 'text');
+                    $this->addRadioGroup($builder, $type.self::markingRemoveNode, array_combine(array_keys(self::markingRemoveTypes), $this->prefixArray(array_values(self::markingRemoveTypes), $type)), textareaName: $type.self::laterDescription, textareaHint: $tempPrefix.self::textHintPlural.'.'.self::laterDescription, textName: $type.self::markingRemoveNode.self::descriptionCap);
                     $this->addCheckboxGroup($builder, $this->prefixArray(self::markingRemoveMiddleTypes, $type), $tempPrefix.self::markingRemoveMiddleNode.'.types.', labelNames: self::markingRemoveMiddleTypes);
                 }
                 // personal remove
                 $tempPrefix = $translationPrefix.self::personalRemoveNode.'.textHints.';
-                $this->addRadioGroup($builder,$type.self::personalRemoveNode,array_combine(array_keys(self::personalRemoveTypes),$this->prefixArray(array_values(self::personalRemoveTypes),$type)),textareaName: $type.self::keepDescription,textHint: $tempPrefix.self::personalRemoveKeep);
-                $this->addFormElement($builder,$type.self::personalRemoveNode.self::descriptionCap,'text',hint: $tempPrefix.self::personalRemoveImmediately);
+                $this->addRadioGroup($builder,$type.self::personalRemoveNode,array_combine(array_keys(self::personalRemoveTypes),$this->prefixArray(array_values(self::personalRemoveTypes),$type)),textareaName: $type.self::keepDescription,textareaHint: $tempPrefix.self::personalRemoveKeep,textName: $type.self::personalRemoveNode.self::descriptionCap,textHint: $tempPrefix.self::personalRemoveImmediately);
             }
             // access
             $this->addCheckboxGroup($builder,$this->prefixArray(self::accessTypes,$type),$accessTypesPrefix,array_values($this->createPrefixArray(self::accessOthers,$type)),$accessPlaceholderArray,labelNames: self::accessTypes);
@@ -128,8 +123,7 @@ class DataPrivacyType extends TypeAbstract
         // compensation code
         if ($dummyParams['isCompensationCode'] ?? false) {
             $tempPrefix = $translationPrefix.self::codeCompensationNode.'.';
-            $this->addRadioGroup($builder,self::codeCompensationNode,self::codeCompensationTypes,$tempPrefix.'title');
-            $this->addFormElement($builder,self::codeCompensationNode.self::descriptionCap,'text',hint: $tempPrefix.'hints.textHintCodeExternal');
+            $this->addRadioGroup($builder,self::codeCompensationNode,self::codeCompensationTypes,$tempPrefix.'title',textName: self::codeCompensationNode.self::descriptionCap,textHint: $tempPrefix.'hints.textHintCodeExternal');
             $this->addRadioGroup($builder,self::codeCompensationInternal,self::codeCompensationInternalTypes,$tempPrefix.self::codeCompensationInternal.'.title'); // how the code is created
             $tempPrefix .= 'code';
             foreach (self::codeCompensationKeys as $key) { // whether the code has personal data

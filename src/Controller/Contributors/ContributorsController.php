@@ -14,7 +14,7 @@ class ContributorsController extends ControllerAbstract
 {
     use ContributorsTrait, AppDataTrait; // AppDataTrait for updating the applicant in coreData
 
-    #[Route('/contributors', name: 'app_contributors')]
+    #[Route('contributors','contributors')]
     public function showContributors(Request $request): Response
     {
         $session = $request->getSession();
@@ -25,7 +25,6 @@ class ContributorsController extends ControllerAbstract
         $contributorsArray = $allContributorsArrays[count($allContributorsArrays)-1]; // most recent contributors array
         $appNode = $this->getXMLfromSession($session);
         $coreDataNode = $appNode->{self::appDataNodeName}->{self::coreDataNode};
-        $coreDataArray = $this->xmlToArray($coreDataNode);
 
         $contributors = $this->createFormAndHandleRequest(ContributorsType::class,null,$request);
         if ($contributors->isSubmitted()) {
@@ -41,7 +40,7 @@ class ContributorsController extends ControllerAbstract
                 if (!$isRemoved) { // contributor was added or edited
                     $committeeType = $this->getCommitteeType($session);
                     $positionOld = (string) $coreDataNode->{self::applicant}->{self::position};
-                    $isStudentOld = $this->checkSupervisor($committeeType,$positionOld,$coreDataArray);
+                    $isStudentOld = $this->checkSupervisor($committeeType,$positionOld);
                     $isApplicant = $id==='0';
                     $isApplicantOrSupervisor = $isApplicant || $isStudentOld && $id==='1';
                     $tempArray = [];
@@ -81,7 +80,7 @@ class ContributorsController extends ControllerAbstract
                         foreach (self::applicantContributorsInfosTypes as $info) { // update infos in core data
                             $node->{$info} = $infos[$info];
                         }
-                        $isStudent = $this->checkSupervisor($committeeType,$position,$coreDataArray);
+                        $isStudent = $this->checkSupervisor($committeeType,$position);
                         if ($isApplicant) {
                             if (!$isStudentOld && $isStudent) { // position was changed such that a supervisor is needed
                                 $this->insertElementBefore(self::supervisor,$coreDataNode->{self::projectStart},self::applicantContributorsInfosTypes);
@@ -109,7 +108,7 @@ class ContributorsController extends ControllerAbstract
         $phone = $infosPrefix.self::phoneNode;
         return $this->render('Contributors/contributors.html.twig', $this->setRenderParameters($request,$contributors,
             ['positionsSupervisor' => $positionsSupervisor,
-             'isQualification' => $this->getQualification($coreDataArray),
+             'isQualification' => $this->getQualification($this->xmlToArray($coreDataNode)),
              'infos' => self::applicantContributorsInfosTypes,
              'tasks' => self::tasksNodes,
              'tasksMandatory' => self::tasksMandatory,

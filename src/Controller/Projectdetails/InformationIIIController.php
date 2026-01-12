@@ -13,11 +13,11 @@ class InformationIIIController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'informationIII', name: 'app_informationIII')]
+    #[Route(self::routePrefix.self::informationIIINode,self::informationIIINode)]
     public function showInformationIII(Request $request): Response
     {
         return $this->createFormAndHandleSubmit(InformationIIIType::class,$request,[self::informationIIINode],
             [self::pageTitle => 'projectdetails.informationIII',
-             'widgetIDs' => array_keys(self::informationIIIInputsTypes)]);
+             'widgetIDs' => self::informationIIIInputsTypes]);
     }
 }

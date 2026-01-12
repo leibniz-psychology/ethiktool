@@ -39,7 +39,7 @@ class ContributorType extends TypeAbstract
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
     {
         $forms = iterator_to_array($forms);
-        $viewData = array_combine(self::tasksNodes,array_fill(0,count(self::tasksNodes),''));
+        $viewData = array_fill_keys(self::tasksNodes,'');
         $noForms = [self::language,ControllerAbstract::submitDummy,ControllerAbstract::loadInput];
         foreach ($forms as $key => $element) {
             if (!in_array($key,$noForms) && $element->getData()) {

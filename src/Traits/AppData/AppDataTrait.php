@@ -9,6 +9,7 @@ trait AppDataTrait
 {
     use PageTrait;
 
+    protected const routePrefixAppData = 'appData/';
     // core data
     protected const coreDataNode = 'coreData';
     protected const applicationType = 'appType';
@@ -23,7 +24,9 @@ trait AppDataTrait
     protected const funding = 'funding';
     protected const projectStartNext = 'projectStartNext';
     protected const projectStartBegun = 'projectStartBegun';
-    protected const begunCommittees = ['EUB','DLR','TUD']; // committees where review after start of data collection is possible
+    protected const projectStartRetrospective = 'retrospective';
+    protected const begunCommittees = ['EUB','DLR','TUD','UH1']; // committees where review after start of data collection is possible
+    protected const retrospectiveCommittees = ['UH1']; // committees where justification is needed why data collection has already started
     protected const appNew = 'new';
     protected const applicationTypes = ['coreData.appType.type.new' => 'new', 'coreData.appType.type.extended' => 'extended', 'coreData.appType.type.resubmission' => 'resubmission', 'coreData.appType.type.resubmissionGranted' => 'resubmissionGranted']; // values must equal the values of the preceding variables
     protected const appExtendedResubmission = ['extended','resubmission','resubmissionGranted']; // values must equal the values of $appExtended and $appResubmission
@@ -31,8 +34,8 @@ trait AppDataTrait
     protected const applicationProcessTypes = ['coreData.applicationProcess.types.short' => 'short', 'coreData.applicationProcess.types.full' => 'full']; // values must equal the value of $reviewProcessShort and $reviewProcessFull in PageTrait
     protected const shortDocsNode = 'shortDocs';
     protected const supervisor = 'supervisor';
-    protected const committeeStudent = ['EUB','JGU','DLR']; // committees where position can be 'student'
-    protected const committeeSupervisor = ['EUB','JGU']; // committees where a supervisor must be added if the position is student. Value must equal the values of $committeeStudent
+    protected const committeeStudent = ['EUB','JGU','DLR','UH1']; // committees where position can be 'student'
+    protected const committeeSupervisor = ['EUB','JGU','UH1']; // committees where a supervisor must be added if the position is student. Value must equal the values of $committeeStudent
     protected const fundingQuali = 'fundingQuali'; // must equal one of the keys in $fundingChoices
     protected const fundingResearchExternal = ['fundingResearch','fundingExternal']; // must equal two keys in $fundingChoices
     protected const fundingTypes = ['fundingQuali' => 'coreData.funding.fundingQuali', 'fundingBudget' => 'coreData.funding.fundingBudget', 'fundingResearch' => 'coreData.funding.fundingResearch', 'fundingExternal' => 'coreData.funding.fundingExternal', 'fundingOther' => 'coreData.funding.fundingOther'];

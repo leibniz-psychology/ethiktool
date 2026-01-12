@@ -26,7 +26,7 @@ trait ProjectdetailsTrait
     protected const addressee = 'addressee'; // session key
     protected const participant = 'participant'; // key for translation parameter that is added in the Form Type if both addressees are part of the translation
     protected const addresseeType = 'addresseeType'; // translation key
-    protected const routePrefix = '/projectdetails/study/{studyID}/group/{groupID}/measure/{measureID}/';
+    protected const routePrefix = 'projectdetails/study/{studyID}/group/{groupID}/measure/{measureID}/';
     protected const template = 'template'; // must equal one of the values in $templateChoices
     protected const templateText = 'text'; // must equal one of the values in $templateTypes
     protected const templateTypes = ['projectdetails.templateChoices.template' => 'template', 'projectdetails.templateChoices.text' => 'text', 'projectdetails.templateChoices.no' => 'no'];
@@ -85,7 +85,7 @@ trait ProjectdetailsTrait
     protected const documentTranslationPDF = 'documentTranslationPDF';
     // informationIII
     protected const informationIIINode = 'informationIII';
-    protected const informationIIIInputsTypes = ['goals' => 'checkDoc.projectdetails.pages.informationIII.goals', 'infoBefore' => 'checkDoc.projectdetails.pages.informationIII.infoBefore', 'infoAfter' => 'checkDoc.projectdetails.pages.informationIII.infoAfter', 'explain' => 'checkDoc.projectdetails.pages.informationIII.explain'];
+    protected const informationIIIInputsTypes = ['goals','infoBefore','infoAfter','explain'];
     // consent
     protected const consentNode = 'consent';
     protected const voluntaryNode = 'voluntary';

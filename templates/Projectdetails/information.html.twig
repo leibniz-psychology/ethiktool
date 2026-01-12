@@ -31,7 +31,7 @@
             {# pre content #}
             {% set preContentSelection = preContent.vars.value %}
             {{ formRender.renderButtons(preContent,labelParams|merge({
-                'hint': [translationPrefix~'pre.content.hints.',addresseeStringParam],
+                'hint': [translationPrefix~'pre.content.',addresseeStringParam],
                 'stim': [informationController,'setPreContent'],
                 'addDiv': ['preContent'],
                 'removeHint': [[informationIIIinput],'preContentHint',preContentSelection in ['','complete']]})) }}
@@ -69,7 +69,7 @@
             {% set isDocTrans = docTrans.vars.value is same as '0' %}
             <div class="mt-8" id="documentTranslation" {{ stimulus_target(informationController,docTransString) }}>
                 {{ formRender.renderButtons(docTrans,{
-                    'text': [content[description],{'fontStyle': true, 'visibility': isDocTrans}],
+                    'text': [content[description],fontNormal|merge({'visibility': isDocTrans})],
                     'stimVisible': {'values': [['0',[description~'Div',pdfDiv]]]}}) }}
                 <div class="mt-4" id="{{ pdfDiv }}" style="{{ boolToDisplay(isDocTrans) }}">
                     {% if content[pdfString] is defined %}

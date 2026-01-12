@@ -19,7 +19,7 @@ class FooterController
         $this->client = $client;
     }
 
-    #[Route('/footer', name: 'footer')]
+    #[Route('footer','footer')]
     public function getFooterFromAssets(Request $request): Response
     {
         $content = null;

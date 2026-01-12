@@ -16,7 +16,7 @@ class MainController extends ControllerAbstract
         return $this->redirectToRoute('app_main');
     }
 
-    #[Route('/main', name: 'app_main')]
+    #[Route('main', name: 'main')]
     public function showMain(Request $request): Response
     {
         $session = $request->getSession();
@@ -34,7 +34,7 @@ class MainController extends ControllerAbstract
         }
 
         $main = $this->createFormAndHandleRequest(DummyType::class,null,$request);
-        if ($main->isSubmitted()) { // language has changed, a link was clicked, the xml-file should be downloaded, or the program should be quit
+        if ($main->isSubmitted()) {
             return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($session));
         }
         $isMajor = $sessionValue['isMajor'] ?? false;

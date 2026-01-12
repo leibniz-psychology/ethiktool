@@ -13,7 +13,7 @@ class MeasuresController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'measures', name: 'app_measures')]
+    #[Route(self::routePrefix.self::measuresNode,self::measuresNode)]
     public function showMeasures(Request $request): Response
     {
         $session = $request->getSession();

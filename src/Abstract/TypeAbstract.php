@@ -141,13 +141,15 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $name name of the widget
      * @param string|bool $label label next to the group of false if no label should be added
      * @param string $textareaName if not an empty string, name of a textarea
-     * @param string $textHint if $textareaName is not an empty string, the text that is displayed above the textarea
+     * @param string $textareaHint if $textareaName is not an empty string, the text that is displayed above the textarea
+     * @param string $textName if not an empty string, name of a text field
+     * @param string $textHint if $textName is not an empty string, the text that is displayed above the text field
      * @param array $options additional options that are passed to the FormBuilder
      * @return void
      */
-    protected function addBinaryRadio(FormBuilderInterface $builder, string $name, string|bool $label = false, string $textareaName = '', string $textHint = '', array $options = []): void
+    protected function addBinaryRadio(FormBuilderInterface $builder, string $name, string|bool $label = false, string $textareaName = '', string $textareaHint = '', string $textName = '', string $textHint = '', array $options = []): void
     {
-        $this->addRadioGroup($builder,$name,['buttons.yes' => 0, 'buttons.no' => 1],$label,$textareaName,$textHint,$options);
+        $this->addRadioGroup($builder,$name,['buttons.yes' => 0, 'buttons.no' => 1],$label, $textareaName, $textareaHint, $textName, $textHint, $options);
     }
 
     /** Creates a group of radio buttons and, if $textareaName is provided, a textarea.
@@ -156,15 +158,20 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param array $choices keys and value of the radio buttons
      * @param string|bool $label label next to the group or false if no label should be added
      * @param string $textareaName if not an empty string, name of a textarea
-     * @param string $textHint if $textareaName is not an empty string, the text that is displayed above the textarea
-     * @param array $options additional options that are passed to the FormBuilder
+     * @param string $textareaHint if $textareaName is not an empty string, the text that is displayed above the textarea
+     * @param string $textName if not an empty string, name of a text field
+     * @param string $textHint if $textName is not an empty string, the text that is displayed above the text field
+     * @param array $options additional options that are passed to the FormBuilder for the radio group and the text field
      * @return void
      */
-    protected function addRadioGroup(FormBuilderInterface $builder, string $name, array $choices, string|bool $label = false, string $textareaName = '', string $textHint = '', array $options = []): void
+    protected function addRadioGroup(FormBuilderInterface $builder, string $name, array $choices, string|bool $label = false, string $textareaName = '', string $textareaHint = '', string $textName = '', string $textHint = '', array $options = []): void
     {
         $this->addFormElement($builder,$name,'choice',$label,array_merge(['choices' => $choices, 'expanded' => true],$options));
         if ($textareaName!=='') {
-            $this->addFormElement($builder,$textareaName,'textarea',hint: $textHint);
+            $this->addFormElement($builder,$textareaName,'textarea',hint: $textareaHint);
+        }
+        if ($textName!=='') {
+            $this->addFormElement($builder,$textName,'text',options: $options,hint: $textHint);
         }
     }
 
@@ -224,7 +231,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
     protected function addFormElement(FormBuilderInterface $builder, string $name, string $class, string|bool $label = false, array $options = [], string $hint = ''): void
     {
         $page = self::getPage();
-        if (in_array(self::getReviewProcess(),self::formTypeQuestions[$page][$name] ?? []) || $name==='submitDummy' || in_array($page,['newForm','landing','contributor','completeForm','quit'])) {
+        if (in_array(self::getReviewProcess(),self::formTypeQuestions[$page][$name] ?? []) || $name==='submitDummy' || in_array($page,['newForm','coreData','landing','contributor','completeForm','quit'])) {
             $classType = null;
             $addOptions = array_merge(['label' => $label, 'required' => false, self::labelParams => $options[self::labelParams] ?? [], self::attrParams => $options[self::attrParams] ?? []], ['attr' => ['placeholder' => str_contains($class,'text') ? $hint : false, 'autocomplete' => 'off']]);
             switch ($class) {
@@ -328,5 +335,14 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
     protected function getArrayValue(array $array, string $key): string
     { // added here because it is called by the preceding function
         return $array[$key] ?? '';
+    }
+
+    /** Creates an array with key 'attr' whose value is an array with key 'placeholder' and text as value.
+     * @param string $text value for inner array
+     * @return array placeholder array
+     */
+    protected function getPlaceholder(string $text): array
+    {
+        return ['attr' => ['placeholder' => $text]];
     }
 }

@@ -19,7 +19,7 @@
                 {% set name, amountDiv = widget.vars.name, compensation~'Amount' %} {# amountDiv only needed for money and houres #}
                 {{ form_widget(widget, {'id': name, 'attr': checkInput|merge(isCompensation and noSelected or (not isCompensation and anySelected) ? addDisableTarget() : {})}) }}
                 {% if compensation is not same as 'money' %}
-                    {{ form_label(widget,null,{'id': name, 'label_attr': checkLabel|merge(addStyle(widthStyle))}) }}
+                    {{ form_label(widget,null,addLabelAttributes(checkLabel|merge(addStyle(widthStyle)))|merge({'id': name})) }}
                     {% if isCompensation and hasDescription %}
                         <div id="{{ description~'Div' }}"  style="margin-top: -1rem">{{ formRender.addTextfield(content[description],markInputParam) }}</div>
                         {% if compensation is same as 'hours' %}
@@ -115,7 +115,7 @@
                                         {% set isLaterDeliver, typeValueParam = isLater or value is same as 'deliver', {'id': typeValue} %}
                                         <div {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>
                                             {{ form_widget(option,typeValueParam|merge(addClass('RadioButton-Input',true))) }}
-                                            {{ form_label(option,null,typeValueParam|merge({'label_html': true, 'label_attr': addClass('RadioButton-Label minAutoGrid me-0')})) }}
+                                            {{ form_label(option,null,typeValueParam|merge(addLabelAttributes(addClass('RadioButton-Label minAutoGrid me-0')))|merge({'label_html': true})) }}
                                             {% if isLaterDeliver %}
                                                 {% set laterDeliver = content[type~(isLater ? 'laterInformation' : 'deliverDescription')] %}
                                                 <div id="{{ typeValue~'Div' }}">
@@ -156,7 +156,7 @@
             {{ formRender.renderButtons(voluntary,{
                 'stim': ['base','setVisibility',{'values': [['0','compensationVoluntaryDescriptionDiv']]}],
                 'hint': [translationPrefix~'compensationVoluntary.'],
-                'text': [content.compensationVoluntaryDescription,{'visibility': voluntary.vars.value is same as '0', 'fontStyle': true}],
+                'text': [content.compensationVoluntaryDescription,fontNormal|merge({'visibility': voluntary.vars.value is same as '0'})],
                 'addDiv': ['compensationVoluntary']}) }}
             {# further description #}
             {% if content.furtherDescription is defined %}

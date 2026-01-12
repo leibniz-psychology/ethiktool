@@ -24,9 +24,7 @@ class CoreDataType extends TypeAbstract
         $this->addFormElement($builder, self::projectTitle, 'textarea', $translationPrefix.'projectTitle');
         $this->addRadioGroup($builder,self::projectTitleParticipation,self::projectTitleTypes,$translationPrefix.self::projectTitleParticipation.'.title',self::projectTitleParticipation.self::descriptionCap);
         // application type
-        $tempPrefix = $translationPrefix.'appType.';
-        $this->addRadioGroup($builder,self::applicationType,self::applicationTypes,$tempPrefix.'title');
-        $this->addFormElement($builder,self::descriptionNode,'text',$tempPrefix.'reference');
+        $this->addRadioGroup($builder,self::applicationType,self::applicationTypes,$translationPrefix.'appType.title',textName: self::descriptionNode);
         // application process
         $this->addRadioGroup($builder,self::applicationProcessNode,self::applicationProcessTypes,$translationPrefix.self::applicationProcessNode.'.title');
         if (in_array($this->committeeType,self::reviewShortChoose)) { // participation documents are not reviewed, but applicants can choose to create for themselves
@@ -63,8 +61,13 @@ class CoreDataType extends TypeAbstract
         }
         if (in_array($this->committeeType,self::begunCommittees)) {
             $startPrefix = $translationPrefix.'project.start.';
+            $tempPrefix = $startPrefix.self::textHint.'.';
             // project start begun
-            $this->addCheckboxTextfield($builder,self::projectStartBegun,$startPrefix.'begun',$startPrefix.self::textHint);
+            $this->addCheckboxTextfield($builder,self::projectStartBegun,$startPrefix.'begun',$tempPrefix.'current');
+            // retrospective
+            if (in_array($this->committeeType,self::retrospectiveCommittees)) {
+                $this->addFormElement($builder,self::projectStartRetrospective,'textarea',hint: $tempPrefix.self::projectStartRetrospective);
+            }
         }
         if ($isEUB) {
             // qualification
@@ -108,6 +111,9 @@ class CoreDataType extends TypeAbstract
             if (array_key_exists(self::projectStartBegun,$forms)) {
                 $forms[self::projectStartBegun]->setData($isBegun);
                 $forms[$this->appendText(self::projectStartBegun)]->setData($this->getArrayValue($tempArray,self::descriptionNode));
+                if (array_key_exists(self::projectStartRetrospective,$forms)) { // justification why data collection has already been started
+                    $forms[self::projectStartRetrospective]->setData($this->getArrayValue($tempArray,self::projectStartRetrospective));
+                }
             }
             $tempVal = $viewData[self::projectEnd];
             $forms[self::projectEnd]->setData($tempVal!=='' ? new DateTime($viewData[self::projectEnd]) : null);
@@ -199,6 +205,9 @@ class CoreDataType extends TypeAbstract
         $tempArray = [self::chosen => (!$forms[self::projectStartNext]->getData() && !$isBegun) ? $this->getDate($forms[self::projectStart]->getData()) : '0'];
         if ($isBegun) {
             $tempArray[self::descriptionNode] = $forms[$this->appendText(self::projectStartBegun)]->getData();
+            if (array_key_exists(self::projectStartRetrospective,$forms)) { // justification why data collection has already been started
+                $tempArray[self::projectStartRetrospective] = $forms[self::projectStartRetrospective]->getData();
+            }
         }
         $newData[self::projectStart] = $tempArray;
         $newData[self::projectEnd] = $this->getDate($forms[self::projectEnd]->getData());
@@ -212,9 +221,7 @@ class CoreDataType extends TypeAbstract
         }
         $isQualification = $isQualification && $qualification===0; // true if question exists and was answered with yes
         // applicant info
-        $position = $forms[self::position]->getData();
-        $isEUB = $this->committeeType===self::committeeEUB;
-        foreach (array_merge([self::applicant],$isEUB && in_array($position,[self::positionsStudent,self::positionsPhd]) && $isQualification || !$isEUB && $position===self::positionsStudent && in_array($this->committeeType,self::committeeSupervisor) ? [self::supervisor] : []) as $type) {
+        foreach (array_merge([self::applicant],$this->checkSupervisor($this->committeeType,$forms[self::position]->getData()) ? [self::supervisor] : []) as $type) {
             $tempArray = [];
             $suffix = $type===self::supervisor ? self::supervisor : '';
             foreach (self::applicantContributorsInfosTypes as $info) {
@@ -222,7 +229,7 @@ class CoreDataType extends TypeAbstract
             }
             // position
             $position = $forms[self::position.$suffix]->getData();
-            if ($type===self::applicant && $isQualification && !in_array($position,[self::positionsStudent,self::positionsPhd])) { // reset position if qualification question has changed to yes
+            if ($type===self::applicant && $isQualification && !in_array($position,self::positionsStudentPhd)) { // reset position if qualification question has changed to yes
                 $position = '';
             } elseif ($position===self::positionOther) {
                 $otherPosition = $forms[$this->appendText(self::position.$suffix)]->getData();

@@ -13,7 +13,7 @@ class LegalController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'legal', name: 'app_legal')]
+    #[Route(self::routePrefix.self::legalNode,self::legalNode)]
     public function showLegal(Request $request): Response
     {
         $measureNode = $this->getMeasureTimePointNode($this->getXMLfromSession($request->getSession()),$request->get('_route_params'));

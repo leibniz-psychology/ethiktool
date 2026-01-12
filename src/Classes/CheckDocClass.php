@@ -82,13 +82,13 @@ class CheckDocClass extends ControllerAbstract
         // set variables
         $checkDoc->appNode = $checkDoc->getXMLfromSession($session,getRecent: true);
         $checkDoc->appArray = $checkDoc->xmlToArray($checkDoc->appNode);
-        $checkDoc->reviewProcess = $checkDoc->getReviewProcess($checkDoc->appArray);
+        $checkDoc->reviewProcess = $checkDoc->getCurrentReviewProcess($checkDoc->appArray);
         $checkDoc->committeeParam = $session->get(self::committeeParams);
         $checkDoc->appDataArray = $checkDoc->appArray[self::appDataNodeName];
         $checkDoc->coreDataArray = $checkDoc->appDataArray[self::coreDataNode];
-        $checkDoc->contributorTasks = array_combine(self::tasksNodes,array_fill(0,count(self::tasksTypes),array()));
-        $checkDoc->isMandatory = array_combine(self::tasksMandatory,array_fill(0,count(self::tasksMandatory),false));
-        foreach ($checkDoc->addZeroIndex($checkDoc->appArray[self::contributorsNodeName][self::contributorNode]) as $index => $contributor) {
+        $checkDoc->contributorTasks = array_fill_keys(self::tasksNodes,[]);
+        $checkDoc->isMandatory = array_fill_keys(self::tasksMandatory,false);
+        foreach ($checkDoc->getContributorsArray($checkDoc->appArray) as $index => $contributor) {
             $tasks = $contributor[self::taskNode] ?: [];
             if ($tasks!==[]) {
                 foreach ($contributor[self::taskNode] as $key => $value) { // key: node name, value: empty or description of 'other'
@@ -351,7 +351,7 @@ class CheckDocClass extends ControllerAbstract
             // error messages if a task of a contributor is not selected in any measure time point
             if ($this->getMultiStudyGroupMeasure($appNode) && in_array($this->reviewProcess,self::reviewDocs)) {
                 $this->checkLabel = trim($this->checkLabel)."\n";
-                $contributor = $this->addZeroIndex($this->appArray[self::contributorsNodeName][self::contributorNode]);
+                $contributor = $this->getContributorsArray($this->appArray);
                 $translationPage = self::projectdetailsPrefix.self::contributorNode.'.task';
                 $anyError = false;
                 foreach ($this->contributorTasks as $key => $value) { // key: node name of task. value: array with contributors. In this array: key: contributor index. value: empty or 'other' description
@@ -465,6 +465,9 @@ class CheckDocClass extends ControllerAbstract
         }
         if ($isBegun) {
             $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPrefix.'begun'],hash: $this->addDiv(self::projectStartBegun,true));
+            if (array_key_exists(self::projectStartRetrospective,$tempArray)) {
+                $this->checkMissingContent($tempArray,[self::projectStartRetrospective => $translationPrefix.self::projectStartRetrospective],hash: $this->addDiv(self::projectStartRetrospective));
+            }
         }
         $end = $this->coreDataArray[self::projectEnd];
         if ($end!=='') {
@@ -543,12 +546,9 @@ class CheckDocClass extends ControllerAbstract
             $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.'description.'.($chosen===0 ? 'yes' : 'no')],hash: $this->addDiv(self::conflictNode,true,false));
         }
         // support
-        $tempArray = $this->coreDataArray[self::supportNode];
-        if ($this->checkMissingChildren($this->coreDataArray,self::supportNode,$translationPrefix.self::supportNode) && !array_key_exists(self::noSupport,$tempArray)) { // at least one support type except no support was chosen
-            foreach (array_keys($tempArray) as $support) {
-                $this->checkMissingContent($tempArray,[$support => 'coreData.support.type.'.$support],true,hash: $this->addDiv($support,true));
-            }
-        }
+        $tempPrefix = $translationPrefix.self::supportNode.'.';
+        $supportWoNo = array_diff(array_keys(self::supportTypes),[self::noSupport]);
+        $this->checkMissingChildrenOther($this->coreDataArray,self::supportNode,$tempPrefix.'title',array_combine($supportWoNo,$this->prefixArray($supportWoNo,$tempPrefix.'types.')),addDescription: false);
         // guidelines
         if (array_key_exists(self::guidelinesNode,$this->coreDataArray) && $this->coreDataArray[self::guidelinesNode]!=='') {
             $this->checkMissingContent($this->coreDataArray[self::guidelinesNode],[self::descriptionNode => $translationPrefix.self::guidelinesNode],true,hash: $this->addDiv(self::guidelinesNode,true));
@@ -624,13 +624,15 @@ class CheckDocClass extends ControllerAbstract
         }
         $tasksPrefix = self::contributorsPrefix.'tasks.';
         // check individual contributors
-        $isStudentPhd = in_array($this->coreDataArray[self::applicant][self::position],[self::positionsStudent,self::positionsPhd]) && ($this->coreDataArray[self::qualification] ?? '')==='0';
+        $position = $this->coreDataArray[self::applicant][self::position];
+        $isSupervisor = $this->checkSupervisor($this->committeeParam[self::committeeType],$position);
+        $translationParameters = ['isSupervisor' => $this->getStringFromBool($isSupervisor), 'isQualification' => $this->getStringFromBool($this->getQualification($this->coreDataArray)), self::position => $position];
         foreach ($windowArray as $index => $contributor) {
             $infos = $contributor[self::infosNode];
             $tasks = $contributor[self::taskNode];
-            $parameter = ['index' => $index+1, 'name' => $infos[self::nameNode], 'isSupervisor' => $this->getStringFromBool($isStudentPhd)];
+            $parameter = array_merge($translationParameters,['index' => $index+1, 'name' => $infos[self::nameNode]]);
             // infos
-            if (!($index===0 || $index===1 && $isStudentPhd)) {
+            if (!($index===0 || $index===1 && $isSupervisor)) {
                 $lineTitle = $this->translateString(self::contributorsPrefix.'lineTitle',$parameter);
                 $this->checkMissingContent($infos,$this->translateArray('multiple.infos.',self::infosMandatory,true),lineTitle: $lineTitle, addHash: false);
                 $tempPrefix = self::contributorsPrefix.self::infosNode.'.';
@@ -649,7 +651,7 @@ class CheckDocClass extends ControllerAbstract
             }
             // tasks
             $numTasks = $tasks==='' ? 0 : count($tasks);
-            if ($numTasks===0 || $numTasks===1 && ($index===0 || $index===1 && $isStudentPhd)) { // contributor does not have any task
+            if ($numTasks===0 || $numTasks===1 && ($index===0 || $index===1 && $isSupervisor)) { // contributor does not have any task
                 $this->addCheckLabelString($tasksPrefix.'missing',parameters: $parameter);
             } else {
                 foreach ($tasks as $key => $value) { // key: node name, value: empty or description of 'other'
@@ -800,8 +802,8 @@ class CheckDocClass extends ControllerAbstract
             $tempPrefix = $translationPage.$type.'.';
             $typePrefix = $tempPrefix.$type;
             $missingDescription = $typePrefix.self::descriptionCap;
-            $this->paramsAddressee['type'] = self::consentNode;
-            $this->paramsParticipants['type'] = self::consentNode;
+            $this->paramsAddressee['type'] = $type;
+            $this->paramsParticipants['type'] = $type;
             $chosen = $this->checkMissingChosen($tempArray,$tempPrefix.'title',null,$type,true);
             $chosenParticipant = $this->isTwoAddressees ? $this->checkMissingChosen($tempArray,$typePrefix.'Participants',null,$type.'TypeParticipants',true,self::chosen.'2') : '';
             if (array_key_exists(self::descriptionNode,$tempArray)) { // description if answer is no
@@ -1158,7 +1160,12 @@ class CheckDocClass extends ControllerAbstract
         $informationIII = $this->measure[self::informationIIINode];
         if ($informationIII!=='') { // input needs to be made on informationIII page
             $this->addProjectdetailsTitle(self::informationIIINode,$setTitle);
-            $this->checkMissingContent($informationIII,self::informationIIIInputsTypes);
+            $tempPrefix = self::projectdetailsPrefix.self::informationIIINode.'.';
+            foreach (self::informationIIIInputsTypes as $type) {
+                if ($informationIII[$type]==='') {
+                    $this->addCheckLabelString($tempPrefix.$type,$type.self::informationIIINode,colorRed: false);
+                }
+            }
             $this->setProjectdetailsTitle($setTitle);
         }
     }
@@ -1939,25 +1946,18 @@ class CheckDocClass extends ControllerAbstract
         $fundingArray = $this->coreDataArray[self::funding];
         $isFunding = false;
         if ($fundingArray!=='') {
-            $allFundingStates = true; // stays true if all funding state questions are answered
-            $anyRequested = false; // gets true if any funding state is requested
-            if (!array_key_exists(self::fundingQuali,$fundingArray)) {
+            $isFunding = array_key_exists(self::fundingQuali,$fundingArray);
+            if (!$isFunding) { // at least one funding except 'no funding' is selected
                 foreach ($fundingArray as $funding) {
-                    if (array_key_exists(self::fundingStateNode,$funding)) {
-                        $fundingState = $funding[self::fundingStateNode];
-                        $allFundingStates = $allFundingStates && $fundingState!=='';
-                        $anyRequested = $anyRequested || $fundingState===self::fundingRequested;
-                    }
+                    $isFunding = $isFunding || ($funding[self::fundingStateNode] ?? 'true')!=='';
                 }
             }
-            $isFunding = $allFundingStates || $anyRequested;
         }
         $hasBegun = in_array($this->committeeParam[self::committeeType],self::begunCommittees);
         return $this->coreDataArray[self::applicationProcessNode][self::chosen]==='' || // no application process chosen
-            (!in_array($this->reviewProcess,[self::reviewShortNoDocs,self::reviewShortService]) && // if shortNoDocs or shortService, project start and funding do not matter
-                ($hasBegun && $projectStartArray[self::chosen]==='' || // if review after start of data collection is possible, check project start
-                !array_key_exists(self::descriptionNode,$projectStartArray) && !$isFunding)) // funding (state) is missing -> check only if project start is not 'begun'
-            ? $this->translateString('checkDoc.reviewMissing',['hasBegun' => $this->getStringFromBool($hasBegun)])."\n\n" : '';
+                $hasBegun && $projectStartArray[self::chosen]==='' || // if review after start of data collection is possible, check project start
+                !array_key_exists(self::descriptionNode,$projectStartArray) && !$isFunding // funding (state) is missing -> check only if project start is not 'begun'
+                ? $this->translateString('checkDoc.reviewMissing',['hasBegun' => $this->getStringFromBool($hasBegun)])."\n\n" : '';
     }
 
     // methods for checking if a valid input was made

@@ -19,7 +19,7 @@ class AppDataController extends ControllerAbstract
     use ContributorsTrait;
 
     // routes
-    #[Route('/appData/coreData', name: 'app_coreData')]
+    #[Route(self::routePrefixAppData.self::coreDataNode,self::coreDataNode)]
     public function showCoreData(Request $request): Response
     {
         $session = $request->getSession();
@@ -34,7 +34,7 @@ class AppDataController extends ControllerAbstract
         $coreDataArray = $this->xmlToArray($coreDataNode);
         $positions = $this->setPositions($session);
         $conflictReviewProcesses = self::reviewQuestions[self::textsNode][self::conflictTextNode]; // review processes for which a description needs to be given
-        $reviewProcessOld = !$session->has('updateProcess') ? $this->getReviewProcess($this->xmlToArray($appNodeOld)) : self::reviewFullDocs;
+        $reviewProcessOld = !$session->has('updateProcess') ? $this->getCurrentReviewProcess($appNodeOld) : self::reviewFullDocs;
         $coreDataArrayOld = $this->xmlToArray($appNodeOld->{self::appDataNodeName}->{self::coreDataNode});
         $isConflictOld = $coreDataArrayOld[self::conflictNode][self::chosen]==='0' && in_array($reviewProcessOld,$conflictReviewProcesses);
         $textInput = '';
@@ -113,9 +113,8 @@ class AppDataController extends ControllerAbstract
                 return $this->getDownloadResponse($session,getSecondLast: true);
             }
             $appNodeNew = $this->cloneNode($appNode);
-            $coreDataArrayLoad = $this->xmlToArray($this->getXMLfromSession($session,true)->{self::appDataNodeName}->{self::coreDataNode}); // core data on page loading
-            $positionLoad = $coreDataArrayLoad[self::applicant][self::position];
-            $isStudentPhd = $this->checkSupervisor($committeeType,$positionLoad,$coreDataArrayLoad); // position on page loading
+            $positionLoad = $this->xmlToArray($this->getXMLfromSession($session,true)->{self::appDataNodeName}->{self::coreDataNode})[self::applicant][self::position];
+            $isStudentPhd = $this->checkSupervisor($committeeType,$positionLoad); // position on page loading
             // set number or reference for extended or resubmission type
             $appType = $data[self::applicationType];
             $type = $appType[self::chosen];
@@ -131,7 +130,7 @@ class AppDataController extends ControllerAbstract
             $contributorsArray = $this->getContributors($session);
             $this->updateContributor($contributorsArray,$data,self::applicant);
             $position = $data[self::applicant][self::position];
-            $isStudentPhdNew = $this->checkSupervisor($committeeType,$position,$data); // position on submission
+            $isStudentPhdNew = $this->checkSupervisor($committeeType,$position); // position on submission
             if ($isStudentPhdNew) {
                 if ($isStudentPhd) {
                     $supervisorTasks = $contributorsArray[1][self::taskNode];
@@ -153,7 +152,7 @@ class AppDataController extends ControllerAbstract
             if (!$isStudentPhd && $isStudentPhdNew) { // supervisor was added or removed
                 $this->updateProjectdetailsContributor($request,$appNodeNew,'',[],false,true);
             }
-            $reviewProcessNew = $this->getReviewProcess($this->xmlToArray($appNodeNew));
+            $reviewProcessNew = $this->getCurrentReviewProcess($appNodeNew);
             $session->set(self::reviewProcess,$reviewProcessNew);
             $isConflict = $data[self::conflictNode][self::chosen]===0;
             $isConflictNew = !$isConflictOld && $isConflict && in_array($reviewProcessNew,$conflictReviewProcesses); // conflict was not chosen, but is chosen now
@@ -196,7 +195,7 @@ class AppDataController extends ControllerAbstract
              'modals' => $modals],'appData.coreData'));
     }
 
-    #[Route('/appData/votes', name: 'app_votes')]
+    #[Route(self::routePrefixAppData.self::voteNode,self::voteNode)]
     public function showVotes(Request $request): Response
     {
         $appNode = $this->getXMLfromSession($request->getSession());
@@ -225,7 +224,7 @@ class AppDataController extends ControllerAbstract
             );
     }
 
-    #[Route('/appData/medicine', name: 'app_medicine')]
+    #[Route(self::routePrefixAppData.self::medicine,self::medicine)]
     public function showMedicine(Request $request): Response
     {
         $tempPrefix = self::medicine.'.'.self::physicianNode.'.'.self::descriptionNode.'.textHints.';
@@ -233,37 +232,11 @@ class AppDataController extends ControllerAbstract
             ['hintArray' => ['' => $this->translateString('multiple.choiceTextHint'),$this->translateString($tempPrefix.'exception'),$this->translateString($tempPrefix.'other')]]);
     }
 
-    #[Route('/appData/summary', name: 'app_summary')]
+    #[Route(self::routePrefixAppData.self::summary, name: self::summary)]
     public function showSummary(Request $request): Response
     {
         return $this->createFormAndHandleSubmit(SummaryType::class,$request,[self::appDataNodeName,self::summary],
             ['maxChars' => 3000,
              self::pageTitle => 'appData.summaryPage']);
-    }
-
-    // functions for core data
-
-    /** Updates the applicant and the supervisor.
-     * @param array $contributors array containing all contributors
-     * @param array $data array containing the submitted data
-     * @param string $type must equal 'applicant' or 'supervisor'
-     */
-    private function updateContributor(array &$contributors, array $data, string $type): void
-    {
-        $dataType = $data[$type];
-        $tempArray = [];
-        foreach (self::applicantContributorsInfosTypes as $info) {
-            $tempArray[$info] = $dataType[$info] ?? '';
-        }
-        if ($type===self::applicant) {
-            $contributors[0][self::infosNode] = $tempArray;
-        } else { // supervisor
-            $tasks = $contributors[1][self::taskNode] ?? '';
-            if ($tasks!=='' && array_key_exists(self::supervisorNode,$tasks)) { // supervisor already exists
-                $contributors[1][self::infosNode] = $tempArray;
-            } else { // supervisor does not exist -> add as second contributor
-                $this->addSupervisor($contributors,$tempArray);
-            }
-        }
     }
 }

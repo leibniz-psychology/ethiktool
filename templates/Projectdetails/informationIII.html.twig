@@ -6,7 +6,7 @@
         {{ formRender.addHeading(('projectdetails.pages.informationIII.title'),{'params': {'addressee': addresseeString}}) }}
         {% for id in widgetIDs %}
             {% set widget = content[id] %}
-            <div class="mt-4" id="{{ id }}">
+            <div class="mt-4" id="{{ id~'informationIII' }}">
                 <div class="MetaData-Label" style="margin-bottom: -1rem">{{ form_label(widget,null,{'id': widget.vars.name}) }}</div>
                 {{ formRender.addTextfield(widget,addStyle('height: '~textHeight,true)|merge({'transfer': [['info','deceit'],addresseeType]})) }}
             </div>

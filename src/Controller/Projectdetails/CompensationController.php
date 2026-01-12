@@ -13,7 +13,7 @@ class CompensationController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'compensation', name: 'app_compensation')]
+    #[Route(self::routePrefix.self::compensationNode,self::compensationNode)]
     public function showCompensation(Request $request): Response
     {
         $routeParams = $request->get('_route_params');

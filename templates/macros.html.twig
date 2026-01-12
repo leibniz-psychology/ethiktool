@@ -41,7 +41,7 @@
         <div class="mt-8" {% if divID is not same as '' %} id="{{ divID }}" {% endif %} {% if divStyle is not same as '' %} style="{{ divStyle }}" {% endif %}>
     {% endif %}
     {% if arguments.noHeading is not defined %}
-        <div class="MetaData-Title">{{ form_label(form,null,{'label_attr': {'for': 'submitDummy'}, 'label_html': true}) }}</div>
+        <div class="MetaData-Title">{{ form_label(form,null,addLabelAttributes({'for': 'submitDummy'})|merge({'label_html': true})) }}</div>
     {% endif %}
     {% set isHint = hintKey is not same as '' %}
     {% if isHint %}
@@ -107,7 +107,7 @@
         {% set curWidget = form[widget] %}
         {% set id = curWidget.vars.name %}
         {% set isOther, isIcon = id in other, id in iconIDs %}
-        <div class="grid" style="grid-template-columns: repeat({{ isIcon ? 2 : 1 }},minmax(min-content,max-content)) max-content {% if loop.index>1 %}; {{ topMarginButtons }} {% endif %}" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[[id],[id~'Text']]]}) }} {% endif %}>
+        <div class="grid" style="grid-template-columns: repeat({{ isIcon ? 2 : 1 }},minmax(min-content,max-content)) max-content {% if loop.index>1 %}; {{ topMarginButtons }} {% endif %}" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[[id],[id~'Text']]], 'isGrid': true}) }} {% endif %}>
             {{ _self.addCheckbox(curWidget, {
                 'labelParams': labelParams,
                 'disable': id in targets,

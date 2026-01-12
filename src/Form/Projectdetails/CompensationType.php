@@ -31,11 +31,9 @@ class CompensationType extends TypeAbstract
                 }
                 // awarding
                 if ($type!==self::compensationOther) {
-                    $this->addRadioGroup($builder, $type.self::awardingNode, self::awardingTypes[$type]);
-                    $this->addFormElement($builder, $type.'otherDescription', 'text', options: $this->getPlaceholder($awardingPrefix.$type.'.'.$type.'OtherPlaceholder')); // other type
+                    $this->addRadioGroup($builder, $type.self::awardingNode, self::awardingTypes[$type],textName: $type.'otherDescription',options: $this->getPlaceholder($awardingPrefix.$type.'.'.$type.'OtherPlaceholder'));
                     $this->addFormElement($builder, $type.self::awardingLater.self::descriptionCap, 'text'); // later description
-                    $this->addRadioGroup($builder, $type.self::laterTypesName, self::laterTypes); // later types
-                    $this->addFormElement($builder, $type.self::laterOtherDescription, 'text', options: $this->getPlaceholder($awardingPrefix.'laterEnd.placeholder')); // description of later type other
+                    $this->addRadioGroup($builder, $type.self::laterTypesName, self::laterTypes,textName: $type.self::laterOtherDescription, options: $this->getPlaceholder($awardingPrefix.'laterEnd.placeholder')); // later types
                 }
                 if (in_array($type, [self::compensationMoney, self::compensationLottery])) { // external description
                     $this->addFormElement($builder, $type.'externalDescription', 'text');
@@ -46,11 +44,9 @@ class CompensationType extends TypeAbstract
             // further awarding widgets
             $tempPrefix = $awardingPrefix.self::compensationLottery.'.result.';
             $this->addFormElement($builder, self::lotteryStart.self::descriptionCap, 'text', hint: $tempPrefix.self::textHint); // description of lottery start in awarding
-            $this->addRadioGroup($builder, self::lotteryStart, self::lotteryTypes); // start of lottery
-            $this->addFormElement($builder, self::lotteryStartOtherDescription, 'text', options: $this->getPlaceholder($tempPrefix.'types.placeholder')); // description of lottery start other option
+            $this->addRadioGroup($builder, self::lotteryStart, self::lotteryTypes,textName: self::lotteryStartOtherDescription, options: $this->getPlaceholder($tempPrefix.'types.placeholder')); // start of lottery
             $this->addRadioGroup($builder, 'lotterydeliver'.self::descriptionCap, self::lotteryDeliverTypes); // deliver types for lottery
-            $this->addRadioGroup($builder, 'voucherdeliver'.self::descriptionCap, self::voucherDeliverTypes); // deliver types for voucher
-            $this->addFormElement($builder, self::awardingOtherDescription, 'text', hint: $awardingPrefix.self::compensationOther.'.'.self::textHint);
+            $this->addRadioGroup($builder, 'voucherdeliver'.self::descriptionCap, self::voucherDeliverTypes, textName: self::awardingOtherDescription, textHint: $awardingPrefix.self::compensationOther.'.'.self::textHint); // deliver types for voucher and description of other type
             foreach ([self::compensationMoney, self::compensationHours] as $type) {
                 $this->addFormElement($builder, $type.self::valueSuffix, $type===self::compensationMoney ? 'money' : 'text', $typesPrefix.$type.'EndDefault');
                 $this->addRadioGroup($builder, $type.self::amountSuffix, self::valueTypes);
@@ -199,15 +195,6 @@ class CompensationType extends TypeAbstract
             }
         }
         $viewData = $newData;
-    }
-
-    /** Creates an array with key 'attr' whose value is an array with key 'placeholder' and text as value.
-     * @param string $text value for inner array
-     * @return array placeholder array
-     */
-    private function getPlaceholder(string $text): array
-    {
-        return ['attr' => ['placeholder' => $text]];
     }
 
     /** Checks if the given value is smaller than self::valueMin or greater than self::valueMax. If so, it is set to self::$valueMin or self::valueMax, respectively. If \$value is an empty string or not a number, an empty string is returned.

@@ -13,7 +13,7 @@ class DataReuseController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'dataReuse', name: 'app_dataReuse')]
+    #[Route(self::routePrefix.self::dataReuseNode,self::dataReuseNode)]
     public function showDataReuse(Request $request): Response
     {
         $routeParams = $request->get('_route_params');

@@ -13,7 +13,7 @@ class BurdensRisksController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'burdensRisks', name: 'app_burdensRisks')]
+    #[Route(self::routePrefix.self::burdensRisksNode,self::burdensRisksNode)]
     public function showBurdensRisks(Request $request): Response
     {
         $session = $request->getSession();

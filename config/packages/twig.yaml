@@ -8,8 +8,6 @@ twig:
         labelDummy: {'label_attr': {'for': 'submitDummy'}} # label attribute for heading labels to avoid browser warning of missing association with a form field
         headingHint: 'headingHint' # translation key for hints that are placed below headings
         noHeading: {'noHeading': true} # for calls of renderButtons() where no heading should be added
-        noPageBreakFirstLine: 'page-break-inside: avoid; height: 45px; margin-bottom: -25px' # avoid page break in pdf after first line of text in preview
-        noPageBreakFirstLineSave: 'page-break-inside: avoid; height: 45px; margin-bottom: -20px' # avoid page break in pdf after first line of text in downloaded pdf
         checkInput: {'class': 'CheckBox-Input'} #  be passed to the 'attr' key of form_widget() calls of checkboxes
         checkLabel: {'class': 'CheckBox-Label minAutoGrid'} # to be passed to the 'label_attr' key of form_label() calls of checkboxes
         textInput:  {'class': 'MetaData-TextInput'} # to be passed to the 'attr' key of form_widget() calls of text fields

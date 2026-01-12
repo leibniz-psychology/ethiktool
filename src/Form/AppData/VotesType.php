@@ -16,14 +16,11 @@ class VotesType extends TypeAbstract
         $translationPrefix = 'votes.';
         // other vote
         $tempPrefix = $translationPrefix.'otherVote.';
-        $this->addBinaryRadio($builder,self::otherVote,$tempPrefix.'title');
-        $this->addFormElement($builder,self::otherVoteText,'text',$tempPrefix.'committee');
-        $this->addRadioGroup($builder,self::otherVoteResult,self::otherVoteResultTypes,$tempPrefix.'result.title');
-        $this->addFormElement($builder,self::otherVoteResultDescription,'textarea');
+        $this->addBinaryRadio($builder,self::otherVote,$tempPrefix.'title',textName: self::otherVoteText);
+        $this->addRadioGroup($builder,self::otherVoteResult,self::otherVoteResultTypes,$tempPrefix.'result.title',self::otherVoteResultDescription);
         // own institution vote
         $tempPrefix = $translationPrefix.'instVote.';
-        $this->addBinaryRadio($builder, self::instVote, $tempPrefix.'title',self::instVoteText,$tempPrefix.self::textHint,[self::labelParams => $options[self::committeeParams]]);
-        $this->addFormElement($builder, self::instReference,'text',hint: $tempPrefix.'reference');
+        $this->addBinaryRadio($builder, self::instVote, $tempPrefix.'title',self::instVoteText,$tempPrefix.self::textHint,self::instReference,$tempPrefix.self::instReference,[self::labelParams => $options[self::committeeParams]]);
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);
     }

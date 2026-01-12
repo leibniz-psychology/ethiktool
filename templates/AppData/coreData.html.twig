@@ -18,7 +18,7 @@
         {# project title #}
         {% set projectTitle = content.projectTitle %}
         <div id="projectTitle">
-            {{ form_label(projectTitle,null,addLabelClass('MetaData-Title')) }}
+            {{ form_label(projectTitle,null,addLabelAttributes(addClass('MetaData-Title'))) }}
             <div class="MetaData-Widget">{{ form_widget(projectTitle,{'attr': projectLength|merge(textInput)}) }}</div>
         </div>
         {# project title for participation documents #}
@@ -32,7 +32,8 @@
         <div class="mt-8" id="appType">
             {{ formRender.renderButtons(appType,{'hint': [tempPrefix,committeeParams], 'stimVisible': {'values': [[exRe,exReDiv]]}}) }}
             <div class="mt-2" id="{{ exReDiv }}" style="{{ boolToDisplay(appType.vars.value in exRe) }}">
-                {{ form_label(description,null,addLabelClass('MetaData-Label')) }}
+                {{ form_label(description,null,addLabelAttributes(addClass('MetaData-Label'))) }}
+                <div class="MetaData-Label">{{ (tempPrefix~'reference')|trans }}</div>
                 <div class="MetaData-Widget" style="width: 20rem">{{ form_widget(description,textInputAttr) }}</div>
                 {{ formRender.addHint(tempPrefix~'hint') }}
             </div>
@@ -58,7 +59,7 @@
         {% set begunInputParams = hasBegunInput ? {'target': [coreDataController,'requestedInput'], 'remove': true, 'visible': not begun.vars.checked and anyRequested} : {} %}
         <div class="mt-8" id="projectDates">
             {{ formRender.addHeading(tempPrefix~'title') }}
-            {{ form_label(projectStart,(startPrefix~'title')|trans({'{committeeType}': committeeType})~':',addLabelClass('MetaData-Label')) }}
+            {{ form_label(projectStart,(startPrefix~'title')|trans({'{committeeType}': committeeType})~':',addLabelAttributes(addClass('MetaData-Label'))) }}
             <div class="MetaData-Widget" style="height: min-content; width: fit-content" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
                 {{ form_widget(projectStart,{'attr': {'lang': 'en'}|merge(addTarget(coreDataController,'projectStart'))}) }}
             </div>
@@ -69,10 +70,13 @@
             {% if content.projectStartBegun is defined %}
                 {# data collection has already been started #}
                 <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
-                    {{ formRender.addCheckbox(begun,{'target': [coreDataController,'projectStartBegun']}) }}
+                    {{ formRender.addCheckbox(begun,{'target': [coreDataController,'projectStartBegun'], 'labelParams': committeeParams}) }}
                     <div {{ stimulus_target(coreDataController,'projectStartBegunText') }}>
                         {{ formRender.addHint(startPrefix~'hint',{'params': committeeParams}) }}
                         {{ formRender.addTextfield(content.projectStartBegunText,fontNormal) }}
+                        {% if content.retrospective is defined %}
+                            {{ formRender.addTextfield(content.retrospective,fontNormal) }}
+                        {% endif %}
                     </div>
                 </div>
                 {% if hasBegunInput %}
@@ -81,7 +85,7 @@
             {% endif %}
             {# project end #}
             {% set projectEnd, tempPrefix = content.projectEnd, tempPrefix~'end.' %}
-            <div id="projectEnd">{{ form_label(projectEnd,(tempPrefix~'title')|trans~':',addLabelClass('MetaData-Label mt-4')) }}</div>
+            <div id="projectEnd">{{ form_label(projectEnd,(tempPrefix~'title')|trans~':',addLabelAttributes(addClass('MetaData-Label mt-4'))) }}</div>
             <div class="MetaData-Widget" style="width: fit-content">
                 {{ form_widget(projectEnd) }}
             </div>
@@ -147,7 +151,7 @@
                                 {% if info is same as 'phone' and not isSupervisor and hasSupervisor %}
                                     <div id="phoneLabelOptional" class="align-self-center" style="text-align: end">{{ (infoPrefix~'phoneOptional')|trans~':' }}</div>
                                 {% endif %}
-                                {{ form_label(widget,(tempPrefix~(isInstitution ? 'Applicant'))|trans~':',{'id': name, 'label_attr': addClass('align-self-center')|merge({'id': name~'Label'})}) }}
+                                {{ form_label(widget,(tempPrefix~(isInstitution ? 'Applicant'))|trans~':',addLabelAttributes(addClass('align-self-center')|merge({'id': name~'Label'}))|merge({'id': name})) }}
                                 {% if isInstitution or isProfessorship %}
                                     <div {% if isProfessorship %} id="{{ positionSuffix~'Hint' }}" style="{{ boolToDisplay(content[positionSuffix].vars.value in ['student','phd']) }}" {% endif %}>
                                         {{ formRender.addIcon((tempPrefix~'Hint')|trans) }}

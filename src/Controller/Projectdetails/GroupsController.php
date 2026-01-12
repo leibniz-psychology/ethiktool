@@ -13,7 +13,7 @@ class GroupsController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'groups', name: 'app_groups')]
+    #[Route(self::routePrefix.self::groupsNode,self::groupsNode)]
     public function showGroups(Request $request): Response
     {
         $session = $request->getSession();

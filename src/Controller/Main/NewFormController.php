@@ -27,7 +27,7 @@ class NewFormController extends ControllerAbstract
     use ProjectdetailsTrait; // project details
     use CompleteFormTrait; // complete form
 
-    #[Route('/newForm', name: 'app_newForm')]
+    #[Route(self::newForm,self::newForm)]
     public function showNewForm(Request $request): Response
     {
         $session = $request->getSession();
@@ -47,7 +47,7 @@ class NewFormController extends ControllerAbstract
              self::requirements => $session->get(self::requirementsTemp) ?? false,
              self::technicalHint => $session->get(self::technicalHintTemp) ?? false,
              self::language => $session->get(self::language)],$request);
-        if ($general->isSubmitted()){
+        if ($general->isSubmitted()) {
             $response = $request->request->all();
             $data = $response['new_form'];
             $submitDummy = $data[self::submitDummy];

@@ -156,6 +156,7 @@ committee:
       JGU   {die Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
       DLR   {die Geschäftsstelle Forschungsethik des DLR}
       TUD   {der Ethikbeirat der Technischen Universität Dresden}
+      UH1   {die Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
       other {die Test-Ethikkommission}}
   committeeGen: >-
     {committee, select,
@@ -164,6 +165,7 @@ committee:
     JGU   {der Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
     DLR   {der Geschäftsstelle Forschungsethik des DLR}
     TUD   {des Ethikbeirats der Technischen Universität Dresden}
+    UH1   {der Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
     other {der Test-Ethikkommission}}
   committeeDat: >-
     {committee, select,
@@ -172,6 +174,7 @@ committee:
       JGU   {der Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
       DLR   {der Geschäftsstelle Forschungsethik des DLR}
       TUD   {dem Ethikbeirat der Technischen Universität Dresden}
+      UH1   {der Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
       other {der Test-Ethikkommission}}
   committeeAcc: >-
     {committee, select,
@@ -180,6 +183,7 @@ committee:
       JGU   {die Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
       DLR   {die Geschäftsstelle Forschungsethik des DLR}
       TUD   {den Ethikbeirat der Technischen Universität Dresden}
+      UH1   {die Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
       other {die Test-Ethikkommission}}
   committeeLocation: >-
     {committee, select,
@@ -188,6 +192,7 @@ committee:
       JGU   {die Johannes Gutenberg-Universität Mainz}
       DLR   {das Deutsche Zentrum für Luft- und Raumfahrt}
       TUD   {die Technische Universität Dresden}
+      UH1   {die Universität Hildesheim}
       other {die Institution der Test-Ethikkommission}}
   committeeLocationGen: >-
     {committee, select,
@@ -196,6 +201,7 @@ committee:
       JGU   {der Johannes Gutenberg-Universität Mainz}
       DLR   {des Deutschen Zentrums für Luft- und Raumfahrt}
       TUD   {der Technischen Universität Dresden}
+      UH1   {der Universität Hildesheim}
       other {der Institution der Test-Ethikkommission}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
@@ -207,6 +213,7 @@ newForm: # placed immediately after 'committee' to have the committee names all 
       JGU: 'Ethikkommission des Psychologischen Instituts der JGU Mainz'
       DLR: 'Geschäftsstelle Forschungsethik des DLR'
       TUD: 'Ethikbeirat der Technischen Universität Dresden'
+      UH1: 'Ethikkommission des Fachbereichs 1 der Universität Hildesheim'
       testCommittee: 'Test-Ethikkommission'
   password:
     title: 'Passwort:'
@@ -305,7 +312,7 @@ main:
     Weitere Informationen finden Sie in den Abschnitten „Über uns“ und „Über das Ethiktool“. Bitte beachten Sie die technischen Hinweise und die Nutzungsbedingungen des Ethiktools.
     Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
 
-    <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz oder an der Universität Bielefeld ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet; die Ethikkommissionen des Psychologischen Instituts der JGU Mainz und des Deutschen Zentrums für Luft- und Raumfahrt befinden sich bereits im Beta-Stadium.
+    <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz oder an der Universität Bielefeld ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet und befindet sich für vier Ethikkommissionen bereits im Beta-Stadium.
     
     Über „Neuer Antrag“ können Sie die Antragserstellung für die entsprechende Kommission beginnen.
     Über „Antrag laden“ können Sie eine vorhandene XML-Datei eines zuvor im Ethiktool erstellten Antrags laden und weiter bearbeiten. </i>
@@ -333,7 +340,7 @@ main:
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden.
              
              Forschungsprojekte mit Ärztinnen bzw. Ärzten als Projektbeteiligte müssen normalerweise durch eine medizinische Ethikkommission geprüft werden. In Einzelfällen ist eine Begutachtung durch die nicht-medizinische Ethik-Kommission der Universität Bielefeld möglich. Weitere Informationen finden Sie <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">hier</a>.}
-      JGU   {Antragsberechtigt sind Mitglieder des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz. Antragsberechtigt sind außerdem Forscherinnen und Forscher, die einen Antrag auf eigene Stelle (z.B. bei der DFG) vorbereiten, um im Rahmen ihres Projektes in einer Abteilung des Psychologischen Instituts der JGU Mainz zu arbeiten; in diesem Fall ist den Antragsunterlagen eine kurze Erklärung der Abteilungsleiterin bzw. des Abteilungsleiters der aufnehmenden Abteilung beizulegen.
+      JGU   {Antragsberechtigt sind Mitglieder des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz. Antragsberechtigt sind außerdem Forscherinnen und Forscher, die einen Antrag auf eigene Stelle (z.B. bei der DFG) vorbereiten, um im Rahmen ihres Projekts in einer Abteilung des Psychologischen Instituts der JGU Mainz zu arbeiten; in diesem Fall ist den Antragsunterlagen eine kurze Erklärung der Abteilungsleiterin bzw. des Abteilungsleiters der aufnehmenden Abteilung beizulegen.
              
              Der Ethikantrag muss <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden; ein rückwirkendes Ethikvotum ist ausgeschlossen.
  
@@ -348,6 +355,13 @@ main:
              Weiterhin wird hier die Abgrenzung zwischen Anträgen an den Ethikbeirat und Anträgen an die Ethikkommission der TU Dresden (für medizinische Forschungsvorhaben) erläutert.
              
              Ein Antrag an den Ethikbeirat soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann eine nachträgliche Begutachtung erfolgen. Das Vorgehen in solchen Fällen wird demnächst hier erläutert.}
+      UH1   {Antragsberechtigt sind Personen, die am Fachbereich 1 der Universität Hildesheim eigenständig wissenschaftlich tätig sind; das schließt Promovierende ausdrücklich ein. Studierende können ebenfalls einen Ethikantrag für ihre Abschlussarbeit oder andere studentische Forschungsprojekte einreichen, die Lehrpersonen bzw. Betreuenden müssen den Antrag vor der Einreichung gelesen und genehmigt haben.
+    
+             Ein Antrag soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann die Ethikkommission eine nachträgliche Prüfung vornehmen.
+             
+             Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden. 
+             
+             Forschungsprojekte mit Ärztinnen bzw. Ärzten als Projektbeteiligte, bei denen klar abgrenzbare medizinische Fragestellungen beantwortet werden sollen, müssen normalerweise durch eine medizinische Ethikkommission geprüft werden. In Einzelfällen ist eine Begutachtung durch die nicht-medizinische Ethikkommission des Fachbereichs 1 der Universität Hildesheim möglich.}
       other {Sie erstellen einen Test-Ethikantrag, für den <b>keine Einreichung bei einer Ethikkommission</b> vorgesehen ist. Daher sind auch keine Voraussetzungen für die Antragstellung zu erfüllen.}}
   newFormModal:
     title: 'Wechsel zu Neuer Antrag'
@@ -360,7 +374,7 @@ landing:
   appData:
     overview:
       title: 'Antragsdaten' # part of tab name
-      start: 'Bitte machen Sie zunächst grundlegende Angaben zu Ihrem Forschungsprojekt. Zur Navigation nutzen Sie bitte die Buttons „nächste Seite“ bzw. „vorherige Seite“. Alternativ können Sie auch über die Seitenleiste links navigieren.'
+      start: 'Bitte machen Sie zunächst grundlegende Angaben zu Ihrem Forschungsprojekt. Zur Navigation nutzen Sie bitte die Buttons „Nächste Seite“ bzw. „Vorherige Seite“. Alternativ können Sie auch über die Seitenleiste links navigieren.'
   projectdetails:
     overview:
       title: 'Projektdetails' # part of tab name
@@ -471,15 +485,24 @@ coreData:
           EUB   {(geplanter)}
           DLR   {(geplanter)}
           TUD   {(geplanter)}
+          UH1   {(geplanter)}
           other {geplanter}} Beginn der Datenerhebung
       hint: >-
         {committeeType, select,
           EUB   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender Datenerhebung ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
           DLR   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
           TUD   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
+          UH1   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.}
           other {}}
-      textHint: 'Bitte beschreiben Sie hier, welche Teile der Datenerhebung bereits abgeschlossen sind (z.B. Kontaktierung der Teilnehmenden, Anzahl erhobener Datensätze) und welche Teile noch ausstehen. Die weiteren Angaben im Ethiktool sind prospektiv auszufüllen.'
-      begun: 'Die Datenerhebung hat bereits begonnen. Eine Genehmigung zur nachträglichen Begutachtung ist notwendig.'
+      textHint:
+        current: 'Bitte beschreiben Sie hier, welche Teile der Datenerhebung bereits abgeschlossen sind (z.B. Kontaktierung der Teilnehmenden, Anzahl erhobener Datensätze) und welche Teile noch ausstehen. Die weiteren Angaben im Ethiktool sind prospektiv auszufüllen.'
+        retrospective: 'Warum wird der Ethikantrag nachträglich gestellt?'
+      begun: >-
+          Die Datenerhebung hat bereits begonnen. Eine
+          {committeeType, select,
+            UH1   {Begründung für die nachträgliche}
+            other {Genehmigung zur nachträglichen}}
+          Begutachtung ist notwendig.
     next: 'nächstmöglicher Zeitpunkt (nach Vorliegen eines positiven Ethikvotums)'
     end:
       title: 'geplantes Projektende'
@@ -561,7 +584,7 @@ votes:
 medicine:
   medicine:
     heading: 'Kann aus dem Projekt zukünftig medizinische, pharmazeutische Forschung oder anderweitige Forschung entstehen, die nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG/MPDG) oder anderen gesetzlichen Vorgaben bewertet werden muss?'
-    textHint: >- # other is TUC, DLR and test committee
+    textHint: >- # other is TUC, DLR, UH1 and test committee
       Forschungsprojekte, bei denen eine gesetzliche Vorgabe zur Prüfung durch eine medizinische Ethikkommission vorliegt, müssen - unabhängig von der Konstellation und Zugehörigkeit der Antragstellenden - bei einer medizinischen Ethikkommission eingereicht werden.
       {committeeType, select,
         EUB   {Weitere Informationen zu den Zuständigkeiten und weiteren, einzureichenden Unterlagen finden Sie <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">hier</a>.}
@@ -739,7 +762,7 @@ projectdetails:
       sampleSize:
         title: 'Stichprobengröße'
         total:
-          title: 'Wie viele Personen der ausgewählten Gruppen sollen in diesen Zeitpunkt der Studie eingeschlossen werden?'
+          title: 'Wie viele Personen der ausgewählten Gruppe sollen in diesen Zeitpunkt der Studie eingeschlossen werden?'
           textHint: 'Gemeint ist die Anzahl an Personen, an denen Daten erhoben werden (inkl. Puffer für Pilotierung, etwaigen Ausschluss aus der Analyse u.a.).'
         furtherParticulars: '(optional) Weitere Angaben zur Stichprobengröße (z.B. Verteilung der Gesamtzahl auf verschiedene Untergruppen)'
         plan:
@@ -777,9 +800,7 @@ projectdetails:
         title: 'Werden die {addressee} vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen?'
         content:
           title: 'Inwieweit werden die {addressee} vor Untersuchungsbeginn über die Ziele, Inhalte und Methoden der Studie informiert?'
-          hints:
-            headingHint: 'Gemeint sind zentrale Informationen über die Studie. Dazu gehört eine für die jeweilige(n) Zielgruppe(n) verständliche Darlegung der Forschungsziele, Verfahren zur Datenerhebung und Aufgaben der Teilnehmenden. Das Nicht-Offenlegen der Hypothese(n) zählt nicht als unvollständige Aufklärung. Wenn sowohl Informationen vorenthalten werden als auch eine explizite Täuschung vorliegt, wählen Sie bitte Täuschung aus.'
-            informationIII: 'Bitte geben Sie die Texte für die nachträgliche vollständige Aufklärung auf der Seite „<a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII" data-base-route-i-ds-param="{routeIDs}">Debriefing</a>“ ein.'
+          headingHint: 'Gemeint sind zentrale Informationen über die Studie. Dazu gehört eine für die jeweilige(n) Zielgruppe(n) verständliche Darlegung der Forschungsziele, Verfahren zur Datenerhebung und Aufgaben der Teilnehmenden. Das Nicht-Offenlegen der Hypothese(n) zählt nicht als unvollständige Aufklärung. Wenn sowohl Informationen vorenthalten werden als auch eine explizite Täuschung vorliegt, wählen Sie bitte Täuschung aus.'
           type:
             complete: 'Die {addressee} werden vollständig aufgeklärt.'
             partial: 'Mindestens eine Information wird nicht erwähnt, d.h. die {addressee} werden unvollständig aufgeklärt.'
@@ -791,7 +812,7 @@ projectdetails:
       textHints:
         pre: 'Bitte begründen Sie, warum die {addressee} nicht vorab darüber aufgeklärt werden, dass {participant} an einer Studie teilnehmen.'
         post: 'Bitte begründen Sie, warum die {addressee} nicht nachträglich darüber aufgeklärt werden, dass {participant} an einer Studie teilgenommen haben.'
-        preComplete: 'Bitte begründen Sie Ihr Vorgehen und geben Sie an, welche Informationen die {addressee} wann erhalten.'
+        preComplete: 'Bitte begründen Sie Ihr Vorgehen und geben Sie an, welche Informationen die {addressee} wann erhalten bzw. welche ihnen vorenthalten werden.'
       pdf: 'Die Studieninformation für die {participant} erfordert eine an die Zielgruppe angepasste Darstellung und kann daher nicht automatisch aus dem Ethiktool heraus erstellt werden. Bitte bereiten Sie eine selbst formulierte PDF-Datei vor, die sich direkt an die {participant} richtet und folgende Abschnitte enthält: Informationen zur Studienteilnahme, Zustimmung, ggf. Anlage zur Verarbeitung personenbezogener Daten. Zur Orientierung können Ihnen die automatisch erstellten Dokumente für die {addressee} dienen. Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, diese PDF-Datei beizufügen.'
       attendance: 'Sind die {addressee} bei der Erhebung anwesend?'
       documentTranslation:
@@ -927,7 +948,7 @@ projectdetails:
             invasive: 'invasive Eingriffe'
             other: 'sonstige Maßnahme(n)'
           description: 'bitte spezifizieren'
-          headingHint: 'Geben Sie bitte alle Maßnahmen an, mittels derer zum Zweck der Studie gezielt etwas an die Teilnehmenden herangetragen wird. Der Begriff „Maßnahmen“ ist bewusst sehr weit gefasst und reicht vom Stellen einer Frage bis zu langfristigen Interventionen. Viele Maßnahmen sind mit der Notwendigkeit verbunden, Ein- und Ausschlusskriterien (z.B. zur Gewährleistung der Sicherheit der Teilnehmenden) zu überprüfen. Solche Kriterien sind unter „<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">Ein- und Ausschlusskriterien</a>“ zu nennen. Falls Ein- und Ausschlusskriterien erfasst bzw. über den Selbstbericht im Rahmen der Einwilligung hinaus dokumentiert werden, beschreiben Sie bitte deren Messung unter Erhebungsmethoden.'
+          headingHint: 'Geben Sie bitte alle Maßnahmen an, mittels derer zum Zweck der Studie gezielt etwas an die Teilnehmenden herangetragen wird. Der Begriff „Maßnahmen“ ist bewusst sehr weit gefasst und reicht vom Stellen einer Frage bis zu langfristigen Interventionen. Viele Maßnahmen sind mit der Notwendigkeit verbunden, Ein- und Ausschlusskriterien (z.B. zur Gewährleistung der Sicherheit der Teilnehmenden) zu überprüfen. Solche Kriterien sind unter „<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param="{routeIDs}">Ein- und Ausschlusskriterien</a>“ zu nennen. Falls Ein- und Ausschlusskriterien erfasst bzw. über den Selbstbericht im Rahmen der Einwilligung hinaus dokumentiert werden, beschreiben Sie bitte deren Messung unter Erhebungsmethoden.'
           textHints:
             description: 'Bitte beschreiben Sie die ausgewählten Maßnahmen genauer.'
         pdf: >- # other is interventions
@@ -1057,7 +1078,7 @@ projectdetails:
           types:
             always: 'Die {addressee} werden immer über aufgetretene (Zufalls-)Befunde informiert. (Mitteilung obligatorisch)'
             consent: 'Die {addressee} können in der Einwilligung auswählen, ob sie über aufgetretene (Zufalls-)Befunde informiert werden möchten. (Mitteilung optional)'
-          hint: 'Da Sie ausgewählt haben, dass die Mitteilung obligatorisch ist, wird den <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">Einschlusskriterien</a> automatisch hinzugefügt, dass die Teilnahme nur mit Einverständnis zur Mitteilung etwaiger Zufallsbefunde möglich ist.'
+          hint: 'Da Sie ausgewählt haben, dass die Mitteilung obligatorisch ist, wird den <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param="{routeIDs}">Einschlusskriterien</a> automatisch hinzugefügt, dass die Teilnahme nur mit Einverständnis zur Mitteilung etwaiger Zufallsbefunde möglich ist.'
       feedback:
         title: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
         headingHint: 'Eine Rückmeldung individueller Testergebnisse sollte - insbesondere bei persönlich bedeutsamen Testinhalten - sorgsam überdacht werden. Bitte berücksichtigen Sie, dass eine Rückmeldung ggf. negative oder beunruhigende Ergebnisse umfassen kann. Eine Rückmeldung sollte nur erfolgen, wenn die Projektbeteiligten über Erfahrung in der Rahmung der individuellen Ergebnisse verfügen. Bitte beachten Sie auch, dass für die Rückmeldung individueller Testergebnisse voraussichtlich personenbezogene Daten benötigt werden, die mit den erhobenen Forschungsdaten verknüpft sind. Alternativ kann ein allgemeiner Ergebnisbericht zur Verfügung gestellt werden (auch hierfür werden voraussichtlich personenbezogene Daten benötigt, diese müssen jedoch nicht mit den individuellen Forschungsdaten verknüpft werden).'
@@ -1109,7 +1130,7 @@ projectdetails:
       awarding:
         title: 'Wie wird die Vergabe der Aufwandsentschädigung abgewickelt?'
         dateFormat: 'd.m.Y' # for laterTextHint
-        laterTextHint: 'Bitte Datum/Zeitpunkt sowie Name/Stelle benennen (z.B. „ab {date} im Sekretariat“).'
+        laterTextHint: 'Bitte benennen Sie Datum/Zeitpunkt sowie Name/Stelle (z.B. „ab {date} im Sekretariat“).'
         laterEnd: # other is participants in select
           title: 'Hierfür werden folgende Informationen benötigt: '
           code: >-
@@ -1130,16 +1151,16 @@ projectdetails:
           later: 'kann später abgeholt werden'
           transfer: 'wird später überwiesen.'
           external: 'wird über einen externen Anbieter ausgezahlt'
-          externalTextHint: 'Bitte Anbieter benennen.'
+          externalTextHint: 'bitte Anbieter benennen'
           moneyOther: 'Sonstiges'
-          moneyOtherPlaceholder: 'Bitte Abwicklung beschreiben'
+          moneyOtherPlaceholder: 'Bitte beschreiben Sie die Abwicklung'
         hours:
           title: 'Die Versuchspersonenstunden '
           immediately: 'erhalten Sie sofort vor Ort bescheinigt.'
           post: 'werden automatisch verbucht.'
           later: 'erhalten Sie später bescheinigt'
           hoursOther: 'Sonstiges'
-          hoursOtherPlaceholder: 'Bitte Abwicklung beschreiben'
+          hoursOtherPlaceholder: 'Bitte beschreiben Sie die Abwicklung'
         lottery:
           result:
             start: 'Das Ergebnis der Verlosung wird '
@@ -1160,9 +1181,9 @@ projectdetails:
             eMail: 'per E-Mail zugestellt.'
             local: 'vor Ort ausgegeben.'
           external: 'wird im Anschluss über einen externen Anbieter vergeben'
-          externalTextHint: 'Bitte Anbieter benennen.'
+          externalTextHint: 'bitte Anbieter benennen'
           lotteryOther: 'Sonstiges'
-          lotteryOtherPlaceholder: 'Bitte Abwicklung beschreiben'
+          lotteryOtherPlaceholder: 'Bitte beschreiben Sie die Abwicklung'
         voucher:
           title: 'Der Gutschein '
           immediately: 'wird sofort ausgegeben.'
@@ -1172,7 +1193,7 @@ projectdetails:
             mail: 'Post zugestellt.'
             eMail: 'E-Mail zugestellt.'
           voucherOther: 'Sonstiges'
-          voucherOtherPlaceholder: 'Bitte Abwicklung beschreiben'
+          voucherOtherPlaceholder: 'Bitte beschreiben Sie die Abwicklung'
         compensationOther:
           title: 'Sonstige Aufwandsentschädigung'
           textHint: 'Bitte beschreiben Sie die Ausgabe der sonstigen Aufwandsentschädigung in Satzform. Bitte stellen Sie dabei den Bezug zur Art der vergebenen sonstigen Aufwandsentschädigung her und erwähnen den Zeitpunkt der Vergabe und was organisatorisch für den Erhalt notwendig ist (z.B. „Im Anschluss an die Studie erhalten Sie kostenlosen Zugriff auf unsere Kursmaterialien; dazu benötigen wir Ihre E-Mail-Adresse.“).'
@@ -1263,7 +1284,7 @@ projectdetails:
         textHint: 'Tatsächlich zutreffende Information / Rückmeldung (=Richtigstellung oder Ergänzung)'
       explain:
         title: 'Wir bitten Sie um Verständnis für diese erst nachträglich umfassende Aufklärung. Dies war nötig, weil ...'
-        textHint: 'Begründen Sie die Notwendigkeit der Täuschung bzw. unvollständigen Aufklärung in verständlicher Form. Typische Begründungen sind z.B. „um das Verhalten während der Studie so alltagsnah wie möglich erfassen zu können“ oder „um die Wirkung der Methode getrennt von der Wirkungserwartung untersuchen zu können“. Weisen Sie - falls zutreffend - darauf hin, dass es sich dabei um ein übliches Vorgehen in solchen Studien handelt.'
+        textHint: 'Begründen Sie die Notwendigkeit der Täuschung bzw. unvollständigen Aufklärung in verständlicher Form. Typische Begründungen sind z.B. „um das Verhalten während der Studie so alltagsnah wie möglich erfassen zu können“ oder „weil die Wirkung der Methode getrennt von der Wirkungserwartung untersuchen werden sollte“. Weisen Sie - falls zutreffend - darauf hin, dass es sich dabei um ein übliches Vorgehen in solchen Studien handelt.'
     legal:
       hint: 'Forschende sollten im Einzelfall prüfen und abwägen, ob einer oder mehrere der folgenden Aspekte hilfreich erscheinen. Die Textentwürfe können als Basisinformation für häufig auftretende Fälle genutzt werden; eine Prüfung und Abstimmung im Einzelfall kann dadurch nicht ersetzt werden. Die Verwendung der Vorlagen erfolgt daher auf eigene Verantwortung, sie ersetzt insbesondere keine Rechtsberatung. Die Ethikkommission übernimmt keine Verantwortung für die korrekte Anwendung auf den Einzelfall und übernimmt nicht die juristische Prüfung der Formulierungen.'
       liability:
@@ -1450,7 +1471,7 @@ projectdetails:
             Aufgrund der getroffenen Auswahl kann die Datenschutzerklärung nicht über das Ethiktool erstellt werden. Bitte nehmen Sie Kontakt zu der zuständigen Datenschutzstelle auf. {addPDF, select,
                                       true  {Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, die Datenschutzerklärung („Anlage zur Datenverarbeitung“) als PDF-Datei beizufügen.}
                                       other {}}
-          textHintExternal: 'Bitte Urheber bzw. Bezeichnung des Codes angeben (z.B. prolific-ID, SONA-ID, Nutzungskürzel des Rechenzentrums, Klinik-ID).'
+          textHintExternal: 'Bitte geben Sie Urheber bzw. Bezeichnung des Codes an (z.B. prolific-ID, SONA-ID, Nutzungskürzel des Rechenzentrums, Klinik-ID).'
           textHintMarkingName: 'Die Kennzeichnung von Forschungsdaten mit dem Namen der Teilnehmenden sollte möglichst vermieden werden. Bitte begründen Sie, warum die Daten mit dem Namen gekennzeichnet werden sollen.'
         code: 'Ist der Code personenbeziehbar?'
         external: # sub-question for external
@@ -1554,7 +1575,7 @@ projectdetails:
           photo: 'Bitte beschreiben Sie in der Studieninformation, was genau aufgezeichnet wird.'
           video: 'Bitte beschreiben Sie in der Studieninformation, was genau aufgezeichnet wird.'
           health: 'Hier geht es nicht darum, ob die Person anhand der Daten identifizierbar ist, sondern ob - wenn die Person bereits bekannt ist - aus den Daten sensible Schlussfolgerungen zum individuellen Gesundheitszustand gezogen werden können.'
-          dataResearchSpecialOther: 'Bitte grobe Kategorie/Thematik der Daten benennen' # placeholder
+          dataResearchSpecialOther: 'Bitte benennen Sie die grobe Kategorie/Thematik der Daten' # placeholder
           dataSpecial:
             title: 'Darin enthalten sind folgende besondere Kategorien personenbezogener Daten:' # text before ethnic
             text: '*Gemäß Art. 9 Abs. 1 DS-GVO zählen zu der <b>besonderen Kategorie von personenbezogenen Daten</b> solche „Daten, aus denen die rassische und ethnische Herkunft, politische Meinungen, religiöse oder weltanschauliche Überzeugungen oder die Gewerkschaftszugehörigkeit hervorgehen, sowie die Verarbeitung von genetischen Daten, biometrischen Daten zur eindeutigen Identifizierung einer natürlichen Person, Gesundheitsdaten oder Daten zum Sexualleben oder der sexuellen Orientierung einer natürlichen Person“.'
@@ -1943,6 +1964,7 @@ checkDoc:
         shortDocs: 'Antwort auf Frage nach Erstellung der Teilnahmedokumente' # '[] fehlt.'
       start: 'Geplanter Beginn der Datenerhebung liegt in der Vergangenheit.'
       begun: 'Beschreibung des Stands der Datenerhebung'
+      retrospective: 'Begründung, warum der Ethikantrag nachträglich gestellt wird,'
       end: 'Geplantes Projektende liegt in der Vergangenheit.'
       endBeforeStart: 'Projektende liegt vor Projektstart.'
       funding:
@@ -1975,7 +1997,13 @@ checkDoc:
         description:
           yes: 'Beschreibung des Interessenkonflikts'
           no: 'Begründung, warum sich ein Interessenkonflikt ausschließen lässt,'
-      support: 'Beratungs- und Unterstützungsangebote'
+      support:
+        title: 'Beratungs- und Unterstützungsangebote'
+        types:
+          supportCommittee: 'Beschreibung der Beratung durch Geschäftsstelle/Mitglieds der Ethikkommission'
+          supportCenter: 'Beschreibung der Beratung durch Forschungsdatenmanagement-Servicestelle'
+          supportData: 'Beschreibung der Beratung durch Datenschutz-/Informationssicherheitsbeauftragte'
+          supportOther: 'Beschreibung anderer Beratungsangebote'
       guidelines: 'gewünschten Begutachtungsrichtlinien'
     votes:
       otherVote: 'anderem Votum'
@@ -2007,7 +2035,11 @@ checkDoc:
         Projektbeteiligte Person {index} ({name}) hat {index, select,
                                                         1     {neben „Antragstellung“ keine weitere Funktion}
                                                         2     {{isSupervisor, select,
-                                                                  true  {neben „Betreuung der Qualifikationsarbeit“ keiner weitere Funktion}
+                                                                  true  {neben „Betreuung der {isQualification, select,
+                                                                                                true  {Qualifikationsarbeit}
+                                                                                                other {{position, select,
+                                                                                                          student {studentischen Arbeit}
+                                                                                                          other   {Promotion}}}}“ keine weitere Funktion}
                                                                   other {keine Funktion}}}
                                                         other {keine Funktion}} inne.
       missingMandatory: 'Funktion „{task}“ wurde bei keiner projektbeteiligten Person ausgewählt.'
@@ -2146,7 +2178,7 @@ checkDoc:
           title: 'Datenverarbeitung bei vorzeitigem Abbruch' # 'Antwort auf Frage nach [] fehlt.'
           description: 'Beschreibung der Datenverarbeitung bei vorzeitigem Abbruch' # '[] fehlt.'
           information: >-
-              Wenn es keine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, müssen die erhobenen Daten bei vorzeitigem Abbruch entweder gelöscht werden oder die {addressee, select,
+              Wenn es keine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, müssen die erhobenen Daten bei vorzeitigem Abbruch entweder gelöscht werden oder die {addressee, select,
                   children {Erziehungsberechtigten}
                   wards    {gesetzlichen Vertretungspersonen}
                   other    {Teilnehmenden}} müssen über die Nutzung entscheiden können.
@@ -2285,10 +2317,10 @@ checkDoc:
         findingText: 'Aufklärung über (Zufalls-)Befunde fehlt.'
         conflictText: 'Aufklärung über Interessenkonflikte fehlt.'
       informationIII:
-        goals: 'Ziele der Studie'
-        infoBefore: 'Vorab-Aufklärung'
-        infoAfter: 'Nachträgliche Aufklärung'
-        explain: 'Begründung'
+        goals: 'Ziele der Studie fehlen.'
+        infoBefore: 'Vorab-Aufklärung fehlt.'
+        infoAfter: 'Nachträgliche Aufklärung fehlt.'
+        explain: 'Begründung fehlt.'
       legal:
         missing: >- # other is insurance
           {type, select,
@@ -2494,6 +2526,7 @@ completeForm:
                           JGU   {<a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
                           DLR   {<a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
                           TUD   {aktuelle Zusammensetzung {committeeGen}}
+                          UH1   {<a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
                           other {aktuelle Zusammensetzung {committeeGen}}} und teilen Sie uns nachfolgend mögliche Befangenheiten mit:
     types:
       noBias: 'Es liegt keine Befangenheit eines Mitglieds der Ethikkommission vor.'
@@ -2508,6 +2541,7 @@ completeForm:
         JGU   {, abrufbar unter <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>}
         DLR   {, abrufbar <a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">im Intranet des DLR</a>}
         TUD   {. Diese Regelungen sind mit der offiziellen Beschlussfassung hier abrufbar}
+        UH1   {, abrufbar unter <a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/</a>}
         other {}}.
       {committeeType, select,
         EUB   {}
@@ -2561,6 +2595,7 @@ completeForm:
           JGU   {ethikkommission-psychologie@uni-mainz.de}
           DLR   {ethik@dlr.de}
           TUD   {der noch festzulegenden E-Mail-Adresse {committeeGen}}
+          UH1   {ethikfb1@uni-hildesheim.de}
           other {der E-Mail-Adresse {committeeGen}}}.</li>
 
 quitModal:
@@ -2621,9 +2656,9 @@ aboutTool:
 technicalHints:
   title: 'Technische Hinweise'
   text: |
-    Damit das Ethiktool ordnungsgemäß läuft, muss Ihr Browser Cookies und Javascript erlauben. Die Cookies dürfen während der Sitzung nicht gelöscht werden. Es ist nicht empfehlenswert, das Ethiktool gleichzeitig in mehr als einem Browser-Tab zu öffnen. Bitte navigieren Sie auch nicht im Browser vor und zurück, sondern innerhalb des Ethiktools („nächste Seite“/„vorherige Seite“).
+    Damit das Ethiktool ordnungsgemäß läuft, muss Ihr Browser Cookies und Javascript erlauben. Die Cookies dürfen während der Sitzung nicht gelöscht werden. Es ist nicht empfehlenswert, das Ethiktool gleichzeitig in mehr als einem Browser-Tab zu öffnen. Bitte navigieren Sie auch nicht im Browser vor und zurück, sondern innerhalb des Ethiktools („Nächste Seite“/„Vorherige Seite“).
 
-    Zum Ausfüllen der Antragsinhalte beginnen Sie am besten mit „Antragsdaten“ und klicken sich dann jeweils über „nächste Seite“ Schritt für Schritt durch das Formular. Alternativ können Sie in der linksseitigen Navigationsleiste auch direkt zu bestimmten Bereichen (z.B. Projektdetails) springen.
+    Zum Ausfüllen der Antragsinhalte beginnen Sie am besten mit „Antragsdaten“ und klicken sich dann jeweils über „Nächste Seite“ Schritt für Schritt durch das Formular. Alternativ können Sie in der linksseitigen Navigationsleiste auch direkt zu bestimmten Bereichen (z.B. Projektdetails) springen.
 
     Auf der rechten Seite sehen Sie eine Vorschau des Antragsdokuments und der Teilnahmedokumente. Sie können die Fragen bzw. Überschriften dort anwählen und darüber ebenfalls zu bestimmten Bereichen im Ethiktool springen. Oberhalb der Vorschau werden Sie auf fehlende oder fehlerhafte Eingaben hingewiesen.
 

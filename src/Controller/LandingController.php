@@ -18,7 +18,7 @@ class LandingController extends ControllerAbstract
     private array $choices = [];
     private array $isMultiple = [false,false,false];
 
-    #[Route('/landing', name: 'app_landing')]
+    #[Route(self::landing,self::landing)]
     public function showLanding(Request $request): Response
     {
         $session = $request->getSession();

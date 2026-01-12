@@ -31,8 +31,7 @@ class DataReuseType extends TypeAbstract
         $isNotPurposeReuse = !$dummyParams['isPurposeReuse'];
         foreach (array_merge([''],$isDataReuseHowTwice ? [self::personalKeepReuse] : []) as $suffix) {
             $tempVal = self::dataReuseHowNode.$suffix;
-            $this->addRadioGroup($builder,$tempVal,array_diff(self::dataReuseHowTypes,$isNotPurposeReuse || $suffix===self::personalKeepReuse ? self::dataReuseHowOwn : []));
-            $this->addFormElement($builder,$tempVal.self::descriptionCap,'text',hint: $hint);
+            $this->addRadioGroup($builder,$tempVal,array_diff(self::dataReuseHowTypes,$isNotPurposeReuse || $suffix===self::personalKeepReuse ? self::dataReuseHowOwn : []),textName: $tempVal.self::descriptionCap,textHint: $hint);
         }
         // dummy forms
         $this->addDummyForms($builder);

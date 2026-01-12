@@ -15,7 +15,7 @@ class AppExtension extends AbstractExtension
                 new TwigFunction('addDisableTarget',[$this,'addDisableTarget']),
                 new TwigFunction('addTargetArray',[$this,'addTargetArray']),
                 new TwigFunction('addTarget',[$this,'addTarget']),
-                new TwigFunction('addLabelClass',[$this,'addLabelClass']),
+                new TwigFunction('addLabelAttributes',[$this,'addLabelAttributes']),
                 new TwigFunction('addClass',[$this,'addClass']),
                 new TwigFunction('addStyle',[$this,'addStyle']),
                 new TwigFunction('getAnySelected',[$this,'getAnySelected']),
@@ -71,13 +71,12 @@ class AppExtension extends AbstractExtension
     }
 
     /** Creates an array to be passed as the third argument of a form_label() call.
-     * @param string $classname classnames
-     * @param string $style if provided, a second key 'style' is added
+     * @param array $attributes attributes to be added
      * @return array array for the form_label() cal
      */
-    public function addLabelClass(string $classname, string $style = ''): array
+    public function addLabelAttributes(array $attributes): array
     {
-        return ['label_attr' => $this->addClass($classname,$style)];
+        return ['label_attr' => $attributes];
     }
 
     /** Creates an array to be passed to the 'attr' value of the second argument of a form_widget() or the third argument of a form_label() call. The array contains one or more classes and eventually a 'style' key.

@@ -45,7 +45,7 @@
             {# people description #}
             {% set styleHeight, voluntaryHintParams = addStyle(heightString,true), removeHint|merge({'target': [groupsController,'voluntaryHint']}) %}
             <div {{ stimulus_target(groupsController,'examinedDescription') }}>
-                {{ formRender.addTextfield(content.peopleDescription,styleHeight|merge({'hint': examinedPrefix~'description', 'fontStyle': true})) }}
+                {{ formRender.addTextfield(content.peopleDescription,styleHeight|merge(fontNormal)|merge({'hint': examinedPrefix~'description'})) }}
             </div>
             {% if isTextInputVoluntary %}
                 {{ formRender.addHint(textInputVoluntary,voluntaryHintParams) }}

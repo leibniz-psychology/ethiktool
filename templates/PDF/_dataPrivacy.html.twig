@@ -45,5 +45,5 @@
         text:        translated heading
         savePDF:     if true, the pdf will be saved on disk
     #}
-    <div class="{{ textPreview }}" style="font-weight: bold; margin-top: 1em; {{ savePDF ? noPageBreakFirstLineSave : noPageBreakFirstLine }}">{{ paragraph~') '~text }}</div>
+    <div class="{{ textPreview }}" style="font-weight: bold; margin-top: 1em; {{ savePDF ? 'page-break-inside: avoid; height: 45px; margin-bottom: -20px' }}">{{ paragraph~') '~text }}</div> {# avoid page break between heading and first line #}
 {% endmacro %}

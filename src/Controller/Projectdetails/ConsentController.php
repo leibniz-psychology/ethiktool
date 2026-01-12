@@ -13,7 +13,7 @@ class ConsentController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'consent', name: 'app_consent')]
+    #[Route(self::routePrefix.self::consentNode,self::consentNode)]
     public function showConsent(Request $request): Response
     {
         $session = $request->getSession();

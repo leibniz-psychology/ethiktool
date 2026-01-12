@@ -2,10 +2,27 @@
 
 namespace App\Traits;
 
-/** Contains variables with all questions in the Ethiktool.
- */
+use SimpleXMLElement;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+
+/** Contains variables with all questions in the Ethiktool as well as variables and functions regarding the review process. */
 trait ReviewProcessTrait
 {
+    protected const reviewProcess = 'reviewProcess'; // node name for type of review process (following two variables)
+    protected const reviewProcessFull = 'full';
+    protected const reviewProcessShort = 'short';
+    protected const reviewShortNoDocs = 'shortNoDocs'; // without participant documents
+    protected const reviewShortDocs = 'shortDocs'; // with participants documents that are reviewed
+    protected const reviewShortService = 'shortService'; // with participant documents that are not reviewed
+    protected const reviewShortRequested = 'shortRequested'; // without participant documents because funding is requested
+    protected const reviewShortBegun = 'shortBegun'; // without participant documents because data collection has already started
+    protected const reviewFullRequested = 'fullRequested'; // without participant documents because funding is requested
+    protected const reviewFullBegun = 'fullBegun'; // without participant documents because data collection has already started
+    protected const reviewFullDocs = 'fullDocs'; // with participant documents
+    protected const reviewDocs = ['shortDocs','shortService','fullDocs']; // types of review processes for which participant documents are created. Must equal some of the preceding variables
+    protected const reviewShortChoose = ['EUB','TUD','testCommittee']; // committees where, for short applications, it can be chosen whether participant documents should be created
+
     /** Each element is one projectdetails page. The structure of each page-element is equivalent to the structure of the xml-file. Each sub-element is one sub-element of the respective xml node. Each of these elements contains all application types for which the question is asked. If the question is a sub-question (i.e., a child of another question in the xml file), the application types are the same as for the parent question. Used if the review process changes to add/remove nodes in the xml file.
      */
     protected const reviewQuestions = [
@@ -156,60 +173,6 @@ trait ReviewProcessTrait
     protected const formTypeQuestions = [
         // no array for New form because, if on that page, no proposal is open, i.e., no application type is active
         // application data
-        // core data -> as the inputs in core data can change the application type, all questions here are created in the Form Type, but may not be visible
-        'coreData' => [
-            'projectTitle' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'projectTitleParticipation' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'projectTitleParticipationDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'appType' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'description' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'applicationProcess' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'shortDocs' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'qualification' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'name' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'institution' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'professorship' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'eMail' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'position' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'positionText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'phone' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'namesupervisor' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'institutionsupervisor' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'professorshipsupervisor' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'eMailsupervisor' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'positionsupervisor' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'positionsupervisorText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'phonesupervisor' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'projectStart' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'projectStartNext' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'projectStartBegun' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'projectStartBegunText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'projectEnd' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingQuali' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingBudget' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingBudgetText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingResearch' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingResearchText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingResearchFundingState' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingExternal' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingExternalText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingExternalFundingState' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'fundingOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'conflict' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'conflictDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'noSupport' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'supportCommittee' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'supportCommitteeText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'supportCenter' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'supportCenterText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'supportData' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'supportDataText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'supportOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'supportOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'guidelines' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'guidelinesText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
-        ], // core data
         // votes
         'votes' => [
             'otherVote' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -957,4 +920,232 @@ trait ReviewProcessTrait
             'dataReuseSelf' => [['dataReuse','dataReuse'],'no']
         ] // data reuse
     ];
+
+    // functions
+
+    /** Gets the type of review process.
+     * @param array|SimpleXMLElement $application array of xml-node containing all information about the application
+     * @return string type of review process
+     */
+    protected function getCurrentReviewProcess(array|SimpleXMLElement $application): string
+    {
+        if (!is_array($application)) {
+            $application = $this->xmlToArray($application);
+        }
+        $coreDataArray = $application[self::appDataNodeName][self::coreDataNode];
+        $applicationProcessArray = $coreDataArray[self::applicationProcessNode];
+        $appType = $applicationProcessArray[self::chosen]; // short or full
+        $isRequested = false; // gets true if only requested funding exists
+        $fundingArray = $coreDataArray[self::funding];
+        if ($fundingArray!=='' && array_diff(array_keys($fundingArray),self::fundingResearchExternal)===[]) {
+            $isRequested = true;
+            foreach ($fundingArray as $funding) {
+                $isRequested = $isRequested && $funding[self::fundingStateNode]===self::fundingRequested;
+            }
+        }
+        $reviewProcess = '';
+        if ($appType!=='') {
+            $projectStartArray = $coreDataArray[self::projectStart];
+            $reviewProcess = $projectStartArray[self::chosen]==='0' && array_key_exists(self::descriptionNode,$projectStartArray)
+                ? $appType.'Begun'
+                : ($isRequested
+                    ? $appType.'Requested'
+                    : ($appType===self::reviewProcessFull
+                        ? self::reviewFullDocs
+                        : (array_key_exists(self::shortDocsNode,$applicationProcessArray)
+                            ? ($applicationProcessArray[self::shortDocsNode]==='0' ? self::reviewShortService : self::reviewShortNoDocs)
+                            : self::reviewShortDocs)));
+        }
+        if ($reviewProcess==='') {
+            $reviewProcess = $this->getReviewShortDefault($application[self::committee]);
+        }
+        return $reviewProcess;
+    }
+
+    /** Checks if the current review process may contain participation documents.
+     * @param Session $session current session
+     * @return bool true if the current review process may contain participation documents, false otherwise
+     */
+    protected function getReviewDocs(Session $session): bool
+    {
+        return in_array($session->get(self::reviewProcess),self::reviewDocs);
+    }
+
+    /** Gets the default short application type
+     * @param string $committeeType committee type
+     * @return string default short application type
+     */
+    protected function getReviewShortDefault(string $committeeType): string
+    {
+        return in_array($committeeType,self::reviewShortChoose) ? self::reviewShortNoDocs : self::reviewShortDocs;
+    }
+
+    /** Updates the nodes of measure time point
+     * @param Request $request
+     * @param SimpleXMLElement $measureTimePointNode node containing the information about the current measure time point
+     * @param string $reviewProcess type of review process
+     * @return void
+     */
+    protected function updateNodesByReviewProcess(Request $request, SimpleXMLElement $measureTimePointNode, string $reviewProcess): void
+    {
+        foreach (self::reviewQuestions as $page => $pageNodes) { // keys: page names, values: array of questions with review types
+            $pageNode = $measureTimePointNode->{$page};
+            if (!in_array($reviewProcess,self::reviewTypePages[$page])) { // no question is asked on the current page
+                $this->removeAllChildNodes($pageNode);
+            } else { // at least one question is asked on the current page
+                $lastIndex = count($pageNodes)-1; // index of last question
+                $pageNodeKeys = array_keys($pageNodes);
+                $pageDependencies = self::pageDependencies[$page] ?? []; // keys: questions, values: array of dependencies when the question is asked and children that are added to the question
+                foreach (array_reverse($pageNodes) as $node => $reviewTypes) { // keys: questions, values: review types
+                    $isAsked = in_array($reviewProcess,$reviewTypes);
+                    $hasElement = $this->checkElement($node,$pageNode);
+                    if (!$isAsked && $hasElement) { // question was asked, but is not asked now -> remove node
+                        $this->removeElement($node,$pageNode);
+                    } elseif ($isAsked && !$hasElement) { // question was not asked, but is asked now -> add node
+                        // check if any dependencies exist
+                        $curDependencies = $pageDependencies[$node] ?? [];
+                        $createNode = true;
+                        if (($curDependencies[0] ?? [])!==[]) { // at least one dependency exists
+                            $dependencies = $curDependencies[0];
+                            $dependencies = is_array($dependencies[0]) ? $dependencies : [$dependencies];
+                            $values = $curDependencies[1];
+                            $values = is_array($values) ? $values : [$values];
+                            $isOr = $curDependencies[3] ?? false; // true if any of the dependencies must be true
+                            $createNode = !$isOr; // gets true if node should be created
+                            foreach ($dependencies as $index => $dependency) {
+                                $curNode = $measureTimePointNode->{$dependency[0]}; // page node of current dependency
+                                $depIndex = 1;
+                                $lastDepIndex = count($dependency)-1;
+                                while ($depIndex<=$lastDepIndex && $curNode!==null) {
+                                    $curNode = $curNode->{$dependency[$depIndex]};
+                                    ++$depIndex;
+                                }
+                                $curValues = $values[$index];
+                                $hasValue = $curNode!==null && $curNode->getName()!=='' && in_array((string) $curNode,is_array($curValues) ? $curValues : [$curValues]);
+                                if ($isOr) {
+                                    $createNode = $createNode || $hasValue;
+                                } else {
+                                    $createNode = $createNode && $hasValue;
+                                }
+                            }
+                        }
+                        if ($createNode) { // node should be created
+                            $index = array_search($node,$pageNodeKeys); // index of question
+                            $isNextAsked = false; // gets true for the first question following the current one that is also asked
+                            while ($index<$lastIndex && !$isNextAsked) {
+                                ++$index;
+                                $nextKey = $pageNodeKeys[$index];
+                                $isNextAsked = in_array($reviewProcess,$pageNodes[$nextKey]) && $this->checkElement($nextKey,$pageNode);
+                            }
+                            if ($index>=$lastIndex && !$isNextAsked) { // last question on page
+                                $nodeAfter = $pageNode->addChild('dummy');
+                            } else { // another question after the current one is also asked
+                                $nodeAfter = $pageNode->{$pageNodeKeys[$index]};
+                            }
+                            $children = $curDependencies[2] ?? [];
+                            $this->insertElementBefore($node,$nodeAfter,is_array($children) ? $children : [$children]);
+                            $this->removeElement('dummy',$pageNode);
+                        }
+                    } // elseif (isAsked && !hasElement)
+                } // foreach pageNodes
+            } // else (at least one question asked)
+        } // foreach reviewQuestions
+        // remove nodes that depend on different inputs (e.g., A and [B or C]) -> They do (still) exist if they may exist for the review process
+        $groupsNode = $measureTimePointNode->{self::groupsNode};
+        $consentNode = $measureTimePointNode->{self::consentNode};
+        $compensationNode = $measureTimePointNode->{self::compensationNode};
+        if ($this->getShortBegunRequested($request)) { // if creation of participation document can be chosen, but data collection has already begun or funding is requested, intermediate page must have the same information as for shortService and shortNoDocs, i.e., some nodes that were created need to be removed again
+            $this->removeElement(self::criteriaIncludeNode,$groupsNode);
+            $this->removeElement(self::criteriaExcludeNode,$groupsNode);
+            $this->removeElement(self::locationNode,$measureTimePointNode->{self::measuresNode});
+            $this->removeElement(self::terminateParticipantsNode,$consentNode);
+            $compensationTypesArray = $this->xmlToArray($compensationNode[0])[self::compensationTypeNode];
+            if ($compensationTypesArray!=='' && !array_key_exists(self::compensationNo,$compensationTypesArray)) {
+                foreach (array_keys($compensationTypesArray) as $compensation) {
+                    $this->removeElement($compensation.self::descriptionCap,$compensationNode);
+                    $this->removeElement($compensation.self::awardingNode,$compensationNode);
+                    if ($compensation===self::compensationMoney) {
+                        $this->removeElement(self::moneyFurther,$compensationNode);
+                    }
+                }
+            }
+        }
+        if ($this->checkElement(self::criteriaIncludeNode,$groupsNode)) { // add (not remove) first inclusion criterion if old review process was shortNoDocs
+            $include = $groupsNode->{self::criteriaIncludeNode}->{self::criteriaNode};
+            $firstInclude = self::criteriaIncludeNode.'0';
+            if (!$this->checkElement($firstInclude,$include)) {
+                $include->addChild($firstInclude);
+                $this->setFirstInclusion($groupsNode, $request->getLocale());
+            }
+        }
+        $informationNode = $measureTimePointNode->{self::informationNode};
+        $isPre = $this->checkElement(self::pre,$informationNode) && ((string) $informationNode->{self::pre})==='0';
+        $legalNode = $measureTimePointNode->{self::legalNode}; // legal nodes are not changed if the review process changes
+        $hasLegal = count($legalNode->children())>0;
+        if (!$isPre) {
+            // legal
+            if ($hasLegal) {
+                $this->removeAllChildNodes($legalNode);
+            }
+        } elseif (!$hasLegal && in_array($reviewProcess,self::reviewTypePages[self::legalNode])) {
+            $this->addLegalNodes($legalNode,$this->xmlToArray($measureTimePointNode));
+        }
+        // nodes that exist if any information is given
+        if ($isPre || $this->checkElement(self::post,$informationNode) && ((string) $informationNode->{self::post}->{self::chosen})==='0') {
+            // document translation
+            if (((string) $consentNode->{self::consent}->{self::chosen})===self::consentOral) {
+                $this->removeElement(self::documentTranslationNode,$informationNode);
+            }
+            // finding text
+            if (((string) $measureTimePointNode->{self::burdensRisksNode}->{self::findingNode}->{self::chosen})!=='0') {
+                $this->removeElement(self::findingTextNode,$measureTimePointNode->{self::textsNode});
+            }
+            // terminate cons participation
+            if (((string) $consentNode->{self::terminateConsNode}->{self::chosen})!=='1') {
+                $this->removeElement(self::terminateConsParticipationNode,$consentNode);
+            }
+        }
+        // data privacy
+        $privacyNode = $measureTimePointNode->{self::privacyNode}[0];
+        if ($this->checkElement(self::markingNode,$privacyNode) && ((string) $privacyNode->{self::markingNode}->{self::chosen})===self::markingOther) {
+            foreach ([self::dataResearchNode,self::anonymizationNode,self::storageNode,self::personalKeepNode,self::accessNode,self::purposeFurtherNode,self::processingFurtherNode] as $nodeName) { // remove all nodes that may have been created, but not needed because marking is 'other'
+                $this->removeElement($nodeName,$privacyNode);
+            }
+        }
+        $compensationArray = $this->xmlToArray($compensationNode[0]);
+        $selections = $compensationArray[self::compensationTypeNode] ?? '';
+        $hasCode = false; // gets true if any awarding is by code
+        if ($selections!=='' && !array_key_exists(self::compensationNo,$selections)) {
+            foreach (array_keys($selections) as $selection) {
+                $hasCode = $hasCode || ($compensationArray[$selection.self::awardingNode][self::laterTypesName] ?? '')==='code';
+            }
+        }
+        if (!$hasCode || $this->checkElement(self::purposeResearchNode,$privacyNode) && $this->checkElement(self::purposeCompensation,$privacyNode->{self::purposeResearchNode})) { // purpose of marking is compensation or no code is used for awarding
+            $this->removeElement(self::codeCompensationNode,$privacyNode);
+        }
+        // data reuse
+        $dataReuseNode = $measureTimePointNode->{self::dataReuseNode};
+        $personalParams = $this->getPrivacyReuse($this->xmlToArray($privacyNode));
+        $isPersonalPurpose = ($personalParams['personal'] ?? 'noTool')==='purpose';
+        $isAnonymized = $personalParams['isAnonymized'] ?? false;
+        if ($isPersonalPurpose && !$isAnonymized) {
+            $this->removeElement(self::dataReuseNode,$dataReuseNode);
+        }
+        if ($this->checkElement(self::dataReuseNode,$dataReuseNode) && !in_array((string) $dataReuseNode->{self::dataReuseNode},self::dataReuseTypesYes)) {
+            $this->removeElement(self::dataReuseHowNode,$dataReuseNode);
+        }
+        if (!($isPersonalPurpose && $isAnonymized)) {
+            $this->removeElement(self::dataReuseHowNode.'reuse',$dataReuseNode);
+        }
+    }
+
+    /** Checks whether the review process is 'shortBegun' or 'shortRequested' and the committee allows to choose whether documents should be created for short proposals.
+     * @param Request $request
+     * @return bool true if the review process is 'shortBegun' or 'shortRequested' and committee allows to choose whether documents should be created for short proposals, false otherwise
+     */
+    protected function getShortBegunRequested(Request $request): bool
+    {
+        $session = $request->getSession();
+        return in_array($this->getCommitteeType($session),self::reviewShortChoose) && in_array($session->get(self::reviewProcess),[self::reviewShortBegun,self::reviewShortRequested]);
+    }
 }

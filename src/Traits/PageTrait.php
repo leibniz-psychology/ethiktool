@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '2.2.1';
+    protected const toolVersion = '2.3.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -23,21 +23,8 @@ trait PageTrait
     protected const committeeParams = 'committeeParams';
     /** @var string name of parameter indicating if current committee type is in beta status. */
     protected const isCommitteeBeta = 'isCommitteeBeta';
-    protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.TUD' => 'TUD', 'newForm.committee.types.testCommittee' => 'testCommittee'];
-    protected const committeeTypesBeta = ['JGU','DLR','TUD']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
-    protected const reviewProcess = 'reviewProcess'; // node name for type of review process (following two variables)
-    protected const reviewProcessFull = 'full';
-    protected const reviewProcessShort = 'short';
-    protected const reviewShortNoDocs = 'shortNoDocs'; // without participant documents
-    protected const reviewShortDocs = 'shortDocs'; // with participants documents that are reviewed
-    protected const reviewShortService = 'shortService'; // with participant documents that are not reviewed
-    protected const reviewShortRequested = 'shortRequested'; // without participant documents because funding is requested
-    protected const reviewShortBegun = 'shortBegun'; // without participant documents because data collection has already started
-    protected const reviewFullRequested = 'fullRequested'; // without participant documents because funding is requested
-    protected const reviewFullBegun = 'fullBegun'; // without participant documents because data collection has already started
-    protected const reviewFullDocs = 'fullDocs'; // with participant documents
-    protected const reviewDocs = ['shortDocs','shortService','fullDocs']; // types of review processes for which participant documents are created. Must equal some of the preceding variables
-    protected const reviewShortChoose = ['EUB','TUD','testCommittee']; // committees where, for short applications, it can be chosen whether participant documents should be created
+    protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.TUD' => 'TUD', 'newForm.committee.types.UH1' => 'UH1', 'newForm.committee.types.testCommittee' => 'testCommittee'];
+    protected const committeeTypesBeta = ['JGU','DLR','TUD','UH1']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
     
     // constant variables
     /** Node name for nodes which indicate the selection of a radio button. */
@@ -58,6 +45,7 @@ trait PageTrait
     protected const position = 'position';
     protected const positionsStudent = 'student'; // must equal one of the keys in $positions
     protected const positionsPhd = 'phd'; // must equal one of the keys in $positions
+    protected const positionsStudentPhd = ['student','phd']; // values must equal the values of the preceding variables
     protected const positionOther = 'positionOther'; // must equal one of the keys in $positions
     protected const positionsTypes = ['professorship' => 'multiple.position.professorship', 'scientific' => 'multiple.position.scientific', 'phd' => 'multiple.position.phd', 'student' => 'multiple.position.student', 'positionOther' => 'multiple.position.positionOther'];
     protected const applicantContributorsInfosTypes = ['name', 'institution', 'professorship', 'eMail', 'position', 'phone'];
@@ -84,6 +72,16 @@ trait PageTrait
     protected function getCommitteeType(Session $session): string
     {
         return $session->get(self::committeeParams)[self::committeeType] ?? '';
+    }
+
+    /** Checks if a supervisor is needed.
+     * @param string $committeeType committee
+     * @param string|null $position position of the applicant
+     * @return bool true is a supervisor is needed, false otherwise
+     */
+    protected function checkSupervisor(string $committeeType, ?string $position): bool
+    {
+        return in_array($committeeType,self::committeeSupervisor) && ($position===self::positionsStudent || $committeeType===self::committeeEUB && $position===self::positionsPhd);
     }
 
     /** Creates a string with concatenated IDs and underscores between them. Optionally the string can be prefixed or suffixed.

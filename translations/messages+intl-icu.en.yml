@@ -156,6 +156,7 @@ committee:
       JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       DLR   {the Research Ethics Office of the German Aerospace Center}
       TUD   {the Ethics Board of Dresden University of Technology}
+      UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
       other {the test ethics committee}}
   committeeGen: >-
     {committee, select,
@@ -164,6 +165,7 @@ committee:
     JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
     DLR   {the Research Ethics Office of the German Aerospace Center}
     TUD   {the Ethics Board of Dresden University of Technology}
+    UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
     other {the test ethics committee}}
   committeeDat: >-
     {committee, select,
@@ -172,6 +174,7 @@ committee:
       JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       DLR   {the Research Ethics Office of the German Aerospace Center}
       TUD   {the Ethics Board of Dresden University of Technology}
+      UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
       other {the test ethics committee}}
   committeeAcc: >-
     {committee, select,
@@ -180,6 +183,7 @@ committee:
       JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       DLR   {the Research Ethics Office of the German Aerospace Center}
       TUD   {the Ethics Board of Dresden University of Technology}
+      UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
       other {the test ethics committee}}
   committeeLocation: >-
     {committee, select,
@@ -188,6 +192,7 @@ committee:
       JGU   {Johannes Gutenberg University Mainz}
       DLR   {German Aerospace Center}
       TUD   {Dresden University of Technology}
+      UH1   {Hildesheim University}
       other {the institution of the test ethics committee}}
   committeeLocationGen: >-
     {committee, select,
@@ -196,6 +201,7 @@ committee:
       JGU   {of Johannes Gutenberg University Mainz}
       DLR   {of the German Aerospace Center}
       TUD   {of Dresden University of Technology}
+      UH1   {of Hildesheim University}
       other {of the institution of the test ethics committee}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
@@ -207,6 +213,7 @@ newForm: # placed immediately after 'committee' to have the committee names all 
       JGU: 'Ethics Committee of the Department of Psychology of JGU Mainz'
       DLR: 'Research Ethics Office of the German Aerospace Center'
       TUD: 'Ethics Board of Dresden University of Technology'
+      UH1: 'Ethics Review Board of Faculty 1 of Hildesheim University'
       testCommittee: 'Test ethics committee'
   password:
     title: 'Password:'
@@ -304,7 +311,7 @@ main:
     Further information is available in the sections “About us“ and “About the Ethiktool“. Please note the “Technical Information“ and “Terms of Use“ for the Ethiktool.
     You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
 
-    <i>Please note: In the current project phase, the Ethiktool is intended for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites; the Ethics Committees of the Department of Psychology of JGU Mainz and of the German Aerospace Center are already in the beta stage.
+    <i>Please note: In the current project phase, the Ethiktool is intended for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites; four Ethics Committees are already in the beta stage.
 
     You can start creating an application for the respective committee via the “New proposal“ option.
     You can load and edit an existing XML file created by the Ethiktool via “Load proposal”.</i>
@@ -348,6 +355,13 @@ main:
              Furthermore, the dinstinction between proposals to the Ethics Board and proposals to the Ethics Committee of TU Dresden (for medical research) will be explained.
              
              The ethics proposal should be submitted <i>before</i> the start of a research project. Retrospective review is possible only in justified exceptional cases. Further instructions on how to proceed in such cases will follow.}
+      UH1   {Any person carrying out independent research at Faculty 1 of Hildesheim University is eligible to apply; this explicitly includes doctoral candidates. Students can also file an application for their final theses and other student research, the teaching staff or supervisor(s) have to check and approve the application before submission.
+    
+             The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review.
+             
+             Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. 
+             
+             Research projects involving physicians as project contributors, in which clearly delimitable medical research questions shall be addressed, usually have to be evaluated by a medical ethics committee. In individual cases a review by the non-medical Ethics Review Board of Faculty 1 of Hildesheim University may be possible.}
       other {You are creating a test ethics application that is <b>not designed to be submitted to an ethics review board</b>. Therefore, no eligibility requirements need to be fulfilled at this point.}}
   newFormModal:
     title: 'jump to new proposal'
@@ -471,15 +485,24 @@ coreData:
           EUB   {(Planned)}
           DLR   {(Planned)}
           TUD   {(Planned)}
+          UH1   {(Planned)}
           other {Planned}} beginning of data collection
       hint: >-
         {committeeType, select,
           EUB   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
           DLR   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
           TUD   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
+          UH1   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.}
           other {}}
-      textHint: 'Please describe which parts of the data collection have already been completed (e.g., contacting participants, number of datasets collected) and which parts are still ongoing. Further information in the Ethiktool must be completed prospectively.'
-      begun: 'Data collection has already started. Authorisation for retrospective review is needed. '
+      textHint:
+        current: 'Please describe which parts of the data collection have already been completed (e.g., contacting participants, number of datasets collected) and which parts are still ongoing. Further information in the Ethiktool must be completed prospectively.'
+        retrospective: 'Why are you asking for retrospective ethics review?'
+      begun: >-
+          Data collection has already started.
+          {committeeType, select,
+            UH1   {Justification}
+            other {Authorisation}}
+          for retrospective review is needed.
     next: 'as soon as possible (after approval by the ethics committee)'
     end:
       title: 'Planned end of the project'
@@ -521,7 +544,7 @@ coreData:
       supportCommittee: 'committee office/member of the ethics committee'
       supportCenter: 'research data management support center'
       supportData: 'data protection officer or Data Protection and Information Security Coordinator (DISK)'
-      supportOther: 'other (please specify)'
+      supportOther: 'other services (please specify)'
     textHint: 'Please indicate who advised you on which aspects.'
   guidelines:
     title: 'Unless requested otherwise below, the vote will attest an ethics assessment according to the “Ethische Richtlinien der Deutschen Gesellschaft für Psychologie (DGPs) und des Berufsverbandes Deutscher Psychologinnen und Psychologen (BdP)“.'
@@ -561,7 +584,7 @@ votes:
 medicine:
   medicine:
     heading: 'In the long run, could the project head towards medical, pharmaceutical or other research that would have to be assessed in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG), or other legal requirements?'
-    textHint: >- # other is TUC, DLR and test committee
+    textHint: >- # other is TUC, DLR, UH1 and test committee
       Research projects with a legal requirement for review by a medical ethics committee must be submitted to an ethics committee with medical constitution, irrespective of the applicants' affiliations.
       {committeeType, select,
         EUB   {Further information on the jurisdiction and additional documents to be submitted can be found <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">here</a>.}
@@ -739,7 +762,7 @@ projectdetails:
       sampleSize:
         title: 'Sample size'
         total:
-          title: 'How many individuals from the selected groups shall be included in this time point of the study?'
+          title: 'How many individuals from the selected group shall be included in this time point of the study?'
           textHint: 'This refers to the number of individuals on whom data will be collected (incl. buffer for piloting, possible exclusion from the analysis, etc.).'
         furtherParticulars: '(optional) Further information on the sample size (e.g., distribution of the total number across different sub-groups)'
         plan:
@@ -777,9 +800,7 @@ projectdetails:
         title: 'Are the {addressee} informed in advance that {participant} are participating in a study?'
         content:
           title: 'To what extent are the {addressee} informed about the aims, content and methods before the start of the study?'
-          hints:
-            headingHint: 'This refers to key information about the study. This includes a clear presentation of the research objectives, data collection procedures, and participant''s tasks for the respective target group(s). Not disclosing the hypothesis does not count as incomplete information. If the given information is both incomplete and includes deliberate deception, please choose deception.'
-            informationIII: 'Please enter the texts for the debriefing on page “<a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII" data-base-route-i-ds-param="{routeIDs}">Debriefing</a>“.'
+          headingHint: 'This refers to key information about the study. This includes a clear presentation of the research objectives, data collection procedures, and participant''s tasks for the respective target group(s). Not disclosing the hypothesis does not count as incomplete information. If the given information is both incomplete and includes deliberate deception, please choose deception.'
           type:
             complete: 'The {addressee} are fully informed.'
             partial: 'At least one core piece of information is not mentioned, that is, the {addressee} are informed incompletely.'
@@ -791,7 +812,7 @@ projectdetails:
       textHints:
         pre: 'Please explain why the {addressee} are not informed in advance that {participant} are participating in a study.'
         post: 'Please explain why the {addressee} are not informed after-the-fact that {participant} participated in a study.'
-        preComplete: 'Please justify your choice and indicate which information will be given when to the {addressee}.'
+        preComplete: 'Please justify your choice and indicate which information will be given when to the {addressee} and which ones are withheld.'
       pdf: 'The wording of the study information sheet for the {participant} needs to be adapted to the target group and can therefore not be generated automatically by the Ethiktool. Please prepare a self-formulated PDF file that directly addresses the {participant} and contains the following parts: information on study participation, assent form, annex on processing personal data (if applicable). The automatically generated documents for the {addressee} can serve as a guide. When completing the ethics proposal, you will be asked to add the study information sheet for {participant} as a PDF file.'
       attendance: 'Are the {addressee} present during data collection?'
       documentTranslation:
@@ -927,7 +948,7 @@ projectdetails:
             invasive: 'invasive interventions'
             other: 'other measure(s)'
           description: 'please specify'
-          headingHint: 'Please enter all measures/interventions specifically applied to participants for the purpose of the study. The term “measures“ is deliberately used in a very broad sense, ranging from asking a question all the way up to long-term interventions. Many measures are associated with the need to check inclusion and exclusion criteria (e.g., to ensure the safety of participants). Such criteria should be listed under “<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">Inclusion and exclusion criteria</a>“. If inclusion and exclusion criteria are recorded or documented beyond the self-report as part of the consent, please describe their measurement under data collection methods.'
+          headingHint: 'Please enter all measures/interventions specifically applied to participants for the purpose of the study. The term “measures“ is deliberately used in a very broad sense, ranging from asking a question all the way up to long-term interventions. Many measures are associated with the need to check inclusion and exclusion criteria (e.g., to ensure the safety of participants). Such criteria should be listed under “<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param="{routeIDs}">Inclusion and exclusion criteria</a>“. If inclusion and exclusion criteria are recorded or documented beyond the self-report as part of the consent, please describe their measurement under data collection methods.'
           textHints:
             description: 'Please describe the selected measures in more detail.'
         pdf: >- # other is interventions
@@ -1057,7 +1078,7 @@ projectdetails:
           types:
             always: 'The {addressee} are informed of any (incidental) findings that occur. (notification mandatory)'
             consent: 'The {addressee} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)'
-          hint: 'Because you chose that notification is mandatory, the <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">inclusion criteria</a> automatically contain that participation requires consent to be informed.'
+          hint: 'Because you chose that notification is mandatory, the <a class="linkInternal" href="groups#criteria" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">inclusion criteria</a> automatically contain that participation requires consent to be informed.'
       feedback:
         title: 'Do participants receive feedback on their individual test results?'
         headingHint: 'Feedback on individual test results should be carefully considered - especially in case of personally relevant test content. Please consider that feedback may include negative or worrying results. Feedback should only be given if the project contributors are experienced in framing individual results. Please also note that feedback on individual test results is likely to require personal data linked to the collected research data. Alternatively, a general report can be provided (this is also likely to require personal data, but this does not have to be linked to the individual research data).'
@@ -1263,7 +1284,7 @@ projectdetails:
         textHint: 'True information / feedback (=debriefing)'
       explain:
         title: 'We sincerely hope you will accept us withholding this information and providing full information only now. This was necessary because...'
-        textHint: 'Explain the necessity of deception or incomplete information in an understandable manner. Typical justifications are “to be able to record behaviour during the study as close as possible to everyday life“ or “to be able to investigate the effect of the method separately from its expected effect“. If applicable, indicate that this is a common procedure in studies of this type.'
+        textHint: 'Explain the necessity of deception or incomplete information in an understandable manner. Typical justifications are “to be able to record behaviour during the study as close as possible to everyday life“ or “because we wanted to investigate the effect of the method separately from its expected effect“. If applicable, indicate that this is a common procedure in studies of this type.'
     legal:
       hint: 'Researchers should consider and decide on a case-by-case basis whether information on one or more of the following aspects appear useful. The templates can be used as basic information for frequently occurring cases; they cannot replace an individual assessment and consultation. The use of the templates is therefore at the user''s own responsibility; in particular, they are no substitute for legal advice. The Ethics Committee takes no responsibility for the correct use of the templates in individual cases and does not perform a legal review of the wording.'
       liability:
@@ -1943,6 +1964,7 @@ checkDoc:
         shortDocs: 'Answer to question about creation of participant documents' # '[] is missing.'
       start: 'The planned start of data collection is in the past.'
       begun: 'Description of current state of data collection'
+      retrospective: 'Justification for necessity of retrospective ethics review'
       end: 'The planned end of the research project is in the past.'
       endBeforeStart: 'Project end is before project start.'
       funding:
@@ -1975,7 +1997,13 @@ checkDoc:
         description:
           yes: 'description of the conflict of interest'
           no: 'Justification why a conflict of interest can be ruled out'
-      support: 'Counseling and support services'
+      support:
+        title: 'Consulting and support services'
+        types:
+          supportCommittee: 'description of support by office/member of the ethics committee'
+          supportCenter: 'description of support by research data management support center'
+          supportData: 'description of support by data protection officer or Data Protection and Information Security Coordinator (DISK)'
+          supportOther: 'description of other consulting/support services'
       guidelines: 'requested evaluation guidelines'
     votes:
       otherVote: 'other vote'
@@ -2007,7 +2035,11 @@ checkDoc:
         Project contributor {index} ({name}) does not occupy any specific role{index, select,
                                                                                 1     { apart from “application“}
                                                                                 2     {{isSupervisor, select,
-                                                                                          true  { apart from “supervision of the thesis“}
+                                                                                          true  { apart from “supervision of the {isQualification, select,
+                                                                                                                                    true  {thesis}
+                                                                                                                                    other {{position, select,
+                                                                                                                                              student {student}
+                                                                                                                                              other   {thesis}}}}“}
                                                                                           other {}}}
                                                                                 other {}}.
       missingMandatory: 'Role “{task}“ was not selected for any project contributor.'
@@ -2146,7 +2178,7 @@ checkDoc:
           title: 'data handling in case of withdrawal from participation' # 'Answer to question about [] is missing.'
           description: 'data handling in case of withdrawal from participation' # 'Description of [] is missing.'
           information: >-
-            If no <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the collected data must either be deleted or the {addressee, select,
+            If no <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the collected data must either be deleted or the {addressee, select,
                 children {legal guardians}
                 wards    {legal guardians}
                 other    {participants}} must choose whether the collected data shall be used or not in case of individual withdrawal.
@@ -2285,10 +2317,10 @@ checkDoc:
         findingText: 'information regarding incidental findings is missing.'
         conflictText: 'information regarding conflicts of interest is missing.'
       informationIII:
-        goals: 'goals of the study'
-        infoBefore: 'prior information'
-        infoAfter: 'after-the-fact information'
-        explain: 'justification'
+        goals: 'goals of the study are missing.'
+        infoBefore: 'prior information is missing.'
+        infoAfter: 'after-the-fact information is missing.'
+        explain: 'justification is missing.'
       legal:
         missing: >- # other is insurance
           {type, select,
@@ -2494,6 +2526,7 @@ completeForm:
                           JGU   {<a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/" target="_blank">current composition of {committeeGen}</a>}
                           DLR   {<a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">current composition of {committeeGen}</a>}
                           TUD   {current composition of {committeeGen}}
+                          UH1   {<a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">current composition of {committeeGen}</a>}
                           other {current composition of {committeeGen}}} and inform us of any possible conflicts of interest below:
     types:
       noBias: 'No member of the Ethics Committee has a conflict of interest.'
@@ -2508,6 +2541,7 @@ completeForm:
         JGU   {, available at <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>}
         DLR   {, available <a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">in the intranet of the DLR</a>}
         TUD   {. These regulations will be accessible here after the official resolution on the Board's establishment}
+        UH1   {, available at <a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/</a>}
         other {}}.
       {committeeType, select,
         EUB   {}
@@ -2561,6 +2595,7 @@ completeForm:
           JGU   {ethikkommission-psychologie@uni-mainz.de}
           DLR   {ethik@dlr.de}
           TUD   {the yet-to-be-determined e-mail address of {committeeGen}}
+          UH1   {ethikfb1@uni-hildesheim.de}
           other {the e-mail address of {committeeGen}}}.</li>
 
 quitModal:

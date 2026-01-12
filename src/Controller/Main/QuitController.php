@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class QuitController extends ControllerAbstract
 {
-    #[Route('/quit', name: 'app_quit')]
+    #[Route(self::quit,self::quit)]
     public function showQuit(Request $request): Response
     {
         $session = $request->getSession();

@@ -40,7 +40,7 @@
                 </div>
             {% endfor %}
         {% endif %}
-        <div class="{{ textPreview }}" {% if isMessages and savePDF %} style="{{ savePDF ? noPageBreakFirstLine : noPageBreakFirstLine }}" {% endif %}>
+        <div class="{{ textPreview }}">
             {{ (tempPrefix~'messages')|trans(committeeParams|merge({'messages': boolToString(isMessages)})) }}
             {% if isMessages %}
                 <span class="markInput">{{ ("\n"~messages)|nl2br }}</span>

@@ -14,7 +14,7 @@ class InformationIIIType extends TypeAbstract
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationPrefix = 'projectdetails.pages.informationIII.';
-        foreach (self::informationIIIInputsTypes as $input => $value) {
+        foreach (self::informationIIIInputsTypes as $input) {
             $this->addFormElement($builder,$input,'textarea',$translationPrefix.$input.'.title',hint: $translationPrefix.$input.'.'.self::textHint);
         }
         $this->addDummyForms($builder);
@@ -24,7 +24,7 @@ class InformationIIIType extends TypeAbstract
     public function mapDataToForms(mixed $viewData, Traversable $forms): void
     {
         $forms = iterator_to_array($forms);
-        foreach (self::informationIIIInputsTypes as $input => $value) {
+        foreach (self::informationIIIInputsTypes as $input) {
             $forms[$input]->setData($viewData[$input]);
         }
     }
@@ -32,7 +32,7 @@ class InformationIIIType extends TypeAbstract
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
     {
         $forms = iterator_to_array($forms);
-        foreach (self::informationIIIInputsTypes as $input => $value) {
+        foreach (self::informationIIIInputsTypes as $input) {
             $viewData[$input] = $forms[$input]->getData();
         }
     }

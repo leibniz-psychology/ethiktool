@@ -13,7 +13,7 @@ class DataPrivacyController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'dataPrivacy', name: 'app_dataPrivacy')]
+    #[Route(self::routePrefix.self::privacyNode,self::privacyNode)]
     public function showDataPrivacy(Request $request): Response
     {
         $routeParams = $request->get('_route_params');

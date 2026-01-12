@@ -13,7 +13,7 @@ class TextsController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'texts', name: 'app_texts')]
+    #[Route(self::routePrefix.self::textsNode,self::textsNode)]
     public function showTexts(Request $request): Response
     {
         $routeParams = $request->get('_route_params');

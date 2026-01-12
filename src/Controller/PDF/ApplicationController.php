@@ -246,7 +246,7 @@ class ApplicationController extends PDFAbstract
                     $content .= $this->convertDate($start);
                 }
             }
-            $content .= ' '.$this->translateStringPDF($tempPrefix.'end').$this->convertDate($pageArray[self::projectEnd]).($hasBegun ? $this->translateStringPDF($tempPrefix.'startedDescription').$projectStart[self::descriptionNode] : '');
+            $content .= ' '.$this->translateStringPDF($tempPrefix.'end').$this->convertDate($pageArray[self::projectEnd]).($hasBegun ? $this->translateStringPDF($tempPrefix.'startedDescription').$projectStart[self::descriptionNode].(array_key_exists(self::projectStartRetrospective,$projectStart) ? $this->translateStringPDF($tempPrefix.self::projectStartRetrospective).$projectStart[self::projectStartRetrospective] : '') : '');
             $this->addBox($pagePrefix.'projectDates', $content, fragment: 'projectDates');
             // funding
             $tempArray = $pageArray[self::funding];

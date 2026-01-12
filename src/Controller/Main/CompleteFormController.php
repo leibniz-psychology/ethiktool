@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CompleteFormController extends ControllerAbstract
 {
     use CompleteFormTrait, AppDataTrait;
-    #[Route('/completeForm', name: 'app_completeForm')]
+    #[Route('completeForm','completeForm')]
     public function showCompleteForm(Request $request): Response
     {
         $session = $request->getSession();

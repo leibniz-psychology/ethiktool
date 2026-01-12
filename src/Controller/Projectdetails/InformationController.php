@@ -13,8 +13,8 @@ class InformationController extends ControllerAbstract
 {
     use ProjectdetailsTrait;
 
-    #[Route(self::routePrefix.'information', name: 'app_information')]
-    #[Route(self::routePrefix.'informationII', name: 'app_informationII')]
+    #[Route(self::routePrefix.self::informationNode,self::informationNode)]
+    #[Route(self::routePrefix.self::informationIINode,self::informationIINode)]
     public function showInformation(Request $request): Response
     {
         $session = $request->getSession();
@@ -43,7 +43,7 @@ class InformationController extends ControllerAbstract
             $inputArray = $this->setInputArray();
             // informationIII
             $informationIIIinput = $this->getInformationIII($this->xmlToArray($this->getMeasureTimePointNode($appNodeLoad,$routeParams))[self::informationNode]);
-            if ($this->checkInput($measureArray[self::informationIIINode],array_combine(array_keys(self::informationIIIInputsTypes),array_fill(0,count(self::informationIIIInputsTypes),'')))) {
+            if ($this->checkInput($measureArray[self::informationIIINode],array_fill_keys(self::informationIIIInputsTypes,''))) {
                 $this->addInputPage($translationPrefix,self::informationIIINode,$inputArray);
                 $informationIIIinputText = $this->translateString($inputPrefix.'hint',['pages' => 1, 'page' => '„'.$this->translateString($translationPrefix.self::informationIIINode).'“', 'inputs' => $this->translateString($inputPrefix.self::informationIIINode)]);
             }
@@ -65,8 +65,8 @@ class InformationController extends ControllerAbstract
                 ($this->checkInput($textsArray[self::introNode],[self::introTemplate => '', self::descriptionNode => '']) ||
                  $this->checkInput($textsArray,[self::goalsNode => '']) ||
                  $this->checkInput($textsArray[self::proNode],[self::proTemplate => '', self::descriptionNode => '']) ||
-                 $this->checkInput($conArray,array_combine(array_keys($conArray),array_fill(0,count($conArray),''))) ||
-                 $findingConsentArray!==[] && $this->checkInput($findingConsentArray,array_combine(array_keys($findingConsentArray),array_fill(0,count($findingConsentArray),''))) ||
+                 $this->checkInput($conArray,array_fill_keys(array_keys($conArray),'')) ||
+                 $findingConsentArray!==[] && $this->checkInput($findingConsentArray,array_fill_keys(array_keys($findingConsentArray),'')) ||
                  $isConflict && $this->checkInput($textsArray, [self::conflictTextNode => ''])
                 )
                ) {
@@ -76,7 +76,7 @@ class InformationController extends ControllerAbstract
         }
 
         $information = $this->createFormAndHandleRequest(InformationType::class,$this->xmlToArray($informationNode),$request,
-            [self::dummyParams => ['isAttendance' => !$isInformationII && $addressee!==self::addresseeParticipants, 'isInformation' => !$isInformationII, self::reviewProcess => $this->getReviewProcess($this->xmlToArray($appNode))],
+            [self::dummyParams => ['isAttendance' => !$isInformationII && $addressee!==self::addresseeParticipants, 'isInformation' => !$isInformationII, self::reviewProcess => $this->getCurrentReviewProcess($appNode)],
              self::addresseeString => $addresseeString,
              self::participantsString => $this->getAddresseeString($addressee,!$isInformationII,true, $isInformationII || $addressee===self::addresseeParticipants)]);
         if ($information->isSubmitted()) {
@@ -90,7 +90,7 @@ class InformationController extends ControllerAbstract
                 if ($informationIIIinput && !$isInformationIII) { // remove nodes from informationIII
                     $this->removeAllChildNodes($informationIIInode);
                 } elseif (!$informationIIIinput && $isInformationIII) { // add nodes to informationIII
-                    $this->addChildNodes($informationIIInode,array_keys(self::informationIIIInputsTypes));
+                    $this->addChildNodes($informationIIInode,self::informationIIIInputsTypes);
                 }
                 $isPre = $data[self::pre]===0; // true if pre information
                 $isPreOld = $informationLoad===self::pre;

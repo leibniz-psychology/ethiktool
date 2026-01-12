@@ -18,7 +18,7 @@ class InformationType extends TypeAbstract
         $addresseeParam = [self::addressee => $options[self::addresseeString]];
         $parameters = [self::labelParams => array_merge($addresseeParam,[self::participant => $options[self::participantsString]])];
         foreach ([self::pre,self::post,self::preComplete] as $type) {
-            $this->addBinaryRadio($builder,$type,$pagePrefix.$type.'.title',$this->appendText($type),$pagePrefix.self::textHintPlural.'.'.$type,array_merge($parameters,$type===self::preComplete ? ['attr' => ['placeholder' => '']] : [])); // placeholder for preCompleteType is set in template
+            $this->addBinaryRadio($builder,$type,$pagePrefix.$type.'.title',$this->appendText($type),$pagePrefix.self::textHintPlural.'.'.$type,options: array_merge($parameters,$type===self::preComplete ? $this->getPlaceholder('') : [])); // placeholder for preCompleteType is set in template
             $this->addRadioGroup($builder,$type.'Type',self::informationTypes,$pagePrefix.'type.title',options: [self::labelParams => ['type' => $type]]);
         }
         // additional widgets for yes
@@ -32,8 +32,7 @@ class InformationType extends TypeAbstract
         $reviewProcess = $dummyParams[self::reviewProcess];
         if ($dummyParams['isInformation'] && str_contains($reviewProcess,self::reviewProcessFull)) {
             $tempPrefix = $pagePrefix.self::documentTranslationNode.'.';
-            $this->addBinaryRadio($builder,self::documentTranslationNode,$tempPrefix.'title');
-            $this->addFormElement($builder,self::documentTranslationNode.self::descriptionCap,'text',hint: $tempPrefix.self::textHint);
+            $this->addBinaryRadio($builder,self::documentTranslationNode,$tempPrefix.'title',textName: self::documentTranslationNode.self::descriptionCap,textHint: $tempPrefix.self::textHint);
             if ($reviewProcess===self::reviewFullDocs) {
                 $this->addFormElement($builder,self::documentTranslationPDF,'checkbox',$tempPrefix.'pdf.title');
             }
