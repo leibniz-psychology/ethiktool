@@ -33,8 +33,8 @@ trait ReviewProcessTrait
             'examinedPeople' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'peopleDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'closed' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'include' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'exclude' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'include' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'exclude' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'sampleSize' => ['fullBegun','fullRequested','fullDocs'],
             'recruitment' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'recruitmentFurther' => ['fullBegun','fullRequested','fullDocs']
@@ -57,7 +57,7 @@ trait ReviewProcessTrait
             'consent' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'terminateCons' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'participation' => ['shortDocs','shortService','fullDocs'],
-            'terminateParticipants' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
+            'terminateParticipants' => ['shortDocs','shortService','fullBegun','fullDocs'],
             'terminateCriteria' => ['fullBegun','fullRequested','fullDocs']
         ], // consent
         // measures
@@ -71,7 +71,7 @@ trait ReviewProcessTrait
             'interventionsPDF' => ['fullBegun','fullRequested','fullDocs'],
             'otherSources' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'loan' => ['shortDocs','shortService','fullDocs'],
-            'location' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'location' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'presence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'duration' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
         ], // measures
@@ -87,17 +87,17 @@ trait ReviewProcessTrait
         // compensation
         'compensation' => [
             'type' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'moneyDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'moneyFurther' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'moneyawarding' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'hoursDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'hoursawarding' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotteryDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'lotteryawarding' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'voucherDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'voucherawarding' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'compensationOtherDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'compensationOtherawarding' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
+            'moneyDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'moneyFurther' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'moneyawarding' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'hoursDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'hoursawarding' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotteryDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'lotteryawarding' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'voucherDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'voucherawarding' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'compensationOtherDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'compensationOtherawarding' => ['shortDocs','shortService','fullBegun','fullDocs'],
             'terminate' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'compensationVoluntary' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'furtherDescription' => ['fullBegun','fullRequested','fullDocs'],
@@ -233,10 +233,10 @@ trait ReviewProcessTrait
             'school' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'closedOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'closedOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'includeText' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'include' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'excludeText' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'exclude' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'includeText' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'include' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'excludeText' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'exclude' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'total' => ['fullBegun','fullRequested','fullDocs'],
             'furtherParticulars' => ['fullBegun','fullRequested','fullDocs'],
             'sampleSizePlan' => ['fullBegun','fullRequested','fullDocs'],
@@ -287,8 +287,8 @@ trait ReviewProcessTrait
             'terminateCons' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'terminateConsDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'participation' => ['shortDocs','shortService','fullDocs'],
-            'terminateParticipants' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'terminateParticipantsText' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
+            'terminateParticipants' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'terminateParticipantsText' => ['shortDocs','shortService','fullBegun','fullDocs'],
             'terminateCriteria' => ['fullBegun','fullRequested','fullDocs']
         ], // consent
         // measures
@@ -337,11 +337,13 @@ trait ReviewProcessTrait
             'loan' => ['shortDocs','shortService','fullDocs'],
             'receipt' => ['shortDocs','shortService','fullDocs'],
             'receiptText' => ['shortDocs','shortService','fullDocs'],
-            'location' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'locationDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'location' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'locationDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'presence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'measureTime' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'breaks' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
+            'measureTimeDays' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measureTimeHours' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measureTimeMinutes' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'breaksMinutes' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
         ], // measures
         // burdensRisks
         'burdensRisks' => [
@@ -379,52 +381,52 @@ trait ReviewProcessTrait
         'compensation' => [
             'noCompensation' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'money' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'moneyValue' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'moneyAmount' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'moneyValue' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'moneyAmount' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'hours' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'hoursDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'hoursValue' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'hoursAmount' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'hoursDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'hoursValue' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'hoursAmount' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'lottery' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'lotteryDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'lotteryDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'voucher' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'voucherDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'voucherDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'compensationOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'compensationOtherDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'moneyFurther' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'moneyFurtherDescription' => ['shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'compensationOtherDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'moneyFurther' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'moneyFurtherDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'terminate' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'terminateDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'moneyawarding' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'moneylaterDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'moneylaterInformation' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'moneylaterOtherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'moneyexternalDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'moneyotherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'hoursawarding' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'hourslaterDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'hourslaterInformation' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'hourslaterOtherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'hoursotherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotteryStartDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotteryStart' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotteryStartOtherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotteryawarding' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotterylaterDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotterylaterInformation' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotterylaterOtherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotterydeliver' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotterydeliverDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotteryexternalDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'lotteryotherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'voucherawarding' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'voucherlaterDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'voucherlaterInformation' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'voucherlaterOtherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'voucherdeliver' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'voucherdeliverDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'voucherotherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
-            'awardingOtherDescription' => ['shortDocs','shortService','shortBegun','fullBegun','fullDocs'],
+            'moneyawarding' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'moneylaterDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'moneylaterInformation' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'moneylaterOtherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'moneyexternalDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'moneyotherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'hoursawarding' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'hourslaterDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'hourslaterInformation' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'hourslaterOtherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'hoursotherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotteryStartDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotteryStart' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotteryStartOtherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotteryawarding' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotterylaterDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotterylaterInformation' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotterylaterOtherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotterydeliver' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotterydeliverDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotteryexternalDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'lotteryotherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'voucherawarding' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'voucherlaterDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'voucherlaterInformation' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'voucherlaterOtherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'voucherdeliver' => ['shortDocs','shortService','shortBegun','fullDocs'],
+            'voucherdeliverDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'voucherotherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
+            'awardingOtherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
             'compensationVoluntary' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'compensationVoluntaryDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'furtherDescription' => ['fullBegun','fullRequested','fullDocs']
@@ -818,7 +820,6 @@ trait ReviewProcessTrait
             'peopleDescription' => [[['groups','examinedPeople','physical'],['groups','examinedPeople','mental'],['groups','examinedPeople','medical'],['groups','examinedPeople','institutional'],['groups','examinedPeople','wards'],['groups','examinedPeople','vulnerable'],['groups','examinedPeople','dependent'],['groups','examinedPeople','otherPeople']],['','','','','','','',''],[],true],
             'include' => [[],[],['noCriteria','criteria']],
             'exclude' => [[],[],['noCriteria','criteria']],
-            'criteria' => [[],[],['include','exclude']],
             'sampleSize' => [[],[],['total','furtherParticulars','sampleSizePlan']]
         ], // groups
         // information
@@ -935,21 +936,19 @@ trait ReviewProcessTrait
         $coreDataArray = $application[self::appDataNodeName][self::coreDataNode];
         $applicationProcessArray = $coreDataArray[self::applicationProcessNode];
         $appType = $applicationProcessArray[self::chosen]; // short or full
-        $isRequested = false; // gets true if only requested funding exists
+        $isRequested = false; // gets true if any requested funding exists
         $fundingArray = $coreDataArray[self::funding];
-        if ($fundingArray!=='' && array_diff(array_keys($fundingArray),self::fundingResearchExternal)===[]) {
-            $isRequested = true;
+        if ($fundingArray!=='') {
             foreach ($fundingArray as $funding) {
-                $isRequested = $isRequested && $funding[self::fundingStateNode]===self::fundingRequested;
+                $isRequested = $isRequested || ($funding[self::fundingStateNode] ?? '')===self::fundingRequested;
             }
         }
         $reviewProcess = '';
         if ($appType!=='') {
-            $projectStartArray = $coreDataArray[self::projectStart];
-            $reviewProcess = $projectStartArray[self::chosen]==='0' && array_key_exists(self::descriptionNode,$projectStartArray)
-                ? $appType.'Begun'
-                : ($isRequested
-                    ? $appType.'Requested'
+            $reviewProcess = $isRequested
+                ? $appType.'Requested'
+                : (array_key_exists(self::descriptionNode,$coreDataArray[self::projectStart])
+                    ? $appType.'Begun'
                     : ($appType===self::reviewProcessFull
                         ? self::reviewFullDocs
                         : (array_key_exists(self::shortDocsNode,$applicationProcessArray)
@@ -981,7 +980,7 @@ trait ReviewProcessTrait
     }
 
     /** Updates the nodes of measure time point
-     * @param Request $request
+     * @param Request $request request to get the locale
      * @param SimpleXMLElement $measureTimePointNode node containing the information about the current measure time point
      * @param string $reviewProcess type of review process
      * @return void
@@ -1052,24 +1051,6 @@ trait ReviewProcessTrait
         } // foreach reviewQuestions
         // remove nodes that depend on different inputs (e.g., A and [B or C]) -> They do (still) exist if they may exist for the review process
         $groupsNode = $measureTimePointNode->{self::groupsNode};
-        $consentNode = $measureTimePointNode->{self::consentNode};
-        $compensationNode = $measureTimePointNode->{self::compensationNode};
-        if ($this->getShortBegunRequested($request)) { // if creation of participation document can be chosen, but data collection has already begun or funding is requested, intermediate page must have the same information as for shortService and shortNoDocs, i.e., some nodes that were created need to be removed again
-            $this->removeElement(self::criteriaIncludeNode,$groupsNode);
-            $this->removeElement(self::criteriaExcludeNode,$groupsNode);
-            $this->removeElement(self::locationNode,$measureTimePointNode->{self::measuresNode});
-            $this->removeElement(self::terminateParticipantsNode,$consentNode);
-            $compensationTypesArray = $this->xmlToArray($compensationNode[0])[self::compensationTypeNode];
-            if ($compensationTypesArray!=='' && !array_key_exists(self::compensationNo,$compensationTypesArray)) {
-                foreach (array_keys($compensationTypesArray) as $compensation) {
-                    $this->removeElement($compensation.self::descriptionCap,$compensationNode);
-                    $this->removeElement($compensation.self::awardingNode,$compensationNode);
-                    if ($compensation===self::compensationMoney) {
-                        $this->removeElement(self::moneyFurther,$compensationNode);
-                    }
-                }
-            }
-        }
         if ($this->checkElement(self::criteriaIncludeNode,$groupsNode)) { // add (not remove) first inclusion criterion if old review process was shortNoDocs
             $include = $groupsNode->{self::criteriaIncludeNode}->{self::criteriaNode};
             $firstInclude = self::criteriaIncludeNode.'0';
@@ -1092,6 +1073,7 @@ trait ReviewProcessTrait
         }
         // nodes that exist if any information is given
         if ($isPre || $this->checkElement(self::post,$informationNode) && ((string) $informationNode->{self::post}->{self::chosen})==='0') {
+            $consentNode = $measureTimePointNode->{self::consentNode};
             // document translation
             if (((string) $consentNode->{self::consent}->{self::chosen})===self::consentOral) {
                 $this->removeElement(self::documentTranslationNode,$informationNode);
@@ -1112,7 +1094,7 @@ trait ReviewProcessTrait
                 $this->removeElement($nodeName,$privacyNode);
             }
         }
-        $compensationArray = $this->xmlToArray($compensationNode[0]);
+        $compensationArray = $this->xmlToArray($measureTimePointNode->{self::compensationNode}[0]);
         $selections = $compensationArray[self::compensationTypeNode] ?? '';
         $hasCode = false; // gets true if any awarding is by code
         if ($selections!=='' && !array_key_exists(self::compensationNo,$selections)) {
@@ -1137,15 +1119,5 @@ trait ReviewProcessTrait
         if (!($isPersonalPurpose && $isAnonymized)) {
             $this->removeElement(self::dataReuseHowNode.'reuse',$dataReuseNode);
         }
-    }
-
-    /** Checks whether the review process is 'shortBegun' or 'shortRequested' and the committee allows to choose whether documents should be created for short proposals.
-     * @param Request $request
-     * @return bool true if the review process is 'shortBegun' or 'shortRequested' and committee allows to choose whether documents should be created for short proposals, false otherwise
-     */
-    protected function getShortBegunRequested(Request $request): bool
-    {
-        $session = $request->getSession();
-        return in_array($this->getCommitteeType($session),self::reviewShortChoose) && in_array($session->get(self::reviewProcess),[self::reviewShortBegun,self::reviewShortRequested]);
     }
 }

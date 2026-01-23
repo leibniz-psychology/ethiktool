@@ -38,30 +38,36 @@ class AppDataController extends ControllerAbstract
         $coreDataArrayOld = $this->xmlToArray($appNodeOld->{self::appDataNodeName}->{self::coreDataNode});
         $isConflictOld = $coreDataArrayOld[self::conflictNode][self::chosen]==='0' && in_array($reviewProcessOld,$conflictReviewProcesses);
         $textInput = '';
-        $textInputRequested = ''; // if begun is selected and then begun is deselected and (before or after) requested is selected
+        $textInputRequested = ''; // if begun is selected and then requested is selected
         $tempArray = $coreDataArrayOld[self::projectStart];
-        $isBegunOld = $tempArray[self::chosen]==='0' && array_key_exists(self::descriptionNode,$tempArray); // true if begun is selected
+        $isBegunOld = array_key_exists(self::descriptionNode,$tempArray); // true if begun is selected
         $hasBegunInput = false; // gets true if any input was made that gets deleted when changing from begun to requested
         $hasTexts = false; // gets true if any 'texts' page is active
         $hasConflictDescription = false;
+        $isFullBegunOld = $reviewProcessOld===self::reviewFullBegun;
         foreach ($this->addZeroIndex($this->xmlToArray($appNodeOld->{self::projectdetailsNodeName}->{self::studyNode})) as $study) {
             foreach ($this->addZeroIndex($study[self::groupNode]) as $group) {
                 foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureTimePoint) {
                     if ($isBegunOld) {
                         $hasInput = false;
-                        $tempArray = $measureTimePoint[self::dataReuseNode];
-                        if (($measureTimePoint[self::consentNode][self::terminateParticipantsNode][self::chosen] ?? '')!=='' || ($tempArray!=='' && (($tempArray[self::dataReuseHowNode][self::chosen] ?? '')!='' || ($tempArray[self::dataReuseHowNode.'reuse'][self::chosen] ?? '')!==''))) { // terminate participants or data reuse how
-                            $hasInput = true;
-                        }
-                        $compensationArray = $measureTimePoint[self::compensationNode];
-                        $tempArray = $compensationArray[self::compensationTypeNode];
-                        if ($tempArray!=='' && !array_key_exists(self::compensationNo,$tempArray)) { // compensation awarding
-                            foreach (array_keys($tempArray) as $selection) {
-                                $awardingArray = $compensationArray[$selection.self::awardingNode] ?? '';
-                                if ($awardingArray!=='' && $awardingArray[self::chosen]!=='' || $selection===self::compensationLottery && ($awardingArray[self::lotteryStart.self::descriptionCap]!=='' || $awardingArray[self::lotteryStart]!=='')) {
-                                    $hasInput = true;
+                        if ($isFullBegunOld) { // inputs for compensation and data reuse that may be removed are only necessary in full applications
+                            $tempArray = $measureTimePoint[self::dataReuseNode];
+                            if (($tempArray[self::dataReuseHowNode][self::chosen] ?? '')!='' || ($tempArray[self::dataReuseHowNode.'reuse'][self::chosen] ?? '')!=='') { // data reuse how
+                                $hasInput = true;
+                            }
+                            $compensationArray = $measureTimePoint[self::compensationNode];
+                            $tempArray = $compensationArray[self::compensationTypeNode];
+                            if ($tempArray!=='' && !array_key_exists(self::compensationNo,$tempArray)) { // compensation awarding
+                                foreach (array_keys($tempArray) as $selection) {
+                                    $awardingArray = $compensationArray[$selection.self::awardingNode] ?? '';
+                                    if ($awardingArray!=='' && $awardingArray[self::chosen]!=='' || $selection===self::compensationLottery && ($awardingArray[self::lotteryStart.self::descriptionCap]!=='' || $awardingArray[self::lotteryStart]!=='')) {
+                                        $hasInput = true;
+                                    }
                                 }
                             }
+                        }
+                        if (($measureTimePoint[self::consentNode][self::terminateParticipantsNode][self::chosen] ?? '')!=='') {
+                            $hasInput = true;
                         }
                         if ($hasInput) {
                             $hasBegunInput = true;
@@ -79,7 +85,7 @@ class AppDataController extends ControllerAbstract
             }
         }
         if ($hasBegunInput) {
-            $textInputRequested = $this->translateString(self::coreDataNode.'.'.self::funding.'.removeHint');
+            $textInputRequested = $this->translateString(self::coreDataNode.'.'.self::funding.'.removeHint',[self::reviewProcess => $reviewProcessOld]);
         }
         if ($hasConflictDescription) {
             $inputArray = $this->setInputArray();
@@ -103,6 +109,12 @@ class AppDataController extends ControllerAbstract
             if ($hasShortDocs) {
                 $modals[] = array_merge($tempArray,['modalID' => 'shortShort', 'params' => ['type' => 'shortToShort']]); // shortService to shortNoDocs
             }
+        }
+        // hint for requestedConfirm
+        $committeeParams = $session->get(self::committeeParams);
+        $requestedConfirmArray = [];
+        foreach (['true','false'] as $bool) {
+            $requestedConfirmArray[] = $this->translateString(self::coreDataNode.'.'.self::funding.'.'.self::requestedConfirm.'.headingHint',array_merge($committeeParams,['isFull' => $bool]));
         }
 
         $coreData = $this->createFormAndHandleRequest(CoreDataType::class,$coreDataArray,$request,[self::dummyParams => [self::applicant => $positions[$this->getQualification($coreDataArray) ? 1 : 0], self::supervisor => $positions[2]]]);
@@ -188,6 +200,7 @@ class AppDataController extends ControllerAbstract
              self::reviewProcess => $coreDataArrayOld[self::applicationProcessNode][self::chosen]!=='' ? $session->get(self::reviewProcess) : self::reviewFullDocs,
              'positions' => $positions,
              'funding' => self::fundingTypes,
+             'requestedConfirmArray' => $requestedConfirmArray,
              'support' => array_diff_key(self::supportTypes,!$isEUB ? [self::supportCenter => ''] : []),
              'applicantInfo' => self::applicantContributorsInfosTypes,
              'textInputConflict' => $textInput,
@@ -219,6 +232,7 @@ class AppDataController extends ControllerAbstract
         $tempVal = $this->translateString($translationPrefix.'positiveNo');
         return $this->render('AppData/votes.html.twig', $this->setRenderParameters($request,$votes,
                 ['appType' => $appType,
+                 'isDocs' => $this->getStringFromBool(!in_array($this->getCurrentReviewProcess($appNode),[self::reviewShortService,self::reviewShortNoDocs])),
                  'otherVoteResultHeadingText' => ['positive' => $tempVal, self::otherVoteResultNegative => $this->translateString($translationPrefix.self::otherVoteResultNegative), 'noVote' => $tempVal],
                  'exReArray' => self::appExtendedResubmission],'appData.votes')
             );

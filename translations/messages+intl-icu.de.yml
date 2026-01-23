@@ -491,21 +491,27 @@ coreData:
         {committeeType, select,
           EUB   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender Datenerhebung ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
           DLR   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
-          TUD   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
+          TUD   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.}
           UH1   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.}
           other {}}
       textHint:
         current: 'Bitte beschreiben Sie hier, welche Teile der Datenerhebung bereits abgeschlossen sind (z.B. Kontaktierung der Teilnehmenden, Anzahl erhobener Datensätze) und welche Teile noch ausstehen. Die weiteren Angaben im Ethiktool sind prospektiv auszufüllen.'
-        retrospective: 'Warum wird der Ethikantrag nachträglich gestellt?'
+        retrospective: 'Warum stellen Sie den Ethikantrag nachträglich?'
       begun: >-
           Die Datenerhebung hat bereits begonnen. Eine
           {committeeType, select,
             UH1   {Begründung für die nachträgliche}
+            TUD   {Begründung für die nachträgliche}
             other {Genehmigung zur nachträglichen}}
           Begutachtung ist notwendig.
     next: 'nächstmöglicher Zeitpunkt (nach Vorliegen eines positiven Ethikvotums)'
     end:
-      title: 'geplantes Projektende'
+      title: >-
+        {committeeType, select,
+          DLR   {(geplantes)}
+          TUD   {(geplantes)}
+          UH1   {(geplantes)}
+          other {geplantes}} Projektende
       hint: 'Damit ist nicht das Ende der Datenerhebung gemeint, sondern der Abschluss der Datenauswertung und Verschriftlichung. Das ausgestellte Votum ist für das Forschungsprojekt mit der hier angegebenen Laufzeit gültig.'
   funding:
     title: 'Quelle(n) der Finanzierung'
@@ -522,7 +528,28 @@ coreData:
     fundingState:
       granted: 'Es handelt sich um ein bewilligtes Drittmittelprojekt.'
       requested: 'Es handelt sich um ein beantragtes Drittmittelprojekt.'
-    removeHint: 'Durch die Änderung, die Sie gerade vorgenommen haben, sind auf den „Projektdetails“-Seiten „Einwilligung“, „Aufwandsentschädigung“ bzw. „Nachnutzung“ keine Eingaben mehr zu der Frage nach dem Umgang mit den Daten bei individuellem Abbruch, der Abwicklung der Aufwandsentschädigung bzw. der Frage, wie bzw. wem die Forschungsdaten zur Nachnutzung zur Verfügung gestellt werden, erforderlich. Die dort getätigten Eingaben werden gelöscht, sobald Sie diese Seite verlassen.'
+    removeHint: >-
+      Durch die Änderung, die Sie gerade vorgenommen haben, sind auf den „Projektdetails“-Seiten „Einwilligung“{reviewProcess, select,
+        shortBegun { bzw. „Aufwandsentschädigung“}
+        other      {, „Aufwandsentschädigung“ bzw. „Nachnutzung“}} keine Eingaben mehr zu der Frage nach dem Umgang mit den Daten bei individuellem Abbruch{reviewProcess, select,
+          shortBegun { bzw. der Abwicklung der Aufwandsentschädigung}
+          other      {, der Abwicklung der Aufwandsentschädigung bzw. der Frage, wie bzw. wem die Forschungsdaten zur Nachnutzung zur Verfügung gestellt werden,}} erforderlich. Die dort getätigten Eingaben werden gelöscht, sobald Sie diese Seite verlassen.
+    requestedConfirm: 
+      title: 'Bestätigung der Deckungsgleichheit'
+      headingHint: >- # other in committeeType is those without participant documents for short proposals and with no special requirements (currently EUB, UH1, test ethics committee)
+       Fördermittelgeber fordern in der Regel ein Ethikvotum für genau den beantragten Projektinhalt. Daher müssen die im Ethikantrag beschriebenen Studien inhaltlich identisch zu den Studien im Drittmittelantrag sein. Zur Zuordenbarkeit für den Fördermittelgeber sollten der Titel des Drittmittelantrags und des Ethikantrags gleich lauten. 
+       Bitte kombinieren Sie keine drittmittelabhängigen und davon unabhängigen Studien in einem Ethikantrag. Die Ethikkommission geht davon aus, dass die im Ethikantrag beschriebenen Studien nur bei Bewilligung der Drittmittel durchgeführt werden.
+       {committeeType, select,
+         TUC   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+         JGU   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+         DLR   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+         TUD   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags {isFull, select,
+                                                true  {mit Teilnahmedokumenten und Angabe weiterer Details}
+                                                other {}} erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+         other {{isFull, select,
+                  true  {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+                  other {}}}}
+      confirm: 'Ich bestätige, dass die im Ethikantrag dargelegten Studien inhaltlich deckungsgleich zu den Studien im Drittmittelantrag sind.'
   qualification:
     title: 'Wird das Forschungsprojekt ausschließlich im Rahmen der eigenen Qualifikationsarbeit durchgeführt (Bachelor-/Masterarbeit/Promotion)?'
     headingHint: 'Bitte antworten Sie nur dann mit „Ja“, wenn das Forschungsprojekt ohne Ihre Qualifikationsarbeit nicht durchgeführt werden würde. Wenn Sie für Ihre Qualifikationsarbeit Daten eines ohnehin durchgeführten Forschungsprojekts nutzen, ist die Frage mit „Nein“ zu beantworten und eine der Funktionen im Forschungsprojekt für die eigene Person auszuwählen.'
@@ -570,7 +597,9 @@ votes:
     textHint: >-
       {type, select,
         resubmission        {Beschreiben Sie bitte kurz die vorgenommenen Änderungen im Vergleich zum ursprünglichen Antrag. Wenn Sie vorgeschlagene Änderungen bewusst nicht vorgenommen haben, begründen Sie das hier bitte zur Einordnung für die Ethikkommission.}
-        resubmissionGranted {Beschreiben Sie bitte kurz die vorgenommenen Änderungen im Vergleich zum ursprünglichen Antrag, vor allem wenn es über die Vervollständigung der Dokumente nach der Mittelbewilligung hinaus noch weitere Änderungen gibt. Die Erstellung der Teilnahmedokumente muss nicht gesondert erwähnt werden.}
+        resubmissionGranted {Beschreiben Sie bitte kurz die vorgenommenen Änderungen im Vergleich zum ursprünglichen Antrag, vor allem wenn es über die Vervollständigung der Dokumente nach der Mittelbewilligung hinaus noch weitere Änderungen gibt. {isDocs, select,
+                                                                                      true  {Die Erstellung der Teilnahmedokumente muss nicht gesondert erwähnt werden.}
+                                                                                      other {}}}
         other               {Benennen Sie bitte kurz die zentralen Gemeinsamkeiten und beschreiben Sie dann, welche Unterschiede sich im Vergleich zum damaligen Antrag ergeben.}}
     hint:
       main: 'Bitte prüfen Sie, ob anstelle eines neuen Antrags ein Erweiterungsantrag gestellt werden kann. Dies empfiehlt sich, wenn gegenüber dem benannten ähnlichen Forschungsprojekt nur wenige Änderungen vorgenommen werden. Sie können den Antragstyp auf der Seite „<a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#appType">Stammdaten</a>“ ändern.'
@@ -989,23 +1018,16 @@ projectdetails:
           Dauer {multiple, select,
                   true  {des Erhebungszeitpunktes}
                   other {der Erhebung}}
-        total: >-
-          Die Gesamtdauer der {multiple, select,
-                                true  {heutigen}
-                                other {}} Untersuchung beträgt erfahrungsgemäß etwa {time, plural,
-                                                                      =1 {1 Minute, davon}
-                                                                      other {# Minuten, davon}}
-        measureTime: >-
-          {time, plural,
-            =1    {Minute}
-            other {Minuten}}
-          reine Erhebungszeit und
-        breaks: >-
-          {time, plural,
-            =1    {Minute}
-            other {Minuten}}
-          Vor- und Nachbereitungszeit sowie Pausenzeiten.
-        hint: 'Sie können als Zeitwert auch ''0'' eintragen. Beachten Sie aber bitte, dass die Vorbereitung üblicherweise auch die Zeit umfasst, die für das Lesen der relevanten Dokumente (z.B. Studieninformation) benötigt wird.'
+        measureTime:
+          title: 'Reine Erhebungszeit'
+          measureTimeDays: 'Tage:'
+          measureTimeHours: 'Stunden:'
+          measureTimeMinutes: 'Minuten:'
+          hint: "Sie können als Zeitwert auch '0' eintragen. Es werden nur die Eingaben in die Studieninformation übernommen, bei denen ein Wert größer als 0 eingetragen wurde."
+        breaks:
+          title: 'Vor- und Nachbereitungszeit sowie Pausenzeiten'
+          breaksMinutes: 'Minuten:'
+          hint: 'Sie können als Zeitwert auch ''0'' eintragen. Beachten Sie aber bitte, dass die Vorbereitung üblicherweise auch die Zeit umfasst, die für das Lesen der relevanten Dokumente (z.B. Studieninformation) benötigt wird.'
     burdensRisks: # other is burdens/risks for contributors
       textHint: >-
         Bitte beschreiben Sie die {type, select,
@@ -1962,7 +1984,12 @@ checkDoc:
       applicationProcess:
         missing: 'Art des Antragsverfahrens' # 'Antwort auf Frage nach [] fehlt.'
         shortDocs: 'Antwort auf Frage nach Erstellung der Teilnahmedokumente' # '[] fehlt.'
-      start: 'Geplanter Beginn der Datenerhebung liegt in der Vergangenheit.'
+      start:
+        past: >-
+          {hasBegun, select,
+            true  {Das gewählte Datum für den Beginn der Datenerhebung liegt in der Vergangenheit. In diesem Fall muss auch „Die Datenerhebung hat bereits begonnen“ ausgewählt werden.}
+            other {Geplanter Beginn der Datenerhebung liegt in der Vergangenheit.}}
+        begunToPast: 'Sie haben ausgewählt, dass die Datenerhebung bereits begonnen hat. In diesem Fall muss auch das gewählte Datum für den Beginn der Datenerhebung in der Vergangenheit liegen.'
       begun: 'Beschreibung des Stands der Datenerhebung'
       retrospective: 'Begründung, warum der Ethikantrag nachträglich gestellt wird,'
       end: 'Geplantes Projektende liegt in der Vergangenheit.'
@@ -1973,6 +2000,7 @@ checkDoc:
             fundingResearch {Forschungsförderorganisation}
             other           {Industriedrittmittel}}: Auswahl, ob Drittmittelprojekt bewilligt oder beantragt ist,
         appType: 'Sie haben als Antragstyp „Wiedervorlage nach Mittelakquise“ ausgewählt. Das passt nicht zu der Auswahl, dass noch Drittmittel beantragt werden.'
+        begun: 'Sie haben ausgewählt, dass die Finanzierung durch Drittmittel noch beantragt wird. Das passt nicht dazu, dass die Datenerhebung bereits begonnen hat.'
       qualification:
         missing: 'Antwort auf Frage nach Qualifikationsarbeit'
         funding: 'Wenn es keine gesonderte Finanzierung gibt, da es sich um eine Studie im Rahmen einer Qualifikationsarbeit handelt, muss die Frage nach Qualifikationsarbeit mit „Ja“ beantwortet werden.'
@@ -2224,8 +2252,11 @@ checkDoc:
           missing: 'Anwesenheit von Projektbeteiligten'
           consent: 'Wenn die <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">Einwilligung mündlich</a> erfolgt, müssen Projektbeteiligte bei der Erhebung anwesend sein.'
         duration:
-          measureTime: 'Reine Erhebungszeit'
-          breaks: 'Vor-/Nachbereitungszeit'
+          measureTimeDays: 'Anzahl Tage der reinen Erhebungszeit'
+          measureTimeHours: 'Anzahl Stunden der reinen Erhebungszeit'
+          measureTimeMinutes: 'Anzahl Minuten der reinen Erhebungszeit'
+          measureTime: 'Mindestens ein Wert der reinen Erhebungszeit muss größer als 0 sein.'
+          breaksMinutes: 'Vor-/Nachbereitungszeit'
       burdensRisks: # other is burdens/risks for contributors
         title: >-
           {burdensRisksType, select,

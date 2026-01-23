@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '2.3.0';
+    protected const toolVersion = '2.4.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -42,6 +42,7 @@ trait PageTrait
     protected const measureTimePointNode = 'measureTimePoint';
     protected const committeeEUB = 'EUB';
     protected const committeeTUC = 'TUC';
+    protected const committeeTUD = 'TUD';
     protected const position = 'position';
     protected const positionsStudent = 'student'; // must equal one of the keys in $positions
     protected const positionsPhd = 'phd'; // must equal one of the keys in $positions

@@ -491,7 +491,7 @@ coreData:
         {committeeType, select,
           EUB   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
           DLR   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
-          TUD   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
+          TUD   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.}
           UH1   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.}
           other {}}
       textHint:
@@ -501,11 +501,17 @@ coreData:
           Data collection has already started.
           {committeeType, select,
             UH1   {Justification}
+            TUD   {Justification}
             other {Authorisation}}
           for retrospective review is needed.
     next: 'as soon as possible (after approval by the ethics committee)'
     end:
-      title: 'Planned end of the project'
+      title: >-
+        {committeeType, select,
+          DLR   {(Planned)}
+          TUD   {(Planned)}
+          UH1   {(Planned)}
+          other {Planned}} end of the project
       hint: 'This does not refer to the end of data collection, but to finalizing data analysis and compilation. The vote issued is valid for the research project with the duration specified here.'
   funding:
     title: 'Funding source(s)'
@@ -522,7 +528,28 @@ coreData:
     fundingState:
       granted: 'Funding for this research project has already been granted.'
       requested: 'Funding for this research project is applied for/has not been granted yet.'
-    removeHint: 'Due to the change you just made, no inputs on the “Project details“ pages “Consent“, “Compensation“ and “Data reuse“ are needed anymore regarding data handling in case of withdrawal from participation, technical processing of the compensation and data sharing for re-use. The respective entries will be deleted as soon as you leave the current page.'
+    removeHint: >-
+      Due to the change you just made, no inputs on the “Project details“ pages “Consent“{reviewProcess, select,
+        shortBegun { and “Compensation“}
+        other      {, “Compensation“ and “Data reuse“}} are needed anymore regarding data handling in case of withdrawal from participation{reviewProcess, select,
+          shortBegun { and technical processing of the compensation}
+          other      {, technical processing of the compensation and data sharing for re-use}}. The respective entries will be deleted as soon as you leave the current page.
+    requestedConfirm:
+      title: 'Confirmation of congruence'
+      headingHint: >- # other in committeeType is those without participant documents for short proposals and with no special requirements (currently EUB, UH1, test ethics committee)
+       Funding institutions usually require an ethics vote for the exact content of the funding proposal. Therefore, the studies laid out in the ethics proposal must be congruent to those in the funding proposal in terms of content. For consistency from the funder's perspective, the title of the ethics proposal and the funding proposal should be identical. 
+       Please do not combine third-party-funding-dependent and -independent studies within one ethics proposal. The ethics committee acts on the assumption that the studies laid out in the ethics proposal will only be conducted if third-party funding is granted.
+       {committeeType, select,
+         TUC   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+         JGU   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+         DLR   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+         TUD   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted {isFull, select,
+                            true  {with participant documents and further details}
+                            other {}} for receiving a final ethics vote.}
+         other {{isFull, select,
+                  true  {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+                  other {}}}}
+      confirm: 'I confirm that the studies laid out in the ethics proposal are congruent to those in the funding application in terms of content.'
   qualification:
     title: 'Is the research project exclusively carried out within the scope of your own qualification work (Bachelor/Master/PhD thesis)?'
     headingHint: 'Please only answer “yes“ if the research project would not be carried out without your thesis. If the data to be used in your thesis belongs to a research project that would be conducted in any case, please answer “no“ and select one of the roles in the research project for yourself.'
@@ -570,7 +597,9 @@ votes:
     textHint: >-
       {type, select,
         resubmission        {Please briefly describe the changes made relative to the original proposal. If you deliberately refrained from implementing certain changes proposed by the Ethics Review Board, please explain/justify this.}
-        resubmissionGranted {Please briefly describe the changes made relative to the original proposal, especially if there are changes beyond the completion of the documents after funding has been granted. The generation of participant documents does not need to be specifically mentioned.}
+        resubmissionGranted {Please briefly describe the changes made relative to the original proposal, especially if there are changes beyond the completion of the documents after funding has been granted. {isDocs, select,
+                                            true  {The generation of participant documents does not need to be specifically mentioned.}
+                                            other {}}}
         other               {Please briefly name the key similarities and then describe the differences relative to the previous proposal.}}
     hint:
       main: 'Please check whether an amendment can be submitted instead of a new proposal. This is recommended if only few changes are made relative to the research project declared as similar. You can change the proposal type on page “<a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#appType">core data</a>“.'
@@ -989,23 +1018,16 @@ projectdetails:
           Duration of {multiple, select,
                   true  {this data collection time point}
                   other {the data collection}}
-        total: >-
-          The total duration of {multiple, select,
-                                true  {today''s}
-                                other {the}} investigation is usually about {time, plural,
-                                                                      =1 {1 minute, of which}
-                                                                      other {# minutes, of which}}
-        measureTime: >-
-          {time, plural,
-            =1    {minute}
-            other {minutes}}
-          (net) are allocated for data collection and
-        breaks: >-
-          {time, plural,
-            =1    {minute}
-            other {minutes}}
-          for preparation, follow-up, and breaks.
-        hint: 'You can enter a duration of ''0''. Please note, though, that preparation usually comprises the time needed to read the relevant documents (e.g., study information sheet).'
+        measureTime:
+          title: '(Net) time allocated for data collection'
+          measureTimeDays: 'Days:'
+          measureTimeHours: 'Hours:'
+          measureTimeMinutes: 'Minutes:'
+          hint: "You may enter a duration of '0'. Only those inputs with a value greater than 0 will be transferred to the study information sheet."
+        breaks:
+          title: 'Time for preparation, follow-up, and breaks'
+          breaksMinutes: 'Minutes:'
+          hint: 'You may enter a duration of ''0''. Please note, though, that preparation usually comprises the time needed to read the relevant documents (e.g., study information sheet).'
     burdensRisks: # other is burdens/risks for contributors
       textHint: >-
         Please describe the {type, select,
@@ -1962,7 +1984,12 @@ checkDoc:
       applicationProcess:
         missing: 'type of review process' # 'Answer to question about [] is missing.'
         shortDocs: 'Answer to question about creation of participant documents' # '[] is missing.'
-      start: 'The planned start of data collection is in the past.'
+      start:
+        past: >-
+          {hasBegun, select,
+            true  {The chosen date for the start of data collection is in the past. In this case, "Data collection has already started“ must be selected as well.}
+            other {The planned start of data collection is in the past.}}
+        begunToPast: 'You chose that data collection has already started. In this case, the chosen date for the start of data collection must be in the past as well.'
       begun: 'Description of current state of data collection'
       retrospective: 'Justification for necessity of retrospective ethics review'
       end: 'The planned end of the research project is in the past.'
@@ -1973,6 +2000,7 @@ checkDoc:
             fundingResearch {source of funding/sponsor}
             other           {third-party funding from industry}}: Selection whether funding is applied for or already granted
         appType: 'You chose “resubmission after funding acquisition“ as the type of proposal. This is incompatible with the selection that third-party funding is being applied for.'
+        begun: 'You chose that third-party funding is being applied for. This is inconsistent with the choice that data collection has already started.'
       qualification:
         missing: 'Answer to question about qualification work'
         funding: 'If there is no separate funding because the study is conducted within the scope of a qualification thesis, the question about qualification work must be answered with “Yes“.'
@@ -2224,8 +2252,11 @@ checkDoc:
           missing: 'presence of project contributors'
           consent: 'If <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">oral consent</a> is given, project contributors must be present during data collection.'
         duration:
-          measureTime: 'Data collection time (net)'
-          breaks: 'preparation/follow-up time'
+          measureTimeDays: 'Amount of days for (net) data collection time'
+          measureTimeHours: 'Amount of hours for (net) data collection time'
+          measureTimeMinutes: 'Amount of minutes for (net) data collection time'
+          measureTime: 'At least one value of the (net) data collection time must be greater than 0.'
+          breaksMinutes: 'preparation/follow-up time'
       burdensRisks:
         title: >-
           {burdensRisksType, select,

@@ -44,7 +44,7 @@ class CompensationController extends ControllerAbstract
         }
         $isDurationParam = ['isDuration' => $this->getDuration($this->xmlToArray($measure->{self::measuresNode}->{self::durationNode}))>30];
 
-        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request,[self::dummyParams => array_merge($isDurationParam,['hasDetails' => !$this->getShortBegunRequested($request)])]);
+        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request,[self::dummyParams => array_merge($isDurationParam,['hasDetails' => !(in_array($this->getCommitteeType($session),self::reviewShortChoose) && in_array($session->get(self::reviewProcess),[self::reviewShortBegun,self::reviewShortRequested]))])]);
         if ($compensation->isSubmitted()) {
             $data = $this->getDataAndConvert($compensation,$compensationNode);
             if ($hasDocs) {

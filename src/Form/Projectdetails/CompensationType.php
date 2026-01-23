@@ -23,34 +23,32 @@ class CompensationType extends TypeAbstract
         $this->isDuration = $dummyParams['isDuration'];
         // types
         $this->addCheckboxGroup($builder,self::compensationTypes,$typesPrefix);
-        if ($dummyParams['hasDetails']) { // details and awarding may not be asked even if the review process says so
-            $this->addFormElement($builder,self::compensationOther.self::descriptionCap,'text',hint: $textHintPrefix.self::compensationOther);
-            foreach (array_diff(self::compensationTypes, [self::compensationNo]) as $type) {
-                if ($type!==self::compensationMoney) {
-                    $this->addFormElement($builder, $type.self::descriptionCap, 'text', hint: $textHintPrefix.$type);
-                }
-                // awarding
-                if ($type!==self::compensationOther) {
-                    $this->addRadioGroup($builder, $type.self::awardingNode, self::awardingTypes[$type],textName: $type.'otherDescription',options: $this->getPlaceholder($awardingPrefix.$type.'.'.$type.'OtherPlaceholder'));
-                    $this->addFormElement($builder, $type.self::awardingLater.self::descriptionCap, 'text'); // later description
-                    $this->addRadioGroup($builder, $type.self::laterTypesName, self::laterTypes,textName: $type.self::laterOtherDescription, options: $this->getPlaceholder($awardingPrefix.'laterEnd.placeholder')); // later types
-                }
-                if (in_array($type, [self::compensationMoney, self::compensationLottery])) { // external description
-                    $this->addFormElement($builder, $type.'externalDescription', 'text');
-                }
+        $this->addFormElement($builder,self::compensationOther.self::descriptionCap,'text',hint: $textHintPrefix.self::compensationOther);
+        foreach (array_diff(self::compensationTypes, [self::compensationNo]) as $type) {
+            if ($type!==self::compensationMoney) {
+                $this->addFormElement($builder, $type.self::descriptionCap, 'text', hint: $textHintPrefix.$type);
             }
-            // further widgets if money is selected
-            $this->addBinaryRadio($builder, self::moneyFurther, $translationPrefix.self::compensationMoney.'.title', self::moneyFurther.self::descriptionCap);
-            // further awarding widgets
-            $tempPrefix = $awardingPrefix.self::compensationLottery.'.result.';
-            $this->addFormElement($builder, self::lotteryStart.self::descriptionCap, 'text', hint: $tempPrefix.self::textHint); // description of lottery start in awarding
-            $this->addRadioGroup($builder, self::lotteryStart, self::lotteryTypes,textName: self::lotteryStartOtherDescription, options: $this->getPlaceholder($tempPrefix.'types.placeholder')); // start of lottery
-            $this->addRadioGroup($builder, 'lotterydeliver'.self::descriptionCap, self::lotteryDeliverTypes); // deliver types for lottery
-            $this->addRadioGroup($builder, 'voucherdeliver'.self::descriptionCap, self::voucherDeliverTypes, textName: self::awardingOtherDescription, textHint: $awardingPrefix.self::compensationOther.'.'.self::textHint); // deliver types for voucher and description of other type
-            foreach ([self::compensationMoney, self::compensationHours] as $type) {
-                $this->addFormElement($builder, $type.self::valueSuffix, $type===self::compensationMoney ? 'money' : 'text', $typesPrefix.$type.'EndDefault');
-                $this->addRadioGroup($builder, $type.self::amountSuffix, self::valueTypes);
+            // awarding
+            if ($type!==self::compensationOther) {
+                $this->addRadioGroup($builder, $type.self::awardingNode, self::awardingTypes[$type],textName: $type.'otherDescription',options: $this->getPlaceholder($awardingPrefix.$type.'.'.$type.'OtherPlaceholder'));
+                $this->addFormElement($builder, $type.self::awardingLater.self::descriptionCap, 'text'); // later description
+                $this->addRadioGroup($builder, $type.self::laterTypesName, self::laterTypes,textName: $type.self::laterOtherDescription, options: $this->getPlaceholder($awardingPrefix.'laterEnd.placeholder')); // later types
             }
+            if (in_array($type, [self::compensationMoney, self::compensationLottery])) { // external description
+                $this->addFormElement($builder, $type.'externalDescription', 'text');
+            }
+        }
+        // further widgets if money is selected
+        $this->addBinaryRadio($builder, self::moneyFurther, $translationPrefix.self::compensationMoney.'.title', self::moneyFurther.self::descriptionCap);
+        // further awarding widgets
+        $tempPrefix = $awardingPrefix.self::compensationLottery.'.result.';
+        $this->addFormElement($builder, self::lotteryStart.self::descriptionCap, 'text', hint: $tempPrefix.self::textHint); // description of lottery start in awarding
+        $this->addRadioGroup($builder, self::lotteryStart, self::lotteryTypes,textName: self::lotteryStartOtherDescription, options: $this->getPlaceholder($tempPrefix.'types.placeholder')); // start of lottery
+        $this->addRadioGroup($builder, 'lotterydeliver'.self::descriptionCap, self::lotteryDeliverTypes); // deliver types for lottery
+        $this->addRadioGroup($builder, 'voucherdeliver'.self::descriptionCap, self::voucherDeliverTypes, textName: self::awardingOtherDescription, textHint: $awardingPrefix.self::compensationOther.'.'.self::textHint); // deliver types for voucher and description of other type
+        foreach ([self::compensationMoney, self::compensationHours] as $type) {
+            $this->addFormElement($builder, $type.self::valueSuffix, $type===self::compensationMoney ? 'money' : 'text', $typesPrefix.$type.'EndDefault');
+            $this->addRadioGroup($builder, $type.self::amountSuffix, self::valueTypes);
         }
         // terminate
         $tempPrefix = $translationPrefix.self::terminateNode.'.';

@@ -26,7 +26,7 @@ trait AppDataTrait
     protected const projectStartBegun = 'projectStartBegun';
     protected const projectStartRetrospective = 'retrospective';
     protected const begunCommittees = ['EUB','DLR','TUD','UH1']; // committees where review after start of data collection is possible
-    protected const retrospectiveCommittees = ['UH1']; // committees where justification is needed why data collection has already started
+    protected const retrospectiveCommittees = ['TUD','UH1']; // committees where justification is needed why data collection has already started
     protected const appNew = 'new';
     protected const applicationTypes = ['coreData.appType.type.new' => 'new', 'coreData.appType.type.extended' => 'extended', 'coreData.appType.type.resubmission' => 'resubmission', 'coreData.appType.type.resubmissionGranted' => 'resubmissionGranted']; // values must equal the values of the preceding variables
     protected const appExtendedResubmission = ['extended','resubmission','resubmissionGranted']; // values must equal the values of $appExtended and $appResubmission
@@ -41,6 +41,7 @@ trait AppDataTrait
     protected const fundingTypes = ['fundingQuali' => 'coreData.funding.fundingQuali', 'fundingBudget' => 'coreData.funding.fundingBudget', 'fundingResearch' => 'coreData.funding.fundingResearch', 'fundingExternal' => 'coreData.funding.fundingExternal', 'fundingOther' => 'coreData.funding.fundingOther'];
     protected const fundingStateNode = 'fundingState';
     protected const fundingRequested = 'requested';
+    protected const requestedConfirm = 'requestedConfirm';
     protected const conflictNode = 'conflict';
     protected const supportNode = 'support';
     protected const noSupport = 'noSupport'; // must equal one of the keys in $supportChoices

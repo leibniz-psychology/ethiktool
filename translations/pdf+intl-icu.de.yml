@@ -243,9 +243,9 @@ coreData:
     start: 'Von: '
     end: 'Bis: '
     next: 'nächstmöglicher Zeitpunkt '
-    started: 'Die Datenerhebung hat bereits begonnen. '
-    startedDescription: "\n\nBeschreibung des Stands der Datenerhebung:\n"
+    startedDescription: "\n\nDie Datenerhebung hat bereits begonnen. Beschreibung des Stands der Datenerhebung:\n"
     retrospective: "\n\nBegründung, warum der Ethikantrag nachträglich gestellt wird:\n"
+  funding: "\n\nEs wurde bestätigt, dass der Inhalt der im Ethikantrag beschriebenen Studien deckungsgleich zu den Studien im Drittmittelantrag ist."
   conflict: 'Für die Teilnehmenden wird der Interessenkonflikt in der Studieninformation offengelegt.'
 
 votes:
@@ -601,18 +601,28 @@ participation:
     end: ' statt.' # only for online
   procedure: 'Ablauf und Inhalt der Erhebung'
   duration: 'Dauer'
-  durationContent: >-
-    Die Gesamtdauer der {multiple, select,
-                          true  {heutigen}
-                          other {}} Untersuchung beträgt erfahrungsgemäß etwa {total, select,
-                                                                                1     {1 Minute}
-                                                                                other {{total} Minuten}}{breaks, select,
-                                                                                                          0     {.}
-                                                                                                          other {, davon {measureTime, select,
-                                                                                                                            1     {1 Minute}
-                                                                                                                            other {{measureTime} Minuten}} reine Erhebungszeit und {breaks, select,
-      1     {1 Minute}
-      other {{breaks} Minuten}} Vor- und Nachbereitungszeit sowie Pausenzeiten.}}
+  durationContent:
+    text: >-
+      Die Gesamtdauer {multiple, select,
+                        true  {{measureTimeDays, plural,
+                                  =0    {der heutigen}
+                                  other {dieser}}}
+                        other {}} Untersuchung beträgt erfahrungsgemäß etwa {total}{breaksMinutes, plural,
+                                                                                      =0    {.}
+                                                                                      =1    {, davon {measureTime} reine Erhebungszeit und 1 Minute Vor- und Nachbereitungszeit sowie Pausenzeiten.}
+                                                                                      other {, davon {measureTime} reine Erhebungszeit und # Minuten Vor- und Nachbereitungszeit sowie Pausenzeiten.}}
+    measureTimeDays: >-
+      {time, plural,
+        =1    { 1 Tag}
+        other { # Tage}}
+    measureTimeHours: >-
+      {time, plural,
+        =1    { 1 Stunde}
+        other { # Stunden}}
+    measureTimeMinutes: >-
+      {time, plural,
+        =1    { 1 Minute}
+        other { # Minuten}}
   compensation:
     start: >- # other in addressee select is participants
       {information, select,

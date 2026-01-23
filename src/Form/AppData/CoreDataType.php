@@ -35,7 +35,8 @@ class CoreDataType extends TypeAbstract
         $this->addFormElement($builder, self::projectStartNext, 'checkbox', $translationPrefix.'project.next');
         $this->addFormElement($builder, self::projectEnd, 'date');
         // funding
-        $tempPrefix = $translationPrefix.'funding.'.self::textHintPlural.'.';
+        $fundingPrefix = $translationPrefix.self::funding.'.';
+        $tempPrefix = $fundingPrefix.self::textHintPlural.'.';
         $fundingStateChoices = $this->translateArray($translationPrefix.'funding.fundingState.',['granted',self::fundingRequested]);
         foreach (self::fundingTypes as $key => $value) {
             $this->addFormElement($builder,$key,'checkbox',$value);
@@ -46,6 +47,7 @@ class CoreDataType extends TypeAbstract
                 $this->addRadioGroup($builder,$key.'FundingState',$fundingStateChoices);
             }
         }
+        $this->addFormElement($builder,self::requestedConfirm,'checkbox',$fundingPrefix.self::requestedConfirm.'.confirm');
         // applicant info
         $tempPrefix = 'multiple.position.';
         $dummyParams = $options[self::dummyParams];
@@ -104,12 +106,11 @@ class CoreDataType extends TypeAbstract
         try {
             $tempArray = $viewData[self::projectStart];
             $tempVal = $tempArray[self::chosen];
-            $isBegun = array_key_exists(self::descriptionNode,$tempArray);
-            $tempBool = $tempVal==='0' && !$isBegun; // true if projectStartNext is selected
-            $forms[self::projectStartNext]->setData($tempBool);
-            $forms[self::projectStart]->setData(!($tempBool || $isBegun) && $tempVal!=='' ? new DateTime($tempVal, $this->getTimezone()) : null);
+            $isNext = $tempVal==='0'; // true if projectStartNext is selected
+            $forms[self::projectStartNext]->setData($isNext);
+            $forms[self::projectStart]->setData(!$isNext && $tempVal!=='' ? new DateTime($tempVal, $this->getTimezone()) : null);
             if (array_key_exists(self::projectStartBegun,$forms)) {
-                $forms[self::projectStartBegun]->setData($isBegun);
+                $forms[self::projectStartBegun]->setData(array_key_exists(self::descriptionNode,$tempArray));
                 $forms[$this->appendText(self::projectStartBegun)]->setData($this->getArrayValue($tempArray,self::descriptionNode));
                 if (array_key_exists(self::projectStartRetrospective,$forms)) { // justification why data collection has already been started
                     $forms[self::projectStartRetrospective]->setData($this->getArrayValue($tempArray,self::projectStartRetrospective));
@@ -130,6 +131,7 @@ class CoreDataType extends TypeAbstract
                 $forms[$key.'FundingState']->setData($source[self::fundingStateNode]);
             }
         }
+        $forms[self::requestedConfirm]->setData(($viewData[self::requestedConfirm] ?? '')==='1');
         // qualification
         if (array_key_exists(self::qualification,$forms)) {
             $forms[self::qualification]->setData($viewData[self::qualification]);
@@ -202,7 +204,7 @@ class CoreDataType extends TypeAbstract
         // application process
         $newData[self::applicationProcessNode] = $applicationProcessArray;
         // project dates
-        $tempArray = [self::chosen => (!$forms[self::projectStartNext]->getData() && !$isBegun) ? $this->getDate($forms[self::projectStart]->getData()) : '0'];
+        $tempArray = [self::chosen => !$forms[self::projectStartNext]->getData() ? $this->getDate($forms[self::projectStart]->getData()) : '0'];
         if ($isBegun) {
             $tempArray[self::descriptionNode] = $forms[$this->appendText(self::projectStartBegun)]->getData();
             if (array_key_exists(self::projectStartRetrospective,$forms)) { // justification why data collection has already been started
@@ -213,6 +215,9 @@ class CoreDataType extends TypeAbstract
         $newData[self::projectEnd] = $this->getDate($forms[self::projectEnd]->getData());
         // funding
         $newData[self::funding] = $fundingArray ?: '';
+        if ($isRequested) {
+            $newData[self::requestedConfirm] = $forms[self::requestedConfirm]->getData();
+        }
         // qualification
         $isQualification = array_key_exists(self::qualification,$forms); // true if question exists
         $qualification = $isQualification ? $forms[self::qualification]->getData() : '';

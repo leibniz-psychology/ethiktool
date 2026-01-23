@@ -4,16 +4,15 @@
 {% block content %}
     {% set translationPrefix, measuresController, location, hasProcedure = 'projectdetails.pages.measures.', 'Projectdetails--measures', content.location ?? '', content.procedure is defined %}
     {% set measuresInterventionsPrefix, locationPrefix, locationValue = translationPrefix~'measuresInterventions.', translationPrefix~'location.', location.vars.value ?? '' %}
-    {% set measuresHintPrefix, durationPrefix, noLocation, locationHint, isInformation = measuresInterventionsPrefix~'measures.textHints.', translationPrefix~'duration.', 'multiple.choiceTextHint'|trans, (locationPrefix~'textHint')|trans, information in ['pre','post',''] %}
-    {% set measuresSentence, multipleParam, totalName, durationStart, measureTime, breaks = (measuresHintPrefix~'description')|trans, {'multiple': boolToString(true in multipleStudyGroupMeasure)}, 'total', durationPrefix~'total', durationPrefix~'measureTime', durationPrefix~'breaks' %}
+    {% set measuresHintPrefix, noLocation, locationHint, isInformation = measuresInterventionsPrefix~'measures.textHints.', 'multiple.choiceTextHint'|trans, (locationPrefix~'textHint')|trans, information in ['pre','post',''] %}
+    {% set measuresSentence = (measuresHintPrefix~'description')|trans %}
     <div {{ stimulus_controller(measuresController,{
             'measuresTypes': measuresTypes,
             'measuresDescription': [(measuresHintPrefix~'noSelection')|trans,measuresSentence,measuresSentence~(measuresHintPrefix~'survey')|trans],
             'interventionsTypes': interventionsTypes,
             'location': locationValue,
             'locationHint': [noLocation, locationHint],
-            'locationInput': textInputs|slice(1),
-            'duration': {(totalName): [durationStart|trans(multipleParam|merge({'time': 1})), durationStart|trans(multipleParam|merge({'time': 0}))], 'measureTime': [measureTime|trans({'time': 1}), measureTime|trans({'time': 0})], 'breaks': [breaks|trans({'time': 1}), breaks|trans({'time': 0})]}
+            'locationInput': textInputs|slice(1)
     }) }}>
         {# procedure #}
         {% if hasProcedure %}
@@ -114,23 +113,20 @@
             {{ formRender.renderButtons(content.presence,{'hint': [translationPrefix~'presence.'], 'addDiv': ['presence']}) }}
         {% endif %}
         {# duration #}
-        <div class="mt-8" id="duration" {{ stimulus_action(measuresController,'setDuration','change') }}>
-            {{ formRender.addHeading(durationPrefix~'title',{'params': multipleParam}) }}
-            <div class="MetaData-Label">
-                <span id="{{ totalName }}"></span> {# text is set in controller #}
-                {% if isInformation %}
-                    {{ formRender.addPDFhint(transferInfo,'') }}
-                {% endif %}
-            </div>
-            {% for curDur in durationTypes %}
-                {% set widget = content[curDur] %}
-                {% set name = widget.vars.name %}
-                <div class="MetaData-Widget grid" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
-                    <div style="max-width: 4rem">{{ form_widget(widget,addTargetArray(measuresController,name)) }}</div>
-                    <div class="MetaData-Label align-self-center" id="{{ name }}"></div> {# text is set in controller #}
-                </div>
+        {% set durationPrefix = translationPrefix~'duration.' %}
+        <div class="mt-8" id="duration">
+            {{ formRender.addHeading(durationPrefix~'title',{'params': {'multiple': boolToString(true in multipleStudyGroupMeasure)}}) }}
+            {% for duration in ['measureTime','breaks'] %}
+                {% set tempPrefix = durationPrefix~duration~'.' %}
+                <u class="MetaData-Label mb-2 {% if loop.index is same as 2 %} mt-3 {% endif %}">{{ (tempPrefix~'title')|trans }}</u>
+                {% for curDur in (duration is same as 'measureTime' ? measureTimeTypes : ['breaksMinutes']) %}
+                    <div class="minAutoGrid mb-2">
+                        <div class="MetaData-Label" style="width: 7rem">{{ (tempPrefix~curDur)|trans }}</div>
+                        <div style="max-width: 4rem">{{ form_widget(content[curDur]) }}</div>
+                    </div>
+                {% endfor %}
+                {{ formRender.addHint(tempPrefix~'hint') }}
             {% endfor %}
-            {{ formRender.addHint(durationPrefix~'hint') }}
             {% if textInputCompensation is not same as '' %}
                 {{ formRender.addHint(textInputCompensation,{'target': [measuresController,'compensationHint'], 'remove': true}) }}
             {% endif %}

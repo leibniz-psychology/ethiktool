@@ -129,9 +129,12 @@ trait ProjectdetailsTrait
     protected const loanReceipt = 'receipt';
     protected const presenceNode = 'presence';
     protected const durationNode = 'duration';
-    protected const durationTypes = ['measureTime', 'breaks']; // must equal the values of the following two variables
-    protected const durationMeasureTime = 'measureTime';
-    protected const durationBreaks = 'breaks';
+    protected const durationTypes = ['measureTimeDays','measureTimeHours','measureTimeMinutes','breaksMinutes']; // must equal the values of the following variables
+    protected const durationMeasureTimeTypes = ['measureTimeDays','measureTimeHours','measureTimeMinutes']; // must equal the values of the following variables
+    protected const durationMeasureTimeDays = 'measureTimeDays';
+    protected const durationMeasureTimeHours = 'measureTimeHours';
+    protected const durationMeasureTimeMinutes = 'measureTimeMinutes';
+    protected const durationBreaks = 'breaksMinutes';
     // burdens/risks
     protected const burdensRisksNode = 'burdensRisks';
     protected const burdensNode = 'burdens';

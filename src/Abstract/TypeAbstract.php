@@ -111,14 +111,14 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
         return array_key_exists($key,$forms) ? $forms[$key]->getData() : $default;
     }
 
-    /** Creates an array with keys 'min' and 'max'.
+    /** Creates an array with keys 'min', 'max', and 'step'.
      * @param int|float $min value for the 'min' key
      * @param int $max value for the 'max' key
      * @return array array with two keys and values
      */
     protected function setMinMax(int|float $min, int $max): array
     {
-        return ['min' => $min, 'max' => $max];
+        return ['min' => $min, 'max' => $max, 'step' => 1];
     }
 
     // methods

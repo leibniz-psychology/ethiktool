@@ -40,8 +40,8 @@ class MeasuresType extends TypeAbstract
         // presence
         $this->addBinaryRadio($builder,self::presenceNode,$translationPrefix.self::presenceNode.'.title');
         // durations
-        foreach (self::durationTypes as $index => $duration) {
-            $this->addFormElement($builder,$duration,'spinner',options: $this->setMinMax(!($index%2),999));
+        foreach (self::durationTypes as $duration) {
+            $this->addFormElement($builder,$duration,'spinner',options: $this->setMinMax(0,999));
         }
         // dummy forms
         $this->addDummyForms($builder);

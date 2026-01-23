@@ -235,27 +235,24 @@ class ApplicationController extends PDFAbstract
             $tempPrefix = $pagePrefix.'projectDates.';
             $projectStart = $pageArray[self::projectStart];
             $start = $projectStart[self::chosen];
-            $hasBegun = false;
             $content = $this->translateStringPDF($tempPrefix.'start');
             if ($start!=='') {
-                $isNextBegun = $start==='0';
-                if ($isNextBegun) { // next possible time point or has already start
-                    $hasBegun = array_key_exists(self::descriptionNode, $projectStart);
-                    $content .= $this->translateStringPDF($tempPrefix.($hasBegun ? 'started' : 'next'));
-                } else {
-                    $content .= $this->convertDate($start);
-                }
+                $content .= $start==='0' ? $this->translateStringPDF($tempPrefix.'next') : $this->convertDate($start);
             }
-            $content .= ' '.$this->translateStringPDF($tempPrefix.'end').$this->convertDate($pageArray[self::projectEnd]).($hasBegun ? $this->translateStringPDF($tempPrefix.'startedDescription').$projectStart[self::descriptionNode].(array_key_exists(self::projectStartRetrospective,$projectStart) ? $this->translateStringPDF($tempPrefix.self::projectStartRetrospective).$projectStart[self::projectStartRetrospective] : '') : '');
+            $content .= ' '.$this->translateStringPDF($tempPrefix.'end').$this->convertDate($pageArray[self::projectEnd]).(array_key_exists(self::descriptionNode,$projectStart) ? $this->translateStringPDF($tempPrefix.'startedDescription').$projectStart[self::descriptionNode].(array_key_exists(self::projectStartRetrospective,$projectStart) ? $this->translateStringPDF($tempPrefix.self::projectStartRetrospective).$projectStart[self::projectStartRetrospective] : '') : '');
             $this->addBox($pagePrefix.'projectDates', $content, fragment: 'projectDates');
             // funding
             $tempArray = $pageArray[self::funding];
             $tempVal = '';
             if ($tempArray!=='') { // at least one type was selected
-                $tempPrefix = $pagePrefix.self::funding.'.';
+                $fundingPrefix = $pagePrefix.self::funding;
+                $tempPrefix = $fundingPrefix.'.';
                 foreach ($tempArray as $type => $source) {
                     $fundingState = $source[self::fundingStateNode] ?? '';
                     $tempVal .= "\n- ".$this->translateString($tempPrefix.$type).($type!==self::fundingQuali ? ": ".$source[self::descriptionNode].($fundingState!=='' ? "\n".$this->translateString($tempPrefix.self::fundingStateNode.'.'.$fundingState) : '') : '');
+                }
+                if (($pageArray[self::requestedConfirm] ?? '')==='1') { // confirmation for requested funding
+                    $tempVal .= $this->translateStringPDF($fundingPrefix);
                 }
             }
             $this->addBox($pagePrefix.self::funding, trim($tempVal),fragment: self::funding);

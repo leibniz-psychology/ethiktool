@@ -476,7 +476,7 @@ class ParticipationController extends PDFAbstract
                         $createArray = $privacyArray[self::createNode];
                         $privacyCreate = $createArray[self::chosen];
                         $translationParams[self::createNode] = $privacyCreate;
-                        $translationParams[self::createVerificationNode] = $createArray[self::createVerificationNode] ?? ''; // only relevant if complete pdf is created
+                        $translationParams[self::createVerificationNode] = $privacyArray[self::createVerificationNode] ?? ''; // only relevant if complete pdf is created
                         $isSeparate = $privacyCreate===self::createSeparate;
                         $isSeparateLater = $privacyCreate===self::createSeparateLater;
                         $customPrivacy = $isSeparate; // (gets) true if a custom privacy document needs to be added
@@ -653,7 +653,7 @@ class ParticipationController extends PDFAbstract
                         // create string for data reuse how
                         [$dataReuseContent,$isNotOwn,$dataReuseHow] = ['',true,'']; // overwriting $isNotOwn an $dataReuseHow is ok because of available questions and answers in this case
                         $personalParam = $this->getPrivacyReuse($privacyArray);
-                        if ($isSeparateLater && $dataReuseArray[self::confirmIntroNode]==='1') {
+                        if (($isSeparate || $isSeparateLater) && $dataReuseArray[self::confirmIntroNode]==='1') {
                             $personalParam['personal'] = match ($dataReuseArray[self::dataReuseNode]) {
                                 'anonymous' => 'other',
                                 'anonymized' => self::personalRemoveImmediately,

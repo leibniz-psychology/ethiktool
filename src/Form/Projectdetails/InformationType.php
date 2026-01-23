@@ -18,7 +18,7 @@ class InformationType extends TypeAbstract
         $addresseeParam = [self::addressee => $options[self::addresseeString]];
         $parameters = [self::labelParams => array_merge($addresseeParam,[self::participant => $options[self::participantsString]])];
         foreach ([self::pre,self::post,self::preComplete] as $type) {
-            $this->addBinaryRadio($builder,$type,$pagePrefix.$type.'.title',$this->appendText($type),$pagePrefix.self::textHintPlural.'.'.$type,options: array_merge($parameters,$type===self::preComplete ? $this->getPlaceholder('') : [])); // placeholder for preCompleteType is set in template
+            $this->addBinaryRadio($builder,$type,$pagePrefix.$type.'.title',$this->appendText($type),$type!==self::preComplete ? $pagePrefix.self::textHintPlural.'.'.$type : '',options: $parameters); // text hint for preCompleteType is set in template
             $this->addRadioGroup($builder,$type.'Type',self::informationTypes,$pagePrefix.'type.title',options: [self::labelParams => ['type' => $type]]);
         }
         // additional widgets for yes

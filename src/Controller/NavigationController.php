@@ -66,7 +66,7 @@ class NavigationController extends ControllerAbstract
              'activeRoute' => $activeRoute,
              'routeParams' => $activeLevels,
              'isMultiple' => $hasDoc && $this->getMultiStudyGroupMeasure($appNode),
-             'isComplete' => $this->getErrors($request,returnCheck: true),
+             'isComplete' => $hasDoc && $this->getErrors($request,returnCheck: true),
              'anyError' => $this->checkAnyError($windows)]);
     }
 

@@ -149,7 +149,7 @@ class MeasuresController extends ControllerAbstract
                  'measuresTypes' => self::measuresTypes,
                  'interventionsTypes' => self::interventionsTypes,
                  'measuresInterventionsOther' => self::measuresInterventionsOther,
-                 'durationTypes' => self::durationTypes,
+                 'measureTimeTypes' => self::durationMeasureTimeTypes,
                  'textInputs' => $textInputs,
                  'textInputOnline' => $textInputOnline,
                  'textInputCompensation' => $textInputCompensation],'projectdetails.measures',true));

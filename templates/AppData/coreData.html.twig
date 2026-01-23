@@ -11,6 +11,7 @@
             'applicationProcess': appProcess.vars.value,
             'reviewProcess': reviewProcess,
             'reviewProcessLoad': reviewProcessLoad,
+            'requestedConfirmHint': requestedConfirmArray,
             'positions': positions,
             'noChoice': 'multiple.choiceTextHint'|trans,
             'conflictHint': [conflictYesDescription,(conflictPrefix~'no')|trans],
@@ -56,7 +57,6 @@
                 {% set anyRequested = anyRequested or content[widget].vars.checked and (content[widget~'FundingState'].vars.value ?? '') is same as 'requested' %}
             {% endfor %}
         {% endif %}
-        {% set begunInputParams = hasBegunInput ? {'target': [coreDataController,'requestedInput'], 'remove': true, 'visible': not begun.vars.checked and anyRequested} : {} %}
         <div class="mt-8" id="projectDates">
             {{ formRender.addHeading(tempPrefix~'title') }}
             {{ form_label(projectStart,(startPrefix~'title')|trans({'{committeeType}': committeeType})~':',addLabelAttributes(addClass('MetaData-Label'))) }}
@@ -79,26 +79,23 @@
                         {% endif %}
                     </div>
                 </div>
-                {% if hasBegunInput %}
-                    {{ formRender.addHint(textInputRequested,begunInputParams) }}
-                {% endif %}
             {% endif %}
             {# project end #}
             {% set projectEnd, tempPrefix = content.projectEnd, tempPrefix~'end.' %}
-            <div id="projectEnd">{{ form_label(projectEnd,(tempPrefix~'title')|trans~':',addLabelAttributes(addClass('MetaData-Label mt-4'))) }}</div>
+            <div id="projectEnd">{{ form_label(projectEnd,(tempPrefix~'title')|trans(committeeParams)~':',addLabelAttributes(addClass('MetaData-Label mt-4'))) }}</div>
             <div class="MetaData-Widget" style="width: fit-content">
                 {{ form_widget(projectEnd) }}
             </div>
             {{ formRender.addHint(tempPrefix~'hint') }}
         </div>
         {# funding #}
+        {% set noFunding, fundingPrefix = 'fundingQuali', translationPrefix~'funding.' %}
+        {% set selection, anyRequested = getAnySelected(content,fundingKeys,noFunding), false %}
+        {% set noSelected, anySelected = selection[0], selection[1] %}
         <div class="mt-8" id="funding">
-            <div class="grid" style="grid-template-columns: minmax(min-content,max-content) min-content">{{ formRender.addHeading(translationPrefix~'funding.title') }}
+            <div class="grid" style="grid-template-columns: minmax(min-content,max-content) min-content">{{ formRender.addHeading(fundingPrefix~'title') }}
                 <div class="align-self-center" style="margin-left: -1.5rem;">{{ formRender.addPDFhint(transferInfo,'participants') }}</div>
             </div>
-            {% set noFunding = 'fundingQuali' %}
-            {% set selection, anyRequested = getAnySelected(content,fundingKeys,noFunding), false %}
-            {% set noSelected, anySelected = selection[0], selection[1] %}
             <div class="MetaData-Widget" style="{{ style }}" {{ stimulus_action('base','setMultiCheckbox','change',{'single': noFunding, 'multiCheck': fundingKeys|slice(1)})|stimulus_action(coreDataController,'setReviewProcessWidgets','change') }}>
                 {% for widget in fundingKeys %}
                     {% set curWidget, fundingState = content[widget], widget~'FundingState' %}
@@ -123,8 +120,14 @@
                 {% endfor %}
             </div>
             {% if hasBegunInput %}
-                {{ formRender.addHint(textInputRequested,begunInputParams) }}
+                {{ formRender.addHint(textInputRequested,{'target': [coreDataController,'requestedInput'], 'remove': true, 'visible': begun.vars.checked and anyRequested}) }}
             {% endif %}
+        </div>
+        {# requested confirm #}
+        <div class="mt-8" id="requestedConfirmDiv" {{ stimulus_target(coreDataController,'requestedConfirm') }}>
+            {{ formRender.addHeading(fundingPrefix~'requestedConfirm.title') }}
+            <div class="borderHint" {{ stimulus_target(coreDataController,'requestedConfirmHint') }}></div> {# text is set in controller #}
+            <div class="MetaData-Widget">{{ formRender.addCheckbox(content.requestedConfirm) }}</div>
         </div>
         {# qualification #}
         {% if content.qualification is defined %}

@@ -308,17 +308,18 @@ abstract class ControllerAbstract extends AbstractController
                         $loadedVersion = $this->getToolVersion($xml);
                         $this->updateXML($request,$xml);
                         $xmlArray = $this->xmlToArray($xml);
-                        $isBefore2 = str_starts_with($loadedVersion,'2');
-                        if (!$isBefore2) {
+                        $isLoaded2 = str_starts_with($loadedVersion,'2');
+                        if (!$isLoaded2) {
                             $session->set('updateProcess',true); // used in core data to check if first visit after update
                         }
-                        $session->set(self::reviewProcess,$isBefore2 ? $this->getCurrentReviewProcess($xmlArray) : self::reviewFullDocs); // if loaded file is before version 2.0.0, set fullDocs to keep all inputs. Needs to be set before getErrors() is called
+                        $session->set(self::reviewProcess,$isLoaded2 ? $this->getCurrentReviewProcess($xmlArray) : self::reviewFullDocs); // if loaded file is before version 2.0.0, set fullDocs to keep all inputs. Needs to be set before getErrors() is called
                         $this->setCommittee($session, $xmlArray[self::committee], $oldLanguage);
                         $session->set(self::fileName, str_replace('.xml', '', $loadInput->getClientOriginalName()));
                         $session->set(self::docName, [$xml->asXML()]);
                         $session->set(self::contributorsSessionName, [0 => $this->getContributorsArray($xmlArray)]);
                         $session->set(self::loadSuccess,['isMain' => $this->getStringFromBool($curRoute==='app_main'), 'isMajor' => str_starts_with($loadedVersion,'1')]);
                         if ($this->getErrors($request,element: $xml)==='') { // if the file is invalid, an empty string is returned
+                            $session->clear();
                             $session->set(self::xmlLoad,'');
                         }
                     } catch (\Throwable) { // xml-file could not be loaded
@@ -1726,12 +1727,14 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'3';
+        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
+        $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
         $committeeType = (string)$xml->{self::committee};
+        $qualificationOrApplicantNode = $coreDataNode->{$this->checkElement(self::qualification,$coreDataNode) ? self::qualification : self::applicant};
         if ($isMajor1) { // updates for version before 2.0.0
             $this->setToolVersion($xml); // update attribute
             $conflictNode = $coreDataNode->{self::conflictNode};
@@ -1744,21 +1747,51 @@ abstract class ControllerAbstract extends AbstractController
             if (((string)$appTypeNode->{self::chosen})===self::appNew && in_array($committeeType, [self::committeeTUC, 'testCommittee'])) { // TUC or test committee -> remove old application type
                 $this->removeElement(self::descriptionNode, $appTypeNode); // remove node containing the application type
             }
-            $this->insertElementBefore(self::applicationProcessNode, $coreDataNode->{$this->checkElement(self::qualification, $coreDataNode) ? self::qualification : self::applicant}, [self::chosen]);
+            $this->insertElementBefore(self::applicationProcessNode, $qualificationOrApplicantNode, [self::chosen]);
         }
         if ($isSmallerCurrent) {
+            if ($isMajor1 || $isMajor2 && $minor<'4') { // updates for version before 2.4.0
+                $fundingArray = $this->xmlToArray($coreDataNode->{self::funding});
+                $anyRequested = false;
+                foreach (self::fundingResearchExternal as $curFunding) {
+                    $anyRequested = $anyRequested || ($fundingArray[$curFunding][self::fundingStateNode] ?? '')===self::fundingRequested;
+                }
+                if ($anyRequested) { // add requested confirm question
+                    $this->insertElementBefore(self::requestedConfirm,$qualificationOrApplicantNode);
+                }
+            }
+            // updates for version before 2.3.0
+            if ($isSmaller230 && $committeeType===self::committeeEUB && in_array((string) $coreDataNode->{self::applicant}->{self::position}, self::positionsStudentPhd) && !$this->checkElement(self::supervisor,$coreDataNode)) { // supervisor is obligatory for student/phd independent of qualification
+                $this->insertElementBefore(self::supervisor,$coreDataNode->{self::conflictNode},self::applicantContributorsInfosTypes);
+                $contributors = $this->getContributorsArray($this->xmlToArray($xml));
+                $this->updateContributor($contributors,[self::supervisor => []],self::supervisor);
+                $request->getSession()->set(self::contributorsSessionName,[0 => $contributors]); // (temporarily) set contributors in session because updateProjectdetailsContributor may need it
+                $this->updateProjectdetailsContributor($request,$xml,'',[],false,true); // update contributors in projectdetails
+                $this->addAllContributorsNodes($xml,$contributors); // update contributors in Contributors
+            }
+            // updates for version before 2.4.0
+            $projectStartNode = $coreDataNode->{self::projectStart};
+            $isBegun = $this->checkElement(self::descriptionNode,$projectStartNode);
+            if ($isBegun) { // data collection has already begun -> project start has to be entered, too, and justification for TUD is necessary
+                $projectStartNode->{self::chosen} = '';
+                if ($committeeType===self::committeeTUD) {
+                    $projectStartNode->addChild(self::projectStartRetrospective);
+                }
+            }
             $reviewProcess = $this->getCurrentReviewProcess($xml);
             $isShortNoDocs = $reviewProcess===self::reviewShortNoDocs;
             foreach ($xml->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
                     foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
+                        $groupsNode = $measureTimePointNode->{self::groupsNode};
                         $informationNode = $measureTimePointNode->{self::informationNode};
+                        $consentNode = $measureTimePointNode->{self::consentNode};
                         $measuresNode = $measureTimePointNode->{self::measuresNode};
+                        $compensationNode = $measureTimePointNode->{self::compensationNode}[0];
                         $privacyNode = $measureTimePointNode->{self::privacyNode};
                         if ($isMajor1) {
                             // updates for version before 2.0.0
                             // groups (update of nodes)
-                            $groupsNode = $measureTimePointNode->{self::groupsNode};
                             $groupsNodeDom = dom_import_simplexml($groupsNode);
                             $criteriaNode = $groupsNode->{self::criteriaNode};
                             $criteriaNodeDom = dom_import_simplexml($criteriaNode);
@@ -1833,7 +1866,6 @@ abstract class ControllerAbstract extends AbstractController
                                 }
                             }
                             // consent (update of nodes)
-                            $consentNode = $measureTimePointNode->{self::consentNode};
                             $terminateConsNode = $consentNode->{self::terminateConsNode}; // terminate cons
                             if ($this->checkElement(self::terminateConsParticipationNode, $terminateConsNode)) {
                                 $this->insertElementBefore(self::terminateConsParticipationNode, $consentNode->{self::terminateParticipantsNode});
@@ -1869,7 +1901,6 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->removeElement(self::descriptionNode, $burdensNode);
                             }
                             // compensation (update of nodes)
-                            $compensationNode = $measureTimePointNode->{self::compensationNode}[0];
                             $compensationArray = $this->xmlToArray($compensationNode);
                             $selections = $compensationArray[self::compensationTypeNode];
                             if ($selections!=='' && !array_key_exists(self::compensationNo, $selections)) { // at least one type except 'no compensation' was selected
@@ -1958,7 +1989,7 @@ abstract class ControllerAbstract extends AbstractController
                         if ($isSmaller221 && $this->checkElement(self::createNode,$privacyNode)) {
                             $createNode = $privacyNode->{self::createNode};
                             if (((string) $createNode->{self::chosen})===self::createSeparate) { // verification is separate node and not asked for all review types
-                                if (in_array($reviewProcess,self::reviewQuestions[self::privacyNode][self::createVerificationNode])) {
+                                if ($isMajor1 || in_array($reviewProcess,self::reviewQuestions[self::privacyNode][self::createVerificationNode])) { // if major is 1, review process is short(No)Docs at this point
                                     $verification = (string) $createNode->{self::descriptionNode};
                                     if ($this->checkElement(self::createVerificationNode,$privacyNode)) { // loaded version was before 2.0.0 -> node was already added
                                         $privacyNode->{self::createVerificationNode} = $verification;
@@ -1970,19 +2001,35 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->removeElement(self::descriptionNode,$createNode);
                             }
                         }
-                        // updates for version before 2.3.0
-                        if ($committeeType===self::committeeEUB && in_array((string) $coreDataNode->{self::applicant}->{self::position}, self::positionsStudentPhd) && !$this->checkElement(self::supervisor,$coreDataNode)) { // supervisor is obligatory for student/phd independent of qualification
-                            $this->insertElementBefore(self::supervisor,$coreDataNode->{self::conflictNode},self::applicantContributorsInfosTypes);
-                            $contributors = $this->getContributorsArray($this->xmlToArray($xml));
-                            $this->updateContributor($contributors,[self::supervisor => []],self::supervisor);
-                            $request->getSession()->set(self::contributorsSessionName,[0 => $contributors]); // (temporarily) set contributors in session because updateProjectdetailsContributor may need it
-                            $this->updateProjectdetailsContributor($request,$xml,'',[],false,true); // update contributors in projectdetails
-                            $this->addAllContributorsNodes($xml,$contributors); // update contributors in Contributors
+                        if (in_array($reviewProcess,[self::reviewShortRequested,self::reviewShortBegun])) { // remove criteria, location, and details for compensation to have the same information on the intermediate page for short review processes with and without review of participant documents
+                            $this->removeElement(self::criteriaIncludeNode,$groupsNode);
+                            $this->removeElement(self::criteriaExcludeNode,$groupsNode);
+                            $this->removeElement(self::terminateParticipantsNode,$consentNode); // does only exist for shortBegun
+                            $this->removeElement(self::locationNode,$measuresNode);
+                            $compensationArray = $this->xmlToArray($compensationNode);
+                            $validKeys = [self::compensationTypeNode,self::terminateNode,self::compensationVoluntaryNode];
+                            foreach ($compensationArray as $key => $value) {
+                                if (!in_array($key,$validKeys)) {
+                                    unset($compensationArray[$key]);
+                                }
+                            }
+                            $this->arrayToXml($compensationArray,$compensationNode);
                         }
+                        if (in_array($reviewProcess,[self::reviewShortRequested,self::reviewFullRequested])) { // review process is now "requested" if any funding is requested and "requested" is now favored over "begun"
+                            $this->updateNodesByReviewProcess($request,$measureTimePointNode,$reviewProcess);
+                        }
+                        // duration: added days and hours to measure time
+                        $durationNode = $measuresNode->{self::durationNode};
+                        $measureTimeMinutes = (string) $durationNode->{'measureTime'};
+                        $breaks = (string) $durationNode->{'breaks'};
+                        $this->removeAllChildNodes($durationNode);
+                        $this->addChildNodes($durationNode,self::durationTypes);
+                        $durationNode->{self::durationMeasureTimeMinutes} = $measureTimeMinutes;
+                        $durationNode->{self::durationBreaks} = $breaks;
                     } // foreach measure time point
                 } // foreach group
             } // foreach study
-        } // if isSmaller221
+        } // if isSmallerCurrent
     }
 
     /** Gets the array containing all contributors.
@@ -2002,10 +2049,46 @@ abstract class ControllerAbstract extends AbstractController
      */
     protected function getDuration(array $durations, bool $returnTotal = true, bool $isMultiple = true): string|int
     {
-        $measureTime = $this->getIntFromString($durations[self::durationMeasureTime],0);
+        $measureTime = 0;
+        $measureTimeArray = []; // translated time for (net) data collection
+        $measureTimesInt = []; // time for (net) data collection
+        $tempPrefix = 'participation.durationContent.';
+        foreach (self::durationMeasureTimeTypes as $duration) {
+            $curDur = $this->getIntFromString($durations[$duration],0);
+            $measureTime += match ($duration) {
+                self::durationMeasureTimeDays => $curDur*1440,
+                self::durationMeasureTimeHours => $curDur*60,
+                default => $curDur
+            };
+            if ($curDur>0) {
+                $measureTimesInt[$duration] = $curDur;
+                $measureTimeArray[$duration] = $this->translateStringPDF($tempPrefix.$duration,['time' => $curDur]);
+            }
+        }
         $breaks = $this->getIntFromString($durations[self::durationBreaks],0);
-        $total = $breaks+$measureTime;
-        return $returnTotal ? $total : $this->translateStringPDF('participation.durationContent',['multiple' => $this->getStringFromBool($isMultiple), 'total' => $total===0 ? 'X' : $total, self::durationMeasureTime => $measureTime>0 ? $measureTime : 'X', self::durationBreaks => $breaks]);
+        $totalArray = $measureTimeArray; // total time
+        if ($returnTotal) {
+            return $breaks+$measureTime;
+        } else {
+            $hours = $measureTimesInt[self::durationMeasureTimeHours] ?? 0;
+            $minutes = $measureTimesInt[self::durationMeasureTimeMinutes] ?? 0;
+            $minutesNew = $minutes+$breaks;
+            if ($hours>0 && $minutesNew>=60) { // only split if hours were entered
+                $hoursNew = $hours+floor($minutesNew/60);
+                $minutesNew = $minutesNew%60;
+                $totalArray[self::durationMeasureTimeHours] = str_replace($hours,$hoursNew,$totalArray[self::durationMeasureTimeHours]);
+            }
+            if ($minutesNew>0) {
+                if (array_key_exists(self::durationMeasureTimeMinutes,$totalArray)) {
+                    $totalArray[self::durationMeasureTimeMinutes] = str_replace($minutes, $minutesNew, $totalArray[self::durationMeasureTimeMinutes]);
+                } else { // only minutes for breaks
+                    $totalArray[self::durationMeasureTimeMinutes] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeMinutes,['time' => $minutesNew]);
+                }
+            } else { // minutes add up to full hour
+                unset($totalArray[self::durationMeasureTimeMinutes]);
+            }
+            return $this->translateStringPDF($tempPrefix.'text',array_merge($measureTimeArray,['total' => $this->replaceDummyString(array_values($totalArray)), 'measureTime' => $this->replaceDummyString(array_values($measureTimeArray)),self::durationBreaks => $breaks, self::durationMeasureTimeDays => $measureTimeArray[self::durationMeasureTimeDays] ?? 0,'multiple' => $this->getStringFromBool($isMultiple)]));
+        }
     }
 
     /** Translates a string using the 'pdf' domain.

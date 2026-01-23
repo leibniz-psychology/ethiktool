@@ -243,9 +243,9 @@ coreData:
     start: 'From: '
     end: 'To: '
     next: 'as soon as possible '
-    started: 'Data collection has already started. '
-    startedDescription: "\n\nDescription of current state of data collection:\n"
+    startedDescription: "\n\nData collection has already started. Description of current state of data collection:\n"
     retrospective: "\n\nJustification for necessity of retrospective ethics review:\n"
+  funding: "\n\nIt was confirmed that the studies laid out in the ethics proposal are congruent to those in the funding application in terms of content."
   conflict: 'The conflict of interest is disclosed to the participants in the study information sheet.'
 
 votes:
@@ -601,18 +601,28 @@ participation:
     end: '' # only for online
   procedure: 'Procedure'
   duration: 'Duration'
-  durationContent: >-
-    The total duration of {multiple, select,
-                                true  {today''s}
-                                other {the}} investigation is usually about {total, select,
-                                                                                      1     {1 minute}
-                                                                                      other {{total} minutes}}{breaks, select,
-                                                                                                                0     {.}
-                                                                                                                other {, of which {measureTime, select,
-                                                                                                                                  1     {1 minute}
-                                                                                                                                  other {{measureTime} minutes}} (net) are allocated for data collection and {breaks, select,
-            1     {1 minute}
-            other {{breaks} minutes}} for preparation, follow-up, and breaks.}}
+  durationContent:
+    text: >-
+      The total duration of {multiple, select,
+                              true  {{measureTimeDays, plural,
+                                        =0    {today's}
+                                        other {this}}}
+                              other {}} investigation is usually about {total}{breaksMinutes, plural,
+                                                                                =0    {.}
+                                                                                =1    {, of which {measureTime} (net) are allocated for data collection and 1 minute for preparation, follow-up, and breaks.}
+                                                                                other {, of which {measureTime} (net) are allocated for data collection and # minutes for preparation, follow-up, and breaks.}}
+    measureTimeDays: >-
+      {time, plural,
+        =1    { 1 day}
+        other { # days}}
+    measureTimeHours: >-
+      {time, plural,
+        =1    { 1 hour}
+        other { # hours}}
+    measureTimeMinutes: >-
+      {time, plural,
+        =1    { 1 minute}
+        other { # minutes}}
   compensation:
     start: >- # other in addressee select is participants
       {information, select,

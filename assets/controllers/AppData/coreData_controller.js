@@ -3,7 +3,7 @@ import {setElementVisibility, setHint, showModal} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['projectTitleParticipation','applicationFull','shortDocs','shortDocsYes','qualificationYes','applicantPosition','supervisorPosition','supervisorDiv','projectStart','projectStartNext','projectStartBegun','projectStartBegunText','fundingQuali','fundingBudget','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','fundingOther','requestedInput','conflictNo','conflictInput'];
+    static targets = ['projectTitleParticipation','applicationFull','shortDocs','shortDocsYes','qualificationYes','applicantPosition','supervisorPosition','supervisorDiv','projectStart','projectStartNext','projectStartBegun','projectStartBegunText','fundingQuali','fundingBudget','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','fundingOther','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
 
     static values = {
         committeeType: String,
@@ -14,6 +14,7 @@ export default class extends Controller {
         applicationProcess: String,
         reviewProcess: String, // current review process
         reviewProcessLoad: String, // review process on page load
+        requestedConfirmHint: Array, // 0: review process full, 1: review process short
     }
 
     connect() {
@@ -52,7 +53,7 @@ export default class extends Controller {
     setProjectStart(checkModal = true) {
         let isNext = this.projectStartNextTarget.checked;
         let isBegun = this.hasProjectStartBegunTarget && this.projectStartBegunTarget.checked;
-        setElementVisibility(this.projectStartTarget.parentElement,!(isNext || isBegun));
+        setElementVisibility(this.projectStartTarget.parentElement,!isNext);
         setElementVisibility(this.projectStartNextTarget.parentElement,!isBegun);
         if (this.hasProjectStartBegunTarget) {
             setElementVisibility(this.projectStartBegunTarget.parentElement,!isNext);
@@ -107,12 +108,7 @@ export default class extends Controller {
         }
         let isFull = this.applicationProcessValue==='full';
         let isBegun = this.hasProjectStartBegunTarget && this.projectStartBegunTarget.checked;
-
-        let isResearch = this.fundingResearchTarget.checked;
-        let isExternal = this.fundingExternalTarget.checked;
-        let isResearchRequested = isResearch && this.fundingResearchRequestedTarget.checked;
-        let isExternalRequested = isExternal && this.fundingExternalRequestedTarget.checked;
-        let isRequested = !(this.fundingQualiTarget.checked || this.fundingBudgetTarget.checked || this.fundingOtherTarget.checked) && (isResearchRequested && isExternalRequested || isResearchRequested && !isExternal || isExternalRequested && !isResearch);
+        let isRequested = this.fundingResearchTarget.checked && this.fundingResearchRequestedTarget.checked || this.fundingExternalTarget.checked && this.fundingExternalRequestedTarget.checked;
         let isBegunRequested = isBegun || isRequested;
         setElementVisibility(this.projectTitleParticipationTarget,isFull
             ? (!isBegunRequested)
@@ -120,9 +116,9 @@ export default class extends Controller {
         this.setConflictDescription();
         let oldProcess = this.reviewProcessValue; // review process before a change has been made
         if (this.applicationProcessValue!=='') { // get review process after a change has been made
-            this.reviewProcessValue = isBegun
-                ? this.applicationProcessValue+'Begun'
-                : (isRequested ? this.applicationProcessValue+'Requested' :
+            this.reviewProcessValue = isRequested
+                ? this.applicationProcessValue+'Requested'
+                : (isBegun ? this.applicationProcessValue+'Begun' :
                     isFull
                         ? 'fullDocs'
                         : (this.hasShortDocsYesTarget
@@ -158,12 +154,13 @@ export default class extends Controller {
                 }
             }
         }
+        // set visibility of remove hint
         if (this.hasRequestedInputTarget) {
-            let isVisible = !isBegun && isRequested;
-            for (let target of this.requestedInputTargets) {
-                setElementVisibility(target,isVisible);
-            }
+            setElementVisibility(this.requestedInputTarget,isRequested);
         }
+        // set visibility of requested confirm and text of hint
+        setElementVisibility(this.requestedConfirmTarget,isRequested);
+        this.requestedConfirmHintTarget.textContent = this.requestedConfirmHintValue[isFull ? 0 : 1];
     }
 
     /** Sets the visibility of the conflict description div. */

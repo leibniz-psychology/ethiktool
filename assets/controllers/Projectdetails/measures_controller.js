@@ -3,7 +3,7 @@ import {getSelected, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','measureTime','breaks','compensationHint'];
+    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','compensationHint'];
 
     static values = {
         measuresTypes: Array,
@@ -12,7 +12,6 @@ export default class extends Controller {
         location: String,
         locationHint: Array, // 0: please choose, 1: hint if answer is chosen
         locationInput: Object, // 0: insurance way, 1: apparatus and insurance way
-        duration: Object, // keys: 'total', 'measureTime', 'breaks'. Values: arrays: 0: singular, 1: plural
     }
 
     connect() {
@@ -21,7 +20,6 @@ export default class extends Controller {
         if (this.hasLocationDescriptionTarget || this.hasLoanInputTarget) {
             this.setInputHints(); // needs to be called on connect() in case the page is reloaded by the user
         }
-        this.setDuration();
     }
 
     // methods that are called from the template
@@ -101,23 +99,6 @@ export default class extends Controller {
         }
         if (this.hasOnlineHintTarget) { // hint that ip-question in data privacy will be deleted
             setElementVisibility(this.onlineHintTarget,!isOnlineNothing); // this.locationValue can not be empty at this point
-        }
-    }
-
-    /** Sets the duration widgets. */
-    setDuration() {
-        let measureTime = parseInt(this.measureTimeTarget.value);
-        let breaks = parseInt(this.breaksTarget.value);
-        // input field checks if value is in after focus is lost, i.e., after calling this method, therefore check values here
-        measureTime = isNaN(measureTime) ? 0 : (measureTime<1 ? 1 : (measureTime>999 ? 999 : measureTime));
-        breaks = isNaN(breaks) ? 0 : (breaks<0 ? 0 : (breaks>999 ? 999 : breaks));
-        let totalTime = measureTime+breaks;
-        for (let [time,value] of Object.entries({'total': totalTime, 'measureTime': measureTime, 'breaks': breaks})) {
-            let isSingular = value===1;
-            document.getElementById(time).textContent = this.durationValue[time][isSingular ? 0 : 1].replace(isSingular ? '1' : '0',value===0 ? 'X' : value); // only 'total' will replace
-        }
-        if (this.hasCompensationHintTarget) {
-            setElementVisibility(this.compensationHintTarget,totalTime<=30);
         }
     }
 }

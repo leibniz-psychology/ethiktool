@@ -38,6 +38,7 @@ class CheckDocClass extends ControllerAbstract
     private array $appDataArray = []; // contains all data of the application data
     private array $coreDataArray = []; // contains the date of the core data page
     private array $committeeParam = []; // parameter for translations
+    private string $committeeType = '';
     private array $contributorTasks = []; // one sub-array for each task containing all contributor that have this task. Each sub-array: key: index of the contributor. value: either empty of description of 'other'
     private array $isMandatory = []; // for each mandatory task, indicates if at least one contributor has this task
     private array $measure = []; // contains all data of the current time point that is checked
@@ -84,6 +85,7 @@ class CheckDocClass extends ControllerAbstract
         $checkDoc->appArray = $checkDoc->xmlToArray($checkDoc->appNode);
         $checkDoc->reviewProcess = $checkDoc->getCurrentReviewProcess($checkDoc->appArray);
         $checkDoc->committeeParam = $session->get(self::committeeParams);
+        $checkDoc->committeeType = $checkDoc->committeeParam[self::committeeType];
         $checkDoc->appDataArray = $checkDoc->appArray[self::appDataNodeName];
         $checkDoc->coreDataArray = $checkDoc->appDataArray[self::coreDataNode];
         $checkDoc->contributorTasks = array_fill_keys(self::tasksNodes,[]);
@@ -451,16 +453,21 @@ class CheckDocClass extends ControllerAbstract
         $tempArray = $this->coreDataArray[self::projectStart];
         $tempPrefix = 'coreData.project.';
         $this->checkMissingContent($tempArray,[self::chosen => $tempPrefix.'start.title'],parameter: $this->committeeParam,hash: 'projectDates');
-        $this->checkMissingContent($this->coreDataArray,[self::projectEnd => $tempPrefix.'end.title']);
+        $this->checkMissingContent($this->coreDataArray,[self::projectEnd => $tempPrefix.'end.title'],parameter: $this->committeeParam);
         $start = $tempArray[self::chosen];
         $isBegun = array_key_exists(self::descriptionNode,$tempArray);
         $today = $this->getCurrentDate();
         $validStart = false; // gets true if a date is selected
-        if (!($start==='' || $start==='0' || $isBegun)) { // if 'next' is selected, $start is '0' and $isBegun is false
+        if (!in_array($start,['','0'])) { // if 'next' is selected, $start is '0'
             $start = (new DateTime($start))->setTime(0,0);
             $validStart = true;
-            if ($start<=$today) {
-                $this->addCheckLabelString($translationPrefix.'start','projectDates');
+            $isStartPast = $start<=$today;
+            $tempPrefix = $translationPrefix.'start.';
+            if ($isStartPast && !$isBegun) {
+                $this->addCheckLabelString($tempPrefix.'past','projectDates',['hasBegun' => $this->getStringFromBool(in_array($this->committeeType,self::begunCommittees))]);
+            }
+            elseif (!$isStartPast && $isBegun) {
+                $this->addCheckLabelString($tempPrefix.'begunToPast','projectDates');
             }
         }
         if ($isBegun) {
@@ -472,9 +479,10 @@ class CheckDocClass extends ControllerAbstract
         $end = $this->coreDataArray[self::projectEnd];
         if ($end!=='') {
             $end = (new DateTime($end))->setTime(0,0);
-            if ($end<=$today) {
+            if ($end<=$today && (!$isBegun || $this->committeeType===self::committeeEUB)) {
                 $this->addCheckLabelString($translationPrefix.'end',self::projectEnd);
-            } elseif ($validStart && $end<$start) { // $start and $end are either both or neither empty strings
+            }
+            if ($validStart && $end<$start) { // $start and $end are neither empty strings
                 $this->addCheckLabelString($translationPrefix.'endBeforeStart','projectDates');
             }
         }
@@ -500,8 +508,14 @@ class CheckDocClass extends ControllerAbstract
                     }
                 }
             }
-            if ($appTypeArray[self::chosen]==='resubmissionGranted' && $allFundingState && $anyRequested) {
+            if ($appTypeArray[self::chosen]==='resubmissionGranted' && $allFundingState && $anyRequested) { // appType is resubmissionGranted -> no requested funding
                 $this->addCheckLabelString($tempPrefix.self::applicationType);
+            }
+            if ($anyRequested) {
+                if ($isBegun) { // any requested -> data collection must not have been started
+                    $this->addCheckLabelString($tempPrefix.'begun');
+                }
+                $this->checkMissingContent($this->coreDataArray,[self::requestedConfirm => self::coreDataNode.'.'.self::funding.'.'.self::requestedConfirm.'.title'],hash: $this->addDiv(self::requestedConfirm));
             }
         }
         // qualification
@@ -625,7 +639,7 @@ class CheckDocClass extends ControllerAbstract
         $tasksPrefix = self::contributorsPrefix.'tasks.';
         // check individual contributors
         $position = $this->coreDataArray[self::applicant][self::position];
-        $isSupervisor = $this->checkSupervisor($this->committeeParam[self::committeeType],$position);
+        $isSupervisor = $this->checkSupervisor($this->committeeType,$position);
         $translationParameters = ['isSupervisor' => $this->getStringFromBool($isSupervisor), 'isQualification' => $this->getStringFromBool($this->getQualification($this->coreDataArray)), self::position => $position];
         foreach ($windowArray as $index => $contributor) {
             $infos = $contributor[self::infosNode];
@@ -953,8 +967,18 @@ class CheckDocClass extends ControllerAbstract
         }
         // durations
         $tempPrefix = $translationPage.self::durationNode.'.';
-        $this->checkMissingContent($pageArray[self::durationNode],[self::durationMeasureTime => $tempPrefix.self::durationMeasureTime],default: '0',hash: self::durationNode);
-        $this->checkMissingContent($pageArray[self::durationNode],[self::durationBreaks => $tempPrefix.self::durationBreaks],hash: self::durationNode);
+        $tempArray = $pageArray[self::durationNode];
+        $this->checkMissingContent($tempArray,array_combine(self::durationTypes,$this->prefixArray(self::durationTypes,$tempPrefix)),hash: self::durationNode);
+        $totalTime = 0;
+        $allDurations = true; // gets false if any measure time duration was not entered yes
+        foreach (self::durationMeasureTimeTypes as $duration) {
+            $tempVal = $tempArray[$duration];
+            $allDurations = $allDurations && $tempVal!=='';
+            $totalTime += intval($tempVal);
+        }
+        if ($allDurations && $totalTime===0) { // all measure time value are 0
+            $this->addCheckLabelString($tempPrefix.'measureTime',self::durationNode);
+        }
         $this->setProjectdetailsTitle($setTitle);
     }
 
@@ -1945,19 +1969,24 @@ class CheckDocClass extends ControllerAbstract
         $projectStartArray = $this->coreDataArray[self::projectStart];
         $fundingArray = $this->coreDataArray[self::funding];
         $isFunding = false;
+        $anyRequested = false;
         if ($fundingArray!=='') {
             $isFunding = array_key_exists(self::fundingQuali,$fundingArray);
             if (!$isFunding) { // at least one funding except 'no funding' is selected
+                $fundingStatesSelected = true;
                 foreach ($fundingArray as $funding) {
-                    $isFunding = $isFunding || ($funding[self::fundingStateNode] ?? 'true')!=='';
+                    $fundingState = $funding[self::fundingStateNode] ?? 'true';
+                    $anyRequested = $anyRequested || $fundingState===self::fundingRequested;
+                    $fundingStatesSelected = $fundingStatesSelected && $fundingState!=='';
                 }
+                $isFunding = $fundingStatesSelected;
             }
         }
-        $hasBegun = in_array($this->committeeParam[self::committeeType],self::begunCommittees);
+        $isNotBegun = !array_key_exists(self::descriptionNode,$projectStartArray);
         return $this->coreDataArray[self::applicationProcessNode][self::chosen]==='' || // no application process chosen
-                $hasBegun && $projectStartArray[self::chosen]==='' || // if review after start of data collection is possible, check project start
-                !array_key_exists(self::descriptionNode,$projectStartArray) && !$isFunding // funding (state) is missing -> check only if project start is not 'begun'
-                ? $this->translateString('checkDoc.reviewMissing',['hasBegun' => $this->getStringFromBool($hasBegun)])."\n\n" : '';
+                !$isFunding || // funding (state) is missing
+                !$anyRequested && in_array($this->committeeType,self::begunCommittees) && $projectStartArray[self::chosen]==='' && $isNotBegun // neither project start nor that data collection has already started is chosen -> check only if no funding is requested
+                ? $this->translateString('checkDoc.reviewMissing',['hasBegun' => $this->getStringFromBool(in_array($this->committeeType,self::begunCommittees))])."\n\n" : '';
     }
 
     // methods for checking if a valid input was made
