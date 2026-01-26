@@ -144,6 +144,7 @@ class AppDataController extends ControllerAbstract
             $position = $data[self::applicant][self::position];
             $isStudentPhdNew = $this->checkSupervisor($committeeType,$position); // position on submission
             if ($isStudentPhdNew) {
+                $contributorsArray[0][self::taskNode] = array_diff_key($contributorsArray[0][self::taskNode],[self::taskLeader => '',self::taskData => '']); // remove leader and data from tasks
                 if ($isStudentPhd) {
                     $supervisorTasks = $contributorsArray[1][self::taskNode];
                     if ($supervisorTasks!=='' && !array_key_exists(self::supervisorNode,$supervisorTasks)) { // supervisor existed on page load, but was task was removed and needs to be added again

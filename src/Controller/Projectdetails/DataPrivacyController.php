@@ -18,7 +18,7 @@ class DataPrivacyController extends ControllerAbstract
     {
         $routeParams = $request->get('_route_params');
         $session = $request->getSession();
-        $appNode = $this->getXMLfromSession($session);
+        $appNode = $this->getXMLfromSession($session,setRecent: true); // changes on other pages are only made if $hasCreate is true, but it cannot be checked at this point
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
         $hasMeasureNode = $measureNode!==null;
         $privacyNode = $hasMeasureNode ? $measureNode->{self::privacyNode}[0] : null;

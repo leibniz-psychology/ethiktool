@@ -11,7 +11,7 @@
 {% block content %}
     {% set isErrorOrXml, prefix, hasCommittee = error is not same as '', 'main.text', committeeParams.committeeType not in ['noCommittee',''] %} {# either the xml-file could not be loaded, was updated, or an error occurred during saveDocumentAndRedirect #}
     <div class="MetaData-Label mb-2" {% if isErrorOrXml %} {{ stimulus_action('base','showModal','load@window',{'target': error}) }} {% endif %}>
-        {{ (prefix~(hasCommittee ? '' : 'NoCommittee'))|trans(committeeParams)|raw|nl2br }}
+        {{ (prefix~(hasCommittee ? '' : 'NoCommittee'))|trans(committeeParams|merge({'numCommitteesBeta': numCommitteesBeta}))|raw|nl2br }}
     </div>
     {% if hasCommittee %}
         <div class="mb-2" style="margin-top: -2rem">

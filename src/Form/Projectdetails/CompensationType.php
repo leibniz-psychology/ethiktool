@@ -30,7 +30,7 @@ class CompensationType extends TypeAbstract
             }
             // awarding
             if ($type!==self::compensationOther) {
-                $this->addRadioGroup($builder, $type.self::awardingNode, self::awardingTypes[$type],textName: $type.'otherDescription',options: $this->getPlaceholder($awardingPrefix.$type.'.'.$type.'OtherPlaceholder'));
+                $this->addRadioGroup($builder, $type.self::awardingNode, self::awardingTypes[$type],textName: $type.'otherDescription');
                 $this->addFormElement($builder, $type.self::awardingLater.self::descriptionCap, 'text'); // later description
                 $this->addRadioGroup($builder, $type.self::laterTypesName, self::laterTypes,textName: $type.self::laterOtherDescription, options: $this->getPlaceholder($awardingPrefix.'laterEnd.placeholder')); // later types
             }

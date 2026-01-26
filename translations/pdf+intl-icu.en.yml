@@ -118,7 +118,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
 
 
 
-    voluntary: 'Is participation voluntary?'
+    voluntary: 'Is the decision about participation voluntary?'
     voluntarySub: 'Justification on how and why voluntariness is not guaranteed:'
     consent: >-
       How is consent {isAssent, select,
@@ -348,7 +348,9 @@ projectdetails:
                                             true {selections made in the Ethiktool}
                                             other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the data processing aspects will be sorted out in detail at a later point in time. Therefore, the Ethiktool did not generate a data privacy statement{levelNamesString}.}
         other         {{personal, select,
-                          anonymous {According to the selections made in the Ethiktool, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
+                          anonymous {According to the {savePDF, select,
+                                                        true  {selections made in the Ethiktool}
+                                                        other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
                           other     {Due to the following characteristics of data processing (according to the selections made in the Ethiktool), the data privacy statement {levelNamesString} cannot be generated with the Ethiktool:
                             {createOther} Therefore, the data privacy statement was generated separately. It can be found on the following page(s) (if applicable, including the consent form.}}}}
     createOther:
@@ -607,7 +609,7 @@ participation:
                               true  {{measureTimeDays, plural,
                                         =0    {today's}
                                         other {this}}}
-                              other {}} investigation is usually about {total}{breaksMinutes, plural,
+                              other {the}} investigation is usually about {total}{breaksMinutes, plural,
                                                                                 =0    {.}
                                                                                 =1    {, of which {measureTime} (net) are allocated for data collection and 1 minute for preparation, follow-up, and breaks.}
                                                                                 other {, of which {measureTime} (net) are allocated for data collection and # minutes for preparation, follow-up, and breaks.}}

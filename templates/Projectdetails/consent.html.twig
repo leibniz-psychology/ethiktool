@@ -61,7 +61,7 @@
         {% if content.terminateCriteria is defined %}
             <div class="mt-8" id="terminateCriteriaDiv">
                 {{ formRender.addHeading(translationPrefix~'terminateCriteria.title') }}
-                <div style="margin-top: -1.25rem">{{ formRender.addTextfield(content.terminateCriteria) }}</div>
+                {{ formRender.addTextfield(content.terminateCriteria, {'noTopMargin': true}) }}
             </div>
         {% endif %}
         {{ formRender.addSubmitButtons() }}

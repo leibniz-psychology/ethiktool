@@ -301,7 +301,7 @@ class ParticipationController extends PDFAbstract
                     if ($hasDocs && $isInformation) {
                         // contributors
                         $pageArray = $measureTimePoint[self::contributorNode];
-                        $tempArray = $pageArray['leader'];
+                        $tempArray = $pageArray[self::taskLeader];
                         $leaderIndices = [];
                         $contributorsLeaderInstitution = []; // needed in study information. Contains leader with institution. Each element contains name and institution, separated by a comma
                         $contributorsLeader = []; // needed if deceit with complete post information. Each element is a string containing name, e-mail and eventually phone number, separated by a comma
@@ -325,7 +325,7 @@ class ParticipationController extends PDFAbstract
                         $nameTrans = $this->translateStringPDF($tempPrefix.self::nameNode);
                         $mailTrans = $this->translateStringPDF($tempPrefix.self::eMailNode);
                         $phoneTrans = $this->translateStringPDF($tempPrefix.self::phoneNode);
-                        foreach (array_diff(self::tasksNodes,['leader']) as $task) {
+                        foreach (array_diff(self::tasksNodes,[self::taskLeader]) as $task) {
                             $taskTranslated = $this->translateString('contributors.tasks.'.$task);
                             $tempArray = $pageArray[$task];
                             if ($tempArray!=='') { // at least one contributor has the current task
@@ -651,7 +651,7 @@ class ParticipationController extends PDFAbstract
                         // data reuse
                         $dataReuseArray = $measureTimePoint[self::dataReuseNode];
                         // create string for data reuse how
-                        [$dataReuseContent,$isNotOwn,$dataReuseHow] = ['',true,'']; // overwriting $isNotOwn an $dataReuseHow is ok because of available questions and answers in this case
+                        [$dataReuseContent,$isNotOwn,$dataReuseHow] = ['',true,'']; // overwriting $isNotOwn and $dataReuseHow is ok because of available questions and answers in this case
                         $personalParam = $this->getPrivacyReuse($privacyArray);
                         if (($isSeparate || $isSeparateLater) && $dataReuseArray[self::confirmIntroNode]==='1') {
                             $personalParam['personal'] = match ($dataReuseArray[self::dataReuseNode]) {
@@ -713,9 +713,9 @@ class ParticipationController extends PDFAbstract
                                 $dataReuseContent .= $this->translateStringPDF($dataReuseHowPrefix.'guidelines');
                             }
                         }
-                        if ($isPersonal) {
+                        if ($isPersonal || $isMarkingOtherPersonal) {
                             $content .= "\n".$dataReuseContent;
-                        } elseif (!$isMarkingOtherPersonal) {
+                        } else {
                             $content = $this->translateStringPDF(($isSeparateLater || $isMarkingOther) ? $translationPrefix.'noTool' : $translationPrefix.self::markingNode.'.start',array_merge($otherSourcesParam,['codeMarking' => ($isMarking ? $markingSentences : '')]))."\n".$dataReuseContent;
                         }
                         // add code compensation sentences if purpose research is not compensation

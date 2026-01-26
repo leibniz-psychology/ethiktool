@@ -9,8 +9,8 @@
         {% set createValue, dataResearchPrefix, markingPrefix, markingRemovePrefix, markingFirstValue, markingFurtherValue, noResponsibilityHint, storageValue = create.vars.value, translationPrefix~'dataResearch.', translationPrefix~'marking.', translationPrefix~'markingRemove.', content.marking.vars.value, markingFurther.vars.value, translationPrefix~'responsibility.hints.noHint', storage.vars.value %}
         {% set dataOnline, dataOnlineProcessing, addPDFparam, transferArray = content.dataOnline ?? null, content.dataOnlineProcessing ?? null, {'addPDF': boolToString(reviewProcess in ['fullDocs','shortDocs'])}, [transferData,addresseeType] %}
         {% set isDataOnline, markingHintsPrefix, laterEnd, divParam, transferParam, labelParamsCommittee, transferOtherParam = dataOnline is not same as null, markingPrefix~'hints.', markingRemovePrefix~'laterEnd', {'addDiv': ['']}, {'transfer': transferArray}, {'labelParams': committeeParams}, {'transferOther': transferArray} %}
-        {% set descriptionHintsPrefix, anonymizationTypesWoNo = markingHintsPrefix~'textHint', anonymizationTypes|slice(0,(anonymizationTypes|length)-1) %}
-        {% set descriptionHints, labelParams = [(descriptionHintsPrefix~'External')|trans,(descriptionHintsPrefix~'MarkingName')|trans], {'labelParams': addresseeParam} %}
+        {% set descriptionHintsPrefix, anonymizationTypesWoNo, codeCompensation, compensationInternal = markingHintsPrefix~'textHint', anonymizationTypes|slice(0,(anonymizationTypes|length)-1), content.codeCompensation ?? [], content.codeInternal ?? [] %}
+        {% set descriptionHints, labelParams, codeCompensationValue, compensationInternalValue = [(descriptionHintsPrefix~'External')|trans,(descriptionHintsPrefix~'MarkingName')|trans], {'labelParams': addresseeParam}, codeCompensation.vars.value ?? '', compensationInternal.vars.value ?? '' %}
     {% endif %}
     <div {% if hasCreate %} {{ stimulus_controller(privacyController,{
             'create': createValue,
@@ -40,7 +40,9 @@
             'purposeFurtherTypes': purposeFurtherTypes|slice(1),
             'laterEnd': [(laterEnd)|trans({'isName': 'true'}),(laterEnd)|trans({'isName': 'false'})],
             'storage': storageValue,
-            'accessOrderProcessing': accessOrderProcessingTypes
+            'accessOrderProcessing': accessOrderProcessingTypes,
+            'compensation': codeCompensationValue,
+            'compensationInternal': compensationInternalValue
     }) }} {% endif %}>
         {# processing #}
         {% if hasProcessing %}
@@ -373,28 +375,36 @@
                             </div>
                             {# code compensation #}
                             {% if content.codeCompensation is defined %}
-                                {% set compensation, codePrefix = content.codeCompensation, translationPrefix~'codeCompensation.' %}
-                                {% set value, tempPrefix, externalDiv, internalDiv = compensation.vars.value, codePrefix~'hints.code', 'codeExternalDiv', 'codeInternalDiv' %}
-                                {% set isExternal = value is same as 'codeExternal' %}
-                                <div class="mt-8" id="codeCompensation" {{ stimulus_target(privacyController,'compensationCode') }}>
-                                    {{ formRender.renderButtons(compensation,labelParams|merge({
-                                        'text': [content.codeCompensationDescription,transferParam|merge({'visibility': isExternal, 'addNamely': 'true'})],
-                                        'stimVisible': {'values': [['codeExternal',['codeCompensationDescriptionDiv',externalDiv]],['codeInternal',internalDiv]]},
-                                        'icons': {'codeCompensationcodeExternal': tempPrefix~'External', 'codeCompensationcodeInternal': tempPrefix~'Internal'}})) }}
+                                {% set codePrefix = translationPrefix~'codeCompensation.' %}
+                                {% set tempPrefix, externalDiv, internalDiv = codePrefix~'hints.code', 'codeExternalDiv', 'codeInternalDiv' %}
+                                {% set isExternal = codeCompensationValue is same as 'codeExternal' %}
+                                <div class="mt-8" id="codeCompensation" {{ stimulus_target(privacyController,'compensationCode')|stimulus_action(privacyController,'setNoDocumentHint','change') }}>
+                                    <div {{ stimulus_action('base','setVisibility','change',{'values': [['codeExternal',['codeCompensationDescriptionDiv',externalDiv]],['codeInternal',internalDiv]]}) }}>
+                                        {{ formRender.renderButtons(codeCompensation,labelParams|merge({
+                                            'text': [content.codeCompensationDescription,transferParam|merge({'visibility': isExternal, 'addNamely': 'true'})],
+                                            'stim': [privacyController,'setCompensationCode'],
+                                            'icons': {'codeCompensationcodeExternal': tempPrefix~'External', 'codeCompensationcodeInternal': tempPrefix~'Internal'}})) }}
+                                    </div>
                                     {# personal data of code for codeExternal #}
-                                    {{ formRender.renderButtons(content.codeCompensationexternal,{'addDiv': [externalDiv,boolToDisplay(isExternal)], 'icons': {'codeCompensationexternalgeneration': codePrefix~'codeExternal.hints.generation'}}) }}
+                                    {{ formRender.renderButtons(content.codeCompensationexternal,{
+                                        'addDiv': [externalDiv,boolToDisplay(isExternal)],
+                                        'icons': {'codeCompensationexternalgeneration': codePrefix~'codeExternal.hints.generation'},
+                                        'contTarget': ['codeCompensationexternalanonymous',privacyController,'compensationExternal']}) }}
                                     {# code internal #}
-                                    {% set internalPrefix, internal = codePrefix~'codeInternal.', content.codeInternal %}
-                                    {% set tempPrefix, internalValue = internalPrefix~'hints.', internal.vars.value %}
-                                    <div class="mt-8" id="{{ internalDiv }}" style="{{ boolToDisplay(value is same as 'codeInternal') }}">
-                                        {{ formRender.renderButtons(content.codeInternal,labelParams|merge({
-                                            'stimVisible':{'values':  [['pattern','codepatternDiv'],['contributors','codecontributorsDiv']]},
-                                            'icons': {'codeInternalown': tempPrefix~'own', 'codeInternalcontributors': tempPrefix~'contributors'}})) }}
+                                    {% set internalPrefix = codePrefix~'codeInternal.' %}
+                                    {% set tempPrefix = internalPrefix~'hints.' %}
+                                    <div class="mt-8" id="{{ internalDiv }}" style="{{ boolToDisplay(codeCompensationValue is same as 'codeInternal') }}">
+                                        <div {{ stimulus_action('base','setVisibility','change',{'values':  [['pattern','codepatternDiv'],['contributors','codecontributorsDiv']]}) }}>
+                                            {{ formRender.renderButtons(content.codeInternal,labelParams|merge({
+                                                'stim': [privacyController,'setCompensationInternal'],
+                                                'icons': {'codeInternalown': tempPrefix~'own', 'codeInternalcontributors': tempPrefix~'contributors'}})) }}
+                                        </div>
                                         {# personal data of code for codeInternal #}
                                         {% for type in ['pattern','contributors'] %}
                                             {{ formRender.renderButtons(content['codeCompensation'~type], labelParams|merge({
-                                                'addDiv': ['code'~type~'Div',boolToDisplay(internalValue is same as type)],
-                                                'icons': {('codeCompensation'~type~'generation'): internalPrefix~type~'.hints.generation'}})
+                                                'addDiv': ['code'~type~'Div',boolToDisplay(compensationInternalValue is same as type)],
+                                                'icons': {('codeCompensation'~type~'generation'): internalPrefix~type~'.hints.generation'},
+                                                'contTarget': ['codeCompensation'~type~'anonymous',privacyController,'compensation'~type]})
                                                 ) }}
                                         {% endfor %}
                                     </div>

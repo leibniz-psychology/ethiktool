@@ -237,11 +237,12 @@
         markInput:         if provided and true, input will be marked as input that gets transferred to participant documents. May only be provided if 'transfer' is not provided or an empty array
         target:            if provided, the textfield will be passed as a 'disableLoad' target to the base controller.
         contTarget:        if provided, an array of two elements: stimulus controller and target name to be passed to the controller
+        noTopMargin:       if provided, no top margin will be added
     #}
     {% set vars = form.vars %}
     {% set name, transfer, attr, contTargetArray, namely = vars.name, arguments.transfer ?? {}, vars.attr, arguments.contTarget ?? [''], arguments.addNamely ?? '' %}
     {% set isTransfer, textHint, contTarget = transfer is not same as {}, attr.placeholder is defined and attr.placeholder is not same as '' ? attr.placeholder : (arguments.hint ?? ''), contTargetArray[0] %}
-    <div id="{{ name~'Div' }}" class="mt-4 mb-3" style="{{ boolToDisplay(arguments.visibility ?? true) }}">
+    <div id="{{ name~'Div' }}" class="mb-3 {% if arguments.noTopMargin is not defined %} mt-4 {% endif %}" style="{{ boolToDisplay(arguments.visibility ?? true) }}">
         {% if textHint is not same as '' %}
             {% if namely is not same as '' %}
                 <div id="{{ name~'hintStart' }}" class="MetaData-Label mt-3">{{ 'multiple.namely'|trans({'namely': namely}) }}</div>

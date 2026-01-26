@@ -3,7 +3,7 @@ import {getSelected, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['privacyQuestions','responsibilityHint','transferOutsideHint','privacyQuestionsMarking','listDiv','dataPersonal','dataOnlineProcessingDiv','dataResearchDiv','dataResearchHint','laterEnd','anonymization','anonymizationNo','storage','dataPersonalAccess','purposeResearch','purposeNo','purposeCompensation','purposeTechnical','relatable','relatableDiv','purposeFurther','purposeNoFurther','contactResultFurther','technicalFurther','compensationCode','orderProcessingDescription','processingFurther','noDocumentHint']
+    static targets = ['privacyQuestions','responsibilityHint','transferOutsideHint','privacyQuestionsMarking','listDiv','dataPersonal','dataOnlineProcessingDiv','dataResearchDiv','dataResearchHint','laterEnd','anonymization','anonymizationNo','storage','dataPersonalAccess','purposeResearch','purposeNo','purposeCompensation','purposeTechnical','relatable','relatableDiv','purposeFurther','purposeNoFurther','contactResultFurther','technicalFurther','compensationCode','compensationExternal','compensationpattern','compensationcontributors','orderProcessingDescription','processingFurther','noDocumentHint']
 
     static values = {
         create: String,
@@ -33,7 +33,9 @@ export default class extends Controller {
         purposeFurtherTypes: Object, // without 'no further purpose'. Keys: values, values: widget IDs
         laterEnd: Array, // 0: marking with name, 1: marking without name
         storage: String,
-        accessOrderProcessing: Array // access types where order processing is asked
+        accessOrderProcessing: Array, // access types where order processing is asked
+        compensation: String, // type of code for compensation
+        compensationInternal: String // how the internal code for compensation is generated
     }
 
     connect() {
@@ -175,7 +177,7 @@ export default class extends Controller {
     }
 
     /** Sets the access widgets for a given purpose. Must pass a parameter 'purpose'.
-     * @param event widgets that invoked the method.
+     * @param event widgets that invoked the method
      */
     setAccess(event) {
         let target = event.target;
@@ -202,6 +204,20 @@ export default class extends Controller {
             }
             this.setAccessWidgets();
         }
+    }
+
+    /** Sets this.compensationValue.
+     * @param event widget that invoked the method
+     */
+    setCompensationCode(event) {
+        this.compensationValue = event.target.value;
+    }
+
+    /** Sets this.compensationInternalValue.
+     * @param event widget that invoked the method
+     */
+    setCompensationInternal(event) {
+        this.compensationInternalValue = event.target.value;
     }
 
     // methods that are called from within this class
@@ -473,7 +489,12 @@ export default class extends Controller {
                      this.markingSecondValue===this.internalString && (this.internalSecondValue===this.patternString && this.patternSecondValue===anonymousString ||
                                                                        this.internalSecondValue===this.ownString && this.ownSecondValue===anonymousString ||
                                                                        this.internalSecondValue===this.contributorsString && internalValues.includes(this.contributorsSecondValue))))) && // second marking is internal and code is not personal
-            this.purposeNoFurtherTarget.checked); // no further purposes for which personal data are collected
+            this.purposeNoFurtherTarget.checked && // no further purposes for which personal data are collected
+            (!this.hasCompensationCodeTarget || // compensation code is not asked
+                this.compensationValue==='codeExternal' && this.compensationExternalTarget.checked || // compensation code is external and anonymous
+                this.compensationValue==='codeInternal' && (this.compensationInternalValue===this.patternString && this.compensationpatternTarget.checked ||
+                                                            this.compensationInternalValue===this.ownString ||
+                                                            this.compensationInternalValue===this.contributorsString && this.compensationcontributorsTarget.checked))); // compensation code is internal and anonymous
     }
 
     /** Checks whether any marking is personal, i.e., by code with list.

@@ -41,6 +41,7 @@ class MainController extends ControllerAbstract
         return $this->render('Main/main.html.twig',$this->setRenderParameters($request,$main,
             ['error' => $errorModal,
              'isMajor' => $isMajor,
+             'numCommitteesBeta' => (new \NumberFormatter($request->getLocale(),\NumberFormatter::SPELLOUT))->format(count(self::committeeTypesBeta)),
              'params' => ['isMain' => $sessionValue['isMain'] ?? '', 'isMajor' => $this->getStringFromBool($isMajor)]]));
     }
 }

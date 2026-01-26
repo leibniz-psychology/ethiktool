@@ -311,7 +311,10 @@ main:
     Further information is available in the sections “About us“ and “About the Ethiktool“. Please note the “Technical Information“ and “Terms of Use“ for the Ethiktool.
     You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
 
-    <i>Please note: In the current project phase, the Ethiktool is intended for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites; four Ethics Committees are already in the beta stage.
+    <i>Please note: In the current project phase, the Ethiktool is intended for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites{numCommitteesBeta, select,
+            zero  {.}
+            one   {; one ethics committee is already in the beta stage.}
+            other {; {numCommitteesBeta} ethics committees are already in the beta stage.}}
 
     You can start creating an application for the respective committee via the “New proposal“ option.
     You can load and edit an existing XML file created by the Ethiktool via “Load proposal”.</i>
@@ -856,8 +859,8 @@ projectdetails:
         wards: 'legal guardian:'
         participants: 'participants:'
       voluntary:
-        title: 'Is participation voluntary?'
-        headingHint: 'The voluntary nature of participation can be jeopardised, for example, by time pressure between information and consent, promises of special benefits through participation in the study, non-disclosure of the voluntary nature of participation, dependent relationships between participants and project contributors as well as by implicit pressure in closed groups, especially in case of non-confidential consent and data collection.'
+        title: 'Is the decision about participation voluntary?'
+        headingHint: 'The voluntary nature of the decision about participation can be jeopardised, for example, by time pressure between information and consent, promises of special benefits through participation in the study, non-disclosure of the voluntary nature of participation, dependent relationships between participants and project contributors as well as by implicit pressure in closed groups, especially in case of non-confidential consent and data collection.'
         types:
           yes: 'yes'
           no: 'no'
@@ -956,7 +959,7 @@ projectdetails:
             measuresInstrumental: 'instrumental measurements (e.g., response times, eye tracking, motion tracking, EEG, ECG, pulse sensor, breathing, (f)MRI, body dimensions)'
             otherMeasures: 'other data collection method(s)'
           description: 'please specify'
-          headingHint: 'Please enter all data collection methods applied to collect data from participants for the purpose of the study. Remember to include methods for verifying inclusion and exclusion criteria, if applicable.'
+          headingHint: 'Please enter all data collection methods applied to collect data from participants for the purpose of the study. Remember to include methods for verifying <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param={routeIDs}>inclusion and exclusion criteria</a>, if applicable.'
           textHints:
             noSelection: 'Please select at least one data collection method.'
             description: 'Please describe the respective data collection method(s) in more detail.'
@@ -1167,6 +1170,7 @@ projectdetails:
               other    {your name}}.
           laterEndOther: 'other'
           placeholder: 'please specify'
+        otherTextHint: 'Please describe the process.'
         money:
           title: 'The financial compensation '
           immediately: 'will be paid immediately on site.'
@@ -1175,14 +1179,12 @@ projectdetails:
           external: 'will be paid via an external provider'
           externalTextHint: 'Please name the provider.'
           moneyOther: 'other'
-          moneyOtherPlaceholder: 'Please describe the process'
         hours:
           title: 'The course credit (participation hours) '
           immediately: 'will be certified immediately on site.'
           post: 'will be booked automatically.'
           later: 'will be certified later'
           hoursOther: 'other'
-          hoursOtherPlaceholder: 'Please describe the process'
         lottery:
           result:
             start: 'The result of the raffle will be announced '
@@ -1205,7 +1207,6 @@ projectdetails:
           external: 'is subsequently issued via an external provider'
           externalTextHint: 'Please name the provider.'
           lotteryOther: 'other'
-          lotteryOtherPlaceholder: 'Please describe the process'
         voucher:
           title: 'The voucher '
           immediately: 'will be issued immediately.'
@@ -1215,7 +1216,6 @@ projectdetails:
             mail: 'regular mail.'
             eMail: 'e-mail.'
           voucherOther: 'other'
-          voucherOtherPlaceholder: 'Please describe the process'
         compensationOther:
           title: 'Other compensation'
           textHint: 'Please describe how the compensation is issued in sentence style. Please make reference to the type of compensation and mention the time of issuing and what is necessary for retrieval (e.g., “Following the study, you will receive free access to our course materials; we will need your e-mail address for this.“).'
@@ -1308,10 +1308,10 @@ projectdetails:
         title: 'We sincerely hope you will accept us withholding this information and providing full information only now. This was necessary because...'
         textHint: 'Explain the necessity of deception or incomplete information in an understandable manner. Typical justifications are “to be able to record behaviour during the study as close as possible to everyday life“ or “because we wanted to investigate the effect of the method separately from its expected effect“. If applicable, indicate that this is a common procedure in studies of this type.'
     legal:
-      hint: 'Researchers should consider and decide on a case-by-case basis whether information on one or more of the following aspects appear useful. The templates can be used as basic information for frequently occurring cases; they cannot replace an individual assessment and consultation. The use of the templates is therefore at the user''s own responsibility; in particular, they are no substitute for legal advice. The Ethics Committee takes no responsibility for the correct use of the templates in individual cases and does not perform a legal review of the wording.'
+      hint: 'Researchers should consider and decide on a case-by-case basis whether information on one or more of the following aspects appear useful. The templates can be used as basic information for frequently occurring cases; they cannot replace an individual assessment and consultation. The use of the templates is therefore at the user''s own responsibility; in particular, they are no substitute for legal advice. The ethics committee takes no responsibility for the correct use of the templates in individual cases and does not perform a legal review of the wording.'
       liability:
         title: 'Shall the consent to study participation contain a liability clause?'
-        headingHint: 'Liability can never be completely ruled out (e.g., in case of intent or severe negligence), but it can be limited in certain respects. The template for the liability limitation serves as a guide for frequently occurring cases; it cannot replace an individual assessment and consultation. The use of the template is therefore at the user''s own responsibility; in particular, it is no substitute for legal advice. The Ethics Committee takes no responsibility for the correct use of the template in individual cases and does not perform a legal review of the wording. Researchers should consider and decide on a case-by-case basis whether they want to include a clause on the limitation of liability in the participation information.'
+        headingHint: 'Liability can never be completely ruled out (e.g., in case of intent or severe negligence), but it can be limited in certain respects. The template for the liability limitation serves as a guide for frequently occurring cases; it cannot replace an individual assessment and consultation. The use of the template is therefore at the user''s own responsibility; in particular, it is no substitute for legal advice. The ethics committee takes no responsibility for the correct use of the template in individual cases and does not perform a legal review of the wording. Researchers should consider and decide on a case-by-case basis whether they want to include a clause on the limitation of liability in the participation information.'
         template: 'Participation is at one''s own risk. The liability of the project contributors is limited to intent and severe negligence. The parties, their legal representatives and vicarious agents shall also be liable for negligence in the event of breaches of duty in direct connection with the conduction of the study, whereby liability in such cases shall be limited to reasonably foreseeable damage. Liability for damages resulting from injury to life, limb or health shall be governed by the statutory provisions.'
       apparatus:
         title: >-
@@ -1330,7 +1330,7 @@ projectdetails:
         template: 'I have been informed that no accident insurance coverage is granted by {committeeLocation} within the scope of the study.'
       insurance:
         title: 'Shall the consent to participate in the study include a reference to participant insurance?'
-        headingHint: 'Except for legal requirements (e.g., from the German Medicinal Products Act or Medical Device Law Implementation Act), liability insurance or participant insurance is not mandatory for research involving humans as such. The project contributors should consider on a case-by-case basis whether it may be advisable to obtain such insurance. The Ethics Committee cannot offer legal advice; the legal department should be contacted if needed.'
+        headingHint: 'Except for legal requirements (e.g., from the German Medicinal Products Act or Medical Device Law Implementation Act), liability insurance or participant insurance is not mandatory for research involving humans as such. The project contributors should consider on a case-by-case basis whether it may be advisable to obtain such insurance. The ethics committee cannot offer legal advice; the legal department should be contacted if needed.'
         template: 'No special study insurance (participant insurance) is provided.'
     dataPrivacy:
       processing:
@@ -2533,9 +2533,11 @@ checkDoc:
 completeForm:
   titles:
     consent: 'Declaration on correctness of the application documents'
-    bias: 'Conflicts of interest in the review process'
     consentFurther: 'Information on the processing of the ethics proposal'
+    bias: 'Conflicts of interest in the review process'
+    consentText: 'Further notifications to {committeeAcc}'
     pdf: 'Additional documents (PDF)'
+    finish: 'Finalize proposal composition'
   consent:
     text: >-
       I hereby confirm that I have read the application form automatically generated from my entries {anyDoc, select,
@@ -2560,9 +2562,9 @@ completeForm:
                           UH1   {<a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">current composition of {committeeGen}</a>}
                           other {current composition of {committeeGen}}} and inform us of any possible conflicts of interest below:
     types:
-      noBias: 'No member of the Ethics Committee has a conflict of interest.'
-      participate: 'The following members of the Ethics Committee are involved in the research project themselves or have a directive relationship with a project contributor:'
-      access: 'The following members of the Ethics Committee must not view the application documents (usually if there is a justified concern about information being passed on):'
+      noBias: 'No member of the ethics committee has a conflict of interest.'
+      participate: 'The following members of the ethics committee are involved in the research project themselves or have a directive relationship with a project contributor:'
+      access: 'The following members of the ethics committee must not view the application documents (usually if there is a justified concern about information being passed on):'
     hint: 'These persons must not be involved in the decision-making process, but may view the application documents.'
   consentFurther:
     text: >-
@@ -2581,7 +2583,7 @@ completeForm:
             {isExRe, select,
               true  {For the purpose and for the duration of the review of the current proposal revision or amendment, the involved persons are granted access to the documents and correspondence relating to the original proposal with the case number {reference}.}
               other {}}}
-        other {Ethics proposals and all associated documents are processed electronically. The employees of the office and the members of {committeeGen} are involved in processing the documents. The persons involved are obliged to maintain confidentiality and to comply with data protection regulations. In particularly justified exceptional cases, the applicant has the option of restricting access to the proposal documents for individual members of the Ethics Committee (usually if there are justified concerns about the disclosure of information).
+        other {Ethics proposals and all associated documents are processed electronically. The employees of the office and the members of {committeeGen} are involved in processing the documents. The persons involved are obliged to maintain confidentiality and to comply with data protection regulations. In particularly justified exceptional cases, the applicant has the option of restricting access to the proposal documents for individual members of the ethics committee (usually if there are justified concerns about the disclosure of information).
          After completion of the review by {committeeAcc}, all documents and correspondence are stored, irrespective of the vote issued, for a period of 10 years after the end of the research project specified in the proposal. Access to the stored data is granted to employees of the office of {committeeGen}.  
          {isExRe, select,
            true  {For the purpose and for the duration of the review of the current proposal revision or amendment, the members of {committeeGen} are granted access to the documents and correspondence relating to the original proposal with the case number {reference}.}

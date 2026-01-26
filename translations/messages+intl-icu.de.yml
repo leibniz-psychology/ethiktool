@@ -312,7 +312,10 @@ main:
     Weitere Informationen finden Sie in den Abschnitten „Über uns“ und „Über das Ethiktool“. Bitte beachten Sie die technischen Hinweise und die Nutzungsbedingungen des Ethiktools.
     Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
 
-    <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz oder an der Universität Bielefeld ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet und befindet sich für vier Ethikkommissionen bereits im Beta-Stadium.
+    <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz oder an der Universität Bielefeld ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet{numCommitteesBeta, select,
+                  Null  {.}
+                  Eins  { und befindet sich für eine Ethikkommission bereits im Beta-Stadium.}
+                  other { und befindet sich für {numCommitteesBeta} Ethikkommissionen bereits im Beta-Stadium.}}
     
     Über „Neuer Antrag“ können Sie die Antragserstellung für die entsprechende Kommission beginnen.
     Über „Antrag laden“ können Sie eine vorhandene XML-Datei eines zuvor im Ethiktool erstellten Antrags laden und weiter bearbeiten. </i>
@@ -349,7 +352,7 @@ main:
              
              Ein Antrag soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann eine nachträgliche Begutachtung erfolgen. Bitte nehmen Sie in solchen Fällen vorab Kontakt zur Geschäftsstelle Forschungsethik des DLR auf und klären Sie, ob eine Ausnahmegenehmigung für die nachträgliche Begutachtung erteilt werden kann.
              
-             Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethik-Kommission eingereicht werden. Gleiches gilt für Forschungsprojekte, an denen Ärztinnen bzw. Ärzte beteiligt sind.}
+             Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden. Gleiches gilt für Forschungsprojekte, an denen Ärztinnen bzw. Ärzte beteiligt sind.}
       TUD   {Nach der offiziellen Beschlussfassung zur Gründung des Ethikbeirats der Technischen Universität Dresden finden sich hier die Kriterien für die Antragsberechtigung.
       
              Weiterhin wird hier die Abgrenzung zwischen Anträgen an den Ethikbeirat und Anträgen an die Ethikkommission der TU Dresden (für medizinische Forschungsvorhaben) erläutert.
@@ -856,8 +859,8 @@ projectdetails:
         wards: 'gesetzliche Vertretungspersonen:'
         participants: 'Teilnehmende:'
       voluntary:
-        title: 'Erfolgt die Teilnahme freiwillig?'
-        headingHint: 'Die Freiwilligkeit der Teilnahme kann u.a. gefährdet sein durch Zeitdruck zwischen Information und Einwilligung, Versprechen besonderer Vorteile durch die Studienteilnahme, Verschweigen der Freiwilligkeit im Rahmen der Aufklärung, Abhängigkeitsverhältnisse zwischen Teilnehmenden und Projektbeteiligten sowie Erwartungsdruck in geschlossenen Gruppen, insbesondere bei nicht-vertraulicher Einwilligung und Datenerhebung.'
+        title: 'Erfolgt die Teilnahme-Entscheidung freiwillig?'
+        headingHint: 'Die Freiwilligkeit der Teilnahme-Entscheidung kann u.a. gefährdet sein durch Zeitdruck zwischen Information und Einwilligung, Versprechen besonderer Vorteile durch die Studienteilnahme, Verschweigen der Freiwilligkeit im Rahmen der Aufklärung, Abhängigkeitsverhältnisse zwischen Teilnehmenden und Projektbeteiligten sowie Erwartungsdruck in geschlossenen Gruppen, insbesondere bei nicht-vertraulicher Einwilligung und Datenerhebung.'
         types:
           yes: 'Ja'
           no: 'Nein'
@@ -956,7 +959,7 @@ projectdetails:
             measuresInstrumental: 'apparative Messungen (z.B. Reaktionszeiten, Eyetracking, Motion Tracking, EEG, EKG, Pulssensor, Atmung, (f)MRT, Körpermaße)'
             otherMeasures: 'sonstige Erhebungsmethode(n)'
           description: 'bitte spezifizieren'
-          headingHint: 'Geben Sie bitte alle Erhebungsmethoden an, mittels derer zum Zweck der Studie Daten von den Teilnehmenden erfasst werden. Denken Sie dabei auch an Erhebungsmethoden zur Überprüfung der Ein- und Ausschlusskriterien.' 
+          headingHint: 'Geben Sie bitte alle Erhebungsmethoden an, mittels derer zum Zweck der Studie Daten von den Teilnehmenden erfasst werden. Denken Sie dabei auch an Erhebungsmethoden zur Überprüfung der <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param={routeIDs}>Ein- und Ausschlusskriterien</a>.'
           textHints:
             noSelection: 'Bitte wählen Sie mindestens eine Erhebungsmethode aus.'
             description: 'Bitte beschreiben Sie die jeweilige(n) Erhebungsmethode(n) genauer.'
@@ -1167,6 +1170,7 @@ projectdetails:
               other    {Ihr Name}}.
           laterEndOther: 'Sonstiges'
           placeholder: 'bitte spezifizieren'
+        otherTextHint: 'Bitte beschreiben Sie die Abwicklung.'
         money:
           title: 'Die finanzielle Aufwandsentschädigung '
           immediately: 'wird sofort vor Ort ausgezahlt.'
@@ -1175,14 +1179,12 @@ projectdetails:
           external: 'wird über einen externen Anbieter ausgezahlt'
           externalTextHint: 'bitte Anbieter benennen'
           moneyOther: 'Sonstiges'
-          moneyOtherPlaceholder: 'Bitte beschreiben Sie die Abwicklung'
         hours:
           title: 'Die Versuchspersonenstunden '
           immediately: 'erhalten Sie sofort vor Ort bescheinigt.'
           post: 'werden automatisch verbucht.'
           later: 'erhalten Sie später bescheinigt'
           hoursOther: 'Sonstiges'
-          hoursOtherPlaceholder: 'Bitte beschreiben Sie die Abwicklung'
         lottery:
           result:
             start: 'Das Ergebnis der Verlosung wird '
@@ -1205,7 +1207,6 @@ projectdetails:
           external: 'wird im Anschluss über einen externen Anbieter vergeben'
           externalTextHint: 'bitte Anbieter benennen'
           lotteryOther: 'Sonstiges'
-          lotteryOtherPlaceholder: 'Bitte beschreiben Sie die Abwicklung'
         voucher:
           title: 'Der Gutschein '
           immediately: 'wird sofort ausgegeben.'
@@ -1215,7 +1216,6 @@ projectdetails:
             mail: 'Post zugestellt.'
             eMail: 'E-Mail zugestellt.'
           voucherOther: 'Sonstiges'
-          voucherOtherPlaceholder: 'Bitte beschreiben Sie die Abwicklung'
         compensationOther:
           title: 'Sonstige Aufwandsentschädigung'
           textHint: 'Bitte beschreiben Sie die Ausgabe der sonstigen Aufwandsentschädigung in Satzform. Bitte stellen Sie dabei den Bezug zur Art der vergebenen sonstigen Aufwandsentschädigung her und erwähnen den Zeitpunkt der Vergabe und was organisatorisch für den Erhalt notwendig ist (z.B. „Im Anschluss an die Studie erhalten Sie kostenlosen Zugriff auf unsere Kursmaterialien; dazu benötigen wir Ihre E-Mail-Adresse.“).'
@@ -2533,9 +2533,11 @@ checkDoc:
 completeForm:
   titles:
     consent: 'Erklärung zur Korrektheit der Antragsdokumente'
-    bias: 'Befangenheiten im Begutachtungsprozess'
     consentFurther: 'Informationen zur Bearbeitung des Ethikantrags'
+    bias: 'Befangenheiten im Begutachtungsprozess'
+    consentText: 'Weitere Mitteilungen an {committeeAcc}'
     pdf: 'Zusatzdokumente (PDF)'
+    finish: 'Antragserstellung abschließen'
   consent:
     text: >-
       Hiermit versichere ich, dass ich das aus meinen Angaben automatisch erstellte Antragsdokument {anyDoc, select,

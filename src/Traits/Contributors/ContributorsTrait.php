@@ -18,6 +18,7 @@ trait ContributorsTrait
     protected const applicationNode = 'application';
     protected const supervisorNode = 'supervision';
     protected const tasksNodes = ['leader', 'research', 'experiment', 'contact', 'data', 'other'];
+    protected const taskLeader = 'leader';
     protected const taskData = 'data'; // must equal one value in $taskNodes
     // other variables
     protected const otherDescription = 'otherDescription';

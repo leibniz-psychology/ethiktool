@@ -118,7 +118,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                               other {{children, select,
                                         true  {}
                                         other {Erziehungsberechtigten bzw. gesetzlichen Vertretungspersonen}}}} bei der Erhebung anwesend?
-    voluntary: 'Erfolgt die Teilnahme freiwillig?'
+    voluntary: 'Erfolgt die Teilnahme-Entscheidung freiwillig?'
     voluntarySub: 'Begründung(en):'
     consent: >-
       Wie erfolgt die Einwilligung {isAssent, select,
@@ -348,7 +348,9 @@ projectdetails:
                                     true  {Angaben im Ethiktool}
                                     other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} erfolgt die detaillierte Klärung der Datenverarbeitung einem späteren Zeitpunkt. Daher wurde vom Ethiktool keine Datenschutzerklärung {levelNamesString} erstellt.}
         other         {{personal, select,
-                          anonymous {Gemäß der Angaben im Ethiktool werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
+                          anonymous {Gemäß der {savePDF, select,
+                                                  true  {Angaben im Ethiktool}
+                                                  other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
                           other     {Aufgrund von folgenden Besonderheiten im Umgang mit dem Daten (gemäß Angaben im Ethiktool) kann die Datenschutzerklärung {levelNamesString} nicht mit dem Ethiktool erstellt werden:
                             {createOther} Daher wurde die Datenschutzerklärung selbst erstellt. Sie findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}}}}
     createOther:
@@ -607,7 +609,7 @@ participation:
                         true  {{measureTimeDays, plural,
                                   =0    {der heutigen}
                                   other {dieser}}}
-                        other {}} Untersuchung beträgt erfahrungsgemäß etwa {total}{breaksMinutes, plural,
+                        other {der}} Untersuchung beträgt erfahrungsgemäß etwa {total}{breaksMinutes, plural,
                                                                                       =0    {.}
                                                                                       =1    {, davon {measureTime} reine Erhebungszeit und 1 Minute Vor- und Nachbereitungszeit sowie Pausenzeiten.}
                                                                                       other {, davon {measureTime} reine Erhebungszeit und # Minuten Vor- und Nachbereitungszeit sowie Pausenzeiten.}}

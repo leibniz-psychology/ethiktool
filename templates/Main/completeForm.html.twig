@@ -10,7 +10,12 @@
             {{ _self.addBorderText(consentContent) }}
             <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setSubmitButton','change') }}>{{ formRender.addCheckbox(content.consent, {'target': [completeFormController,'consent']}) }}</div>
             <div class="MetaData-Label mt-4">{{ consentHint|raw }}</div>
-            {{ formRender.addTextfield(content.consentText,fontNormal|merge(markInputParam)|merge({'hint': translationPrefix~'consent.notes', 'textHintParams': committeeParams})) }}
+        </div>
+        {# consent further #}
+        <div class="mt-8">
+            {{ formRender.addHeading(titlesPrefix~'consentFurther') }}
+            {{ _self.addBorderText(consentFurtherText) }}
+            <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setSubmitButton','change') }}>{{ formRender.addCheckbox(content.consentFurther, {'target': [completeFormController,'consentFurther']}) }}</div>
         </div>
         {# bias #}
         <div class="mt-8">
@@ -29,11 +34,10 @@
                 {% endfor %}
             </div>
         </div>
-        {# consent further #}
+        {# further notifications #}
         <div class="mt-8">
-            {{ formRender.addHeading(titlesPrefix~'consentFurther') }}
-            {{ _self.addBorderText(consentFurtherText) }}
-            <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setSubmitButton','change') }}>{{ formRender.addCheckbox(content.consentFurther, {'target': [completeFormController,'consentFurther']}) }}</div>
+            {{ formRender.addHeading(titlesPrefix~'consentText',{'params': committeeParams}) }}
+            {{ formRender.addTextfield(content.consentText,markInputParam|merge({'hint': translationPrefix~'consent.notes', 'textHintParams': committeeParams, 'noTopMargin': true})) }}
         </div>
         {% set isLoadFailure = pdfFilename is not same as '' %}
         <div>
@@ -52,10 +56,11 @@
             {% endif %}
             {# buttons #}
             {% set tempPrefix, finishPrefix, failureName = 'multiple.loadMessage.', translationPrefix~'finish.', 'pdfFailure' %}
-            <div class="MetaData-Widget mt-8" {% if isLoadFailure %} {{ stimulus_action('base','showModal','load@window',{'target': failureName}) }} {% endif %}>
-                <div {{ stimulus_target(completeFormController,'finishText') }}>{{ finishText[0] }}</div>
-                <button class="Button_primary_act mt-2 mb-2" type="button" name="finish" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target(completeFormController,'finish') }} onclick="{{ addTracking('Button','Complete Preparation') }}">{{ formRender.addButtonIcon(finishPrefix~'title','pdf') }}</button>
-                <div style="margin-left: -1.5rem" {{ stimulus_target(completeFormController,'finishText') }}>
+            <div class="mt-8" {% if isLoadFailure %} {{ stimulus_action('base','showModal','load@window',{'target': failureName}) }} {% endif %}>
+                {{ formRender.addHeading(titlesPrefix~'finish') }}
+                <div class="MetaData-Label" {{ stimulus_target(completeFormController,'finishText') }}>{{ finishText[0] }}</div>
+                <button class="Button_primary_act ms-4 mt-2 mb-2" type="button" name="finish" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target(completeFormController,'finish') }} onclick="{{ addTracking('Button','Complete Preparation') }}">{{ formRender.addButtonIcon(finishPrefix~'title','pdf') }}</button>
+                <div class="MetaData-Label" style="margin-left: -1.5rem">
                     {{ formRender.addExpandable(finishPrefix~'text.end.title') }}
                     <div class="MetaData-Widget mx-4 mt-2 borderLight" style="display: none">{{ finishText[1]|raw }}</div>
                 </div>

@@ -1727,9 +1727,10 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'4';
+        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'4' || $minor==='4' && $patch<'1';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
+        $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2001,31 +2002,34 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->removeElement(self::descriptionNode,$createNode);
                             }
                         }
-                        if (in_array($reviewProcess,[self::reviewShortRequested,self::reviewShortBegun])) { // remove criteria, location, and details for compensation to have the same information on the intermediate page for short review processes with and without review of participant documents
-                            $this->removeElement(self::criteriaIncludeNode,$groupsNode);
-                            $this->removeElement(self::criteriaExcludeNode,$groupsNode);
-                            $this->removeElement(self::terminateParticipantsNode,$consentNode); // does only exist for shortBegun
-                            $this->removeElement(self::locationNode,$measuresNode);
-                            $compensationArray = $this->xmlToArray($compensationNode);
-                            $validKeys = [self::compensationTypeNode,self::terminateNode,self::compensationVoluntaryNode];
-                            foreach ($compensationArray as $key => $value) {
-                                if (!in_array($key,$validKeys)) {
-                                    unset($compensationArray[$key]);
+                        // updates for version before 2.4.0
+                        if ($isSmaller240) {
+                            if (in_array($reviewProcess, [self::reviewShortRequested, self::reviewShortBegun])) { // remove criteria, location, and details for compensation to have the same information on the intermediate page for short review processes with and without review of participant documents
+                                $this->removeElement(self::criteriaIncludeNode, $groupsNode);
+                                $this->removeElement(self::criteriaExcludeNode, $groupsNode);
+                                $this->removeElement(self::terminateParticipantsNode, $consentNode); // does only exist for shortBegun
+                                $this->removeElement(self::locationNode, $measuresNode);
+                                $compensationArray = $this->xmlToArray($compensationNode);
+                                $validKeys = [self::compensationTypeNode, self::terminateNode, self::compensationVoluntaryNode];
+                                foreach ($compensationArray as $key => $value) {
+                                    if (!in_array($key, $validKeys)) {
+                                        unset($compensationArray[$key]);
+                                    }
                                 }
+                                $this->arrayToXml($compensationArray, $compensationNode);
                             }
-                            $this->arrayToXml($compensationArray,$compensationNode);
+                            if (in_array($reviewProcess, [self::reviewShortRequested, self::reviewFullRequested])) { // review process is now "requested" if any funding is requested and "requested" is now favored over "begun"
+                                $this->updateNodesByReviewProcess($request, $measureTimePointNode, $reviewProcess);
+                            }
+                            // duration: added days and hours to measure time
+                            $durationNode = $measuresNode->{self::durationNode};
+                            $measureTimeMinutes = (string)$durationNode->{'measureTime'};
+                            $breaks = (string)$durationNode->{'breaks'};
+                            $this->removeAllChildNodes($durationNode);
+                            $this->addChildNodes($durationNode, self::durationTypes);
+                            $durationNode->{self::durationMeasureTimeMinutes} = $measureTimeMinutes;
+                            $durationNode->{self::durationBreaks} = $breaks;
                         }
-                        if (in_array($reviewProcess,[self::reviewShortRequested,self::reviewFullRequested])) { // review process is now "requested" if any funding is requested and "requested" is now favored over "begun"
-                            $this->updateNodesByReviewProcess($request,$measureTimePointNode,$reviewProcess);
-                        }
-                        // duration: added days and hours to measure time
-                        $durationNode = $measuresNode->{self::durationNode};
-                        $measureTimeMinutes = (string) $durationNode->{'measureTime'};
-                        $breaks = (string) $durationNode->{'breaks'};
-                        $this->removeAllChildNodes($durationNode);
-                        $this->addChildNodes($durationNode,self::durationTypes);
-                        $durationNode->{self::durationMeasureTimeMinutes} = $measureTimeMinutes;
-                        $durationNode->{self::durationBreaks} = $breaks;
                     } // foreach measure time point
                 } // foreach group
             } // foreach study
