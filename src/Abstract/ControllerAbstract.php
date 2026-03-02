@@ -69,6 +69,8 @@ abstract class ControllerAbstract extends AbstractController
     protected const loadSuccess = 'loadSuccess'; // name of session variable indicating the xml was successfully loaded
     protected const errorModal = 'errorMessage'; // name of session variable indicating that an error occurred and the user was redirected to the main page
     protected const preview = 'preview'; // name of the session variable indicating the position of the preview
+    private string $previewTab = 'previewTab'; // name of the session variable indicating the active preview tab
+    private string $previewTabApplication = 'tabApplication'; // name of application preview tab
     protected const quit = 'quit'; // name of session variable indicating that the proposal should be saved before quitting the tool
     protected const pageErrors = 'pageErrors'; // name of twig variable containing the errors on a single page
     protected const dummyString = 'dummyString'; // dummy string used as a placeholder if multiple elements are listed separated by a comma except for the last two elements
@@ -167,20 +169,18 @@ abstract class ControllerAbstract extends AbstractController
     {
         $session = $request->getSession();
         $committeeParams = $session->get(self::committeeParams) ?? [self::committeeType => 'noCommittee', self::toolVersionAttr => self::toolVersion];
-        try { // set times for maintenance messages
-            $date = $this->getCurrentTime();
-            $timeString = strtotime($date->format('H:i:s'));
-            $date = $date->format('l')==='Monday' ? ($timeString>=strtotime('7:30:00') ? ($timeString<strtotime('8:00:00') ? 'before' : ($timeString<strtotime('8:30:00') ? 'during' : '')) : '') : '';
-        } catch (\Throwable) {
-            return [];
-        }
         $returnArray = array_merge($committeeParams,
             [self::content => $form,
-             'isUpdateTime' => $date,
+             'isUpdateTime' => $this->getUpdateTimeString(),
              self::committeeParams => $committeeParams]);
         if ($pageTitle!=='') {
             $returnArray[self::pageTitle] = $pageTitle;
             $returnArray[self::preview] = (int) ($session->get(self::preview) ?? 0);
+            $previewTab = $session->get($this->previewTab);
+            $isCompleteForm = $pageTitle==='completeForm';
+            $previewTab = $previewTab==='tabCompletePDF' && !$isCompleteForm ? $this->previewTabApplication : $previewTab;
+            $returnArray[$this->previewTab] = $previewTab;
+            $session->set($this->previewTab,$previewTab); // twig macro addPreview() needs preview tab value -> set again in case complete form is left while complete pdf was previewed
             $session->set(self::preview,0); // if the page is reloaded, go to the top of the preview
             if ($addErrors) {
                 $returnArray[self::pageErrors] = $this->getErrors($request,substr($pageTitle,strrpos($pageTitle,'.')+1));
@@ -190,6 +190,20 @@ abstract class ControllerAbstract extends AbstractController
             $returnArray = array_merge($returnArray,$this->getProjectdetailsParameters($request));
         }
         return array_merge($returnArray,$parameters);
+    }
+
+    /** Creates the string saying that an update is about to be or is ongoing.
+     * @return string update string or an empty string if no update is about to be or is ongoing
+     */
+    protected function getUpdateTimeString(): string
+    {
+        try { // set times for maintenance messages
+            $date = $this->getCurrentTime();
+            $timeString = strtotime($date->format('H:i:s'));
+            return $date->format('l')==='Monday' ? ($timeString>=strtotime('7:30:00') ? ($timeString<strtotime('8:00:00') ? 'before' : ($timeString<strtotime('8:30:00') ? 'during' : '')) : '') : '';
+        } catch (\Throwable) {
+            return '';
+        }
     }
 
     /** Gets the parameters for projectdetails pages.
@@ -249,7 +263,9 @@ abstract class ControllerAbstract extends AbstractController
             $submitDummy = $formContent[self::submitDummy];
             if (str_starts_with($submitDummy, self::preview)) {
                 $submitDummy = explode("\n", $submitDummy);
-                $session->set(self::preview, substr(trim($submitDummy[0]), strlen(self::preview.':')));
+                $preview = explode(':',trim($submitDummy[0])); // 0: 'preview', 1: scroll position of preview, 2: active preview tab
+                $session->set(self::preview, $preview[1] ?? 0);
+                $session->set($this->previewTab,$preview[2] ?? $this->previewTabApplication);
                 foreach ($submitDummy as $key => $value) { // if a link is double-clicked, the 'preview:X' value may exist twice
                     if (str_contains($value, self::preview)) {
                         unset($submitDummy[$key]);
@@ -882,20 +898,22 @@ abstract class ControllerAbstract extends AbstractController
     /** Checks if either burdens, risks, or burdens/risks for contributors are selected.
      * @param array $burdensRisksArray array containing the burdens and risks information
      * @param string $type must equal 'burdens','risks', or 'burdensRisksContributors
+     * @param bool $checkEveryday if true and $type equals 'burdens', the first element of the return array is only true if the 'burdensEveryday' question is answered with yes
      * @return array 0: true if any option except 'no' is selected (burdens/risks for contributors: if 'yes' is selected), 1: true if 'no' is selected; otherwise false in both cases
      */
-    protected function getBurdensOrRisks(array $burdensRisksArray, string $type): array
+    protected function getBurdensOrRisks(array $burdensRisksArray, string $type, bool $checkEveryday = true): array
     {
-        $tempArray = $burdensRisksArray[$type];
+        $typeArray = $burdensRisksArray[$type];
         if ($type!==self::burdensRisksContributorsNode) {
-            $tempArray = $tempArray[$type.'Type'];
+            $tempArray = $typeArray[$type.'Type'];
             if ($tempArray==='' || $tempArray==[]) { // depending on where the function is called, the 'Type' key can either be an empty string or an empty array if nothing was chosen yet
                 return [false,false];
             }
-            $isNo = array_key_exists($type===self::burdensNode ? self::noBurdens : self::noRisks,$tempArray);
-            return [!$isNo,$isNo];
+            $isBurdens = $type===self::burdensNode;
+            $isNo = array_key_exists($isBurdens ? self::noBurdens : self::noRisks,$tempArray);
+            return [!$isNo && (!$isBurdens || !$checkEveryday || $typeArray[self::burdensEveryday]=='0'),$isNo];
         } else { // burdens/risks for contributors
-            $chosen = $tempArray[self::chosen];
+            $chosen = $typeArray[self::chosen];
             return [$chosen==='0',$chosen==='1'];
         }
     }
@@ -1342,7 +1360,7 @@ abstract class ControllerAbstract extends AbstractController
                                 ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
                         // wards -> no need to set $allShort because checks for wards are implicitly included in checks for examined
                         $briefReport[$this->getBriefReportHeading(self::wardsExaminedNode)] = $this->getBriefReportAnswer(self::wardsExaminedNode, array_key_exists(self::wardsExaminedNode, $examinedArray) ? self::answerNo : ($isUnder18 ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, $noUnclear);
-                        // pre content -> no need to set $allShort because checks for pre content are implicitly included in checked for information
+                        // pre content -> no need to set $allShort because checks for pre content are implicitly included in checks for information
                         $briefReport[$this->getBriefReportHeading(self::preContent)] = $this->getBriefReportAnswer(self::preContent, in_array(self::deceit, $preContent) // deceit was chosen
                             ? self::answerYes
                             : (array_intersect($allInformation, [self::post, 'noPost'])!==[] // no information is given
@@ -1351,15 +1369,17 @@ abstract class ControllerAbstract extends AbstractController
                         $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
                         $tempVal = $burdensRisksArray[self::burdensRisksContributorsNode][self::chosen];
                         $isBurdensRisksContributors = $tempVal==='0';
+                        $burdensEveryday = $burdensRisksArray[self::burdensNode][self::burdensEveryday] ?? '';
                         $allShort = $allShort && $tempVal==='1';
                         $parameters['isBurdensRisksContributors'] = $this->getStringFromBool($isBurdensRisksContributors);
                         foreach ([self::burdensNode, self::risksNode] as $type) {
+                            $isBurdens = $type===self::burdensNode;
                             $tempArray = $burdensRisksArray[$type][$type.'Type'];
                             $isChosen = is_array($tempArray);
-                            $isCurrent = $isChosen && array_diff_key($tempArray, [($type===self::burdensNode ? self::noBurdens : self::noRisks) => ''])!==[];
+                            $isCurrent = $isChosen && array_diff_key($tempArray, [($isBurdens ? self::noBurdens : self::noRisks) => ''])!==[];
                             $allShort = $allShort && $isChosen && !$isCurrent;
                             $parameters['is'.ucfirst($type)] = $this->getStringFromBool($isCurrent);
-                            $briefReport[$this->getBriefReportHeading($type)] = $this->getBriefReportAnswer($type, $isBurdensRisksContributors || $isCurrent ? self::answerYes : self::answerNo, $parameters, $getReviewError);
+                            $briefReport[$this->getBriefReportHeading($type)] = $this->getBriefReportAnswer($type, $isBurdensRisksContributors || $isCurrent && (!$isBurdens || $burdensEveryday==='0') ? self::answerYes : ($isBurdens && $burdensEveryday==='1' ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
                         }
                         // finding
                         $tempVal = $burdensRisksArray[self::findingNode][self::chosen];
@@ -1727,7 +1747,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'4' || $minor==='4' && $patch<'1';
+        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'5';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
@@ -1788,6 +1808,8 @@ abstract class ControllerAbstract extends AbstractController
                         $informationNode = $measureTimePointNode->{self::informationNode};
                         $consentNode = $measureTimePointNode->{self::consentNode};
                         $measuresNode = $measureTimePointNode->{self::measuresNode};
+                        $burdensRisksNode = $measureTimePointNode->{self::burdensRisksNode};
+                        $burdensNode = $burdensRisksNode->{self::burdensNode};
                         $compensationNode = $measureTimePointNode->{self::compensationNode}[0];
                         $privacyNode = $measureTimePointNode->{self::privacyNode};
                         if ($isMajor1) {
@@ -1894,8 +1916,6 @@ abstract class ControllerAbstract extends AbstractController
 
                             }
                             // burdensRisks (update of nodes)
-                            $burdensRisksNode = $measureTimePointNode->{self::burdensRisksNode};
-                            $burdensNode = $burdensRisksNode->{self::burdensNode};
                             if ($burdensNode->{self::burdensTypesNode}->{self::noBurdens}->getName()!=='') { // 'no burdens' is selected
                                 $this->insertElementBefore(self::burdensNoDescription, $burdensRisksNode->{self::risksNode});
                                 $burdensRisksNode->{self::burdensNoDescription} = (string)$burdensNode->{self::descriptionNode};
@@ -2030,6 +2050,11 @@ abstract class ControllerAbstract extends AbstractController
                             $durationNode->{self::durationMeasureTimeMinutes} = $measureTimeMinutes;
                             $durationNode->{self::durationBreaks} = $breaks;
                         }
+                        // update for version before 2.5.0
+                        if ($this->checkElement(self::burdensRisksCompensationNode,$burdensNode)) { // any burden except 'no burden' is selected -> add burdens everyday node
+                            $this->insertElementBefore(self::burdensEveryday,$burdensNode->{self::burdensRisksCompensationNode});
+                            $burdensNode->{self::burdensEveryday} = '0'; // as the everyday part was part of the burdens questions before, set the answer to 'yes'
+                        }
                     } // foreach measure time point
                 } // foreach group
             } // foreach study
@@ -2075,19 +2100,13 @@ abstract class ControllerAbstract extends AbstractController
             return $breaks+$measureTime;
         } else {
             $hours = $measureTimesInt[self::durationMeasureTimeHours] ?? 0;
-            $minutes = $measureTimesInt[self::durationMeasureTimeMinutes] ?? 0;
-            $minutesNew = $minutes+$breaks;
+            $minutesNew = ($measureTimesInt[self::durationMeasureTimeMinutes] ?? 0)+$breaks;
             if ($hours>0 && $minutesNew>=60) { // only split if hours were entered
-                $hoursNew = $hours+floor($minutesNew/60);
+                $totalArray[self::durationMeasureTimeHours] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeHours,['time' => $hours+floor($minutesNew/60)]); // translate again in case hours changed from singular to plural
                 $minutesNew = $minutesNew%60;
-                $totalArray[self::durationMeasureTimeHours] = str_replace($hours,$hoursNew,$totalArray[self::durationMeasureTimeHours]);
             }
             if ($minutesNew>0) {
-                if (array_key_exists(self::durationMeasureTimeMinutes,$totalArray)) {
-                    $totalArray[self::durationMeasureTimeMinutes] = str_replace($minutes, $minutesNew, $totalArray[self::durationMeasureTimeMinutes]);
-                } else { // only minutes for breaks
-                    $totalArray[self::durationMeasureTimeMinutes] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeMinutes,['time' => $minutesNew]);
-                }
+                $totalArray[self::durationMeasureTimeMinutes] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeMinutes,['time' => $minutesNew]); // translate again in case minutes changed from singular to plural or vice versa
             } else { // minutes add up to full hour
                 unset($totalArray[self::durationMeasureTimeMinutes]);
             }

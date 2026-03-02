@@ -145,10 +145,11 @@
                         0: name of stimulus controller
                         1: stimulus action that is called if the checkbox is clicked
                         2: if provided, parameters that are passed to the stimulus action
-        noHeading: if provided, no heading will be added
+        noHeading:     if provided, no heading will be added
+        resize:        if provided, the textarea will be vertically resizable
     #}
     {% set isVisible, hintArray, isTemplate, transfer, stim = boolToDisplay(arguments.visible ?? true,1), arguments.hint ?? [''], arguments.template is defined, arguments.transfer ?? [], arguments.stim ?? [] %}
-    {% set hintText, vars, isTransfer = hintArray[0], form.vars, transfer is not same as [] %}
+    {% set hintText, vars, isTransfer, isResize, height = hintArray[0], form.vars, transfer is not same as [], arguments.resize is defined, arguments.divHeight ?? textHeight %}
     {% set name, isTemplateClass, markInputClass = vars.name, arguments.templateClass is defined, isTransfer ? ' markInput' %}
     {% if arguments.noHeading is not defined %}
         <div class="MetaData-Title">{{ form_label(form) }}</div>
@@ -157,15 +158,22 @@
         {{ _self.addHint(hintText[0],{'params': hintText[1] ?? {}}|merge(hintArray[1] is defined ? {'hintStyle': true} : {})) }}
     {% endif %}
     <div class="grid" style="grid-template-columns: auto {% if isTransfer %}min-content{% endif %} min-content">
-        <div class="MetaData-Widget pt-0 {% if isTransfer %} pe-0 {% endif %}" id="{{ name~'Div' }}" style="grid-row: span {{ isTemplate ? 2 : 1 }}; grid-column: 1; height: {{ arguments.divHeight ?? textHeight }}; {{ isVisible }}">
-            {% set style = 'grid-area: 1 / 1; height: 99%' %}
-            <div class="{{ 'border'~markInputClass }}" style="background-color: white; white-space: pre-wrap; overflow-y: auto; word-break: break-word; {{ style }}"></div>
-            {{ form_widget(form,{'attr': addClass('p-0'~markInputClass, false, 'background-color: transparent;'~style)|merge(addTarget('base','countableText'))}) }}
+        <div class="MetaData-Widget pt-0 {% if isTransfer %} pe-0 {% endif %}" id="{{ name~'Div' }}" style="grid-column: 1; height: {{ height }}; {{ isVisible }}">
+            {% set style = 'grid-area: 1/ 1; height: '~height %}
+            <div class="{{ 'border'~markInputClass }}" style="{{ resizeHeight }} background-color: white; white-space: pre-wrap; overflow-y: auto; word-break: break-word; {{ style }}"></div>
+            {{ form_widget(form,{'attr': addClass('p-0'~markInputClass, false, (isResize ? resizeHeight~'resize: vertical; ')~'background-color: transparent;'~style)|merge(addTarget('base','countableText'))}) }}
         </div>
         {% if isTransfer %}
             <div id="{{ name~'PDF' }}" class="pe-2" style="{{ isVisible }}">{{ _self.addPDFhint(transfer[0],transfer[1]) }}</div>
         {% endif %}
-        <div class="borderLight {% if isTemplateClass %} mx-4 {% endif %}" id="{{ name~'Count' }}" style="height: min-content; width: min-content; margin-right: 0.3rem; grid-area: {{ isTemplate ? 2 : 1 }} / {{ isTransfer ? 3 : 2 }}; {{ isVisible }}">
+        <div>
+            {% if isTemplate %}
+                {% set template = arguments.template %}
+                <div {% if isTemplateClass %} class="MetaData-Widget" {% endif %} {% if stim is not same as [] %} {{ stimulus_action(stim[0],stim[1],'change',stim[2] ?? {}) }} {% endif %}>
+                    {{ _self.addCheckbox(template, addStyle('white-space: nowrap')) }}
+                </div>
+            {% endif %}
+        <div class="borderLight {% if isTemplateClass %} mx-4 mt-3 {% endif %}" id="{{ name~'Count' }}" style="height: min-content; width: min-content; margin-right: 0.3rem; grid-column: {{ isTransfer ? 3 : 2 }}; {{ isVisible }}">
             <div>{{ 'multiple.charCount'|trans }}</div>
             {% set text = vars.value %}
             <div style="justify-self: center" data-max-chars="{{ maxChars }}" {{ stimulus_target('base','charCount') }}>{{ text|trim|length-text|split('\n')|length+1 }}</div> {# color is set on load #}
@@ -173,12 +181,7 @@
                 {{ _self.addIcon('multiple.charCountHint'|trans) }}
             </div>
         </div>
-        {% if isTemplate %}
-            {% set template = arguments.template %}
-            <div {% if isTemplateClass %} class="MetaData-Widget" {% endif %} {% if stim is not same as [] %} {{ stimulus_action(stim[0],stim[1],'change',stim[2] ?? {}) }} {% endif %}>
-                {{ _self.addCheckbox(template, addStyle('white-space: nowrap')) }}
-            </div>
-        {% endif %}
+        </div>
     </div>
 {% endmacro %}
 
@@ -238,10 +241,14 @@
         target:            if provided, the textfield will be passed as a 'disableLoad' target to the base controller.
         contTarget:        if provided, an array of two elements: stimulus controller and target name to be passed to the controller
         noTopMargin:       if provided, no top margin will be added
+        resize:            if provided, the text field will be vertically resizable
     #}
-    {% set vars = form.vars %}
+    {% set vars, attributes = form.vars, arguments.attributes ?? {} %}
     {% set name, transfer, attr, contTargetArray, namely = vars.name, arguments.transfer ?? {}, vars.attr, arguments.contTarget ?? [''], arguments.addNamely ?? '' %}
     {% set isTransfer, textHint, contTarget = transfer is not same as {}, attr.placeholder is defined and attr.placeholder is not same as '' ? attr.placeholder : (arguments.hint ?? ''), contTargetArray[0] %}
+    {% if arguments.resize is defined %}
+        {% set attributes = attributes|merge({'style': resizeHeight~'resize: vertical; '~(attributes.style ?? '')}) %}
+    {% endif %}
     <div id="{{ name~'Div' }}" class="mb-3 {% if arguments.noTopMargin is not defined %} mt-4 {% endif %}" style="{{ boolToDisplay(arguments.visibility ?? true) }}">
         {% if textHint is not same as '' %}
             {% if namely is not same as '' %}
@@ -249,7 +256,11 @@
             {% endif %}
             {{ _self.addHint(textHint,{'params': arguments.textHintParams ?? {}, 'id': arguments.textHintID ?? ''}|merge(arguments.fontStyle is defined ? {'hintStyle': true} : {})) }}
         {% endif %}
-        <div class="MetaData-Widget grid" style="grid-template-columns: auto {% if isTransfer %}min-content{% endif %}">{{ form_widget(form,{'id': name, 'attr': (arguments.attributes ?? {})|merge(addClass('MetaData-TextInput'~(isTransfer or (arguments.markInput ?? false) ? ' markInput')))|merge({'placeholder': ''})|merge(arguments.target is defined ? addDisableTarget() : {})|merge(contTarget is not same as '' ? addTarget(contTarget,contTargetArray[1]) : {})}) }} {# remove placeholder if any #}
+        <div class="MetaData-Widget grid" style="grid-template-columns: auto {% if isTransfer %}min-content{% endif %}">{{ form_widget(form,{'id': name,
+                'attr': attributes|
+                    merge(addClass('MetaData-TextInput'~(isTransfer or (arguments.markInput ?? false) ? ' markInput')))|
+                    merge({'placeholder': ''})|
+                    merge(arguments.target is defined ? addDisableTarget() : {})|merge(contTarget is not same as '' ? addTarget(contTarget,contTargetArray[1]) : {})}) }} {# remove placeholder if any #}
             {% if isTransfer %}
                 {{ _self.addPDFhint(transfer[0],transfer[1]) }}
             {% endif %}
@@ -350,7 +361,20 @@
         isComplete: if true, the complete proposal should be created
         firstPage:  if isComplete is true, the content of the first page of the complete proposal
     #}
-    {{ render(controller('App\\Controller\\PDF\\'~(isComplete ? 'CompletePDF' : 'Application')~'Controller::createPDF',{'request': app.request}|merge(ids is not same as {} ? {'routeIDs': ids} : {})|merge(isComplete ? {'additional': firstPage} : {}))) }}
+    {% set tabs, renderParams, previewTab = (isComplete ? ['CompletePDF'] : [])|merge(['Application','Participation']), {'request': app.request}|merge(ids is not same as {} ? {'routeIDs': ids} : {})|merge(isComplete ? {'additional': firstPage} : {}), app.session.get('previewTab') %}
+    <div class="flex sticky top-0 previewTabs" style="font-size: 0.9cqw; flex-wrap: nowrap">
+        {# calc(0.8vw + 0.8vh - 0.8vmin) #}
+        {% for preview in tabs %}
+            {% set id = 'tab'~preview %}
+            <button type="button" id="{{ id }}" {% if id is same as previewTab %} class="activeTab" {% endif %} {{ stimulus_target('base','previewTab')|stimulus_action('base','setPreviewTabs','click') }}>{{ ('preview.'~id)|trans }}</button>
+        {% endfor %}
+    </div>
+    {% for preview in tabs %}
+        {% set id = 'tab'~preview %}
+        <div id="{{ id~'Content' }}" style="{{ boolToDisplay(id is same as previewTab) }}">
+            {{ render(controller('App\\Controller\\PDF\\'~preview~'Controller::createPDF',renderParams)) }}
+        </div>
+    {% endfor %}
 {% endmacro %}
 
 {% macro addButtonIcon(text,icon) %}

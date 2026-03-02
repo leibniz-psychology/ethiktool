@@ -142,6 +142,7 @@ trait ProjectdetailsTrait
     protected const noBurdens = 'noBurdens'; // must equal one of the values in burdensTypes
     protected const burdensTypes = ['noBurdens','physical', 'mental', 'emotional', 'sensitive', 'otherBurdens'];
     protected const burdensNoDescription = 'burdensNoDescription';
+    protected const burdensEveryday = 'burdensEveryday';
     protected const risksNode = 'risks';
     protected const risksTypesNode = 'risksType';
     protected const noRisks = 'noRisks'; // must equal one of the values in risksTypes

@@ -2,18 +2,15 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set pre, preContent, preComplete, post, translationPrefix, informationController = content.pre, content.preContent, content.preComplete, content.post, 'projectdetails.pages.information.', 'Projectdetails--information' %}
-    {% set preValue, preCompleteValue, postValue, isFull, isInformationIIhint = pre.vars.value, preComplete.vars.value, post.vars.value, isInformation and 'full' in reviewProcess, not isInformation and reviewProcess is not same as 'fullRequested' %}
-    {% set isPreComplete, isPostNo, addresseeStringParam = preCompleteValue is same as '0', postValue is same as '1', {'addressee': isInformation ? addresseeString : participantsString} %}
-    {% set preYes, preNo, postType, preCompleteTextHint, informationHintName, preHintDiv, labelParams = 'preYes', 'preNo', 'postType', (translationPrefix~'textHints.preComplete')|trans(addresseeStringParam), 'informationIIIhint', 'preHintDiv', {'labelParams': addresseeStringParam} %}
+    {% set pre, translationPrefix, informationController = content.pre, 'projectdetails.pages.information.', 'Projectdetails--information' %}
+    {% set preValue, isFull, isInformationIIhint = pre.vars.value, isInformation and 'full' in reviewProcess, not isInformation and reviewProcess is not same as 'fullRequested' %}
+    {% set choiceTextHintTrans, informationHintName, addresseeStringParam = choiceTextHint|trans, 'informationIIIhint', {'addressee': isInformation ? addresseeString : participantsString} %}
     <div {{ stimulus_controller(informationController,{
             'pre': preValue,
-            'preCompleteTextHint': [choiceTextHint|trans,preCompleteTextHint],
-            'informationHintName': informationHintName,
-            'isPreComplete': isPreComplete
+            'informationHintName': informationHintName
     }) }}>
         {# pre #}
-        {% set styleHeight = addStyle('height: '~textHeight) %}
+        {% set styleHeight, preHintDiv, preYes, preNo = addStyle('height: '~textHeight), 'preHintDiv', 'preYes', 'preNo' %}
         {% set isPreNo, textParams = preValue is same as '1', fontNormal|merge({'attributes': styleHeight, 'textHintParams': addresseeStringParam|merge({'participant': isInformation ? participantsString : participantsStringpost})}) %}
         <div id="pre" {% if isFull %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
             {{ formRender.renderButtons(pre,{
@@ -29,25 +26,31 @@
                 {{ _self.addType(true,content.preType,isInformationIIhint,addresseeType,'preType',[informationController]) }}
             {% endif %}
             {# pre content #}
+            {% set preContent = content.preContent %}
             {% set preContentSelection = preContent.vars.value %}
-            {{ formRender.renderButtons(preContent,labelParams|merge({
+            {{ formRender.renderButtons(preContent,{
+                'labelParams': addresseeStringParam,
                 'hint': [translationPrefix~'pre.content.',addresseeStringParam],
                 'stim': [informationController,'setPreContent'],
                 'addDiv': ['preContent'],
-                'removeHint': [[informationIIIinput],'preContentHint',preContentSelection in ['','complete']]})) }}
+                'removeHint': [[informationIIIinput],'preContentHint',preContentSelection in ['','complete']]}) }}
             {# complete post if incomplete or deceit #}
-            {% set anyComplete = preCompleteValue is not same as '' %}
+            {% set preComplete, preCompleteTextHint = content.preComplete, (translationPrefix~'textHints.preComplete')|trans(addresseeStringParam) %}
+            {% set preCompleteValue = preComplete.vars.value %}
+            {% set anyComplete, isPreComplete = preCompleteValue is not same as '', preCompleteValue is same as '0' %}
             <div class="mt-8" id="preComplete" style="{{ boolToDisplay(preContentSelection in ['partial','deceit']) }}" {{ stimulus_target(informationController,'preComplete') }}>
                 {{ formRender.renderButtons(preComplete,{
                     'text': [content.preCompleteText,fontNormal|
                         merge({'contTarget': [informationController,'preCompleteText'], 'attributes': styleHeight|merge({'disabled': not anyComplete}), 'hint': anyComplete ? preCompleteTextHint : choiceTextHint, 'textHintParams': addresseeStringParam, 'textHintID': 'preCompleteTextHint'})],
-                    'stim': [informationController,'setPreComplete']}|
-                    merge(isInformation ? {'removeHint': [[informationIIIinput],informationHintName,preCompleteValue is not same as '0']} : {})) }}
+                    'stim': [informationController,'setPreComplete',{'hint': [choiceTextHintTrans,preCompleteTextHint]}]}|
+                    merge(isInformation ? {'removeHint': [[informationIIIinput],informationHintName,not isPreComplete]} : {})) }}
                 {{ _self.addType(isPreComplete,content.preCompleteType,false,addresseeType,'completePostType',[informationController,'preCompleteType']) }}
             </div>
         </div>
         {# post #}
-        {% set postHint, postText = 'postHint', content.postText %}
+        {% set post, postType = content.post, 'postType' %}
+        {% set postValue = post.vars.value %}
+        {% set postHint, postText, isPostNo = 'postHint', content.postText, postValue is same as '1' %}
         <div id="{{ preNo }}" class="mt-8" style="{{ boolToDisplay(isPreNo) }}" {% if isFull %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
             {{ formRender.renderButtons(post,{'text': [postText,textParams|
                     merge({'visibility': isPreNo and isPostNo})|

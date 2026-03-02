@@ -2,18 +2,16 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set translationPrefix, create = 'projectdetails.pages.dataPrivacy.', content.create ?? '' %}
-    {% set hasProcessing, hasCreate = content.processing is defined, create is not same as '' %}
+    {% set translationPrefix, hasProcessing, hasCreate = 'projectdetails.pages.dataPrivacy.', content.processing is defined, content.create is defined %}
     {% if hasCreate %}
         {% set privacyController, dataPersonal, storage, addresseeParam, markingFurther = 'Projectdetails--privacy', content.dataPersonal, content.storage, {'addressee': addresseeType}, content.markingFurther %}
-        {% set createValue, dataResearchPrefix, markingPrefix, markingRemovePrefix, markingFirstValue, markingFurtherValue, noResponsibilityHint, storageValue = create.vars.value, translationPrefix~'dataResearch.', translationPrefix~'marking.', translationPrefix~'markingRemove.', content.marking.vars.value, markingFurther.vars.value, translationPrefix~'responsibility.hints.noHint', storage.vars.value %}
+        {% set dataResearchPrefix, markingPrefix, markingRemovePrefix, markingFirstValue, markingFurtherValue, noResponsibilityHint, storageValue = translationPrefix~'dataResearch.', translationPrefix~'marking.', translationPrefix~'markingRemove.', content.marking.vars.value, markingFurther.vars.value, translationPrefix~'responsibility.hints.noHint', storage.vars.value %}
         {% set dataOnline, dataOnlineProcessing, addPDFparam, transferArray = content.dataOnline ?? null, content.dataOnlineProcessing ?? null, {'addPDF': boolToString(reviewProcess in ['fullDocs','shortDocs'])}, [transferData,addresseeType] %}
         {% set isDataOnline, markingHintsPrefix, laterEnd, divParam, transferParam, labelParamsCommittee, transferOtherParam = dataOnline is not same as null, markingPrefix~'hints.', markingRemovePrefix~'laterEnd', {'addDiv': ['']}, {'transfer': transferArray}, {'labelParams': committeeParams}, {'transferOther': transferArray} %}
         {% set descriptionHintsPrefix, anonymizationTypesWoNo, codeCompensation, compensationInternal = markingHintsPrefix~'textHint', anonymizationTypes|slice(0,(anonymizationTypes|length)-1), content.codeCompensation ?? [], content.codeInternal ?? [] %}
         {% set descriptionHints, labelParams, codeCompensationValue, compensationInternalValue = [(descriptionHintsPrefix~'External')|trans,(descriptionHintsPrefix~'MarkingName')|trans], {'labelParams': addresseeParam}, codeCompensation.vars.value ?? '', compensationInternal.vars.value ?? '' %}
     {% endif %}
     <div {% if hasCreate %} {{ stimulus_controller(privacyController,{
-            'create': createValue,
             'responsibility:': content.responsibility.vars.value,
             'responsibilityHint': [(noResponsibilityHint)|trans(addPDFparam|merge({'isPrivate': 'true'})), (noResponsibilityHint)|trans(addPDFparam|merge({'isPrivate': 'false'}))],
             'transferOutside': content.transferOutside.vars.value,
@@ -48,15 +46,15 @@
         {% if hasProcessing %}
             <div id="processingDiv">
                 {{ formRender.addHeading(translationPrefix~'processing.title') }}
-                {{ formRender.addTextfield(content.processing,{'attributes': textHeightLong}) }}
+                {{ formRender.addTextfield(content.processing,{'attributes': textHeightLong, 'resize': true}) }}
             </div>
         {% endif %}
         {# create #}
         {% if hasCreate %}
-            {% set hasVerification, pdfHint, reviewDocsParam = content.verification is defined, 'pdfHintDiv', {'hasReviewDocs': boolToString(reviewProcess in ['shortDocs','fullDocs'])} %}
-            {% set verificationDiv, toolDiv = 'verificationDiv', 'toolDiv' %}
+            {% set create, hasVerification, pdfHint, reviewDocsParam = content.create, content.verification is defined, 'pdfHintDiv', {'hasReviewDocs': boolToString(reviewProcess in ['shortDocs','fullDocs'])} %}
+            {% set createValue, verificationDiv, toolDiv = create.vars.value, 'verificationDiv', 'toolDiv' %}
             {% set isSeparate = createValue is same as 'separate' %}
-            <div {% if hasProcessing %} class="mt-8" {% endif %} id="create" {{ stimulus_action(privacyController,'setPrivacyCreate','change') }}>
+            <div {% if hasProcessing %} class="mt-8" {% endif %} id="create">
                 {{ formRender.renderButtons(create,{
                     'stimVisible': {'values': [['tool',toolDiv],['separate',[pdfHint]|merge(hasVerification ? [verificationDiv] : [])]]},
                     'icons': {'createtool': translationPrefix~'create.toolHint'},
@@ -379,10 +377,10 @@
                                 {% set tempPrefix, externalDiv, internalDiv = codePrefix~'hints.code', 'codeExternalDiv', 'codeInternalDiv' %}
                                 {% set isExternal = codeCompensationValue is same as 'codeExternal' %}
                                 <div class="mt-8" id="codeCompensation" {{ stimulus_target(privacyController,'compensationCode')|stimulus_action(privacyController,'setNoDocumentHint','change') }}>
-                                    <div {{ stimulus_action('base','setVisibility','change',{'values': [['codeExternal',['codeCompensationDescriptionDiv',externalDiv]],['codeInternal',internalDiv]]}) }}>
+                                    <div {{ stimulus_action(privacyController,'setCompensationCode','change') }}>
                                         {{ formRender.renderButtons(codeCompensation,labelParams|merge({
                                             'text': [content.codeCompensationDescription,transferParam|merge({'visibility': isExternal, 'addNamely': 'true'})],
-                                            'stim': [privacyController,'setCompensationCode'],
+                                            'stimVisible': {'values': [['codeExternal',['codeCompensationDescriptionDiv',externalDiv]],['codeInternal',internalDiv]]},
                                             'icons': {'codeCompensationcodeExternal': tempPrefix~'External', 'codeCompensationcodeInternal': tempPrefix~'Internal'}})) }}
                                     </div>
                                     {# personal data of code for codeExternal #}

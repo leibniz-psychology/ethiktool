@@ -7,8 +7,7 @@ export default class extends Controller {
 
     static values = {
         compensationTypes: Array, // without 'no compensation'
-        terminateHint: Array, // 0: no compensation, 1: other
-        isDuration: Boolean // true if total duration is greater than 30 minutes
+        terminateHint: Array // 0: no compensation, 1: other
     }
 
     connect() {
@@ -60,10 +59,11 @@ export default class extends Controller {
      */
     setTerminate(event) {
         let value = event.target.value;
+        let params = event.params;
         let isNothing = value==='nothing';
         let descriptionDiv = document.getElementById('terminateDescriptionDiv');
-        setElementVisibility(descriptionDiv,isNothing && this.isDurationValue || value==='terminateOther');
-        setHint(descriptionDiv,this.terminateHintValue[isNothing ? 0 : 1]);
+        setElementVisibility(descriptionDiv,isNothing && params.isDuration || value==='terminateOther');
+        setHint(descriptionDiv,params.hints[isNothing ? 0 : 1]);
     }
 
     /** Sets the awarding widgets.

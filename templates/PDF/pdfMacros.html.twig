@@ -102,7 +102,7 @@
         id:      id of the checkbox. Only used for avoiding browser warnings
         savePDF: if true, the pdf will be saved on disk
     #}
-    <div class="checkboxPDF {% if not savePDF %} checkSmall {% endif %}">{% if checked %} {{ include('images/checkmark.svg') }} {% endif %}</div>
+    <div class="checkboxPDF {% if not savePDF %} checkSmall bg-mono-200 {% endif %}">{% if checked %} {{ include('images/checkmark.svg') }} {% endif %}</div>
 {% endmacro %}
 
 {% macro addSingleDocsHint(singleDocsHint) %}

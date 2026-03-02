@@ -5,7 +5,6 @@
     {% set translationPrefix, groupsController = 'projectdetails.pages.groups.', 'Projectdetails--groups' %}
     {% set examinedPrefix = translationPrefix~'examined.' %}
     <div {{ stimulus_controller(groupsController,{
-            'wardsHint': textInput,
             'examined': examined,
             'criteriaHint': criteriaHint,
             'includeStart': includeStart,

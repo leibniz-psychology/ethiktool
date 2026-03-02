@@ -6,17 +6,21 @@
     {# first page #}
     <div style="page-break-after: always">
         {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
+        <div class="{{ textPreview }}">
+            {{ hints[0] }}
+            <div class="{{ textPreview }} boxInner" style="padding: 0.5em 1em 0.5em 0.5em">{{ hints[1]|raw }}</div>
+        </div>
         <h2 class="{{ headingCenter }}">{{ (translationPrefix~'consent')|trans(committeeParams) }}</h2>
         {% for curContent, checkbox in content %}
             {% if curContent is not same as '' %}
                 <div class="{{ textPreview }}" style="margin-bottom: 5em">
                     {{ curContent|raw|nl2br }}
-                    <table class="mt-1 mb-5">
-                        <tr>
-                            <td>{{ pdfMacros.addCheckbox(checkbox[0] is same as '1',savePDF) }}</td>
-                            <td class="align-content-end">{{ checkbox[1] }}</td>
-                        </tr>
-                    </table>
+                        <table class="mt-1 mb-5">
+                            <tr>
+                                <td style="vertical-align: top">{{ pdfMacros.addCheckbox(checkbox[0] is same as '1',savePDF) }}</td>
+                                <td>{{ checkbox[1]|raw }}</td>
+                            </tr>
+                        </table>
                 </div>
             {% endif %}
         {% endfor %}
@@ -71,7 +75,4 @@
             </div>
         {% endfor %}
     </div>
-    {% if not savePDF %}
-        {{ pdfMacros.addLine() }}
-    {% endif %}
 {% endblock %}

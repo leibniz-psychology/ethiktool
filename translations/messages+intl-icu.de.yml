@@ -1034,27 +1034,27 @@ projectdetails:
     burdensRisks: # other is burdens/risks for contributors
       textHint: >-
         Bitte beschreiben Sie die {type, select,
-                                    burdens {ausgewählten Belastungen}
+                                    burdens {ausgewählten Belastungen bzw. Beanspruchungen}
                                     risks   {ausgewählten Risiken}
                                     other   {Belastungen bzw. Risiken}} genauer.
       compensation:
         title: >-
           Sind bezogen auf die o.g. {type, select,
-                                      burdens {Belastungen}
+                                      burdens {Belastungen bzw. Beanspruchungen}
                                       risks   {Risiken}
                                       other   {Belastungen bzw. Risiken}} Vorsichtsmaßnahmen bzw. Kompensationen geplant?
         textHints:
           yes: >-
             Bitte beschreiben Sie die Vorsichtsmaßnahmen bzw. Kompensationen genauer und stellen dabei den Bezug zu den {type, select,
-                                                                                                        burdens {gewählten Belastungen}
+                                                                                                        burdens {gewählten Belastungen bzw. Beanspruchungen}
                                                                                                         risks   {gewählten Risiken}
                                                                                                         other   {Belastungen/Risiken}} her.
           no: 'Bitte begründen Sie, warum keine Vorsichtsmaßnahmen bzw. Kompensationen geplant sind.'
       burdens:
-        title: 'Welchen Belastungen werden die Teilnehmenden ausgesetzt, die über das im Alltag zu erwartende Maß hinausgehen?'
+        title: 'Welchen Belastungen bzw. Beanspruchungen werden die Teilnehmenden ausgesetzt?'
         hints:
           headingHint: 'Hier sind Belastungen gemeint, die durch die Studienteilnahme zwangsläufig für alle Teilnehmenden entstehen. Bitte setzen Sie die Belastungen durch die Studienteilnahme in Beziehung zur Alltagserfahrung der untersuchten Personengruppe (d.h. ob diese Gruppe sich im Alltag einer vergleichbaren Belastung aussetzen würde).'
-          noBurdens: 'Bitte begründen Sie, warum Sie davon ausgehen, dass keine das alltagsübliche Maß überschreitende Belastung vorliegt.'
+          noBurdens: 'Bitte begründen Sie, warum Sie davon ausgehen, dass keine Belastungen bzw. Beanspruchungen vorliegen.'
         types:
           noBurdens: 'keine Belastungen'
           physical: 'körperliche Belastung'
@@ -1067,6 +1067,7 @@ projectdetails:
           mental: 'z.B. durch Konzentrationsanforderung, Tätigkeitsdauer'
           emotional: 'z.B. aversive Reize, kurzfristige Auslösung negativer Gefühle, Täuschung mit persönlicher Relevanz'
           sensitive: 'Fragen, die in die Privatsphäre eindringen (z.B. zu politischen Überzeugungen, zu illegalem Verhalten, zur Gesundheit, zu sexuellen Präferenzen)'
+        burdensEveryday: 'Geht mindestens eine der o.g. Belastungen über das im Alltag der Teilnehmenden zu erwartende Maß hinaus?'
       risks:
         title: 'Welche potenziellen Gefährdungen oder Risiken bringt die Teilnahme mit sich?'
         hints:
@@ -2270,7 +2271,8 @@ checkDoc:
                                                 burdens {Belastungen}
                                                 risks   {Risiken}
                                                 other   {Belastungen/Risiken für Projektbeteiligte/Dritte}}
-        noBurdens: 'Begründung, warum keine das alltagsübliche Maß überschreitenden Belastungen erwartet werden,'
+        noBurdens: 'Begründung, warum keine Belastungen erwartet werden,'
+        burdensEveryday: 'Antwort auf Frage, ob die Belastungen das alltagsübliche Maß übersteigen,'
         finding:
           title: '(Zufalls-)Befunden'
           description: '(Zufalls-)Befunde'
@@ -2615,13 +2617,19 @@ completeForm:
     text:
       start: 'Der Gesamtantrag kann nun heruntergeladen werden:'
       end:
-        title: 'Hinweise zum weiteren Vorgehen'
+        title: >-
+          Hinweise {isTool, select,
+                     true  {}
+                     other {für die Antragstellenden}} zum weiteren Vorgehen
         text: >-
-          <li>Es wird eine ZIP-Datei „{fileName}_Gesamtantrag_{curDate}.zip“ erstellt, die alle Unterlagen enthält (Gesamtantrag, Einzeldokumente, XML-Datei).</li>
-          <li>Für die Einreichung benötigen Sie den Gesamtantrag (PDF) und die XML-Datei.</li>
-          <li>Die Einzeldokumente sind für Ihre eigene Verwendung vorgesehen.</li>
-          <li>Bitte prüfen Sie die Inhalte des Gesamtantrags (PDF) nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter.</li>
-          <li>Bearbeiten Sie die PDF-Datei des Gesamtantrags <b>nicht</b> mit anderen Programmen.</li>
+          {isTool, select,
+            true  {
+                  <li>Es wird eine ZIP-Datei „{fileName}_Gesamtantrag_{curDate}.zip“ erstellt, die alle Unterlagen enthält (Gesamtantrag, Einzeldokumente, XML-Datei).</li>
+                  <li>Für die Einreichung benötigen Sie den Gesamtantrag (PDF) und die XML-Datei.</li>
+                  <li>Die Einzeldokumente sind für Ihre eigene Verwendung vorgesehen.</li>
+                  <li>Bitte prüfen Sie die Inhalte des Gesamtantrags (PDF) nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter.</li>
+                  <li>Bearbeiten Sie weder die PDF-Datei des Gesamtantrags noch die XML-Datei mit anderen Programmen.</li>}
+            other {<li>Bitte prüfen Sie die Inhalte des Gesamtantrags nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter.</li>}}
           <li>Wenn alle Angaben im Gesamtantrag korrekt sind, senden Sie die PDF-Datei mit der zugehörigen XML-Datei an {committeeAcc} unter {committeeType, select,
           TUC   {ethik@tu-chemnitz.de (E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet, bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Hinweise zum Datenschutz</a>)}
           EUB   {ethikkommission@uni-bielefeld.de}
@@ -2633,17 +2641,19 @@ completeForm:
 
 quitModal:
   title: 'Bearbeitung dieses Antrags beenden'
-  content: "Sie sind dabei, den aktuellen Ethikantrag zu schließen. Bitte stellen Sie sicher, dass Sie die Daten gespeichert haben.</br> Beim Speichern wird eine XML-Datei in Ihrem Download-Ordner abgelegt. Wenn Datum und Uhrzeit dieser XML-Datei nicht aktuell sind, wählen Sie bitte die Option „Speichern und beenden“. </br>Nur wenn Sie Ihre letzten Änderungen bewusst nicht speichern wollen, wählen Sie „Beenden ohne zu speichern“."
-  leftButton: 'Speichern und beenden'
+  content: "Sie sind dabei, den aktuellen Ethikantrag zu schließen. Bitte stellen Sie sicher, dass Sie die Daten gespeichert haben.</br> Beim Speichern wird eine XML-Datei in Ihrem Download-Ordner abgelegt. Wenn Datum und Uhrzeit dieser XML-Datei nicht aktuell sind, wählen Sie bitte die Option „Speichern“. </br>Nur wenn Sie Ihre letzten Änderungen bewusst nicht speichern wollen, wählen Sie „Beenden ohne zu speichern“."
+  contentDownload: 'Download wurde gestartet - bitte prüfen Sie vor dem Beenden des Ethiktools, ob sich in Ihrem Download-Ordner die XML-Datei Ihres Ethikantrags mit aktuellem Zeitstempel befindet.'
+  leftButton: 'Speichern'
   middleButton: 'Beenden ohne zu speichern'
+  middleButtonDownload: 'Beenden'
   rightButton: 'Abbrechen'
 
-quit:
-  download: 'Download wurde gestartet - bitte prüfen Sie vor dem Beenden des Ethiktools, ob sich in Ihrem Download-Ordner die XML-Datei Ihres Ethikantrags mit aktuellem Zeitstempel befindet.'
-  buttons:
-    quit: 'Ethiktool beenden'
-    backToMain: 'Zurück zum Ethiktool'
-  quit: |
+preview: # tab names in preview
+  tabCompletePDF: 'Antragsübersicht'
+  tabApplication: 'Antragsformular'
+  tabParticipation: 'Teilnahmedokumente'
+
+quit: |
     Sie haben das Ethiktool ordnungsgemäß beendet. Ethiktool-bezogene Formularinhalte wurden aus Ihrem Browser-Cache entfernt. Vielen Dank für die Nutzung des Ethiktools.
   
     Sie möchten das Ethiktool unterstützen? Das Ethiktool wird permanent weiterentwickelt. Daher sind Fehlermitteilungen, Fragen und Anmerkungen stets willkommen; bitte senden Sie dazu eine E-Mail an <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. Bei technischen Problemen mit der aktuellen Version wenden Sie sich bitte an <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
@@ -2703,7 +2713,7 @@ technicalHints:
 
     Sie erhalten am Ende ein Gesamtdokument im PDF-Format und die zugrundeliegende XML-Datei. Beide Dateien {committeeType, select,
       testCommittee {bilden später (nach Abschluss der Testphase) die Grundlage für die Einreichung des Ethikantrags; die XML-Datei benötigen Sie zudem für etwaige Überarbeitungen des Antrags. Darüber hinaus erhalten Sie die Einzeldokumente der verschiedenen Antragsteile. Bitte beachten Sie, dass es sich noch um einen Testlauf handelt und dass Sie die Dokumente in der vorliegenden Form noch nicht verwenden sollten.}
-      other         {benötigen Sie zur Einreichung bei {committeeType,select,
+      other         {benötigen Sie zur Einreichung bei {committeeType, select,
                                                           noCommittee {Ihrer Ethikkommission}
                                                           other       {{committeeDat}}}. Darüber hinaus erhalten Sie die Einzeldokumente der verschiedenen Antragsteile zu Ihrer eigenen Verwendung. Bitte beachten Sie, dass Sie die XML-Datei später für etwaige Überarbeitungen des Antrags benötigen.}}
     

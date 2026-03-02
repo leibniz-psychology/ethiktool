@@ -145,14 +145,14 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     interventionsSub: 'Description of the measures/interventions:'
     otherSources: 'Will individually traceable data from other sources be added?'
     presence: 'Are project contributors present during data collection?'
-    burdens: 'Which burdens will participants be exposed to that go beyond the level commonly encountered in everyday life?'
+    burdens: 'Which burdens or strains will participants be exposed to?'
     burdensSub: >-
       {burdens, select,
         true  {Description of the burdens}
         other {}} {noBurdens, select,
                     true  {{burdens, select,
                               true {resp. }
-                              other {}} justification why no burden exceeding the level commonly encountered in everyday life is expected.}
+                              other {}} justification why no burdens or strains are expected.}
                     other {}}:
     burdensCompensation: 'Are precautionary measures or compensations planned for the burdens mentioned above?'
     risks: 'Which potential dangers or risks does participation involve?'
@@ -352,7 +352,7 @@ projectdetails:
                                                         true  {selections made in the Ethiktool}
                                                         other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
                           other     {Due to the following characteristics of data processing (according to the selections made in the Ethiktool), the data privacy statement {levelNamesString} cannot be generated with the Ethiktool:
-                            {createOther} Therefore, the data privacy statement was generated separately. It can be found on the following page(s) (if applicable, including the consent form.}}}}
+                            {createOther} Therefore, the data privacy statement was generated separately. It can be found on the following page(s) (if applicable, including the consent form).}}}}
     createOther:
       responsibility: '{committeeLocation} does not carry exclusive responsibility for processing the personal data according to EU-GDPR.'
       transferOutside: 'Personal data are transmitted to or shared with third parties outside the EAA.'
@@ -469,6 +469,7 @@ projectdetails:
       emotional: 'psychological or emotional burden'
       sensitive: 'intimate contents'
       otherBurdens: 'other stress/burden factors'
+      burdensEveryday: "\nAccording to the applicants' judgment, these burdens do not exceed the level commonly encountered in the participants' everyday life."
     risks:
       noRisks: 'no risks'
       risksPhysical: 'physical discomfort'
@@ -1478,8 +1479,11 @@ completeForm:
                                                                     true  {, }
                                                                     other {}}38/39}
                                                           other {}})}
+                    unclear { (see field 34)}
                     other   {}}}
-          other {}}
+          other {{answer, select,
+                   unclear { (see field 19)}
+                   other   {}}}}
       risks: >-
         {isFull, select,
           true  {{answer, select,
@@ -1524,8 +1528,8 @@ completeForm:
           other {}}
       dataPrivacy: >-
         {answer, select,
-          yes     { see annex on data processing}
-          unclear { see field 43}
+          yes     { (see annex on data processing)}
+          unclear { (see field 43)}
           other   {}}
     headings:
       information: 'Information'

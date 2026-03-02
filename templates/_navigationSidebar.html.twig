@@ -61,7 +61,7 @@
     {% set quitPrefix = 'quitModal.'  %}
     {{ include('components/redirectModal.html.twig',{'modalID': modalID, 'prefix': 'main.newFormModal.', 'link': 'app_newForm'}) }}
     {{ include('components/redirectModal.html.twig',{'modalID': loadModalID, 'prefix': 'main.loadModal.', 'link': 'app_newForm', 'targetCont': 'base', 'redirectTarget': 'loadModal'}) }}
-    {{ include('components/redirectModal.html.twig',{'modalID': quitModalID, 'prefix': quitPrefix, 'link': 'app_main', 'leftButton': quitPrefix~'leftButton', 'middleButton': quitPrefix~'middleButton', 'rightButton': quitPrefix~'rightButton'}) }}
+    {{ include('components/redirectModal.html.twig',{'modalID': quitModalID, 'prefix': quitPrefix, 'link': 'app_main', 'leftButton': quitPrefix~'leftButton', 'middleButton': quitPrefix~'middleButton', 'rightButton': quitPrefix~'rightButton', 'modalBodyTarget': ['base','quitModal'], 'stim': ['base','setQuitModal',{'body': (quitPrefix~'contentDownload')|trans, 'button': (quitPrefix~'middleButtonDownload')|trans}], 'stimNo': ['base','resetQuitModal',{'body': (quitPrefix~'content')|trans, 'button': (quitPrefix~'middleButton')|trans}]}) }}
 {% endif %}
 
 {% macro createSideMenu(window,isFilename,activeRoute,routeParams,level,anyError,isProjectdetails = false, visibility = false, isMultiple = true) %}
@@ -104,7 +104,7 @@
                     {{ route.label }}
                 </a>
                 {% if hasSubPages %}
-                    <span class="{{ 'dropdown'~(isActivePath ? 'Expanded' : 'Collapsed') }} dropdownNav clickable mt-1" style="height: 1.5rem"></span>
+                    <span class="{{ 'dropdown'~(isActivePath or isProjectdetails and not isMultiple ? 'Expanded' : 'Collapsed') }} dropdownNav clickable mt-1" style="height: 1.5rem"></span>
                 {% endif %}
             </div>
             {% if hasSubPages %}

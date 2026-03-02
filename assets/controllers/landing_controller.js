@@ -4,9 +4,6 @@ import {mergeInput, setElementVisibility} from "./multiFunction";
 export default class extends Controller {
 
     static targets = ['edit','name','copy','submitName','submitCopy']
-    static values = {
-        names: Array
-    }
 
     // methods that are called from the template
 
@@ -22,14 +19,15 @@ export default class extends Controller {
      * @param event widget that invoked the method
      */
     setButtons(event) {
+        let names = event.params.names;
         let id = this.getID(event);
         let numTargets  = this.nameTargets.length;
         let targetID = id<0 ? numTargets-1 : id;
         let name = this.hasNameTarget ? this.nameTargets[targetID].value.trim() : '';
         let nameEmpty = name==='';
-        let nameExisting = this.namesValue.includes(name);
+        let nameExisting = names.includes(name);
         // let disabled = nameEmpty || nameExisting;
-        let disabled = this.hasNameTarget && !nameEmpty && nameExisting && name!==(this.namesValue[targetID] ?? '');
+        let disabled = this.hasNameTarget && !nameEmpty && nameExisting && name!==(names[targetID] ?? '');
         if (id<0) { // copy dropdown was selected or text field for new study/group was edited
             this.submitCopyTarget.disabled = this.copyTarget.value==='' || disabled; // (de)activate button for copying
         }

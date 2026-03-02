@@ -5,11 +5,9 @@
     {% set translationPrefix, noCompensation, typesWoNo, compensationController, isTextInput, transferParam, isTransfer = 'projectdetails.pages.compensation.', 'noCompensation', types|slice(1), 'Projectdetails--compensation', textInput is not same as '', {'transfer': [transferInfo,addresseeType]}, transferInfo[0] is not same as '' %}
     {% set hasDescription, hasAwarding, markInputParam, markInputClassParam = content.moneyValue is defined, content.moneyawarding is defined, {'markInput': isTransfer}, isTransfer ? addClass('markInput',true) : {} %}
     {% set selection, margins, widthStyle, terminatePrefix, addresseeTypeParam, hintParams = getAnySelected(content,types,noCompensation), 'margin-right: 0.2rem; margin-left: 0.2rem; ', 'width: fit-content;', translationPrefix~'terminate.textHint', {'addressee': addresseeType}, {'target': [compensationController,'textInput'], 'remove': true} %}
-    {% set noSelected, anySelected, valueStyle, flexCenter, terminateHints, inputMargins = selection[0], selection[1], addStyle('width: 6rem; height: 1.75rem; '~margins), 'flex align-items-center', [terminatePrefix|trans, (terminatePrefix~'Other')|trans], 'margin-left: -1.5rem; margin-right: -1.5rem' %}
+    {% set noSelected, anySelected, valueStyle, flexCenter, inputMargins = selection[0], selection[1], addStyle('width: 6rem; height: 1.75rem; '~margins), 'flex align-items-center', 'margin-left: -1.5rem; margin-right: -1.5rem' %}
     <div {{ stimulus_controller(compensationController,{
-            'compensationTypes': typesWoNo,
-            'terminateHint': terminateHints,
-            'isDuration': isDuration
+            'compensationTypes': typesWoNo
     }) }}>
         {# types #}
         <div class="MetaData-Label" id="type">{{ (translationPrefix~'title')|trans(addresseeTypeParam|merge({'information': information})) }}{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
@@ -76,10 +74,10 @@
             {# terminate #}
             {% set terminate = content.terminate %}
             {% set value = terminate.vars.value %}
-            {% set isNothing = value is same as 'nothing' %}
+            {% set isNothing, terminateHints = value is same as 'nothing', [terminatePrefix|trans, (terminatePrefix~'Other')|trans] %}
             <div class="mt-4" id="terminate" {{ stimulus_target(compensationController,'terminate') }}>
                 <div class="MetaData-Label">{{ form_label(terminate,null,labelDummy) }}</div>
-                {{ formRender.renderButtons(terminate,noHeading|merge({'text': [content.terminateDescription,transferParam|merge({'visibility': isNothing and isDuration or value is same as 'terminateOther', 'hint': terminateHints[isNothing ? 0 : 1]})], 'stim': [compensationController,'setTerminate']})) }}
+                {{ formRender.renderButtons(terminate,noHeading|merge({'text': [content.terminateDescription,transferParam|merge({'visibility': isNothing and isDuration or value is same as 'terminateOther', 'hint': terminateHints[isNothing ? 0 : 1]})], 'stim': [compensationController,'setTerminate',{'hints': terminateHints, 'isDuration': isDuration}]})) }}
             </div>
             {# awarding #}
             {% if hasAwarding %}

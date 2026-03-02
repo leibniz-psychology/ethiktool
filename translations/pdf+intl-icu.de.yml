@@ -145,14 +145,14 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     interventionsSub: 'Beschreibung der Maßnahmen:'
     otherSources: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
     presence: 'Sind Projektbeteiligte bei der Erhebung anwesend?'
-    burdens: 'Welchen Belastungen werden die Teilnehmenden ausgesetzt, die über das im Alltag zu erwartende Maß hinausgehen?'
+    burdens: 'Welchen Belastungen bzw. Beanspruchungen werden die Teilnehmenden ausgesetzt?'
     burdensSub: >-
       {burdens, select,
         true  {Beschreibung der Belastungen}
         other {}} {noBurdens, select,
                     true  {{burdens, select,
                               true {bzw. }
-                              other {}} Begründung, warum keine über das alltagsübliche Maß hinausgehenden Belastungen erwartet werden}
+                              other {}} Begründung, warum keine Belastungen bzw. Beanspruchungen erwartet werden}
                     other {}}:
     burdensCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Belastungen Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     risks: 'Welche potenziellen Gefährdungen oder Risiken bringt die Teilnahme mit sich?'
@@ -354,7 +354,7 @@ projectdetails:
                           other     {Aufgrund von folgenden Besonderheiten im Umgang mit dem Daten (gemäß Angaben im Ethiktool) kann die Datenschutzerklärung {levelNamesString} nicht mit dem Ethiktool erstellt werden:
                             {createOther} Daher wurde die Datenschutzerklärung selbst erstellt. Sie findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}}}}
     createOther:
-      responsibility: 'Verantwortlich ist nicht allein die {committeeLocation}.'
+      responsibility: 'Verantwortlich ist nicht allein {committeeLocation}.'
       transferOutside: 'Es werden personenbezogene Daten an Dritte außerhalb des EWR weitergegeben.'
       marking: 'Die Forschungsdaten werden gekennzeichnet, aber keine der im Ethiktool auswählbaren Optionen bildet das Vorgehen in der Studie vollständig ab.'
   groups:
@@ -469,6 +469,7 @@ projectdetails:
       emotional: 'psychische oder emotionale Belastung'
       sensitive: 'intime Inhalte'
       otherBurdens: 'andere Belastungsfaktoren'
+      burdensEveryday: "\nNach Einschätzung der Antragstellenden sind diese Belastungen für die Teilnehmenden alltagsüblich."
     risks:
       noRisks: 'keine Risiken'
       risksPhysical: 'körperliches Unwohlsein'
@@ -1478,8 +1479,11 @@ completeForm:
                                                                   true  {, }
                                                                   other {}}38/39}
                                                         other {}})}
+                    unclear { (siehe Feld 34)}
                     other   {}}}
-          other {}}
+          other {{answer, select,
+                    unclear { (siehe Feld 19)}
+                    other   {}}}}
       risks: >-
         {isFull, select,
           true  {{answer, select,

@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '2.4.1';
+    protected const toolVersion = '2.5.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -59,8 +59,6 @@ trait PageTrait
     private const pageNames = 'pageNames'; // key holding the page names with inputs
     private const pageInputs = 'pageInputs'; // key holding the inputs that will be removed
     // session variables
-    protected const pdfApplication = 'pdfApplication'; // rendered view for preview
-    protected const pdfParticipation = 'pdfParticipation'; // rendered view for preview
     protected const pdfParticipationArray = 'pdfParticipationArray'; // array of array with three elements containing the IDs of the participation documents to be created
     protected const pdfParticipationCustom = 'pdfParticipationCustom'; // array with one sub-array for each study, group, and time point. Value for each time point is an array containing all values for which a custom pdf will be added
 

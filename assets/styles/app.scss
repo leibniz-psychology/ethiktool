@@ -93,6 +93,27 @@ select {
     content: url("../images/pdf.svg");
 }
 
+// preview tabs
+
+.previewTabs {
+    @apply bg-zpid-blue-100;
+    padding-left: 0.3rem;
+    margin: 0.2rem 0.7rem 0.2rem 0.6rem;
+    z-index: 1; // above link symbols
+
+    button {
+        @apply p-1.5 pb-2 hover:bg-zpid-blue;
+        border: 5px solid theme('colors.zpid-blue.100');
+    }
+}
+
+.activeTab {
+    background-color: white !important;
+    border-bottom-color: white !important;
+    border-top: none;
+    font-weight: bold;
+}
+
 /* input fields */
 input { /* simple text fields  (Texttype in xxxType.php. "input" tag itself is not used until now */
     width: 100%;

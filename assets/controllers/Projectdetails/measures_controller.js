@@ -3,22 +3,23 @@ import {getSelected, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','compensationHint'];
+    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','measureTimeDays','measureTimeHours','measureTimeMinutes','breaksMinutes','compensationHint'];
 
     static values = {
         measuresTypes: Array,
         measuresDescription: Array, // 0: nothing selected, 1: at least one measure selected, 2: at least one measure selected including survey
-        interventionsTypes: Array,
+        interventionsTypes: Array, // without 'no intervention
         location: String,
-        locationHint: Array, // 0: please choose, 1: hint if answer is chosen
         locationInput: Object, // 0: insurance way, 1: apparatus and insurance way
     }
 
     connect() {
-        this.interventionsTypesWoNo = this.interventionsTypesValue.slice(1);
         this.setMeasuresInterventions();
         if (this.hasLocationDescriptionTarget || this.hasLoanInputTarget) {
             this.setInputHints(); // needs to be called on connect() in case the page is reloaded by the user
+        }
+        if (this.hasCompensationHintTarget) {
+            this.setDuration();
         }
     }
 
@@ -32,7 +33,7 @@ export default class extends Controller {
         let isLocation = this.locationValue!=='';
         let descriptionDiv = document.getElementById('locationDescriptionDiv');
         setElementVisibility(descriptionDiv,this.locationValue!=='');
-        setHint(descriptionDiv.firstElementChild,this.locationHintValue[isLocation ? 1 : 0]); // hint above text field
+        setHint(descriptionDiv.firstElementChild,event.params.hints[isLocation ? 1 : 0]); // hint above text field
         this.locationDescriptionTarget.disabled = !isLocation;
         setElementVisibility(this.locationEndTarget,this.locationValue==='online'); // end of sentence below text field if online is chosen
         this.setInputHints();
@@ -63,7 +64,7 @@ export default class extends Controller {
             this.interventionsSurveyTarget.checked = isInterventionsSurvey;
         }
         let [anyMeasure] = getSelected(this.measuresTypesValue);
-        let [anyIntervention,numInterventions] = getSelected(this.interventionsTypesWoNo);
+        let [anyIntervention,numInterventions] = getSelected(this.interventionsTypesValue);
         // measures
         setElementVisibility(this.measuresBurdensRisksTarget,anyMeasure); // hint for burdens/risks
         setElementVisibility('measuresSurveyText',isMeasuresSurvey); // text field for description of survey
@@ -79,7 +80,7 @@ export default class extends Controller {
         }
         if (isMeasuresSurveyTarget) { // deselect and disable the 'no interventions' checkbox in case it was checked before and then measures survey was selected
             this.noInterventionTarget.checked = false;
-            for (let checkbox of this.interventionsTypesWoNo) { // enable all checkboxes in case they were disabled
+            for (let checkbox of this.interventionsTypesValue) { // enable all checkboxes in case they were disabled
                 document.getElementById(checkbox).disabled = false;
             }
             this.noInterventionTarget.disabled = anyIntervention;
@@ -98,7 +99,19 @@ export default class extends Controller {
             setElementVisibility(this.locationInputHintTarget,isOnlineNothing);
         }
         if (this.hasOnlineHintTarget) { // hint that ip-question in data privacy will be deleted
-            setElementVisibility(this.onlineHintTarget,!isOnlineNothing); // this.locationValue can not be empty at this point
+            setElementVisibility(this.onlineHintTarget,!isOnlineNothing);
         }
+    }
+
+    /** Sets the visibility of the hint for deleting inputs for durations. */
+    setDuration() {
+        let minutes = [0,0];
+        for (let [index,targetValue] of [this.measureTimeMinutesTarget.value,this.breaksMinutesTarget.value].entries()) {
+            if (targetValue!=='') {
+                targetValue = parseInt(targetValue);
+                minutes[index] = targetValue<0 ? 0 : targetValue; // if a value smaller than 0 is entered, it is updated after this check
+            }
+        }
+        setElementVisibility(this.compensationHintTarget,this.measureTimeDaysTarget.value<=0 && this.measureTimeHoursTarget.value<=0 && (minutes[0]+minutes[1])<=30);
     }
 }

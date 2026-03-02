@@ -24,7 +24,9 @@ class BurdensRisksType extends TypeAbstract
             }
             $this->addBinaryRadio($builder,$type.'Compensation', $translationPrefix.'compensation.title',$type.'CompensationDescription',options: [self::labelParams => ['type' => $type]]);
         }
-        $this->addFormElement($builder,self::burdensNoDescription,'textarea',hint: $translationPrefix.self::burdensNode.'.hints.'.self::noBurdens);
+        $tempPrefix = $translationPrefix.self::burdensNode.'.';
+        $this->addFormElement($builder,self::burdensNoDescription,'textarea',hint: $tempPrefix.'hints.'.self::noBurdens);
+        $this->addBinaryRadio($builder,self::burdensEveryday,$tempPrefix.self::burdensEveryday);
         // finding
         $tempPrefix = $translationPrefix.self::findingNode.'.';
         $this->addBinaryRadio($builder,self::findingNode,$tempPrefix.'title',self::descriptionNode,$tempPrefix.self::textHint);
@@ -51,6 +53,7 @@ class BurdensRisksType extends TypeAbstract
         if (array_key_exists(self::burdensNoDescription,$forms)) {
             $forms[self::burdensNoDescription]->setData($this->getArrayValue($viewData,self::burdensNoDescription));
         }
+        $forms[self::burdensEveryday]->setData($this->getArrayValue($viewData[self::burdensNode],self::burdensEveryday));
         // burdensRisksContributors
         $this->setChosenArray($forms,$viewData,self::burdensRisksContributorsNode,[self::descriptionNode => self::burdensRisksContributorsNode.self::descriptionCap]);
         $this->setCompensation($forms,$viewData[self::burdensRisksContributorsNode],self::burdensRisksContributorsNode);
@@ -73,7 +76,15 @@ class BurdensRisksType extends TypeAbstract
             $isAnySelected = $selected!==[];
             if ($isAnySelected && $isNotNo) { // any type except 'no' is selected
                 $tempArray[self::descriptionNode] = $forms[$type.self::descriptionCap]->getData();
-                $tempArray[self::burdensRisksCompensationNode] = $this->getCompensation($forms,$type);
+                $hasCompensation = true;
+                if ($isBurdens) {
+                    $tempVal = $forms[self::burdensEveryday]->getData();
+                    $tempArray[self::burdensEveryday] = $tempVal;
+                    $hasCompensation = $tempVal===0;
+                }
+                if ($hasCompensation) {
+                    $tempArray[self::burdensRisksCompensationNode] = $this->getCompensation($forms,$type);
+                }
             }
             $newData[$type] = $tempArray;
             if ($isBurdens && array_key_exists(self::burdensNoDescription,$forms) && $isAnySelected && !$isNotNo) { // 'no burdens' is selected

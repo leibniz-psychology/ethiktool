@@ -33,7 +33,6 @@ class CheckDocClass extends ControllerAbstract
     private bool $isTwoAddressees = false; // gets true if $addressee is not 'participants'
     private array $paramsAddressee = []; // translation parameters for addressee
     private array $paramsParticipants = []; // translation parameters for participants, if applicable
-    private SimpleXMLElement $appNode; // root node of the xml-document
     private array $appArray = []; // root node of the xml-document as an array
     private array $appDataArray = []; // contains all data of the application data
     private array $coreDataArray = []; // contains the date of the core data page
@@ -53,15 +52,13 @@ class CheckDocClass extends ControllerAbstract
     private bool $noPost = false; // gets  true if post-information is answered with 'no'
     private bool $noPostParticipants = false; // same as $noPost, but for participants, if third parties
     private array $information = [2,2]; // 0: pre information, 1: post information
-    private array $informationII = [2,2]; // same as $information, but for participants, if third parties
+    private array $informationII = [2,2]; // same as $information, but for participants, if third parties; currently only needed in checkConsent, but set as global variable as other variables for informationII need to be set anyways
     private bool $isInformationII = false; // gets true if informationII is active
-    private bool $isFeedback = false; // gets true if 'feedback' is chosen in interventions
     private string $consentAddressee = ''; // consent of participants or (if third parties are involved) of third parties
     // prefixes
     private const appDataPrefix = 'checkDoc.appData.';
     private const contributorsPrefix = 'checkDoc.contributors.';
     private const projectdetailsPrefix = 'checkDoc.projectdetails.pages.';
-    private const projectdetailsPrefixTool = 'projectdetails.pages.';
     private const missingPrefix = 'checkDoc.missing.';
     private const missingSingle = 'checkDoc.missing.single';
     private const missingTypes = 'checkDoc.projectdetails.missingTypes';
@@ -81,8 +78,8 @@ class CheckDocClass extends ControllerAbstract
         $checkDoc = new CheckDocClass(self::$translator);
         $session = $request->getSession();
         // set variables
-        $checkDoc->appNode = $checkDoc->getXMLfromSession($session,getRecent: true);
-        $checkDoc->appArray = $checkDoc->xmlToArray($checkDoc->appNode);
+        $appNode = $checkDoc->getXMLfromSession($session,getRecent: true);
+        $checkDoc->appArray = $checkDoc->xmlToArray($appNode); // may be set again in checkDocument(), but also needed in checkContributors()
         $checkDoc->reviewProcess = $checkDoc->getCurrentReviewProcess($checkDoc->appArray);
         $checkDoc->committeeParam = $session->get(self::committeeParams);
         $checkDoc->committeeType = $checkDoc->committeeParam[self::committeeType];
@@ -112,10 +109,7 @@ class CheckDocClass extends ControllerAbstract
             if ($session->has(self::docName)) {
                 if ($page==='') {
                     $returnVal = $checkDoc->checkDocument($request);
-                    if ($returnCheck) {
-                        $returnVal = $returnVal===$checkDoc->getNoError();
-                    }
-                    return $returnVal;
+                    return $returnCheck ? $returnVal===$checkDoc->getNoError() : $returnVal;
                 } else {
                     try {
                         $routeParams = $hasRouteIDs ? $routeIDs : $request->get('_route_params');
@@ -124,7 +118,7 @@ class CheckDocClass extends ControllerAbstract
                             $groupID = $routeParams[self::groupID];
                             $measureID = $routeParams[self::measureID];
                             $checkDoc->IDs = [self::studyNode => $studyID, self::groupNode => $groupID,self::measureTimePointNode => $measureID];
-                            $checkDoc->measure = $checkDoc->xmlToArray($checkDoc->getMeasureTimePointNode($checkDoc->appNode,[self::studyID => $studyID, self::groupID => $groupID, self::measureID => $measureID]));
+                            $checkDoc->measure = $checkDoc->xmlToArray($checkDoc->getMeasureTimePointNode($appNode,[self::studyID => $studyID, self::groupID => $groupID, self::measureID => $measureID]));
                             $checkDoc->setProjectdetailsVariables();
                         }
                         $type = '';
@@ -852,7 +846,7 @@ class CheckDocClass extends ControllerAbstract
                 if (array_key_exists($otherDescription,$tempArray)) { // description of 'other' type for participants
                     $this->checkMissingContent($tempArray,[$otherDescription => $otherDescriptionTrans],parameter: $this->paramsParticipants,hash: self::consentNode.'Participants'.self::consentOther);
                 }
-                $consentParticipant = $chosen;
+                $consentParticipant = $chosenParticipant;
                 $isConsentChosen = $this->consentAddressee!=='';
                 $isConsentNotApplicable = $this->consentAddressee===self::consentNotApplicable;
                 $isConsentChosenParticipant = $chosenParticipant!=='';
@@ -1006,11 +1000,17 @@ class CheckDocClass extends ControllerAbstract
                 if (!(count($multiArray)==1 && $isNoID)) {
                     $this->checkMissingContent($tempArray,[self::descriptionNode => $title],true,parameter: $params,hash: $this->addDiv($type,true,false));
                 }
+                if ($isBurdens) {
+                    if (array_key_exists(self::burdensEveryday,$tempArray)) {
+                        $this->checkMissingChosen($tempArray,$translationPage.self::burdensEveryday,2,$this->addDiv(self::burdensEveryday),name: self::burdensEveryday);
+                        $isNoID = $tempArray[self::burdensEveryday]!=='0'; // compensation is only asked if burdens everyday is answered with yes
+                    }
+                    if (array_key_exists(self::burdensNoDescription,$tempArray)) {
+                        $this->checkMissingContent($tempArray,[self::burdensNoDescription => $translationPage.'noBurdens'],hash: $this->addDiv(self::burdensNoDescription));
+                    }
+                }
                 if (!$isNoID) {
                     $this->checkBurdensRisksCompensation($tempArray,$type,$params);
-                }
-                if ($isBurdens && array_key_exists(self::burdensNoDescription,$tempArray)) {
-                    $this->checkMissingContent($tempArray,[self::burdensNoDescription => $translationPage.'noBurdens'],hash: $this->addDiv(self::burdensNoDescription));
                 }
             }
         }
@@ -1285,6 +1285,7 @@ class CheckDocClass extends ControllerAbstract
                         $isCodeMaybe = false; // gets true if any marking is by code 'generation'
                         $isCodeOnlyMarking = false; // gets false if any code is used only for marking of data
                         $isCodeNoDoc = false; // gets true if any code has no further documentation
+                        $projectdetailsPrefixTool = 'projectdetails.pages.';
                         foreach (array_merge([self::markingNode], array_key_exists($markingSecondString, $pageArray) ? [$markingSecondString] : []) as $marking) {
                             $tempArray = $pageArray[$marking];
                             $isFirstMarking = $marking===self::markingNode;
@@ -1350,7 +1351,7 @@ class CheckDocClass extends ControllerAbstract
                             // purposes translated -> here because data personal is also needed
                             $purposeTrans = [];
                             $purposeTransGen = [];
-                            foreach ($this->translateArray(self::projectdetailsPrefixTool.self::privacyNode.'.'.self::purposeResearchNode.'.typesShort.', array_merge([self::dataPersonalNode], self::allPurposeTypes), true) as $purpose => $translationKey) {
+                            foreach ($this->translateArray($projectdetailsPrefixTool.self::privacyNode.'.'.self::purposeResearchNode.'.typesShort.', array_merge([self::dataPersonalNode], self::allPurposeTypes), true) as $purpose => $translationKey) {
                                 $purposeTrans[$purpose] = $this->translateString($translationKey);
                                 if ($purpose!==self::dataPersonalNode) {
                                     $purposeTransGen[$purpose] = $this->translateString(str_replace('typesShort', 'typesShortGen', $translationKey));
@@ -1382,7 +1383,7 @@ class CheckDocClass extends ControllerAbstract
                                     if ($this->checkMissingChildren($pageArray, self::personalKeepNode, $tempPrefix.'missing')) {
                                         $tempArray = $pageArray[self::personalKeepConsentNode] ?? [];
                                         foreach ($pageArray[self::personalKeepNode] as $type => $description) {
-                                            $typeParam = ['type' => $this->translateString(self::projectdetailsPrefixTool.self::privacyNode.'.'.self::personalKeepNode.'.typesShort.'.$type)];
+                                            $typeParam = ['type' => $this->translateString($projectdetailsPrefixTool.self::privacyNode.'.'.self::personalKeepNode.'.typesShort.'.$type)];
                                             if ($description==='') {
                                                 $this->addCheckLabelString($tempPrefix.self::descriptionNode, $this->addDiv($type, true), $typeParam, colorRed: false);
                                             }

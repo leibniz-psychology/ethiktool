@@ -610,9 +610,9 @@ class ParticipationController extends PDFAbstract
                                 $markingSentences .= $curSentences;
                                 $isExternal = $isExternal || $chosenWoPrefix===self::markingExternal;
                                 $isInternal = $isInternal || $isCurInternal;
-                                $codePersonal['isName'] = $chosenWoPrefix===self::markingName;
-                                $codePersonal['isList'] = $curCodePersonal===self::listNode;
-                                $codePersonal['isGeneration'] = $curCodePersonal===self::generation;
+                                $codePersonal['isName'] = $codePersonal['isName'] || $chosenWoPrefix===self::markingName;
+                                $codePersonal['isList'] = $codePersonal['isList'] || $curCodePersonal===self::listNode;
+                                $codePersonal['isGeneration'] = $codePersonal['isGeneration'] || $curCodePersonal===self::generation;
                             } else {
                                 $codeCompensationSentences .= $curSentences;
                             }
@@ -887,13 +887,13 @@ class ParticipationController extends PDFAbstract
                                             }
                                         }
                                     }
-                                    // access if research data is personal
-                                    $tempArray = $privacyArray[self::accessNode] ?? '';
-                                    if ($tempArray!=='') {
-                                        $tempVal = $this->addAccess($tempArray,self::dataPersonalNode,$committeeParam,$anyOrderProcessingKnown,$purposesKnownTrans,$allPurposesTranslated[self::dataPersonalNode]);
-                                        foreach (array_merge([self::dataPersonalNode],$isDataOnlineProcessingResearch ? [self::purposeTechnical] : []) as $type) {
-                                            $transferContent[] = $this->translateStringPDF($accessStart,[self::purposeNode => $allPurposesTranslated[$type]])."\n".$tempVal;
-                                        }
+                                }
+                                // access if research data is personal -> if research data is not personal, but marking is personal, access is asked
+                                $tempArray = $privacyArray[self::accessNode] ?? '';
+                                if ($tempArray!=='') {
+                                    $tempVal = $this->addAccess($tempArray,self::dataPersonalNode,$committeeParam,$anyOrderProcessingKnown,$purposesKnownTrans,$allPurposesTranslated[self::dataPersonalNode]);
+                                    foreach (array_merge([self::dataPersonalNode],$isDataOnlineProcessingResearch ? [self::purposeTechnical] : []) as $type) {
+                                        $transferContent[] = $this->translateStringPDF($accessStart,[self::purposeNode => $allPurposesTranslated[$type]])."\n".$tempVal;
                                     }
                                 }
                             }
@@ -1211,7 +1211,7 @@ class ParticipationController extends PDFAbstract
         if (self::$savePDF && self::$isCompleteForm) {
             $session->set(self::pdfParticipationCustom,$customPDFs);
         }
-        $session->set(self::pdfParticipation.$markedSuffix,$allHtml);
+        $session->set('pdfParticipation'.$markedSuffix,$allHtml);
         $session->set(self::pdfParticipationArray,$html);
         return new Response($allHtml);
     }

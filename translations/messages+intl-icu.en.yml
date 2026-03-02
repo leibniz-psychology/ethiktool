@@ -152,7 +152,7 @@ committee:
   committeeNom: >-
     {committee, select,
       TUC   {the Ethics Committee of Chemnitz University of Technology}
-      EUB   {Bielefeld University Ethics Review Board}
+      EUB   {the Bielefeld University Ethics Review Board}
       JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       DLR   {the Research Ethics Office of the German Aerospace Center}
       TUD   {the Ethics Board of Dresden University of Technology}
@@ -161,7 +161,7 @@ committee:
   committeeGen: >-
     {committee, select,
     TUC   {the Ethics Committee of Chemnitz University of Technology}
-    EUB   {Bielefeld University Ethics Review Board}
+    EUB   {the Bielefeld University Ethics Review Board}
     JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
     DLR   {the Research Ethics Office of the German Aerospace Center}
     TUD   {the Ethics Board of Dresden University of Technology}
@@ -170,7 +170,7 @@ committee:
   committeeDat: >-
     {committee, select,
       TUC   {the Ethics Committee of Chemnitz University of Technology}
-      EUB   {Bielefeld University Ethics Review Board}
+      EUB   {the Bielefeld University Ethics Review Board}
       JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       DLR   {the Research Ethics Office of the German Aerospace Center}
       TUD   {the Ethics Board of Dresden University of Technology}
@@ -179,7 +179,7 @@ committee:
   committeeAcc: >-
     {committee, select,
       TUC   {the Ethics Committee of Chemnitz University of Technology}
-      EUB   {Bielefeld University Ethics Review Board}
+      EUB   {the Bielefeld University Ethics Review Board}
       JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
       DLR   {the Research Ethics Office of the German Aerospace Center}
       TUD   {the Ethics Board of Dresden University of Technology}
@@ -1034,31 +1034,31 @@ projectdetails:
     burdensRisks: # other is burdens/risks for contributors
       textHint: >-
         Please describe the {type, select,
-                              burdens {selected burdens}
+                              burdens {selected burdens or strains}
                               risks   {selected risks}
                               other   {burdens/risks}} in detail.
       compensation:
         title: >-
           Are precautionary measures or compensations planned for the {type, select,
-                                                                        burdens {burdens mentioned above}
+                                                                        burdens {burdens or strains mentioned above}
                                                                         risks   {risks mentioned above}
                                                                         other   {burdens/risks}}?
         textHints:
           yes: >-
             Please describe the precautionary measures or compensations in detail with reference to the {type, select,
-                                                                      burdens {selected burdens}
+                                                                      burdens {selected burdens or strains}
                                                                       risks   {selected risks}
                                                                       other   {burdens/risks}}.
           no: 'Please explain why no precautionary measures or compensations are planned.'
       burdens:
-        title: 'Which burdens will participants be exposed to that go beyond the level commonly encountered in everyday life?'
+        title: 'Which burdens or strains will participants be exposed to?'
         hints:
           headingHint: 'This refers to burdens that inevitably arise for all participants as a result of participating in the study. Please compare the burdens of study participation with everyday experience of the target group (i.e., whether this is something they would engage in during their everyday activities).'
-          noBurdens: 'Please justify why you assume that no burdens exceeding the level commonly encountered in everyday life are present.'
+          noBurdens: 'Please justify why you assume that no burdens or strains are present.'
         types:
           noBurdens: 'no burdens'
-          physical: 'physical burden'
-          mental: 'cognitive burden'
+          physical: 'physical strain'
+          mental: 'cognitive load'
           emotional: 'psychological or emotional burden'
           sensitive: 'intimate contents'
           otherBurdens: 'other stress/burden factors'
@@ -1067,6 +1067,7 @@ projectdetails:
           mental: 'e.g., through concentration requirements, duration of the activity'
           emotional: 'e.g., aversive stimuli, short-term induction of negative emotions, deception with personal relevance'
           sensitive: 'questions that invade privacy (e.g., about political beliefs, illegal behaviour, health, sexual preferences)'
+        burdensEveryday: 'Does at least one of the burdens mentioned above exceed the level commonly encountered in the participants'' everyday life?'
       risks:
         title: 'Which potential dangers or risks does participation involve?'
         hints:
@@ -2270,7 +2271,8 @@ checkDoc:
                                                         burdens {burdens}
                                                         risks   {risks}
                                                         other   {burdens/risks for contributors/third parties}}
-        noBurdens: 'reasons why no burdens beyond everyday level are expected'
+        noBurdens: 'reasons why no burdens are expected'
+        burdensEveryday: 'Answer to question whether any burden exceeds the level commonly encountered in everyday life'
         finding:
           title: 'incidental findings'
           description: 'incidental findings'
@@ -2615,13 +2617,19 @@ completeForm:
     text:
       start: 'The complete proposal can now be downloaded:'
       end:
-        title: 'Instructions on how to proceed'
+        title: >-
+          Instructions {isTool, select,
+                         true  {}
+                         other {for the applicants}} on how to proceed
         text: >-
-          <li>A ZIP file “{fileName}_completeApplication_{curDate}.zip“ is generated, which contains all documents (complete proposal, single documents, XML file).</li>
-          <li>For submitting your proposal, you will need the complete proposal (PDF) and the XML file.</li>
-          <li>The single documents are intended for your own use.</li>
-          <li>Please check all contents of the complete proposal (PDF) carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>
-          <li>Do <b>not</b> modify the PDF file of the complete proposal with any other software.</li>
+          {isTool, select,
+            true  {
+                  <li>A ZIP file “{fileName}_completeApplication_{curDate}.zip“ is generated, which contains all documents (complete proposal, single documents, XML file).</li>
+                  <li>For submitting your proposal, you will need the complete proposal (PDF) and the XML file.</li>
+                  <li>The single documents are intended for your own use.</li>
+                  <li>Please check all contents of the complete proposal (PDF) carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>
+                  <li>Do <b>not</b> modify the PDF file of the complete proposal nor the XML file with any other software.</li>}
+            other {<li>Please check all contents of the complete proposal carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>}}
           <li>If all entries in the complete proposal are correct, please send the PDF file with the corresponding XML file to {committeeAcc} at {committeeType, select,
           TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
           EUB   {ethikkommission@uni-bielefeld.de}
@@ -2633,17 +2641,19 @@ completeForm:
 
 quitModal:
   title: 'Quit editing this proposal'
-  content: "You are about to close current the ethics proposal. Please make sure you have saved your entries. </br>Saving writes an XML file to your Downloads folder. If date and time of this XML file are not up-to-date, please choose “Save and quit“ below. </br>Use the alternative “Quit without saving“ only if you deliberately want to refrain from saving your latest changes."
-  leftButton: 'Save and quit'
+  content: "You are about to close current the ethics proposal. Please make sure you have saved your entries. </br>Saving writes an XML file to your Downloads folder. If date and time of this XML file are not up-to-date, please choose “Save“ below. </br>Use the alternative “Quit without saving“ only if you deliberately want to refrain from saving your latest changes."
+  contentDownload: 'The download process was initiated - please check before closing the Ethiktool whether your download folder contains the XML file of your ethics proposal with the current date and time.'
+  leftButton: 'Save'
   middleButton: 'Quit without saving'
+  middleButtonDownload: 'Quit'
   rightButton: 'Cancel'
 
-quit:
-  download: 'The download process was initiated - please check before closing the Ethiktool whether your download folder contains the XML file of your ethics proposal with the current date and time.'
-  buttons:
-    quit: 'Leave the Ethiktool'
-    backToMain: 'Back to the Ethiktool'
-  quit: |
+preview: # tab names in preview
+  tabCompletePDF: 'Proposal overview'
+  tabApplication: 'Proposal'
+  tabParticipation: 'Participant documents'
+
+quit: |
     You successfully terminated the Ethiktool. Any Ethiktool-related form content was removed from your browser cache. Thank you for using the Ethiktool.
     
     We continuously extend and improve the Ethiktool. We therefore greatly appreciate your support by sending us error reports, questions and remarks via email to <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. If you experience technical issues with the current version, please contact <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.

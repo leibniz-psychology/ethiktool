@@ -6,7 +6,6 @@ export default class extends Controller {
     static targets = ['privacyQuestions','responsibilityHint','transferOutsideHint','privacyQuestionsMarking','listDiv','dataPersonal','dataOnlineProcessingDiv','dataResearchDiv','dataResearchHint','laterEnd','anonymization','anonymizationNo','storage','dataPersonalAccess','purposeResearch','purposeNo','purposeCompensation','purposeTechnical','relatable','relatableDiv','purposeFurther','purposeNoFurther','contactResultFurther','technicalFurther','compensationCode','compensationExternal','compensationpattern','compensationcontributors','orderProcessingDescription','processingFurther','noDocumentHint']
 
     static values = {
-        create: String,
         responsibility: String,
         responsibilityHint: Array, // 0: with private, 1: without private
         transferOutside: String,
@@ -65,13 +64,6 @@ export default class extends Controller {
     }
 
     // methods that are called from the template
-
-    /** Sets this.createValue.
-     * @param event widget that invoked the method
-     */
-    setPrivacyCreate(event) {
-        this.createValue = event.target.value;
-    }
 
     /** Sets this.markingValue or this.markingSecondValue.
      * @param event widget that invoked the method
@@ -156,7 +148,7 @@ export default class extends Controller {
         this.setList();
     }
 
-    /** Sets this.patternValue or this.patternSecondValue.
+    /** Sets this.contributorsValue or this.contributorsSecondValue.
      * @param event widget that invoked the method
      */
     setcontributors(event) {
@@ -210,7 +202,11 @@ export default class extends Controller {
      * @param event widget that invoked the method
      */
     setCompensationCode(event) {
-        this.compensationValue = event.target.value;
+        let target = event.target;
+        console.log(target.id,target.id!=='codeCompensationDescription');
+        if (target.id!=='codeCompensationDescription') {
+            this.compensationValue = event.target.value;
+        }
     }
 
     /** Sets this.compensationInternalValue.

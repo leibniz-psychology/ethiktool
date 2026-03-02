@@ -4,14 +4,13 @@
 {% block content %}
     {% set translationPrefix, measuresController, location, hasProcedure = 'projectdetails.pages.measures.', 'Projectdetails--measures', content.location ?? '', content.procedure is defined %}
     {% set measuresInterventionsPrefix, locationPrefix, locationValue = translationPrefix~'measuresInterventions.', translationPrefix~'location.', location.vars.value ?? '' %}
-    {% set measuresHintPrefix, noLocation, locationHint, isInformation = measuresInterventionsPrefix~'measures.textHints.', 'multiple.choiceTextHint'|trans, (locationPrefix~'textHint')|trans, information in ['pre','post',''] %}
+    {% set measuresHintPrefix, isInformation = measuresInterventionsPrefix~'measures.textHints.', information in ['pre','post',''] %}
     {% set measuresSentence = (measuresHintPrefix~'description')|trans %}
     <div {{ stimulus_controller(measuresController,{
             'measuresTypes': measuresTypes,
             'measuresDescription': [(measuresHintPrefix~'noSelection')|trans,measuresSentence,measuresSentence~(measuresHintPrefix~'survey')|trans],
-            'interventionsTypes': interventionsTypes,
+            'interventionsTypes': interventionsTypes|slice(1),
             'location': locationValue,
-            'locationHint': [noLocation, locationHint],
             'locationInput': textInputs|slice(1)
     }) }}>
         {# procedure #}
@@ -41,7 +40,7 @@
                     <div {{ stimulus_target(measuresController,description~'Div') }}>
                         {{ formRender.addTextfield(content[description], fontNormal|merge(addStyle('height: '~textHeight,true))|merge(
                             {'hint': typePrefix~'textHints.description'}|
-                            merge(not isInterventions ? {'contTarget': [measuresController,description]} : {}))) }}
+                            merge(not isInterventions ? {'contTarget': [measuresController,description], 'resize': true} : {}))) }}
                     </div> {# hint text may be set in controller, but must not be empty here #}
                     <div {% if isInterventions %} {{ stimulus_target(measuresController,'interventionsPDF') }} {% endif %}>
                         <div class="mt-4">
@@ -90,13 +89,13 @@
         {% endif %}
         {# location #}
         {% if location is not same as '' %}
-            {% set isLocation, bothHint = locationValue is not same as '', textInputs['both'] %}
+            {% set isLocation, bothHint, noLocation, locationHint = locationValue is not same as '', textInputs['both'], 'multiple.choiceTextHint'|trans, (locationPrefix~'textHint')|trans %}
             <div class="mt-8" id="location">
                 {{ formRender.addHeading(locationPrefix~'title') }}
                 <div class="MetaData-Label">{{ (locationPrefix~'start')|trans({'information': information}) }}{{ formRender.addPDFhint(transferInfo,addresseeType) }}</div>
                 {{ formRender.renderButtons(location,noHeading|merge({
                     'text': [content.locationDescription,{'attributes': {'disabled': not isLocation}, 'contTarget': [measuresController,'locationDescription'], 'hint': isLocation ? locationHint : noLocation, 'markInput': true}],
-                    'stim': [measuresController,'setLocation'],
+                    'stim': [measuresController,'setLocation',{'hints': [noLocation, locationHint]}],
                     'icons': {'locationother': locationPrefix~'otherHint'},
                     'labelParams': committeeParams|merge({'routeIDs': '{&quot;studyID&quot;:&quot;'~studyID~'&quot;,&quot;groupID&quot;:&quot;'~groupID~'&quot;}'})})) }}
                 <div class="MetaData-Label mb-4" style="{{ boolToDisplay(locationValue is same as 'online') }}" {{ stimulus_target(measuresController,'locationEnd') }}>{{ (locationPrefix~'end')|trans }}</div>
@@ -113,21 +112,22 @@
             {{ formRender.renderButtons(content.presence,{'hint': [translationPrefix~'presence.'], 'addDiv': ['presence']}) }}
         {% endif %}
         {# duration #}
-        {% set durationPrefix = translationPrefix~'duration.' %}
-        <div class="mt-8" id="duration">
+        {% set durationPrefix, hasInput = translationPrefix~'duration.', textInputCompensation is not same as '' %}
+        <div class="mt-8" id="duration" {% if hasInput %} {{ stimulus_action(measuresController,'setDuration','change') }} {% endif %}>
             {{ formRender.addHeading(durationPrefix~'title',{'params': {'multiple': boolToString(true in multipleStudyGroupMeasure)}}) }}
             {% for duration in ['measureTime','breaks'] %}
                 {% set tempPrefix = durationPrefix~duration~'.' %}
                 <u class="MetaData-Label mb-2 {% if loop.index is same as 2 %} mt-3 {% endif %}">{{ (tempPrefix~'title')|trans }}</u>
                 {% for curDur in (duration is same as 'measureTime' ? measureTimeTypes : ['breaksMinutes']) %}
+                    {% set widget = content[curDur] %}
                     <div class="minAutoGrid mb-2">
                         <div class="MetaData-Label" style="width: 7rem">{{ (tempPrefix~curDur)|trans }}</div>
-                        <div style="max-width: 4rem">{{ form_widget(content[curDur]) }}</div>
+                        <div style="max-width: 4rem">{{ form_widget(widget,addTargetArray(measuresController,widget.vars.name)) }}</div>
                     </div>
                 {% endfor %}
                 {{ formRender.addHint(tempPrefix~'hint') }}
             {% endfor %}
-            {% if textInputCompensation is not same as '' %}
+            {% if hasInput %}
                 {{ formRender.addHint(textInputCompensation,{'target': [measuresController,'compensationHint'], 'remove': true}) }}
             {% endif %}
         </div>

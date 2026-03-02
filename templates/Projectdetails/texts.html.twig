@@ -2,8 +2,8 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set translationPrefix, burdensRisks, transferArray = 'projectdetails.pages.texts.', isBurdens or isRisks, {'transfer': [transferInfo,addresseeType]} %}
-    {% set introTemplate, introHint, isTransfer = 'introTemplateText', 'introHint', transferInfo is not same as [] %}
+    {% set translationPrefix, burdensRisks, resizeParam = 'projectdetails.pages.texts.', isBurdens or isRisks, {'resize': true} %}
+    {% set introTemplate, introHint, isTransfer, transferResizeArray = 'introTemplateText', 'introHint', transferInfo is not same as [], resizeParam|merge({'transfer': [transferInfo,addresseeType]}) %}
     <div>
         {{ formRender.addHint(translationPrefix~'hint') }}
         {# intro and goals #}
@@ -18,13 +18,13 @@
                     <div id="{{ introHint }}" style="{{ boolToDisplay(not isIntroTemplate) }}; grid-row: 2">{{ formRender.addHint(translationPrefix~'intro.headingHint') }}</div>
                     <div class="template" id="{{ introTemplate }}" style="{{ boolToDisplay(isIntroTemplate) }}; grid-row: 2">{{ introTemplateText|raw }}</div> {# intro template containts project title #}
                 {% endif %}
-                {{ formRender.addCountableTextfield(widget,maxCharsIntroGoals,transferArray|merge(not isIntro ? {'hint': [[translationPrefix~type~'.'~headingHint,{'multiple': boolToString(true in multipleStudyGroupMeasure)}]]} : {'template': template, 'templateClass' : true, 'visible': not isIntroTemplate, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,introTemplate,[name~'Div',name~'Count',introHint]|merge(isTransfer ? [name~'PDF'] : [])]], 'isGrid': true}]})) }}
+                {{ formRender.addCountableTextfield(widget,maxCharsIntroGoals,transferResizeArray|merge(not isIntro ? {'hint': [[translationPrefix~type~'.'~headingHint,{'multiple': boolToString(true in multipleStudyGroupMeasure)}]]} : {'template': template, 'templateClass' : true, 'visible': not isIntroTemplate, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,introTemplate,[name~'Div',name~'Count',introHint]|merge(isTransfer ? [name~'PDF'] : [])]], 'isGrid': true}]})) }}
             </div>
         {% endfor %}
         {# conflict text #}
         {% if content.conflictText is defined %}
             <div class="mt-8" id="conflict">
-                {{ formRender.addCountableTextfield(content.conflictText,maxCharsConflict,transferArray|merge({'hint': [[translationPrefix~'conflictText.headingHint']]})) }}
+                {{ formRender.addCountableTextfield(content.conflictText,maxCharsConflict,transferResizeArray|merge({'hint': [[translationPrefix~'conflictText.headingHint']]})) }}
             </div>
         {% endif %}
         {# pro and con #}
@@ -52,7 +52,7 @@
                         <div class="template mb-1">{{ conTemplateText|raw }}</div>
                     {% endif %}
                 </div>
-                {{ formRender.addCountableTextfield(widget,maxCharsProCon,transferArray|merge({'visible': isProBurdensRisks or not isTemplate, 'template': content[type~'Template'], 'templateClass': true, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,[templateDiv]|merge(isPro ? [proEnd] : []), not isProBurdensRisks ? [name~'Div',name~'Count']|merge(isTransfer ? [name~'PDF'] : []) : []]], 'isGrid': true}]})) }}
+                {{ formRender.addCountableTextfield(widget,maxCharsProCon,transferResizeArray|merge({'visible': isProBurdensRisks or not isTemplate, 'template': content[type~'Template'], 'templateClass': true, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,[templateDiv]|merge(isPro ? [proEnd] : []), not isProBurdensRisks ? [name~'Div',name~'Count']|merge(isTransfer ? [name~'PDF'] : []) : []]], 'isGrid': true}]})) }}
                 {% if isPro %}
                     <div id="{{ proEnd }}" class="template" style="{{ visible }}">{{ proTemplateEnd }}</div>
                 {% endif %}
@@ -65,7 +65,7 @@
             {% set isTemplate = templateVars.checked %}
             <div class="mt-8 grid" id="finding">
                 <div class="template" id="{{ templateDiv }}" style="{{ boolToDisplay(isTemplate) }}; grid-row: 2">{{ (translationPrefix~'findingText.template')|trans({'consent': boolToString(isConsent), 'addressee': addresseeType}) }}</div>
-                {{ formRender.addCountableTextfield(findingText,maxCharsFinding,{'transfer': [['consent',information],addresseeType], 'visible': not isTemplate, 'template': template, 'templateClass' : true, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,templateDiv,[name~'Div',name~'Count']|merge(isTransfer ? [name~'PDF'] : [])]], 'isGrid': true}]}) }}
+                {{ formRender.addCountableTextfield(findingText,maxCharsFinding,resizeParam|merge({'transfer': [['consent',information],addresseeType], 'visible': not isTemplate, 'template': template, 'templateClass' : true, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,templateDiv,[name~'Div',name~'Count']|merge(isTransfer ? [name~'PDF'] : [])]], 'isGrid': true}]})) }}
             </div>
         {% endif %}
         {{ formRender.addSubmitButtons() }}

@@ -23,6 +23,7 @@ class CompletePDFController extends PDFAbstract
             'isFull' => $this->getStringFromBool(str_contains($session->get(self::reviewProcess),self::reviewProcessFull)),
             'briefReports' => $this->getBriefReport($session,false),
             'savePDF' => self::$savePDF,
+            'hints' => [$this->translateString('completeForm.finish.text.end.title',['isTool' => 'false']).':', $this->getFinishEndText($session,false)],
             self::content => $additional,
             'messages' => $completeArray[self::descriptionNode],
             self::bias => $completeArray[self::bias],
@@ -34,6 +35,6 @@ class CompletePDFController extends PDFAbstract
             self::$pdf->removeTemporaryFiles();
             return new Response();
         }
-        return new Response($completePDF.$session->get(self::pdfApplication).$session->get(self::pdfParticipation.'Marked'));
+        return new Response($completePDF);
     }
 }

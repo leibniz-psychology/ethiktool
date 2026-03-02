@@ -7,10 +7,15 @@
 
 }
 
+li {
+    margin-left: 1.5rem;
+    text-indent: -1.1rem;
+    list-style-position: inside;
+}
+
 .pdfBox {
     page-break-inside: avoid;
     margin-bottom: 2em;
-    margin-left: 0.1em;
 }
 
 .boxOuter {
@@ -198,7 +203,7 @@ tr {
 
 .briefBorder td {
     border: 1px solid black;
-    padding: 0.25em;
+    padding: 0.5em 0.5em 0.45em 0.5em;
     text-align: start;
     width: fit-content;
 }

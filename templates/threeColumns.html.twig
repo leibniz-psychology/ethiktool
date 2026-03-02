@@ -7,7 +7,8 @@
     <div {{ stimulus_controller('base',
         {'route': request.get('_route'),
             'routeParams': request.get('_route_params'),
-            'preview': preview ?? 0}) }} class="pb-5 grid">
+            'preview': preview ?? 0,
+            'previewTab': previewTab ?? ''}) }} class="pb-5 grid">
         {{ include('components/header.html.twig',committeeParams|merge({'update': isUpdateTime})) }}
         {{ formRender.startForm(content) }} {# every controller needs to pass the data as 'content' #}
         <div style="display: none">{{ form_widget(submitDummy,addTargetArray('base','submitDummy')|merge({'id': submitDummy.vars.name})) }}</div> {#  id needed for dummy label #}
@@ -50,7 +51,7 @@
             {% if isPreview %}
                 <div style="width: 35%">
                     {% set classes = classes~' scrollbar scrollbar-thumb-gray-400 scrollbar-thin scrollbar-track-gray-100 overflow-y-auto' %}
-                    <div class="sticky top-0" style="max-width: 211mm">
+                    <div class="sticky top-0" style="min-width: 390px;; max-width: 211mm">
                         {# error messages #}
                         {% if not ('completeForm' in pageTitle or 'checkDoc' in pageTitle) %} {# complete form is the only page with preview, but without error messages #}
                             <div class="{{ classes }} mb-2" id="checkDoc" style="height: min-content; max-height: 150px; word-break: break-word" {{ stimulus_target('base','checkDoc') }}>

@@ -4,9 +4,6 @@
 {% set textPreview, style, markingTrans = not savePDF ? 'previewSmall', 'text-align: justify; line-height: 1.5;', 'participation.marking' %}
 {% set topMargin, redClasses = style~' margin-top: 0.25em;', 'pdfOral '~textPreview %}
 {% block pdfBody %}
-    {% if not savePDF %}
-        {{ pdfMacros.addLine() }}
-    {% endif %}
     {% if not hasDocs or information is same as 'noPost' %}
         {{ pdfMacros.addHeading('participation.noInformation.title'|trans,savePDF,false) }}
         {% if isMarkInput %}

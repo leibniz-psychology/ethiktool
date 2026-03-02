@@ -9,7 +9,6 @@ export default class extends Controller {
         committeeType: String,
         contributors: Array, // all contributors
         title: Array,
-        isStudentApplicant: Boolean, // true if position of applicant is student
         positions: Object,
         committeeStudent: Array, // committees where student is allowed position
         hasSupervisor: Boolean, // true if second contributor exists and has task 'supervision'
@@ -25,7 +24,7 @@ export default class extends Controller {
         this.studentChoiceValue = 'student'; // value of the option-tag
         this.phdChoiceValue = 'phd'; // value of the option-tag
         this.positionOtherValue = 'positionOther'; // value of the option-tag
-        this.isStudentApplicantValue = this.contributorsValue[0]['infos']['position']===this.studentChoiceValue;
+        this.isStudentApplicantValue = this.contributorsValue[0]['infos']['position']===this.studentChoiceValue; // true if position of applicant is student
         // fill the modal inputs if a contributor gets edited
         this.modalTarget.addEventListener('show.bs.modal', event => {
             let id = event.relatedTarget.getAttribute('data-bs-id');
@@ -37,15 +36,12 @@ export default class extends Controller {
             let isAdd = id==='add';
             let noChoice = {'': this.noChoiceValue};
             let allowedPositions = Object.assign({},noChoice,this.positionsValue);
-            let isStudent = this.committeeStudentValue.includes(this.committeeTypeValue);
-            if (isApplicant && (this.hasSupervisorValue || this.isQualificationValue) && this.committeeTypeValue==='EUB') { // applicant and has supervisor or qualification was answered with yes -> only PhD and eventually student
+            if (isApplicant && this.isQualificationValue && this.committeeTypeValue==='EUB') { // applicant and has supervisor or qualification was answered with yes -> only PhD and student
                 allowedPositions = noChoice;
                 allowedPositions[this.phdChoiceValue] = this.positionsValue[this.phdChoiceValue];
-                if (isStudent) {
-                    allowedPositions[this.studentChoiceValue] = this.positionsValue[this.studentChoiceValue];
-                }
+                allowedPositions[this.studentChoiceValue] = this.positionsValue[this.studentChoiceValue];
             } else {
-                if (isSupervisor || isApplicant && !isStudent) { // applicant and supervisor must not be student
+                if (isSupervisor || isApplicant && !this.committeeStudentValue.includes(this.committeeTypeValue)) { // applicant and supervisor must not be student
                     delete allowedPositions[this.studentChoiceValue];
                 }
                 if (isSupervisor && this.contributorsValue[0]['infos']['position']===this.phdChoiceValue) { // if applicant is PhD, supervisor must not be PhD
@@ -160,7 +156,7 @@ export default class extends Controller {
                 setElementVisibility(this.nameErrorTarget,value!=='' && tempVal,1);
             } else if (info==='eMail') {
                 // local: start with letter, then any number of any character except §ß`"()\€[]. domain: start with letter, then any number of letters and digits, then a dot, than only letters, but at least two
-                tempVal = !this.getInputValidityEmpty(value,/^[a-zA-Z]+[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]*@[a-zA-Z]+[a-zA-Z0-9-.]*[.][a-zA-Z]{2,}$/);
+                tempVal = !this.getInputValidityEmpty(value,/^[a-zA-Z]+[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]*@[a-zA-Z]+[a-zA-Z0-9-.]*[.][a-zA-Z]{2,}$/) || value.includes('.@') || value.includes(',');
                 setElementVisibility(this.eMailErrorTarget,tempVal,1);
             } else if (isPhone) {
                 tempVal = !this.getInputValidityEmpty(value,/^\+?([0-9][\s\/-]?)+[0-9]+$/); // optionally starting with a '+', then at least two numbers. After each number (except the last), optionally a separator space, '/', or '-'

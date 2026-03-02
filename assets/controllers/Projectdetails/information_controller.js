@@ -7,9 +7,7 @@ export default class extends Controller {
 
     static values = {
         pre: String,
-        preCompleteTextHint: Array, // 0: nothing selected, 1: yes or no selected
-        informationHintName: String,
-        isPreComplete: Boolean
+        informationHintName: String
     }
 
     connect() {
@@ -37,10 +35,9 @@ export default class extends Controller {
     setPreComplete(event) {
         let value = event.target.value;
         let isAnswered = value!=='';
-        this.isPreCompleteValue = value==='0';
-        setElementVisibility(this.preCompleteTypeTarget,this.isPreCompleteValue);
+        setElementVisibility(this.preCompleteTypeTarget,value==='0');
         this.preCompleteTextTarget.disabled = !isAnswered;
-        setHint('preCompleteTextHint',this.preCompleteTextHintValue[isAnswered ? 1 : 0]);
+        setHint('preCompleteTextHint',event.params.hint[isAnswered ? 1 : 0]); // 0: nothing selected, 1: yes or no selected
         let deleteHint = document.getElementById(this.informationHintNameValue);
         if (deleteHint!==null) {
             setElementVisibility(deleteHint,value==='1')

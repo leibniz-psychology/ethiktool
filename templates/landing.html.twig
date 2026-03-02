@@ -8,8 +8,7 @@
 {% endblock %}
 {% block content %}
     {% set isProjectdetailsLanding, headingsPrefix = page is same as 'projectdetails' and not isMeasure, 'projectdetails.headings.' %}
-    <div {{ stimulus_controller('landing',{
-        'names': names|json_encode}) }}>
+    <div {{ stimulus_controller('landing') }}>
         <h2 class="MetaDataGroup-Title">{{ pageTitle|trans }} {{ ('pages.'~page~'.title')|trans }}</h2>
         {# indices and names of current level(s) #}
         {% if isStudy %}
@@ -37,7 +36,7 @@
         {% set landingRouteIDs, modalID = isStudy ? {'studyID': id[0]+1}|merge(isGroup ? {'groupID': id[1]+1}|merge(isMeasure ? {'measureID': id[2]+1} : {}) : {}) : {}, 'removeModal' %}
         <div class="MetaData-Widget">
             {% set manipulatePrefix, landingIndex, width = 'landing.manipulate.', 0, 'width: 15rem' %} {# either all pages or no page links to landing #}
-            {% set minWidth, manipulate, editPrefix = addStyle(width), manipulatePrefix~'manipulate', manipulatePrefix~'edit.' %}
+            {% set minWidth, manipulate, editPrefix, namesParam = addStyle(width), manipulatePrefix~'manipulate', manipulatePrefix~'edit.', {'names': names} %}
             {% for route in menu %}
                 {% set routeIDs, curRoute = route.routeIDs ?? {}, route.route %}
                 {% set isCurRoute = curRoute is not same as '' %}
@@ -52,7 +51,7 @@
                 </a>
                 {% if isProjectdetailsLanding and not isGroup %}
                     <div class="mt-1 mb-4" style="display: none; width: fit-content" {{ stimulus_target('landing','edit') }}> {# text field and submit button for changing name #}
-                        <div {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setButtons','input') }}>
+                        <div {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setButtons','input',namesParam) }}>
                             {{ form_widget(content['editText'~landingIndex],{'attr': minWidth|merge({'value': names[landingIndex]})|merge(addTarget('landing','name'))}) }}
                         </div>
                         <button type="submit" class="Button_primary_act align-self-center ms-2" id="{{ 'landing_edit'~landingIndex }}" style="height: fit-content" {{ stimulus_action('base','submitForm','click',{'routeIDs': landingRouteIDs})|stimulus_target('landing','submitName') }}>
@@ -86,7 +85,7 @@
                 {# new study, group, or measure time point #}
                 <div class="MetaData-Widget grid mt-4 gap-2" style="grid-template-columns: repeat(2,minmax(min-content,max-content))"> {# if isMeasure is true, then isGroup is also true #}
                     {% if not isGroup %}
-                        <div style="grid-area: 1 / 1; {{ width }}" {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setButtons','input') }}> {# text field for entering a new study or group name #}
+                        <div style="grid-area: 1 / 1; {{ width }}" {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setButtons','input',namesParam) }}> {# text field for entering a new study or group name #}
                             {{ form_widget(content.newStudyGroupText,{'attr': minWidth|merge(addTarget('landing','name'))}) }}
                         </div>
                     {% endif %}
@@ -95,7 +94,7 @@
                     {# button for creating a new study, group or measure point in time #}
                     <button type="submit" id="submitName" class="Button_primary_act align-self-center" style="grid-area: 1 / 2; height: fit-content" {{ stimulus_action('base','submitForm','click',routeParams)|stimulus_target('landing','submitName') }}>{{ manipulate|trans(levelParam|merge({'type': 'new'})) }}</button>
                     {# dropdown for selecting the study, group or measure point in time to be copied #}
-                    <div style="grid-area: 2 / 1; {{ width }}" {{ stimulus_action('landing','setButtons','change') }}>
+                    <div style="grid-area: 2 / 1; {{ width }}" {{ stimulus_action('landing','setButtons','change',namesParam) }}>
                         {{ form_widget(content.copy,{'attr': addClass('Button_dropdown',false,'text-overflow: ellipsis')|merge(addTarget('landing','copy'))}) }}
                     </div>
                     {# button for copying a study, group or measure point in time #}

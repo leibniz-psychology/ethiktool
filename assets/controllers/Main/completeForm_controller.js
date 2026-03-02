@@ -9,7 +9,9 @@ export default class extends Controller {
         this.setBias();
         if (this.hasPdfTarget) {
             for (let widget of this.pdfTargets) {
-                widget.addEventListener('change',() => {
+                widget.addEventListener('change',(event) => {
+                    let filenameDiv = document.getElementById(event.currentTarget.id+'filename');
+                    filenameDiv.style.minWidth = filenameDiv.textContent!=='' ? '10rem' : '0'; // prevent filename div from getting too narrow
                     this.setSubmitButton();
                 });
             }

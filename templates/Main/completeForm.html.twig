@@ -61,7 +61,7 @@
                 <div class="MetaData-Label" {{ stimulus_target(completeFormController,'finishText') }}>{{ finishText[0] }}</div>
                 <button class="Button_primary_act ms-4 mt-2 mb-2" type="button" name="finish" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target(completeFormController,'finish') }} onclick="{{ addTracking('Button','Complete Preparation') }}">{{ formRender.addButtonIcon(finishPrefix~'title','pdf') }}</button>
                 <div class="MetaData-Label" style="margin-left: -1.5rem">
-                    {{ formRender.addExpandable(finishPrefix~'text.end.title') }}
+                    {{ formRender.addExpandable(finishPrefix~'text.end.title',{'isTool': 'true'}) }}
                     <div class="MetaData-Widget mx-4 mt-2 borderLight" style="display: none">{{ finishText[1]|raw }}</div>
                 </div>
             </div>
@@ -118,7 +118,7 @@
             <div class="MetaData-Widget flex">
                 <label class="Upload my-1" for="{{ id }}" style="{{ fitWidth }}">{{ 'completeForm.pdf.upload'|trans }}</label>
                 <div style="display: none">{{ form_widget(form,{'id': id, 'attr': addStyle(fitWidth)|merge({'accept': 'application/pdf'})|merge(addTarget(stimCont,'pdf'))}) }}</div>
-                <div class="mx-1 my-1" id="{{ id~'filename' }}"></div>
+                <div class="mx-1 my-1" id="{{ id~'filename' }}" style="line-break: anywhere"></div>
             </div>
         </div>
     </div>

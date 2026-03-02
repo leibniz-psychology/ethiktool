@@ -11,12 +11,13 @@ import {
 
 export default class extends Controller {
 
-    static targets = ['loadModal','download','load','loadInput','sidebar','content','checkDoc','preview','form','submitDummy','hint','countableText','charCount','disableLoad','undo','language','xmlModal','pdfModal','landingRemove','expandable'];
+    static targets = ['loadModal','download','load','loadInput','sidebar','content','checkDoc','preview','form','submitDummy','hint','countableText','charCount','disableLoad','undo','language','xmlModal','pdfModal','landingRemove','expandable','quitModal','previewTab'];
 
     static values = {
         route: String,
         routeParams: Object,
         preview: Number, // position of preview scrollbar
+        previewTab: String // id of visible preview tab
     }
 
     connect() {
@@ -86,7 +87,7 @@ export default class extends Controller {
                 }
             });
         } else {
-            this.formSubmit()
+            this.formSubmit();
             this.submitDummyTarget.value = '';
         }
     }
@@ -224,6 +225,18 @@ export default class extends Controller {
         }
     }
 
+    /** Sets the visibility of the preview tabs.
+     * @param event widget that invoked the method, i.e., one of the tab buttons
+     */
+    setPreviewTabs(event) {
+        let id = event.target.id;
+        if (id!==this.previewTabValue) { // if the values are equal, the button of the active tab was clicked again
+            this.previewTabValue = id;
+            document.getElementById(id).classList.toggle('activeTab');
+            this.setPreviewTabsVisibility();
+        }
+    }
+
     // methods that are called from a template and from within this class
 
     /** Sets all elements in array either (in)visible.
@@ -325,6 +338,7 @@ export default class extends Controller {
                 this.previewValue = this.previewTarget.scrollTop;
                 this.previewTarget.parentNode.replaceChild(html.querySelector('#preview'),this.previewTarget);
                 this.previewTarget.scrollTop = this.previewValue;
+                this.setPreviewTabsVisibility();
             }
             let url = response.url;
             if (url.includes('contributors') || url.includes('landing')) {
@@ -452,9 +466,15 @@ export default class extends Controller {
             textfield.addEventListener('input', () => {
                 this.setTextareaCharCount(textfield);
             });
+            let textDiv = textfield.previousElementSibling;
             textfield.addEventListener('scroll', () => {
-                textfield.previousElementSibling.scrollTop = textfield.scrollTop;
+                textDiv.scrollTop = textfield.scrollTop;
             });
+            new ResizeObserver(() => {
+                let height = textfield.style.height;
+                textDiv.style.height = height; // height of div below textarea
+                textDiv.parentElement.style.height = height; // height of div surrounding textarea and div
+            }).observe(textfield);
         }
         // prevent submitting the form by pressing enter
         for (let inputField of document.getElementsByTagName('input')) {
@@ -542,6 +562,48 @@ export default class extends Controller {
         showModal(element);
     }
 
+    /** Sets the quit modal.
+     * @param event widget that invoked the method
+     */
+    setQuitModal(event) {
+        event.preventDefault(); // prevent redirecting
+        let target = event.target;
+        if (target.id==='quitModalButton') { // save xml
+            let params = event.params;
+            this.formSubmit('download');
+            this.submitDummyTarget.value = '';
+            setElementVisibility(target,false); // make button invisible
+            this.quitModalTarget.innerHTML = params.body; // set text of modal body
+            target.nextElementSibling.textContent = params.button; // change text of middle button from "Quit without saving" to "Quit"
+        } else { // quit without saving
+            this.formSubmit('quit');
+        }
+    }
+
+    /** Resets the quit modal.
+     * @param event widget that invoked the method
+     */
+    resetQuitModal(event) {
+        let params = event.params;
+        setElementVisibility('quitModalButton',true,2); // make button visible in case it was invisible
+        this.quitModalTarget.innerHTML = params.body; // set text of modal body
+        document.getElementById('quitModalButtonMiddle').textContent = params.button; // set text of middle button to "Quit without saving"
+    }
+
+    /** Sets the visibility of the preview tabs. */
+    setPreviewTabsVisibility() {
+        for (let target of this.previewTabTargets) {
+            let targetID = target.id;
+            let isActive = targetID===this.previewTabValue;
+            setElementVisibility(targetID+'Content',isActive);
+            if (isActive) {
+                target.classList.add('activeTab');
+            } else {
+                target.classList.remove('activeTab');
+            }
+        }
+    }
+
     /** Submits the form with the formTarget.
      * @param dummyVal if not an empty string, value the submitDummyTarget gets set to
      */
@@ -550,7 +612,7 @@ export default class extends Controller {
         if (submitDummy.startsWith('preview')) {
             submitDummy = submitDummy.split("\n").slice(1).join("\n");
         }
-        this.submitDummyTarget.value = 'preview:'+(this.hasPreviewTarget ? this.previewTarget.scrollTop : '')+"\n"+submitDummy;
+        this.submitDummyTarget.value = 'preview:'+(this.hasPreviewTarget ? this.previewTarget.scrollTop+':'+this.previewTabValue : '')+"\n"+submitDummy;
         if (dummyVal!=='') {
             let split = this.submitDummyTarget.value.split("\n");
             let isPage = false;

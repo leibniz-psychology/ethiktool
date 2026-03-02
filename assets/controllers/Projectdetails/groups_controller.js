@@ -6,7 +6,6 @@ export default class extends Controller {
     static targets = ['minAge','maxAge','unlimited','healthy','wards','examinedDescription','wardsHint','removeHint','physical','mental','dependent','closedNo','voluntaryHint','criteriaHint','includeStart','include'];
 
     static values = {
-        wardsHint: String, // inputs are about to be deleted
         examined: Array,
         criteriaHint: Array, // 0: participants, 1: children, 2: wards
         includeStart: Array, // 0: participants, 1: children, 2: wards

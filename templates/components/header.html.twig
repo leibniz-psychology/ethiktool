@@ -1,6 +1,6 @@
-{% set logoSize, maxWidth, flexRowClasses, request, curLocale = 'height: 100px; width: 100px;', 'max-width: 1600px;', 'flex flex-row', app.request, request.getLocale() %}
+{% set logoSize, maxWidth, flexRowClasses, request = 'height: 100px; width: 100px;', 'max-width: 1600px;', 'flex flex-row', app.request %}
 {% set background, flexClasses, route = 'background: linear-gradient(to right,#240d46 0%,#2b2171 100%);', flexRowClasses~' flex-nowrap', request.attributes.get('_route') %}
-{% set headerModals, infoModal = ['aboutUs','aboutTool','technicalHints','termsOfUse','contactModal'], 'components/infoModal.html.twig' %}
+{% set headerModals, infoModal, curLocale = ['aboutUs','aboutTool','technicalHints','termsOfUse','contactModal'], 'components/infoModal.html.twig', request.getLocale() %}
 <div class="bg-white relative z-20">
     <div class="mx-auto winWidth" style="{{ maxWidth }}">
         <div class="{{ flexClasses }} justify-between" style="max-width: 1600px">

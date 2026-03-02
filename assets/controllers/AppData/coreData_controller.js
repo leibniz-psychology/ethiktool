@@ -26,7 +26,6 @@ export default class extends Controller {
         this.setApplicantSupervisor();
         this.setProjectStart(false);
         this.setConflict();
-        // this.setReviewProcessWidgets(null,false);
     }
 
     // methods that are called from the template
