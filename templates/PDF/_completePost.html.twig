@@ -2,9 +2,6 @@
 {% import 'PDF/pdfMacros.html.twig' as pdfMacros %}
 {% trans_default_domain 'pdf' %}
 {% block pdfBody %}
-    {% if not savePDF %}
-        {{ pdfMacros.addLine() }}
-    {% endif %}
     {% set textPreview = not savePDF ? 'previewSmall' %}
     <div class="pdfDocument">
         {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
@@ -37,4 +34,7 @@
             </table>
         </div>
     </div>
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
+    {% endif %}
 {% endblock %}

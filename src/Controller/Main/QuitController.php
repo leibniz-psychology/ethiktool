@@ -13,6 +13,6 @@ class QuitController extends ControllerAbstract
     public function showQuit(Request $request): Response
     {
         $request->getSession()->clear();
-        return $this->render('Main/quit.html.twig',[self::committeeParams => [self::committeeType => 'noCommittee'], self::toolVersionAttr => self::toolVersion, 'isUpdateTime' => $this->getUpdateTimeString()]);
+        return $this->render('Main/quit.html.twig',[self::committeeParams => [self::committeeType => 'noCommittee', self::toolVersionAttr => self::toolVersion], 'isUpdateTime' => $this->getUpdateTimeString()]);
     }
 }

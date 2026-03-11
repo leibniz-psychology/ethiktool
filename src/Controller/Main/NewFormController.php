@@ -120,8 +120,10 @@ class NewFormController extends ControllerAbstract
                     // save additional information in session
                     $session->set(self::fileName, $data[self::fileName]);
                     $session->set(self::contributorsSessionName, [[0 => $this->xmlToArray($xml->{self::contributorsNodeName}->{self::contributorNode})]]); // save contributors in session
+                    $reviewProcess = $this->getReviewShortDefault($committeeType);
+                    $this->updateNodesByReviewProcess($request,$xml->{self::projectdetailsNodeName}->{self::studyNode}->{self::groupNode}->{self::measureTimePointNode},$reviewProcess);
                     $session->set(self::docName,[$xml->asXML()]); // save xml-document in session
-                    $session->set(self::reviewProcess,$this->getReviewShortDefault($committeeType));
+                    $session->set(self::reviewProcess,$reviewProcess);
                     $session->set(self::newForm,'');
                     return $this->redirectToRoute('app_main');
                 } catch (DOMException | Exception) { // Exception is for SimpleXMLElement

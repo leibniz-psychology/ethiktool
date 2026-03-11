@@ -307,7 +307,7 @@ main:
   title: 'Ethiktool'
   textNoCommittee: |
     Die Software „Ethiktool“ unterstützt Sie beim Verfassen von Ethikanträgen. Die relevanten Aspekte für die ethische Begutachtung werden fallbezogen abgefragt.
-    Das Ethiktool erzeugt am Ende alle Dokumente, die durch die Ethikkommission begutachtet werden: das Antragsformular und die Teilnahmedokumente, die sich an die untersuchten Personen richten (Informations- und Einwilligungstexte).
+    Das Ethiktool erzeugt am Ende alle Dokumente, die durch die Ethikkommission begutachtet werden: das Antragsformular und die Teilnahmedokumente, die sich an die teilnahmeinteressierten Personen richten (Informations- und Einwilligungstexte).
 
     Weitere Informationen finden Sie in den Abschnitten „Über uns“ und „Über das Ethiktool“. Bitte beachten Sie die technischen Hinweise und die Nutzungsbedingungen des Ethiktools.
     Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
@@ -715,8 +715,8 @@ projectdetails:
         unlimited: 'unbegrenzt'
       wardsHint: 'Die gewählten Gruppen umfassen Personen, die selbst nicht einwilligungsfähig sind. Daher sind weitere Angaben und Dokumente für die einwilligenden Personen erforderlich. Wenn Sie darüber hinaus noch selbst einwilligungsfähige Personen untersuchen wollen, legen Sie bitte auf der <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-route-i-ds-param="{studyID}" data-base-page-param="Projectdetails">Übersichtsseite dieser Studie</a> eine weitere Gruppe an.'
       examined:
-        title: 'Welche Personen sollen untersucht werden?'
-        headingHint: 'Wählen Sie bitte alle Personengruppen aus, die an diesem Zeitpunkt der Studie untersucht werden und für die Sie keine separate Gruppe im Menü angelegt haben. Die Kategorien sind danach auszuwählen, welche Eigenschaften maßgeblich für den Untersuchungsgegenstand sind. Wenn Sie bspw. gezielt Personen mit körperlichen Erkrankungen untersuchen wollen, ist die entsprechende Kategorie auszuwählen; wenn Sie hingegen in einer großen, online rekrutierten Stichprobe davon ausgehen, dass darunter zufällig auch Personen mit körperlichen Erkrankungen sein werden, muss die Kategorie nicht ausgewählt werden.'
+        title: 'Welche Personen sollen teilnehmen?'
+        headingHint: 'Wählen Sie bitte alle Personengruppen aus, die an diesem Zeitpunkt der Studie teilnehmen und für die Sie keine separate Gruppe im Menü angelegt haben. Die Kategorien sind danach auszuwählen, welche Eigenschaften maßgeblich für den Untersuchungsgegenstand sind. Wenn Sie bspw. gezielt Personen mit körperlichen Erkrankungen untersuchen wollen, ist die entsprechende Kategorie auszuwählen; wenn Sie hingegen in einer großen, online rekrutierten Stichprobe davon ausgehen, dass darunter zufällig auch Personen mit körperlichen Erkrankungen sein werden, muss die Kategorie nicht ausgewählt werden.'
         types:
           healthy: 'gesunde Personen'
           physical: 'Personen mit körperlichen Erkrankungen oder Einschränkungen'
@@ -831,7 +831,7 @@ projectdetails:
       pre:
         title: 'Werden die {addressee} vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen?'
         content:
-          title: 'Inwieweit werden die {addressee} vor Untersuchungsbeginn über die Ziele, Inhalte und Methoden der Studie informiert?'
+          title: 'Inwieweit werden die {addressee} vor Beginn der Teilnahme über die Ziele, Inhalte und Methoden der Studie informiert?'
           headingHint: 'Gemeint sind zentrale Informationen über die Studie. Dazu gehört eine für die jeweilige(n) Zielgruppe(n) verständliche Darlegung der Forschungsziele, Verfahren zur Datenerhebung und Aufgaben der Teilnehmenden. Das Nicht-Offenlegen der Hypothese(n) zählt nicht als unvollständige Aufklärung. Wenn sowohl Informationen vorenthalten werden als auch eine explizite Täuschung vorliegt, wählen Sie bitte Täuschung aus.'
           type:
             complete: 'Die {addressee} werden vollständig aufgeklärt.'
@@ -865,7 +865,7 @@ projectdetails:
           yes: 'Ja'
           no: 'Nein'
           notApplicable: 'nicht zutreffend: Die {addressee} werden nicht vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen'
-        textHintYes: 'Bitte erläutern Sie, wie die freiwillige Studienteilnahme gewährleistet wird. Im Fall der Erhebung in einer geschlossenen Gruppe erläutern Sie bspw., wie sichergestellt wird, dass einzelne Anwesende unauffällig auf die Teilnahme verzichten können. Im Fall der Rekrutierung von Personen, die in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen, erläutern Sie, welche gesonderten Maßnahmen Sie zur Wahrung der Freiwilligkeit treffen.'
+        textHintYes: 'Bitte erläutern Sie, wie die freiwillige Studienteilnahme gewährleistet wird. Im Fall der Erhebung in einer geschlossenen Gruppe erläutern Sie bspw., wie sichergestellt wird, dass einzelne Anwesende unauffällig einwilligen bzw. auf die Teilnahme verzichten können. Im Fall der Rekrutierung von Personen, die in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen, erläutern Sie, welche gesonderten Maßnahmen Sie zur Wahrung der Freiwilligkeit treffen (z.B. Durchführung der Studie in Abwesenheit der Lehrenden bzw. Prüfenden; anonyme Gestaltung der Erhebung; explizite Zusicherung, dass die Teilnahme oder deren Ablehnung keinen Einfluss auf Studien-, Prüfungsleistungen oder weitere studienbezogene Aspekte wie Platzvergaben o.ä. hat).'
         textHint: 'Bitte beschreiben und begründen Sie, inwiefern die Freiwilligkeit nicht garantiert ist.'
       consent:
         title: >- # other is pre (first select) respectively post (third select). Participants is children or wards in second select.
@@ -1002,7 +1002,7 @@ projectdetails:
       location:
         title: 'Wo findet die Datenerhebung statt?'
         start: >-
-          Die Untersuchung {information, select,
+          Die Studie {information, select,
                               post  {fand}
                               other {findet}} ...
         types:
@@ -1020,7 +1020,7 @@ projectdetails:
         title: >-
           Dauer {multiple, select,
                   true  {des Erhebungszeitpunktes}
-                  other {der Erhebung}}
+                  other {der Erhebung}} pro Person
         measureTime:
           title: 'Reine Erhebungszeit'
           measureTimeDays: 'Tage:'
@@ -1053,7 +1053,7 @@ projectdetails:
       burdens:
         title: 'Welchen Belastungen bzw. Beanspruchungen werden die Teilnehmenden ausgesetzt?'
         hints:
-          headingHint: 'Hier sind Belastungen gemeint, die durch die Studienteilnahme zwangsläufig für alle Teilnehmenden entstehen. Bitte setzen Sie die Belastungen durch die Studienteilnahme in Beziehung zur Alltagserfahrung der untersuchten Personengruppe (d.h. ob diese Gruppe sich im Alltag einer vergleichbaren Belastung aussetzen würde).'
+          headingHint: 'Hier sind Belastungen gemeint, die durch die Studienteilnahme zwangsläufig für alle Teilnehmenden entstehen. Bitte setzen Sie die Belastungen durch die Studienteilnahme in Beziehung zur Alltagserfahrung der teilnehmenden Personengruppe (d.h. ob diese Gruppe sich im Alltag einer vergleichbaren Belastung aussetzen würde).'
           noBurdens: 'Bitte begründen Sie, warum Sie davon ausgehen, dass keine Belastungen bzw. Beanspruchungen vorliegen.'
         types:
           noBurdens: 'keine Belastungen'
@@ -1071,7 +1071,7 @@ projectdetails:
       risks:
         title: 'Welche potenziellen Gefährdungen oder Risiken bringt die Teilnahme mit sich?'
         hints:
-          headingHint: 'Hier sind Gefährdungen gemeint, die eventuell eintreten können (aber nicht müssen) und die ggf. nur einzelne Teilnehmende betreffen. Bitte setzen Sie die möglichen Gefährdungen zu dem Risiko in Beziehung, dem die untersuchte Personengruppe im Alltag üblicherweise ausgesetzt ist („minimal risk“).'
+          headingHint: 'Hier sind Gefährdungen gemeint, die eventuell eintreten können (aber nicht müssen) und die ggf. nur einzelne Teilnehmende betreffen. Bitte setzen Sie die möglichen Gefährdungen zu dem Risiko in Beziehung, dem die teilnehmende Personengruppe im Alltag üblicherweise ausgesetzt ist („minimal risk“).'
         types:
           noRisks: 'keine Risiken'
           risksPhysical: 'körperliches Unwohlsein'
@@ -1141,9 +1141,9 @@ projectdetails:
         real: 'tatsächliche Dauer'
         flat: 'pauschal'
       money:
-        title: 'Kann die finanzielle Aufwandsentschädigung durch den individuellen Verlauf der Untersuchung beeinflusst werden?'
+        title: 'Kann die finanzielle Aufwandsentschädigung durch den individuellen Verlauf der Teilnahme beeinflusst werden?'
         headingHint: 'Damit ist gemeint, dass die Aufwandsentschädigung einen anreizbasierten Anteil enthält, der z.B. die Leistung oder den Erfolg der Teilnehmenden in einer Aufgabe belohnt. Die Abhängigkeit von der reinen Dauer der Teilnahme fällt nicht in diese Kategorie.'
-        textHint: ' Die genaue Höhe der finanziellen Aufwandsentschädigung hängt vom individuellen Verlauf der Untersuchung ab, und zwar '
+        textHint: ' Die genaue Höhe der finanziellen Aufwandsentschädigung hängt vom individuellen Verlauf der Teilnahme ab, und zwar '
       terminate:
         title: 'Im Falle eines vorzeitigen Abbruchs ...'
         types:
@@ -1288,7 +1288,7 @@ projectdetails:
       findingText:
         title: 'Aufklärung über (Zufalls-)Befunde:'
         template: >-
-          Die Untersuchung dient ausschließlich Forschungszwecken. Eine medizinische oder psychologische Beurteilung der Daten erfolgt nicht. Es könnte uns jedoch ein ungewöhnliches Untersuchungsergebnis (Zufallsbefund) auffallen. In diesem Fall werden wir Sie{consent, select,
+          Die Studie dient ausschließlich Forschungszwecken. Eine medizinische oder psychologische Beurteilung der Daten erfolgt nicht. Es könnte uns jedoch ein ungewöhnliches Untersuchungsergebnis (Zufallsbefund) auffallen. In diesem Fall werden wir Sie{consent, select,
                                                                           true  {, sofern Sie einverstanden sind, darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen.}
                                                                           other { darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen. Nur wenn Sie damit einverstanden sind, dass wir Sie ggf. über eine Auffälligkeit informieren, ist eine Teilnahme an dieser Studie möglich.}} Sofern bei dieser diagnostischen Abklärung eine Erkrankung festgestellt werden sollte, könnten {addressee, select,
                   children {Ihrem Kind}
@@ -1307,7 +1307,7 @@ projectdetails:
         textHint: 'Tatsächlich zutreffende Information / Rückmeldung (=Richtigstellung oder Ergänzung)'
       explain:
         title: 'Wir bitten Sie um Verständnis für diese erst nachträglich umfassende Aufklärung. Dies war nötig, weil ...'
-        textHint: 'Begründen Sie die Notwendigkeit der Täuschung bzw. unvollständigen Aufklärung in verständlicher Form. Typische Begründungen sind z.B. „um das Verhalten während der Studie so alltagsnah wie möglich erfassen zu können“ oder „weil die Wirkung der Methode getrennt von der Wirkungserwartung untersuchen werden sollte“. Weisen Sie - falls zutreffend - darauf hin, dass es sich dabei um ein übliches Vorgehen in solchen Studien handelt.'
+        textHint: 'Begründen Sie die Notwendigkeit der Täuschung bzw. unvollständigen Aufklärung in verständlicher Form. Typische Begründungen sind z.B. „um das Verhalten während der Studie so alltagsnah wie möglich erfassen zu können“ oder „weil die Wirkung der Methode getrennt von der Wirkungserwartung untersucht werden sollte“. Weisen Sie - falls zutreffend - darauf hin, dass es sich dabei um ein übliches Vorgehen in solchen Studien handelt.'
     legal:
       hint: 'Forschende sollten im Einzelfall prüfen und abwägen, ob einer oder mehrere der folgenden Aspekte hilfreich erscheinen. Die Textentwürfe können als Basisinformation für häufig auftretende Fälle genutzt werden; eine Prüfung und Abstimmung im Einzelfall kann dadurch nicht ersetzt werden. Die Verwendung der Vorlagen erfolgt daher auf eigene Verantwortung, sie ersetzt insbesondere keine Rechtsberatung. Die Ethikkommission übernimmt keine Verantwortung für die korrekte Anwendung auf den Einzelfall und übernimmt nicht die juristische Prüfung der Formulierungen.'
       liability:
@@ -1327,8 +1327,8 @@ projectdetails:
         loan: ' Die Leihgeräte samt Zubehör sind sorgsam zu behandeln, vor Verlust und Beschädigungen zu schützen und unaufgefordert zum vereinbarten Zeitpunkt zurückzugeben. Verluste oder Beschädigungen der Geräte oder des Zubehörs während der Ausleihe sind unverzüglich anzuzeigen. Eine Weitergabe der entliehenen Geräte oder des Zubehörs an Dritte ist untersagt. Bei Verlust oder Beschädigung ist der Forschungseinrichtung der verursachte Schaden zu ersetzen.'
       insuranceWay:
         title: 'Soll die Einwilligung in die Studienteilnahme einen Hinweis zur Wege-/Unfallversicherung enthalten?'
-        headingHint: 'Es besteht keine Aufklärungspflicht über das Nicht-Vorliegen einer studienbezogenen Wege-/Unfallversicherung gegenüber Teilnehmenden. Man kann unterstellen, dass Personen vernünftigerweise nicht davon ausgehen, auf dem Weg vom und zum Ort der Untersuchung unfallversichert zu sein, da dies für andere private Wege (z.B. Weg zum Arzt, zum Sportverein) ebenfalls nicht zutrifft. Eine Information über die Rechtslage/Lebenswirklichkeit ist aber, wenn gewünscht, möglich. Es sollte im Einzelfall durch die Projektbeteiligten abgewogen werden, ob ein solcher Hinweis für die konkrete Studie bzw. Personengruppe sinnvoll erscheint. Sinnvoll kann eine Information beispielsweise dann sein, wenn Forschung in speziellen Settings (z.B. im Rahmen gemeinsamer Spaziergänge, Exkursionen) durchgeführt wird, also Wege im Rahmen der Forschung (über den Hin- und Rückweg hinaus) selbst Teil der Forschung sind. Nehmen Personen während einer Erhebung Schaden, spielen Haftungsfragen eine Rolle, zu denen in einer separaten Frage Angaben vorzunehmen sind.'
-        template: 'Ich bin darauf hingewiesen worden, dass {committeeLocation} im Rahmen der Untersuchungsdurchführung keine Unfallversicherung gewährt.'
+        headingHint: 'Es besteht keine Aufklärungspflicht über das Nicht-Vorliegen einer studienbezogenen Wege-/Unfallversicherung gegenüber Teilnehmenden. Man kann unterstellen, dass Personen vernünftigerweise nicht davon ausgehen, auf dem Weg vom und zum Ort der Studienteilnahme unfallversichert zu sein, da dies für andere private Wege (z.B. Weg zum Arzt, zum Sportverein) ebenfalls nicht zutrifft. Eine Information über die Rechtslage/Lebenswirklichkeit ist aber, wenn gewünscht, möglich. Es sollte im Einzelfall durch die Projektbeteiligten abgewogen werden, ob ein solcher Hinweis für die konkrete Studie bzw. Personengruppe sinnvoll erscheint. Sinnvoll kann eine Information beispielsweise dann sein, wenn Forschung in speziellen Settings (z.B. im Rahmen gemeinsamer Spaziergänge, Exkursionen) durchgeführt wird, also Wege im Rahmen der Forschung (über den Hin- und Rückweg hinaus) selbst Teil der Forschung sind. Nehmen Personen während einer Erhebung Schaden, spielen Haftungsfragen eine Rolle, zu denen in einer separaten Frage Angaben vorzunehmen sind.'
+        template: 'Ich bin darauf hingewiesen worden, dass {committeeLocation} im Rahmen der Studiendurchführung keine Unfallversicherung gewährt.'
       insurance:
         title: 'Soll die Einwilligung in die Studienteilnahme einen Hinweis zur Teilnehmendenversicherung enthalten?'
         headingHint: 'Abgesehen von etwaigen gesetzlichen Pflichten (z.B. aus dem Arzneimittelgesetz oder Medizinproduktegesetz) ist für eine humanwissenschaftliche Studie als solche eine Haftpflichtversicherung oder eine Teilnehmendenversicherung (Probandenversicherung) nicht obligatorisch. Es obliegt den Projektbeteiligten abzuwägen, ob eine solche Versicherung sinnvoll erscheint. Die Ethikkommission kann hierzu keine rechtliche Einschätzung bieten; bei Bedarf ist eine Rechtsberatung einzuholen.'
@@ -2294,8 +2294,8 @@ checkDoc:
           money:
             missing: 'Höhe der Aufwandsentschädigung'
             amount: 'Auswahl, ob die Höhe der Aufwandsentschädigung pro Stunde oder pauschal ist,'
-            moneyFurther: 'Beeinflussung der finanziellen Aufwandsentschädigung durch den individuellen Verlauf der Untersuchung' # 'Antwort auf Frage nach [] fehlt.'
-            moneyFurtherDescription: 'möglichen Beeinflussung der finanziellen Aufwandsentschädigung durch den individuellen Verlauf der Untersuchung' # 'Beschreibung der [] fehlt.'
+            moneyFurther: 'Beeinflussung der finanziellen Aufwandsentschädigung durch den individuellen Verlauf der Teilnahme' # 'Antwort auf Frage nach [] fehlt.'
+            moneyFurtherDescription: 'möglichen Beeinflussung der finanziellen Aufwandsentschädigung durch den individuellen Verlauf der Teilnahme' # 'Beschreibung der [] fehlt.'
           hours:
             missing: 'Angabe der Studiengänge/Fakultäten/Fachbereiche für VP-Stunden'
             amount: 'Auswahl, ob die VP-Stunden pro Stunde oder pauschal sind,'
@@ -2630,7 +2630,7 @@ completeForm:
                   <li>Bitte prüfen Sie die Inhalte des Gesamtantrags (PDF) nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter.</li>
                   <li>Bearbeiten Sie weder die PDF-Datei des Gesamtantrags noch die XML-Datei mit anderen Programmen.</li>}
             other {<li>Bitte prüfen Sie die Inhalte des Gesamtantrags nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter.</li>}}
-          <li>Wenn alle Angaben im Gesamtantrag korrekt sind, senden Sie die PDF-Datei mit der zugehörigen XML-Datei an {committeeAcc} unter {committeeType, select,
+          <li>Wenn alle Angaben korrekt sind, senden Sie die PDF-Datei des Gesamtantrags mit der zugehörigen XML-Datei an {committeeAcc} unter {committeeType, select,
           TUC   {ethik@tu-chemnitz.de (E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet, bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Hinweise zum Datenschutz</a>)}
           EUB   {ethikkommission@uni-bielefeld.de}
           JGU   {ethikkommission-psychologie@uni-mainz.de}

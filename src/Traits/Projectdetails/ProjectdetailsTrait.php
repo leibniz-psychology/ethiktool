@@ -238,6 +238,7 @@ trait ProjectdetailsTrait
     protected const dataOnlineTypes = ['projectdetails.pages.dataPrivacy.dataOnline.types.ipTechnical' => 'ipTechnical', 'projectdetails.pages.dataPrivacy.dataOnline.types.ipResearch' => 'ipResearch', 'projectdetails.pages.dataPrivacy.dataOnline.types.ipNo' => 'ipNo'];
     protected const dataOnlineTechnical = 'ipTechnical'; // must equal one value in $dataOnlineTypes
     protected const dataOnlineResearch = 'ipResearch'; // must equal one value in $dataOnlineTypes
+    protected const dataOnlinePersonal = ['ipTechnical','ipResearch']; // must equal the values of the preceding variables
     protected const dataOnlineProcessingNode = 'dataOnlineProcessing';
     protected const dataOnlineProcessingTypes = ['projectdetails.pages.dataPrivacy.dataOnlineProcessing.types.separate' => 'separate', 'projectdetails.pages.dataPrivacy.dataOnlineProcessing.types.linked' => 'linked', 'projectdetails.pages.dataPrivacy.dataOnlineProcessing.types.research' => 'research'];
     protected const dataOnlineProcessingLinked = 'linked'; // must equal one value in $dataOnlineProcessingTypes

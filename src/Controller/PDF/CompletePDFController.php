@@ -28,9 +28,9 @@ class CompletePDFController extends PDFAbstract
             'messages' => $completeArray[self::descriptionNode],
             self::bias => $completeArray[self::bias],
             'toolVersion' => self::toolVersion]));
-        $this->forward('App\Controller\PDF\ApplicationController::createPDF');
 
         if (self::$savePDF) {
+            $this->forward('App\Controller\PDF\ApplicationController::createPDF');
             $this->generatePDF($session,$completePDF,'complete');
             self::$pdf->removeTemporaryFiles();
             return new Response();

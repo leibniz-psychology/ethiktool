@@ -6,10 +6,7 @@
     {% set textPreview = not savePDF ? 'previewSmall' %}
     {% set justify = 'textJustify '~textPreview %}
     <div>
-        {% if not savePDF %}
-            {{ pdfMacros.addLine() }}
-        {% endif %}
-            {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
+        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
         <div class="noPageBreak {% if not isSeparate %} pdfMargin {% endif %}">  {# avoid page break between heading and first paragraph #}
             <div>{{ pdfMacros.addHeading(consentHeading,savePDF) }}</div>
             <div class="{{ justify }}">{{ consent[0]|raw|nl2br }}</div>
@@ -45,5 +42,8 @@
             {% endif %}
             <b class="{{ textPreview }}" style="display: flex; justify-content: center; margin-top: 50px">{{ 'consent.end'|trans }}</b>
         </div>
+        {% if not savePDF %}
+            {{ pdfMacros.addLine() }}
+        {% endif %}
     </div>
 {% endblock %}

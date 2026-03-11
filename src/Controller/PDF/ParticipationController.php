@@ -45,7 +45,6 @@ class ParticipationController extends PDFAbstract
         $multipleStudies = count($studyArray)>1; // true if multiple studies exist
         $levelNames = ['study' => ['isMultiple' => $multipleStudies]];
         $numStudiesParam = ['numStudies' => count($this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode])), 'curDate' => $this->getCurrentDate()->format($this->translateString('dateFormat',['noTime' => 'true']))];
-        $shortServiceParam = ['isService' => $this->getStringFromBool($isShortService)];
         // get indices of variants for which documents should be created
         // keys: studies, values: array. In this array: keys: group IDs, value: array of measure time points IDs.
         // Example: [1 ->
@@ -298,6 +297,7 @@ class ParticipationController extends PDFAbstract
                     $isSeparateLater = false; // gets true if data privacy create is 'separate later'
                     $isInformation = in_array($information,self::prePostArray);
                     $noInformationPrefix = $participationPrefix.'noInformation.';
+                    $isMissingInformation = false; // gets true if either pre or post information was not answered yet
                     if ($hasDocs && $isInformation) {
                         // contributors
                         $pageArray = $measureTimePoint[self::contributorNode];
@@ -486,6 +486,7 @@ class ParticipationController extends PDFAbstract
                         $isDataResearch = array_key_exists(self::dataResearchNode,$privacyArray); // research data is/may be personal or a personal marking is used
                         $hasDataResearch = $dataResearch!==''; // true if at least one data type is selected
                         $isDataSpecial = $isDataResearch && $hasDataResearch && array_intersect(array_keys($dataResearch),self::dataSpecialTypes)!==[]; // true if any data special is collected for research
+                        $dataOnlineArray = $privacyArray[self::dataOnlineNode] ?? [];
                         $isMarkingName = false; // gets true is any marking is by name
                         $isMarkingPersonal = false; // gets true if any marking is or may be personal
                         $isMarkingOther = false; // gets true if 'other' marking is selected
@@ -499,7 +500,7 @@ class ParticipationController extends PDFAbstract
                         $processingPrefix = $privacyPrefix.'processing.';
                         $dataResearchPrefix = $processingPrefix.self::dataResearchNode.'.';
                         $privacyPrefixTool = $projectdetailsPrefix.self::privacyNode.'.';
-                        $isPersonal = false; // gets true if personal data is collected. Also true if processing is checked later. False if research data are personal, but marking is other.
+                        $isPersonal = false; // gets true if personal data is collected. Also true if processing is checked later. Also true if ip-addresses are collected. False if research data are personal, but marking is other.
                         $createOther = ''; // list of reasons why the tool can not create the document
                         $createOtherPrefix = $customPrefix.'createOther.';
                         if ($privacyCreate===self::createTool && $createArray[self::descriptionNode]==='1') {
@@ -553,7 +554,7 @@ class ParticipationController extends PDFAbstract
                         }
                         $translationParams['createOther'] = "\n".$createOther."\n";
                         $hasCustomPDF[self::privacyNode] = $customPrivacy;
-                        $isPersonal = $isPersonal || $isSeparate || $isToolPersonal; // true if personal data is collected. Also true if processing is checked later. False if research data are personal, but marking is other.
+                        $isPersonal = $isPersonal || $isSeparate || $isToolPersonal || in_array($dataOnlineArray[self::chosen] ?? '',self::dataOnlinePersonal); // true if personal data is collected. Also true if processing is checked later. Also true if ip-addresses are collected False if research data are personal, but marking is other.
                         $translationParams[self::isPersonal] = $this->getStringFromBool($isPersonal);
                         // other sources
                         $otherSourcesArray = $measuresArray[self::otherSourcesNode];
@@ -810,7 +811,7 @@ class ParticipationController extends PDFAbstract
                             $accessPrefix = $transferPrefix.self::accessNode.'.';
                             $accessStart = $accessPrefix.'start';
                             $purposeStart = $this->translateStringPDF($processingPrefix.'purposeStart'); // 'For' translated
-                            $isDataOnlineProcessingResearch = ($privacyArray[self::dataOnlineNode][self::descriptionNode] ?? '')===self::dataOnlineProcessingResearch;
+                            $isDataOnlineProcessingResearch = ($dataOnlineArray[self::descriptionNode] ?? '')===self::dataOnlineProcessingResearch;
                             $anyOrderProcessingKnown = [false,false]; // gets true if any order processing is known (0) or not known (1)
                             $purposesKnownTrans = [[],[]]; // translated purposes for which order processing is known (0) or not known (1)
                             $allPurposesTranslated = [];
@@ -1091,17 +1092,18 @@ class ParticipationController extends PDFAbstract
                              self::isPersonal => $this->getStringFromBool($isPersonal || $isMarkingOtherPersonal),
                              'privacyParameters' => $privacyParameters]);
                     } else { // no documents are created
-                        $noDocStart = $this->translateStringPDF($noInformationPrefix.'start',array_merge($parameters,$shortServiceParam));
+                        $isMissingInformation = $hasDocs && in_array($information,['','noPre']); // no pre or no post information is selected
+                        $noDocStart = $this->translateStringPDF($noInformationPrefix.'start',array_merge($parameters,['isService' => $this->getStringFromBool($isShortService && !$isMissingInformation)]));
+                        $tempParams = array_merge($parameters,$savePDFstringParam);
+                        $noInformationSentence = $this->translateStringPDF($noInformationPrefix.($isMissingInformation ? 'informationMissing' : self::informationNode),$tempParams);
                         if (!$isShortService) {
-                            $tempParams = array_merge($parameters,$savePDFstringParam);
-                            $noInformationSentence = $this->translateStringPDF($noInformationPrefix.self::informationNode,$tempParams);
                             $noDocStart .= ' '.($hasDocs ? $noInformationSentence : $this->translateStringPDF($noInformationPrefix.(!$isShortChoose
                                         ? ($isBegun
                                             ? self::projectStart
                                             : ($isRequested ? self::funding : self::reviewProcessShort))
                                         : self::reviewProcessShort),array_merge($tempParams,['informationSentence' => $noInformationSentence])));
-                            $noDocStart .= $this->translateStringPDF($noInformationPrefix.'end');
                         }
+                        $noDocStart .= ($isShortService && $isInformation ? ' '.$noInformationSentence : '').$this->translateStringPDF($noInformationPrefix.'end',['isInformation' => $this->getStringFromBool(!$isMissingInformation)]);
                         $noDocStart .= "\n\n";
                         // add compensation by termination
                         if ($isCompensationTerminate) {
@@ -1137,11 +1139,13 @@ class ParticipationController extends PDFAbstract
                                 $curHtml .= $this->renderView(self::intermediateDocument,array_merge($parameters,[self::content => $this->translateStringPDF($consentPrefix.'noConsent',array_merge($translationParams,$noConsentParams,$isFullParam))]));
                             }
                             // data privacy
-                            if ($isToolPersonal) {
-                                self::$linkedPage = self::privacyNode;
-                                $curHtml .= $this->renderView('PDF/_dataPrivacy.html.twig',$parameters);
-                            } elseif ($personal==='anonymous' || $isSeparateLater) {
-                                $curHtml .= $this->renderView(self::intermediateDocument,array_merge($parameters,[self::content => $this->translateStringPDF($customPrefix.self::privacyNode,$translationParams)]));
+                            if (!$isMissingInformation) {
+                                if ($isToolPersonal) {
+                                    self::$linkedPage = self::privacyNode;
+                                    $curHtml .= $this->renderView('PDF/_dataPrivacy.html.twig',$parameters);
+                                } elseif ($personal==='anonymous' || $isSeparateLater) {
+                                    $curHtml .= $this->renderView(self::intermediateDocument,array_merge($parameters,[self::content => $this->translateStringPDF($customPrefix.self::privacyNode,$translationParams)]));
+                                }
                             }
                             // complete post information
                             if ($isPre && $this->getInformationIII($informationArray)) { // partial or deceit with post information

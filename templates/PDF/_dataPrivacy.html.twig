@@ -3,9 +3,6 @@
 {% trans_default_domain 'pdf' %}
 {% set textPreview, style = not savePDF ? 'previewSmall', 'text-align: justify; line-height: 1.5;' %}
 {% block pdfBody %}
-    {% if not savePDF %}
-        {{ pdfMacros.addLine() }}
-    {% endif %}
     <div>
         {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
         <div class="noPageBreak"> {# avoid page break between heading and first paragraph #}
@@ -36,6 +33,9 @@
             <div class="{{ textPreview }}" style="{{ style }}">{{ content|raw|nl2br }}</div>
         {% endfor %}
     </div>
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
+    {% endif %}
 {% endblock %}
 
 {% macro addParagraphHeading(textPreview,paragraph,text,savePDF) %}

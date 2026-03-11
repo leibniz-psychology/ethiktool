@@ -95,7 +95,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     measureTimePoint: 'Zeitpunkt '
     measureTimePointAll: 'alle Zeitpunkte'
     overview: 'Übersicht über die Studien, Gruppen und Zeitpunkte'
-    examinedPeople: 'Welche Personen sollen untersucht werden?'
+    examinedPeople: 'Welche Personen sollen teilnehmen?'
     examinedPeopleSub: 'Beschreibung der Personengruppen:'
     closed: 'Findet die Erhebung in einer geschlossenen Gruppe statt?'
     sampleSize: 'Wie viele Personen der ausgewählten Gruppe sollen in diesen Zeitpunkt der Studie eingeschlossen werden?'
@@ -341,9 +341,9 @@ projectdetails:
                                                                         verified   {Sie ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.}
                                                                         unverified {Sie ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.}
                                                                         other      {}} Sie findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}
-        anonymous     {Gemäß der {savePDF, select,
-                                    true  {Angaben im Ethiktool}
-                                    other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
+        anonymous     {In der Studie werden - {savePDF, select,
+                                    true  {nach Einschätzung der zuständigen Datenschutzstelle}
+                                    other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">nach Einschätzung der zuständigen Datenschutzstelle</a>}} - nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
         separateLater {Gemäß der {savePDF, select,
                                     true  {Angaben im Ethiktool}
                                     other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} erfolgt die detaillierte Klärung der Datenverarbeitung einem späteren Zeitpunkt. Daher wurde vom Ethiktool keine Datenschutzerklärung {levelNamesString} erstellt.}
@@ -539,6 +539,10 @@ participation:
                                                                                         children {Erziehungsberechtigen}
                                                                                         wards    {gesetzlichen Vertretungspersonen}
                                                                                         other    {Teilnehmenden}} erstellt, weil}}
+    informationMissing: >-
+      noch Angaben zur {savePDF, select,
+                          true  {Aufklärung}
+                          other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Aufklärung</a>}} fehlen
     information: >- # also used for {informationSentence} in the following 'funding' and 'projectStart' keys
       die {addressee, select,
             children {Erziehungsberechtigen}
@@ -576,7 +580,10 @@ participation:
                 noPost {}
                 other  { und daher die Teilnahmedokumente schon existieren}}
     short: 'bei {committeeDat} für die Begutachtung von Kurzanträgen keine Vorlage von Teilnahmedokumenten vorgesehen ist'
-    end: ". Aus diesem Grund wurde auch keine Datenschutzerklärung erstellt. Folgende Informationen, die sonst in die Teilnahmedokumente übernommen worden wären, sind für die Begutachtung zu berücksichtigen:"
+    end: >-
+      . Aus diesem Grund wurde auch keine Datenschutzerklärung erstellt. {isInformation, select,
+              true  {Folgende Informationen, die sonst in die Teilnahmedokumente übernommen worden wären, sind für die Begutachtung zu berücksichtigen:}
+              other {}}
   projectTitle:
   title: >-
     {information, select,
@@ -594,7 +601,7 @@ participation:
   location: 'Ort'
   locationContent:
     start: >-
-      Die Untersuchung {information, select,
+      Die Studie {information, select,
                           post  {fand}
                           other {findet}} {location, select,
                                             intern {in Räumlichkeiten {committeeLocationGen} statt, und zwar }
@@ -610,7 +617,7 @@ participation:
                         true  {{measureTimeDays, plural,
                                   =0    {der heutigen}
                                   other {dieser}}}
-                        other {der}} Untersuchung beträgt erfahrungsgemäß etwa {total}{breaksMinutes, plural,
+                        other {der}} Teilnahme beträgt erfahrungsgemäß etwa {total}{breaksMinutes, plural,
                                                                                       =0    {.}
                                                                                       =1    {, davon {measureTime} reine Erhebungszeit und 1 Minute Vor- und Nachbereitungszeit sowie Pausenzeiten.}
                                                                                       other {, davon {measureTime} reine Erhebungszeit und # Minuten Vor- und Nachbereitungszeit sowie Pausenzeiten.}}
@@ -695,7 +702,7 @@ participation:
         {addressee, select,
           children {Der Code Ihres Kindes}
           wards    {Der Code der von Ihnen betreuten Person}
-          other    {Ihr Code}} (siehe unten).
+          other    {Ihr Code}}.
       name: >-
         {addressee, select,
           children {Der Name Ihres Kindes}
@@ -709,7 +716,7 @@ participation:
                                     true  {{isMoney, select,
                                               true  {bzw. die}
                                               other {Die}} genaue Anzahl bescheinigter Stunden}
-                                    other {}} richtet sich nach der tatsächlichen Dauer der Untersuchung.}
+                                    other {}} richtet sich nach der tatsächlichen Dauer der Teilnahme.}
               other {}}
     terminate: >-
       {terminateCons, select,
@@ -726,7 +733,7 @@ participation:
                                                                                                         true  {außerdem}
                                                                                                         other {jedoch}}}} {isDuration, select,
                                                           true  {keine Aufwandsentschädigung. Dies begründet sich wie folgt: }
-                                                          other {aufgrund der kurzen Dauer der Untersuchung keine Aufwandsentschädigung.}}}
+                                                          other {aufgrund der kurzen Dauer der Teilnahme keine Aufwandsentschädigung.}}}
                                                       other    {}}
   proCon:
     pro: 'Vorteile/Nutzen'
@@ -758,19 +765,19 @@ participation:
                                                               false {nicht}
                                                               other {}} freiwillig. {attendance, select,
                                                                                       true  {Sie und Ihr Kind können}
-                                                                                      other {Ihr Kind kann}} die Untersuchung {isVoluntary, select,
+                                                                                      other {Ihr Kind kann}} die Teilnahme {isVoluntary, select,
                                       false {allerdings}
                                       other {}} jederzeit ohne Angabe von Gründen und ohne, dass daraus ein Nachteil entsteht, abbrechen.}
                   wards    {Die Teilnahme der von Ihnen betreuten Person ist {isVoluntary, select,
                                                                                 false {nicht}
                                                                                 other {}} freiwillig. {attendance, select,
                                                                                                         true  {Sie und die von Ihnen betreute Person können}
-                                                                                                        other {Sie kann}} die Untersuchung {isVoluntary, select,
+                                                                                                        other {Sie kann}} die Teilnahme {isVoluntary, select,
                                       false {allerdings}
                                       other {}} jederzeit ohne Angabe von Gründen und ohne, dass daraus ein Nachteil entsteht, abbrechen.}
                   other    {Ihre Teilnahme ist {isVoluntary, select,
                                                   false {nicht}
-                                                  other {}} freiwillig. Sie können die Untersuchung {isVoluntary, select,
+                                                  other {}} freiwillig. Sie können die Teilnahme {isVoluntary, select,
                                       false {allerdings}
                                       other {}} jederzeit ohne Angabe von Gründen und ohne, dass ein Nachteil für Sie entsteht, abbrechen.}}}
         other {{addressee, select,
@@ -778,19 +785,19 @@ participation:
                                                               false {nicht}
                                                               other {}} freiwillig. {attendance, select,
                                                                                       true  {Sie und Ihr Kind können}
-                                                                                      other {Ihr Kind kann}} die Untersuchung {isVoluntary, select,
+                                                                                      other {Ihr Kind kann}} die Teilnahme {isVoluntary, select,
                                               false {auch}
                                               other {allerdings}} nicht nachteilsfrei abbrechen, wenn sie einmal begonnen hat.}
                   wards    {Die Teilnahme der von Ihnen betreuten Person ist {isVoluntary, select,
                                                                                 false {nicht}
                                                                                 other {}} freiwillig. {attendance, select,
                                                                                                         true  {Sie und die von Ihnen betreute Person können}
-                                                                                                        other {Sie kann}} die Untersuchung {isVoluntary, select,
+                                                                                                        other {Sie kann}} die Teilnahme {isVoluntary, select,
                                               false {auch}
                                               other {allerdings}} nicht nachteilsfrei abbrechen, wenn sie einmal begonnen hat.}
                   other    {Ihre Teilnahme ist {isVoluntary, select,
                                                   false {nicht}
-                                                  other {}} freiwillig. Sie können die Untersuchung {isVoluntary, select,
+                                                  other {}} freiwillig. Sie können die Teilnahme {isVoluntary, select,
                                               false {auch}
                                               other {allerdings}} nicht nachteilsfrei abbrechen, wenn Sie einmal begonnen haben.}} {description}}}
     # added empty lines to have same line numbers in all translation files.
@@ -1338,7 +1345,7 @@ consent:
                                                                                         other    {meiner Daten}}}}}} ein. {addressee, select,
             children {Hiermit erkläre ich, die Einwilligung im Namen aller Erziehungsberechtigten abzugeben.}
             other    {}}
-  finding: 'Sollten sich in der Untersuchung Hinweise auf ein ungewöhnliches Untersuchungsergebnis ergeben, bin ich damit einverstanden, dass mir diese mitgeteilt werden, so dass ich diese ggf. weiter abklären lassen kann. Ich wurde darüber aufgeklärt, dass die Kenntnis von einem Krankheitsbild dazu führen kann, dass daraus resultierende Schäden nicht mehr versichert werden können.'
+  finding: 'Sollten sich Hinweise auf ein ungewöhnliches Untersuchungsergebnis ergeben, bin ich damit einverstanden, dass mir diese mitgeteilt werden, so dass ich diese ggf. weiter abklären lassen kann. Ich wurde darüber aufgeklärt, dass die Kenntnis von einem Krankheitsbild dazu führen kann, dass daraus resultierende Schäden nicht mehr versichert werden können.'
   personalKeepConsent: 'Ich bin mit der Aufbewahrung und Verwendung der personenbezogenen Forschungsdaten {type} einverstanden.'
   digital: 'Hinweis: Die Einwilligung erfolgt über das Anklicken eines entsprechenden Buttons.'
   oral: 'Hinweis: Die Einwilligung wird von einer projektbeteiligten Person dokumentiert.'

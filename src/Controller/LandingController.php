@@ -59,13 +59,24 @@ class LandingController extends ControllerAbstract
                 $isRemove = str_contains($submitDummy, self::remove);
                 $isCopy = str_contains($submitDummy, 'copyClicked');
                 if (str_contains($submitDummy, 'newClicked') || $isCopy) { // new study, group, or measure point in time should be created
+                    $newIndices = [0,0,0]; // indices of empty measure time point that will be created
                     $addNode = $projectdetailsNode; // node where the new one gets appended
+                    $addNodeArray = $this->addZeroIndex($this->xmlToArray($projectdetailsNode->{self::studyNode}));
+                    $newIndices[0] = count($addNodeArray);
                     $nodeName = self::studyNode;
                     if (str_contains($submitDummy, self::studyID)) { // new group oder measure point in time
-                        $addNode = $addNode->{self::studyNode}[$IDs[0]];
+                        $studyID = $IDs[0];
+                        $newIndices[0] = $studyID;
+                        $addNodeArray = $this->addZeroIndex($addNodeArray[$studyID][self::groupNode]);
+                        $newIndices[1] = count($addNodeArray);
+                        $addNode = $addNode->{self::studyNode}[$studyID];
                         $nodeName = self::groupNode;
                         if (str_contains($submitDummy, self::groupID)) { // new measure point in time
-                            $addNode = $addNode->{self::groupNode}[$IDs[1]];
+                            $groupID = $IDs[1];
+                            $newIndices[1] = $groupID;
+                            $addNodeArray = $this->addZeroIndex($addNodeArray[$groupID][self::measureTimePointNode]);
+                            $newIndices[2] = count($addNodeArray);
+                            $addNode = $addNode->{self::groupNode}[$groupID];
                             $nodeName = self::measureTimePointNode;
                         }
                     }
@@ -81,6 +92,7 @@ class LandingController extends ControllerAbstract
                     }
                     if ($addMeasurement) {
                         $this->addMeasurement($addNode, $nodeName, $newName, $isCopy ? $data[self::copy] : null); // if 'new' is clicked, but an existing is selected, 'copy' is not null
+                        $this->updateNodesByReviewProcess($request,$projectdetailsNode->{self::studyNode}[$newIndices[0]]->{self::groupNode}[$newIndices[1]]->{self::measureTimePointNode}[$newIndices[2]],$this->getCurrentReviewProcess($this->xmlToArray($appNode)));
                     }
                 } elseif ($isRemove || str_contains($submitDummy, self::edit)) { // study, group, or measure point in time should be removed or study or group name should be changed
                     // logic: $submitDummy has the form 'key:value\r\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\r\n' (substr call). Then split the string by the colon such that the first element is 'remove' and the second element starts with 'index\r\n' (first explode call). Then, split again by "\r" such that the first element contains the index (second explode call). Finally, convert it to an integer ((int) call). Same for 'edit'.

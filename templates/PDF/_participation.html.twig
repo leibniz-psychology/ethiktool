@@ -31,6 +31,12 @@
             {% endfor %}
         </div>
         {{ _self.addParagraphs(content,textPreview) }}
+    {% elseif information in ['','noPre'] %}
+        {{ pdfMacros.addHeading('participation.noInformation.title'|trans,savePDF,false) }}
+        <div class="{{ textPreview }}">{{ noDocStart|raw|nl2br }}</div>
+    {% endif %}
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
     {% endif %}
 {% endblock %}
 

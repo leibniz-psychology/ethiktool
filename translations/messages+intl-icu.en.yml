@@ -865,7 +865,7 @@ projectdetails:
           yes: 'yes'
           no: 'no'
           notApplicable: 'not applicable: The {addressee} are not informed in advance that {participant} are participating in a study.'
-        textHintYes: 'Please explain how voluntary participation in the study is ensured. For example, in case of data collection in a closed group, explain how individual group members can unobtrusively refrain from participating. In case of recruitment of individuals in a dependent relationship to project contributors, explain which specific measures you are taking to maintain voluntariness.'
+        textHintYes: 'Please explain how voluntary participation in the study is ensured. For example, in case of data collection in a closed group, explain how individual group members can unobtrusively agree or refrain to participate. In case of recruitment of individuals in a dependent relationship to project contributors, explain which specific measures you are taking to maintain voluntariness (e.g., carrying out the study in absence of teachers or examiners; anonymous data collection; explicit confirmation that participation or abstention does not affect exam results or other study-related aspects such as placements).'
         textHint: 'Please describe and justify how and why voluntariness is not guaranteed.'
       consent:
         title: >- # other is pre (first select) respectively post (third select). Participants is children or wards in second select.
@@ -1020,7 +1020,7 @@ projectdetails:
         title: >-
           Duration of {multiple, select,
                   true  {this data collection time point}
-                  other {the data collection}}
+                  other {the data collection}} per person
         measureTime:
           title: '(Net) time allocated for data collection'
           measureTimeDays: 'Days:'
@@ -2376,7 +2376,7 @@ checkDoc:
           support: >-
             If{isVerified, select,
                 true  { the data privacy statement has been checked and approved by the responsible data protection authorities}
-                other {, according to the judgment of the responsible data protection authorities, the study includes only anonymous data}}, the < class="linkInternal"a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">data protection officer or Data Protection and Information Security Coordinator (DISK)</a> must be have been consulted.
+                other {, according to the judgment of the responsible data protection authorities, the study includes only anonymous data}}, the <a class="linkInternal"a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">data protection officer or Data Protection and Information Security Coordinator (DISK)</a> must be have been consulted.
         verification: 'Information about approval of data privacy statement by the responsible data protection authorities' # '[] is missing.'
         confirmIntro: 'Confirmation of notice on data protection' # '[] is missing.'
         responsibility:
@@ -2630,7 +2630,7 @@ completeForm:
                   <li>Please check all contents of the complete proposal (PDF) carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>
                   <li>Do <b>not</b> modify the PDF file of the complete proposal nor the XML file with any other software.</li>}
             other {<li>Please check all contents of the complete proposal carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>}}
-          <li>If all entries in the complete proposal are correct, please send the PDF file with the corresponding XML file to {committeeAcc} at {committeeType, select,
+          <li>If all entries are correct, please send the PDF file of the complete proposal with the corresponding XML file to {committeeAcc} at {committeeType, select,
           TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
           EUB   {ethikkommission@uni-bielefeld.de}
           JGU   {ethikkommission-psychologie@uni-mainz.de}

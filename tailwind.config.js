@@ -74,9 +74,6 @@ module.exports = {
       screens: {
         xl: "1440px",
       },
-      backgroundImage: {
-        "header-cyan": "url('/public/images/header_cyan.jpg')",
-      },
     },
   },
   plugins: [require("tailwind-scrollbar")],

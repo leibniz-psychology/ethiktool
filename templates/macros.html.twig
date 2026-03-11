@@ -362,8 +362,7 @@
         firstPage:  if isComplete is true, the content of the first page of the complete proposal
     #}
     {% set tabs, renderParams, previewTab = (isComplete ? ['CompletePDF'] : [])|merge(['Application','Participation']), {'request': app.request}|merge(ids is not same as {} ? {'routeIDs': ids} : {})|merge(isComplete ? {'additional': firstPage} : {}), app.session.get('previewTab') %}
-    <div class="flex sticky top-0 previewTabs" style="font-size: 0.9cqw; flex-wrap: nowrap">
-        {# calc(0.8vw + 0.8vh - 0.8vmin) #}
+    <div class="flex sticky top-0 previewTabs" style="font-size: clamp(0.65rem, 0.85cqw, 1rem); flex-wrap: nowrap">
         {% for preview in tabs %}
             {% set id = 'tab'~preview %}
             <button type="button" id="{{ id }}" {% if id is same as previewTab %} class="activeTab" {% endif %} {{ stimulus_target('base','previewTab')|stimulus_action('base','setPreviewTabs','click') }}>{{ ('preview.'~id)|trans }}</button>

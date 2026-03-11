@@ -342,8 +342,8 @@ projectdetails:
                                                                       unverified {It has not yet been approved by the responsible data protection authorities.}
                                                                       other      {}} It can be found on the following page(s) (if applicable, including the consent form).}
         anonymous     {According to the {savePDF, select,
-                                          true {selections made in the Ethiktool}
-                                          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
+                                          true {judgment of the responsible data protection authorities}
+                                          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">judgment of the responsible data protection authorities</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
         separateLater {According to the {savePDF, select,
                                             true {selections made in the Ethiktool}
                                             other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the data processing aspects will be sorted out in detail at a later point in time. Therefore, the Ethiktool did not generate a data privacy statement{levelNamesString}.}
@@ -539,6 +539,10 @@ participation:
                                                                                                       children {legal guardians}
                                                                                                       wards    {legal guardians}
                                                                                                       other    {participants}} because}}
+    informationMissing: >-
+      entries on {savePDF, select,
+                    true  {participant information}
+                    other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">participant information</a>}} are missing
     information: >- # also used for {informationSentence} in the following 'funding' and 'projectStart' keys
       the {addressee, select,
             children {legal guardians}
@@ -576,7 +580,10 @@ participation:
                 noPost {}
                 other  {, and thus the participant documents already exist}}
     short: '{committeeDat} does not include participant documents in their review of short proposals'
-    end: ". For the same reason, no data privacy statement was generated. The following information, which otherwise would have been transferred to the participant documents, needs to be taken into account for review:"
+    end: >-
+      . For the same reason, no data privacy statement was generated. {isInformation, select,
+              true  {The following information, which otherwise would have been transferred to the participant documents, needs to be taken into account for review:}
+              other {}}
   projectTitle:
   title: >-
     {information, select,
@@ -695,7 +702,7 @@ participation:
         {addressee, select,
           children {your child's code}
           wards    {the code of the individual under your supervision}
-          other    {your code}} (see below).
+          other    {your code}}.
       name: >-
         {addressee, select,
           children {your child's name}

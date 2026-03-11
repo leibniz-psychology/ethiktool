@@ -1396,7 +1396,8 @@ abstract class ControllerAbstract extends AbstractController
                                 $isMarkingOther = $marking===self::markingOther; // marking can not be created by the tool
                                 $answer = $create===self::createSeparate || // personal data are collected, but document should not be created by the tool
                                           $isTool && (!$isMarkingOther && $responsibility!==self::privacyNotApplicable || // if responsibility does not equal 'not applicable', personal data are collected
-                                          in_array($dataPrivacyArray[self::dataPersonalNode] ?? '',self::dataPersonal)) // research data are personal
+                                          in_array($dataPrivacyArray[self::dataPersonalNode] ?? '',self::dataPersonal)) || // research data are personal
+                                          in_array($dataPrivacyArray[self::dataOnlineNode][self::chosen] ?? '',self::dataOnlinePersonal) // ip-addresses are collected
                                          ? self::answerYes
                                          : (in_array($create,[self::createSeparateLater,self::privacyNotApplicable]) || // data privacy is checked later or no information is given
                                             $isTool && $isMarkingOther // marking can not be created by the tool
@@ -1747,10 +1748,11 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'5';
+        $isSmallerCurrent = $isMajor1 || $isMajor2 && ($minor<'5' || $minor==='5' && $patch<'1');
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
+        $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2051,7 +2053,7 @@ abstract class ControllerAbstract extends AbstractController
                             $durationNode->{self::durationBreaks} = $breaks;
                         }
                         // update for version before 2.5.0
-                        if ($this->checkElement(self::burdensRisksCompensationNode,$burdensNode)) { // any burden except 'no burden' is selected -> add burdens everyday node
+                        if ($isSmaller250 && $this->checkElement(self::burdensRisksCompensationNode,$burdensNode)) { // any burden except 'no burden' is selected -> add burdens everyday node
                             $this->insertElementBefore(self::burdensEveryday,$burdensNode->{self::burdensRisksCompensationNode});
                             $burdensNode->{self::burdensEveryday} = '0'; // as the everyday part was part of the burdens questions before, set the answer to 'yes'
                         }
