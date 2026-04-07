@@ -41,7 +41,7 @@ class DataPrivacyController extends ControllerAbstract
             $tempPrefix = $translationPrefix.'hints.';
             $tempArray = [];
             $addresseeTypeParam = [self::addressee => $this->getAddresseeFromRequest($request)];
-            foreach ([self::markingExternal, self::markingInternal, self::markingNo] as $type) { // external
+            foreach ([self::markingConsecutive, self::markingExternal, self::markingInternal, self::markingNo] as $type) { // external
                 $tempArray[$type] = $this->translateString($tempPrefix.$type, $addresseeTypeParam);
             }
             $iconArray = [self::markingNode => $tempArray, self::markingExternal => ['generation' => $translationPrefix.self::markingExternal.'.hints.generation']]; // one element for marking question, one sub-array for external sub-question, one sub-array for internal

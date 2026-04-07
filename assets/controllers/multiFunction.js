@@ -74,6 +74,17 @@ export function addExpandableListener(elements) {
     }
 }
 
+/** Adds the listener that prevents submitting the form if enter is pressed.
+ * @param element element where the listener is added
+ */
+export function addInputListener(element) {
+    element.addEventListener('keydown', event => {
+        if (event.key==='Enter') {
+            event.preventDefault();
+        }
+    })
+}
+
 /** Checks if text has more than 300 characters. If so and between 300 and 400 characters, the last 100 characters are hidden and the remaining are visible. If more than 400 characters, the first 300 are visible and the remaining are hidden. the last third of the text is hidden and can be toggled by clicking on a symbol. Must pass either an element, an event, or a string. If a string is passed, it must be the ID of an element. The entire text must be either in the first child or in the optional second parameter 'text'. Depending on the length of the text, two further children are added (if not already) and the text is split. If the text is shorter than or equal to 300 characters, the additional two children are removed (if still there). If an event is passed, the parent element must have three children. The second child contains the symbol and the last child the remaining text. The visibility and look of the symbol are then toggled.
  * @param element either an element, an event, or a string
  * @param text text that may be split

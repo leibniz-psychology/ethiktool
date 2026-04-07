@@ -17,7 +17,9 @@ export default class extends Controller {
         infosNames: Array,
         institutionLabel: Array, // 0: applicant/supervisor, 1: remaining contributors
         phoneLabel: Array, // 0: mandatory, 1: optional
-        tasksNames: Array}
+        tasksNames: Array,
+        tasksHints: Array // 0: no position selected, 1: position selected
+    }
 
     connect() {
         this.modalType = ''; // add, edit, or remove -> used for setting the value of the modal submit button which is used for identifying the type in the php-controller
@@ -135,7 +137,9 @@ export default class extends Controller {
         }
         this.taskOtherDescriptionTarget.disabled = disabled;
         setElementVisibility(this.taskOtherDescriptionTarget,this.taskOtherTarget.checked,1)
-        setElementVisibility(this.taskHintTarget,disabled,1);
+        this.taskHintTarget.innerHTML = this.tasksHintsValue[disabled ? 0 : 1];
+        this.taskHintTarget.style.fontStyle = disabled ? 'italic' : 'normal';
+        this.taskHintTarget.style.fontWeight = disabled ? 'normal' : 'bold';
         setElementVisibility(this.professorshipIconTarget,isStudent || position==='phd',1);
         setElementVisibility(this.positionOtherTarget,position===this.positionOtherValue,1);
         this.setSubmitButton();

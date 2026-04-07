@@ -3,7 +3,7 @@ import {getSelected, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['privacyQuestions','responsibilityHint','transferOutsideHint','privacyQuestionsMarking','listDiv','dataPersonal','dataOnlineProcessingDiv','dataResearchDiv','dataResearchHint','laterEnd','anonymization','anonymizationNo','storage','dataPersonalAccess','purposeResearch','purposeNo','purposeCompensation','purposeTechnical','relatable','relatableDiv','purposeFurther','purposeNoFurther','contactResultFurther','technicalFurther','compensationCode','compensationExternal','compensationpattern','compensationcontributors','orderProcessingDescription','processingFurther','noDocumentHint']
+    static targets = ['privacyQuestions','createSeparate','responsibilityHint','transferOutsideHint','addOwnDiv','addOwnYes','verification','privacyQuestionsMarking','listDiv','dataPersonal','dataOnlineProcessingDiv','dataResearchDiv','dataResearchHint','laterEnd','anonymization','anonymizationNo','storage','dataPersonalAccess','purposeResearch','purposeNo','purposeCompensation','purposeTechnical','relatable','relatableDiv','purposeFurther','purposeNoFurther','contactResultFurther','technicalFurther','compensationCode','compensationExternal','compensationpattern','compensationcontributors','orderProcessingDescription','processingFurther','noDocumentHint']
 
     static values = {
         responsibility: String,
@@ -40,12 +40,12 @@ export default class extends Controller {
     connect() {
         this.responsibilityValues = ['onlyOther','multiple','private'];
         this.personalValues = ['personal','personalMaybe'];
+        this.consecutiveString = 'consecutive';
         this.externalString = 'external';
         this.internalString = 'internal';
-        this.externalIntervalValues = [this.externalString,this.internalString];
         this.nameString = 'name';
         this.markingOtherString = 'other';
-        this.markingValues = [this.externalString,this.internalString,this.nameString];
+        this.markingValues = [this.consecutiveString,this.externalString,this.internalString,this.nameString];
         this.patternString = 'pattern';
         this.ownString = 'own';
         this.contributorsString = 'contributors';
@@ -84,6 +84,8 @@ export default class extends Controller {
             this.setMarkingHints();
             // set visibility of list question
             this.setList();
+            // set visibility of addOwn and verification questions
+            this.setAddOwn();
         }
     }
 
@@ -240,6 +242,7 @@ export default class extends Controller {
         if (isResponsibility) {
             this.responsibilityHintTarget.textContent = this.responsibilityHintValue[this.responsibilityValue==='private' ? 0 : 1];
         }
+        this.setAddOwn();
         this.setPrivacyQuestions();
     }
 
@@ -276,7 +279,29 @@ export default class extends Controller {
         this.setDataResearch();
     }
 
+    /** Sets the visibility of the addOwn question. Then calls this.setVerification(). */
+    setAddOwn() {
+        if (this.hasAddOwnDivTarget) {
+            setElementVisibility(this.addOwnDivTarget,this.getAddOwn());
+            this.setVerification();
+        }
+    }
+
     // methods that are called from the template or from within this class
+
+    /** Sets the visibility of the verification question. */
+    setVerification() {
+        if (this.hasVerificationTarget) {
+            setElementVisibility(this.verificationTarget,this.createSeparateTarget.checked || this.getAddOwn() && this.addOwnYesTarget.checked);
+        }
+    }
+
+    /** Checks whether the addOwn question needs to be asked.
+     * @returns {boolean} true if the addOwn question needs to be asked, false otherwise
+     */
+    getAddOwn() { // only called from within this class
+        return this.responsibilityValues.includes(this.responsibilityValue) || this.transferOutsideValue==='yes' || this.markingValue===this.markingOtherString;
+    }
 
     /** Sets this.dataOnlineValue and the visibility of the data online processing div. Then calls this.setDataOnlineProcessing().
      * @param event widget that invoked the method
@@ -474,6 +499,7 @@ export default class extends Controller {
         let internalValues = ['anonymous','marking'];
         setElementVisibility(this.noDocumentHintTarget,this.dataPersonalValue==='personalNo' && // research data are not personal
              (this.markingValue==='no' || // no marking
+                this.markingValue===this.consecutiveString || // marking is consecutive number
                 this.markingValue===this.externalString && this.externalValue===anonymousString || // marking is external, but code and not personal
                 this.markingValue===this.internalString && (this.internalValue===this.patternString && this.patternValue===anonymousString ||
                                                             this.internalValue===this.ownString && this.ownValue===anonymousString ||
@@ -481,7 +507,8 @@ export default class extends Controller {
             (!this.getAnyMarking() || this.purposeNoTarget.checked && // no further purpose for the first marking
                 (this.markingFurtherValue==='1' || // no second marking
                  this.markingFurtherValue==='0' &&
-                    (this.markingSecondValue===this.externalString && this.externalSecondValue===anonymousString || // second marking is external, but code and not personal
+                    (this.markingSecondValue===this.consecutiveString || // second marking is consecutive number
+                     this.markingSecondValue===this.externalString && this.externalSecondValue===anonymousString || // second marking is external, but code and not personal
                      this.markingSecondValue===this.internalString && (this.internalSecondValue===this.patternString && this.patternSecondValue===anonymousString ||
                                                                        this.internalSecondValue===this.ownString && this.ownSecondValue===anonymousString ||
                                                                        this.internalSecondValue===this.contributorsString && internalValues.includes(this.contributorsSecondValue))))) && // second marking is internal and code is not personal

@@ -293,7 +293,7 @@
         addressee: if provided (i.e., not an empty string), addressee for a sentence is added that the wording should be addressed to the addressee
     #}
     {% if transfer[0] is not same as '' %}
-        <span class="pdfInfo Label-Info" style="height: fit-content; white-space: initial; width: fit-content; margin-left: 0.3rem"><span style="font-weight: 400">{{ 'multiple.inputHint'|trans({'type': transfer[0]}|merge(transfer[1] is defined ? {'infoType': transfer[1]} : {}))~(addressee is not same as '' ? ' '~'multiple.wording'|trans({'addressee': ('projectdetails.addressee.thirdParties.'~addressee)|trans})) }}</span></span>
+        <span class="pdfInfo Label-Info" style="height: fit-content; white-space: initial; width: fit-content; margin-left: 0.3rem"><span style="font-weight: 400">{{ 'multiple.inputHint'|trans({'type': transfer[0]}|merge(transfer[1] is defined ? {'infoType': transfer[1]} : {}))~(addressee is not same as '' ? ' '~'multiple.wording'|trans({'addressee': ('projectdetails.addressee.thirdParties.'~addressee)|trans, 'isBold': 'false'})) }}</span></span>
     {% endif %}
 {% endmacro %}
 
@@ -302,7 +302,7 @@
         text:   translation key for the text to be shown next to the expanded/collapsed symbol
         params: if provided, parameters for the translation
     #}
-    <div class="flex mt-4 clickable bg-mono-200 mx-4"{{ stimulus_target('base','expandable') }}>
+    <div class="flex mt-4 clickable bg-mono-200 mx-4" {{ stimulus_target('base','expandable') }}>
         <span class="dropdownCollapsed" style="height: 1.5rem"></span>
         {{ (text)|trans(params) }}
     </div>
@@ -381,5 +381,5 @@
         text: translation key for the text
         icon: name of the icon to be added
     #}
-    <span class="flex column-gap-2">{{ (text)|trans }}{{ include('images/'~icon~'.svg') }}</span>
+    <span class="flex column-gap-2 align-items-center">{{ (text)|trans }}{{ include('images/'~icon~'.svg') }}</span>
 {% endmacro %}

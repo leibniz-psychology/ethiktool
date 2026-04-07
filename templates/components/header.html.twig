@@ -1,6 +1,6 @@
 {% set logoSize, maxWidth, flexRowClasses, request = 'height: 100px; width: 100px;', 'max-width: 1600px;', 'flex flex-row', app.request %}
 {% set background, flexClasses, route = 'background: linear-gradient(to right,#240d46 0%,#2b2171 100%);', flexRowClasses~' flex-nowrap', request.attributes.get('_route') %}
-{% set headerModals, infoModal, curLocale = ['aboutUs','aboutTool','technicalHints','termsOfUse','contactModal'], 'components/infoModal.html.twig', request.getLocale() %}
+{% set headerModals, infoModal, curLocale, isNotQuit = ['aboutUs','aboutTool','technicalHints','termsOfUse','contactModal'], 'components/infoModal.html.twig', request.getLocale(), route is not same as 'app_quit' %}
 <div class="bg-white relative z-20">
     <div class="mx-auto winWidth" style="{{ maxWidth }}">
         <div class="{{ flexClasses }} justify-between" style="max-width: 1600px">
@@ -20,7 +20,7 @@
                     <span style="margin-left: 8px" class="{{ flexRowClasses }} gap-1">
                         {% for locale in appLocales %}
                             <a id="{{ locale }}" {{ stimulus_target('base','language') }} {% if locale is same as curLocale %} class="font-bold text-secondary" {% endif %}
-                               href="{{ path(route,request.get('_route_params')) }}">{{ locale|upper }}</a>
+                               href="{{ isNotQuit ? path(route,request.get('_route_params')) : '/'~locale~'/quit' }}">{{ locale|upper }}</a>
                         {% endfor %}
                     </span>
                 </div>

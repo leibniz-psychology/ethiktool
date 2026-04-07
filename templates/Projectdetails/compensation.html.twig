@@ -86,7 +86,7 @@
                     {{ formRender.addHeading(awardingPrefix~'title') }}
                     {% if transferInfo is not same as [] %}
                         <div class="MetaData-Label">
-                            {{ 'multiple.wording'|trans({'addressee': addresseeString}) }}
+                            {{ 'multiple.wording'|trans({'addressee': addresseeString, 'isBold': 'true'})|raw }}
                             {{ formRender.addPDFhint(transferInfo) }}
                         </div>
                     {% endif %}

@@ -43,7 +43,7 @@
         committeeType: committee type
     #}
     {% set isTestCommittee = committeeType is same as 'testCommittee' %}
-    <div class="logo" style="background: inherit; width: 20%; {% if isTestCommittee %} margin: 0 {% endif %}" title="{{ ('logo.'~committeeType)|trans([],'pdf') }}">{{ include('images/logos/'~committeeType~(isTestCommittee ? '_'~app.request.locale)~'.svg') }}</div>
+    <div style="background: inherit; width: 20%; margin: {{ not isTestCommittee ? '0.5em' : 0 }}" title="{{ ('logo.'~committeeType)|trans([],'pdf') }}">{{ include('images/logos/'~committeeType~(isTestCommittee ? '_'~app.request.locale)~'.svg') }}</div>
 {% endmacro %}
 
 {% macro addDate(savePDF, isComplete, style = '', toolVersion = '') %}

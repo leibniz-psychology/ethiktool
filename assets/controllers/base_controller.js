@@ -1,6 +1,7 @@
 import {Controller} from "@hotwired/stimulus";
 import {
     addExpandableListener,
+    addInputListener,
     checkTextareaInput,
     getSelected,
     sanitizeString,
@@ -11,7 +12,7 @@ import {
 
 export default class extends Controller {
 
-    static targets = ['loadModal','download','load','loadInput','sidebar','content','checkDoc','preview','form','submitDummy','hint','countableText','charCount','disableLoad','undo','language','xmlModal','pdfModal','landingRemove','expandable','quitModal','previewTab'];
+    static targets = ['loadModal','download','load','loadInput','sidebar','content','checkDoc','preview','form','submitDummy','hint','countableText','charCount','disableLoad','undo','language','xmlModal','pdfModal','expandable','quitModal','previewTab'];
 
     static values = {
         route: String,
@@ -23,6 +24,8 @@ export default class extends Controller {
     connect() {
         this.spinnerVal = ''; // value of a spinner if it gets focused
         this.numDocs = 1;
+        this.copyID = ''; // id of element to be copied if on landing
+        this.landingRemoveID = ''; // id of element to be removed if on landing
         // set error and preview scrollbars
         if (this.hasCheckDocTarget) {
             this.checkDocValue = 0; // position of error messages scrollbar -> reset if page is left
@@ -43,7 +46,7 @@ export default class extends Controller {
                 if (target.id!=='loadInput') {
                     if (this.submitDummyTarget.value!=='load' && type!=='number' && type!=='file') { // if a file is loaded, the type is checked first. If a spinner input is changed, the validity is checked first.
                         let id = target.id;
-                        if (!(this.routeValue.includes('landing') && (id.includes('Text') || id==='landing_copy') || id.includes('language'))) {
+                        if (!(this.routeValue.includes('landing') && (id.includes('new') || id.includes('editText')) || id.includes('language'))) {
                             this.submitDummyTarget.value = '';
                             await this.submitForm(event);
                         }
@@ -174,21 +177,6 @@ export default class extends Controller {
         }
     }
 
-    /** Sets the value of the submit dummy to the id that eventually gets removed. Is called when the modal opens.
-     * @param event widget that invoked the method
-     */
-    setLandingRemove(event) { // only called in landing
-        this.landingRemoveID = parseInt(event.target.id.replace('landing_remove',''))+1;
-        this.submitDummyTarget.value = 'remove:'+(this.landingRemoveID-1);
-        this.landingRemoveTarget.textContent = this.landingRemoveTarget.textContent.replace('{id}',this.landingRemoveID); // if called, multiple element must exist -> name id in modal text
-    }
-
-    /** Removes the id that eventually gets removed from the submit dummy. Is called if the "no" button in the remove modal is clicked. */
-    unsetLandingRemove() { // only called in landing
-        this.submitDummyTarget.value = '';
-        this.landingRemoveTarget.textContent = this.landingRemoveTarget.textContent.replace(this.landingRemoveID,'{id}');
-    }
-
     /** Enables or disables a text field based on checkboxes. The event must have a parameter 'checkboxes' which must be an array of three or four entries. If any of the widgets in the first entry (an array) is checked, a text field gets enabled. The text field must have been created with 'addTextfield()'. The second entry contains the id of the div surrounding the text field and the hint. The third entry contains the texts for the hint above the text field: 0: nothing selected, 1: at least one checkbox selected, 2: at least one checkbox selected including a specific one. This specific one may be provided by the fourth entry (which can also be an array; in that case the hint is set to this text if at least one of these is selected). If a parameter 'setMulti' is passed, the event is passed to the 'setMultiCheckbox' method. In this case, the parameters for this method ('single' and 'multiCheck') must also be passed.
      * @param event widget that invoked the method
      */
@@ -235,6 +223,30 @@ export default class extends Controller {
             document.getElementById(id).classList.toggle('activeTab');
             this.setPreviewTabsVisibility();
         }
+    }
+
+    /** Sets this.copyID.
+     * @param event widget that invoked the method.
+     */
+    setLandingCopy(event) { // only called in landing
+        this.copyID = event.currentTarget.id;
+    }
+
+    /** Resets this.copyID. */
+    unsetLandingCopy() { // only called in landing
+        this.copyID = '';
+    }
+
+    /** Sets this.landingRemoveID.
+     * @param event widget that invoked the method
+     */
+    setLandingRemove(event) { // only called in landing
+        this.landingRemoveID = event.currentTarget.id;
+    }
+
+    /** Resets this.landingRemoveID */
+    unsetLandingRemove() { // only called in landing
+        this.landingRemoveID = '';
     }
 
     // methods that are called from a template and from within this class
@@ -297,17 +309,7 @@ export default class extends Controller {
             // sanitize text inputs -> "<letter" will be removed (everything starting from "<"); "< letter", "<number" and "< number" will be escaped. ">" will only be escaped if the text contains "<", too.
             target.value = sanitizeString(target.value);
         }
-        // set dummy target if on a landing page of projectdetails
-        let params = event.params ?? [];
         let isLanding = this.routeValue.includes('landing');
-        if (isLanding && params.routeIDs!==undefined) {
-            let dummyVal = this.combineKeyValues(params.routeIDs); // route IDs for landing, empty if on overview of studies
-            let id = target.id;
-            let removeVal = this.submitDummyTarget.value;
-            let editRemove = id.includes('edit') ? 'edit:'+id.replace('landing_edit','') : (removeVal.includes('remove') ? removeVal : '');
-            this.submitDummyTarget.value = "app_landing\n"+(editRemove!=='' ? editRemove : id==='submitName' ? 'newClicked:true' : 'copyClicked:true')+"\n"+(dummyVal!=='' ? dummyVal.trim()+"\n" : '')+'page:Projectdetails';
-        }
-
         this.submitDummyTarget.value = !isLanding ? (this.submitDummyTarget.value+"\n"+this.routeValue).trim() : this.submitDummyTarget.value; // may contain 'download' or 'undo'
         // add route IDs to dummy target if existent
         if (this.routeParamsValue['studyID']!==undefined) { // submission on a projectdetails page
@@ -317,6 +319,27 @@ export default class extends Controller {
                 dummyVal += "\n"+'page:'+page;
             }
             this.submitDummyTarget.value += dummyVal;
+        }
+        if (isLanding) {
+            let id = target.id;
+            let dummyEnd = "\npage:Projectdetails";
+            if (id.includes('new')) { // element on landing should be created
+                let dummyVal = '';
+                if (this.copyID!=='') { // element should be copied
+                    dummyVal = 'copy:'+this.copyID.replace('copy_','').replace('_button','');
+                    this.copyID = '';
+                } else { // empty element should be created
+                    dummyVal = 'new:'+id.replace('new_','').replace('_create','');
+                }
+                this.submitDummyTarget.value = "app_landing\n"+dummyVal+dummyEnd;
+            } else if (id.includes('rename')) { // element on landing was was renamed
+                let name = document.getElementById(id.replace('rename','editText'));
+                name.textContent = sanitizeString(name.textContent); // sanitize text input -> "<letter" will be removed (everything starting from "<"); "< letter", "<number" and "< number" will be escaped. ">" will only be escaped if the text contains "<", too.
+                this.submitDummyTarget.value = "app_landing\nedit:"+id.replace('rename_','')+dummyEnd;
+            } else if (this.landingRemoveID!=='') {
+                this.submitDummyTarget.value = "app_landing\nremove:"+this.landingRemoveID.replace('remove_','')+dummyEnd;
+                this.landingRemoveID = '';
+            }
         }
 
         // submit the form and update the page
@@ -478,11 +501,7 @@ export default class extends Controller {
         }
         // prevent submitting the form by pressing enter
         for (let inputField of document.getElementsByTagName('input')) {
-            inputField.addEventListener('keydown', event => {
-                if (event.key==='Enter') {
-                    event.preventDefault();
-                }
-            });
+            addInputListener(inputField);
             let type = inputField.type;
             let isFile = type==='file' && inputField!==this.loadInputTarget;
             if (this.hasPreviewTarget || isFile) {

@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import {setElementVisibility, getSelected, setHint, checkTextareaInput} from "../multiFunction";
+import {min} from "@popperjs/core/lib/utils/math";
 
 export default class extends Controller {
 
@@ -41,6 +42,7 @@ export default class extends Controller {
     /** Sets the age and examined widgets including the text field. */
     setExamined() {
         let minAge = this.minAgeTarget.value;
+        minAge = minAge>100 ? 100 : minAge; // if a value greater than 100 is entered, it is updated after this check
         let isMinAge = minAge!=='';
         let maxAge = this.maxAgeTarget.value;
         let isMaxAge = maxAge!=='';
@@ -98,7 +100,7 @@ export default class extends Controller {
                     addressee = 2; // wards
                 }
             }
-            setHint(this.criteriaHintTarget.firstElementChild.nextElementSibling,this.criteriaHintValue[addressee]); // hint below heading
+            this.criteriaHintTarget.innerHTML = this.criteriaHintValue[addressee]; // hint below heading
             this.includeStartTarget.textContent = this.includeStartValue[addressee]; // start of inclusion
             // first inclusion criterion
             let include = this.includeTarget.value.split("\n");

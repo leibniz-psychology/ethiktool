@@ -955,23 +955,27 @@ class CheckDocClass extends ControllerAbstract
         // presence
         if (array_key_exists(self::presenceNode,$pageArray)) {
             $tempPrefix = $translationPage.self::presenceNode.'.';
-            if ($this->checkMissingChosen($pageArray,$tempPrefix.'missing',2,self::presenceNode,true,self::presenceNode)===1 && ($this->isTwoAddressees ? $this->measure[self::consentNode][self::consentNode][self::chosen2Node] : $this->consentAddressee)===self::consentOral) { // oral consent -> contributors must be present
+            if ($this->checkMissingTextfield($pageArray[self::presenceNode],null,self::presencePartly,$tempPrefix.'missing',self::presenceNode,$tempPrefix.self::descriptionNode,addDescription: true)===self::presenceNo && ($this->isTwoAddressees ? $this->measure[self::consentNode][self::consentNode][self::chosen2Node] : $this->consentAddressee)===self::consentOral) { // oral consent -> contributors must be present
                 $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->routeIDs);
             }
         }
         // durations
         $tempPrefix = $translationPage.self::durationNode.'.';
         $tempArray = $pageArray[self::durationNode];
-        $this->checkMissingContent($tempArray,array_combine(self::durationTypes,$this->prefixArray(self::durationTypes,$tempPrefix)),hash: self::durationNode);
-        $totalTime = 0;
-        $allDurations = true; // gets false if any measure time duration was not entered yes
-        foreach (self::durationMeasureTimeTypes as $duration) {
-            $tempVal = $tempArray[$duration];
-            $allDurations = $allDurations && $tempVal!=='';
-            $totalTime += intval($tempVal);
-        }
-        if ($allDurations && $totalTime===0) { // all measure time value are 0
-            $this->addCheckLabelString($tempPrefix.'measureTime',self::durationNode);
+        if (array_key_exists(self::descriptionNode,$tempArray)) { // days>0
+            $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.self::descriptionNode],true,hash: $this->addDiv(self::durationMeasureTimeDays,true));
+        } else {
+            $this->checkMissingContent($tempArray,array_combine(self::durationTypes,$this->prefixArray(self::durationTypes,$tempPrefix)),hash: self::durationNode);
+            $totalTime = 0;
+            $allDurations = true; // gets false if any measure time duration was not entered yes
+            foreach (self::durationMeasureTimeTypes as $duration) {
+                $tempVal = $tempArray[$duration];
+                $allDurations = $allDurations && $tempVal!=='';
+                $totalTime += intval($tempVal);
+            }
+            if ($allDurations && $totalTime===0) { // all measure time value are 0
+                $this->addCheckLabelString($tempPrefix.'measureTime',self::durationNode);
+            }
         }
         $this->setProjectdetailsTitle($setTitle);
     }
@@ -1110,7 +1114,7 @@ class CheckDocClass extends ControllerAbstract
                                     if (array_key_exists(self::laterTypesName,$awardingArray) && $this->checkMissingChosen($awardingArray,$tempPrefix,null,$hashDiv,name: self::laterTypesName,parameters: $typeParams)==='laterEndOther') { // information for later
                                         $this->checkMissingContent($awardingArray,[self::laterOtherDescription => $tempPrefix.self::descriptionCap],true,lineTitle: $lineTitle,parameter: $typeParams,hash: $hashDiv);
                                     }
-                                    if ($isMoneyHours && $chosen==='immediately' && $this->measure[self::measuresNode][self::presenceNode]==='1') { // money and hours immediately -> contributors must be present
+                                    if ($isMoneyHours && $chosen==='immediately' && $this->measure[self::measuresNode][self::presenceNode]===self::presenceNo) { // money and hours immediately -> contributors must be present
                                         $this->addCheckLabelString($translationPage.self::presenceNode,parameters: $typeParams);
                                     }
                                 }
@@ -1305,6 +1309,7 @@ class CheckDocClass extends ControllerAbstract
                                 $this->checkMissingContent($tempArray, [self::descriptionNode => $tempPrefix.self::descriptionNode], lineTitle: $lineTitle, parameter: ['type' => $markingChosen], hash: $this->addDiv($markingWithSuffix, true, false));
                             }
                             $isInternal = $markingChosen===self::markingInternal;
+                            $isCodeOnlyMarking = $isCodeOnlyMarking || $markingChosen===self::markingConsecutive;
                             if ($isExternal || $isInternal) {
                                 if ($isInternal) { // how the code is created
                                     $markingChosen = $this->checkMissingChosen($tempArray, $tempPrefix.self::markingInternal, null, 'internalCreateDiv'.$suffix, name: self::markingInternal, lineTitle: $lineTitle);
@@ -1328,9 +1333,16 @@ class CheckDocClass extends ControllerAbstract
                             if (in_array($pageArray[self::markingNode][self::chosen] ?? '', self::markingValues)) {
                                 $isMarkingAnswered = $isMarkingAnswered && $this->checkMissingChosen($pageArray, $translationPage.self::markingFurtherNode, 2, $this->addDiv(self::markingFurtherNode), true, self::markingFurtherNode)!==2;
                             }
-                            // two markings with name
-                            if ($isMarkingAnswered && $markings[self::markingNode]===self::markingName && $markings[$markingSecondString]===self::markingName) {
-                                $this->addCheckLabelString($translationPage.'markingName');
+                            $firstMarking = $markings[self::markingNode];
+                            if ($isMarkingAnswered && $firstMarking===$markings[$markingSecondString]) {
+                                // two markings with name
+                                if ($firstMarking===self::markingName) {
+                                    $this->addCheckLabelString($translationPage.'markingName');
+                                }
+                                // two markings with consecutive numbers
+                                if ($firstMarking===self::markingConsecutive) {
+                                    $this->addCheckLabelString($translationPage.'markingConsecutive');
+                                }
                             }
                             $hasMarkingPersonal = [self::markingList => $isMarkingList, self::generation => $isCodeMaybe, self::markingName => $isMarkingName];
                             $allPersonalAnswered = $isMarkingAnswered && $dataPersonal!==''; // true if all questions which lead to personal data are answered
@@ -1634,10 +1646,16 @@ class CheckDocClass extends ControllerAbstract
                             }
                         }
                     }
-                } elseif ($isSeparate && array_key_exists(self::createVerificationNode,$pageArray)) { // verification if create is 'separate'
-                    $this->checkMissingChosen($pageArray,$translationPage.self::createVerificationNode,null,$this->addDiv(self::createVerificationNode),name: self::createVerificationNode);
                 } elseif ($isCreateAnonymous && $isOtherSources) { // other sources -> create selection can not be that the study includes only anonymous data
                     $this->addCheckLabelString($furtherOtherSourcesPrefix.self::createNode, parameters: $this->routeIDs);
+                }
+                // addOwn
+                if (array_key_exists(self::addOwnNode,$pageArray)) {
+                    $this->checkMissingChosen($pageArray,$translationPage.self::addOwnNode,2,$this->addDiv(self::addOwnNode),true,self::addOwnNode);
+                }
+                // verification
+                if (array_key_exists(self::createVerificationNode,$pageArray)) {
+                    $this->checkMissingChosen($pageArray,$translationPage.self::createVerificationNode,null,$this->addDiv(self::createVerificationNode),name: self::createVerificationNode);
                 }
             } // if create node exists
             $this->setProjectdetailsTitle($setTitle);

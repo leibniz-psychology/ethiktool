@@ -128,6 +128,9 @@ trait ProjectdetailsTrait
     protected const loanNode = 'loan';
     protected const loanReceipt = 'receipt';
     protected const presenceNode = 'presence';
+    protected const presenceTypes = ['projectdetails.pages.measures.presence.types.yes' => 'yes', 'projectdetails.pages.measures.presence.types.partly' => 'partly', 'projectdetails.pages.measures.presence.types.no' => 'no'];
+    protected const presencePartly = 'partly'; // must equal one value in $presenceTypes
+    protected const presenceNo = 'no'; // must equal one value in $presenceTypes
     protected const durationNode = 'duration';
     protected const durationTypes = ['measureTimeDays','measureTimeHours','measureTimeMinutes','breaksMinutes']; // must equal the values of the following variables
     protected const durationMeasureTimeTypes = ['measureTimeDays','measureTimeHours','measureTimeMinutes']; // must equal the values of the following variables
@@ -135,6 +138,7 @@ trait ProjectdetailsTrait
     protected const durationMeasureTimeHours = 'measureTimeHours';
     protected const durationMeasureTimeMinutes = 'measureTimeMinutes';
     protected const durationBreaks = 'breaksMinutes';
+    protected const durationMax = ['measureTimeDays' => 999, 'measureTimeHours' => 23, 'measureTimeMinutes' => 59, 'breaksMinutes' => 999]; // keys must equal the values of $durationTypes
     // burdens/risks
     protected const burdensRisksNode = 'burdensRisks';
     protected const burdensNode = 'burdens';
@@ -225,10 +229,12 @@ trait ProjectdetailsTrait
     protected const createSeparateLater = 'separateLater'; // must equal one value in $createTypes
     protected const createTypes = ['projectdetails.pages.dataPrivacy.create.types.tool' => 'tool', 'projectdetails.pages.dataPrivacy.create.types.separate' => 'separate', 'projectdetails.pages.dataPrivacy.create.types.anonymous' => 'anonymous', 'projectdetails.pages.dataPrivacy.create.types.separateLater' => 'separateLater', 'projectdetails.pages.dataPrivacy.create.types.notApplicable' => 'notApplicable'];
     protected const createVerificationNode = 'verification';
+    protected const addOwnNode = 'addOwn';
     protected const verificationTypes = ['projectdetails.pages.dataPrivacy.create.verification.types.verified' => 'verified', 'projectdetails.pages.dataPrivacy.create.verification.types.unverified' => 'unverified'];
     protected const confirmIntroNode = 'confirmIntro'; // confirm that introduction has been read, also used for data reuse
     protected const responsibilityNode = 'responsibility';
     protected const responsibilityTypes = ['projectdetails.pages.dataPrivacy.responsibility.types.onlyOwn' => 'onlyOwn', 'projectdetails.pages.dataPrivacy.responsibility.types.onlyOther' => 'onlyOther', 'projectdetails.pages.dataPrivacy.responsibility.types.multiple' => 'multiple', 'projectdetails.pages.dataPrivacy.responsibility.types.private' => 'private', 'projectdetails.pages.dataPrivacy.responsibility.types.notApplicable' => 'notApplicable'];
+    protected const responsibilityNotOwn = ['onlyOther','multiple','private']; // values must equal the values in $responsibilityTypes
     protected const responsibilityPrivate = ['projectdetails.pages.dataPrivacy.responsibility.types.private' => 'private']; // must equal one element in $responsibilityTypes
     protected const responsibilityOnlyOwn = 'onlyOwn'; // must equal one value in $responsibilityTypes
     protected const transferOutsideNode = 'transferOutside';
@@ -249,8 +255,9 @@ trait ProjectdetailsTrait
     protected const dataPersonalNo = 'personalNo'; // must equal one value in $dataPersonalTypes
     protected const dataPersonal = ['personal','personalMaybe']; // values must equal the values in $dataPersonalTypes
     protected const markingNode = 'marking'; // how the research data are marked
-    protected const markingTypes = ['projectdetails.pages.dataPrivacy.marking.types.external' => 'external', 'projectdetails.pages.dataPrivacy.marking.types.internal' => 'internal', 'projectdetails.pages.dataPrivacy.marking.types.name' => 'name', 'projectdetails.pages.dataPrivacy.marking.types.no' => 'no', 'projectdetails.pages.dataPrivacy.marking.types.other' => 'other']; // values must equal the values of the following variables
-    protected const markingValues = ['external','internal','name'];
+    protected const markingTypes = ['projectdetails.pages.dataPrivacy.marking.types.consecutive' => 'consecutive', 'projectdetails.pages.dataPrivacy.marking.types.external' => 'external', 'projectdetails.pages.dataPrivacy.marking.types.internal' => 'internal', 'projectdetails.pages.dataPrivacy.marking.types.name' => 'name', 'projectdetails.pages.dataPrivacy.marking.types.no' => 'no', 'projectdetails.pages.dataPrivacy.marking.types.other' => 'other']; // values must equal the values of the following variables
+    protected const markingValues = ['consecutive','external','internal','name'];
+    protected const markingConsecutive = 'consecutive';
     protected const markingExternal = 'external';
     protected const markingInternal = 'internal';
     protected const markingName = 'name';
@@ -433,19 +440,16 @@ trait ProjectdetailsTrait
     {
         $isNotMeasure = $nodeName!==self::measureTimePointNode;
         if ($copy!==null) {
-            $newNode = simplexml_import_dom(dom_import_simplexml($element)->appendChild(dom_import_simplexml($element->{$nodeName}[$copy])->cloneNode(true)));
-            if ($isNotMeasure) {
-                $newNode->{self::nameNode} = $nameContent;
-            }
+            $newNode = simplexml_import_dom(dom_import_simplexml($element)->appendChild(dom_import_simplexml($element->{$nodeName}[1]!==null ? $element->{$nodeName}[$copy] : $element->{$nodeName}) ->cloneNode(true)));
+            $newNode->{self::nameNode} = $nameContent;
         } else {
             $newNode = $element->addChild($nodeName);
+            $newNode->addChild(self::nameNode,$nameContent);
             if ($isNotMeasure) {
-                $newNode->addChild(self::nameNode,$nameContent);
-                if ($nodeName==self::studyNode) {
-                    $newNode = $newNode->addChild(self::groupNode);
+                foreach (array_merge($nodeName===self::studyNode ? [self::groupNode] : [],[self::measureTimePointNode]) as $type) {
+                    $newNode = $newNode->addChild($type);
                     $newNode->addChild(self::nameNode);
                 }
-                $newNode = $newNode->addChild(self::measureTimePointNode);
             }
             // groups
             $groupsNode = $newNode->addChild(self::groupsNode);
@@ -472,7 +476,7 @@ trait ProjectdetailsTrait
             $this->addChosenNode($measuresNode,self::otherSourcesNode);
             $this->addChosenNode($measuresNode,self::loanNode);
             $this->addChosenNode($measuresNode,self::locationNode)->addChild(self::descriptionNode);
-            $measuresNode->addChild(self::presenceNode);
+            $this->addChosenNode($measuresNode,self::presenceNode);
             $this->addChildNodes($measuresNode->addChild(self::durationNode),self::durationTypes);
             // burdens/risks
             $burdensRisksNode = $newNode->addChild(self::burdensRisksNode);

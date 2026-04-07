@@ -20,7 +20,7 @@ multiple:
         
         
         {isMajor, select,
-          true  {You loaded an XML file that was created with an older version of the Ethiktool. In newer versions, choosing the type of review process is mandatory. Depending on the chosen review process, the Ethiktool requests different inputs. Please choose the type of review process before making any further entries. Would you like switch to this choice on the “Core data“ page?}
+          true  {You loaded an XML file that was created with an older version of the Ethiktool. In newer versions, choosing the type of review process is mandatory. Depending on the chosen review process, the Ethiktool requests different inputs. Please choose the type of review process before making any further entries. Would you like to switch to this choice on the “Core data“ page?}
           other {}}
     failure: # info modal if the extension is invalid
       title: 'Select file'
@@ -46,7 +46,10 @@ multiple:
   charCount: 'Number of characters:'
   charCountHint: 'The recommended maximum number of characters has been exceeded. It is possible to submit the proposal despite exceeding this number; nevertheless, please check whether you can shorten the description without compromising important information for the ethics review.'
   optional: '(optional)'
-  wording: 'Please address your descriptions directly to the {addressee}.'
+  wording: >-
+    {isBold, select,
+      true  {<span style="font-weight: bold">Please address your descriptions directly to the {addressee}.</span>}
+      other {Please address your descriptions directly to the {addressee}.}}
   inputHint: >-
     The text entered here is transferred verbatim to the {type, select,
                                                                 info    {{infoType, select,
@@ -253,7 +256,7 @@ pages:
   contributors:
     contributors: 'Project contributors'
   projectdetails:
-    title: 'Project details'
+    title: 'Project structure'
     groups: 'Participants'
     information: 'Participant Information'
     informationSidebar: 'Part.Information'
@@ -379,24 +382,39 @@ landing:
       title: 'Application data' # part of tab name
       start: 'Please start by providing basic information about your research project. Please use the buttons “next page“ or “previous page“ to navigate. Alternatively, you can also navigate using the sidebar to the left.'
   projectdetails:
+    name: 'Name'
+    editHint: >-
+      Name {type, select,
+              study {study}
+              group {group}
+              other {time point}} {index}
+    copyHint: >-
+      Create duplicates {type, select,
+                          study {study }
+                          group {group }
+                          other {time point }} X
+    buttons:
+      new:
+        study: 'Create new study'
+        group: 'Create new group'
+        measureTimePoint: 'Create new time point'
+      create: 'Create'
+      edit: 'Rename'
+      cancel: 'Cancel'
+      details: 'Edit details'
     overview:
-      title: 'Projectdetails' # part of tab name
-      start: 'The Ethiktool allows for integrating several (sub)studies within one proposal. You can describe research projects comprises several studies, several participant groups or several data collection time points.</br></br>This page lists all (sub)studies of the research project. It is recommended to begin by filling the details of <i>one</i> study and (if needed) add further studies thereafter.'
-      end: 'Different groups of participants and data collection time points can be described within a (sub)study; you do not need to add further studies for this.</br></br>You only need to add further studies if your research project is divided into several (sub)studies that differ in terms of aims or methodology, e.g., when conducting a series of experiments. When adding a (sub)study, you can either create a new (empty) study or copy an existing study and change only the relevant entries. The studies are automatically numbered consecutively as soon as there is more than one; please also assign a brief, expressive name to each study.'
-      new: 'Add further study'
-    study:
-      title: 'Study ' # part of tab name
-      start: 'This page lists all participant groups of the currently chosen study. It is recommended to begin by filling the details of <i>one</i> group and (if needed) add further groups thereafter.'
-      end: 'You should add further groups if, for example, the inclusion criteria or the information for the groups (e.g., minors/adults, patients/controls) differ.</br></br>When adding a participant group, you can either create a new (empty) group or copy an existing group and change only the relevant entries. The groups are automatically numbered consecutively as soon as there is more than one; please also assign a brief, expressive name to each group.'
-      new: 'Add further group'
-    group:
-      title: 'Group ' # part of tab name
-      start: 'This page lists all data collection time points for the currently chosen study and participant group. </br></br>The term “time point“ refers to an instance of data collection that requires a new study information sheet and an additional consent form, such as a pre-test for a subsequent study, in which it is not yet possible to inform about further phases of the research project in detail or in which only some of the participants of the pre-test are invited to participate in the main study (“screening“). </br></br>It is recommended to begin by filling the details of <i>one</i> data collection time point and (if needed) add further time points thereafter.'
-      end: 'When adding a data collection time point, you can either create a new (empty) time point or copy an existing time point and change only the relevant entries. The time points are automatically numbered consecutively as soon as there is more than one.'
-      new: 'Add further time point'
-    measure:
-      title: 'Time point ' # part of tab name
-      start: 'Please enter information for this combination of study, group and time point here.</br> The requested information is grouped into the following categories:'
+      title: 'Project structure' # part of tab name
+      start: >-
+        {isOverview, select,
+          true  {The Ethiktool can describe research projects comprising several studies, several participant groups or several data collection time points.</br></br> This page shows the structure of your research project. Here you can add further studies, participant groups and time points. The elements are automatically numbered consecutively as soon as there is more than one; it is advisable to also assign a brief, expressive name to each study.}
+          other {Please enter information for this combination of study, group and time point here.</br> The requested information is grouped into the following categories:}}
+      end:
+        start: 'Note: It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then duplicate the filled combination and change only the relevant entries. The symbols have the following functions:'
+        rename: 'rename the element'
+        copy: 'duplicate the element and add it at the end of the respective branch'
+        add: 'add a new element'
+        delete: 'remove the element (including all sub-elements)'
+        edit: 'edit details of the study/group/time point combination'
     removeModal:
       title: >-
         delete {type, select,
@@ -405,35 +423,9 @@ landing:
           other {time point}}
       content: >-
         Do you really want to remove {type, select,
-                                        study {study {id}? All groups and time points of this study will be removed as well.}
-                                        group {group {id}? All time points of this group will be removed as well.}
-                                        other {time point {id}?}}
-  manipulate:
-    details: 'Edit details'
-    manipulate: >-
-      {level, select,
-        study {{type, select,
-                  new             {create new study}
-                  copy            {copy study}
-                  remove          {delete study}
-                  other           {[no name]}}}
-        group {{type, select,
-                  new             {create new group}
-                  copy            {copy group}
-                  remove          {delete group}
-                  other           {[no name]}}}
-        other {{type, select,
-                  new             {create new time point}
-                  copy            {copy time point}
-                  remove          {delete time point}
-                  other           {[no name]}}}}
-    edit:
-      change: 'change name'
-      editCommit: 'confirm'
-    placeholder: >-
-      Name of further {isStudy, select,
-                    true  {group}
-                    other {study}}
+                                        study {study X? All groups and time points of this study will be removed as well.}
+                                        group {group X? All time points of this group will be removed as well.}
+                                        other {time point X?}}
 
 # application data
 coreData:
@@ -653,7 +645,9 @@ contributors:
   tasks:
     title: 'Role(s) in the research project:'
     hints:
-      position: 'Please select a position first.'
+      position:
+        noSelection: 'Please select a position first.'
+        selection: 'Please select all roles of this person in the research project.</br> At least one role must be selected.'
       mandatory: '<i>This role must be occupied by at least one project contributor for each study.</i>'
       responsibility: "\nIn case more than one person is responsible for data processing, responsibilities must be settled."
     nodeTitle: 'Tasks'
@@ -688,6 +682,7 @@ projectdetails:
     study: 'study'
     group: 'group'
     measureTimePoint: 'time point'
+  sidebar: 'Study details'
   addressee:
     participants:
       participants: 'participants'
@@ -795,11 +790,11 @@ projectdetails:
         title: 'Sample size'
         total:
           title: 'How many individuals from the selected group shall be included in this time point of the study?'
-          textHint: 'This refers to the number of individuals on whom data will be collected (incl. buffer for piloting, possible exclusion from the analysis, etc.).'
+          textHint: 'This refers to the number of individuals on whom data will be collected (including buffer for piloting, possible exclusion from the analysis, etc.).'
         furtherParticulars: '(optional) Further information on the sample size (e.g., distribution of the total number across different sub-groups)'
         plan:
           title: 'How was the sample size chosen?'
-          textHint: 'Please describe the statistical approach used for sample size calculation (e.g., power analysis), or otherwise describe the assumptions on which your sample size is based. If applicable, state who supported you with sample size planning.'
+          textHint: 'Please describe the rationale for choosing your sample size (e.g., statistical power analysis, theoretical saturation). If applicable, state who supported you with sample size planning.'
       recruitment:
         title: 'How are participants recruited?'
         types:
@@ -1015,7 +1010,12 @@ projectdetails:
         textHint: 'Please add information on the location of data collection. Make sure your wording complements the sentence above.'
       presence:
         title: 'Are project contributors present during data collection?'
+        types:
+          yes: 'Yes'
+          partly: 'Temporarily'
+          no: 'No'
         headingHint: 'Knowledge about the presence of project contributors is relevant, amongst others, for the assessment of possible actions in case of burdens/risks and for handling certain conflicts of interest.'
+        textHint: 'Please specify for which parts of data collection project contributors are present or absent.'
       duration:
         title: >-
           Duration of {multiple, select,
@@ -1026,7 +1026,8 @@ projectdetails:
           measureTimeDays: 'Days:'
           measureTimeHours: 'Hours:'
           measureTimeMinutes: 'Minutes:'
-          hint: "You may enter a duration of '0'. Only those inputs with a value greater than 0 will be transferred to the study information sheet."
+          hint: "You may enter a duration of '0'. Only those inputs with a value greater than 0 will be transferred to the study information sheet. If data collection spans a longer period, please indicate the overall number of days."
+          hintDays: 'Please explain how data collection is distributed over the indicated period. Please address the time interval and the duration of each individual data collection (including time for breaks, if applicable).'
         breaks:
           title: 'Time for preparation, follow-up, and breaks'
           breaksMinutes: 'Minutes:'
@@ -1048,7 +1049,7 @@ projectdetails:
             Please describe the precautionary measures or compensations in detail with reference to the {type, select,
                                                                       burdens {selected burdens or strains}
                                                                       risks   {selected risks}
-                                                                      other   {burdens/risks}}.
+                                                                      other   {burdens/risks}}. Please do not mention the voluntary nature of participation or the right to withdraw from participation without disadvantages because these principles hold independent of burdens or risks.
           no: 'Please explain why no precautionary measures or compensations are planned.'
       burdens:
         title: 'Which burdens or strains will participants be exposed to?'
@@ -1104,7 +1105,7 @@ projectdetails:
           types:
             always: 'The {addressee} are informed of any (incidental) findings that occur. (notification mandatory)'
             consent: 'The {addressee} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)'
-          hint: 'Because you chose that notification is mandatory, the <a class="linkInternal" href="groups#criteria" data-action="base#setDummySubmit" data-base-url-param="app_groups" data-base-route-i-ds-param="{routeIDs}">inclusion criteria</a> automatically contain that participation requires consent to be informed.'
+          hint: 'Because you chose that notification is mandatory, the inclusion criteria automatically contain that participation requires consent to be informed.'
       feedback:
         title: 'Do participants receive feedback on their individual test results?'
         headingHint: 'Feedback on individual test results should be carefully considered - especially in case of personally relevant test content. Please consider that feedback may include negative or worrying results. Feedback should only be given if the project contributors are experienced in framing individual results. Please also note that feedback on individual test results is likely to require personal data linked to the collected research data. Alternatively, a general report can be provided (this is also likely to require personal data, but this does not have to be linked to the individual research data).'
@@ -1358,6 +1359,7 @@ projectdetails:
           types:
             verified: 'The data privacy statement has been checked and approved by the responsible data protection authorities.'
             unverified: 'The data privacy statement has not yet been approved by the responsible data protection authorities.'
+      addOwn: 'When completing the ethics proposal, would you like add a self-formulated data privacy statement as a PDF file?'
       intro:
         text:
           start: 'The Ethiktool supports you in indicating all aspects of data processing related to your study.'
@@ -1452,7 +1454,7 @@ projectdetails:
             Due to your selection, the data privacy statement cannot be generated via the Ethiktool. {isPrivate, select,
                                                                                       true  {Please contact the person supervising the qualification thesis.}
                                                                                       other {Please contact the responsibly data protection authorities.}} {addPDF, select,
-                  true  {When completing the ethics proposal, you will be asked to add the data privacy statement (“annex on data processing“) as a PDF file.}
+                  true  {You can choose whether you would like to add your own GDPR-compliant data privacy statement (“annex on data processing“) as a PDF file when completing the ethics proposal.}
                   other {}}
       transferOutside:
         title: 'Do you transmit personal data to or share personal data with third parties outside of the European Economic Area (EEA, so-called “third-country transfer“)?'
@@ -1464,7 +1466,7 @@ projectdetails:
           headingHint: 'This can be a company, but also a collaborator outside of your institution. It also comprises data transfer through storage in cloud services or the like, as well as the transmission to external services (e.g., for data transcription or editing) and the use of file transfer services.'
           noHint: >-
             Due to your selection, the data privacy statement cannot be generated via the Ethiktool. Please contact the responsibly data protection authorities. {addPDF, select,
-                    true  {When completing the ethics proposal, you will be asked to add the data privacy statement (“annex on data processing“) as a PDF file.}
+                    true  {You can choose whether you would like to add your own GDPR-compliant data privacy statement (“annex on data processing“) as a PDF file when completing the ethics proposal.}
                     other {}}
       dataPersonal:
         title: 'Are the research data person-related?'
@@ -1477,12 +1479,14 @@ projectdetails:
         title: 'How are the research data labelled?'
         headingHint: 'For various reasons, participants in research projects are often assigned numbers/codes/pseudonyms or the research data are registered/stored under a person-related code. This can also refer to file names for individual datasets. The term “code“ refers to different types of pseudonyms/codes in a narrow sense as well as to using participants'' names for labelling the data. For assessing whether the research data could be related to individual persons, the type of labelling is a relevant aspect and is therefore queried in detail here. <u>If you use two types of labelling, you will be separately asked for the second one further down.</u>'
         types:
+          consecutive: 'The research data are labelled with a consecutive number. This number is only used for labelling datasets; it does not enable the identification of individual persons.'
           external: 'The research data are labelled with a code that was or is assigned outside of the project'
           internal: 'The research data are labelled with an internal code in the project. '
           name: 'The research data are labelled with the participants'' names. '
           no: 'The research data are not individually labelled.'
           other: 'The data research data are labelled, but none of the above options fully applies to the procedures in the study.'
         hints:
+          consecutive: 'This includes the case that the data are written into a table in which each row contain all answers or data points of one person. The key element is that several answers/data points of a person can be linked with each other by being assigned the same (row) number.'
           external: 'This includes both existing codes (e.g., prolific ID, university user account ID) and codes that are freshly created by contractors such as survey companies. The relevant aspect is that the code is not assigned by the project contributors.'
           internal: >-
             This code is freshly assigned or generated by the {addressee, select,
@@ -1492,7 +1496,7 @@ projectdetails:
           no: 'e.g., when using a tally sheet'
           other: >- # hint below options
             Due to your selection, the data privacy statement cannot be generated via the Ethiktool. Please contact the responsibly data protection authorities. {addPDF, select,
-                true  {When completing the ethics proposal, you will be asked to add the data privacy statement (“annex on data processing“) as a PDF file.}
+                true  {You can choose whether you would like to add your own GDPR-compliant data privacy statement (“annex on data processing“) as a PDF file when completing the ethics proposal.}
                 other {}}
           textHintExternal: 'Please give origin or descriptor of the code (e.g., prolific ID, SONA ID, university user account ID, clinic ID).'
           textHintMarkingName: 'Labelling research data with participants'' names should generally be avoided. Please justify why you intend to label the data with participants'' names.'
@@ -2251,6 +2255,7 @@ checkDoc:
           locationDescription: 'description of the location of data collection'
         presence:
           missing: 'presence of project contributors'
+          description: 'temporary presence of project contributors' # 'Description of [] is missing.'
           consent: 'If <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">oral consent</a> is given, project contributors must be present during data collection.'
         duration:
           measureTimeDays: 'Amount of days for (net) data collection time'
@@ -2258,6 +2263,7 @@ checkDoc:
           measureTimeMinutes: 'Amount of minutes for (net) data collection time'
           measureTime: 'At least one value of the (net) data collection time must be greater than 0.'
           breaksMinutes: 'preparation/follow-up time'
+          description: 'data collection distribution across time' # 'Description of [] is missing.'
       burdensRisks:
         title: >-
           {burdensRisksType, select,
@@ -2377,6 +2383,7 @@ checkDoc:
             If{isVerified, select,
                 true  { the data privacy statement has been checked and approved by the responsible data protection authorities}
                 other {, according to the judgment of the responsible data protection authorities, the study includes only anonymous data}}, the <a class="linkInternal"a href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">data protection officer or Data Protection and Information Security Coordinator (DISK)</a> must be have been consulted.
+        addOwn: 'adding a self-formulated data privacy statement'
         verification: 'Information about approval of data privacy statement by the responsible data protection authorities' # '[] is missing.'
         confirmIntro: 'Confirmation of notice on data protection' # '[] is missing.'
         responsibility:
@@ -2397,7 +2404,8 @@ checkDoc:
           internal: 'type of code generation'
           codePersonal: 'person-related character of the code'
         markingFurther: 'using a second code'
-        markingName: 'If research data are marked with two different labels, these labels can''t both be the names of the participants.'
+        markingName: "If research data are marked with two different labels, these labels can't both be the names of the participants."
+        markingConsecutive: "If research data are marked with two different labels, these labels can't both be consecutive numbers."
         markingSecond: 'second code'
         list:
           missing: 'Personal data for the allocation list' # '[] are missing.'

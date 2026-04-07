@@ -21,6 +21,7 @@ class DataPrivacyType extends TypeAbstract
         // create
         $tempPrefix = $translationPrefix.self::createNode.'.';
         $this->addRadioGroup($builder,self::createNode,self::createTypes,$tempPrefix.'title');
+        $this->addBinaryRadio($builder,self::addOwnNode,$translationPrefix.self::addOwnNode);
         $this->addRadioGroup($builder,self::createVerificationNode,self::verificationTypes,$tempPrefix.self::createVerificationNode.'.title');
         // confirm
         $this->addFormElement($builder,self::confirmIntroNode,'checkbox',$translationPrefix.self::introNode.'.confirm');
@@ -270,8 +271,14 @@ class DataPrivacyType extends TypeAbstract
                         $forms[self::processingFurtherNode]->setData($this->getArrayValue($viewData, self::processingFurtherNode));
                     } // responsibility and transferOutside
                 } // confirmIntro
-            } elseif ($create===self::createSeparate && array_key_exists(self::createVerificationNode,$forms)) { // verification if create is 'separate'
-                $forms[self::createVerificationNode]->setData($viewData[self::createVerificationNode]);
+            }
+            // addOwn
+            if (array_key_exists(self::addOwnNode,$forms)) {
+                $forms[self::addOwnNode]->setData($this->getArrayValue($viewData, self::addOwnNode));
+            }
+            // verification
+            if (array_key_exists(self::createVerificationNode,$forms)) {
+                $forms[self::createVerificationNode]->setData($this->getArrayValue($viewData,self::createVerificationNode));
             }
         } // 'create' exists
     }
@@ -293,9 +300,11 @@ class DataPrivacyType extends TypeAbstract
                 $tempArray[self::descriptionNode] = $isConfirm;
             }
             $newData[self::createNode] = $tempArray;
+            $isAddOwn = false;
             if ($isTool && $isConfirm) {
                 $responsibility = $forms[self::responsibilityNode]->getData(); // responsibility
                 $transferOutside = $forms[self::transferOutsideNode]->getData(); // transfer outside
+                $isAddOwn = in_array($responsibility,self::responsibilityNotOwn) || $transferOutside==='yes';
                 $newData[self::responsibilityNode] = $responsibility;
                 $newData[self::transferOutsideNode] = $transferOutside;
                 if (in_array($responsibility, [self::responsibilityOnlyOwn, self::privacyNotApplicable]) && in_array($transferOutside, [self::transferOutsideNo, self::privacyNotApplicable])) {
@@ -314,12 +323,13 @@ class DataPrivacyType extends TypeAbstract
                     $isPersonal = in_array($tempVal, self::dataPersonal);
                     $isDataResearch = $isPersonal;
                     $markingChosen = $forms[self::markingNode]->getData();
+                    $isAddOwn = $markingChosen===self::markingOther;
                     $hasFurther = in_array($markingChosen, self::markingValues); // true if further question is asked
                     $further = $forms[self::markingFurtherNode]->getData(); // marking further
                     // marking
                     $isList = false;
                     $isNameListGeneration = false; // marking name or internal/external and list/generation
-                    $isMarking = false; // internal, external, or name
+                    $isMarking = false; // consecutive, internal, external, or name
                     foreach (array_merge([''], $hasFurther && $further===0 ? [self::markingSuffix] : []) as $suffix) {
                         $marking = self::markingNode.$suffix;
                         $tempArray = $this->getChosenArray($forms, $marking, [self::markingExternal, self::markingName], [self::descriptionNode => self::markingNode.$suffix.self::descriptionCap]);
@@ -329,7 +339,7 @@ class DataPrivacyType extends TypeAbstract
                         $isName = $tempVal===self::nameNode;
                         $isNameListGeneration = $isNameListGeneration || $isName;
                         $isDataResearch = $isDataResearch || $isName;
-                        $isMarking = $isMarking || in_array(true, [$isExternal, $isInternal, $isName]);
+                        $isMarking = $isMarking || in_array(true, [$tempVal===self::markingConsecutive, $isExternal, $isInternal, $isName]);
                         if ($isExternal || $isInternal) {
                             $codeQuestion = true;
                             if ($isInternal) {
@@ -347,7 +357,7 @@ class DataPrivacyType extends TypeAbstract
                         }
                         $newData[$marking] = $tempArray;
                     }
-                    if ($markingChosen!==self::markingOther) {
+                    if (!$isAddOwn) { // marking is not 'other'
                         $hasPersonal = $isNameListGeneration; // true is any personal data is collected
                         if ($hasFurther) {
                             $newData[self::markingFurtherNode] = $further;
@@ -492,7 +502,13 @@ class DataPrivacyType extends TypeAbstract
                         }
                     } // markingChosen!==markingOther
                 } // responsibility and transferOutside
-            } else if ($create==self::createSeparate && array_key_exists(self::createVerificationNode,$forms)) { // create separate
+            }
+            $addOwn = '';
+            if ($isAddOwn && array_key_exists(self::addOwnNode,$forms)) {
+                $addOwn = $forms[self::addOwnNode]->getData();
+                $newData[self::addOwnNode] = $addOwn;
+            }
+            if (($create==self::createSeparate || $addOwn===0) && array_key_exists(self::createVerificationNode,$forms)) { // create separate
                 $newData[self::createVerificationNode] = $forms[self::createVerificationNode]->getData();
             }
         } // 'create' exists

@@ -82,7 +82,7 @@
                         merge(isPre ? {'stimVisible': {'values': [['always',hintDiv]]}} : {})) }}</div>
                 {% if isPre %}
                     <div class="mt-4">
-                        {{ formRender.addHint(tempPrefix~'informing.hint',{'id': hintDiv, 'visible': informing.vars.value is same as 'always', 'params': routeIDsParam}) }}
+                        {{ formRender.addHint(tempPrefix~'informing.hint',{'id': hintDiv, 'visible': informing.vars.value is same as 'always'}) }}
                     </div>
                 {% endif %}
             </div>

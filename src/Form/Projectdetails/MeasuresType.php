@@ -38,11 +38,13 @@ class MeasuresType extends TypeAbstract
             $this->addRadioGroup($builder,self::locationNode,$this->translateArray($translationPrefix.'location.types.',self::locationTypes),textareaName: self::locationNode.self::descriptionCap);
         }
         // presence
-        $this->addBinaryRadio($builder,self::presenceNode,$translationPrefix.self::presenceNode.'.title');
+        $tempPrefix = $translationPrefix.self::presenceNode.'.';
+        $this->addRadioGroup($builder,self::presenceNode,self::presenceTypes,$tempPrefix.'title',self::presenceNode.self::descriptionCap,$tempPrefix.self::textHint);
         // durations
         foreach (self::durationTypes as $duration) {
-            $this->addFormElement($builder,$duration,'spinner',options: $this->setMinMax(0,999));
+            $this->addFormElement($builder,$duration,'spinner',options: $this->setMinMax(0,self::durationMax[$duration]));
         }
+        $this->addFormElement($builder,$this->appendText(self::durationMeasureTimeDays),'textarea',hint: $translationPrefix.self::durationNode.'.measureTime.hintDays');
         // dummy forms
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);
@@ -79,10 +81,12 @@ class MeasuresType extends TypeAbstract
         $this->setChosenArray($forms,$viewData,self::locationNode,[self::descriptionNode => self::locationNode.self::descriptionCap]);
         // presence
         if (array_key_exists(self::presenceNode,$forms)) {
-            $forms[self::presenceNode]->setData($viewData[self::presenceNode]);
+            $this->setChosenArray($forms,$viewData,self::presenceNode,[self::descriptionNode => self::presenceNode.self::descriptionCap]);
         }
         // durations
-        $this->setSpinner($forms,$viewData[self::durationNode],self::durationTypes);
+        $tempArray = $viewData[self::durationNode];
+        $this->setSpinner($forms,$tempArray,self::durationTypes);
+        $forms[$this->appendText(self::durationMeasureTimeDays)]->setData($this->getArrayValue($tempArray,self::descriptionNode));
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
@@ -138,13 +142,18 @@ class MeasuresType extends TypeAbstract
         }
         // presence
         if (array_key_exists(self::presenceNode,$forms)) {
-            $newData[self::presenceNode] = $forms[self::presenceNode]->getData();
+            $newData[self::presenceNode] = $this->getChosenArray($forms,self::presenceNode,self::presencePartly,[self::descriptionNode => self::presenceNode.self::descriptionCap]);
         }
         // durations
         $tempArray = [];
-        foreach (self::durationTypes as $duration) {
-            $curDur = $forms[$duration]->getData();
-            $tempArray[$duration] = $curDur!==null ? floor($curDur) : null; // avoid decimals
+        $days = $forms[self::durationMeasureTimeDays]->getData();
+        if ($days>0) {
+            $tempArray = [self::durationMeasureTimeDays => floor($days), self::descriptionNode => $forms[$this->appendText(self::durationMeasureTimeDays)]->getData()];
+        } else {
+            foreach (self::durationTypes as $duration) {
+                $curDur = $forms[$duration]->getData();
+                $tempArray[$duration] = $curDur!==null ? floor($curDur) : null; // avoid decimals
+            }
         }
         $newData[self::durationNode] = $tempArray;
         $viewData = $newData;

@@ -1,115 +1,203 @@
 {% extends 'threeColumns.html.twig' %}
 {% import 'macros.html.twig' as formRender %}
 
-{% set isStudy, isGroup, isMeasure = id[0] is not null, id[1] is not null, id[2] is not null %} {# true if overview. If any is not null, all lower indices are also not null #}
-{% set prefix = 'landing.'~page~'.'~(isMeasure ? 'measure' : (isGroup ? 'group' : (isStudy ? 'study' : 'overview')))~'.' %}
 {% block title %}
-    {{ 'pages.tabName'|trans~('pages.landing')|trans~(prefix~'title')|trans~(isMeasure and isMultiple[2] ? id[2]+1 : (isGroup and isMultiple[1] ? id[1]+1 : (isStudy and isMultiple[0] ? id[0]+1 : ''))) }}
+    {{ tabName }}
 {% endblock %}
 {% block content %}
-    {% set isProjectdetailsLanding, headingsPrefix = page is same as 'projectdetails' and not isMeasure, 'projectdetails.headings.' %}
-    <div {{ stimulus_controller('landing') }}>
-        <h2 class="MetaDataGroup-Title">{{ pageTitle|trans }} {{ ('pages.'~page~'.title')|trans }}</h2>
-        {# indices and names of current level(s) #}
-        {% if isStudy %}
-            {% set multipleStudies, multipleGroups, isStudyName, isGroupName = isMultiple[0], isMultiple[1], studyName is not same as '', groupName is not same as '' %}
-            <div class="MetaData-Title" style="word-break: break-word">
-                {{ (headingsPrefix~'study')|trans }}
-                {% if multipleStudies %}{{ id[0]+1 }} {% if isStudyName %}({% endif %}{% endif %}{{ studyName }}{% if multipleStudies and isStudyName %}){% endif %}
-                {% if isGroup %}
-                    {{ '/ '~(headingsPrefix~'group')|trans }}
-                    {% if multipleGroups %}{{ id[1]+1 }} {% if isGroupName %}({% endif %}{% endif %}{{ groupName }}{% if multipleGroups and isGroupName %}){% endif %}
-                    {% if isMeasure %}
-                        {{ '/ '~(headingsPrefix~'measureTimePoint')|trans }}
-                        {% if isMultiple[2] %}
-                            {{ id[2]+1 }}
-                        {% endif %}
-                    {% endif %}
-                {% endif %}
+    {% set isProjectdetailsLanding, translationPrefix = page is same as 'projectdetails' and not isPageOverview, 'landing.'~page~'.' %}
+    {% set overviewPrefix, widthMinHeight = translationPrefix~'overview.', 'min-height: 3rem; width: 2rem;' %}
+    <div {{ stimulus_controller('landing',{
+        'names': nameTrans,
+        'copyNames': copyTrans,
+        'remove': removeTrans
+    }) }}>
+        <div class="MetaData-Title">{{ pageHeading }}</div>
+        <div class="MetaData-Label mb-2">{{ (overviewPrefix~'start')|trans({'isOverview': boolToString(isProjectdetailsLanding)})|raw }}</div>
+        {% if isProjectdetailsLanding %}
+            {% set isOneStudy, studyNames, heightBorder, heightShort = (allStudies|length) is same as 1, allNames['name'], 'height: 75%; border-left: 1px solid black; border-bottom: 1px solid black', 'height: 25%' %}
+            <div class="MetaData-Widget grid px-2" style="grid-template-columns: repeat(4,min-content) repeat(2,minmax(min-content,max-content)) auto">
+                {% for studyIndex, study in allStudies %}
+                    {% set groups, groupsWithNames = study['group'], allNames[studyIndex] %}
+                    {% set studyName, groupNames, isOneGroup = studyNames[studyIndex], groupsWithNames['name'], groups|length is same as 1 %}
+                    <div class="mt-2" style="grid-column: span 6"></div>
+                    {{ _self.addExpandable('study',nameTrans['study']~(studyIndex+1)~(studyName is not same as '' ? ' ('~studyName~')'),content,studyIndex,studyIndex,studyNames,studyName) }}
+                    {{ _self.addCopy('study',studyIndex,isOneStudy) }}
+                    {% for groupIndex, group in groups %}
+                        {% set isLastGroup, id, measures = loop.last, studyIndex~'_'~groupIndex, group['measureTimePoint'] %}
+                        {% set groupName, leftBorderGroup, isOneMeasure, measureNames = groupNames[groupIndex], '1px '~(isLastGroup? 'dotted' : 'solid')~' black', (measures|length) is same as 1, groupsWithNames[groupIndex] %}
+                        <div style="grid-column: 2; {{ widthMinHeight }}">
+                            <div style="{{ heightBorder }}"></div>
+                            <div style="{{ heightShort }}; border-left: {{ leftBorderGroup }}"></div>
+                        </div>
+                        {{ _self.addExpandable('group',nameTrans['group']~(groupIndex+1)~(groupName is not same as '' ? ' ('~groupName~')'),content,id,groupIndex,groupNames,groupName) }}
+                        {{ _self.addCopy('group',id,isOneGroup) }}
+                        {% for measureIndex, measure in measures %}
+                            {% set measureName, id = measureNames[measureIndex], studyIndex~'_'~groupIndex~'_'~measureIndex %}
+                            <div style="grid-column: 2; border-left: {{ leftBorderGroup }}"></div>
+                            <div style="grid-column: 4; {{ widthMinHeight }}">
+                                <div style="{{ heightBorder }}"></div>
+                                <div style="{{ heightShort }}; border-left: {{ '1px '~(loop.last ? 'dotted' : 'solid')~' black' }}"></div>
+                            </div>
+                            <div id="{{ 'dropdownDiv_'~id }}" class="flex flex-wrap align-self-end ms-2" style="grid-column: 5; min-height: 1.5rem">
+                                <span id="{{ 'editText_'~id~'_Text' }}">{{ nameTrans['measureTimePoint']~(measureIndex+1)~(measureName is not same as '' ? ' ('~measureName~')') }}</span>
+                                {{ _self.addEdit(content,id,'measureTimePoint',measureIndex,measureNames,measureName) }}
+                            </div>
+                            {{ _self.addCopy('measureTimePoint',id,isOneMeasure) }}
+                            {% if loop.last %}
+                                {{ _self.addNew(content,'measureTimePoint',measureNames,studyIndex~'_'~groupIndex,isLastGroup) }}
+                            {% endif %}
+                        {% endfor %} {# measure time point #}
+                    {% endfor %} {# group #}
+                    {{ _self.addNew(content,'group',groupNames,studyIndex) }}
+                {% endfor %} {# study #}
+                {{ _self.addNew(content,'study',studyNames) }}
+            </div>
+            {% set tempPrefix = overviewPrefix~'end.' %}
+            <div class="MetaData-Label mt-4">{{ (tempPrefix~'start')|trans|raw|nl2br }}</div>
+            <div class="MetaData-Label minAutoGrid gap-2">
+                {% for symbol in ['rename','copy','add','delete','edit'] %}
+                    {{ include('images/'~symbol~'.svg') }}
+                    {{ (tempPrefix~symbol)|trans }}
+                {% endfor %}
             </div>
         {% endif %}
-        {# description of page part one #}
-        <div class="MetaData-Label">
-            {{ (prefix~'start')|trans|raw }}
-        </div>
-        {# variable for creating, editing, removing, i.e., after manipulation redirect to same page #}
-        {% set landingRouteIDs, modalID = isStudy ? {'studyID': id[0]+1}|merge(isGroup ? {'groupID': id[1]+1}|merge(isMeasure ? {'measureID': id[2]+1} : {}) : {}) : {}, 'removeModal' %}
-        <div class="MetaData-Widget">
-            {% set manipulatePrefix, landingIndex, width = 'landing.manipulate.', 0, 'width: 15rem' %} {# either all pages or no page links to landing #}
-            {% set minWidth, manipulate, editPrefix, namesParam = addStyle(width), manipulatePrefix~'manipulate', manipulatePrefix~'edit.', {'names': names} %}
-            {% for route in menu %}
-                {% set routeIDs, curRoute = route.routeIDs ?? {}, route.route %}
-                {% set isCurRoute = curRoute is not same as '' %}
-                {% set href, dummyParam = isCurRoute ? path(curRoute,routeIDs), {'route-i-ds': routeIDs, 'url': curRoute}|merge(curRoute is same as 'app_landing' ? {'page': page|capitalize} : {}) %}
-                <a {% if isCurRoute %}
-                    class="block link {% if isProjectdetailsLanding %} StudyNav-SubNavItem Button_navigation justify-content-start {% if loop.index0 is same as 0 or isProjectdetailsLanding and not isMeasure %} mt-4 {% endif %} {% endif %}"
-                    href="{{ href }}"
-                    {{ stimulus_action('base','setDummySubmit','click',dummyParam) }}
-                {% endif %}
-                        style="line-height: 2; word-break: break-word; width: fit-content; {% if not isCurRoute %} display: block; {% endif %}"> {# do not set display as class to have correct color #}
-                    {{ route.label|nl2br }}
-                </a>
-                {% if isProjectdetailsLanding and not isGroup %}
-                    <div class="mt-1 mb-4" style="display: none; width: fit-content" {{ stimulus_target('landing','edit') }}> {# text field and submit button for changing name #}
-                        <div {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setButtons','input',namesParam) }}>
-                            {{ form_widget(content['editText'~landingIndex],{'attr': minWidth|merge({'value': names[landingIndex]})|merge(addTarget('landing','name'))}) }}
-                        </div>
-                        <button type="submit" class="Button_primary_act align-self-center ms-2" id="{{ 'landing_edit'~landingIndex }}" style="height: fit-content" {{ stimulus_action('base','submitForm','click',{'routeIDs': landingRouteIDs})|stimulus_target('landing','submitName') }}>
-                            {{ (editPrefix~'editCommit')|trans }}
-                        </button>
-                    </div>
-                {% endif %}
-                {% if isProjectdetailsLanding %}
-                    <div class="flex align-items-center mt-1" style="width: fit-content">
-                        {% if not isMeasure %}
-                            <a class="Button_primary_act me-2" style="text-align: center" href="{{ href }}" {{ stimulus_action('base','setDummySubmit','click',dummyParam) }}>{{ (manipulatePrefix~'details')|trans }}</a>
-                        {% endif %}
-                        {% if not isGroup %}
-                            <button type="button" class="Button_primary_act mx-2" id="{{ 'edit'~landingIndex }}" {{ stimulus_action('landing','editStudyGroup','click') }}>{{ (editPrefix~'change')|trans }}</button> {# change name #}
-                        {% endif %}
-                        {% if isMultiple[isGroup ? 2 : (isStudy ? 1 : 0)] %}
-                            <button type="button" class="Button_primary_act mx-2" id="{{ 'landing_remove'~landingIndex }}" data-bs-toggle="modal" data-bs-target="#{{ modalID }}" {{ stimulus_action('base','setLandingRemove','click') }}>{{ manipulate|trans({'level': isGroup ? 'measure':  (isStudy ? 'group' : 'study'), 'type': 'remove'}) }}</button> {# remove #}
-                        {% endif %}
-                    </div>
-                {% endif %}
-                {% set landingIndex = landingIndex+1 %}
-            {% endfor %}
-        </div>
-        {# description of page part two #}
-        {% if isProjectdetailsLanding %}
-            {{ formRender.addExpandable(prefix~'new') }}
-            <div style="display: none"> {# div closes in next 'if not isMeasure' #}
-                <div class="MetaData-Label mt-4">
-                    {{ (prefix~'end')|trans|raw }}
-                </div>
-                {# new study, group, or measure time point #}
-                <div class="MetaData-Widget grid mt-4 gap-2" style="grid-template-columns: repeat(2,minmax(min-content,max-content))"> {# if isMeasure is true, then isGroup is also true #}
-                    {% if not isGroup %}
-                        <div style="grid-area: 1 / 1; {{ width }}" {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setButtons','input',namesParam) }}> {# text field for entering a new study or group name #}
-                            {{ form_widget(content.newStudyGroupText,{'attr': minWidth|merge(addTarget('landing','name'))}) }}
-                        </div>
+        {% if not isProjectdetailsLanding %} {# sub-pages #}
+            <div class="MetaData-Widget">
+                {% for route in menu %}
+                    {% set routeIDs, curRoute = route.routeIDs ?? {}, route.route %}
+                    <a {% if curRoute is not same as '' %}
+                        class="link"
+                        href="{{ path(curRoute,routeIDs) }}"
+                        {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': curRoute}) }}
                     {% endif %}
-                    {% set level = isStudy ? (not isGroup ? 'group' : 'measure') : 'study' %}
-                    {% set levelParam, routeParams = {'level': level}, {'routeIDs': landingRouteIDs} %}
-                    {# button for creating a new study, group or measure point in time #}
-                    <button type="submit" id="submitName" class="Button_primary_act align-self-center" style="grid-area: 1 / 2; height: fit-content" {{ stimulus_action('base','submitForm','click',routeParams)|stimulus_target('landing','submitName') }}>{{ manipulate|trans(levelParam|merge({'type': 'new'})) }}</button>
-                    {# dropdown for selecting the study, group or measure point in time to be copied #}
-                    <div style="grid-area: 2 / 1; {{ width }}" {{ stimulus_action('landing','setButtons','change',namesParam) }}>
-                        {{ form_widget(content.copy,{'attr': addClass('Button_dropdown',false,'text-overflow: ellipsis')|merge(addTarget('landing','copy'))}) }}
-                    </div>
-                    {# button for copying a study, group or measure point in time #}
-                    <button type="submit" id="submitCopy" class="Button_primary_act" style="grid-area: 2 / 2" {{ stimulus_action('base','submitForm','click',routeParams)|stimulus_target('landing','submitCopy') }} disabled>{{ manipulate|trans(levelParam|merge({'type': 'copy'})) }}</button>
-                </div>
-            </div> {# div after 'addExpandable' #}
+                            style="line-height: 2; word-break: break-word; width: fit-content; display: block;"> {# do not set display as class to have correct color #}
+                        {{ route.label|nl2br }}
+                    </a>
+                {% endfor %}
+            </div>
         {% endif %}
         {# modal for removing #}
         {% if isProjectdetailsLanding %}
-            {{ include('components/redirectModal.html.twig',{'modalID': modalID, 'prefix': 'landing.projectdetails.removeModal.', 'link': 'app_landing', 'params': {'type': level}, 'submitParams': {'routeIDs': landingRouteIDs}, 'stim': ['base','submitForm'], 'stimNo': ['base','unsetLandingRemove'], 'modalBodyTarget': ['base','landingRemove']}) }}
+            {{ include('components/redirectModal.html.twig',{'modalID': 'removeModal', 'prefix': translationPrefix~'removeModal.', 'link': 'app_landing', 'stim': ['base','submitForm'], 'stimNo': ['base','unsetLandingRemove'], 'modalBodyTarget': ['landing','landingRemove']}) }}
         {% endif %}
         {{ formRender.addSubmitButtons(true,page is same as 'appData', isProjectdetailsLanding) }}
     </div> {# div including stimulus controller #}
 {% endblock %}
 
 {% block preview %}
-    {{ formRender.addPreview(isStudy ? [id[0]+1]|merge(isGroup ? [id[1]+1]|merge(isMeasure ? [id[2]+1] : []) : []) : []) }}
+    {{ formRender.addPreview(isPageOverview ? [IDs[0]+1,IDs[1]+1,IDs[2]+1] : []) }}
 {% endblock %}
+
+{% macro addExpandable(type,text,content,id,index,names,currentName) %}
+    {# Adds an expandable element. The element that gets expanded must follow immediately this element. Input arguments:
+        type:        must equal 'study', 'group', or 'measureTimePoint'
+        text:        translation key for the text to be shown next to the expanded/collapsed symbol
+        content:     form elements
+        id:          concatenated part of the id for the widget
+        index:       index of the type
+        names:       names of the elements of the current type
+        currentName: current name of the element
+    #}
+    {% set column = type is same as 'study' ? 1 : 3 %}
+    <span id="{{ 'dropdown_'~id }}" class="clickable dropdownExpanded landingDropdown align-self-end" style="min-height: 1.5rem; grid-column: {{ column }}"></span>
+    <div id="{{ 'dropdownDiv_'~id }}" class="flex flex-wrap align-content-end" style="grid-column: {{ column+1 }} / span {{ 5-column+1 }}; min-height: 2.5rem;">
+        <span id="{{ 'editText_'~id~'_Text' }}">{{ text }}</span>
+        {{ _self.addEdit(content,id,type,index,names,currentName) }}
+    </div>
+{% endmacro %}
+
+{% macro addExpandable2(type,text,content,id,index,names,currentName) %}
+    {# Adds an expandable element. The element that gets expanded must follow immediately this element. Input arguments:
+        type:        must equal 'study', 'group', or 'measureTimePoint'
+        text:        translation key for the text to be shown next to the expanded/collapsed symbol
+        content:     form elements
+        id:          concatenated part of the id for the widget
+        index:       index of the type
+        names:       names of the elements of the current type
+        currentName: current name of the element
+    #}
+    {% set column = type is same as 'study' ? 1 : 3 %}
+    <span id="{{ 'V2dropdown_'~id }}" class="clickable dropdownExpanded landingDropdown align-self-end" style="min-height: 1.5rem; grid-column: {{ column }}"></span>
+    <div id="{{ 'V2dropdownDiv_'~id }}" class="flex flex-wrap align-content-end" style="grid-column: {{ column+1 }} / span {{ 4-column+1 }}; min-height: 2.7rem;">
+        <span id="{{ 'V2editText_'~id~'_Text' }}">{{ text }}</span>
+        {{ _self.addEdit2(content,id,type,index,names,currentName) }}
+    </div>
+    {{ _self.addEditCancel2(id) }}
+{% endmacro %}
+
+{% macro addNew(content, type, names, id = '', isLastGroup = false) %}
+    {# Adds the widgets for creating a new element. Input arguments:
+        content:    form elements
+        type:       must equal 'study', 'group', or 'measureTimePoint'
+        names:      names of the element of the current type
+        id:         concatenated part of the id for the widget
+        isLasGroup: true if last group of current study
+    #}
+    {% set projectdetailsPrefix, id, classes = 'landing.projectdetails.', 'new_'~id, 'flex align-self-center ms-2' %}
+    {% set buttonsPrefix, isStudy, column = projectdetailsPrefix~'buttons.', type is same as 'study', type is same as 'group' ? 2 : 4 %}
+    {% if not isStudy %}
+        <div style="grid-column: 2; border-left: 1px {{ isLastGroup ? 'dotted' : 'solid' }} black"></div>
+        <div style="grid-column: {{ column }}; height: 3rem; width: 2rem">
+            <div style="height: 75%; border-left: 1px dotted black; border-bottom: 1px dotted black"></div>
+        </div>
+    {% endif %}
+    {% set column, gridArea, fitHeight = isStudy ? 1 : (column+1), 'grid-area: 1 / 1;', ' height: fit-content;' %}
+    <div class="grid mt-3" id="{{ id~'_Outer' }}" style="grid-column: {{ column }} / span {{ 5-column+1 }}; width: fit-content; min-height: 2.5rem">
+        <button type="button" id="{{ id~'_button' }}" class="{{ classes }} buttonHover" style="{{ gridArea }} color: grey" {{ stimulus_action('landing','setNewEdit','click')|stimulus_action('base','unsetLandingCopy','click') }}>
+            <span class="me-1" style='color: black'>+</span>
+            {{ (buttonsPrefix~'new.'~type)|trans }}</button>
+        <div id="{{ id~'_Div' }}" class="{{ classes }} flex-wrap gap-2 " style="{{ gridArea~fitHeight }} display: none">
+            <div>
+                <div id="{{ id~'_name' }}" style="font-size: x-small; text-align: end">{{ (projectdetailsPrefix~'copyHint')|trans({'type': type}) }}</div>
+                <div {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setCreate','input',{'names': names, 'current': ''}) }}>{{ form_widget(content[id],{'id': id, 'attr': {'style': 'width: 10rem; height: 1.75rem'}}) }}</div>
+            </div>
+            <button type="button" id="{{ id~'_create' }}" class="Button_primary_go align-self-end" style="{{ fitHeight }}" {{ stimulus_action('base','submitForm','click') }}>{{ (buttonsPrefix~'create')|trans }}</button>
+            <button type="button" id="{{ id~'_cancel' }}" class="Button_primary_act align-self-end" style="{{ fitHeight }}" {{ stimulus_action('landing','cancelNewEdit','click')|stimulus_action('base','unsetLandingCopy','click') }}>{{ (buttonsPrefix~'cancel')|trans }}</button>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro addCopy(type, id, isOnly = false, routeIDs = '') %}
+    {# Adds the buttons for copy, remove, and eventually going to details. Input arguments:
+        type:     must equal 'study', 'group', or 'measureTimePoint'
+        id:       concatenated part of the id for the widgets
+        isOnly:   if true, the element is the only one in this branch
+        routeIDs: if type equals 'measureTimePoint', the route IDs
+    #}
+    {% set routeIDs, buttonAlign = id|split('_'), 'Button_primary_act align-self-end' %}
+    <div id="{{ 'copy_'~id~'_Div' }}" class="grid ms-3 justify-content-end" style="grid-column: 7; column-gap: 0.5rem !important; grid-template-columns: repeat(2,min-content) {% if true %} auto {% endif %}">
+        <button type="button" id="{{ 'copy_'~id~'_button' }}" class="{{ buttonAlign }}" {{ stimulus_action('landing','setCopy','click')|stimulus_action('base','setLandingCopy','click') }}>{{ include('images/copy.svg') }}</button>
+        <button type="button" id="{{ 'remove_'~id }}" class="{{ buttonAlign }}" {% if isOnly %} disabled {% endif %} data-bs-toggle="modal" data-bs-target="#removeModal" {{ stimulus_action('landing','setLandingRemove','click')|stimulus_action('base','setLandingRemove','click') }}>{{ include('images/delete.svg') }}</button>
+        {% if type is same as 'measureTimePoint' %}
+            {% set routeIDs = {'studyID': routeIDs[0]+1, 'groupID': routeIDs[1]+1, 'measureID': routeIDs[2]+1} %}
+            <a class="Button_primary_go align-self-end" href="{{ path('app_landing',routeIDs) }}" style="width: fit-content" {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': 'app_landing', 'page': 'Projectdetails'}) }}>{{ include('images/edit.svg') }}</a>
+        {% else %}
+            <div style="width: 2rem;"></div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro addEdit(content, id, type, index, names, currentName) %}
+    {# Adds the widgets for editing the name. Input arguments:
+        content:     form elements
+        id:          concatenated part of the id for the widget
+        type:        must equal 'study', 'group', or 'measure time point'
+        index:       index of the type
+        names:       names of the elements of the current type
+        currentName: current name of the element
+    #}
+    {% set projectdetailsPrefix, editID, fitHeight = 'landing.projectdetails.', 'editText_'~id, 'height: fit-content;' %}
+    {% set buttonsPrefix, heightGrid = projectdetailsPrefix~'buttons.', fitHeight~' grid-area: 1 / 1;' %}
+    <div class="grid" id="{{ 'edit_'~editID }}">
+        <button type="button" id="{{ editID~'_button' }}" class="buttonHover ms-2" style="{{ heightGrid }} width: fit-content" {{ stimulus_action('landing','setNewEdit','click') }}>{{ include('images/rename.svg') }}</button>
+        <div id="{{ editID~'_Div' }}" class="flex flex-wrap gap-2 align-self-end" style="{{ heightGrid }} display: none">
+            <div>
+                <div id="{{ editID~'_name' }}" style="font-size: x-small; text-align: end">{{ (projectdetailsPrefix~'editHint')|trans({'type': type, 'index': index+1}) }}</div>
+                <div {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setCreate','input',{'names': names, 'current': currentName}) }}>{{ form_widget(content[editID],{'id': editID, 'attr': {'style': 'width: 10rem; height: 1.75rem'}}) }}</div>
+            </div>
+            <button type="button" id="{{ 'rename_'~id }}" class="Button_primary_go align-self-end" style="{{ fitHeight }}" {{ stimulus_action('base','submitForm','click') }}>{{ (buttonsPrefix~'edit')|trans }}</button>
+            <button type="button"  id="{{ editID~'_cancel' }}" class="Button_primary_act align-self-end" style="{{ fitHeight }}" {{ stimulus_action('landing','cancelNewEdit','click') }}>{{ (buttonsPrefix~'cancel')|trans }}</button>
+        </div>
+    </div>
+{% endmacro %}

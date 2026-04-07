@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '2.5.1';
+    protected const toolVersion = '2.6.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -219,5 +219,17 @@ trait PageTrait
     protected function translateString(string $string, array $parameters = [], string $domain = 'messages'): string
     {
         return self::$translator->trans($string, $parameters,$domain);
+    }
+
+    // functions involvin xml
+
+    /** Checks if an xml-element exists.
+     * @param string $name name of the element
+     * @param SimpleXMLElement $element parent element
+     * @return bool true if element has a child called name, false otherwise
+     */
+    protected function checkElement(string $name, SimpleXMLElement $element): bool
+    {
+        return $element->{$name}->getName()!=='';
     }
 }

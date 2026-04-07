@@ -40,7 +40,7 @@ abstract class ControllerAbstract extends AbstractController
     public const submitDummy = 'submitDummy'; // name of the form element that hold the route to redirect to; needed in TypeAbstract, therefore public
     protected const landing = 'landing'; // name of the session variable
     protected const content = 'content'; // name of the variable that is passed to the template
-    private const routeOrder = ['app_coreData','app_votes','app_medicine','app_summary','app_contributors','app_landing','app_groups','app_information','app_informationII','app_consent','app_measures','app_burdensRisks','app_compensation','app_texts','app_informationIII','app_legal','app_dataPrivacy','app_dataReuse','app_contributor']; // must equal the route names
+    protected const routeOrder = ['app_coreData','app_votes','app_medicine','app_summary','app_contributors','app_landing','app_groups','app_information','app_informationII','app_consent','app_measures','app_burdensRisks','app_compensation','app_texts','app_informationIII','app_legal','app_dataPrivacy','app_dataReuse','app_contributor']; // must equal the route names
     // constant variables for node names
     protected const docName = 'document'; // array of documents. Each time an input is made, a copy is added. If the page is left, all copies except the most recent one are removed.
     protected const docNameRecent = 'documentRecent'; // Same as 'document' but including changes on other pages. Will be used if the xml-file or the single documents are downloaded before the page is left, but only on pages whose inputs may affect other pages. Therefore, the key only exists on such pages.
@@ -187,7 +187,15 @@ abstract class ControllerAbstract extends AbstractController
             }
         }
         if ($addProjectdetails) {
-            $returnArray = array_merge($returnArray,$this->getProjectdetailsParameters($request));
+            $tempParams = $this->getProjectdetailsParameters($request);
+            $tabName  = '';
+            if ($tempParams['multipleStudyGroupMeasure']) {
+                $tabName .= ' - ';
+                foreach ([self::studyNode => self::studyID, self::groupNode => self::groupID, self::measureTimePointNode => self::measureID] as $type => $typeID) {
+                    $tabName .= ($type!==self::studyNode ? ' / ' : '').ucfirst($this->translateString('projectdetails.headings.'.$type)).' '.$tempParams[$typeID];
+                }
+            }
+            $returnArray = array_merge($returnArray,$tempParams,['tabName' => $this->translateString('pages.'.$pageTitle).$tabName]);
         }
         return array_merge($returnArray,$parameters);
     }
@@ -222,15 +230,12 @@ abstract class ControllerAbstract extends AbstractController
         $returnArray[self::groupID] = $groupID;
         $returnArray[self::measureID] = $measureID;
         $returnArray['routeIDsParam'] = ['routeIDs' => $this->createRouteIDs([self::studyNode => $studyID, self::groupNode => $groupID, self::measureTimePointNode => $measureID])];
-        $allNodes = $appNode->{self::projectdetailsNodeName}->{self::studyNode};
-        $studyNode = $allNodes[$studyID-1];
+        $studyNode = $appNode->{self::projectdetailsNodeName}->{self::studyNode}[$studyID-1];
         $returnArray[self::studyName] = (string) $studyNode->{self::nameNode};
-        $returnArray[self::groupName] = (string) $studyNode->{self::groupNode}[$groupID-1]->{self::nameNode};
-        $isMultiple = [count($allNodes)>1, false, false]; // indicates for each level if multiple elements exist
-        $allNodes = $allNodes[$routeParams[self::studyID]-1]->{self::groupNode};
-        $isMultiple[1] = count($allNodes)>1;
-        $isMultiple[2] = count($allNodes[$routeParams[self::groupID]-1]->{self::measureTimePointNode})>1;
-        $returnArray['multipleStudyGroupMeasure'] = $isMultiple; // name for the twig variable indicating if there are multiple studies, groups, or measure points in time
+        $groupNode = $studyNode->{self::groupNode}[$groupID-1];
+        $returnArray[self::groupName] = (string) $groupNode->{self::nameNode};
+        $returnArray['measureName'] = (string) $groupNode->{self::measureTimePointNode}[$measureID-1]->{self::nameNode};
+        $returnArray['multipleStudyGroupMeasure'] = $this->getMultiStudyGroupMeasure($appNode); // indicates if there are multiple studies, groups, or measure points in time
         $addressee = $this->getAddresseeFromRequest($request);
         $returnArray[self::addresseeType] = $addressee;
         $returnArray[self::participantsString] = $this->getAddresseeString($addressee,false,true,$addressee===self::addresseeParticipants);
@@ -404,15 +409,13 @@ abstract class ControllerAbstract extends AbstractController
                                 $nextRoute = 'app_coreData';
                             } else { // one of the projectdetails overviews
                                 $isPagesOverview = array_key_exists(self::measureID,$landingArray); // true if overview of pages of one measure time point
-                                $isMeasureTimePointOverview = !$isPagesOverview && array_key_exists(self::groupID,$landingArray); // true if overview of measure time points
-                                $isGroupOverview = !$isMeasureTimePointOverview && array_key_exists(self::studyID,$landingArray); // true if overview of groups
                                 if ($isNext) {
                                     if ($isPagesOverview) {
                                         $nextRoute = 'app_groups';
                                         unset($landingArray['page']);
                                     } else {
-                                        $nextRoute = 'app_landing';;
-                                        $landingArray[$isMeasureTimePointOverview ? self::measureID : ($isGroupOverview ? self::groupID : self::studyID)] = 1; // redirect to first element of next level
+                                        $nextRoute = 'app_landing';
+                                        $landingArray = array_merge($landingArray,[self::studyID => 1, self::groupID => 1, self::measureID => 1]); // redirect to first element
                                     }
                                     $tempArray = []; // if 'next page' is clicked immediately after a link was clicked, landingArray is empty
                                     foreach (explode("\n", $submitDummy) as $line) {
@@ -429,7 +432,9 @@ abstract class ControllerAbstract extends AbstractController
                                 } else { // previous page
                                     if (array_key_exists(self::studyID,$landingArray)) { // overview of groups, measure time points or one measure time point
                                         $nextRoute = 'app_landing';
-                                        unset($landingArray[$isPagesOverview ? self::measureID : ($isMeasureTimePointOverview ? self::groupID : ($isGroupOverview ? self::studyID : ''))]); // redirect to previous level
+                                        foreach ([self::studyID,self::groupID,self::measureID] as $type) { // redirect to overview of structure
+                                            unset($landingArray[$type]);
+                                        }
                                         $session->set(self::landing, $landingArray);
                                     } else { // overview of studies
                                         $nextRoute = 'app_contributors';
@@ -604,10 +609,11 @@ abstract class ControllerAbstract extends AbstractController
      * @param int|null $groupID if $page does not equal 'AppData', the id of the group or null if an overview of the study pages should be created
      * @param int|null $measureID if $page does not equal 'AppData', the id of the measure point in time or null if an overview of the group pages should be created
      * @param bool $cutName if $page equals 'Projectdetails' and an overview of studies or groups should be created, true if only the first 5 characters of the name should be shown, false otherwise
+     * @param bool $isOverview if true, the heading for one combination of projectdetails is created, otherwise the overview of one measure time point
      * @return array keys: label for the pages, values: array: names of the routes and route IDs, if applicable, and a bool indicating if any inconsistencies are on the page(s)
      * @throws Exception is any error is thrown in getDocumentCheck
      */
-    protected function setSubMenu(string $page, ?Request $request = null, ?int $studyID = null, ?int $groupID = null, ?int $measureID = null, bool $cutName = true): array
+    protected function setSubMenu(string $page, ?Request $request = null, ?int $studyID = null, ?int $groupID = null, ?int $measureID = null, bool $cutName = true, bool $isOverview = false): array
     {
         if ($page===self::appDataNodeName) {
             $tempVal = 'pages.appData.';
@@ -619,44 +625,50 @@ abstract class ControllerAbstract extends AbstractController
         } else {
             $session = $request->getSession();
             $appNode = $this->getXMLfromSession($session);
-            $studies = $this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]);
-            if ($studyID===null) { // overview of studies
-                $returnArray = $this->setOverview($request,$studies,self::studyNode,$cutName,[]);
-            } else {
-                $groups = $this->addZeroIndex($studies[$studyID][self::groupNode]);
-                if ($groupID===null) { // overview of groups
-                    $returnArray = $this->setOverview($request,$groups,self::groupNode,$cutName,[self::studyID => $studyID+1]);
-                } else {
-                    $measureTimePoints = $this->addZeroIndex($groups[$groupID][self::measureTimePointNode]);
-                    if ($measureID===null) { // overview of measure time points
-                        $returnArray = $this->setOverview($request,$measureTimePoints,self::measureTimePointNode,$cutName,[self::studyID => $studyID+1, self::groupID => $groupID+1]);
-                    } else { // overview of one measure time point
-                        $reviewProcess = $session->get(self::reviewProcess);
-                        $hasDocs = in_array($reviewProcess,self::reviewDocs);
-                        $prefix = 'pages.projectdetails.';
-                        $measure = $measureTimePoints[$measureID];
-                        $routeIDs = [self::studyID => $studyID+1, self::groupID => $groupID+1, self::measureID => $measureID+1];
-                        $information = $this->getInformation($appNode,[self::studyID => $studyID+1, self::groupID => $groupID+1, self::measureID => $measureID+1]);
-                        $isPre = $information===self::pre;
-                        $sidebarSuffix = $cutName ? 'Sidebar' : ''; // use abbreviation for information pages only in sidebar
-                        $returnArray = [];
-                        foreach ([self::groupsNode,self::informationNode,self::informationIINode,self::consentNode,self::measuresNode,self::burdensRisksNode,self::compensationNode,self::textsNode,self::informationIIINode,self::legalNode,self::privacyNode,self::dataReuseNode,self::contributorNode] as $page) {
-                            $route = match ($page) {
-                                self::informationIINode => $this->getAddressee($measure[self::groupsNode])!==self::addresseeParticipants ? 'app_informationII' : '',
-                                self::textsNode => $hasDocs && ($isPre || $information===self::post) ? 'app_texts' : '',
-                                self::informationIIINode => $hasDocs && $this->getInformationIII($measure[self::informationNode]) ? 'app_informationIII' : '',
-                                self::legalNode => $hasDocs && ($isPre && ($this->getAnyConsent($measure[self::consentNode]) || $this->getTemplateChoice($this->getLoanReceipt($measure[self::measuresNode][self::loanNode] ?? [])))) ? 'app_legal' : '',
-                                self::privacyNode => in_array($reviewProcess,self::reviewTypePages[self::privacyNode]) ? 'app_dataPrivacy' : '',
-                                self::dataReuseNode => in_array($reviewProcess,self::reviewTypePages[self::dataReuseNode]) ? 'app_dataReuse' : '',
-                                self::contributorNode => $hasDocs && (count($studies)>1 || count($groups)>1 || count($measureTimePoints)>1) ? 'app_contributor' : '',
-                                default => 'app_'.$page};
-                            $returnArray[] =
-                                [self::label => $this->translateString($prefix.$page.(str_contains($page,self::informationNode) ? $sidebarSuffix : '')),
-                                 self::route => $route,
-                                 self::routeIDs => $routeIDs,
-                                 self::error => $route!=='' && CheckDocClass::getDocumentCheck($request,$page,routeIDs: $routeIDs)];
-                        }
-                    }
+            if ($isOverview) { // overview of one combination in the sidebar
+                if ($this->getMultiStudyGroupMeasure($appNode)) {
+                    $headingTrans = $this->getProjectdetailsHeadings();
+                    $curRouteIDs = [self::studyID => $studyID+1, self::groupID => $groupID+1, self::measureID => $measureID+1];
+                    $returnArray = [
+                        self::label => $headingTrans[self::studyNode].($studyID+1).'/ '.$headingTrans[self::groupNode].($groupID+1).'/ '.$headingTrans[self::measureTimePointNode].($measureID+1),
+                        self::route => 'app_landing',
+                        self::routeIDs => $curRouteIDs,
+                        self::error => CheckDocClass::getDocumentCheck($request,self::projectdetailsNodeName,routeIDs: $curRouteIDs)];
+                } else { // only one study, group, and measure time point
+                    $curRouteIDs = [self::studyID => 1, self::groupID => 1, self::measureID => 1];
+                    $returnArray = [
+                        self::label => $this->translateString('projectdetails.sidebar'),
+                        self::route => 'app_landing',
+                        self::routeIDs => $curRouteIDs,
+                        self::error => CheckDocClass::getDocumentCheck($request,self::projectdetailsNodeName,routeIDs: $curRouteIDs)];
+                }
+
+            } else { // overview of one measure time point
+                $reviewProcess = $session->get(self::reviewProcess);
+                $hasDocs = in_array($reviewProcess,self::reviewDocs);
+                $prefix = 'pages.projectdetails.';
+                $routeIDs = [self::studyID => $studyID+1, self::groupID => $groupID+1, self::measureID => $measureID+1];
+                $measure = $this->xmlToArray($this->getMeasureTimePointNode($appNode,$routeIDs));
+                $isMultiple = $this->getMultiStudyGroupMeasure($appNode);
+                $information = $this->getInformation($appNode,$routeIDs);
+                $isPre = $information===self::pre;
+                $sidebarSuffix = $cutName ? 'Sidebar' : ''; // use abbreviation for information pages only in sidebar
+                $returnArray = [];
+                foreach ([self::groupsNode,self::informationNode,self::informationIINode,self::consentNode,self::measuresNode,self::burdensRisksNode,self::compensationNode,self::textsNode,self::informationIIINode,self::legalNode,self::privacyNode,self::dataReuseNode,self::contributorNode] as $page) {
+                    $route = match ($page) {
+                        self::informationIINode => $this->getAddressee($measure[self::groupsNode])!==self::addresseeParticipants ? 'app_informationII' : '',
+                        self::textsNode => $hasDocs && ($isPre || $information===self::post) ? 'app_texts' : '',
+                        self::informationIIINode => $hasDocs && $this->getInformationIII($measure[self::informationNode]) ? 'app_informationIII' : '',
+                        self::legalNode => $hasDocs && ($isPre && ($this->getAnyConsent($measure[self::consentNode]) || $this->getTemplateChoice($this->getLoanReceipt($measure[self::measuresNode][self::loanNode] ?? [])))) ? 'app_legal' : '',
+                        self::privacyNode => in_array($reviewProcess,self::reviewTypePages[self::privacyNode]) ? 'app_dataPrivacy' : '',
+                        self::dataReuseNode => in_array($reviewProcess,self::reviewTypePages[self::dataReuseNode]) ? 'app_dataReuse' : '',
+                        self::contributorNode => $hasDocs && $isMultiple ? 'app_contributor' : '',
+                        default => 'app_'.$page};
+                    $returnArray[] =
+                        [self::label => $this->translateString($prefix.$page.(str_contains($page,self::informationNode) ? $sidebarSuffix : '')),
+                            self::route => $route,
+                            self::routeIDs => $routeIDs,
+                            self::error => $route!=='' && CheckDocClass::getDocumentCheck($request,$page,routeIDs: $routeIDs)];
                 }
             }
         }
@@ -1242,13 +1254,9 @@ abstract class ControllerAbstract extends AbstractController
         $parameters = array_merge($isReviewFullParam,['reviewProcess' => $reviewProcess]);
         // brief report
         $allBriefReports = []; // 0: heading, 1: array, keys: questions, values: 0: answer, 1: if true, answer will be displayed in red
-        $headingTrans = [];
-        foreach ([self::studyNode,self::groupNode,self::measureTimePointNode] as $type) {
-            $headingTrans[$type] = $this->translateString('projectdetails.headings.'.$type).' ';
-        }
+        $headingTrans = $this->getProjectdetailsHeadings();
         $studyArray = $this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]);
         $multipleStudies = count($studyArray)>1;
-        $noUnclear = [self::answerNo,self::answerUnclear];
         $appDataArray = $this->xmlToArray($appNode->{self::appDataNodeName});
         $medicineArray = $appDataArray[self::medicine];
         $coreDataArray = $appDataArray[self::coreDataNode];
@@ -1303,7 +1311,7 @@ abstract class ControllerAbstract extends AbstractController
                         $parameters['isNotPre'] = $this->getStringFromBool($isNotPre);
                         $isIncomplete = array_intersect($preContent, self::preContentIncomplete)!==[];
                         $parameters['isIncomplete'] = $this->getStringFromBool($isIncomplete);
-                        $briefReport[$this->getBriefReportHeading(self::informationNode)] = $this->getBriefReportAnswer(self::informationNode, $isNotPre || $isIncomplete ? self::answerNo : self::answerYes, $parameters, $getReviewError, $noUnclear);
+                        $briefReport[$this->getBriefReportHeading(self::informationNode)] = $this->getBriefReportAnswer(self::informationNode, $isNotPre || $isIncomplete ? self::answerNo : self::answerYes, $parameters, $getReviewError, [self::answerNo]);
                         // voluntary -> no need to check for chosen2 because if it exists, 'examined' will falsify $allShort anyway
                         $consentArray = $measureTimePoint[self::consentNode];
                         $tempArray = $consentArray[self::consentNode];
@@ -1324,7 +1332,7 @@ abstract class ControllerAbstract extends AbstractController
                                 ? self::answerRestricted
                                 : ($isVoluntary || // voluntariness not applicable, closed group or dependent
                                 $isConsentOther // consent is 'other'
-                                    ? self::answerUnclear : self::answerYes)), $parameters, $getReviewError, [self::answerUnclear, self::answerRestricted, self::answerNo]);
+                                    ? self::answerUnclear : self::answerYes)), $parameters, $getReviewError, [self::answerRestricted, self::answerNo]);
                         // terminate cons
                         $measuresArray = $measureTimePoint[self::measuresNode];
                         $isLonger30 = $this->getDuration($measuresArray[self::durationNode])>30;
@@ -1342,7 +1350,7 @@ abstract class ControllerAbstract extends AbstractController
                         $briefReport[$this->getBriefReportHeading(self::terminateConsNode)] = $this->getBriefReportAnswer(self::terminateConsNode, $isTerminateCons || $isLonger30 && $isNoCompensationTerminate // cons if withdrawal or duration>30min and no compensation if withdrawal
                             ? self::answerNo
                             : ($compensationTerminate===self::terminateOther || $isShorter30Terminate // other compensation if withdrawal or duration at most 30 minutes and no compensation if withdrawal
-                                ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, $noUnclear);
+                                ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, [self::answerNo]);
                         // examined
                         $groupsArray = $measureTimePoint[self::groupsNode];
                         $examinedArray = $groupsArray[self::examinedPeopleNode];
@@ -1359,7 +1367,7 @@ abstract class ControllerAbstract extends AbstractController
                             $isUnder18 // underage
                                 ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
                         // wards -> no need to set $allShort because checks for wards are implicitly included in checks for examined
-                        $briefReport[$this->getBriefReportHeading(self::wardsExaminedNode)] = $this->getBriefReportAnswer(self::wardsExaminedNode, array_key_exists(self::wardsExaminedNode, $examinedArray) ? self::answerNo : ($isUnder18 ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, $noUnclear);
+                        $briefReport[$this->getBriefReportHeading(self::wardsExaminedNode)] = $this->getBriefReportAnswer(self::wardsExaminedNode, array_key_exists(self::wardsExaminedNode, $examinedArray) ? self::answerNo : ($isUnder18 ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, [self::answerNo]);
                         // pre content -> no need to set $allShort because checks for pre content are implicitly included in checks for information
                         $briefReport[$this->getBriefReportHeading(self::preContent)] = $this->getBriefReportAnswer(self::preContent, in_array(self::deceit, $preContent) // deceit was chosen
                             ? self::answerYes
@@ -1446,18 +1454,18 @@ abstract class ControllerAbstract extends AbstractController
      * @param string $answer answer to the question
      * @param array $parameters parameters for the translation
      * @param bool $getFull if true, return whether the answer is in $coloredAnswers but unequal to 'unclear'
-     * @param array $coloredAnswers if $answer equals any of these answers, the answer will be displayed in red
-     * @return array if $getFull is false: 0: whether the answer is in coloredAnswers but unequal to 'unclear', 1: whether the answer is 'unclear'. If getColored is true: array of two elements: 0: translated answer (i.e., second column), 1: whether the answer is in $coloredAnswers
+     * @param array $coloredAnswers if $answer equals any of these answers, the answer will be displayed in red except if the answer is 'unclear' which will be rendered in grey
+     * @return array if $getFull is false: 0: whether the answer is in coloredAnswers but unequal to 'unclear', 1: whether the answer is 'unclear'. If getColored is true: array of two elements: 0: translated answer (i.e., second column), 1: color of the answer
      */
-    private function getBriefReportAnswer(string $key, string $answer, array $parameters, bool $getFull, array $coloredAnswers = [self::answerYes,self::answerUnclear]): array
+    private function getBriefReportAnswer(string $key, string $answer, array $parameters, bool $getFull, array $coloredAnswers = [self::answerYes]): array
     {
         $tempPrefix = 'completeForm.briefReport.';
         $isColored = in_array($answer,$coloredAnswers);
+        $isUnclear = $answer===self::answerUnclear;
         if ($getFull) {
-            $isUnclear = $answer===self::answerUnclear;
-            return [$isColored && !$isUnclear,$isUnclear];
+            return [$isColored,$isUnclear];
         } else {
-            return [$this->translateStringPDF($tempPrefix.'types.'.$answer).$this->translateStringPDF($tempPrefix.'linking.'.$key,(array_merge($parameters,['answer' => $answer]))),$isColored];
+            return [$this->translateStringPDF($tempPrefix.'types.'.$answer).$this->translateStringPDF($tempPrefix.'linking.'.$key,(array_merge($parameters,['answer' => $answer]))),$isColored ? 'red' : ($isUnclear ? 'grey' : '')];
         }
     }
 
@@ -1470,6 +1478,16 @@ abstract class ControllerAbstract extends AbstractController
         $pre = $information[self::pre];
         $post = $pre==='1' ? $information[self::post][self::chosen] : '';
         return $pre==='0' ? self::pre : ($pre==='1' ? ($post==='0' ? self::post : ($post==='1' ? 'noPost' : 'noPre')) : '');
+    }
+
+    /** Checks whether data collection has already begun and participant documents would be reviewed.
+     * @param string $reviewProcess current review process
+     * @param Session $session session
+     * @return bool true if data collection has already begun and participants documents would be reviewed, false otherwise
+     */
+    protected function getBegunDocs(string $reviewProcess, Session $session): bool
+    {
+        return $reviewProcess===self::reviewFullBegun || $reviewProcess===self::reviewShortBegun && !in_array($this->getCommitteeType($session),self::reviewShortChoose);
     }
 
     // functions involving xml
@@ -1748,7 +1766,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajor1 || $isMajor2 && ($minor<'5' || $minor==='5' && $patch<'1');
+        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'6';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
@@ -1758,7 +1776,7 @@ abstract class ControllerAbstract extends AbstractController
         $conflictDescription = '';
         $committeeType = (string)$xml->{self::committee};
         $qualificationOrApplicantNode = $coreDataNode->{$this->checkElement(self::qualification,$coreDataNode) ? self::qualification : self::applicant};
-        if ($isMajor1) { // updates for version before 2.0.0
+        if ($isMajor1) { // updates for versions before 2.0.0
             $this->setToolVersion($xml); // update attribute
             $conflictNode = $coreDataNode->{self::conflictNode};
             $isConflict = (string)$conflictNode->{self::chosen}==='0';
@@ -1773,7 +1791,7 @@ abstract class ControllerAbstract extends AbstractController
             $this->insertElementBefore(self::applicationProcessNode, $qualificationOrApplicantNode, [self::chosen]);
         }
         if ($isSmallerCurrent) {
-            if ($isMajor1 || $isMajor2 && $minor<'4') { // updates for version before 2.4.0
+            if ($isMajor1 || $isMajor2 && $minor<'4') { // updates for versions before 2.4.0
                 $fundingArray = $this->xmlToArray($coreDataNode->{self::funding});
                 $anyRequested = false;
                 foreach (self::fundingResearchExternal as $curFunding) {
@@ -1783,7 +1801,7 @@ abstract class ControllerAbstract extends AbstractController
                     $this->insertElementBefore(self::requestedConfirm,$qualificationOrApplicantNode);
                 }
             }
-            // updates for version before 2.3.0
+            // updates for versions before 2.3.0
             if ($isSmaller230 && $committeeType===self::committeeEUB && in_array((string) $coreDataNode->{self::applicant}->{self::position}, self::positionsStudentPhd) && !$this->checkElement(self::supervisor,$coreDataNode)) { // supervisor is obligatory for student/phd independent of qualification
                 $this->insertElementBefore(self::supervisor,$coreDataNode->{self::conflictNode},self::applicantContributorsInfosTypes);
                 $contributors = $this->getContributorsArray($this->xmlToArray($xml));
@@ -1792,7 +1810,7 @@ abstract class ControllerAbstract extends AbstractController
                 $this->updateProjectdetailsContributor($request,$xml,'',[],false,true); // update contributors in projectdetails
                 $this->addAllContributorsNodes($xml,$contributors); // update contributors in Contributors
             }
-            // updates for version before 2.4.0
+            // updates for versions before 2.4.0
             $projectStartNode = $coreDataNode->{self::projectStart};
             $isBegun = $this->checkElement(self::descriptionNode,$projectStartNode);
             if ($isBegun) { // data collection has already begun -> project start has to be entered, too, and justification for TUD is necessary
@@ -1815,7 +1833,7 @@ abstract class ControllerAbstract extends AbstractController
                         $compensationNode = $measureTimePointNode->{self::compensationNode}[0];
                         $privacyNode = $measureTimePointNode->{self::privacyNode};
                         if ($isMajor1) {
-                            // updates for version before 2.0.0
+                            // updates for versions before 2.0.0
                             // groups (update of nodes)
                             $groupsNodeDom = dom_import_simplexml($groupsNode);
                             $criteriaNode = $groupsNode->{self::criteriaNode};
@@ -2008,11 +2026,14 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->insertElementBefore(self::presenceNode,$measuresNode->{self::durationNode});
                             }
                         } // is200
-                        // updates for version before 2.2.1
-                        if ($isSmaller221 && $this->checkElement(self::createNode,$privacyNode)) {
-                            $createNode = $privacyNode->{self::createNode};
-                            if (((string) $createNode->{self::chosen})===self::createSeparate) { // verification is separate node and not asked for all review types
-                                if ($isMajor1 || in_array($reviewProcess,self::reviewQuestions[self::privacyNode][self::createVerificationNode])) { // if major is 1, review process is short(No)Docs at this point
+                        // updates for versions before 2.2.1
+                        $hasCreate = $this->checkElement(self::createNode,$privacyNode);
+                        $createNode = $hasCreate ? $privacyNode->{self::createNode} : null;
+                        $isSeparate = $hasCreate && ((string) $createNode->{self::chosen})===self::createSeparate;
+                        $reviewQuestionsPrivacy = self::reviewQuestions[self::privacyNode];
+                        if ($isSmaller221 && $hasCreate) {
+                            if ($isSeparate) { // verification is separate node and not asked for all review types
+                                if ($isMajor1 || in_array($reviewProcess,$reviewQuestionsPrivacy[self::createVerificationNode])) { // if major is 1, review process is short(No)Docs at this point
                                     $verification = (string) $createNode->{self::descriptionNode};
                                     if ($this->checkElement(self::createVerificationNode,$privacyNode)) { // loaded version was before 2.0.0 -> node was already added
                                         $privacyNode->{self::createVerificationNode} = $verification;
@@ -2024,7 +2045,8 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->removeElement(self::descriptionNode,$createNode);
                             }
                         }
-                        // updates for version before 2.4.0
+                        // updates for versions before 2.4.0
+                        $durationNode = $measuresNode->{self::durationNode};
                         if ($isSmaller240) {
                             if (in_array($reviewProcess, [self::reviewShortRequested, self::reviewShortBegun])) { // remove criteria, location, and details for compensation to have the same information on the intermediate page for short review processes with and without review of participant documents
                                 $this->removeElement(self::criteriaIncludeNode, $groupsNode);
@@ -2044,7 +2066,6 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->updateNodesByReviewProcess($request, $measureTimePointNode, $reviewProcess);
                             }
                             // duration: added days and hours to measure time
-                            $durationNode = $measuresNode->{self::durationNode};
                             $measureTimeMinutes = (string)$durationNode->{'measureTime'};
                             $breaks = (string)$durationNode->{'breaks'};
                             $this->removeAllChildNodes($durationNode);
@@ -2052,10 +2073,32 @@ abstract class ControllerAbstract extends AbstractController
                             $durationNode->{self::durationMeasureTimeMinutes} = $measureTimeMinutes;
                             $durationNode->{self::durationBreaks} = $breaks;
                         }
-                        // update for version before 2.5.0
+                        // updates for versions before 2.5.0
                         if ($isSmaller250 && $this->checkElement(self::burdensRisksCompensationNode,$burdensNode)) { // any burden except 'no burden' is selected -> add burdens everyday node
                             $this->insertElementBefore(self::burdensEveryday,$burdensNode->{self::burdensRisksCompensationNode});
                             $burdensNode->{self::burdensEveryday} = '0'; // as the everyday part was part of the burdens questions before, set the answer to 'yes'
+                        }
+                        // updates for versions before 2.6.0
+                        $this->insertElementBefore(self::nameNode,$groupsNode); // measure time points may also be named
+                        // presence may have a description -> add chosen node
+                        $presence = (string) $measuresNode->{self::presenceNode};
+                        $this->removeElement(self::presenceNode,$measuresNode);
+                        $this->insertElementBefore(self::presenceNode,$durationNode,[self::chosen]);
+                        $measuresNode->{self::presenceNode}->{self::chosen} = $presence==='0' ? 'yes' : ($presence==='1' ? self::presenceNo : '');
+                        $days = $this->getIntFromString((string) $durationNode->{self::durationMeasureTimeDays});
+                        if ($days>0) { // if days>0, description instead of hours, minutes, and breaks must be entered
+                            $this->removeAllChildNodes($durationNode);
+                            $durationNode->addChild(self::durationMeasureTimeDays,$days);
+                            $durationNode->addChild(self::descriptionNode);
+                        }
+                        $privacyArray = $this->xmlToArray($privacyNode);
+                        if ($hasCreate) {
+                            if ((in_array($privacyArray[self::responsibilityNode] ?? '',self::responsibilityNotOwn) || ($privacyArray[self::transferOutsideNode] ?? '')==='yes' || ($privacyArray[self::markingNode][self::chosen] ?? '')===self::markingOther) && in_array($reviewProcess,$reviewQuestionsPrivacy[self::addOwnNode])) { // privacy statement can not be created by the tool -> add question whether PDF should be added
+                                $privacyNode->addChild(self::addOwnNode);
+                            }
+                            if ($isSeparate && in_array($reviewProcess,$reviewQuestionsPrivacy[self::createVerificationNode]) && !$this->checkElement(self::createVerificationNode,$privacyNode)) { // verification is now also asked for shortDocs
+                                $privacyNode->addChild(self::createVerificationNode);
+                            }
                         }
                     } // foreach measure time point
                 } // foreach group
@@ -2075,44 +2118,47 @@ abstract class ControllerAbstract extends AbstractController
     /** Creates a string indicating the duration or an int indicating the total time.
      * @param array $durations array containing the durations
      * @param bool $returnTotal if true, the total time is returned
+     * @param string $addresseeType current addressee. May only be provided if $returnTotal is false
+     * @param bool $addSpan true if the description (if applicable) should be marked, false otherwise. May only be provided if $returnTotal is false
      * @param bool $isMultiple true if multiple measure time points exist. May only be provided if $returnTotal is false
      * @return string|int duration string if $returnTotal ist false, the total time otherwise
      */
-    protected function getDuration(array $durations, bool $returnTotal = true, bool $isMultiple = true): string|int
+    protected function getDuration(array $durations, bool $returnTotal = true, string $addresseeType = '', bool $addSpan = true, bool $isMultiple = true): string|int
     {
         $measureTime = 0;
         $measureTimeArray = []; // translated time for (net) data collection
         $measureTimesInt = []; // time for (net) data collection
         $tempPrefix = 'participation.durationContent.';
-        foreach (self::durationMeasureTimeTypes as $duration) {
-            $curDur = $this->getIntFromString($durations[$duration],0);
-            $measureTime += match ($duration) {
-                self::durationMeasureTimeDays => $curDur*1440,
-                self::durationMeasureTimeHours => $curDur*60,
-                default => $curDur
-            };
-            if ($curDur>0) {
-                $measureTimesInt[$duration] = $curDur;
-                $measureTimeArray[$duration] = $this->translateStringPDF($tempPrefix.$duration,['time' => $curDur]);
-            }
-        }
-        $breaks = $this->getIntFromString($durations[self::durationBreaks],0);
-        $totalArray = $measureTimeArray; // total time
-        if ($returnTotal) {
-            return $breaks+$measureTime;
+        if (array_key_exists(self::descriptionNode,$durations)) { // days>0
+            $days = $durations[self::durationMeasureTimeDays];
+            return $returnTotal ? $this->getIntFromString($days) : $this->translateStringPDF($tempPrefix.self::durationMeasureTimeDays,[self::addressee => $addresseeType, 'time' => $days]).' '.$this->addMarkInput($durations[self::descriptionNode],$addSpan);
         } else {
-            $hours = $measureTimesInt[self::durationMeasureTimeHours] ?? 0;
-            $minutesNew = ($measureTimesInt[self::durationMeasureTimeMinutes] ?? 0)+$breaks;
-            if ($hours>0 && $minutesNew>=60) { // only split if hours were entered
-                $totalArray[self::durationMeasureTimeHours] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeHours,['time' => $hours+floor($minutesNew/60)]); // translate again in case hours changed from singular to plural
-                $minutesNew = $minutesNew%60;
+            foreach ([self::durationMeasureTimeHours,self::durationMeasureTimeMinutes] as $duration) {
+                $curDur = $this->getIntFromString($durations[$duration],0);
+                $measureTime += $duration===self::durationMeasureTimeHours ? $curDur*60 : $curDur;
+                if ($curDur>0) {
+                    $measureTimesInt[$duration] = $curDur;
+                    $measureTimeArray[$duration] = $this->translateStringPDF($tempPrefix.$duration,['time' => $curDur]);
+                }
             }
-            if ($minutesNew>0) {
-                $totalArray[self::durationMeasureTimeMinutes] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeMinutes,['time' => $minutesNew]); // translate again in case minutes changed from singular to plural or vice versa
-            } else { // minutes add up to full hour
-                unset($totalArray[self::durationMeasureTimeMinutes]);
+            $breaks = $this->getIntFromString($durations[self::durationBreaks],0);
+            $totalArray = $measureTimeArray; // total time
+            if ($returnTotal) {
+                return $breaks+$measureTime;
+            } else {
+                $hours = $measureTimesInt[self::durationMeasureTimeHours] ?? 0;
+                $minutesNew = ($measureTimesInt[self::durationMeasureTimeMinutes] ?? 0)+$breaks;
+                if ($hours>0 && $minutesNew>=60) { // only split if hours were entered
+                    $totalArray[self::durationMeasureTimeHours] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeHours,['time' => $hours+floor($minutesNew/60)]); // translate again in case hours changed from singular to plural
+                    $minutesNew = $minutesNew%60;
+                }
+                if ($minutesNew>0) {
+                    $totalArray[self::durationMeasureTimeMinutes] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeMinutes,['time' => $minutesNew]); // translate again in case minutes changed from singular to plural or vice versa
+                } else { // minutes add up to full hour
+                    unset($totalArray[self::durationMeasureTimeMinutes]);
+                }
+                return $this->translateStringPDF($tempPrefix.'text',array_merge($measureTimeArray,['total' => $this->replaceDummyString(array_values($totalArray)), 'measureTime' => $this->replaceDummyString(array_values($measureTimeArray)),self::durationBreaks => $breaks, 'multiple' => $this->getStringFromBool($isMultiple)]));
             }
-            return $this->translateStringPDF($tempPrefix.'text',array_merge($measureTimeArray,['total' => $this->replaceDummyString(array_values($totalArray)), 'measureTime' => $this->replaceDummyString(array_values($measureTimeArray)),self::durationBreaks => $breaks, self::durationMeasureTimeDays => $measureTimeArray[self::durationMeasureTimeDays] ?? 0,'multiple' => $this->getStringFromBool($isMultiple)]));
         }
     }
 
@@ -2338,16 +2384,6 @@ abstract class ControllerAbstract extends AbstractController
         }
     }
 
-    /** Checks if an xml-element exists.
-     * @param string $name name of the element
-     * @param SimpleXMLElement $element parent element
-     * @return bool true if element has a child called name, false otherwise
-     */
-    protected function checkElement(string $name, SimpleXMLElement $element): bool
-    {
-        return $element->{$name}->getName()!=='';
-    }
-
     /** For each value in \$nodes, a child of \$element with the same name is created.
      * @param SimpleXMLElement $element node where the children get appended
      * @param array $nodeNames names of the children
@@ -2392,6 +2428,18 @@ abstract class ControllerAbstract extends AbstractController
     protected function xmlToArray(SimpleXMLElement $element): array
     { // added here because it is used by updateNodesByReviewProcess
         return $this->convertEmptyArray(json_decode(json_encode($element),true));
+    }
+
+    /** Creates an array containing the translated names of 'study', 'group', and 'measure time point'
+     * @return array translated array
+     */
+    private function getProjectdetailsHeadings(): array
+    {
+        $headingTrans = [];
+        foreach ([self::studyNode,self::groupNode,self::measureTimePointNode] as $type) {
+            $headingTrans[$type] = ucfirst($this->translateString('projectdetails.headings.'.$type)).' ';
+        }
+        return $headingTrans;
     }
 
     /** Each element in the array whose value is an empty array is converted to an empty string.

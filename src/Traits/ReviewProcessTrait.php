@@ -129,7 +129,8 @@ trait ReviewProcessTrait
         'dataPrivacy' => [
             'processing' => ['fullBegun','fullRequested','fullDocs'],
             'create' => ['shortDocs','shortService','fullDocs'],
-            'verification' => ['fullDocs'],
+            'addOwn' => ['shortDocs','fullDocs'],
+            'verification' => ['shortDocs','fullDocs'],
             'responsibility' => ['shortDocs','shortService','fullDocs'],
             'transferOutside' => ['shortDocs','shortService','fullDocs'],
             'dataOnline' => ['shortDocs','shortService','fullDocs'],
@@ -340,10 +341,12 @@ trait ReviewProcessTrait
             'location' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'locationDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'presence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'presenceDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measureTimeDays' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measureTimeHours' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measureTimeMinutes' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'breaksMinutes' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
+            'breaksMinutes' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measureTimeDaysText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
         ], // measures
         // burdensRisks
         'burdensRisks' => [
@@ -469,7 +472,8 @@ trait ReviewProcessTrait
         'dataPrivacy' => [
             'processing' => ['fullBegun','fullRequested','fullDocs'],
             'create' => ['shortDocs','shortService','fullDocs'],
-            'verification' => ['fullDocs'],
+            'addOwn' => ['shortDocs','fullDocs'],
+            'verification' => ['shortDocs','fullDocs'],
             'confirmIntro' => ['shortDocs','shortService','fullDocs'],
             'responsibility' => ['shortDocs','shortService','fullDocs'],
             'transferOutside' => ['shortDocs','shortService','fullDocs'],
@@ -876,7 +880,7 @@ trait ReviewProcessTrait
             'conflictText' => [['dummy'],''], // dummy to avoid creating the node
             'pro' => [[['information','pre'],['information','post','chosen']],['0','0'],['proTemplate','description'],true],
             'con' => [[['information','pre'],['information','post','chosen']],['0','0'],['conTemplate','description'],true],
-            'findingText' => [[['information','pre'],['information','post','chosen']],['0','0'],[],true] // may be removed again if finding is not answered with 'yes'
+            'findingText' => [[['information','pre'],['information','post','chosen']],['0','0'],['findingTextTemplate','description'],true] // may be removed again if finding is not answered with 'yes'
         ], // texts
         // informationIII
         'informationIII' => [
@@ -895,7 +899,8 @@ trait ReviewProcessTrait
         // data privacy
         'dataPrivacy' => [
             'create' => [[],[],'chosen'],
-            'verification' => [['dataPrivacy','create','chosen'],'separate'],
+            'addOwn' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside'],['dataPrivacy','marking','chosen']],[['onlyOther','multiple','private'],'yes','other']],
+            'verification' => [[['dataPrivacy','create','chosen'],['dataPrivacy','addOwn']],['separate','0']],
             'responsibility' => [['dataPrivacy','create','description'],'1'],
             'transferOutside' => [['dataPrivacy','create','description'],'1'],
             'dataOnline' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside'],['measures','location','chosen']],[['onlyOwn','notApplicable'],['no','notApplicable'],'online'],'chosen'],

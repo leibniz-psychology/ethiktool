@@ -46,7 +46,10 @@ multiple:
   charCount: 'Zeichenanzahl:'
   charCountHint: 'Die empfohlene Maximalanzahl an Zeichen wurde überschritten. Die Einreichung des Antrags ist auch bei Überschreitung möglich; bitte prüfen Sie dennoch, ob Sie (ohne Informationsverlust für die ethische Begutachtung) kürzen können.'
   optional: '(optional)'
-  wording: 'Bitte formulieren Sie Ihre Beschreibungen so, dass sie sich an die {addressee} richten.'
+  wording: >-
+    {isBold, select,
+      true  {<span style="font-weight: bold">Bitte formulieren Sie Ihre Beschreibungen so, dass sie sich an die {addressee} richten.</span>}
+      other {Bitte formulieren Sie Ihre Beschreibungen so, dass sie sich an die {addressee} richten.}}
   inputHint: >-
     Der Text erscheint so, wie Sie ihn hier eingeben, in {type, select,
                                                             info    {der {infoType, select,
@@ -253,7 +256,7 @@ pages:
   contributors:
     contributors: 'Projektbeteiligte'
   projectdetails:
-    title: 'Projektdetails'
+    title: 'Projektstruktur'
     groups: 'Personengruppen'
     information: 'Aufklärung'
     informationSidebar: 'Aufklärung'
@@ -379,24 +382,39 @@ landing:
       title: 'Antragsdaten' # part of tab name
       start: 'Bitte machen Sie zunächst grundlegende Angaben zu Ihrem Forschungsprojekt. Zur Navigation nutzen Sie bitte die Buttons „Nächste Seite“ bzw. „Vorherige Seite“. Alternativ können Sie auch über die Seitenleiste links navigieren.'
   projectdetails:
+    name: 'Name'
+    editHint: >-
+      Name {type, select,
+              study {Studie}
+              group {Gruppe}
+              other {Zeitpunkt}} {index}
+    copyHint: >-
+      Erstellen dupliziert {type, select,
+                            study {Studie}
+                            group {Gruppe}
+                            other {Zeitpunkt}} X
+    buttons:
+      new:
+        study: 'Neue Studie erstellen'
+        group: 'Neue Gruppe erstellen'
+        measureTimePoint: 'Neuen Zeitpunkt erstellen'
+      create: 'Erstellen'
+      edit: 'Umbenennen'
+      cancel: 'Abbrechen'
+      details: 'Details bearbeiten'
     overview:
-      title: 'Projektdetails' # part of tab name
-      start: 'Das Ethiktool bietet die Möglichkeit, mehrere (Teil-)Studien in einem Antrag zusammenzufassen. Sie können Forschungsprojekte abbilden, die mehrere Studien, mehrere Teilnehmenden-Gruppen und/oder mehrere Erhebungszeitpunkte umfassen.</br></br>Auf dieser Seite werden alle (Teil-)Studien des Forschungsprojekts aufgeführt. Es empfiehlt sich, zunächst die Detailangaben für <i>eine</i> Studie auszufüllen und erst danach bei Bedarf weitere Studien anzulegen.'
-      end: 'Innerhalb einer Studie können verschiedene Teilnehmenden-Gruppen und Erhebungszeitpunkte beschrieben werden; hierfür müssen Sie keine weitere Studie anlegen. Eine weitere Studie müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.</br></br>Wenn Sie eine (Teil-)Studie hinzufügen, können Sie entweder eine neue (leere) Studie erstellen oder eine bestehende Studie kopieren und nur die relevanten Einträge ändern. Die Studien werden automatisch durchnummeriert, sobald es mehr als eine gibt; es empfiehlt sich, außerdem jeder Studie einen kurzen, aussagekräftigen Namen zu geben.'
-      new: 'Weitere Studie anlegen'
-    study:
-      title: 'Studie ' # part of tab name
-      start: 'Auf dieser Seite werden alle Teilnehmenden-Gruppen der aktuell ausgewählten Studie aufgeführt. Es empfiehlt sich, zunächst die Detailangaben für <i>eine</i> Gruppe auszufüllen und erst danach bei Bedarf weitere Gruppen anzulegen.'
-      end: 'Eine weitere Gruppe müssen Sie nur anlegen, wenn sich beispielsweise die Einschlusskriterien oder die Aufklärung für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) unterscheiden.</br></br>Wenn Sie eine Teilnehmenden-Gruppe hinzufügen, können Sie entweder eine neue (leere) Gruppe erstellen oder eine bestehende Gruppe kopieren und nur die relevanten Einträge ändern. Die Gruppen werden automatisch durchnummeriert, sobald es mehr als eine gibt; es empfiehlt sich, außerdem jeder Gruppe einen kurzen, aussagekräftigen Namen zu geben.'
-      new: 'Weitere Gruppe anlegen'
-    group:
-      title: 'Gruppe ' # part of tab name
-      start: 'Auf dieser Seite werden alle Erhebungszeitpunkte für die aktuell ausgewählte Studie und Teilnehmenden-Gruppe aufgeführt. </br></br>Der Begriff „Erhebungszeitpunkt“ bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird („Screening“).</br></br>Es empfiehlt sich, zunächst die Detailangaben für <i>einen</i> Erhebungszeitpunkt auszufüllen und erst danach bei Bedarf weitere Erhebungszeitpunkte anzulegen.'
-      end: 'Wenn Sie einen Erhebungszeitpunkt hinzufügen, können Sie entweder einen neuen (leeren) Zeitpunkt erstellen oder einen vorherigen Zeitpunkt kopieren und nur die relevanten Einträge ändern. Die Zeitpunkte werden automatisch durchnummeriert, sobald es mehr als einen gibt.'
-      new: 'Weiteren Zeitpunkt anlegen'
-    measure:
-      title: 'Zeitpunkt ' # part of tab name
-      start: 'Hier können Sie nun Eingaben zu dieser Kombination aus Studie, Gruppe und Zeitpunkt vornehmen.</br> Die Eingaben gliedern sich in folgende Punkte:'
+      title: 'Projektstruktur' # part of tab name
+      start: >-
+        {isOverview, select,
+          true  {Das Ethiktool kann Forschungsprojekte abbilden, die mehrere Studien, mehrere Teilnehmenden-Gruppen und/oder mehrere Erhebungszeitpunkte umfassen.</br></br> Diese Seite zeigt die Struktur Ihres Forschungsprojekts. Sie können hier weitere Studien, Gruppen und Zeitpunkte anlegen. Die Elemente werden automatisch durchnummeriert, sobald es mehr als eines gibt; es empfiehlt sich, außerdem jedem Element einen kurzen, aussagekräftigen Namen zu geben.}
+          other {Hier können Sie nun Eingaben zu dieser Kombination aus Studie, Teilnehmenden-Gruppe und Erhebungszeitpunkt vornehmen.</br> Die Eingaben gliedern sich in folgende Punkte:}}
+      end:
+        start: 'Hinweis: Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination duplizieren und nur die relevanten Einträge ändern. Die Symbole haben folgende Funktionen:'
+        rename: 'Name des Elements ändern'
+        copy: 'Element duplizieren und am Ende des Astes einfügen'
+        add: 'neues Element erstellen'
+        delete: 'Element entfernen (inklusive aller Unterelemente)'
+        edit: 'Details der Kombination Studie/Gruppe/Zeitpunkt bearbeiten'
     removeModal:
       title: >-
         {type, select,
@@ -405,35 +423,9 @@ landing:
           other {Zeitpunkt}} löschen
       content: >-
         Möchten Sie {type, select,
-                      study {Studie {id} wirklich löschen? Alle Gruppen und Zeitpunkte dieser Studie werden ebenfalls gelöscht.}
-                      group {Gruppe {id} wirklich löschen? Alle Zeitpunkte dieser Gruppe werden ebenfalls gelöscht.}
-                      other {Zeitpunkt {id} wirklich löschen?}}
-  manipulate:
-    details: 'Details bearbeiten'
-    manipulate: >-
-      {level, select,
-        study {{type, select,
-                  new             {neue Studie erstellen}
-                  copy            {Studie kopieren}
-                  remove          {Studie löschen}
-                  other           {[kein Name]}}}
-        group {{type, select,
-                  new             {neue Gruppe erstellen}
-                  copy            {Gruppe kopieren}
-                  remove          {Gruppe löschen}
-                  other           {[kein Name]}}}
-        other {{type, select,
-                  new             {neuen Zeitpunkt erstellen}
-                  copy            {Zeitpunkt kopieren}
-                  remove          {Zeitpunkt löschen}
-                  other           {[kein Name]}}}}
-    edit:
-      change: 'Name ändern'
-      editCommit: 'Bestätigen'
-    placeholder: >-
-      Name der weiteren {isStudy, select,
-                          true  {Gruppe}
-                          other {Studie}}
+                      study {Studie X wirklich löschen? Alle Gruppen und Zeitpunkte dieser Studie werden ebenfalls gelöscht.}
+                      group {Gruppe X wirklich löschen? Alle Zeitpunkte dieser Gruppe werden ebenfalls gelöscht.}
+                      other {Zeitpunkt X wirklich löschen?}}
 
 # application data
 coreData:
@@ -653,7 +645,9 @@ contributors:
   tasks:
     title: 'Funktion(en) im Forschungsprojekt:'
     hints:
-      position: 'Bitte wählen Sie zuerst eine Position aus.'
+      position:
+        noSelection: 'Bitte wählen Sie zuerst eine Position aus.'
+        selection: "Bitte wählen Sie alle Funktionen dieser Person im Forschungsprojekt.</br> Mindestens eine Funktion muss gewählt werden."
       mandatory: '<i>Diese Funktion muss bei jeder Erhebung von mindestens einer projektbeteiligten Person ausgefüllt werden.</i>'
       responsibility: "\nBei mehr als einer datenverantwortlichen Person müssen die Zuständigkeiten geklärt werden."
     nodeTitle: 'aufgaben'
@@ -688,6 +682,7 @@ projectdetails:
     study: 'Studie'
     group: 'Gruppe'
     measureTimePoint: 'Zeitpunkt'
+  sidebar: 'Studiendetails'
   addressee:
     participants:
       participants: 'Teilnehmenden'
@@ -799,7 +794,7 @@ projectdetails:
         furtherParticulars: '(optional) Weitere Angaben zur Stichprobengröße (z.B. Verteilung der Gesamtzahl auf verschiedene Untergruppen)'
         plan:
           title: 'Auf welcher Basis wurde die Fallzahlplanung durchgeführt?'
-          textHint: 'Bitte führen Sie die statistische Methode zur Fallzahlplanung (z.B. Poweranalyse) aus oder schildern Sie anderweitig, auf welchen Annahmen die Wahl Ihrer Stichprobengröße basiert. Benennen Sie etwaige Stellen, die Sie zur Fallzahlplanung beraten haben.'
+          textHint: 'Bitte führen Sie aus, worauf die Wahl Ihrer Stichprobengröße basiert (z.B. statistische Poweranalyse, theoretische Sättigung). Benennen Sie etwaige Stellen, die Sie zur Fallzahlplanung beraten haben.'
       recruitment:
         title: 'Wie werden die Teilnehmenden rekrutiert?'
         types:
@@ -1015,7 +1010,12 @@ projectdetails:
         textHint: 'Bitte ergänzen Sie Angaben zum Ort der Datenerhebung. Achten Sie darauf, dass sich Ihre Formulierung in den obenstehenden Satz einfügt.'
       presence:
         title: 'Sind Projektbeteiligte bei der Erhebung anwesend?'
+        types:
+          yes: 'Ja'
+          partly: 'Zeitweise'
+          no: 'Nein'
         headingHint: 'Die Kenntnis über die Anwesenheit von Projektbeteiligten ist u.a. relevant für die Beurteilung von Reaktionsmöglichkeiten im Falle von Belastungen/Risiken und für den Umgang mit bestimmten Interessenkonflikten.'
+        textHint: 'Bitte erläutern Sie, für welche Teile der Erhebung Projektbeteiligte an- oder abwesend sind.'
       duration:
         title: >-
           Dauer {multiple, select,
@@ -1026,7 +1026,8 @@ projectdetails:
           measureTimeDays: 'Tage:'
           measureTimeHours: 'Stunden:'
           measureTimeMinutes: 'Minuten:'
-          hint: "Sie können als Zeitwert auch '0' eintragen. Es werden nur die Eingaben in die Studieninformation übernommen, bei denen ein Wert größer als 0 eingetragen wurde."
+          hint: "Sie können als Zeitwert auch '0' eintragen. Es werden nur die Eingaben in die Studieninformation übernommen, bei denen ein Wert größer als 0 eingetragen wurde. Wenn sich die Erhebungen über einen längeren Zeitraum erstrecken, geben Sie die Gesamtzahl der Tage ein."
+          hintDays: 'Bitte erläutern Sie, wie sich die Erhebungen über den angegebenen Zeitraum verteilen. Gehen Sie auf den zeitlichen Abstand und die Dauer der einzelnen Erhebungen (ggf. inkl. Pausenzeiten) ein.'
         breaks:
           title: 'Vor- und Nachbereitungszeit sowie Pausenzeiten'
           breaksMinutes: 'Minuten:'
@@ -1048,7 +1049,7 @@ projectdetails:
             Bitte beschreiben Sie die Vorsichtsmaßnahmen bzw. Kompensationen genauer und stellen dabei den Bezug zu den {type, select,
                                                                                                         burdens {gewählten Belastungen bzw. Beanspruchungen}
                                                                                                         risks   {gewählten Risiken}
-                                                                                                        other   {Belastungen/Risiken}} her.
+                                                                                                        other   {Belastungen/Risiken}} her. Die Freiwilligkeit der Teilnahme und das Recht auf nachteilsfreien Rücktritt sind hier nicht gesondert aufzuführen, da diese Prinzipien unabhängig von Belastungen oder Risiken gelten. 
           no: 'Bitte begründen Sie, warum keine Vorsichtsmaßnahmen bzw. Kompensationen geplant sind.'
       burdens:
         title: 'Welchen Belastungen bzw. Beanspruchungen werden die Teilnehmenden ausgesetzt?'
@@ -1104,7 +1105,7 @@ projectdetails:
           types:
             always: 'Die {addressee} werden immer über aufgetretene (Zufalls-)Befunde informiert. (Mitteilung obligatorisch)'
             consent: 'Die {addressee} können in der Einwilligung auswählen, ob sie über aufgetretene (Zufalls-)Befunde informiert werden möchten. (Mitteilung optional)'
-          hint: 'Da Sie ausgewählt haben, dass die Mitteilung obligatorisch ist, wird den <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param="{routeIDs}">Einschlusskriterien</a> automatisch hinzugefügt, dass die Teilnahme nur mit Einverständnis zur Mitteilung etwaiger Zufallsbefunde möglich ist.'
+          hint: 'Da Sie ausgewählt haben, dass die Mitteilung obligatorisch ist, wird den Einschlusskriterien automatisch hinzugefügt, dass die Teilnahme nur mit Einverständnis zur Mitteilung etwaiger Zufallsbefunde möglich ist.'
       feedback:
         title: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
         headingHint: 'Eine Rückmeldung individueller Testergebnisse sollte - insbesondere bei persönlich bedeutsamen Testinhalten - sorgsam überdacht werden. Bitte berücksichtigen Sie, dass eine Rückmeldung ggf. negative oder beunruhigende Ergebnisse umfassen kann. Eine Rückmeldung sollte nur erfolgen, wenn die Projektbeteiligten über Erfahrung in der Rahmung der individuellen Ergebnisse verfügen. Bitte beachten Sie auch, dass für die Rückmeldung individueller Testergebnisse voraussichtlich personenbezogene Daten benötigt werden, die mit den erhobenen Forschungsdaten verknüpft sind. Alternativ kann ein allgemeiner Ergebnisbericht zur Verfügung gestellt werden (auch hierfür werden voraussichtlich personenbezogene Daten benötigt, diese müssen jedoch nicht mit den individuellen Forschungsdaten verknüpft werden).'
@@ -1358,6 +1359,7 @@ projectdetails:
           types:
             verified: 'Die Datenschutzerklärung ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.'
             unverified: 'Die Datenschutzerklärung ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.'
+      addOwn: 'Möchten Sie bei der Erstellung des Gesamt-Ethikantrags eine selbst erstellte Datenschutzerklärung als PDF-Datei beifügen?'
       intro:
         text:
           start: 'Das Ethiktool unterstützt Sie darin, die Datenverarbeitung in der Studie abzubilden.'
@@ -1452,7 +1454,7 @@ projectdetails:
             Aufgrund der getroffenen Auswahl kann die Datenschutzerklärung nicht über das Ethiktool erstellt werden. Bitte nehmen Sie Kontakt zu der {isPrivate, select,
                                                                                       true  {Person auf, die die Qualifikationsarbeit betreut.}
                                                                                       other {zuständigen Datenschutzstelle auf.}} {addPDF, select,
-                    true  {Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, die Datenschutzerklärung („Anlage zur Datenverarbeitung“) als PDF-Datei beizufügen.}
+                    true  {Sie können wählen, ob Sie bei der Erstellung des Gesamt-Ethikantrags eine selbst formulierte Datenschutzerklärung („Anlage zur Datenverarbeitung“) gemäß DS-GVO als PDF-Datei beifügen möchten.}
                     other {}}
       transferOutside:
         title: 'Übermitteln Sie personenbezogene Daten an bzw. teilen Sie personenbezogene Daten mit Dritten außerhalb des Europäischen Wirtschaftsraums (EWR, sog. „Drittlandtransfer“)?'
@@ -1464,8 +1466,8 @@ projectdetails:
           headingHint: 'Dies kann eine Firma, aber auch Ihr Kooperationspartner außerhalb Ihrer Institution sein. Dies umfasst auch die Weitergabe von Daten durch Speicherung in Clouddiensten u.ä. sowie die Weitergabe an Dienstleistende (z.B. zur Transkription oder Aufbereitung bestimmter Daten) bzw. die Nutzung von File-Transfer-Diensten.'
           noHint: >-
             Aufgrund der getroffenen Auswahl kann die Datenschutzerklärung nicht über das Ethiktool erstellt werden. Bitte nehmen Sie Kontakt zu der zuständigen Datenschutzstelle auf. {addPDF, select,
-                                      true  {Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, die Datenschutzerklärung („Anlage zur Datenverarbeitung“) als PDF-Datei beizufügen.}
-                                      other {}}
+                      true  {Sie können wählen, ob Sie bei der Erstellung des Gesamt-Ethikantrags eine selbst formulierte Datenschutzerklärung („Anlage zur Datenverarbeitung“) gemäß DS-GVO als PDF-Datei beifügen möchten.}
+                      other {}}
       dataPersonal:
         title: 'Sind die Forschungsdaten personenbezogen?'
         headingHint: 'Bitte beachten Sie, dass die <u>Forschungsdaten selbst vollständig oder zum Teil personenbezogen</u> sein können. Dies kann durch Art der Daten allein (z.B. Ton-/Bildaufnahmen oder Hirnstrukturbilder) oder im Zusammenhang mit dem Kontext der Studie (z.B. durch das Alter bei Erhebung einer Schulklasse, in der nur ein Kind ein bestimmtes Alter aufweist) der Fall sein.'
@@ -1477,12 +1479,14 @@ projectdetails:
         title: 'Wie werden die Forschungsdaten gekennzeichnet?'
         headingHint: 'Häufig werden Teilnehmenden in Forschungsprojekten aus verschiedenen Gründen Nummern/Codes/Pseudonyme zugewiesen bzw. die Forschungsdaten unter einem Personencode oder (selten) Klarnamen registriert/gespeichert. Damit können auch Dateibezeichnungen für einzelne Datensätze gemeint sein. Mit Kennzeichnung sind hier sowohl verschiedene Arten der Codierung im engeren Sinn als auch die Kennzeichnung mit dem Klarnamen der Teilnehmenden gemeint. Für die Beurteilung, ob die Forschungsdaten personenbeziehbar sind, ist u.a. die Art der Kennzeichnung relevant; sie wird daher hier im Detail erfragt. <u>Wenn Sie zwei Kennzeichnungen verwenden, werden Sie weiter unten separat nach der zweiten Kennzeichnung gefragt.</u>'
         types:
+          consecutive: 'Die Forschungsdaten werden mit einer fortlaufenden Nummer versehen. Die Nummer dient nur der Kennzeichnung von Datensätzen; sie ermöglicht keine Identifikation einzelner Personen.'
           external: 'Die Forschungsdaten werden mit einem Code versehen, der außerhalb des Projekts vergeben wurde oder wird'
           internal: 'Die Forschungsdaten werden mit einem projektinternen Code versehen. '
           name: 'Die Forschungsdaten werden mit dem Namen der Teilnehmenden gekennzeichnet. '
           no: 'Die Forschungsdaten werden nicht individuell gekennzeichnet.'
           other: 'Die Forschungsdaten werden gekennzeichnet, aber keine der o.g. Optionen bildet das Vorgehen in der Studie vollständig ab.'
         hints:
+          consecutive: 'Darunter fällt z.B. auch, dass die Daten in eine Tabelle geschrieben werden, in der jede Zeile alle Antworten bzw. Datenpunkte jeweils einer Person enthält. Entscheidend ist, dass mehrere Antworten/Datenpunkte einer Person durch die (Zeilen-)Nummerierung einander zuordenbar sind.'
           external: 'Hierzu zählen bestehende Codes (z.B. prolific-ID, Nutzungskürzel des Rechenzentrums) ebenso wie Codes, die durch Auftragnehmer wie z.B. Umfrageinstitute neu angelegt werden. Entscheidend ist, dass der Code nicht durch die Projektbeteiligten vergeben wird.'
           internal: >-
             Dieser Code wird durch die {addressee, select,
@@ -1492,8 +1496,8 @@ projectdetails:
           no: 'z.B. bei Anfertigung einer Strichliste, bei durchgängigen Videoaufnahmen'
           other: >- # hint below options
             Aufgrund der getroffenen Auswahl kann die Datenschutzerklärung nicht über das Ethiktool erstellt werden. Bitte nehmen Sie Kontakt zu der zuständigen Datenschutzstelle auf. {addPDF, select,
-                                      true  {Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, die Datenschutzerklärung („Anlage zur Datenverarbeitung“) als PDF-Datei beizufügen.}
-                                      other {}}
+                      true  {Sie können wählen, ob Sie bei der Erstellung des Gesamt-Ethikantrags eine selbst formulierte Datenschutzerklärung („Anlage zur Datenverarbeitung“) gemäß DS-GVO als PDF-Datei beifügen möchten.}
+                      other {}}
           textHintExternal: 'Bitte geben Sie Urheber bzw. Bezeichnung des Codes an (z.B. prolific-ID, SONA-ID, Nutzungskürzel des Rechenzentrums, Klinik-ID).'
           textHintMarkingName: 'Die Kennzeichnung von Forschungsdaten mit dem Namen der Teilnehmenden sollte möglichst vermieden werden. Bitte begründen Sie, warum die Daten mit dem Namen gekennzeichnet werden sollen.'
         code: 'Ist der Code personenbeziehbar?'
@@ -1544,7 +1548,7 @@ projectdetails:
                     wards    {betreuen Personen bzw. gesetzlichen Vertretungspersonen}
                     other    {Teilnehmenden}} aufbewahrt. Nur für Personen mit Kenntnis des Codes ist eine Identifikation möglich.
               list: 'Über eine Schlüsselliste ist Beteiligten des Forschungsprojekts eine Zuordnung des Codes zu personenidentifizierenden Daten (z.B. Name, IP-Adresse) möglich. Die Schlüsselliste wird separat von allen anderen Daten aufbewahrt.'
-              marking: 'Der Code dient nur der Kennzeichnung von Datensätzen, es ist damit keine Identifikation einzelner Personen möglich.'
+              marking: 'Der Code dient nur der Kennzeichnung von Datensätzen, er ermöglicht keine Identifikation einzelner Personen.'
               generation: 'Unmittelbar personenidentifizierende Daten werden nicht gespeichert. Durch die Art der Codebildung (z.B. mit Bestandteilen von Name oder Geburtsdatum) könnte jedoch für Projektbeteiligte mit wenig Zusatzwissen die Identifikation einzelner Personen möglich sein.'
             hints:
               marking: 'häufig bei Verknüpfung mehrerer Datenarten zu einem Erhebungszeitpunkt'
@@ -2251,6 +2255,7 @@ checkDoc:
           locationDescription: 'Beschreibung des Ortes der Datenerhebung'
         presence:
           missing: 'Anwesenheit von Projektbeteiligten'
+          description: 'zeitweisen Anwesenheit von Projektbeteiligten' # 'Beschreibung der [] fehlt.'
           consent: 'Wenn die <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">Einwilligung mündlich</a> erfolgt, müssen Projektbeteiligte bei der Erhebung anwesend sein.'
         duration:
           measureTimeDays: 'Anzahl Tage der reinen Erhebungszeit'
@@ -2258,6 +2263,7 @@ checkDoc:
           measureTimeMinutes: 'Anzahl Minuten der reinen Erhebungszeit'
           measureTime: 'Mindestens ein Wert der reinen Erhebungszeit muss größer als 0 sein.'
           breaksMinutes: 'Vor-/Nachbereitungszeit'
+          description: 'zeitlichen Verteilung der Erhebungen' # 'Beschreibung der [] fehlt.'
       burdensRisks: # other is burdens/risks for contributors
         title: >-
           {burdensRisksType, select,
@@ -2377,6 +2383,7 @@ checkDoc:
             Wenn {isVerified, select,
                     true  {die Datenschutzerklärung durch die zuständige Datenschutzstelle geprüft und genehmigt worden ist}
                     other {nach Einschätzung der zuständigen Datenschutzstelle nur anonyme Daten verarbeitet werden}}, muss eine <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">Unterstützung durch die datenschutz- und/oder informationssicherheitsbeauftragte Person</a> in Anspruch genommen worden sein.
+        addOwn: 'Beifügen einer selbst erstellten Datenschutzerklärung'
         verification: 'Angabe zur Prüfung der Datenschutzerklärung durch die zuständige Datenschutzstelle' # '[] fehlt.'
         confirmIntro: 'Bestätigung der Informationen zum Datenschutz' # '[] fehlt.'
         responsibility:
@@ -2398,6 +2405,7 @@ checkDoc:
           codePersonal: 'Personenbezug des Codes'
         markingFurther: 'Verwendung eines weiteren Codes'
         markingName: 'Wenn die Forschungsdaten mit zwei Kennzeichnungen versehen werden, dürfen nicht beide Kennzeichnungen der Name sein.'
+        markingConsecutive: 'Wenn die Forschungsdaten mit zwei Kennzeichnungen versehen werden, dürften nicht beide Kennzeichnungen fortlaufende Nummern sein.'
         markingSecond: 'Zweite Kennzeichnung'
         list:
           missing: 'Personenbezogene Daten für die Schlüsselliste' # '[] fehlen.'

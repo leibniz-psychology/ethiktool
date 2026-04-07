@@ -2,8 +2,7 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block body %}
-    {% set isPreview, request, submitDummy = pageTitle is not same as '', app.request, content.submitDummy %}
-    {% set fitWidth, classes = 'width: fit-content;', 'border rounded-lg shadow-sm' %}
+    {% set isPreview, request, submitDummy, classes = pageTitle is not same as '', app.request, content.submitDummy, 'border rounded-lg shadow-sm' %}
     <div {{ stimulus_controller('base',
         {'route': request.get('_route'),
             'routeParams': request.get('_route_params'),
@@ -21,21 +20,14 @@
             {# content #}
             <div class="{{ classes }} bg-mono-50" style="width: {{ isPreview ? '45%' : '80%' }}; height: fit-content" id="content" {{ stimulus_target('base','content') }}>
                 {% block groupMeasureTitle %}
-                    {% if multipleStudyGroupMeasure is defined %}
-                        {% set landingPath, params, topClasses = path('app_landing'), {'page': 'Projectdetails', 'url': 'app_landing'}, 'flex mt-2' %}
+                    {% if multipleStudyGroupMeasure ?? false %}
                         <div class="m-0">
-                            {% set routeIDs, isMultipleStudies, isMultipleGroups = {'studyID': studyID}, multipleStudyGroupMeasure[0], multipleStudyGroupMeasure[1] %}
-                            <a class="flex" style="{{ fitWidth }}" href="{{ landingPath }}" {{ stimulus_action('base','setDummySubmit','click', params|merge({'route-i-ds': routeIDs})) }}>
-                                {{ 'projectdetails.headings.study'|trans }} {{ isMultipleStudies ? studyID }} {{ studyName is not same as '' ? (isMultipleStudies ? '('~studyName~')' : studyName) }}
-                            </a>
-                            {% set routeIDs = routeIDs|merge({'groupID': groupID}) %}
-                            <a class="{{ topClasses }}" style="{{ fitWidth }}" href="{{ landingPath }}" {{ stimulus_action('base','setDummySubmit','click', params|merge({'route-i-ds': routeIDs})) }}>
-                                {{ 'projectdetails.headings.group'|trans }} {{ isMultipleGroups ? groupID}} {{ groupName is not same as '' ? (isMultipleGroups ? '('~groupName~')' : groupName) }}
-                            </a>
-                            {% set routeIDs = routeIDs|merge({'measureID': measureID}) %}
-                            <a class="{{ topClasses }}" style="{{ fitWidth }}" href="{{ landingPath }}" {{ stimulus_action('base','setDummySubmit','click',params|merge({'route-i-ds': routeIDs})) }}>
-                                {{ 'projectdetails.headings.measureTimePoint'|trans }}{% if multipleStudyGroupMeasure[2] %} {{ measureID }} {% endif %}
-                            </a>
+                            {% for type, values in {'study': [studyID,studyName], 'group': [groupID,groupName], 'measureTimePoint': [measureID,measureName]} %}
+                                {% set name = values[1] %}
+                                <div class="flex {% if type is not same as 'study' %} mt-2 {% endif %}" style="width: fit-content">
+                                    {{ ('projectdetails.headings.'~type)|trans|capitalize~' '~values[0]~(name is not same as '' ? ' ('~name~')') }}
+                                </div>
+                            {% endfor %}
                         </div>
                     {% endif %}
                 {% endblock %}

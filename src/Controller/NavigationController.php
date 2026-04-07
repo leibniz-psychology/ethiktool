@@ -28,17 +28,13 @@ class NavigationController extends ControllerAbstract
             // contributors
             $windows[self::contributorsNodeName] = [self::label => 'app_contributors', self::error => CheckDocClass::getDocumentCheck($request,'contributors')];
             // project details
-            $projectDetailsArray = $this->setSubMenu(self::projectdetailsNodeName,$request);
+            $projectDetailsArray = [];
             foreach ($this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]) as $studyIndex => $study) {
-                $studyArray = $this->setSubMenu(self::projectdetailsNodeName,$request,$studyIndex);
                 foreach ($this->addZeroIndex($study[self::groupNode]) as $groupIndex => $group) {
-                    $groupArray = $this->setSubMenu(self::projectdetailsNodeName,$request,$studyIndex,$groupIndex);
                     foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureIndex => $measureTimePoint) {
-                        $groupArray[$measureIndex][self::subPages] = $this->setSubMenu(self::projectdetailsNodeName,$request,$studyIndex,$groupIndex,$measureIndex);
+                        $projectDetailsArray[] = array_merge($this->setSubMenu(self::projectdetailsNodeName,$request,$studyIndex,$groupIndex,$measureIndex,isOverview: true),[self::subPages => $this->setSubMenu(self::projectdetailsNodeName,$request,$studyIndex,$groupIndex,$measureIndex)]);
                     }
-                    $studyArray[$groupIndex][self::subPages] = $groupArray;
                 }
-                $projectDetailsArray[$studyIndex][self::subPages] = $studyArray;
             }
             $windows[self::projectdetailsNodeName] = [[self::label => $this->translateString('pages.projectdetails.title'), self::route => 'app_landing', self::subPages => $projectDetailsArray, self::error => CheckDocClass::getDocumentCheck($request,self::projectdetailsNodeName)]];
         } else {
@@ -51,14 +47,19 @@ class NavigationController extends ControllerAbstract
             $session->set(self::language,\Locale::getDefault());
         }
         $activeRoute = $request->get('_route');
-        $routeParams = $activeRoute!=='app_landing' ? $request->get('_route_params') : $session->get(self::landing);
+        $isLanding = $activeRoute==='app_landing';
+        $routeParams = !$isLanding ? $request->get('_route_params') : $session->get(self::landing);
         $activeLevels = [];
-        foreach (array_diff_key($routeParams,['_locale' => '', 'page' => '']) as $level => $id) {
+        foreach (array_intersect_key($routeParams,[self::studyID => '', self::groupID => '', self::measureID => '']) as $level => $id) {
             $activeLevels[$level] = (int)($id);
         }
         if (array_key_exists(self::informationNode,$routeParams)) {
             $activeRoute = 'app_'.$routeParams[self::informationNode];
         }
+        if ($isLanding) { // if landing of application data or projectdetails: 'app_landingAppData' or 'app_landingProjectdetails'. If overview of one measure time point: 'app_landingProjectdetailsSub'
+            $activeRoute .= $routeParams['page'].(array_key_exists(self::studyID,$routeParams) ? 'Sub' : '');
+        }
+        $activeIndex = array_search($activeRoute,self::routeOrder);
         return $this->render('_navigationSidebar.html.twig',
             ['content' => [self::fileName => ['title' => $this->translateString('multiple.filename').':', 'titleValue' => $hasDoc ? $session->get(self::fileName) : ''],
                            self::projectTitle => ['title' => $this->translateString('coreData.projectTitle').':', 'titleValue' => $hasDoc ? ((string) $appNode->{self::appDataNodeName}->{self::coreDataNode}->{self::projectTitle}) : '']],
@@ -67,7 +68,8 @@ class NavigationController extends ControllerAbstract
              'routeParams' => $activeLevels,
              'isMultiple' => $hasDoc && $this->getMultiStudyGroupMeasure($appNode),
              'isComplete' => $hasDoc && $this->getErrors($request,returnCheck: true),
-             'anyError' => $this->checkAnyError($windows)]);
+             'anyError' => $this->checkAnyError($windows),
+             'isActiveProjectdetails' => in_array($routeParams['page'] ?? '',['',self::projectdetailsNodeName]) && $activeIndex>-1 && $activeIndex>array_search('app_landing',self::routeOrder)]);
     }
 
     /** Checks if a key 'errors' exists in the given array or any sub-array.

@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         {% set pageTitle, transferInfo, transferData = pageTitle is not defined ? '' : 'pages.'~pageTitle, information is not defined or information in ['pre',''] ? ['info','pre'] : information is same as 'noPost' ? [''] : ['info','post'], information is not defined or information in ['pre','post',''] ? ['privacy'] : [''] %}
         {% include('_favico.html.twig') %}
-        <title>{% block title %}{{ 'pages.tabName'|trans~((pageTitle is not same as '' ? pageTitle : 'pages.newForm')|trans) }}{% endblock %}</title>
+        <title>{% block title %}{{ 'pages.tabName'|trans~(tabName is defined ? tabName : ((pageTitle is not same as '' ? pageTitle : 'pages.newForm')|trans)) }}{% endblock %}</title>
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}

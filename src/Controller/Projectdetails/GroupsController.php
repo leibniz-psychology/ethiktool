@@ -67,7 +67,7 @@ class GroupsController extends ControllerAbstract
                 foreach ([1,101] as $maxAge) {
                     $maxArray = [];
                     foreach ([self::addresseeParticipants,self::addresseeChildren,self::addresseeWards] as $addressee) {
-                        $criteriaHint[] = $this->translateString('multiple.wording',[self::addressee => $this->translateString($thirdPartiesPrefix.$addressee)]);
+                        $criteriaHint[] = $this->translateString('multiple.wording',[self::addressee => $this->translateString($thirdPartiesPrefix.$addressee), 'isBold' => 'true']);
                         $includeStart[] = $this->translateString('projectdetails.pages.'.self::groupsNode.'.'.self::criteriaNode.'.include.start',array_merge($informationParam,[self::addressee => $addressee]));
                         $tempArray = [];
                         foreach (['noUpperLimit','sameLimit','limits'] as $limit) {

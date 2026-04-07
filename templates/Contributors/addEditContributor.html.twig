@@ -38,7 +38,7 @@
         {% set hintPrefix = translationPrefix~'hints.' %}
         <div class="mt-4">
             <div class="MetaData-Label">{{ (translationPrefix~'title')|trans }}</div>
-            {{ formRender.addHint(hintPrefix~'position',{'target': [contributorsController,'taskHint']}) }}
+            <div class="MetaData-Label hint" {{ stimulus_target(contributorsController,'taskHint') }}></div> {# text is set in controller #}
             <div class="MetaData-Widget">
                 <div {{ stimulus_action(contributorsController,'setTasks','change') }}>
                     {% for widget in tasks %}

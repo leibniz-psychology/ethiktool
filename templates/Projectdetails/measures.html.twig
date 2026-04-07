@@ -5,7 +5,7 @@
     {% set translationPrefix, measuresController, location, hasProcedure = 'projectdetails.pages.measures.', 'Projectdetails--measures', content.location ?? '', content.procedure is defined %}
     {% set measuresInterventionsPrefix, locationPrefix, locationValue = translationPrefix~'measuresInterventions.', translationPrefix~'location.', location.vars.value ?? '' %}
     {% set measuresHintPrefix, isInformation = measuresInterventionsPrefix~'measures.textHints.', information in ['pre','post',''] %}
-    {% set measuresSentence = (measuresHintPrefix~'description')|trans %}
+    {% set measuresSentence, multipleParam, transferParam = (measuresHintPrefix~'description')|trans, {'multiple': boolToString(multipleStudyGroupMeasure)}, {'transfer': [transferInfo,addresseeType]} %}
     <div {{ stimulus_controller(measuresController,{
             'measuresTypes': measuresTypes,
             'measuresDescription': [(measuresHintPrefix~'noSelection')|trans,measuresSentence,measuresSentence~(measuresHintPrefix~'survey')|trans],
@@ -16,7 +16,7 @@
         {# procedure #}
         {% if hasProcedure %}
             <div id="procedure">
-                {{ formRender.addCountableTextfield(content.procedure,maxCharsProcedure,{'hint': [[(translationPrefix~'procedure.'~headingHint)|trans({'multiple': boolToString(true in multipleStudyGroupMeasure)})~(isInformation ? ' '~('multiple.wording')|trans({'addressee': addresseeString}))]]}|merge(isInformation ? {'transfer': [isInformation ? transferInfo : [''],'']} : {})) }}
+                {{ formRender.addCountableTextfield(content.procedure,maxCharsProcedure,{'hint': [[(translationPrefix~'procedure.'~headingHint)|trans(multipleParam)~(isInformation ? ' '~('multiple.wording')|trans({'addressee': addresseeString, 'isBold': 'true'}))]]}|merge(isInformation ? {'transfer': [isInformation ? transferInfo : [''],'']} : {})) }}
             </div>
         {% endif %}
         {# measures and interventions #}
@@ -60,7 +60,7 @@
             <div id="{{ otherSourcesDiv }}" style="{{ boolToDisplay(otherSources.vars.value is same as '0') }}">
                 {{ formRender.addTextfield(content.otherSourcesDescription,fontNormal|
                     merge({'attributes': textHeightLong, 'hint': [translationPrefix~'otherSources']})|
-                    merge(isInformation and reviewProcess not in ['fullBegun','fullRequested'] ? {'transfer': [transferInfo,addresseeType]} : {})) }}
+                    merge(isInformation and reviewProcess not in ['fullBegun','fullRequested'] ? transferParam : {})) }}
                 {{ formRender.addHint(tempPrefix~'hint',{'params': routeIDsParam}) }}
                 <div class="mt-4">
                     {{ formRender.addHint(tempPrefix~'pdf.hint') }}
@@ -109,24 +109,33 @@
         {% endif %}
         {# presence #}
         {% if content.presence is defined %}
-            {{ formRender.renderButtons(content.presence,{'hint': [translationPrefix~'presence.'], 'addDiv': ['presence']}) }}
+            {% set presence = content.presence %}
+            {{ formRender.renderButtons(presence,{
+                'hint': [translationPrefix~'presence.'],
+                'stimVisible': {'values': [['partly','presenceDescriptionDiv']]},
+                'text': [content.presenceDescription,fontNormal|merge({'visibility': presence.vars.value is same as 'partly'})],
+                'addDiv': ['presence']}) }}
         {% endif %}
         {# duration #}
         {% set durationPrefix, hasInput = translationPrefix~'duration.', textInputCompensation is not same as '' %}
-        <div class="mt-8" id="duration" {% if hasInput %} {{ stimulus_action(measuresController,'setDuration','change') }} {% endif %}>
-            {{ formRender.addHeading(durationPrefix~'title',{'params': {'multiple': boolToString(true in multipleStudyGroupMeasure)}}) }}
+        <div class="mt-8" id="duration" {{ stimulus_action(measuresController,'setDuration','change') }}>
+            {{ formRender.addHeading(durationPrefix~'title',{'params': multipleParam}) }}
             {% for duration in ['measureTime','breaks'] %}
-                {% set tempPrefix = durationPrefix~duration~'.' %}
-                <u class="MetaData-Label mb-2 {% if loop.index is same as 2 %} mt-3 {% endif %}">{{ (tempPrefix~'title')|trans }}</u>
-                {% for curDur in (duration is same as 'measureTime' ? measureTimeTypes : ['breaksMinutes']) %}
-                    {% set widget = content[curDur] %}
-                    <div class="minAutoGrid mb-2">
-                        <div class="MetaData-Label" style="width: 7rem">{{ (tempPrefix~curDur)|trans }}</div>
-                        <div style="max-width: 4rem">{{ form_widget(widget,addTargetArray(measuresController,widget.vars.name)) }}</div>
-                    </div>
-                {% endfor %}
-                {{ formRender.addHint(tempPrefix~'hint') }}
+                {% set isBreaks = duration is same as 'breaks' %}
+                <span {% if isBreaks %} {{ stimulus_target(measuresController,'duration') }} {% endif %}>
+                    {% set tempPrefix = durationPrefix~duration~'.' %}
+                    <u class="MetaData-Label mb-2 {% if loop.index is same as 2 %} mt-3 {% endif %}">{{ (tempPrefix~'title')|trans }}</u>
+                    {% for curDur in (not isBreaks ? measureTimeTypes : ['breaksMinutes']) %}
+                        {% set widget = content[curDur] %}
+                        <div class="minAutoGrid mb-2" {% if curDur is not same as 'measureTimeDays' %} {{ stimulus_target(measuresController,'duration') }} {% endif %}>
+                            <div class="MetaData-Label" style="width: 7rem">{{ (tempPrefix~curDur)|trans }}</div>
+                            <div style="max-width: 4rem">{{ form_widget(widget,addTargetArray(measuresController,widget.vars.name)) }}</div>
+                        </div>
+                    {% endfor %}
+                    {{ formRender.addHint(tempPrefix~'hint',{'target': [measuresController,'duration']}) }}
+                </span>
             {% endfor %}
+            {{ formRender.addTextfield(content.measureTimeDaysText,fontNormal|merge(transferParam)) }}
             {% if hasInput %}
                 {{ formRender.addHint(textInputCompensation,{'target': [measuresController,'compensationHint'], 'remove': true}) }}
             {% endif %}

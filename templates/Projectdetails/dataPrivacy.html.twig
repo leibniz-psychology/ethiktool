@@ -4,7 +4,7 @@
 {% block content %}
     {% set translationPrefix, hasProcessing, hasCreate = 'projectdetails.pages.dataPrivacy.', content.processing is defined, content.create is defined %}
     {% if hasCreate %}
-        {% set privacyController, dataPersonal, storage, addresseeParam, markingFurther = 'Projectdetails--privacy', content.dataPersonal, content.storage, {'addressee': addresseeType}, content.markingFurther %}
+        {% set privacyController, dataPersonal, storage, addresseeParam, markingFurther, hasAddOwn = 'Projectdetails--privacy', content.dataPersonal, content.storage, {'addressee': addresseeType}, content.markingFurther, content.addOwn is defined %}
         {% set dataResearchPrefix, markingPrefix, markingRemovePrefix, markingFirstValue, markingFurtherValue, noResponsibilityHint, storageValue = translationPrefix~'dataResearch.', translationPrefix~'marking.', translationPrefix~'markingRemove.', content.marking.vars.value, markingFurther.vars.value, translationPrefix~'responsibility.hints.noHint', storage.vars.value %}
         {% set dataOnline, dataOnlineProcessing, addPDFparam, transferArray = content.dataOnline ?? null, content.dataOnlineProcessing ?? null, {'addPDF': boolToString(reviewProcess in ['fullDocs','shortDocs'])}, [transferData,addresseeType] %}
         {% set isDataOnline, markingHintsPrefix, laterEnd, divParam, transferParam, labelParamsCommittee, transferOtherParam = dataOnline is not same as null, markingPrefix~'hints.', markingRemovePrefix~'laterEnd', {'addDiv': ['']}, {'transfer': transferArray}, {'labelParams': committeeParams}, {'transferOther': transferArray} %}
@@ -54,15 +54,13 @@
             {% set create, hasVerification, pdfHint, reviewDocsParam = content.create, content.verification is defined, 'pdfHintDiv', {'hasReviewDocs': boolToString(reviewProcess in ['shortDocs','fullDocs'])} %}
             {% set createValue, verificationDiv, toolDiv = create.vars.value, 'verificationDiv', 'toolDiv' %}
             {% set isSeparate = createValue is same as 'separate' %}
-            <div {% if hasProcessing %} class="mt-8" {% endif %} id="create">
+            <div {% if hasProcessing %} class="mt-8" {% endif %} id="create" {% if hasAddOwn %} {{ stimulus_action(privacyController,'setVerification','change') }} {% endif %}>
                 {{ formRender.renderButtons(create,{
                     'stimVisible': {'values': [['tool',toolDiv],['separate',[pdfHint]|merge(hasVerification ? [verificationDiv] : [])]]},
                     'icons': {'createtool': translationPrefix~'create.toolHint'},
-                    'labelParams': reviewDocsParam|merge({'addressee': addresseeString, 'participant': participantsString})}) }}
+                    'labelParams': reviewDocsParam|merge({'addressee': addresseeString, 'participant': participantsString}),
+                    'contTarget': ['createseparate',privacyController,'createSeparate']}) }}
                 {{ formRender.addHint(translationPrefix~'create.hint',{'visible': isSeparate, 'id': pdfHint, 'params': reviewDocsParam}) }}
-                {% if hasVerification %}
-                    {{ formRender.renderButtons(content.verification,{'addDiv': [verificationDiv,boolToDisplay(isSeparate)]}) }}
-                {% endif %}
             </div>
             <div id="{{ toolDiv }}" class="mt-8" style="{{ boolToDisplay(createValue is same as 'tool') }}">
                 {% set confirm, confirmDiv, tempPrefix = content.confirmIntro, 'confirmDiv', translationPrefix~'intro.text.' %}
@@ -123,11 +121,11 @@
                             'contTarget': ['dataPersonalpersonal',privacyController,'dataPersonal'],
                             'addDiv': ['dataPersonal']}) }}
                         {% set externalNameArray, otherDiv, listDiv = ['external','name'], 'otherDiv', 'listDiv' %}
-                        {% set headingHint, furtherDiv, furtherValues = [markingPrefix], 'markingFurtherDiv', ['external','internal','name'] %}
+                        {% set headingHint, furtherDiv, furtherValues = [markingPrefix], 'markingFurtherDiv', ['consecutive','external','internal','name'] %}
                         {% set markingRemoveHintsPrefix = markingRemovePrefix~'textHints.markingRemove' %}
                         {% set markingHintsImmediately, markingHintsLater = (markingRemoveHintsPrefix~'Immediately')|trans, (markingRemoveHintsPrefix~'Later')|trans %}
                         {% set markingIcons, internalIcons = iconArray['marking'], iconArray['internal'] %}
-                        {% set externalIcon, internalIcon, noIcon, externalGeneration, internalOwn, internalContributors, patternGeneration, contributorsMarking = markingIcons['external'], markingIcons['internal'], markingIcons['no'], iconArray['external']['generation'], internalIcons['own'], internalIcons['contributors'], iconArray['pattern']['generation'], iconArray['contributors']['marking'] %}
+                        {% set consecutiveIcon, externalIcon, internalIcon, noIcon, externalGeneration, internalOwn, internalContributors, patternGeneration, contributorsMarking = markingIcons['consecutive'], markingIcons['external'], markingIcons['internal'], markingIcons['no'], iconArray['external']['generation'], internalIcons['own'], internalIcons['contributors'], iconArray['pattern']['generation'], iconArray['contributors']['marking'] %}
                         {# marking -> question may be asked twice #}
                         {% for suffix in ['','Second'] %}
                             {% set markingString, externalString, internalString = 'marking'~suffix, 'external'~suffix, 'internal'~suffix %}
@@ -148,7 +146,7 @@
                                         {{ formRender.renderButtons(marking,noHeading|merge({
                                             'text': [description,transferParam|merge({'hint': descriptionHints[0], 'addNamely': 'true'})],
                                             'stimVisible': {'values': [[externalNameArray,description.vars.name~'Div'],['external',externalDiv],['internal',internalDiv]]|merge(isFirst ? [['other',otherDiv],[furtherValues,furtherDiv]] : [])},
-                                            'icons': {(markingString~'external'): externalIcon, (markingString~'internal'): internalIcon, (markingString~'no'): noIcon}})) }}
+                                            'icons': {(markingString~'consecutive'): consecutiveIcon, (markingString~'external'): externalIcon, (markingString~'internal'): internalIcon, (markingString~'no'): noIcon}})) }}
                                     </div>
                                 </div>
                                 {# personal data of code for external #}
@@ -417,8 +415,22 @@
                             <div class="borderHint py-0 px-4"{{ stimulus_target(privacyController,'noDocumentHint') }}>{{ (translationPrefix~'noDocumentHint')|trans }}</div>
                         </div> {# div containing all widgets if marking is not 'other' #}
                     </div> {# div containing all widgets if responsibility and transfer outside questions do not prevent creation by tool #}
+                {# addOwn #}
+                {% if hasAddOwn %}
+                    <div id="addOwnDiv" class="mt-8" {{ stimulus_target(privacyController,'addOwnDiv') }}>
+                        {{ formRender.renderButtons(content.addOwn,{
+                            'stim': [privacyController,'setAddOwn'],
+                            'contTarget': ['addOwn0',privacyController,'addOwnYes']}) }}
+                    </div>
+                {% endif %}
                 </div> {# div containing all widgets if confirm checbox if checked #}
             </div> {# div containing all widgets if privacy should be created with tool #}
+            {% if hasVerification %}
+                <div id="{{ verificationDiv }}" class="mt-8" {{ stimulus_target(privacyController,'verification') }}>
+                {{ formRender.renderButtons(content.verification) }}
+                </div>
+{#                {{ formRender.renderButtons(content.verification,{'addDiv': [verificationDiv,boolToDisplay(isSeparate)]}) }}#}
+            {% endif %}
         {% endif %}  {# if create exists #}
     {{ formRender.addSubmitButtons() }}
     </div> {# entire form including stimulus controller #}

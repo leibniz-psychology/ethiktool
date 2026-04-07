@@ -145,6 +145,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     interventionsSub: 'Beschreibung der Maßnahmen:'
     otherSources: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
     presence: 'Sind Projektbeteiligte bei der Erhebung anwesend?'
+    presenceSub: 'Beschreibung der zeitweisen Anwesenheit:'
     burdens: 'Welchen Belastungen bzw. Beanspruchungen werden die Teilnehmenden ausgesetzt?'
     burdensSub: >-
       {burdens, select,
@@ -289,7 +290,11 @@ projectdetails:
       eine Gruppe {isGroupName, select,
                     true  {({groupName})}
                     other {}}
-    measureTimePoint: 'ein Zeitpunkt'
+    measureTimePoint: >-
+      ein Zeitpunkt {isMeasureTimePointName, select,
+                      true  {({measureTimePointName})}
+                      other {}}
+  sampleSizeMultiple: 'je X'
   pdf:
     examinedPeople: 'Die genauen Ein- und Ausschlusskriterien finden sich {informationHint}.'
     measures: 'Ergänzende Materialien zu den Erhebungsmethoden befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
@@ -340,7 +345,7 @@ projectdetails:
         separate      {Die Datenschutzerklärung {levelNamesString} wurde selbst erstellt. {verification, select,
                                                                         verified   {Sie ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.}
                                                                         unverified {Sie ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.}
-                                                                        other      {}} Sie findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}
+                                                                        other      {}} Die Datenschutzerklärung findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}
         anonymous     {In der Studie werden - {savePDF, select,
                                     true  {nach Einschätzung der zuständigen Datenschutzstelle}
                                     other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">nach Einschätzung der zuständigen Datenschutzstelle</a>}} - nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
@@ -352,7 +357,12 @@ projectdetails:
                                                   true  {Angaben im Ethiktool}
                                                   other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">Angaben im Ethiktool</a>}} werden nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
                           other     {Aufgrund von folgenden Besonderheiten im Umgang mit dem Daten (gemäß Angaben im Ethiktool) kann die Datenschutzerklärung {levelNamesString} nicht mit dem Ethiktool erstellt werden:
-                            {createOther} Daher wurde die Datenschutzerklärung selbst erstellt. Sie findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}}}}
+                            {createOther} {addOwn, select,
+                                            true  {Daher wurde die Datenschutzerklärung selbst erstellt. {verification, select,
+                                                        verified   {Sie ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.}
+                                                        unverified {Sie ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.}
+                                                        other      {}} Die Datenschutzerklärung findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}
+                                            other {Die Datenschutzerklärung muss noch erstellt und durch die zuständige Datenschutzstelle genehmigt werden.}}}}}}
     createOther:
       responsibility: 'Verantwortlich ist nicht allein {committeeLocation}.'
       transferOutside: 'Es werden personenbezogene Daten an Dritte außerhalb des EWR weitergegeben.'
@@ -614,17 +624,18 @@ participation:
   durationContent:
     text: >-
       Die Gesamtdauer {multiple, select,
-                        true  {{measureTimeDays, plural,
-                                  =0    {der heutigen}
-                                  other {dieser}}}
+                        true  {der heutigen}
                         other {der}} Teilnahme beträgt erfahrungsgemäß etwa {total}{breaksMinutes, plural,
                                                                                       =0    {.}
                                                                                       =1    {, davon {measureTime} reine Erhebungszeit und 1 Minute Vor- und Nachbereitungszeit sowie Pausenzeiten.}
                                                                                       other {, davon {measureTime} reine Erhebungszeit und # Minuten Vor- und Nachbereitungszeit sowie Pausenzeiten.}}
     measureTimeDays: >-
-      {time, plural,
-        =1    { 1 Tag}
-        other { # Tage}}
+      {addressee, select,
+        children {Die Teilnahme Ihres Kindes}
+        wards    {Die Teilnahme der von Ihnen betreuten Person}
+        other    {Ihre Teilnahme}} erstreckt sich über {time, plural,
+                                                          =1    {1 Tag.}
+                                                          other {# Tage.}}
     measureTimeHours: >-
       {time, plural,
         =1    { 1 Stunde}
@@ -836,12 +847,13 @@ participation:
         Die Forschungsdaten werden {isSecond, select,
                             true  {außerdem}
                             other {}} mit {type, select,
-                                            external {einem Code versehen, der außerhalb des Projekts vergeben wurde oder wird, und zwar }
-                                            internal {einem projektinternen Code versehen. }
-                                            other    {{addressee, select,
-                                                        children {dem Namen Ihres Kindes versehen. }
-                                                        wards    {dem Namen der von Ihnen betreuten Person versehen. }
-                                                        other    {Ihrem Namen versehen. }}}}
+                                            consecutive {einer fortlaufenden Nummer versehen. Die Nummer dient nur der Kennzeichnung von Datensätzen; sie ermöglicht keine Identifikation einzelner Personen.}
+                                            external    {einem Code versehen, der außerhalb des Projekts vergeben wurde oder wird, und zwar }
+                                            internal    {einem projektinternen Code versehen. }
+                                            other       {{addressee, select,
+                                                            children {dem Namen Ihres Kindes versehen. }
+                                                            wards    {dem Namen der von Ihnen betreuten Person versehen. }
+                                                            other    {Ihrem Namen versehen. }}}}
       external:
         types:
           anonymous: 'Der Code selbst lässt keinen Rückschluss auf konkrete Personen zu. Die Zuordnung des Codes zu personenidentifizierenden Daten ist nur der Stelle möglich, die den Code ursprünglich vergeben hat. Informationen zum Umgang mit den personenbezogenen Daten sind dort erhältlich.'
@@ -874,7 +886,7 @@ participation:
                   wards    {der von Ihnen betreuten Person bzw.}
                   other    {}} Ihnen aufbewahrt. Nur für Personen mit Kenntnis des Codes ist eine Identifikation möglich.
             list: 'Über eine Schlüsselliste ist Beteiligten des Forschungsprojekts eine Zuordnung des Codes zu personenidentifizierenden Daten möglich. Die Schlüsselliste wird separat von allen anderen Daten aufbewahrt.'
-            marking: 'Der Code dient nur der Kennzeichnung von Datensätzen, es ist damit keine Identifikation einzelner Personen möglich.'
+            marking: 'Der Code dient nur der Kennzeichnung von Datensätzen, er ermöglicht keine Identifikation einzelner Personen.'
             generation: 'Unmittelbar personenidentifizierende Daten werden nicht gespeichert. Durch die Art der Codebildung könnte jedoch für Projektbeteiligte mit wenig Zusatzwissen die Identifikation einzelner Personen möglich sein.'
     markingPersonal:
       personal:
@@ -885,6 +897,7 @@ participation:
         codePersonal: '{codePersonal} Zudem sind die Forschungsdaten selbst zwar nicht direkt personenbezogen, es lässt sich aber nicht vollkommen ausschließen, dass durch Kombination eines Teils der Forschungsdaten mit Zusatzwissen einzelne Personen identifiziert werden können.'
         no: 'Die Forschungsdaten selbst sind nicht direkt personenbezogen, es lässt sich jedoch nicht vollkommen ausschließen, dass durch Kombination eines Teils der Forschungsdaten mit Zusatzwissen einzelne Personen identifiziert werden können.'
       personalNo:
+        consecutive: 'Für die Projektbeteiligten sind die Forschungsdaten anonym. Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
         external: 'Für die Nutzung im Rahmen dieser Studie sind die Forschungsdaten anonym. Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
         internal: 'Für die Projektbeteiligten sind die Forschungsdaten anonym. Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
         no: >-
@@ -1345,6 +1358,7 @@ consent:
                                                                                         other    {meiner Daten}}}}}} ein. {addressee, select,
             children {Hiermit erkläre ich, die Einwilligung im Namen aller Erziehungsberechtigten abzugeben.}
             other    {}}
+  optionalHeading: 'Darüber hinaus treffe ich folgende Entscheidungen:'
   finding: 'Sollten sich Hinweise auf ein ungewöhnliches Untersuchungsergebnis ergeben, bin ich damit einverstanden, dass mir diese mitgeteilt werden, so dass ich diese ggf. weiter abklären lassen kann. Ich wurde darüber aufgeklärt, dass die Kenntnis von einem Krankheitsbild dazu führen kann, dass daraus resultierende Schäden nicht mehr versichert werden können.'
   personalKeepConsent: 'Ich bin mit der Aufbewahrung und Verwendung der personenbezogenen Forschungsdaten {type} einverstanden.'
   digital: 'Hinweis: Die Einwilligung erfolgt über das Anklicken eines entsprechenden Buttons.'
@@ -1392,7 +1406,7 @@ completeForm:
       Die Antworten auf die folgenden Basisfragen wurden vom Ethiktool anhand der Eingaben der antragstellenden Person zusammengefasst.
       {isFull, select,
         true  {Ausführlichere Angaben zu allen Fragen finden sich im Antragsformular.}
-        other {}} Das Ethiktool kann die Stimmigkeit der Angaben nur teilweise verifizieren; die inhaltliche Prüfung obliegt den Antragstellenden und der Ethikkommission.
+        other {}} Das Ethiktool kann die Stimmigkeit der Angaben nur teilweise verifizieren; die inhaltliche Prüfung obliegt den Antragstellenden und der Ethikkommission. <span style="color: red">Rot</span> markierte Felder signalisieren genaueren Prüfbedarf aufgrund bestimmter Besonderheiten im Forschungsprojekt. Der Eintrag „<span style="color: grey">unklar</span>“ kennzeichnet Aspekte, deren ethische Implikationen vom Ethiktool nicht eindeutig interpretierbar sind; hier wird die Selbsteinschätzung der Antragstellenden hinsichtlich des Verfahrens (Kurz- oder Vollantrag) überprüft.
     types:
       yes: 'Ja'
       no: 'Nein'

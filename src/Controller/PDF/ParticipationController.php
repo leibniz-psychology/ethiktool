@@ -27,7 +27,7 @@ class ParticipationController extends PDFAbstract
         $isShortService = $reviewProcess===self::reviewShortService;
         $isDocs = in_array($reviewProcess,self::reviewDocs);
         $hasDocs = $isDocs && !($isShortService && $markInput);
-        $isBegun = in_array($reviewProcess,[self::reviewShortBegun,self::reviewFullBegun]);
+        $isBegun = $this->getBegunDocs($reviewProcess,$session);
         $isRequested = in_array($reviewProcess,[self::reviewShortRequested,self::reviewFullRequested]);
         self::$markInput = !self::$savePDF || self::$isCompleteForm && $markInput;
         $singleDocsHint = $this->getSingleDocsHint($request,'participation',$isDocs && !$isShortService);
@@ -192,7 +192,7 @@ class ParticipationController extends PDFAbstract
                     }
                     // duration
                     $durationsArray = $measuresArray[self::durationNode];
-                    $tempArray[] = $this->getDuration($durationsArray, false, $multipleMeasures);
+                    $tempArray[] = $this->getDuration($durationsArray, false, $addressee, self::$markInput, $multipleMeasures);
                     $linkedSubHeadings[] = self::measuresNode;
                     $subHeadings[] = self::durationNode;
                     $paragraphsAll[self::procedureNode] = [self::content => $tempArray,$this->linkedSubHeadingsString => $linkedSubHeadings, $subHeadingsString => $this->prefixArray($subHeadings,$participationPrefix)];
@@ -476,6 +476,7 @@ class ParticipationController extends PDFAbstract
                         $createArray = $privacyArray[self::createNode];
                         $privacyCreate = $createArray[self::chosen];
                         $translationParams[self::createNode] = $privacyCreate;
+                        $translationParams[self::addOwnNode] = $this->getStringFromBool(($privacyArray[self::addOwnNode] ?? '')==='0'); // only relevant if complete pdf is created
                         $translationParams[self::createVerificationNode] = $privacyArray[self::createVerificationNode] ?? ''; // only relevant if complete pdf is created
                         $isSeparate = $privacyCreate===self::createSeparate;
                         $isSeparateLater = $privacyCreate===self::createSeparateLater;
@@ -507,7 +508,7 @@ class ParticipationController extends PDFAbstract
                             $responsibility = $privacyArray[self::responsibilityNode];
                             $transferOutside = $privacyArray[self::transferOutsideNode];
                             $isOutside = $transferOutside==='yes';
-                            $isNotResponsible = in_array($responsibility,['onlyOther','multiple','private']);
+                            $isNotResponsible = in_array($responsibility,self::responsibilityNotOwn);
                             if (in_array($responsibility,[self::responsibilityOnlyOwn,self::privacyNotApplicable]) && in_array($transferOutside,[self::transferOutsideNo,self::privacyNotApplicable])) {
                                 if ($hasDataResearch) {
                                     $otherTypes = ['dataResearchOther',self::dataResearchSpecialOther];
@@ -552,7 +553,6 @@ class ParticipationController extends PDFAbstract
                                 }
                             }
                         }
-                        $translationParams['createOther'] = "\n".$createOther."\n";
                         $hasCustomPDF[self::privacyNode] = $customPrivacy;
                         $isPersonal = $isPersonal || $isSeparate || $isToolPersonal || in_array($dataOnlineArray[self::chosen] ?? '',self::dataOnlinePersonal); // true if personal data is collected. Also true if processing is checked later. Also true if ip-addresses are collected False if research data are personal, but marking is other.
                         $translationParams[self::isPersonal] = $this->getStringFromBool($isPersonal);
@@ -570,6 +570,11 @@ class ParticipationController extends PDFAbstract
                         $codeCompensationSentences = '';
                         $markingSecondString = self::markingNode.self::markingSuffix;
                         $marking = $privacyArray[self::markingNode] ?? '';
+                        $hasMarking = $marking!=='';
+                        if ($hasMarking && $marking[self::chosen]===self::markingOther) {
+                            $createOther .= "<li>".$this->translateStringPDF($createOtherPrefix.self::markingNode)."</li>";
+                        }
+                        $translationParams['createOther'] = "\n".$createOther."\n";
                         $markingSecond = $privacyArray[$markingSecondString] ?? '';
                         $codeCompensation = $privacyArray[self::codeCompensationNode] ?? '';
                         $isPurposeCompensation = false;
@@ -579,10 +584,11 @@ class ParticipationController extends PDFAbstract
                         }
                         $purposeCompensationParam = ['purposeCompensation' => $this->getStringFromBool($isPurposeCompensation)];
                         // the following variables get true if any marking is of that type
+                        $isConsecutive = false;
                         $isExternal = false;
                         $isInternal = false;
                         $codePersonal = ['isName' => false, 'isList' => false, 'isGeneration' => false, 'isNameList' => false];
-                        foreach (array_merge($marking!=='' ? [self::markingNode] : [], $markingSecond!=='' ? [$markingSecondString] : [], $codeCompensation!=='' ? [self::codeCompensationNode] : []) as $type) {
+                        foreach (array_merge($hasMarking ? [self::markingNode] : [], $markingSecond!=='' ? [$markingSecondString] : [], $codeCompensation!=='' ? [self::codeCompensationNode] : []) as $type) {
                             $isMarkingCode = $type!==self::codeCompensationNode;
                             $markingPrefix = $translationPrefix.($isMarkingCode ? self::markingNode : self::codeCompensationNode).'.';
                             $tempArray = $privacyArray[$type];
@@ -609,6 +615,7 @@ class ParticipationController extends PDFAbstract
                             }
                             if ($isMarkingCode) {
                                 $markingSentences .= $curSentences;
+                                $isConsecutive = $isConsecutive || $chosenWoPrefix===self::markingConsecutive;
                                 $isExternal = $isExternal || $chosenWoPrefix===self::markingExternal;
                                 $isInternal = $isInternal || $isCurInternal;
                                 $codePersonal['isName'] = $codePersonal['isName'] || $chosenWoPrefix===self::markingName;
@@ -630,7 +637,7 @@ class ParticipationController extends PDFAbstract
                             } elseif ($isDataPersonalMaybe) {
                                 $tempVal = $isCodePersonal ? 'codePersonal' : ($isExternalInternal ? 'anonymous' : self::markingNo);
                             } else { // research data are anonymous
-                                $tempVal = $isCodePersonal ? 'codePersonal' : ($isExternal ? self::markingExternal : ($isInternal ? self::markingInternal : self::markingNo));
+                                $tempVal = $isCodePersonal ? 'codePersonal' : ($isConsecutive ? self::markingConsecutive : ($isExternal ? self::markingExternal : ($isInternal ? self::markingInternal : self::markingNo)));
                             }
                             if (!(in_array($dataPersonal,['','personal']) && $tempVal===self::markingNo)) { // if no marking is chosen, tempVal equals markingNo
                                 $codePersonal['isNameList'] = $codePersonal['isName'] || $codePersonal['isList'];

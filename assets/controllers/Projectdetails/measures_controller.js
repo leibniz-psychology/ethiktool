@@ -3,7 +3,7 @@ import {getSelected, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','measureTimeDays','measureTimeHours','measureTimeMinutes','breaksMinutes','compensationHint'];
+    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','duration','measureTimeDays','measureTimeHours','measureTimeMinutes','breaksMinutes','compensationHint'];
 
     static values = {
         measuresTypes: Array,
@@ -18,9 +18,7 @@ export default class extends Controller {
         if (this.hasLocationDescriptionTarget || this.hasLoanInputTarget) {
             this.setInputHints(); // needs to be called on connect() in case the page is reloaded by the user
         }
-        if (this.hasCompensationHintTarget) {
-            this.setDuration();
-        }
+        this.setDuration();
     }
 
     // methods that are called from the template
@@ -105,13 +103,25 @@ export default class extends Controller {
 
     /** Sets the visibility of the hint for deleting inputs for durations. */
     setDuration() {
+        let days = this.measureTimeDaysTarget.value;
+        days = days!=='' ? parseInt(days) : 0;
+        days = days<0 ? 0 : days;
+        let isNotDays = days===0;
+        for (let target of this.durationTargets) {
+            setElementVisibility(target,isNotDays,1);
+        }
+        setElementVisibility('measureTimeDaysTextDiv',!isNotDays,1);
         let minutes = [0,0];
-        for (let [index,targetValue] of [this.measureTimeMinutesTarget.value,this.breaksMinutesTarget.value].entries()) {
-            if (targetValue!=='') {
-                targetValue = parseInt(targetValue);
-                minutes[index] = targetValue<0 ? 0 : targetValue; // if a value smaller than 0 is entered, it is updated after this check
+        if (isNotDays) {
+            for (let [index,targetValue] of [this.measureTimeMinutesTarget.value,this.breaksMinutesTarget.value].entries()) {
+                if (targetValue!=='') {
+                    targetValue = parseInt(targetValue);
+                    minutes[index] = targetValue<0 ? 0 : targetValue; // if a value smaller than 0 is entered, it is updated after this check
+                }
             }
         }
-        setElementVisibility(this.compensationHintTarget,this.measureTimeDaysTarget.value<=0 && this.measureTimeHoursTarget.value<=0 && (minutes[0]+minutes[1])<=30);
+        if (this.hasCompensationHintTarget) {
+            setElementVisibility(this.compensationHintTarget,isNotDays && this.measureTimeDaysTarget.value<=0 && this.measureTimeHoursTarget.value<=0 && (minutes[0]+minutes[1])<=30);
+        }
     }
 }

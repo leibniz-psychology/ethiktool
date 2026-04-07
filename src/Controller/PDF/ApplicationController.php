@@ -386,12 +386,12 @@ class ApplicationController extends PDFAbstract
             //              [0 => 2]
             //          ]
             $numIndices = [];
-            // names: names of studies and groups and indices of measure time points. key: study ID, value: array. In this array; first element: name of study, second element: array of arrays (one for each group in this study). In each of these arrays: same for groups. if any of the arrays is empty, there is at most one element in the level underneath.
+            // names: names of studies, groups and measure time points and indices of measure time points. key: study ID, value: array. In this array; first element: name of study, second element: array of arrays (one for each group in this study). In each of these arrays: same for groups. if any of the arrays is empty, there is at most one element in the level underneath.
             // Example: [0 =>
             //               [0 => 'study 1: studyName',
             //                1 => [0 =>
             //                          [0 => 'group 1: groupName',
-            //                           1 => [0 => 'measure time point 1'
+            //                           1 => [0 => 'measure time point 1: measureTimePointName'
             //                                ]
             //                          ]
             //                     ]
@@ -403,6 +403,8 @@ class ApplicationController extends PDFAbstract
             $examinedPrefix = $groupsPrefix.'examined.';
             $burdensRisksPrefix = $projecdetailsPrefix.self::burdensRisksNode.'.';
             $isMultiple = $this->getMultiStudyGroupMeasure($appNode);
+            $sampleSizes = []; // contains all sample sizes
+            $sampleSizesMulti = []; // contains all sample sizes which occure more than once
             // translations
             $projectdetailsHeadingPrefix = 'boxHeadings.'.$projecdetailsPrefix;
             $this->levelTrans[self::studyNode] = $this->translateStringPDF($projectdetailsHeadingPrefix.self::studyNode);
@@ -416,20 +418,20 @@ class ApplicationController extends PDFAbstract
             self::$isPageLink = !$isMultiple;
             foreach ($studyArray as $studyID => $study) {
                 $this->studyID = $studyID;
-                $names[$studyID] = $this->getStudyGroupName($study[self::nameNode], self::studyNode, $studyID, $multipleStudies);
+                $names[$studyID] = $this->getLevelName($study[self::nameNode], self::studyNode, $studyID, $multipleStudies);
                 $groupArray = $this->addZeroIndex($study[self::groupNode]);
                 $multipleGroups = count($groupArray)>1;
                 $groupIndices = [];
                 foreach ($groupArray as $groupID => $group) {
                     $this->groupID = $groupID;
-                    $groupIndices[$groupID] = $this->getStudyGroupName($group[self::nameNode], self::groupNode, $groupID, $multipleGroups);
+                    $groupIndices[$groupID] = $this->getLevelName($group[self::nameNode], self::groupNode, $groupID, $multipleGroups);
                     $measureTimePointArray = $this->addZeroIndex($group[self::measureTimePointNode]);
                     $numIndices[$studyID][$groupID] = count($measureTimePointArray);
                     $multipleMeasures = count($measureTimePointArray)>1;
                     $measureIndices = [];
                     foreach ($measureTimePointArray as $measureID => $measureTimePoint) {
                         $this->measureID = $measureID;
-                        $measureIndices[$measureID] = $this->getStudyGroupName('', self::measureTimePointNode, $measureID, $multipleMeasures);
+                        $measureIndices[$measureID] = $this->getLevelName($measureTimePoint[self::nameNode], self::measureTimePointNode, $measureID, $multipleMeasures);
                         $groupsArray = $measureTimePoint[self::groupsNode];
                         // get current addressee(s) and create variables that are needed in several questions
                         $addressee = $this->getAddressee($groupsArray);
@@ -453,6 +455,13 @@ class ApplicationController extends PDFAbstract
                         $this->addBoxContent(self::closedNode, $this->translateBinaryAnswer($tempArray[self::chosen],addHyphenYes: true).str_replace('{description}', $closedTypes[self::closedOther] ?? '', $this->getSelectedCheckboxes($closedTypes, $groupsPrefix.self::closedNode.'.')), $tempArray[self::closedNode.self::descriptionCap] ?? '');
                         // sample size (groups)
                         $tempArray = $groupsArray[self::sampleSizeNode] ?? [];
+                        $tempVal = $tempArray[self::sampleSizeTotalNode] ?? '';
+                        if ($tempVal!=='') {
+                            if (in_array($tempVal,$sampleSizes)) {
+                                $sampleSizesMulti[] = $tempVal;
+                            }
+                            $sampleSizes[] = $tempVal;
+                        }
                         $this->addBoxContent(self::sampleSizeNode, $tempArray[self::sampleSizeTotalNode] ?? '', $tempArray[self::sampleSizeFurtherNode] ?? '',fragment: self::sampleSizeTotalNode);
                         $this->addBoxContent(self::sampleSizePlanNode, $tempArray[self::sampleSizePlanNode] ?? '');
                         // recruitment (groups)
@@ -590,7 +599,9 @@ class ApplicationController extends PDFAbstract
                         $tempArray = $measuresArray[self::otherSourcesNode];
                         $this->addBoxContent(self::otherSourcesNode, $this->translateBinaryAnswer($tempArray[self::chosen],true).($tempArray[self::otherSourcesNode.self::descriptionCap] ?? ''), subHeading: $isAnyOtherSources ? $this->documentHint : '');
                         // presence (measures)
-                        $this->addBoxContent(self::presenceNode, $this->translateBinaryAnswer($measuresArray[self::presenceNode] ?? ''));
+                        $tempArray = $measuresArray[self::presenceNode] ?? [];
+                        $tempVal = $tempArray[self::chosen] ?? '';
+                        $this->addBoxContent(self::presenceNode, $tempVal!=='' ? $this->translateString($projecdetailsPrefix.'pages.'.self::measuresNode.'.'.self::presenceNode.'.types.'.$tempVal) : '', $tempArray[self::descriptionNode] ?? '');
 
                         // burdens and risks (burdens/risks)
                         self::$linkedPage = self::burdensRisksNode;
@@ -655,9 +666,18 @@ class ApplicationController extends PDFAbstract
                 $names[$studyID][1] = !$multipleGroups; // extra indentation if only one group in current study. If no multiple groups at all, extra indentation will also be added
                 $names[$studyID][2] = $groupIndices;
             } // for study
+            if ($sampleSizesMulti!==[]) { // add 'each' to sample sizes that occur more than once
+                $tempArray = $this->boxContent[self::sampleSizeNode][self::main];
+                $sampleSizeArray = [];
+                $sampleSizeString = $this->translateStringPDF($projecdetailsPrefix.'sampleSizeMultiple');
+                foreach (array_unique($sampleSizes) as $sampleSize) {
+                    $sampleSizeArray[in_array($sampleSize,$sampleSizesMulti) ? str_replace('X',$sampleSize,$sampleSizeString) : $sampleSize] = $tempArray[$sampleSize];
+                }
+                $this->boxContent[self::sampleSizeNode][self::main] = $sampleSizeArray;
+            }
             if (!$isMultiple) { // simplify $names
                 $tempArray = $names[0];
-                $names = $tempArray[0].' - '.$tempArray[2][0][0].' - '.$this->translateStringPDF($projecdetailsPrefix.'overview.'.self::measureTimePointNode);
+                $names = $tempArray[0].' - '.$tempArray[2][0][0].' - '.$tempArray[2][0][2][0][0];
                 self::$routeIDs = $this->createRouteIDs([self::studyNode => 1, self::groupNode => 1, self::measureTimePointNode => 1]);
             }
             $parameters = array_merge($childrenWardsParams, $informationHintParam, [self::burdensNode => $this->getStringFromBool($isAnyBurdensRisks[self::burdensNode]), 'noBurdens' => $this->getStringFromBool($isAnyBurdensNo), self::risksNode => $this->getStringFromBool($isAnyBurdensRisks[self::risksNode]), 'isPre' => $this->getStringFromBool($isAnyPre || $isNotAnyPreYet), 'isVoluntaryNo' => $this->getStringFromBool($anyVoluntary), 'isAssent' => $this->getStringFromBool($isChildrenWards), 'anyConsentNo' => $this->getStringFromBool($anyConsent[0]), 'anyAssentNo' => $this->getStringFromBool($anyConsent[1]), 'isCompensationVoluntary' => $this->getStringFromBool($isAnyCompensationVoluntary), 'isReviewFull' => $this->getStringFromBool($this->isReviewFull)]); // all parameters for all translations of headings and subContent headings
@@ -885,7 +905,7 @@ class ApplicationController extends PDFAbstract
      * @param bool $isMultiple true if multiple elements of the level exist, false otherwise
      * @return array $name eventually prefixed by the level name
      */
-    private function getStudyGroupName(string $name, string $level, int $levelID, bool $isMultiple): array
+    private function getLevelName(string $name, string $level, int $levelID, bool $isMultiple): array
     {
         if ($isMultiple) {
             return [$this->levelTrans[$level].($levelID+1).($name!=='' ? ': '.$name : '')];

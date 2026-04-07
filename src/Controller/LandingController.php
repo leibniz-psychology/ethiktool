@@ -13,10 +13,9 @@ class LandingController extends ControllerAbstract
 {
     use LandingTrait;
 
-    private array $pages = [];
-    private array $names = [];
-    private array $choices = [];
-    private array $isMultiple = [false,false,false];
+    private const copy = 'copy';
+    private const remove = 'remove';
+    private const edit = 'edit';
 
     #[Route(self::landing,self::landing)]
     public function showLanding(Request $request): Response
@@ -30,83 +29,158 @@ class LandingController extends ControllerAbstract
             return $this->redirectToRoute('app_main');
         }
         $projectdetailsNode = $appNode->{self::projectdetailsNodeName};
-        $study = $this->addZeroIndex($this->xmlToArray($projectdetailsNode)[self::studyNode]);
-        $isStudy = array_key_exists(self::studyID,$landingArray); // true if overview of one study
-        $isGroup = array_key_exists(self::groupID,$landingArray); // true if overview of one group
-        $isMeasure = array_key_exists(self::measureID,$landingArray); // true if overview of one measure point in time
-        $IDs = [$isStudy ? $landingArray[self::studyID]-1 : null, $isGroup ? $landingArray[self::groupID]-1 : null, $isMeasure ? $landingArray[self::measureID]-1 : null];
-        $this->pages = $this->setSubMenu($title,$request,$IDs[0],$IDs[1],$IDs[2],false); // menu points;
-        $numGroups = $isStudy ? count($this->addZeroIndex($study[$IDs[0]][self::groupNode])) : 1;
-        $numMeasures = $isGroup ? count($this->addZeroIndex($this->addZeroIndex($this->addZeroIndex($study)[$IDs[0]][self::groupNode])[$IDs[1]][self::measureTimePointNode])) : 1;
-        // isMultiple: true if multiple studies (element 0) or multiple groups of the current study (element 1) or multiple measure points in time of the current group (element 2) are created. If the current level is the overview of one study or group, then the following elements are false
-        $this->isMultiple = [$isProjectdetails && count($study)>1, $isProjectdetails && $isStudy && $numGroups>1, $isProjectdetails && $isGroup && $numMeasures>1];
-        if ($isProjectdetails) {
-            if (!$isStudy) { // overview over studies
-                $this->setVariables(self::studyNode,$study);
-            } elseif (!$isGroup) { // overview of groups
-                $this->setVariables(self::groupNode,$this->addZeroIndex($study[$IDs[0]][self::groupNode]));
-            } elseif (!$isMeasure) { // overview of measure time points
-                $this->setVariables(self::measureTimePointNode);
+        $hasStudyID = array_key_exists(self::studyID,$landingArray);
+        $isPageOverview = $isProjectdetails && $hasStudyID; // true if overview of one measure time point
+        $isProjectdetailsOverview = $isProjectdetails && !$hasStudyID;
+        $IDs = [null,null,null];
+        $allStudies = $this->addZeroIndex($this->xmlToArray($projectdetailsNode)[self::studyNode]); // $projectdetailsNode converted to array, but every sub-element has a numerical index (and a key 'name' which is not used) and the measure time point level has an array which contains the name (not used) and arrays with information about the pages
+        $projectdetailsPrefix = self::landing.'.projectdetails.';
+        $nameTrans = []; // name of elements where the given name may be appended
+        $newTrans = []; // label for button for creating a new element
+        $copyTrans = []; // hint above text field for copying an element
+        $removeTrans = []; // heading and text for the remove modal
+        $pageHeading = (!$isProjectdetailsOverview ? $this->translateString('pages.'.self::landing) : ''); // heading on page
+        $removePrefix = $projectdetailsPrefix.'removeModal.';
+        $currentElement = $allStudies;
+        foreach ([self::studyNode,self::groupNode,self::measureTimePointNode] as $index => $type) {
+            $isNotStudy = $type!==self::studyNode;
+            $typeParam = ['type' => $type];
+            $typeTrans = ucfirst($this->translateString('projectdetails.headings.'.$type)).' ';
+            $nameTrans[$type] = $typeTrans;
+            $newTrans[$type] = $this->translateString($projectdetailsPrefix.'buttons.new.'.$type);
+            $copyTrans[$type] = $this->translateString($projectdetailsPrefix.'copyHint',$typeParam);
+            $removeTrans[$type] = ['title' => $this->translateString($removePrefix.'title',$typeParam), 'text' => $this->translateString($removePrefix.'content',$typeParam)];
+            if ($isPageOverview) {
+                $curID = $landingArray[$type!==self::measureTimePointNode ? $type.'ID' : self::measureID]-1;
+                $currentElement = $isNotStudy ? $this->addZeroIndex($currentElement[$type])[$curID] : $currentElement[$curID];
+                $IDs[$index] = $curID;
+                $curName = $currentElement[self::nameNode];
+                $pageHeading .= ($isNotStudy ? ' / ' : '').$typeTrans.($curID+1).($curName!=='' ? ' ('.$curName.')' : '');
+            }
+        }
+        $tempVal = $pageHeading.($isPageOverview ? '' : $this->translateString('pages.'.lcfirst($title).'.title'));
+        $tabName = $this->translateString('pages.tabName');
+        if ($isPageOverview && !$this->getMultiStudyGroupMeasure($appNode)) {
+            $studyDetailsTrans = $this->translateString('projectdetails.sidebar');
+            $pageHeading = $studyDetailsTrans;
+            $tabName .= $studyDetailsTrans;
+        } else {
+            $tabName .= $tempVal;
+        }
+        $pageHeading = !$isPageOverview ? $tempVal : $pageHeading;
+
+        $pages = [];
+        // names of the elements, split by levels. E.g.: names has several values: one index for each study and 'names' containing the names of all studies. Each of these elements has the same structure (one index for each group and one element with the names of all groups of this study). Each of these elements has an array as the value containing the names of the measure time points of this group
+        $names = []; // needed for overview of projectdetails structure
+        if ($isProjectdetailsOverview) { // overview of projectdetails structure
+            $studyNames = [];
+            foreach ($allStudies as $studyIndex => $curStudy) {
+                $studyNames[] = $curStudy[self::nameNode];
+                $groupNames = [];
+                $allGroups = $this->addZeroIndex($curStudy[self::groupNode]);
+                foreach ($allGroups as $groupIndex => $group) {
+                    $groupNames[] = $group[self::nameNode];
+                    $measureNames = [];
+                    $measures = $this->addZeroIndex($group[self::measureTimePointNode]);
+                    foreach ($measures as $measure) {
+                        $measureNames[] = $measure[self::nameNode];
+                    }
+                    $names[$studyIndex][$groupIndex] = $measureNames;
+                    $allGroups[$groupIndex][self::measureTimePointNode] = $measures;
+                }
+                $names[$studyIndex][self::nameNode] = $groupNames;
+                $allStudies[$studyIndex][self::groupNode] = $allGroups;
+            }
+            $names[self::nameNode] = $studyNames;
+        } else { // overview of application data pages or measure time point pages
+            try {
+                $pages = $this->setSubMenu($title, $request, $IDs[0], $IDs[1], $IDs[2], false);
+                if (!$isProjectdetails) {
+                    $pages = $pages[self::subPages];
+                }
+            } catch (\Throwable) {
+                return $this->setErrorAndRedirect($session);
             }
         }
 
         $landing = $this->createFormAndHandleRequest(LandingType::class,[self::language => $session->get(self::language)],$request,
-            ['attr' => [self::isProjectdetails => $isProjectdetails, self::isStudy => $isStudy, self::isGroup => $isGroup, self::isMeasure => $isMeasure, self::numStudies => count($study), self::numGroups => $numGroups, 'numMeasures' => $numMeasures], self::dummyParams => [self::dropdownChoices => $this->choices]]);
+            [self::dummyParams => [self::isProjectdetails => $isProjectdetails, self::isMeasure => array_key_exists(self::measureID,$landingArray),'allStudies' => $allStudies]]);
         if ($landing->isSubmitted()) { // language has changed or a link was clicked
             $data = $landing->getData();
             $submitDummy = $data[self::submitDummy]; // submitDummy as string
-            if (!str_contains($submitDummy,"loadedXML:")) { // if a proposal is loaded, the submit dummy contains the entire xml
+            if (!str_contains($submitDummy,'loadedXML:')) { // if a proposal is loaded, the submit dummy contains the entire xml
+                $isNew = str_contains($submitDummy,'new') && !str_contains($submitDummy,'app_newForm');
+                $isCopy = str_contains($submitDummy,self::copy);
+                $isNewCopy = $isNew || $isCopy;
                 $isRemove = str_contains($submitDummy, self::remove);
-                $isCopy = str_contains($submitDummy, 'copyClicked');
-                if (str_contains($submitDummy, 'newClicked') || $isCopy) { // new study, group, or measure point in time should be created
-                    $newIndices = [0,0,0]; // indices of empty measure time point that will be created
-                    $addNode = $projectdetailsNode; // node where the new one gets appended
-                    $addNodeArray = $this->addZeroIndex($this->xmlToArray($projectdetailsNode->{self::studyNode}));
-                    $newIndices[0] = count($addNodeArray);
-                    $nodeName = self::studyNode;
-                    if (str_contains($submitDummy, self::studyID)) { // new group oder measure point in time
-                        $studyID = $IDs[0];
-                        $newIndices[0] = $studyID;
-                        $addNodeArray = $this->addZeroIndex($addNodeArray[$studyID][self::groupNode]);
-                        $newIndices[1] = count($addNodeArray);
-                        $addNode = $addNode->{self::studyNode}[$studyID];
-                        $nodeName = self::groupNode;
-                        if (str_contains($submitDummy, self::groupID)) { // new measure point in time
-                            $groupID = $IDs[1];
-                            $newIndices[1] = $groupID;
-                            $addNodeArray = $this->addZeroIndex($addNodeArray[$groupID][self::measureTimePointNode]);
-                            $newIndices[2] = count($addNodeArray);
-                            $addNode = $addNode->{self::groupNode}[$groupID];
-                            $nodeName = self::measureTimePointNode;
+                $isEditRemove = $isRemove || str_contains($submitDummy, self::edit);
+                $name = ''; // name of new element
+                if ($isNewCopy || $isEditRemove) {
+                    // logic: $submitDummy has the form 'key:value\r\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\r\n' (substr call). The split the string by "\r" such that the first element contains "remove:..." (first explode). Then split again by the colon such that the second element contains the indices (second explode). Then split again by the underscore to get the individual indices (third explode). Same for 'edit'.
+                    $indicesString = explode(':', explode("\r", substr($submitDummy, strpos($submitDummy, $isNewCopy ? ($isNew ? self::newElement : self::copy) : ($isRemove ? self::remove : self::edit))))[0])[1];
+                    $indices = explode('_', $indicesString);
+                    $name = !$isRemove ? $data[($isNewCopy ? self::newElement : self::editName).'_'.(!$isCopy ? $indicesString : implode('_',array_slice($indices,0,count($indices)-1)))] : '';
+                }
+                if ($isNewCopy) {
+                    $newIndices = [0,0,0];
+                    $studies = $this->addZeroIndex($this->xmlToArray($projectdetailsNode->{self::studyNode}));
+                    $appendNode = $projectdetailsNode; // node where the new element is added
+                    $studyIndex = $indices[0];
+                    $copyIndex = '';
+                    $appendNodeName = self::studyNode; // type of element to be added
+                    if ($isNew) {
+                        if ($studyIndex!=='') { // group or measure time point is created
+                            $studyIndex = intval($studyIndex);
+                            $newIndices[0] = $studyIndex; // values are used -> if $isNew is true, $isCopy will be false, i.e., $newIndices will be accessed
+                            $groups = $this->addZeroIndex($studies[$studyIndex][self::groupNode]);
+                            $appendNodeName = self::groupNode;
+                            $appendNode = $appendNode->{self::studyNode}[$studyIndex];
+                            if (array_key_exists(1, $indices)) { // new measure time point
+                                $groupIndex = intval($indices[1]);
+                                $newIndices[1] = $groupIndex;
+                                $newIndices[2] = count($this->addZeroIndex($groups[$groupIndex][self::measureTimePointNode]));
+                                $appendNodeName = self::measureTimePointNode;
+                                $appendNode = $appendNode->{self::groupNode}[$groupIndex];
+                            } else {
+                                $newIndices[1] = count($groups);
+                            }
+                        } else { // new study is created
+                            $newIndices[0] = count($studies);
                         }
-                    }
-                    $addMeasurement = true;
-                    $newName = $data[self::newStudyGroupName] ?? '';
-                    if ($nodeName!==self::measureTimePointNode) { // if double-clicked, prevent creating two studies/groups with the same name
-                        foreach ($this->addZeroIndex($this->xmlToArray($addNode)[$nodeName]) as $studyGroup) {
-                            $curName = $studyGroup[self::nameNode];
-                            if ($curName!=='' && $curName===$newName) {
-                                $addMeasurement = false;
+                    } else { // element is copied
+                        $copyIndex = intval($studyIndex); // index of element that is copied
+                        if (array_key_exists(1,$indices)) { // group or measure time point is copied
+                            $appendNodeName = self::groupNode;
+                            $appendNode = $appendNode->{self::studyNode}[1]!==null ? $appendNode->{self::studyNode}[$copyIndex] : $appendNode->{self::studyNode};
+                            $copyIndex = intval($indices[1]);
+                            if (array_key_exists(2,$indices)) { // measure time point is copied
+                                $appendNodeName = self::measureTimePointNode;
+                                $appendNode = $appendNode->{self::groupNode}[1]!==null ? $appendNode->{self::groupNode}[$copyIndex] : $appendNode->{self::groupNode};
+                                $copyIndex = intval($indices[2]);
                             }
                         }
                     }
-                    if ($addMeasurement) {
-                        $this->addMeasurement($addNode, $nodeName, $newName, $isCopy ? $data[self::copy] : null); // if 'new' is clicked, but an existing is selected, 'copy' is not null
-                        $this->updateNodesByReviewProcess($request,$projectdetailsNode->{self::studyNode}[$newIndices[0]]->{self::groupNode}[$newIndices[1]]->{self::measureTimePointNode}[$newIndices[2]],$this->getCurrentReviewProcess($this->xmlToArray($appNode)));
+                    $isCopy = $copyIndex!=='';
+                    $this->addMeasurement($appendNode,$appendNodeName,$name,$isCopy ? $copyIndex : null);
+                    if (!$isCopy) {
+                        $this->updateNodesByReviewProcess($request,$projectdetailsNode->{self::studyNode}[$newIndices[0]]->{self::groupNode}[$newIndices[1]]->{self::measureTimePointNode}[$newIndices[2]],$this->getCurrentReviewProcess($appNode));
                     }
-                } elseif ($isRemove || str_contains($submitDummy, self::edit)) { // study, group, or measure point in time should be removed or study or group name should be changed
-                    // logic: $submitDummy has the form 'key:value\r\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\r\n' (substr call). Then split the string by the colon such that the first element is 'remove' and the second element starts with 'index\r\n' (first explode call). Then, split again by "\r" such that the first element contains the index (second explode call). Finally, convert it to an integer ((int) call). Same for 'edit'.
-                    // The only characters before the 'remove' are the page, but there must be no other 'remove' string before the one containing the index. Same for 'edit'.
-                    $index = (int)(explode("\r", explode(':', substr($submitDummy, strpos($submitDummy, $isRemove ? self::remove : self::edit)))[1])[0]);
-                    $editRemoveNode = $projectdetailsNode->{self::studyNode}[$isStudy ? $IDs[0] : $index];
-                    if ($isStudy) { // remove group or measure time point or edit group name
-                        $editRemoveNode = $editRemoveNode->{self::groupNode}[($isRemove && $isGroup) ? $IDs[1] : $index];
-                    }
-                    if ($isRemove) {
-                        if ($isGroup) { // remove measure time point
-                            $editRemoveNode = $editRemoveNode->{self::measureTimePointNode}[$index];
+                } elseif ($isEditRemove) {
+                    // logic: $submitDummy has the form 'key:value\r\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\r\n' (substr call). The split the string by "\r" such that the first element contains "remove:..." (first explode). Then split again by the colon such that the second element contains the indices (second explode). Then split again by the underscore to get the individual indices (third explode). Same for 'edit'.
+                    $editRemoveNode = $projectdetailsNode->{self::studyNode}[intval($indices[0])];
+                    $isNotStudy = array_key_exists(1,$indices);
+                    try {
+                        if ($isNotStudy) {
+                            $editRemoveNode = $editRemoveNode->{self::groupNode}[intval($indices[1])];
+                            if (array_key_exists(2, $indices)) {
+                                $editRemoveNode = $editRemoveNode->{self::measureTimePointNode}[intval($indices[2])];
+                            }
                         }
-                        if ($editRemoveNode!==null) { // if the remove button is double-clicked, the element may already be removed
+                    } catch (\Throwable) {} // if remove button is double-clicked, it may already be removed
+                    if (!$isRemove) {
+                        $editRemoveNode->{self::nameNode} = $name;// $data[self::editName.'_'.$indicesString];
+                    } else { // element is removed
+                        if ($editRemoveNode!==null) {
                             $dom = dom_import_simplexml($editRemoveNode);
                             $childNodes = $dom->parentNode->childNodes;
                             $index = 0;
@@ -118,48 +192,31 @@ class LandingController extends ControllerAbstract
                                     ++$index;
                                 }
                             }
-                            if ($childNodes->count()>1 && in_array($childNodes->item(1)->nodeName, [self::studyNode, self::groupNode, self::measureTimePointNode])) { // if the remove button is double-clicked and an element after the one to be removed exists, it would also be removed
+                            if ($childNodes->count()>($isNotStudy ? 2 : 1) && in_array($childNodes->item(1)->nodeName, [self::studyNode, self::groupNode, self::measureTimePointNode])) { // if the remove button is double-clicked and an element after the one to be removed exists, it would also be removed
                                 $dom->parentNode->removeChild($dom);
-                                $studies = $this->addZeroIndex($this->xmlToArray($projectdetailsNode->{self::studyNode}));
-                                if (count($studies)===1) {
-                                    $groups = $this->addZeroIndex($studies[0][self::groupNode]);
-                                    if (count($groups)===1 && count($this->addZeroIndex($groups[0][self::measureTimePointNode]))===1) { // only one study with one group with one measure time point remaining
-                                        $this->setProjectdetailsContributor($request, $appNode);
-                                    }
+                                if (!$this->getMultiStudyGroupMeasure($appNode)) { // only one study with one group with one measure time point remaining
+                                    $this->setProjectdetailsContributor($request, $appNode);
                                 }
                             }
                         }
-                    } else { // edit study or group name
-                        $editRemoveNode->{self::nameNode} = $data[self::editName.$index];
                     }
                 }
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
         }
         return $this->render('landing.html.twig', $this->setRenderParameters($request,$landing,
-            ['menu' => $isProjectdetails ? $this->pages : $this->pages[self::subPages],
+            ['menu' => $pages,
+             'tabName' => $tabName,
+             'pageHeading' => $pageHeading,
              'page' => lcfirst($title),
-             'id' => $IDs,
-             'isMultiple' => $this->isMultiple,
-             self::studyName => $isStudy ? $study[$IDs[0]][self::nameNode] : '',
-             self::groupName => $isGroup ? $this->addZeroIndex($study[$IDs[0]][self::groupNode])[$IDs[1]][self::nameNode] : '',
-             'names' => $this->names,
+             'IDs' => $IDs,
+             'allStudies' => $allStudies,
+             'nameTrans' => $nameTrans,
+             'newTrans' => $newTrans,
+             'copyTrans' => $copyTrans,
+             'removeTrans' => $removeTrans,
+             'allNames' => $names,
+             'isPageOverview' => $isPageOverview,
              self::pageErrors => $this->getErrors($request,$title)],self::landing));
-    }
-
-    /** Sets the variables needed for creating the links on the landing page.
-     * @param string $type level. Must equal 'study', 'group', or 'measureTimePoint'
-     * @param array $subElements array with the subelements of the current level
-     * @return void
-     */
-    private function setVariables(string $type, array $subElements = []): void
-    {
-        $isStudy = $type===self::studyNode;
-        $isMeasure = $type===self::measureTimePointNode;
-        foreach ($this->pages as $index => $page) {
-            $name = !$isMeasure ? $subElements[$index][self::nameNode] : '';
-            $this->names[$index] = $name;
-            $this->choices[$name ?: $this->translateString('projectdetails.headings.'.$type).($this->isMultiple[$isMeasure ? 2 : (!$isStudy ? 1 : 0)] ? ' '.($index+1) : '')] = $index;
-        }
     }
 }

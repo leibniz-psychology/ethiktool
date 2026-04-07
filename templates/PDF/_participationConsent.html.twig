@@ -19,6 +19,7 @@
             {% if optionalConsent is not same as [] %}
                 {% set classes = 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : '') %}
                 <div class="{{ textPreview }}" style="page-break-inside: avoid">
+                    <div style="margin-bottom: 1rem; font-weight: bold">{{ 'consent.optionalHeading'|trans }}</div>
                     {% for text in optionalConsent %}
                         <table style="margin-bottom: 2em">
                             <tr><td class="{{ justify }}" colspan="5">{{ text }}</td></tr>

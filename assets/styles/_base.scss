@@ -99,3 +99,12 @@ left center no-repeat;
 .linkColor {
   color: rgb(10,88,180);
 }
+
+.buttonHover:hover, .buttonHover:hover span { // only used in landing
+  color: rgb(10,88,180) !important; // use same values as in .linkColor
+
+  svg { // edit icon
+    width: 120% !important;
+    height: 120% !important;
+  }
+}

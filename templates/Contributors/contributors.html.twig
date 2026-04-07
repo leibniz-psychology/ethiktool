@@ -2,7 +2,7 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set contributorsController, hasSupervisor, numInfos, numTasks, autoRows, titlesPrefix, positionPrefix = 'Contributors--contributors', contributorsArray[1]['tasks']['supervision'] is defined, infos|length, tasks|length, 'grid-auto-rows: 2rem;', 'contributors.titles.', 'multiple.position.' %}
+    {% set contributorsController, hasSupervisor, numInfos, numTasks, autoRows, titlesPrefix, positionPrefix, hintsPrefix = 'Contributors--contributors', contributorsArray[1]['tasks']['supervision'] is defined, infos|length, tasks|length, 'grid-auto-rows: 2rem;', 'contributors.titles.', 'multiple.position.', 'contributors.tasks.hints.position.' %}
     <div {{ stimulus_controller(contributorsController,{
             'committeeType': committeeParams['committeeType'],
             'contributors': contributorsArray|json_encode,
@@ -15,7 +15,8 @@
             'infos-names': infos|json_encode,
             'institution-label': institutionLabel|json_encode,
             'phone-label': phoneLabel|json_encode,
-            'tasks-names': tasks|json_encode}) }} class="MetaData-Widget">
+            'tasks-names': tasks|json_encode,
+            'tasks-hints': [(hintsPrefix~'noSelection')|trans, (hintsPrefix~'selection')|trans]}) }} class="MetaData-Widget">
         <div class="minAutoGrid borderLight" style="padding: 0">
             <div class="grid align-items-center column-gap-2" style="grid-template-columns: repeat(2,min-content); {{ autoRows }}">
                 {% for index, contributor in contributorsArray %}

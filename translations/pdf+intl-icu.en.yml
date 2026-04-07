@@ -145,6 +145,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     interventionsSub: 'Description of the measures/interventions:'
     otherSources: 'Will individually traceable data from other sources be added?'
     presence: 'Are project contributors present during data collection?'
+    presenceSub: 'Description of temporary presence:'
     burdens: 'Which burdens or strains will participants be exposed to?'
     burdensSub: >-
       {burdens, select,
@@ -289,7 +290,11 @@ projectdetails:
       one group {isGroupName, select,
                   true  {({groupName})}
                   other {}}
-    measureTimePoint: 'one time point'
+    measureTimePoint: >-
+      one time point {isMeasureTimePointName, select,
+                        true  {({measureTimePointName})}
+                        other {}}
+  sampleSizeMultiple: 'X each'
   pdf:
     examinedPeople: 'The precise inclusion and exclusion criteria can be found {informationHint}.'
     measures: 'Supplementary materials on the data collection methods are available after the participant documents created by the Ethiktool.'
@@ -340,7 +345,7 @@ projectdetails:
         separate      {The data privacy statement {levelNamesString} was generated separately (i.e., outside of the Ethiktool). {verification, select,
                                                                       verified   {It has been checked and approved by the responsible data protection authorities.}
                                                                       unverified {It has not yet been approved by the responsible data protection authorities.}
-                                                                      other      {}} It can be found on the following page(s) (if applicable, including the consent form).}
+                                                                      other      {}} The data privacy statement can be found on the following page(s) (if applicable, including the consent form).}
         anonymous     {According to the {savePDF, select,
                                           true {judgment of the responsible data protection authorities}
                                           other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">judgment of the responsible data protection authorities</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
@@ -352,7 +357,12 @@ projectdetails:
                                                         true  {selections made in the Ethiktool}
                                                         other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
                           other     {Due to the following characteristics of data processing (according to the selections made in the Ethiktool), the data privacy statement {levelNamesString} cannot be generated with the Ethiktool:
-                            {createOther} Therefore, the data privacy statement was generated separately. It can be found on the following page(s) (if applicable, including the consent form).}}}}
+                            {createOther} {addOwn, select,
+                                            true  {Therefore, the data privacy statement was generated separately (i.e., outside of the Ethiktool). {verification, select,
+                                                                            verified   {It has been checked and approved by the responsible data protection authorities.}
+                                                                            unverified {It has not yet been approved by the responsible data protection authorities.}
+                                                                            other      {}} The data privacy statement can be found on the following page(s) (if applicable, including the consent form).}
+                                            other {The data privacy statement still has to be created and must receive approval by the responsible data protection authorities.}}}}}}
     createOther:
       responsibility: '{committeeLocation} does not carry exclusive responsibility for processing the personal data according to EU-GDPR.'
       transferOutside: 'Personal data are transmitted to or shared with third parties outside the EAA.'
@@ -614,17 +624,18 @@ participation:
   durationContent:
     text: >-
       The total duration of {multiple, select,
-                              true  {{measureTimeDays, plural,
-                                        =0    {today's}
-                                        other {this}}}
+                              true  {today's}
                               other {the}} investigation is usually about {total}{breaksMinutes, plural,
                                                                                 =0    {.}
                                                                                 =1    {, of which {measureTime} (net) are allocated for data collection and 1 minute for preparation, follow-up, and breaks.}
                                                                                 other {, of which {measureTime} (net) are allocated for data collection and # minutes for preparation, follow-up, and breaks.}}
     measureTimeDays: >-
-      {time, plural,
-        =1    { 1 day}
-        other { # days}}
+      {addressee, select,
+        children {The participation of your child}
+        wards    {The participation of the person under your supervision}
+        other    {Your participation}} spans {time, plural,
+                                                =1    {1 day.}
+                                                other {# days.}}
     measureTimeHours: >-
       {time, plural,
         =1    { 1 hour}
@@ -836,12 +847,13 @@ participation:
            The research data are {isSecond, select,
                         true  {additionally}
                         other {}} labelled with {type, select,
-                                                  external {a code assigned outside of the project, namely }
-                                                  internal {an internal code in the project. }
-                                                  other    {{addressee, select,
-                                                              children {your child's name. }
-                                                              wards    {the name of the individual under your supervision. }
-                                                              other    {your name. }}}}
+                                                  consecutive {a consecutive number. This number is only used for labelling datasets; it does not enable the identification of individual persons.}
+                                                  external    {a code assigned outside of the project, namely }
+                                                  internal    {an internal code in the project. }
+                                                  other       {{addressee, select,
+                                                                  children {your child's name. }
+                                                                  wards    {the name of the individual under your supervision. }
+                                                                  other    {your name. }}}}
       external:
         types:
           anonymous: 'The code itself does not allow inference on specific persons. The mapping of codes to personally identifying information is possible only for the institution or body that assigned the code originally. Information on the handling of personal data is available there.'
@@ -885,6 +897,7 @@ participation:
         codePersonal: '{codePersonal} Moreover, though the research data themselves are not directly person-related, it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.'
         no: 'The research data themselves are not directly person-related, but it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.'
       personalNo:
+        consecutive: 'For the project contributors, the research data are anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
         external: 'For use within this study, the research data are anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
         internal: 'For the project contributors, the research data are anonymous. The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
         no: >-
@@ -1345,6 +1358,7 @@ consent:
                                                                                         other    {my data}}}}.}} {addressee, select,
             children {I hereby declare to give consent on behalf of all legal guardians.}
             other    {}}
+  optionalHeading: 'Additionally, I take the following decisions:'
   finding: 'If the investigation points towards an unusual test result (incidental finding), I agree to being told about this for me to possibly seek further diagnostic assessment. I was informed that knowing about a disease could lead to difficulties in contracting insurance for resulting adversities.'
   personalKeepConsent: 'I agree to the storage and use of personal research data {type}.'
   digital: 'Note: Consent is given by clicking on a corresponding button.'
@@ -1392,7 +1406,7 @@ completeForm:
       The answers to the following basic questions were extracted by the Ethiktool from the entries of the ethics applicant.
       {isFull, select,
         true  {More detailed information on each question is available in the ethics proposal form.}
-        other {}} The Ethiktool can verify the plausibility of the entries only partially; the responsibility for checking all entries by content remains with the applicants and the ethics committee.
+        other {}} The Ethiktool can verify the plausibility of the entries only partially; the responsibility for checking all entries by content remains with the applicants and the ethics committee. Cells marked in <span style="color: red">red</span> indicate the demand for specific inspection due to certain characteristics of the research project. The entry “<span style="color: grey">unclear</span>“ indicates aspects whose ethical implications are difficult to interpret for the Ethiktool; this requires verification of the applicants' self-judgment regarding the review process (short or full proposal).
     types:
       yes: 'Yes'
       no: 'No'

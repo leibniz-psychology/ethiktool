@@ -38,7 +38,7 @@ class CompleteFormController extends ControllerAbstract
         $studies = $this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]);
         $isMultiple = [self::studyNode => count($studies)>1,self::groupNode => false,self::measureTimePointNode => false]; // each value gets true if multiple studies, groups, or measure time points exist.
         $reviewProcess = $session->get(self::reviewProcess);
-        $isBegun = in_array($reviewProcess,[self::reviewShortBegun,self::reviewFullBegun]); // true if data collection has already begun
+        $isBegun = $this->getBegunDocs($reviewProcess,$session); // true if data collection has already begun and application type is either full or short and participant documents are reviewed
         foreach ($studies as $studyID => $study) {
             $names[$studyID][0] = $study[self::nameNode];
             $groups = $this->addZeroIndex($study[self::groupNode]);
@@ -78,7 +78,7 @@ class CompleteFormController extends ControllerAbstract
                         $pdfArray[self::otherSourcesNode] = [];
                     }
                     $privacyArray = $measureTimePoint[self::privacyNode];
-                    if ($privacyArray!=='' && array_key_exists(self::createNode,$privacyArray) && ($privacyArray[self::createNode][self::chosen]===self::createSeparate || in_array($privacyArray[self::responsibilityNode] ?? '',['onlyOther','multiple','private']) || ($privacyArray[self::transferOutsideNode] ?? '')==='yes' || ($privacyArray[self::markingNode][self::chosen] ?? '')===self::markingOther)) {
+                    if ($privacyArray!=='' && array_key_exists(self::createNode,$privacyArray) && ($privacyArray[self::createNode][self::chosen]===self::createSeparate || ($privacyArray[self::addOwnNode] ?? '')==='0')) {
                         $pdfArray[self::privacyNode] = [];
                     }
                     foreach ($pdfArray as $key => $value) {
