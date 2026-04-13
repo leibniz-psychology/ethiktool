@@ -205,7 +205,6 @@ export default class extends Controller {
      */
     setCompensationCode(event) {
         let target = event.target;
-        console.log(target.id,target.id!=='codeCompensationDescription');
         if (target.id!=='codeCompensationDescription') {
             this.compensationValue = event.target.value;
         }

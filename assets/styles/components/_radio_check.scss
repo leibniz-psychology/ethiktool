@@ -17,6 +17,11 @@
   }
 }
 
+.backgroundPosition {
+  background-position-x: center;
+  background-position-y: center;
+}
+
 .CheckBox-Label,
 .RadioButton-Label {
   @apply items-center mt-1.5 gap-1;
@@ -81,9 +86,4 @@ left center no-repeat;
 left center no-repeat;
 
   @apply bg-white backgroundPosition;
-}
-
-.backgroundPosition {
-  background-position-x: center;
-  background-position-y: center;
 }

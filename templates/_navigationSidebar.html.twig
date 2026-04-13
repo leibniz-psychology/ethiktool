@@ -27,7 +27,7 @@
         {% set label = contributors.label ?? '' %}
         {% set isContributors = activeRoute is same as label %}
         {% set isNotContributors = isFilename and not isContributors %}
-        <div class="flex" style="margin-left: {{ (contributors.error ?? false) ? '8px' : (anyError ? '28px' : '20px') }} !important;">
+        <div class="flex {% if isFilename and isContributors %} mt-2 mb-3 {% endif %}" style="margin-left: {{ (contributors.error ?? false) ? '8px' : (anyError ? '28px' : '20px') }} !important;">
             {% if contributors.error ?? false %}
                 <span {% if not isContributors%} style="margin-top: 0.75rem;" {% endif %}>{{ include('images/exclamation.svg') }}</span>
             {% endif %}

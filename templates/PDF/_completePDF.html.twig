@@ -59,10 +59,10 @@
     <div>
         {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
         <h2 class="{{ headingCenter }}">{{ (tempPrefix~'title')|trans }}</h2>
-        <div class="{{ textPreview }}">{{ (tempPrefix~'intro')|trans({'isFull': isFull})|raw }}</div>
+        <div class="{{ textPreview }}" {% if savePDF %} style="margin-bottom: 1em" {% endif %}>{{ (tempPrefix~'intro')|trans({'isFull': isFull})|raw }}</div>
         {% for report in briefReports %}
             {% set heading, content = report.heading, report.content %}
-            <div class="{{ textPreview }}" style="page-break-inside: avoid">
+            <div class="{{ textPreview }}" style="page-break-inside: avoid; {% if savePDF %} margin-bottom: 0 {% endif %}">
                 <b class="{{ textPreview }}" style="margin-left: 5%">{{ heading }}</b>
                 <table class="briefBorder">
                     {% for question, answer in content %}

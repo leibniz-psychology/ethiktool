@@ -3,11 +3,12 @@ import {setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['preTypeOral','preNo','preText','preComplete','preCompleteType','preCompleteText','postYes','postTypeOral','postText','documentTranslation'];
+    static targets = ['preTypeOral','preNo','preText','preComplete','preCompleteType','preCompleteText','preAbort','postYes','postTypeOral','postText','documentTranslation'];
 
     static values = {
         pre: String,
-        informationHintName: String
+        informationHintName: String,
+        preAbortHints: Object
     }
 
     connect() {
@@ -35,12 +36,26 @@ export default class extends Controller {
     setPreComplete(event) {
         let value = event.target.value;
         let isAnswered = value!=='';
-        setElementVisibility(this.preCompleteTypeTarget,value==='0');
+        let isPreComplete = value==='0';
+        setElementVisibility(this.preCompleteTypeTarget,isPreComplete);
+        setElementVisibility(this.preAbortTarget,isPreComplete);
         this.preCompleteTextTarget.disabled = !isAnswered;
         setHint('preCompleteTextHint',event.params.hint[isAnswered ? 1 : 0]); // 0: nothing selected, 1: yes or no selected
         let deleteHint = document.getElementById(this.informationHintNameValue);
         if (deleteHint!==null) {
             setElementVisibility(deleteHint,value==='1')
+        }
+    }
+
+    /** Sets the visibility of the text field for pre abort as well as the hint. Must pass a parameter 'hints'.
+     * @param event widget that invoked the method
+     */
+    setPreAbort(event) {
+        let value = event.target.value;
+        let isDescription = ['abortOther','abortNo'].includes(value);
+        setElementVisibility('preAbortDescriptionDiv',isDescription);
+        if (isDescription) {
+            setHint('preAbortDescriptionHint',event.params.hints[value]);
         }
     }
 

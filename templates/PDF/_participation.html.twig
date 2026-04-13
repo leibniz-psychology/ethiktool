@@ -12,7 +12,7 @@
         <div class="{{ textPreview }}">{{ noDocStart|raw|nl2br }}</div>
         {{ _self.addParagraphs(content,textPreview) }}
     {% elseif information in ['pre','post'] %}
-        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
+        {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
         {{ pdfMacros.addHeading(participationHeading,savePDF) }}
         {% if isMarkInput %}
             <div class="{{ redClasses }}">{{ (markingTrans)|trans(markInputParams) }}</div>

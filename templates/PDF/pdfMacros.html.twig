@@ -1,8 +1,7 @@
-{% macro addHeader(committeeType, projectTitle, leader, levelNames, savePDF, isComplete) %}
+{% macro addHeader(committeeType, projectTitle, levelNames, savePDF, isComplete) %}
     {# Adds a header. Input arguments:
         committeeType:   committee type
         projectTitle:    array of two elements: project title and whether it differs for participants
-        leader:          array containing the  project leaders
         levelNames:      string containing the level IDs
         savePDF:         if true, the pdf will be saved on disk
         isComplete:      if true, for the date, only the date will be added, otherwise the time will also be added
@@ -10,17 +9,13 @@
     <div style="page-break-inside: avoid; margin-bottom: 0.5em">
         <div style="display: flex">
             {{ _self.addLogo(committeeType) }}
-            {# project leader #}
             <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-top: 0.25em; text-align: right; margin-right: 0.5em; width: {{ committeeType is not same as 'testCommittee' ? '80%' : '100%' }}">
-                <div>{{ 'contributors.tasks.leader'|trans([],'messages')~':' }}</div>
-                {% for curLeader in leader %}
-                    <div >{{ curLeader|raw }}</div>
-                {% endfor %}
                 {# project title #}
                 <div {% if not savePDF %} class="previewSmall" {% endif %} style="word-break: break-word; margin-top: 0.25em">
-                    {{ ('participation.projectTitleHeader'|trans({'projectTitle': projectTitle['projectTitle'], 'savePDF': boolToString(savePDF), 'isDifferent': projectTitle['isDifferent']},'pdf')~levelNames)|raw }}
+                    {{ ('participation.projectTitleHeader'|trans({'projectTitle': projectTitle['projectTitle'], 'savePDF': boolToString(savePDF), 'isDifferent': projectTitle['isDifferent']},'pdf'))|raw }}
                 </div>
-                {{ _self.addDate(savePDF,isComplete) }}
+                <div>{{ levelNames }}</div>
+                {{ _self.addDate(savePDF) }}
             </div>
         </div>
     </div>
@@ -46,10 +41,10 @@
     <div style="background: inherit; width: 20%; margin: {{ not isTestCommittee ? '0.5em' : 0 }}" title="{{ ('logo.'~committeeType)|trans([],'pdf') }}">{{ include('images/logos/'~committeeType~(isTestCommittee ? '_'~app.request.locale)~'.svg') }}</div>
 {% endmacro %}
 
-{% macro addDate(savePDF, isComplete, style = '', toolVersion = '') %}
+{% macro addDate(savePDF, noTime = true, style = '', toolVersion = '') %}
     {# Adds the current time. Input argument:
         savePDF:    if true, the pdf will be saved on disk
-        isComplete: if true, only the date will be added, otherwise the time will also be added
+        noTime:     if true, only the date will be added, otherwise the time will also be added
         style:      style for the surrounding div
         addVersion: if not an empty string, the tool version is added above the date
     #}
@@ -57,7 +52,7 @@
         {% if toolVersion is not same as '' %}
             {{ 'header'|trans({'toolVersion': toolVersion, 'savePDF': boolToString(savePDF)},'pdf')|raw|nl2br }}
         {% endif %}
-        {{ 'now'|date('dateFormat'|trans({'noTime': boolToString(isComplete)}), 'Europe/Berlin') }}
+        {{ 'now'|date('dateFormat'|trans({'noTime': boolToString(noTime)}), 'Europe/Berlin') }}
     </div>
 {% endmacro %}
 

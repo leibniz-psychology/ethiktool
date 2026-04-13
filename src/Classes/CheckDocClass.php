@@ -769,7 +769,12 @@ class CheckDocClass extends ControllerAbstract
                         $tempArray = $pageArray[self::preComplete];
                         $this->checkMissingTextfieldEmpty($tempArray,$translationStart.self::deceit,$translationStart.'deceitDescription',self::preComplete,false,hashDescription: $this->addDiv(self::preComplete,true)); // complete post-information and description of information given
                         if (array_key_exists(self::preCompleteType,$tempArray)) {
-                            $this->checkMissingChosen($tempArray,$translationStart.'deceitType',null,'completePostType',true,self::preCompleteType);
+                            $this->checkMissingChosen($tempArray,$translationStart.'deceitType',null,'completePostType',true,self::preCompleteType)===self::informationOral;
+                            $tempPrefix = $translationStart.self::preAbort.'.';
+                            $tempArray = $tempArray[self::preAbort];
+                            if (in_array($this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::preAbort,true),self::preAbortDescriptions)) {
+                                $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.self::descriptionNode],parameter: ['isOther' => $this->getStringFromBool($tempArray[self::chosen]===self::preAbortOther)],hash: $this->addDiv(self::preAbort,true,false));
+                            }
                         }
                     }
                 } elseif ($pre===1) { // answer was no
@@ -945,18 +950,34 @@ class CheckDocClass extends ControllerAbstract
             }
         }
         // location
+        $preAbortArray = [self::informationNode => $this->measure[self::informationNode][self::preComplete][self::preAbort][self::chosen] ?? '', self::informationIINode => $this->isInformationII ? $this->measure[self::informationIINode][self::preComplete][self::preAbort][self::chosen] ?? '' : ''];
         if (array_key_exists(self::locationNode,$pageArray)) {
             $tempArray = $pageArray[self::locationNode];
             $tempPrefix = $translationPage.self::locationNode.'.';
-            if ($this->checkMissingChosen($tempArray,$tempPrefix.'title',null,self::locationNode)!=='') {
+            $location = $this->checkMissingChosen($tempArray,$tempPrefix.'title',null,self::locationNode);
+            if ($location!=='') {
                 $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.'locationDescription'],hash: $this->addDiv(self::locationNode,true,false));
+                if ($location!==self::locationOnline) {
+                    foreach ($preAbortArray as $type => $chosen) {
+                        if ($chosen===self::preAbortButton) { // pre abort by using a cancel button -> location must be online
+                            $this->addCheckLabelString($tempPrefix.self::preAbort,parameters: $type===self::informationNode ? $this->paramsAddressee : $this->paramsParticipants);
+                        }
+                    }
+                }
             }
         }
         // presence
         if (array_key_exists(self::presenceNode,$pageArray)) {
             $tempPrefix = $translationPage.self::presenceNode.'.';
-            if ($this->checkMissingTextfield($pageArray[self::presenceNode],null,self::presencePartly,$tempPrefix.'missing',self::presenceNode,$tempPrefix.self::descriptionNode,addDescription: true)===self::presenceNo && ($this->isTwoAddressees ? $this->measure[self::consentNode][self::consentNode][self::chosen2Node] : $this->consentAddressee)===self::consentOral) { // oral consent -> contributors must be present
-                $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->routeIDs);
+            if ($this->checkMissingTextfield($pageArray[self::presenceNode],null,self::presencePartly,$tempPrefix.'missing',self::presenceNode,$tempPrefix.self::descriptionNode,addDescription: true)===self::presenceNo) {
+                if (($this->isTwoAddressees ? $this->measure[self::consentNode][self::consentNode][self::chosen2Node] : $this->consentAddressee)===self::consentOral) { // oral consent -> contributors must be present
+                    $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->routeIDs);
+                }
+                foreach ($preAbortArray as $type => $chosen) {
+                    if ($chosen==='abortContact') { // pre abort in person -> contributors must be present
+                        $this->addCheckLabelString($tempPrefix.self::preAbort, parameters: $type===self::informationNode ? $this->paramsAddressee : $this->paramsParticipants);
+                    }
+                }
             }
         }
         // durations
@@ -1156,7 +1177,7 @@ class CheckDocClass extends ControllerAbstract
             $this->checkMissingContent($pageArray,[self::goalsNode => $translationPage.self::goalsNode]);
             // conflict text
             if (array_key_exists(self::conflictTextNode,$pageArray) && $pageArray[self::conflictTextNode]==='') {
-                $this->addCheckLabelString($translationPage.self::conflictTextNode,self::conflictTextNode,colorRed: false);
+                $this->addCheckLabelString($translationPage.self::conflictTextNode,self::conflictNode,colorRed: false);
             }
             // pro
             $tempArray = $pageArray[self::proNode];

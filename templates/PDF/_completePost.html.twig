@@ -4,7 +4,7 @@
 {% block pdfBody %}
     {% set textPreview = not savePDF ? 'previewSmall' %}
     <div class="pdfDocument">
-        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
+        {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
         <div class="pdfHeadingCenter pdfHeadingMain pdfBorderMain {% if not savePDF %}previewXLarge{% endif %}">{{ completePostHeading|raw }}</div>
         {% if isOral %}
             <div class="pdfOral {{ textPreview }}">{{ oralHint|raw }}</div>

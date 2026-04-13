@@ -6,7 +6,7 @@
     {% set textPreview = not savePDF ? 'previewSmall' %}
     {% set justify = 'textJustify '~textPreview %}
     <div>
-        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
+        {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
         <div class="noPageBreak {% if not isSeparate %} pdfMargin {% endif %}">  {# avoid page break between heading and first paragraph #}
             <div>{{ pdfMacros.addHeading(consentHeading,savePDF) }}</div>
             <div class="{{ justify }}">{{ consent[0]|raw|nl2br }}</div>

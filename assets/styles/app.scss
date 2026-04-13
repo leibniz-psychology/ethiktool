@@ -64,10 +64,6 @@ select {
     }
 }
 
-.column {
-    @apply border rounded-lg shadow-sm bg-mono-50;
-}
-
 /* classes */
 .errorStyle { /* for displaying form errors */
     color: red;
@@ -102,8 +98,11 @@ select {
     z-index: 1; // above link symbols
 
     button {
-        @apply p-1.5 pb-2 hover:bg-zpid-blue;
+        @apply p-1.5 pb-2;
         border: 5px solid theme('colors.zpid-blue.100');
+        &:hover {
+            border-bottom-color: theme('colors.zpid-blue.700');
+        }
     }
 }
 
@@ -117,6 +116,10 @@ select {
 /* input fields */
 input { /* simple text fields  (Texttype in xxxType.php. "input" tag itself is not used until now */
     width: 100%;
+}
+
+.borderPadding {
+    padding: 0.5rem;
 }
 
 .borderLight {
@@ -161,6 +164,23 @@ a {
     }
 }
 
+.linkIcon {
+    position: relative;
+    top: 0.125rem;
+    display: inline-block;
+    overflow: hidden;
+    width: 1rem;
+    height: 1rem;
+    content: "(external link)";
+    text-indent: 1rem;
+    white-space: nowrap;
+}
+
+.linkInternalIcon {
+    vertical-align: text-top;
+    @apply linkIcon;
+}
+
 .linkInternal::after {
     /* prettier-ignore */
     background:
@@ -179,23 +199,6 @@ left center no-repeat;
 left center no-repeat;
     background-size: 130%;
     @apply linkInternalIcon;
-}
-
-.linkInternalIcon {
-    vertical-align: text-top;
-    @apply linkIcon;
-}
-
-.linkIcon {
-    position: relative;
-    top: 0.125rem;
-    display: inline-block;
-    overflow: hidden;
-    width: 1rem;
-    height: 1rem;
-    content: "(external link)";
-    text-indent: 1rem;
-    white-space: nowrap;
 }
 
 .borderHint {
@@ -258,10 +261,6 @@ h3.inputPageHeading:hover {
     @apply borderPadding bg-mono-200 mt-4 mx-4;
     background-clip: padding-box;
     width: fit-content;
-}
-
-.borderPadding {
-    padding: 0.5rem;
 }
 
 .markInput { // must equal the attributes in pdf.css

@@ -3,10 +3,6 @@
     line-height: 1.5;
 }
 
-.linkInternal::after {
-
-}
-
 li { /* needed for hints in complete form */
     margin-left: 1.5rem;
     text-indent: -1.1rem;
@@ -114,30 +110,13 @@ li { /* needed for hints in complete form */
     margin: 0.5em;
 }
 
-.pdfHeading a, .pdfHeadingCenter a, .previewSmall a, div a {
+.pdfHeading a, .pdfHeadingCenter a, div a {
     font-family: inherit;
 }
 
 .linkNormal {
     text-decoration: none;
     color: inherit;
-}
-
-.previewSmall a::after {
-    position: relative;
-    top: 0.125em;
-    display: inline-block;
-    overflow: hidden;
-    width: 1em;
-    height: 1em;
-    background:
-    url("../images/link-in.svg"
-    param(--color theme("colors.mono.900")))
-left center no-repeat;
-    content: "(external link)";
-    text-indent: 1em;
-    white-space: nowrap;
-    background-size: 100% !important;
 }
 
 i.pdfHeading {
@@ -148,10 +127,6 @@ i.pdfHeading {
 
 .previewXLarge {
     font-size: medium;
-}
-
-.previewSmall {
-    font-size: x-small !important;
 }
 
 .textJustify {

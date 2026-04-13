@@ -19,9 +19,7 @@ multiple:
                                                           other {Sie wurden auf die Hauptseite zurückgeleitet.}} Sie können den Antrag nun an den gewünschten Stellen weiter bearbeiten.
         
         
-        {isMajor, select,
-          true  {Sie haben eine XML-Datei geladen, die mit einer älteren Version des Ethiktools erstellt wurde. In neueren Versionen müssen Sie die Art des Antragsverfahrens auswählen. Je nach gewähltem Antragsverfahren unterscheiden sich die Fragen, die Sie im Ethiktool beantworten müssen. Bitte wählen Sie die Art des Antragsverfahrens aus, bevor Sie weitere Eingaben tätigen. Möchten Sie dafür auf die Seite „Stammdaten“ wechseln?}
-          other {}}
+        Sie haben eine XML-Datei geladen, die mit einer älteren Version des Ethiktools erstellt wurde. In neueren Versionen müssen Sie die Art des Antragsverfahrens auswählen. Je nach gewähltem Antragsverfahren unterscheiden sich die Fragen, die Sie im Ethiktool beantworten müssen. Bitte wählen Sie die Art des Antragsverfahrens aus, bevor Sie weitere Eingaben tätigen. Möchten Sie dafür auf die Seite „Stammdaten“ wechseln?
     failure: # info modal if the extension is invalid
       title: 'Datei auswählen'
       text: >-
@@ -31,7 +29,7 @@ multiple:
     xmlFailure: # info modal if an xml-file could not be loaded
       title: 'XML-Datei laden'
       text: 'Die ausgewählte XML-Datei konnte nicht geladen werden.'
-    customPDF: # info modal if a custom pdf could not be added while creating the complete proposal 
+    customPDF: # info modal if a custom pdf could not be added while creating the complete proposal
       title: 'Selbst formulierte PDF-Dateien hinzufügen'
       text: >-
         {filename, select,
@@ -129,6 +127,7 @@ multiple:
     position: 'Position'
     phone: 'berufliche Telefonnummer'
     phoneOptional: '(optional) berufliche Telefonnummer'
+    nameHint: 'Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) hinzugefügt werden.'
     institutionHint: 'Bitte geben Sie die Fakultät bzw. den Fachbereich an, bei externen Projektbeteiligten zusätzlich auch die Institution.'
     professorshipHint: '<i>Arbeitsgruppe/Professur der Erstbetreuung</i>'
   position:
@@ -233,6 +232,10 @@ newForm: # placed immediately after 'committee' to have the committee names all 
   technicalHint:
     text: 'Technische Hinweise'
     confirm: 'Ich habe die technischen Hinweise zur Nutzung des Ethiktools zur Kenntnis genommen.'
+  finalHint: >-
+    {committeeType, select,
+      EUB   {Bei Fragen oder Problemen können Sie sich gerne an die Geschäftsstelle wenden: <a href="mailto:ethikkommission@uni-bielefeld.de">ethikkommission@uni-bielefeld.de</a> oder 0521/106-4468.}
+      other {}}
   buttons:
     save: 'Antrag anlegen'
     cancel: 'Abbrechen'
@@ -423,9 +426,9 @@ landing:
           other {Zeitpunkt}} löschen
       content: >-
         Möchten Sie {type, select,
-                      study {Studie X wirklich löschen? Alle Gruppen und Zeitpunkte dieser Studie werden ebenfalls gelöscht.}
-                      group {Gruppe X wirklich löschen? Alle Zeitpunkte dieser Gruppe werden ebenfalls gelöscht.}
-                      other {Zeitpunkt X wirklich löschen?}}
+                      study {Studie ID1 wirklich löschen? Alle Gruppen und Zeitpunkte dieser Studie werden ebenfalls gelöscht.}
+                      group {Gruppe ID1 von Studie ID2 wirklich löschen? Alle Zeitpunkte dieser Gruppe werden ebenfalls gelöscht.}
+                      other {Zeitpunkt ID1 von Studie ID3, Gruppe ID2 wirklich löschen?}}
 
 # application data
 coreData:
@@ -529,7 +532,7 @@ coreData:
         other      {, „Aufwandsentschädigung“ bzw. „Nachnutzung“}} keine Eingaben mehr zu der Frage nach dem Umgang mit den Daten bei individuellem Abbruch{reviewProcess, select,
           shortBegun { bzw. der Abwicklung der Aufwandsentschädigung}
           other      {, der Abwicklung der Aufwandsentschädigung bzw. der Frage, wie bzw. wem die Forschungsdaten zur Nachnutzung zur Verfügung gestellt werden,}} erforderlich. Die dort getätigten Eingaben werden gelöscht, sobald Sie diese Seite verlassen.
-    requestedConfirm: 
+    requestedConfirm:
       title: 'Bestätigung der Deckungsgleichheit'
       headingHint: >- # other in committeeType is those without participant documents for short proposals and with no special requirements (currently EUB, UH1, test ethics committee)
        Fördermittelgeber fordern in der Regel ein Ethikvotum für genau den beantragten Projektinhalt. Daher müssen die im Ethikantrag beschriebenen Studien inhaltlich identisch zu den Studien im Drittmittelantrag sein. Zur Zuordenbarkeit für den Fördermittelgeber sollten der Titel des Drittmittelantrags und des Ethikantrags gleich lauten. 
@@ -547,7 +550,7 @@ coreData:
       confirm: 'Ich bestätige, dass die im Ethikantrag dargelegten Studien inhaltlich deckungsgleich zu den Studien im Drittmittelantrag sind.'
   qualification:
     title: 'Wird das Forschungsprojekt ausschließlich im Rahmen der eigenen Qualifikationsarbeit durchgeführt (Bachelor-/Masterarbeit/Promotion)?'
-    headingHint: 'Bitte antworten Sie nur dann mit „Ja“, wenn das Forschungsprojekt ohne Ihre Qualifikationsarbeit nicht durchgeführt werden würde. Wenn Sie für Ihre Qualifikationsarbeit Daten eines ohnehin durchgeführten Forschungsprojekts nutzen, ist die Frage mit „Nein“ zu beantworten und eine der Funktionen im Forschungsprojekt für die eigene Person auszuwählen.'
+    headingHint: 'Bitte antworten Sie nur dann mit „Ja“, wenn das Forschungsprojekt ohne Ihre Qualifikationsarbeit nicht durchgeführt werden würde. Wenn Sie für Ihre Qualifikationsarbeit Daten eines ohnehin durchgeführten Forschungsprojekts nutzen, ist die Frage mit „Nein“ zu beantworten.'
   applicant:
     title: 'Verantwortlichkeit für die Antragstellung'
     applicant: 'Antragstellende Person'
@@ -820,9 +823,10 @@ projectdetails:
                             post        {nachträgliche}
                             preComplete {nachträgliche vollständige}
                             other       {}} Aufklärung?
-        written: 'schriftlich'
-        writtenOral: 'schriftlich mit mündlicher Erläuterung'
+        written: 'in Textform'
+        writtenOral: 'in Textform mit mündlicher Erläuterung'
         oral: 'mündlich'
+        hintWritten: 'schriftlich oder elektronisch'
       pre:
         title: 'Werden die {addressee} vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen?'
         content:
@@ -834,6 +838,28 @@ projectdetails:
             deceit: 'Mindestens eine Information an die {addressee} ist falsch, d.h. sie werden explizit getäuscht.'
       preComplete:
         title: 'Werden die {addressee} nachträglich vollständig aufgeklärt?'
+      preAbort:
+        title: >-
+          Erhalten die {isInformation, select,
+                          true  {{addresseeType, select,
+                                    children {Erziehungsberechtigten}
+                                    wards    {gesetzlichen Vertretungspersonen}
+                                    other    {Teilnehmenden}}}
+                          other {{addresseeType, select,
+                                    children {Kinder}
+                                    wards    {betreuten Personen}
+                                    other    {}}}} bei vorzeitigem Abbruch ebenfalls die nachträgliche vollständige Aufklärung?
+        type:
+          abortContact: 'Ja, im persönlichen Kontakt'
+          abortButton: 'Ja, über einen Abbruch-Button'
+          abortOther: 'Ja, auf andere Weise'
+          abortNo: 'Nein'
+        hints:
+          abortContact: 'mündlich oder schriftlich vor Ort'
+          abortButton: 'Die vollständige Aufklärung wird automatisch angezeigt.'
+        textHints:
+          abortOther: 'Bitte beschreiben Sie, auf welche Weise die nachträgliche vollständige Aufklärung bei vorzeitigem Abbruch erfolgt.'
+          abortNo: 'Bitte begründen Sie, warum keine nachträgliche vollständige Aufklärung bei vorzeitigem Abbruch erfolgt.'
       post:
         title: 'Werden die {addressee} nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilgenommen haben?'
       textHints:
@@ -919,7 +945,7 @@ projectdetails:
               post  {Bei individuellem Abbruch der Studienteilnahme kann die teilnehmende (bzw. deren vertretungsberechtigte) Person entscheiden, ob die bis dahin erhobenen Daten gelöscht werden oder in die Auswertung einfließen.}
               other {Bei individuellem Abbruch der Studienteilnahme kann die teilnehmende (bzw. deren vertretungsberechtigte) Person entscheiden, ob die bis dahin erhobenen Daten gelöscht werden oder in die Auswertung einfließen.}}
           terminateParticipantsOther: 'Sonstiges'
-        textHint: 'Bitte beschreiben Sie das Vorgehen, beispielsweise wenn Sie über einen „Abbruchbutton“ die bis dahin erhobenen Daten verwenden wollen und bei Schließen des Browserfensters alle Daten automatisch löschen.'
+        textHint: 'Bitte beschreiben Sie das Vorgehen, beispielsweise wenn Sie über einen Abbruch-Button die bis dahin erhobenen Daten verwenden wollen und bei Schließen des Browserfensters alle Daten automatisch löschen.' 
       terminateCriteria:
         title: 'Unter welchen Umständen wird die Datenerhebung durch die Projektbeteiligten vorzeitig abgebrochen?'
         textHint: 'Im Regelfall bezieht sich dies auf den Abbruch der Datenerhebung bei einer Einzelperson (z.B. Abbruch bei bestimmten Belastungsanzeichen); wenn ein solcher Abbruch seitens der Projektbeteiligten nicht möglich ist, erläutern Sie dies bitte. Der Umgang mit einem Abbruchwunsch durch die Teilnehmenden selbst und ggf. deren Vertretungspersonen wird an anderer Stelle thematisiert und muss hier nicht explizit erwähnt werden. Falls es auch Kriterien für den Abbruch der gesamten Studie gibt, benennen Sie diese ebenfalls hier.'
@@ -974,6 +1000,7 @@ projectdetails:
             medical: 'Verabreichung von Substanzen (z.B. Medikamente, Nahrungsmittel, Vitaminpräparate)'
             invasive: 'invasive Eingriffe'
             other: 'sonstige Maßnahme(n)'
+            tasksHint: 'einfache (z.B. Tastendruck) oder komplexe (z.B. Zeichnung) Aufgaben, die an die Teilnehmenden zum Zweck der Studie herangetragen werden'
           description: 'bitte spezifizieren'
           headingHint: 'Geben Sie bitte alle Maßnahmen an, mittels derer zum Zweck der Studie gezielt etwas an die Teilnehmenden herangetragen wird. Der Begriff „Maßnahmen“ ist bewusst sehr weit gefasst und reicht vom Stellen einer Frage bis zu langfristigen Interventionen. Viele Maßnahmen sind mit der Notwendigkeit verbunden, Ein- und Ausschlusskriterien (z.B. zur Gewährleistung der Sicherheit der Teilnehmenden) zu überprüfen. Solche Kriterien sind unter „<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param="{routeIDs}">Ein- und Ausschlusskriterien</a>“ zu nennen. Falls Ein- und Ausschlusskriterien erfasst bzw. über den Selbstbericht im Rahmen der Einwilligung hinaus dokumentiert werden, beschreiben Sie bitte deren Messung unter Erhebungsmethoden.'
           textHints:
@@ -1049,7 +1076,7 @@ projectdetails:
             Bitte beschreiben Sie die Vorsichtsmaßnahmen bzw. Kompensationen genauer und stellen dabei den Bezug zu den {type, select,
                                                                                                         burdens {gewählten Belastungen bzw. Beanspruchungen}
                                                                                                         risks   {gewählten Risiken}
-                                                                                                        other   {Belastungen/Risiken}} her. Die Freiwilligkeit der Teilnahme und das Recht auf nachteilsfreien Rücktritt sind hier nicht gesondert aufzuführen, da diese Prinzipien unabhängig von Belastungen oder Risiken gelten. 
+                                                                                                        other   {Belastungen/Risiken}} her. Die Freiwilligkeit der Teilnahme und das Recht auf nachteilsfreien Rücktritt sind hier nicht gesondert aufzuführen, da diese Prinzipien unabhängig von Belastungen oder Risiken gelten.
           no: 'Bitte begründen Sie, warum keine Vorsichtsmaßnahmen bzw. Kompensationen geplant sind.'
       burdens:
         title: 'Welchen Belastungen bzw. Beanspruchungen werden die Teilnehmenden ausgesetzt?'
@@ -1133,6 +1160,7 @@ projectdetails:
         lottery: 'die Möglichkeit, an einer Verlosung teilzunehmen'
         voucher: 'eine geldwerte Aufwandsentschädigung in Form eines Gutscheins'
         compensationOther: 'sonstige Aufwandsentschädigung'
+        moneyHint: 'bar ausgezahltes oder überwiesenes Geld zur freien Verwendung'
         textHints:
           hours: 'für folgende Studiengänge/Fakultäten/Fachbereiche:'
           lottery: 'Bitte geben Sie die Art bzw. Höhe des Gewinns und die individuelle Gewinnwahrscheinlichkeit an:'
@@ -2113,6 +2141,12 @@ checkDoc:
         deceit: 'Antwort auf Frage nach nachträglicher vollständiger Aufklärung'
         deceitType: 'Art der nachträglichen vollständigen Aufklärung'
         deceitDescription: 'Begründung und Angabe, wann welche Informationen mitgeteilt werden,'
+        preAbort:
+          missing: 'nachträglicher vollständiger Aufklärung bei Abbruch'
+          description: >-
+            {isOther, select,
+              true  {Beschreibung der nachträglichen vollständigen Aufklärung}
+              other {Begründung für fehlende nachträgliche vollständige Aufklärung}} bei Abbruch
         descriptionPre: 'Begründung für fehlende Vorab-Aufklärung'
         missingPost: 'nachträglicher Aufklärung'
         descriptionPost: 'Begründung für fehlende nachträgliche Aufklärung'
@@ -2253,10 +2287,28 @@ checkDoc:
         location:
           title: 'Ort der Datenerhebung'
           locationDescription: 'Beschreibung des Ortes der Datenerhebung'
+          preAbort: >-
+            Wenn {addressee, select,
+                    children {für die {participant, select,
+                                        thirdParty {Erziehungsberechtigten}
+                                        other      {Kinder}}}
+                    wards    {für die {participant, select,
+                                        thirdParty {gesetzlichen Vertretungspersonen}
+                                        other      {betreuten Personen}}}
+                    other    {}} die <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#preAbort" data-base-route-i-ds-param="{routeIDs}">nachträgliche vollständige Aufklärung</a> über einen Abbruch-Button erfolgt, muss die Studie online stattfinden.
         presence:
           missing: 'Anwesenheit von Projektbeteiligten'
           description: 'zeitweisen Anwesenheit von Projektbeteiligten' # 'Beschreibung der [] fehlt.'
           consent: 'Wenn die <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">Einwilligung mündlich</a> erfolgt, müssen Projektbeteiligte bei der Erhebung anwesend sein.'
+          preAbort: >-
+            Wenn {addressee, select,
+                    children {für die {participant, select,
+                                        thirdParty {Erziehungsberechtigten}
+                                        other      {Kinder}}}
+                    wards    {für die {participant, select,
+                                        thirdParty {gesetzlichen Vertretungspersonen}
+                                        other      {betreuten Personen}}}
+                    other    {}} die <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#preAbort" data-base-route-i-ds-param="{routeIDs}">nachträgliche vollständige Aufklärung</a> im persönlichen Kontakt stattfindet, müssen Projektbeteiligte bei der Erhebung anwesend sein.
         duration:
           measureTimeDays: 'Anzahl Tage der reinen Erhebungszeit'
           measureTimeHours: 'Anzahl Stunden der reinen Erhebungszeit'
@@ -2638,6 +2690,7 @@ completeForm:
                   <li>Bitte prüfen Sie die Inhalte des Gesamtantrags (PDF) nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter.</li>
                   <li>Bearbeiten Sie weder die PDF-Datei des Gesamtantrags noch die XML-Datei mit anderen Programmen.</li>}
             other {<li>Bitte prüfen Sie die Inhalte des Gesamtantrags nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter.</li>}}
+          <li>Die ethische Begutachtung erfolgt ausschließlich auf Basis der PDF-Datei des Gesamtantrags.</li>
           <li>Wenn alle Angaben korrekt sind, senden Sie die PDF-Datei des Gesamtantrags mit der zugehörigen XML-Datei an {committeeAcc} unter {committeeType, select,
           TUC   {ethik@tu-chemnitz.de (E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet, bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Hinweise zum Datenschutz</a>)}
           EUB   {ethikkommission@uni-bielefeld.de}

@@ -107,7 +107,11 @@ export default class extends Controller {
         let idSplit = event.currentTarget.id.split('_');
         let idSplitLength = idSplit.length;
         let type = idSplitLength===2 ? 'study' : (idSplitLength===3 ? 'group' : 'measureTimePoint');
-        this.landingRemoveTarget.textContent = this.removeValue[type]['text'].replace('X',parseInt(idSplit[idSplitLength-1])+1);
+        let text = this.removeValue[type]['text'];
+        for (let id of [1,2,3]) {
+            text = text.replace('ID'+id,parseInt(idSplit[idSplitLength-id] ?? 1)+1); // if the string to be replaced exists, the index in idSplit does also exist
+        }
+        this.landingRemoveTarget.textContent = text;
         this.landingRemoveTarget.parentElement.firstElementChild.textContent = this.removeValue[type]['title'];
     }
 

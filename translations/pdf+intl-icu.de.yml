@@ -107,6 +107,15 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     preContent: 'Wie umfassend ist die Vorab-Aufklärung hinsichtlich der Ziele, Inhalte und Methoden der Studie?'
     preComplete: 'Wird die vollständige Aufklärung später nachgeholt (d.h. werden die Vorab-Informationen ergänzt bzw. richtiggestellt)?'
     preCompleteSub: 'Begründung des Vorgehens und Angabe, wann welche Informationen mitgeteilt werden:'
+    preAbort: 'Erfolgt bei vorzeitigem Abbruch auch eine vollständige Aufklärung?'
+    preAbortSub: >-
+      {anyAbortOther, select,
+        true  {Beschreibung der vollständigen Aufklärung bei Abbruch}
+        other {}} {anyAbortNo, select,
+                    true  {{anyAbortOther, select,
+                              true  {bzw.}
+                              other {}} Begründung, warum bei vorzeitigem Abbruch keine vollständige Aufklärung erfolgt}
+                    other {}}:
     post: 'Wird nachträglich darüber aufgeklärt, dass an einer Studie teilgenommen wurde?'
     attendance: >-
       Sind die {children, select,
@@ -567,7 +576,7 @@ participation:
                         other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preNo" data-base-route-i-ds-param="{routeIDs}">nachträglich darüber aufgeklärt</a>}} werden, dass {addressee, select,
             children {ihre Kinder}
             wards    {die betreuten Personen}
-            other    {sie}} an einer Studie teilgenommen haben (vgl. Feld 24 des Antragsformulars)
+            other    {sie}} an einer Studie teilgenommen haben (vgl. Feld 25 des Antragsformulars)
     informationII:
       start: >- # other addressee is wards
         Für die {addressee, select,
@@ -576,13 +585,11 @@ participation:
       noPost: >- # also used for {informationSentence} in the following key
         die {addressee, select,
               children {Kinder}
-              other    {betreuten Personen}} nicht vorab darüber aufgeklärt werden, dass sie an einer Studie teilnehmen (vgl. Feld 21 des Antragsformulars), und auch nicht nachträglich darüber aufgeklärt werden, dass sie an einer Studie teilgenommen haben (vgl. Feld 24 des Antragsformulars).
+              other    {betreuten Personen}} nicht vorab darüber aufgeklärt werden, dass sie an einer Studie teilnehmen (vgl. Feld 21 des Antragsformulars), und auch nicht nachträglich darüber aufgeklärt werden, dass sie an einer Studie teilgenommen haben (vgl. Feld 25 des Antragsformulars)
     funding: >-
       {information, select,
-        noPost {weil {informationSentence} und weil}
-        other  {}} sich das Forschungsvorhaben noch im Stadium der Beantragung von Fördermitteln befindet{information, select,
-                noPost {}
-                other  { und die Teilnahmedokumente bei deren Bewilligung nachgereicht werden}}
+        noPost { {informationSentence} und weil sich das Forschungsvorhaben noch im Stadium der Beantragung von Fördermitteln befindet}
+        other  { sich das Forschungsvorhaben noch im Stadium der Beantragung von Fördermitteln befindet und die Teilnahmedokumente bei deren Bewilligung nachgereicht werden}}
     projectStart: >-
       {information, select,
         noPost {weil {informationSentence} und weil}
@@ -633,9 +640,11 @@ participation:
       {addressee, select,
         children {Die Teilnahme Ihres Kindes}
         wards    {Die Teilnahme der von Ihnen betreuten Person}
-        other    {Ihre Teilnahme}} erstreckt sich über {time, plural,
-                                                          =1    {1 Tag.}
-                                                          other {# Tage.}}
+        other    {Ihre Teilnahme}} {information, select,
+                                      post  {erstreckte}
+                                      other {erstreckt}} sich über {time, plural,
+                                                                      =1    {1 Tag.}
+                                                                      other {# Tage.}}
     measureTimeHours: >-
       {time, plural,
         =1    { 1 Stunde}
@@ -815,17 +824,36 @@ participation:
 
 
 
+    preAbort: >-
+      {terminateCons, select,
+        true  {{addressee, select,
+                  children { Es ist wichtig, hierfür den vorgesehenen Abbruch-Button zu nutzen.}
+                  wards    { Es ist wichtig, hierfür den vorgesehenen Abbruch-Button zu nutzen.}
+                  other    { Bitte nutzen Sie hierfür den vorgesehenen Abbruch-Button.}}}
+        other { Um dennoch die Teilnahme abzubrechen, {addressee, select,
+                  children {ist es wichtig, den dafür vorgesehenen Abbruch-Button zu nutzen.}
+                  wards    {ist es wichtig, den dafür vorgesehenen Abbruch-Button zu nutzen.}
+                  other    {nutzen Sie bitte den dafür vorgesehenen Abbruch-Button.}}}}
     post: >-
-          Wir haben Sie vorab nicht darüber aufgeklärt, dass
-          {addressee, select,
-            children {Ihr Kind an einer Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie und Ihr Kind daher nicht im Vorhinein um freiwillige Einwilligung bzw. Zustimmung zur Studienteilnahme bitten. {isConsent, select,
-                                true  {Sie und Ihr Kind haben aber jetzt die Möglichkeit frei zu entscheiden, ob wir die von Ihrem Kind erhobenen Daten verwenden dürfen.}
+      Wir haben Sie {addressee, select,
+        children {{informationII, select,
+                    pre   {vorab nicht darüber aufgeklärt, dass Ihr Kind an einer Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie daher nicht im Vorhinein um freiwillige Einwilligung zur Studienteilnahme bitten.}
+                    other {und Ihr Kind vorab nicht darüber aufgeklärt, dass Ihr Kind an einer Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie und Ihr Kind daher nicht im Vorhinein um freiwillige Einwilligung bzw. Zustimmung zur Studienteilnahme bitten.}} {isConsent, select,
+                                true  {Sie {informationII, select,
+                                              pre    {}
+                                              noPost {}
+                                              other  {und Ihr Kind}} haben aber die Möglichkeit frei zu entscheiden, ob wir die von Ihrem Kind erhobenen Daten verwenden dürfen.}
                                 other {}}}
-            wards    {die von Ihnen betreute Person an einer Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie und die von Ihnen betreute Person daher nicht im Vorhinein um freiwillige Einwilligung bzw. Zustimmung zur Studienteilnahme bitten. {isConsent, select,
-                                true  {Sie und die von Ihnen betreute Person haben aber jetzt die Möglichkeit frei zu entscheiden, ob wir die von der betreuten Person erhobenen Daten verwenden dürfen.}
+        wards    {{informationII, select,
+                    pre   {vorab nicht darüber aufgeklärt, dass die von Ihnen betreute Person an einer Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie daher nicht im Vorhinein um freiwillige Einwilligung zur Studienteilnahme bitten.}
+                    other {und die von Ihnen betreute Person vorab nicht darüber aufgeklärt, dass die von Ihnen betreute Person an einer Studie teilnimmt. Dies begründet sich wie folgt: {description}. Wir konnten Sie und die von Ihnen betreute Person daher nicht im Vorhinein um freiwillige Einwilligung bzw. Zustimmung zur Studienteilnahme bitten.}} {isConsent, select,
+                                true  {Sie {informationII, select,
+                                              pre    {}
+                                              noPost {}
+                                              other  {und die von Ihnen betreute Person}} haben aber die Möglichkeit frei zu entscheiden, ob wir die von der betreuten Person erhobenen Daten verwenden dürfen.}
                                 other {}}}
-            other    {Sie an einer Studie teilnehmen. Dies begründet sich wie folgt: {description}. Wir konnten Sie deshalb nicht im Vorhinein um Ihre freiwillige Einwilligung in die Studienteilnahme bitten. {isConsent, select,
-                                true  {Sie haben aber jetzt die Möglichkeit frei zu entscheiden, ob wir die von Ihnen erhobenen Daten verwenden dürfen.}
+        other    {vorab nicht darüber aufgeklärt, dass Sie an einer Studie teilnehmen. Dies begründet sich wie folgt: {description}. Wir konnten Sie deshalb nicht im Vorhinein um Ihre freiwillige Einwilligung in die Studienteilnahme bitten. {isConsent, select,
+                                true  {Sie haben aber die Möglichkeit frei zu entscheiden, ob wir die von Ihnen erhobenen Daten verwenden dürfen.}
                                 other {}}}}
     terminateParticipants: >-
       {information, select,
@@ -1285,14 +1313,14 @@ consent:
                                                                                 wards    {die gesetzlichen Vertretungspersonen}
                                                                                 other    {Teilnehmenden}} erstellt, da {savePDF, select,
                     true  {{consent, select,
-                             no    {keine Einwilligung erfolgt (vgl. Feld 27 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
+                             no    {keine Einwilligung erfolgt (vgl. Feld 28 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
                              other {die Einwilligung auf eine andere Art ({description}) erfolgt (vgl. Feld {isFull, select,
-                                                                                                              true  {27}
+                                                                                                              true  {28}
                                                                                                               other {16}} des Antragsformulars).}}}
                     other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">{consent, select,
-                         no    {keine Einwilligung</a> erfolgt (vgl. Feld 27 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
+                         no    {keine Einwilligung</a> erfolgt (vgl. Feld 28 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
                          other {die Einwilligung auf eine andere Art</a> ({description}) erfolgt (vgl. Feld {isFull, select,
-                                                                                                              true  {27}
+                                                                                                              true  {28}
                                                                                                               other {16}} des Antragsformulars).}}}}
   title: >-
     {information, select,
@@ -1427,14 +1455,14 @@ completeForm:
         {isFull, select,
           true  {{answer, select,
                     unclear    { (siehe Feld {isVoluntary, select,
-                                                true  {26}
+                                                true  {27}
                                                 other {}}{isConsent, select,
                                                             true  {{isVoluntary, select,
                                                                       true  {/}
-                                                                      other {}}27}
+                                                                      other {}}28}
                                                             other {}})}
-                    restricted { (siehe Feld 42)}
-                    no         { (siehe Feld 26)}
+                    restricted { (siehe Feld 43)}
+                    no         { (siehe Feld 27)}
                     other      {}}}
           other {{answer, select,
                     unclear { (siehe Feld 16)}
@@ -1454,7 +1482,7 @@ completeForm:
                                             other  {Studieninformation}})}
                       other     { (siehe Seite „Teilnahmedokumente“)}}}
           no      { (siehe {isTerminateCons, select,
-                              true  {Feld 28{isDuration, select,
+                              true  {Feld 29{isDuration, select,
                                                true  { /}
                                                other {{isDocHint, select,
                                                          true  { /}
@@ -1486,21 +1514,23 @@ completeForm:
       preContent: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (siehe Feld 22/23)}
-                    unclear { (siehe Feld 21/24)}
+                    yes     { (siehe Feld 22{isCompletePost,select,
+                                              true  {-24}
+                                              other {/23}})}
+                    unclear { (siehe Feld 21/25)}
                     other   {}}}
           other {}}
       burdens: >-
         {isFull, select,
           true  {{answer, select,
                     yes     { (siehe Feld {isBurdens, select,
-                                            true  {34/35}
+                                            true  {35/36}
                                             other {}}{isBurdensRisksContributors, select,
                                                         true  {{isBurdens, select,
                                                                   true  {, }
-                                                                  other {}}38/39}
+                                                                  other {}}39/40}
                                                         other {}})}
-                    unclear { (siehe Feld 34)}
+                    unclear { (siehe Feld 35)}
                     other   {}}}
           other {{answer, select,
                     unclear { (siehe Feld 19)}
@@ -1509,24 +1539,24 @@ completeForm:
         {isFull, select,
           true  {{answer, select,
                     yes     { (siehe Feld {isRisks, select,
-                                            true  {36/37}
+                                            true  {37/38}
                                             other {}}{isBurdensRisksContributors, select,
                                                         true  {{isRisks, select,
                                                                   true  {, }
-                                                                  other {}}38/39}
+                                                                  other {}}39/40}
                                                         other {}})}
                     other   {}}}
           other {}}
       finding: >-
         {isFull, select,
           true  {{answer, select,
-                    yes   { (siehe Feld 40)}
+                    yes   { (siehe Feld 41)}
                     other {}}}
           other {}}
       otherSources: >-
         {isFull, select,
           true  {{answer, select,
-                    yes   { (siehe Feld 32)}
+                    yes   { (siehe Feld 33)}
                     other {}}}
           other {}}
       conflict: >-
@@ -1550,7 +1580,7 @@ completeForm:
       dataPrivacy: >-
         {answer, select,
           yes     { (siehe Anlage zur Datenverarbeitung)}
-          unclear { (siehe Feld 43)}
+          unclear { (siehe Feld 44)}
           other   {}}
     headings:
       information: 'Aufklärung'

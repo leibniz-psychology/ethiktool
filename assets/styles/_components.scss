@@ -2,7 +2,7 @@
 @import "components/buttons";
 @import "components/navigation";
 @import "components/modal";
-@import "components/widget_author";
+@import "components/widget_author"; // if removed, classes in _navigation.scss will overwrite classes in _buttons.scss, but _buttons must overwrite _navigation
 
 .MetaDataGroup-Title {
   @apply px-6 pt-4 pb-4 text-2xl font-semibold rounded-lg bg-mono-100 text-zpid-purple-700;

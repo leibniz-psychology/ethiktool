@@ -123,7 +123,7 @@ class LandingController extends ControllerAbstract
                 }
                 if ($isNewCopy) {
                     $newIndices = [0,0,0];
-                    $studies = $this->addZeroIndex($this->xmlToArray($projectdetailsNode->{self::studyNode}));
+                    $studies = $this->addZeroIndex($this->xmlToArray($projectdetailsNode)[self::studyNode]);
                     $appendNode = $projectdetailsNode; // node where the new element is added
                     $studyIndex = $indices[0];
                     $copyIndex = '';
@@ -178,7 +178,7 @@ class LandingController extends ControllerAbstract
                         }
                     } catch (\Throwable) {} // if remove button is double-clicked, it may already be removed
                     if (!$isRemove) {
-                        $editRemoveNode->{self::nameNode} = $name;// $data[self::editName.'_'.$indicesString];
+                        $editRemoveNode->{self::nameNode} = $name;
                     } else { // element is removed
                         if ($editRemoveNode!==null) {
                             $dom = dom_import_simplexml($editRemoveNode);

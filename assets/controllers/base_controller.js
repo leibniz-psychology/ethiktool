@@ -220,7 +220,6 @@ export default class extends Controller {
         let id = event.target.id;
         if (id!==this.previewTabValue) { // if the values are equal, the button of the active tab was clicked again
             this.previewTabValue = id;
-            document.getElementById(id).classList.toggle('activeTab');
             this.setPreviewTabsVisibility();
         }
     }
@@ -389,7 +388,6 @@ export default class extends Controller {
                 }
             }
             this.addSidebarPreviewListener();
-            // }
             if (this.hasUndoTarget) { // few pages do not have an 'undo' button
                 this.setUndoButton();
             }

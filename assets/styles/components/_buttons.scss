@@ -1,3 +1,12 @@
+.Button_with_icon {
+  @apply flex items-center;
+  gap: 0.5rem;
+  justify-content: space-evenly;
+  svg {
+    @apply flex-shrink-0 w-5 h-5;
+  }
+}
+
 .Button {
   @apply border border-transparent;
   @apply Button_with_icon;
@@ -37,15 +46,6 @@
 .Button_navigation {
   @apply Button_with_icon;
   @apply ring-inset ps-0 pt-1 h-full text-base border-b-4 hover:border-zpid-blue border-transparent;
-}
-
-.Button_with_icon {
-  @apply flex items-center;
-  gap: 0.5rem;
-  justify-content: space-evenly;
-  svg {
-    @apply flex-shrink-0 w-5 h-5;
-  }
 }
 
 .Upload {

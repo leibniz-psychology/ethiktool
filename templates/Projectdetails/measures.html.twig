@@ -33,7 +33,8 @@
                         'contTargets': {(surveyOption): [measuresController,surveyOption]}|
                             merge(isInterventions ? {noIntervention: [measuresController,noIntervention]} : {}),
                         'other': measuresInterventionsOther[type]}|
-                        merge(isInterventions and (isNoIntervention or selection[1]) ? {'targets': isNoIntervention ? typesWoFirst : [noIntervention]} : {})) }}
+                        merge(isInterventions ? {'icons': {'tasks': typePrefix~'types.tasksHint'}}|
+                                                 merge(isNoIntervention or selection[1] ? {'targets': isNoIntervention ? typesWoFirst : [noIntervention]} : {}): {})) }}
                 </div>
                 {{ formRender.addHint(hintsPrefix~'selection',{'target': [measuresController,type~'BurdensRisks'], 'params': params|merge(routeIDsParam)}) }}
                 {% if content[description] is defined %}

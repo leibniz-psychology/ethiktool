@@ -4,7 +4,7 @@
 {% block pdfBody %}
     {% set prefix, style, textPreview = 'loanReceipt.', 'margin-top: 2em; page-break-inside: avoid', not savePDF ? 'previewSmall' %}
     <div class="pdfDocument">
-        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
+        {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
         <div class="pdfHeading" style="font-weight: bold; font-size: {{ not savePDF ? 'medium' : 'large' }}; margin-left: 0; margin-bottom: 2em">
             {{ heading|raw }}
         </div>

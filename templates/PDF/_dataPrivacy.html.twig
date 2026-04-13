@@ -4,7 +4,7 @@
 {% set textPreview, style = not savePDF ? 'previewSmall', 'text-align: justify; line-height: 1.5;' %}
 {% block pdfBody %}
     <div>
-        {{ pdfMacros.addHeader(committeeType,projectTitle,leaderInstitution,levelNames,savePDF,isComplete) }}
+        {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
         <div class="noPageBreak"> {# avoid page break between heading and first paragraph #}
             {{ pdfMacros.addHeading(privacyHeading,savePDF) }}
             <div class="{{ textPreview }}" style="{{ style }}">

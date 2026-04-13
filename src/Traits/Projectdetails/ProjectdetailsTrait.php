@@ -73,6 +73,12 @@ trait ProjectdetailsTrait
     protected const preComplete = 'preComplete'; // complete information afterward
     protected const preCompleteType = 'preCompleteType'; // node name for type of complete information afterward
     protected const preCompleteText = 'preCompleteText';
+    protected const preAbort = 'preAbort';
+    protected const preAbortTypes = ['projectdetails.pages.information.preAbort.type.abortContact' => 'abortContact', 'projectdetails.pages.information.preAbort.type.abortButton' => 'abortButton', 'projectdetails.pages.information.preAbort.type.abortOther' => 'abortOther', 'projectdetails.pages.information.preAbort.type.abortNo' => 'abortNo'];
+    protected const preAbortButton = 'abortButton'; // value must equal one value in $preAbortTypes
+    protected const preAbortOther = 'abortOther'; // value must equal one value in $preAbortTypes
+    protected const preAbortNo = 'abortNo'; // value must equal one value in $preAbortTypes
+    protected const preAbortDescriptions = ['abortOther','abortNo']; // values must equal the values of $preAbortTypes
     // widget names for no
     protected const preText = 'preText';
     protected const post = 'post';

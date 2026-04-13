@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import {setElementVisibility, getSelected, setHint, checkTextareaInput} from "../multiFunction";
-import {min} from "@popperjs/core/lib/utils/math";
+import {setElementVisibility, getSelected, checkTextareaInput} from "../multiFunction";
 
 export default class extends Controller {
 
@@ -81,7 +80,12 @@ export default class extends Controller {
         this.unlimitedTarget.disabled = isUnder16 || isHealthy && isWards;
         let healthyWards = !isUnder16 && (isMaxAge && maxAge>17 || isUnlimited);
         this.healthyTarget.disabled = isWards && healthyWards;
-        this.wardsTarget.disabled = isUnder16 || isHealthy && healthyWards;
+        if (isUnder16) {
+            this.wardsTarget.addEventListener('click',this.preventEvent);
+        } else {
+            this.wardsTarget.removeEventListener('click',this.preventEvent);
+        }
+        this.wardsTarget.disabled = isHealthy && healthyWards;
         // description text field
         let [, numSelected] = getSelected(this.examinedValue);
         setElementVisibility(this.examinedDescriptionTarget,minAge<18 || numSelected>1 || numSelected===1 && !isHealthy);
@@ -129,5 +133,14 @@ export default class extends Controller {
             text.disabled = checkbox.checked;
             checkbox.disabled = criterion==='include' ? input.split("\n").length>1 : input!=='';
         }
+    }
+
+    // methods that are called from within this class
+
+    /** Prevents the event from being executed.
+     * @param event widget that invoked the method
+     */
+    preventEvent(event) {
+        event.preventDefault();
     }
 }

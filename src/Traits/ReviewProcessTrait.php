@@ -265,6 +265,8 @@ trait ReviewProcessTrait
             'preComplete' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preCompleteText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preCompleteType' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'preAbort' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'preAbortDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'post' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'postType' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -831,7 +833,7 @@ trait ReviewProcessTrait
         'information' => [
             'preType' => [['information','pre'],'0'],
             'preContent' => [['information','pre'],'0'],
-            'preComplete' => [[['information','pre'],['information','preContent']],['0',['partial','deceit']],'chosen'],
+            'preComplete' => [['information','preContent'],['partial','deceit'],'chosen'],
             'preText' => [['information','pre'],'1'],
             'post' => [['information','pre'],'1','chosen'],
             'attendance' => [['groups','examinedPeople','wards'],''],
@@ -869,9 +871,9 @@ trait ReviewProcessTrait
             'voucherawarding' => [['compensation','type','voucher'],'','chosen'],
             'compensationOtherDescription' => [['compensation','type','compensationOther'],'','description'],
             'compensationOtherawarding' => [['compensation','type','compensationOther'],'','chosen'],
-            'terminate' => [[['compensation','type','money'],['compenation','type','hours'],['compensation','type','lottery'],['compensation','type','voucher'],['compensation','type','compensationOther']],['','','','',''],'chosen',true],
-            'compensationVoluntary' => [[['compensation','type','money'],['compenation','type','hours'],['compensation','type','lottery'],['compensation','type','voucher'],['compensation','type','compensationOther']],['','','','',''],'chosen',true],
-            'furtherDescription' => [[['compensation','type','money'],['compenation','type','hours'],['compensation','type','lottery'],['compensation','type','voucher'],['compensation','type','compensationOther']],['','','','',''],[],true]
+            'terminate' => [[['compensation','type','money'],['compensation','type','hours'],['compensation','type','lottery'],['compensation','type','voucher'],['compensation','type','compensationOther']],['','','','',''],'chosen',true],
+            'compensationVoluntary' => [[['compensation','type','money'],['compensation','type','hours'],['compensation','type','lottery'],['compensation','type','voucher'],['compensation','type','compensationOther']],['','','','',''],'chosen',true],
+            'furtherDescription' => [[['compensation','type','money'],['compensation','type','hours'],['compensation','type','lottery'],['compensation','type','voucher'],['compensation','type','compensationOther']],['','','','',''],[],true]
         ], // compensation
         // texts
         'texts' => [
@@ -899,22 +901,22 @@ trait ReviewProcessTrait
         // data privacy
         'dataPrivacy' => [
             'create' => [[],[],'chosen'],
-            'addOwn' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside'],['dataPrivacy','marking','chosen']],[['onlyOther','multiple','private'],'yes','other']],
-            'verification' => [[['dataPrivacy','create','chosen'],['dataPrivacy','addOwn']],['separate','0']],
+            'addOwn' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside'],['dataPrivacy','marking','chosen']],[['onlyOther','multiple','private'],'yes','other'],[],true],
+            'verification' => [[['dataPrivacy','create','chosen'],['dataPrivacy','addOwn']],['separate','0'],[],true],
             'responsibility' => [['dataPrivacy','create','description'],'1'],
             'transferOutside' => [['dataPrivacy','create','description'],'1'],
             'dataOnline' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside'],['measures','location','chosen']],[['onlyOwn','notApplicable'],['no','notApplicable'],'online'],'chosen'],
             'dataPersonal' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside']],[['onlyOwn','notApplicable'],['no','notApplicable']]],
             'marking' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside']],[['onlyOwn','notApplicable'],['no','notApplicable']],'chosen'],
             'markingSecond' => [['dataPrivacy','markingFurther'],'0','chosen'],
-            'markingFurther' => [['dataPrivacy','marking','chosen'],['external','internal','name']],
+            'markingFurther' => [['dataPrivacy','marking','chosen'],['consecutive','external','internal','name']],
             'list' => [[['dataPrivacy','marking','codePersonal'],['dataPrivacy','markingSecond','codePersonal']],['list','list'],[],true],
             'dataResearch' => [[['dataPrivacy','dataPersonal'],['dataPrivacy','dataOnline','description']],[['personal','personalMaybe'],'linked'],[],true], // all following nodes including this one may be removed again if marking is 'other' (except purposeResearch which was not created or already removed in that case)
             'anonymization' => [['dataPrivacy','dataPersonal'],['personal','personalMaybe']],
             'storage' => [[['dataPrivacy','anonymization','grouping'],['dataPrivacy','anonymization','convert'],['dataPrivacy','anonymization','delete'],['dataPrivacy','anonymization','alienate'],['dataPrivacy','anonymization','preprocess'],['dataPrivacy','anonymization','anonymizationOther']],['','','','','',''],'chosen',true],
             'personalKeep' => [[['dataPrivacy','anonymization','anonymizationNo'],['dataPrivacy','storage','chosen']],['','keep'],[],true],
             'access' => [['dataPrivacy','dataPersonal'],['personal','personalMaybe']],
-            'purposeResearch' => [['dataPrivacy','marking','chosen'],['external','internal','name']],
+            'purposeResearch' => [['dataPrivacy','marking','chosen'],['consecutive','external','internal','name']],
             'purposeFurther' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside']],[['onlyOwn','notApplicable'],['no','notApplicable']]],
             'codeCompensation' => [[],[],'chosen'], // may be removed again
             'processingFurther' => [[['dataPrivacy','responsibility'],['dataPrivacy','transferOutside']],[['onlyOwn','notApplicable'],['no','notApplicable']]]

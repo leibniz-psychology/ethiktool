@@ -28,10 +28,10 @@ export default class extends Controller {
         for (let bias of [this.participateTarget,this.accessTarget]) {
             let isChecked = bias.checked;
             anyBias = anyBias || isChecked;
-            let description = document.getElementById(bias.id+'DescriptionDiv');
-            setElementVisibility(description,isChecked);
+            let descriptionID = bias.id+'Description';
+            setElementVisibility(descriptionID+'Div',isChecked);
             if (isChecked) {
-                biasDescription = biasDescription && description.value!=='';
+                biasDescription = biasDescription && document.getElementById(descriptionID).value!=='';
             }
             bias.disabled = isNoBias;
         }

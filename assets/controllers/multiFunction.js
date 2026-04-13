@@ -62,16 +62,25 @@ export function mergeInput(event) {
     return value.substring(0,target.selectionStart)+(event.data ?? '')+value.substring(target.selectionEnd); // complete string with added text
 }
 
+/** Adds a listener for expanding/collapsing to each element.
+ * @param elements elements where the listener gets added
+ */
 export function addExpandableListener(elements) {
-    for (let expandableTarget of elements) {
-        expandableTarget.addEventListener('click', () => {
-            let expandable = expandableTarget.firstElementChild;
-            expandable.classList.toggle('dropdownCollapsed');
-            expandable.classList.toggle('dropdownExpanded');
-            expandable = expandableTarget.nextElementSibling;
-            expandable.style.display = expandable.style.display==='none' ? 'block' : 'none';
-        })
+    for (let expandable of elements) {
+        expandable.addEventListener('click',expandCollapse); // use a callable to avoid adding the listener multiple times
     }
+}
+
+/** Either expands or collapses an element.
+ * @param event widget that invoked the method
+ */
+function expandCollapse(event) { // only used by addExpandableListener()
+    let element = event.currentTarget;
+    let expandable = element.firstElementChild;
+    expandable.classList.toggle('dropdownCollapsed');
+    expandable.classList.toggle('dropdownExpanded');
+    expandable = element.nextElementSibling;
+    expandable.style.display = expandable.style.display==='none' ? 'block' : 'none';
 }
 
 /** Adds the listener that prevents submitting the form if enter is pressed.

@@ -9,8 +9,13 @@
     <h2 class="MetaDataGroup-Title">{{ title }}</h2>
 {% endblock %}
 {% block content %}
-    <div class="MetaData-Label">{{ text|raw|nl2br }}</div>
-    <div class="MetaData-Widget mt-8 mb-2"><button type="button" class="Button_primary_go mt-2" onclick="window.location.href='{{ path('app_main') }}'">{{ 'buttons.backToMain'|trans }}</button></div>
+    <div class="minAutoGrid MetaData-Label gap-2">
+        {% if not hasError %}
+            <div style="height: 50px; width: 50px">{{ include('images/checkmarkGreen.svg') }}</div>
+        {% endif %}
+        <div style="grid-column: 2">{{ text|raw|nl2br }}</div>
+    </div>
+    <div class="MetaData-Widget mt-8 mb-2"><button type="button" class="Button_primary_go mt-2 {% if hasError %} ms-2 {% else %} ms-1 {% endif %}" onclick="window.location.href='{{ path('app_main') }}'">{{ 'buttons.backToMain'|trans }}</button></div>
 {% endblock %}
 
 {% block preview %}

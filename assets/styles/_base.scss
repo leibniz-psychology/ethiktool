@@ -22,6 +22,26 @@ textarea {
   @apply shadow-sm outline-none ring;
 }
 
+.linkExternal::after {
+  /* prettier-ignore */
+  background:
+          url("../images/link-out.svg"
+          param(--color theme("colors.mono.900")))
+left center no-repeat;
+  background-size: 80%;
+  margin-left: 0.2rem;
+  @apply linkIcon;
+}
+
+.linkExternal:hover::after {
+  /* prettier-ignore */
+  background:
+          url("../images/link-out.svg"
+          param(--color
+          theme("colors.blue.500")))
+left center no-repeat;
+}
+
 a[href*="//"]:not([href*="https://leibniz-psychology.org"], .no-linkout) {
   @apply linkExternal;
 }
@@ -50,24 +70,13 @@ a[href^="mailto"]:hover {
   }
 }
 
-.linkExternal::after {
-  /* prettier-ignore */
-  background:
-          url("../images/link-out.svg"
-          param(--color theme("colors.mono.900")))
-left center no-repeat;
-  background-size: 80%;
-  margin-left: 0.2rem;
-  @apply linkIcon;
+.previewSmall {
+  font-size: x-small !important;
 }
 
-.linkExternal:hover::after {
-  /* prettier-ignore */
-  background:
-          url("../images/link-out.svg"
-          param(--color
-          theme("colors.blue.500")))
-  left center no-repeat;
+.previewSmallIcon {
+  vertical-align: text-bottom;
+  @apply linkIcon;
 }
 
 .previewSmall a::after {
@@ -89,11 +98,6 @@ left center no-repeat;
 left center no-repeat;
   background-size: 130%;
   @apply previewSmallIcon;
-}
-
-.previewSmallIcon {
-  vertical-align: text-bottom;
-  @apply linkIcon;
 }
 
 .linkColor {

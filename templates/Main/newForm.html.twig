@@ -33,6 +33,7 @@
                     <div class="MetaData-Widget borderLight mx-4 mt-1" style="display: none">{{ (text)|trans(committeeParamsnewForm)|raw|nl2br }}</div>
                     <div class="MetaData-Widget">{{ formRender.addCheckbox(content[confirm],{'target': [newFormController,confirm], 'labelParams': committeeParamsnewForm}) }}</div>
                 {% endfor %}
+                <div class="MetaData-Label mt-3 font-bold">{{ 'newForm.finalHint'|trans(committeeParamsnewForm)|raw }}</div>
             </div>
             <div class="grid mt-8 mb-2" style="grid-column: 2 / span 2; grid-template-columns: repeat(2,minmax(min-content,max-content))">
                 <button class="Button_primary_go me-2" type="submit" name="newFormSubmit" {{ stimulus_target(newFormController,'save') }}>{{ 'newForm.buttons.save'|trans }}</button>

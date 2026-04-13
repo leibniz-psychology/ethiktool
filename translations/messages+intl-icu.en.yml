@@ -19,9 +19,7 @@ multiple:
                                         other {You were re-directed to the main page.}} You can now continue editing the application.
         
         
-        {isMajor, select,
-          true  {You loaded an XML file that was created with an older version of the Ethiktool. In newer versions, choosing the type of review process is mandatory. Depending on the chosen review process, the Ethiktool requests different inputs. Please choose the type of review process before making any further entries. Would you like to switch to this choice on the “Core data“ page?}
-          other {}}
+        You loaded an XML file that was created with an older version of the Ethiktool. In newer versions, choosing the type of review process is mandatory. Depending on the chosen review process, the Ethiktool requests different inputs. Please choose the type of review process before making any further entries. Would you like to switch to this choice on the “Core data“ page?
     failure: # info modal if the extension is invalid
       title: 'Select file'
       text: >-
@@ -129,6 +127,7 @@ multiple:
     position: 'Position'
     phone: 'Work phone'
     phoneOptional: '(optional) Work phone'
+    nameHint: 'If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space).'
     institutionHint: 'Please provide department or division. For external contributors, please supply the institution as well.'
     professorshipHint: '<i>research group/professorship of the primary supervisor</i>'
   position:
@@ -233,6 +232,10 @@ newForm: # placed immediately after 'committee' to have the committee names all 
   technicalHint:
     text: 'Technical information'
     confirm: 'I have taken note of the technical information on using the Ethiktool.'
+  finalHint: >-
+    {committeeType, select,
+      EUB   {If you have any questions or concerns, please feel free to contact the Review Board's Office: <a href="mailto:ethikkommission@uni-bielefeld.de">ethikkommission@uni-bielefeld.de</a> or 0521/106-4468.}
+      other {}}
   buttons:
     save: 'generate proposal'
     cancel: 'cancel'
@@ -406,7 +409,7 @@ landing:
       title: 'Project structure' # part of tab name
       start: >-
         {isOverview, select,
-          true  {The Ethiktool can describe research projects comprising several studies, several participant groups or several data collection time points.</br></br> This page shows the structure of your research project. Here you can add further studies, participant groups and time points. The elements are automatically numbered consecutively as soon as there is more than one; it is advisable to also assign a brief, expressive name to each study.}
+          true  {The Ethiktool can describe research projects comprising several studies, several participant groups or several data collection time points.</br></br> This page shows the structure of your research project. Here you can add further studies, participant groups and time points. The elements are automatically numbered consecutively as soon as there is more than one; it is advisable to also assign a brief, expressive name to each element.}
           other {Please enter information for this combination of study, group and time point here.</br> The requested information is grouped into the following categories:}}
       end:
         start: 'Note: It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then duplicate the filled combination and change only the relevant entries. The symbols have the following functions:'
@@ -423,9 +426,9 @@ landing:
           other {time point}}
       content: >-
         Do you really want to remove {type, select,
-                                        study {study X? All groups and time points of this study will be removed as well.}
-                                        group {group X? All time points of this group will be removed as well.}
-                                        other {time point X?}}
+                                        study {study ID1? All groups and time points of this study will be removed as well.}
+                                        group {group ID1 of study ID2? All time points of this group will be removed as well.}
+                                        other {time point ID1 of study ID3, group ID2?}}
 
 # application data
 coreData:
@@ -547,7 +550,7 @@ coreData:
       confirm: 'I confirm that the studies laid out in the ethics proposal are congruent to those in the funding application in terms of content.'
   qualification:
     title: 'Is the research project exclusively carried out within the scope of your own qualification work (Bachelor/Master/PhD thesis)?'
-    headingHint: 'Please only answer “yes“ if the research project would not be carried out without your thesis. If the data to be used in your thesis belongs to a research project that would be conducted in any case, please answer “no“ and select one of the roles in the research project for yourself.'
+    headingHint: 'Please only answer “yes“ if the research project would not be carried out without your thesis. If the data to be used in your thesis belongs to a research project that would be conducted in any case, please answer “no“.'
   applicant:
     title: 'Responsibility for the proposal'
     applicant: 'Applicant'
@@ -823,6 +826,7 @@ projectdetails:
         written: 'in writing'
         writtenOral: 'in writing with oral explanation'
         oral: 'orally'
+        hintWritten: 'in printed or electronic form'
       pre:
         title: 'Are the {addressee} informed in advance that {participant} are participating in a study?'
         content:
@@ -834,6 +838,28 @@ projectdetails:
             deceit: 'At least one core piece of information is wrong, that is, the {addressee} are deliberately deceived.'
       preComplete:
         title: 'Are the {addressee} fully debriefed?'
+      preAbort:
+        title: >-
+          Are the {isInformation, select,
+                    true  {{addresseeType, select,
+                              children {legal guardians}
+                              wards    {legal guardians}
+                              other    {participants}}}
+                    other {{addresseeType, select,
+                              children {children}
+                              wards    {supervised individuals}
+                              other    {}}}} also fully debriefed in case of withdrawal from participation?
+        type:
+          abortContact: 'Yes, in person'
+          abortButton: 'Yes, using a “cancel“ button'
+          abortOther: 'Yes, in a different way'
+          abortNo: 'No'
+        hints:
+          abortContact: 'written or oral on site'
+          abortButton: 'The debriefing is shown automatically.'
+        textHints:
+          abortOther: 'Please describe how the debriefing takes place in case of withdrawal from participation.'
+          abortNo: 'Please justify why no debriefing is given in case of withdrawal from participation.'
       post:
         title: 'Are the {addressee} informed after-the-fact that {participant} participated in a study?'
       textHints:
@@ -919,7 +945,7 @@ projectdetails:
               post  {In case of withdrawal from participation, the participant (or their legal guardian) can choose whether the data collected up to that point shall be deleted or included in the analysis.}
               other {In case of withdrawal from participation, the participant (or their legal guardian) can choose whether the data collected up to that point shall be deleted or included in the analysis.}}
           terminateParticipantsOther: 'other'
-        textHint: 'Please describe the procedure, for example if you want to use the data collected up to that point via a “cancel button“ and automatically delete all data when the browser window is closed.'
+        textHint: 'Please describe the procedure, for example if you want to use the data collected up to that point via a “cancel“ button and automatically delete all data when the browser window is closed.'
       terminateCriteria:
         title: 'Which circumstances lead to an early termination of data collection by the project contributors?'
         textHint: 'This usually refers to termination of data collection in an individual participant (e.g., in case of apparent burden); if such termination by the project contributors is not possible, please explain this. The handling of individual participants'' or their legal guardians'' request to withdraw from participation is queried elsewhere and does not need to be reiterated here. If criteria for discontinuation of the entire study are defined, please state these here as well.'
@@ -974,6 +1000,7 @@ projectdetails:
             medical: 'administration of substances (e.g., medication, food, vitamin products)'
             invasive: 'invasive interventions'
             other: 'other measure(s)'
+            tasksHint: 'simple (e.g., button press) or complex (e.g., drawing) tasks required from participants for the purpose of the study'
           description: 'please specify'
           headingHint: 'Please enter all measures/interventions specifically applied to participants for the purpose of the study. The term “measures“ is deliberately used in a very broad sense, ranging from asking a question all the way up to long-term interventions. Many measures are associated with the need to check inclusion and exclusion criteria (e.g., to ensure the safety of participants). Such criteria should be listed under “<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param="{routeIDs}">Inclusion and exclusion criteria</a>“. If inclusion and exclusion criteria are recorded or documented beyond the self-report as part of the consent, please describe their measurement under data collection methods.'
           textHints:
@@ -1133,6 +1160,7 @@ projectdetails:
         lottery: 'the opportunity to take part in a raffle'
         voucher: 'a monetary compensation in form of a voucher'
         compensationOther: 'other compensation'
+        moneyHint: 'money payed in cash or via bank transfer for unrestricted use'
         textHints:
           hours: 'for the following degree programs/faculties/departments:'
           lottery: 'Please specify the type or value of the prize and the individual chances of winning.'
@@ -2113,11 +2141,17 @@ checkDoc:
         deceit: 'Answer to question about debriefing'
         deceitType: 'type of debriefing'
         deceitDescription: 'Justification and description of given information'
+        preAbort:
+          missing: 'debriefing in case of withdrawal from participation'
+          description: >-
+            {isOther, select,
+              true  {Description of debriefing}
+              other {Justification for missing debriefing}} in case of withdrawal from participation
         descriptionPre: 'Justification for not providing prior information'
         missingPost: 'after-the-fact information'
         descriptionPost: 'Justification for not providing after-the-fact information'
         typePost: 'type of after-the-fact information'
-        attendance: >-
+        attendance: >- # other is wards
           presence of {addressee, select,
                         children {legal guardians}
                         other    {legal guardians}}
@@ -2253,10 +2287,28 @@ checkDoc:
         location:
           title: 'location of data collection'
           locationDescription: 'description of the location of data collection'
+          preAbort: >-
+            If{addressee, select,
+                children {, for the {participant, select,
+                                      thirdParty {legal guardians,}
+                                      other      {children,}}}
+                wards    {, for the {participant, select,
+                                      thirdParty {legal guardians,}
+                                      other      {supervised individuals,}}
+                other    {}} <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#preAbort" data-base-route-i-ds-param="{routeIDs}">debriefing</a> is given by using a “cancel“ button, data collection must take place online.
         presence:
           missing: 'presence of project contributors'
           description: 'temporary presence of project contributors' # 'Description of [] is missing.'
           consent: 'If <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">oral consent</a> is given, project contributors must be present during data collection.'
+          preAbort: >-
+            If{addressee, select,
+                children {, for the {participant, select,
+                                      thirdParty {legal guardians}
+                                      other      {children}}}
+                wards    {, for the {participant, select,
+                                      thirdParty {legal guardians}
+                                      other      {supervised individuals}}}
+                other    {}} <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#preAbort" data-base-route-i-ds-param="{routeIDs}">debriefing</a> is given in person, project contributors must be present during data collection.
         duration:
           measureTimeDays: 'Amount of days for (net) data collection time'
           measureTimeHours: 'Amount of hours for (net) data collection time'
@@ -2638,6 +2690,7 @@ completeForm:
                   <li>Please check all contents of the complete proposal (PDF) carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>
                   <li>Do <b>not</b> modify the PDF file of the complete proposal nor the XML file with any other software.</li>}
             other {<li>Please check all contents of the complete proposal carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>}}
+          <li>The ethics review is based exclusively on the PDF file of the complete proposal.</li>
           <li>If all entries are correct, please send the PDF file of the complete proposal with the corresponding XML file to {committeeAcc} at {committeeType, select,
           TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
           EUB   {ethikkommission@uni-bielefeld.de}

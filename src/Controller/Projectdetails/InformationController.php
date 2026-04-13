@@ -76,7 +76,7 @@ class InformationController extends ControllerAbstract
         }
 
         $information = $this->createFormAndHandleRequest(InformationType::class,$this->xmlToArray($informationNode),$request,
-            [self::dummyParams => ['isAttendance' => !$isInformationII && $addressee!==self::addresseeParticipants, 'isInformation' => !$isInformationII, self::reviewProcess => $this->getCurrentReviewProcess($appNode)],
+            [self::addresseeType => $addressee, self::dummyParams => ['isAttendance' => !$isInformationII && $addressee!==self::addresseeParticipants, 'isInformation' => !$isInformationII, self::reviewProcess => $this->getCurrentReviewProcess($appNode)],
              self::addresseeString => $addresseeString,
              self::participantsString => $this->getAddresseeString($addressee,!$isInformationII,true, $isInformationII || $addressee===self::addresseeParticipants)]);
         if ($information->isSubmitted()) {
