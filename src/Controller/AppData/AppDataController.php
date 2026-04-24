@@ -11,7 +11,7 @@ use App\Traits\AppData\AppDataTrait;
 use App\Traits\Contributors\ContributorsTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class AppDataController extends ControllerAbstract
 {

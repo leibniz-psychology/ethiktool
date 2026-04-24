@@ -153,11 +153,14 @@
                 </div>
             {% endif %}
             {# compensation voluntary #}
-            {% set voluntary = content.compensationVoluntary %}
+            {% set voluntary, tempPrefix = content.compensationVoluntary, translationPrefix~'compensationVoluntary.' %}
             {{ formRender.renderButtons(voluntary,{
                 'stim': ['base','setVisibility',{'values': [['0','compensationVoluntaryDescriptionDiv']]}],
-                'hint': [translationPrefix~'compensationVoluntary.'],
-                'text': [content.compensationVoluntaryDescription,fontNormal|merge({'visibility': voluntary.vars.value is same as '0'})],
+                'hint': [tempPrefix],
+                'text': [content.compensationVoluntaryDescription,fontNormal|merge({
+                    'visibility': voluntary.vars.value is same as '0',
+                    'hint': tempPrefix~'textHint',
+                    'textHintParams': {'isNotPre':  boolToString(information not in ['','pre'])} })],
                 'addDiv': ['compensationVoluntary']}) }}
             {# further description #}
             {% if content.furtherDescription is defined %}

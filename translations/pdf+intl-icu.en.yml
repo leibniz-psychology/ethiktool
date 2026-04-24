@@ -127,14 +127,21 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
 
 
 
-    voluntary: 'Is the decision about participation voluntary?'
+    voluntary: >-
+      Is the decision about {isPre, select,
+                              true  {participation}
+                              other {}} {anyPreNo, select,
+                                          true  {{isPre, select,
+                                                    true  {and data processing}
+                                                    other {data use}}}
+                                          other {}} voluntary?
     voluntarySub: 'Justification on how and why voluntariness is not guaranteed:'
     consent: >-
       How is consent {isAssent, select,
                         true  {or assent, respectively,}
-                        other {}} given to the {isPre, select,
-                                                  true  {study participation and the}
-                                                  other {}} data processing?
+                        other {}} given regarding {isPre, select,
+                                                  true  {study participation and data processing}
+                                                  other {data use}}?
     consentSub: >-
       {isReviewFull, select,
         true  {Justification for missing {anyConsentNo, select,
@@ -182,10 +189,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     feedback: 'Do participants receive feedback on their individual test results?'
     feedbackSub: 'Description of type and framing of feedback:'
     compensationVoluntary: 'Compensation'
-    compensationVoluntarySub: >-
-      {isCompensationVoluntary, select,
-        true  {Explanation on how voluntary participation is compromised by the type or amount of compensation; other}
-        other {Other}} remarks regarding the compensation:
+    compensationVoluntarySub: 'Other remarks regarding the compensation:'
     processing: 'Description of data processing'
     dataReuse: 'Will the research data be re-used?'
 
@@ -444,7 +448,7 @@ projectdetails:
       {chosen, select,
         yes           {yes}
         no            {no}
-        notApplicable {not applicable: The {addressee} are not informed in advance that {participant} are participating in a study.}
+        notApplicable {not applicable: The {addressee} are not informed in advance or after-the-fact that {participant} are participating in a study.}
         other         {}}
     voluntaryDescription:
       yes: "• Explanation of how voluntariness is ensured despite the special circumstances (closed group / dependent relationship):\n"
@@ -508,9 +512,16 @@ projectdetails:
                         wards    {legal guardians}
                         other    {participants}} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)}
         other   {}}
-  compensationVoluntary: 'Is the voluntary nature participation compromised by the type or amount of compensation?'
+  compensationVoluntary: >-
+    Is the voluntary nature of {isPreCompensation, select,
+                                  true  {participation}
+                                  other {}} {anyPreNoCompensation, select,
+                                              true  {{isPreCompensation, select,
+                                                        true  {or the decision about data use, respectively,}
+                                                        other {the decision about data use}}}
+                                              other {}} compromised by the type or amount of compensation?
   dataReuse:
-    yes: 'Yes (see section “Data protection and data use“ in the study information sheet)'
+    yes: 'Yes (see section “Data protection and data usage“ in the study information sheet)'
     dataReuse: >- # other selection is personal. other reuseType is used if dataReuse is not asked.
       Yes, {selection, select,
               anonymous  {anonymous}
@@ -546,7 +557,7 @@ participation:
     pro: 'Advantages and disadvantages of participation'
     criteria: 'Inclusion and exclusion criteria'
     voluntary: 'Voluntariness and withdrawal'
-    dataPrivacy: 'Data protection and data use'
+    dataPrivacy: 'Data protection and data usage'
     contact: 'Contact persons for questions'
     terminateParticipants: 'Data handling in case of individual withdrawal from participation' # only for intermediate document
   noInformation:
@@ -1052,6 +1063,10 @@ dataPrivacy:
                 Universitätsplatz 1
                 31141 Hildesheim
                 Web: https://www.uni-hildesheim.de}
+          UPB   {Universität Paderborn
+                 Warburger Str. 100
+                 33098 Paderborn
+                 Web: https://www.uni-paderborn.de}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1067,20 +1082,22 @@ dataPrivacy:
         The data protection officer can be reached via regular mail at the address of the responsible institution.
 
         {committeeType, select,
-          TUC   {Phone: +49 371 531-12030
+          TUC   {Phone: +49 (0)371 531-12030
                  E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
-          EUB   {Phone: +49 521 106-5225
+          EUB   {Phone: +49 (0)521 106-5225
                  E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
-          JGU   {Phone: +49 6131 39-20065
+          JGU   {Phone: +49 (0)6131 39-20065
                  E-Mail: datenschutz@uni-mainz.de
                  Web: https://www.uni-mainz.de/datenschutz/}
-          DLR   {Phone: +49 2203 601-0
+          DLR   {Phone: +49 (0)2203 601-0
                  E-Mail: datenschutz@dlr.de}
-          TUD   {Phone: 0351 463-32839
+          TUD   {Phone: +49 (0)351 463-32839
                  E-Mail: informationssicherheit@tu-dresden.de}
-          UH1   {Phone: +49 5121-883-10922
+          UH1   {Phone: +49 (0)5121-883-10922
                  E-Mail: datenschutz@uni-hildesheim.de}
-          other {Phone: +49 1234 56789
+          UPB   {Phone: +49 (0)5251 / 60–4444
+                 E-Mail: datenschutz@uni-paderborn.de}
+          other {Phone: +49 (0)1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
     title: 'Lawfulness of data processing'
@@ -1239,17 +1256,17 @@ dataPrivacy:
         TUC   {Sächsische Datenschutz- und Transparenzbeauftragte
                Postfach 11 01 32
                01330 Dresden
-               Phone: +49 351 85471-101
+               Phone: +49 (0)351 85471-101
                E-Mail: post@sdtb.sachsen.de}
         EUB   {Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
                Kavalleriestraße 2-4
                40213 Düsseldorf
-               Phone: +49 211/384 24-0
+               Phone: +49 (0)211/384 24-0
                E-Mail: poststelle@ldi.nrw.de}
         JGU   {Landesbeauftragter für den Datenschutz und die Informationsfreiheit Rheinland-Pfalz
                Hintere Bleiche 34
                55116 Mainz
-               Phone: 06131 8920-0
+               Phone: +49 (0)6131 8920-0
                E-Mail: poststelle@datenschutz.rlp.de}
         DLR   {Bundesbeauftragte für den Datenschutz und die Informationsfreiheit (BfDI)
                Graurheindorfer Straße 153
@@ -1259,13 +1276,18 @@ dataPrivacy:
         TUD   {Sächsische Datenschutz- und Transparenzbeauftragte
                Postfach 11 01 32
                01330 Dresden
-               Phone: +49 351 85471-101
+               Phone: +49 (0)351 85471-101
                E-Mail: post@sdtb.sachsen.de}
         UH1   {Landesbeauftragter für den Datenschutz Niedersachsen
                Prinzenstraße 5
                30159 Hannover
-               Phone: 0511 120-4500
+               Phone: +49 (0)511 120-4500
                E-Mail: poststelle@lfd.niedersachsen.de}
+        UPB   {Landesbeauftragte*r für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
+               Kavalleriestraße 2-4
+               40213 Düsseldorf
+               Tel.: +49 (0)211/38424-0
+               E-Mail: poststelle@ldi.nrw.de}
         other {}}
     textEnd: "\n\nIf you have any questions on data processing within this study, please contact the responsible project contributors (see section 1)."
 
@@ -1300,10 +1322,11 @@ completePost:
                                               wards    {the data of the individual under my supervision.}
                                               other    {my data.}}
     no: >-
-      No, I withdraw from my consent to the use of {addressee, select,
+      No, I withdraw my consent regarding the use of {addressee, select,
                                                               children {the data of my child.}
                                                               wards    {the data of the individual under my supervision.}
                                                               other    {my data.}}
+    compensation: 'Your choice does not affect the announced compensation.'
 
 # consent for participation
 consent:
@@ -1336,7 +1359,7 @@ consent:
           other {}}. I have been sufficiently informed and had the opportunity to ask questions.
       
     I am aware that {information, select,
-                      post  {the consent on usage {addressee, select,
+                      post  {the consent on the use {addressee, select,
                                                    children {of my child''s data is voluntary and that my child and I will not experience any disadvantages if I do not give my consent.}
                                                    wards    {of the data from the individual under my supervision is voluntary and that the individual under my supervision and I will not experience any disadvantages if I do not give my consent.}
                                                    other    {of my data is voluntary and that I will not experience any disadvantages if I do not give my consent.}}}
@@ -1597,7 +1620,7 @@ completeForm:
       conflict: 'Conflict of interest'
       medicine: 'Medical aspects'
     information: 'Full prior information is guaranteed.'
-    voluntary: 'Voluntariness of participation is guaranteed.'
+    voluntary: 'The decision about participation/data use is voluntary.'
     terminateCons: 'Withdrawal from participation is possible at any time and without disadvantages.'
     examinedPeople: 'The study involves persons who belong to a vulnerable group with respect to the scope of the research.'
     wards: 'The study solely involves persons who are capable of giving consent themselves.'
@@ -1628,3 +1651,4 @@ logo:
   DLR: 'Logo of the German Aerospace Center'
   TUD: 'Logo of Dresden University of Technology'
   UH1: 'Logo of Hildesheim University'
+  UPB: 'Logo of Paderborn University'

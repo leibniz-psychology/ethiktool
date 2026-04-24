@@ -15,7 +15,7 @@ class DummyType extends TypeAbstract
         $builder->add(ControllerAbstract::loadInput,FileType::class,['empty_data' => '', 'required' => false, 'attr' => ['type' => 'file', 'accept' => '.xml']]);
     }
 
-    public function mapDataToForms(mixed $viewData, \Traversable $forms){}
+    public function mapDataToForms(mixed $viewData, \Traversable $forms):void{}
 
-    public function mapFormsToData(\Traversable $forms, mixed &$viewData){}
+    public function mapFormsToData(\Traversable $forms, mixed &$viewData):void{}
 }

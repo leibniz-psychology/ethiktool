@@ -25,7 +25,7 @@ class ConsentType extends TypeAbstract
             }
         }
         if ($dummyParams['isClosedDependent']) {
-            $this->addFormElement($builder,self::voluntaryYesDescription,'textarea',hint: $translationPrefix.self::voluntaryNode.'.textHintYes');
+            $this->addFormElement($builder,self::voluntaryYesDescription,'textarea');
         }
         // terminate with disadvantages
         $tempPrefix = $translationPrefix.self::terminateConsNode.'.';

@@ -60,10 +60,10 @@ class ApplicationController extends PDFAbstract
              * $isAnyBurdensEveryday: true if any burdens everyday question was answered with yes
              * $anyVoluntary: true is any no-description needs to be given
              * anyConsent: array with two elements regarding the consent question: 0: consent question was answered with 'no', 1: true if any assent question was answered with 'no', otherwise false in both cases.
-             * $isAnyCompensation: true if any compensation is given
+             * $isAnyCompensation: true if any compensation is given if information is pre or not yet chosen (0) of if nor pre information is given (1)
              * $isAnyCompensationVoluntary: true if any compensationVoluntary question was answered with yes, false otherwise.
             */
-            [$allAddressees, $isAnyTranslated, $isAnySupplement, $isAnyOtherSources, $isAnyBurdensRisks, $isAnyBurdensNo, $isAnyBurdensEveryday, $anyVoluntary, $anyConsent, $isAnyCompensation, $isAnyCompensationVoluntary] = [[self::addresseeParticipants => false, self::addresseeChildren => false, self::addresseeWards => false], [self::informationNode => false, self::post => false], array_fill_keys($supplementTypes,false), false, [self::burdensNode => false, self::risksNode => false, self::burdensRisksContributorsNode => false], false, false, false, [false, false], false, false];
+            [$allAddressees, $isAnyTranslated, $isAnySupplement, $isAnyOtherSources, $isAnyBurdensRisks, $isAnyBurdensNo, $isAnyBurdensEveryday, $anyVoluntary, $anyConsent, $isAnyCompensation, $isAnyCompensationVoluntary] = [[self::addresseeParticipants => false, self::addresseeChildren => false, self::addresseeWards => false], [self::informationNode => false, self::post => false], array_fill_keys($supplementTypes,false), false, [self::burdensNode => false, self::risksNode => false, self::burdensRisksContributorsNode => false], false, false, false, [false, false], [false, false], false];
             /* The following values are true if either for third parties or participants at least one of the information questions was answered in the respective way:
              * $isAnyPre: yes
              * $isAnyNotPre: no
@@ -84,7 +84,8 @@ class ApplicationController extends PDFAbstract
             $postNo = self::post.'No';
             $burdensNo = self::burdensNode.'No';
             $consentNo = self::consentNode.'No';
-            $allTrue = [self::addresseeParticipants => false, $preTrans => false, $postTrans => false, self::measuresNode.'PDF' => false, self::interventionsNode.'PDF' => false, self::otherSourcesNode.'PDF' => false, self::addresseeChildren => false, self::addresseeWards => false, self::pre => false, $preNo => false, $preNotYet => false, $completePost => false, self::preAbort => false, self::preAbortOther => false, self::preAbortNo => false, self::post => false, $postNo => false, self::otherSourcesNode => false, self::burdensNode => false, $burdensNo => false, self::burdensEveryday => false, self::risksNode => false, self::burdensRisksContributorsNode => false, self::voluntaryNode => false, self::consent => false, $consentNo => false, self::compensationNode => false, self::compensationVoluntaryNode => false]; // Each entry gets true if the respective value in one of the preceding variables gets true
+            $compensationPost = self::compensationNode.self::post;
+            $allTrue = [self::addresseeParticipants => false, $preTrans => false, $postTrans => false, self::measuresNode.'PDF' => false, self::interventionsNode.'PDF' => false, self::otherSourcesNode.'PDF' => false, self::addresseeChildren => false, self::addresseeWards => false, self::pre => false, $preNo => false, $preNotYet => false, $completePost => false, self::preAbort => false, self::preAbortOther => false, self::preAbortNo => false, self::post => false, $postNo => false, self::otherSourcesNode => false, self::burdensNode => false, $burdensNo => false, self::burdensEveryday => false, self::risksNode => false, self::burdensRisksContributorsNode => false, self::voluntaryNode => false, self::consent => false, $consentNo => false, self::compensationNode => false, $compensationPost => false, self::compensationVoluntaryNode => false]; // Each entry gets true if the respective value in one of the preceding variables gets true
             foreach ($studyArray as $study) {
                 foreach ($this->addZeroIndex($study[self::groupNode]) as $group) {
                     foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureTimePoint) {
@@ -192,7 +193,11 @@ class ApplicationController extends PDFAbstract
                         $compensationArray = $measureTimePoint[self::compensationNode];
                         $tempArray = $compensationArray[self::compensationTypeNode];
                         if ($tempArray!=='' && !array_key_exists(self::compensationNo,$tempArray)) {
-                            [$isAnyCompensation,$allTrue[self::compensationNode]] = [true, true];
+                            if ($isNotPre) {
+                                [$isAnyCompensation[1],$allTrue[$compensationPost]] = [true, true];
+                            } else {
+                                [$isAnyCompensation[0],$allTrue[self::compensationNode]] = [true, true];
+                            }
                             if ($compensationArray[self::compensationVoluntaryNode]==='0') {
                                 [$isAnyCompensationVoluntary, $allTrue[self::compensationVoluntaryNode]] = [true, true];
                             }
@@ -712,7 +717,22 @@ class ApplicationController extends PDFAbstract
                 $names = $tempArray[0].' - '.$tempArray[2][0][0].' - '.$tempArray[2][0][2][0][0];
                 self::$routeIDs = $this->createRouteIDs([self::studyNode => 1, self::groupNode => 1, self::measureTimePointNode => 1]);
             }
-            $parameters = array_merge($childrenWardsParams, $informationHintParam, [self::burdensNode => $this->getStringFromBool($isAnyBurdensRisks[self::burdensNode]), 'noBurdens' => $this->getStringFromBool($isAnyBurdensNo), self::risksNode => $this->getStringFromBool($isAnyBurdensRisks[self::risksNode]), 'isPre' => $this->getStringFromBool($isAnyPre || $isNotAnyPreYet), 'anyAbortOther' => $this->getStringFromBool($isAnyPreAbortOtherNo[0]), 'anyAbortNo' => $this->getStringFromBool($isAnyPreAbortOtherNo[1]), 'isVoluntaryNo' => $this->getStringFromBool($anyVoluntary), 'isAssent' => $this->getStringFromBool($isChildrenWards), 'anyConsentNo' => $this->getStringFromBool($anyConsent[0]), 'anyAssentNo' => $this->getStringFromBool($anyConsent[1]), 'isCompensationVoluntary' => $this->getStringFromBool($isAnyCompensationVoluntary), 'isReviewFull' => $this->getStringFromBool($this->isReviewFull)]); // all parameters for all translations of headings and subContent headings
+            $parameters = array_merge($childrenWardsParams, $informationHintParam, [
+                self::burdensNode => $this->getStringFromBool($isAnyBurdensRisks[self::burdensNode]),
+                'noBurdens' => $this->getStringFromBool($isAnyBurdensNo),
+                self::risksNode => $this->getStringFromBool($isAnyBurdensRisks[self::risksNode]),
+                'isPre' => $this->getStringFromBool($isAnyPre || $isNotAnyPreYet),
+                'anyPreNo' => $this->getStringFromBool($isAnyNotPre),
+                'isPreCompensation' => $this->getStringFromBool($isAnyCompensation[0]),
+                'anyPreNoCompensation' => $this->getStringFromBool($isAnyCompensation[1]),
+                'anyAbortOther' => $this->getStringFromBool($isAnyPreAbortOtherNo[0]),
+                'anyAbortNo' => $this->getStringFromBool($isAnyPreAbortOtherNo[1]),
+                'isVoluntaryNo' => $this->getStringFromBool($anyVoluntary),
+                'isAssent' => $this->getStringFromBool($isChildrenWards),
+                'anyConsentNo' => $this->getStringFromBool($anyConsent[0]),
+                'anyAssentNo' => $this->getStringFromBool($anyConsent[1]),
+                'isCompensationVoluntary' => $this->getStringFromBool($isAnyCompensationVoluntary),
+                'isReviewFull' => $this->getStringFromBool($this->isReviewFull)]); // all parameters for all translations of headings and subContent headings
             // box with names of levels
             self::$linkedPage = self::landing;
             self::$isPageLink = true;
@@ -792,7 +812,7 @@ class ApplicationController extends PDFAbstract
                         $tempVal = $this->translateStringPDF($projecdetailsPrefix.'pdf.'.$title,$informationHintParam);
                         $isMain = $isCompensation || $sub==='';
                         $content = $isMain ? $main : $sub;
-                        $content = ($isCompensation ? $tempVal.($isAnyCompensation ? "\n\n".$this->translateStringPDF($projecdetailsPrefix.self::compensationVoluntaryNode)."\n".$content : '') : '').(!$isCompensation ? $content : '').(!$isCompensation ? "\n\n".$tempVal : '');
+                        $content = ($isCompensation ? $tempVal.(in_array(true,$isAnyCompensation) ? "\n\n".$this->translateStringPDF($projecdetailsPrefix.self::compensationVoluntaryNode,$parameters)."\n".$content : '') : '').(!$isCompensation ? $content : '').(!$isCompensation ? "\n\n".$tempVal : '');
                         if ($isMain) {
                             $main = $content;
                         } else {

@@ -7,7 +7,7 @@ use App\Form\Projectdetails\CompensationType;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class CompensationController extends ControllerAbstract
 {
@@ -27,10 +27,11 @@ class CompensationController extends ControllerAbstract
         $hasDocs = $this->getReviewDocs($session);
         $isCodeCompensationLoad = $this->checkCompensationAwarding($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::compensationNode}[0]));
         $textInput = '';
+        $measureArray = $this->xmlToArray($measure);
         if ($hasDocs) {
             // check if inputs were made for the code compensation question on data privacy
             $inputArray = $this->setInputArray();
-            if ($this->checkInput($this->xmlToArray($measure)[self::privacyNode][self::codeCompensationNode] ?? '',[self::chosen => ''])) {
+            if ($this->checkInput($measureArray[self::privacyNode][self::codeCompensationNode] ?? '',[self::chosen => ''])) {
                 $this->addInputPage('pages.projectdetails.',self::privacyNode,$inputArray);
             }
             $textInput = $this->setInputHint($inputArray);
@@ -44,7 +45,7 @@ class CompensationController extends ControllerAbstract
         }
         $isDurationParam = ['isDuration' => $this->getDuration($this->xmlToArray($measure->{self::measuresNode}->{self::durationNode}))>30];
 
-        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request,[self::dummyParams => array_merge($isDurationParam,['hasDetails' => !(in_array($this->getCommitteeType($session),self::reviewShortChoose) && in_array($session->get(self::reviewProcess),[self::reviewShortBegun,self::reviewShortRequested]))])]);
+        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request,[self::informationNode => $this->getInformationString($measureArray[self::informationNode]), self::dummyParams => array_merge($isDurationParam,['hasDetails' => !(in_array($this->getCommitteeType($session),self::reviewShortChoose) && in_array($session->get(self::reviewProcess),[self::reviewShortBegun,self::reviewShortRequested]))])]);
         if ($compensation->isSubmitted()) {
             $data = $this->getDataAndConvert($compensation,$compensationNode);
             if ($hasDocs) {

@@ -95,11 +95,10 @@ trait ProjectdetailsTrait
     // consent
     protected const consentNode = 'consent';
     protected const voluntaryNode = 'voluntary';
-    protected const voluntaryNotApplicable = 'notApplicable'; // must equal one of the values in $voluntaryTypes
-    protected const voluntaryConsentNo = 'no'; // must equal one value in $voluntaryTypes and one ine $consentTypes
+    protected const voluntaryConsentNo = 'no'; // must equal one value in $voluntaryTypes and one in $consentTypes
     protected const voluntaryTypes = ['projectdetails.pages.consent.voluntary.types.yes' => 'yes', 'projectdetails.pages.consent.voluntary.types.no' => 'no', 'projectdetails.pages.consent.voluntary.types.notApplicable' => 'notApplicable'];
     protected const voluntaryYesDescription = 'voluntaryYesDescription';
-    protected const consentNotApplicable = 'notApplicable'; // must equal on of the values in $consentTypes
+    protected const voluntaryConsentNotApplicable = 'notApplicable'; // must equal one value in $voluntaryTypes and one in $consentTypes
     protected const consentOral = 'oral'; // must equal one of the values in $consentTypes
     protected const consentTypesAny = ['written','digital','oral']; // must equal the values in $consentTypes; contains all types of consent where a consent gets created
     protected const consentTypesAll = ['written','digital','oral','other']; // must equal the values in $consentTypes; contains all types of consent where consent is given

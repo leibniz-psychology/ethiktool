@@ -222,7 +222,7 @@ class ParticipationController extends PDFAbstract
                     $voluntaryArray = $consentArray[self::voluntaryNode];
                     $chosen2 = $voluntaryArray[self::chosen2Node] ?? '';
                     $terminateConsParam = [self::terminateConsNode => $this->getStringFromBool($consentArray[self::terminateConsNode][self::chosen]!=='1')];
-                    $voluntaryParams = array_merge($addresseeParam,$terminateConsParam,['isVoluntary' => $this->getStringFromBool(in_array((!array_key_exists(self::chosen2Node,$voluntaryArray) || $chosen2===self::voluntaryNotApplicable) ? $voluntaryArray[self::chosen] : $chosen2,['','yes']))]);
+                    $voluntaryParams = array_merge($addresseeParam,$terminateConsParam,['isVoluntary' => $this->getStringFromBool(in_array((!array_key_exists(self::chosen2Node,$voluntaryArray) || $chosen2===self::voluntaryConsentNotApplicable) ? $voluntaryArray[self::chosen] : $chosen2,['','yes']))]);
                     $compensationTerminateParams = array_merge($voluntaryParams,[self::compensationNode => $compensationTerminateChosen, 'isDuration' => $this->getStringFromBool($this->getDuration($durationsArray)>30)]);
                     $compensationTerminateTrans = $compensationPrefixPDF.self::terminateNode;
                     if ($compensationTypes!=='') { // at least one compensation type was chosen
@@ -1172,6 +1172,7 @@ class ParticipationController extends PDFAbstract
                                     'content' => $content,
                                     'completePostHeading' => $completePostHeading,
                                     'isOral' => $preCompleteArray[self::preCompleteType]===self::informationOral,
+                                    'isCompensation' => $isCompensationTerminate,
                                     'contributors' => array_merge($contributorsLeader,$contributorsFurther ?? []), // $contributorsFurther is defined if information is pre or post
                                     'oralHint' => $this->addHeadingLink($translationPrefix.self::informationOral)]));
                             }

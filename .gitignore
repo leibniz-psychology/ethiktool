@@ -64,3 +64,9 @@ secret.*.y?ml
 /public/
 /config/secrets/
 /src/Traits/Main/BetaCommitteeTrait.php
+
+###> phpstan/phpstan ###
+phpstan.neon
+phpstan.dist.neon
+###< phpstan/phpstan ###
+rector.php

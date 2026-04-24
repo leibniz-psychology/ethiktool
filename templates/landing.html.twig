@@ -61,13 +61,14 @@
                     {{ (tempPrefix~symbol)|trans }}
                 {% endfor %}
             </div>
-        {% endif %}
-        {% if not isProjectdetailsLanding %} {# sub-pages #}
+            {# modal for removing #}
+            {{ include('components/redirectModal.html.twig',{'modalID': 'removeModal', 'prefix': translationPrefix~'removeModal.', 'link': 'app_landing', 'stim': ['base','submitForm'], 'stimNo': ['base','unsetLandingRemove'], 'modalBodyTarget': ['landing','landingRemove']}) }}
+        {% else %} {# sub-pages #}
             <div class="MetaData-Widget">
                 {% for route in menu %}
                     {% set routeIDs, curRoute = route.routeIDs ?? {}, route.route %}
                     <a {% if curRoute is not same as '' %}
-                        class="link"
+                        class="link linkInternal"
                         href="{{ path(curRoute,routeIDs) }}"
                         {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': curRoute}) }}
                     {% endif %}
@@ -76,10 +77,6 @@
                     </a>
                 {% endfor %}
             </div>
-        {% endif %}
-        {# modal for removing #}
-        {% if isProjectdetailsLanding %}
-            {{ include('components/redirectModal.html.twig',{'modalID': 'removeModal', 'prefix': translationPrefix~'removeModal.', 'link': 'app_landing', 'stim': ['base','submitForm'], 'stimNo': ['base','unsetLandingRemove'], 'modalBodyTarget': ['landing','landingRemove']}) }}
         {% endif %}
         {{ formRender.addSubmitButtons(true,page is same as 'appData', isProjectdetailsLanding) }}
     </div> {# div including stimulus controller #}

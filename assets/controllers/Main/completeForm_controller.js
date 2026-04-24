@@ -3,7 +3,7 @@ import {setElementVisibility} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['consent','noBias','participate','participateHint','access','consentFurther','finish','finishText','pdf'];
+    static targets = ['consent','noBias','participate','participateHint','access','consentFurther','finish','finishText','finishTextMissing','pdf'];
 
     connect() {
         this.setBias();
@@ -55,5 +55,6 @@ export default class extends Controller {
         let isFinish = this.consentTarget.checked && this.biasInput && allAdded && this.consentFurtherTarget.checked;
         this.finishTarget.disabled = !isFinish;
         setElementVisibility(this.finishTextTarget,isFinish);
+        setElementVisibility(this.finishTextMissingTarget,!isFinish);
     }
 }

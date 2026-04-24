@@ -59,6 +59,7 @@ multiple:
                                                             other   {der Empfangsbestätigung für die Leihgeräte}}.
   inputs:
     pages:
+      textsIntro: 'Studieninformation'
       textsCon: 'Studieninformation'
       textsFinding: 'Studieninformation'
       textsConflict: 'Studieninformation'
@@ -78,6 +79,7 @@ multiple:
                                                other {{isFinding, select,
                                                         true  {, den Vor-/Nachteilen und der Aufklärung über (Zufalls-)Befunde}
                                                         other { und den Vor-/Nachteilen}} }}
+    textsIntro: 'dem Freitext der Studien-Einleitung'
     textsCon: 'dem Freitext der Nachteile'
     textsFinding: 'der Aufklärung über (Zufalls-)Befunde'
     textsConflict: 'der Aufklärung über Interessenkonflikte'
@@ -159,6 +161,7 @@ committee:
       DLR   {die Geschäftsstelle Forschungsethik des DLR}
       TUD   {der Ethikbeirat der Technischen Universität Dresden}
       UH1   {die Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
+      UPB   {die Ethik-Kommission der Universität Paderborn}
       other {die Test-Ethikkommission}}
   committeeGen: >-
     {committee, select,
@@ -168,6 +171,7 @@ committee:
     DLR   {der Geschäftsstelle Forschungsethik des DLR}
     TUD   {des Ethikbeirats der Technischen Universität Dresden}
     UH1   {der Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
+    UPB   {der Ethik-Kommission der Universität Paderborn}
     other {der Test-Ethikkommission}}
   committeeDat: >-
     {committee, select,
@@ -177,6 +181,7 @@ committee:
       DLR   {der Geschäftsstelle Forschungsethik des DLR}
       TUD   {dem Ethikbeirat der Technischen Universität Dresden}
       UH1   {der Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
+      UPB   {der Ethik-Kommission der Universität Paderborn}
       other {der Test-Ethikkommission}}
   committeeAcc: >-
     {committee, select,
@@ -186,6 +191,7 @@ committee:
       DLR   {die Geschäftsstelle Forschungsethik des DLR}
       TUD   {den Ethikbeirat der Technischen Universität Dresden}
       UH1   {die Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
+      UPB   {die Ethik-Kommission der Universität Paderborn}
       other {die Test-Ethikkommission}}
   committeeLocation: >-
     {committee, select,
@@ -195,6 +201,7 @@ committee:
       DLR   {das Deutsche Zentrum für Luft- und Raumfahrt}
       TUD   {die Technische Universität Dresden}
       UH1   {die Universität Hildesheim}
+      UPB   {die Universität Paderborn}
       other {die Institution der Test-Ethikkommission}}
   committeeLocationGen: >-
     {committee, select,
@@ -204,6 +211,7 @@ committee:
       DLR   {des Deutschen Zentrums für Luft- und Raumfahrt}
       TUD   {der Technischen Universität Dresden}
       UH1   {der Universität Hildesheim}
+      UPB   {der Universität Paderborn}
       other {der Institution der Test-Ethikkommission}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
@@ -216,6 +224,7 @@ newForm: # placed immediately after 'committee' to have the committee names all 
       DLR: 'Geschäftsstelle Forschungsethik des DLR'
       TUD: 'Ethikbeirat der Technischen Universität Dresden'
       UH1: 'Ethikkommission des Fachbereichs 1 der Universität Hildesheim'
+      UPB: 'Ethik-Kommission der Universität Paderborn'
       testCommittee: 'Test-Ethikkommission'
   password:
     title: 'Passwort:'
@@ -371,6 +380,11 @@ main:
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden. 
              
              Forschungsprojekte mit Ärztinnen bzw. Ärzten als Projektbeteiligte, bei denen klar abgrenzbare medizinische Fragestellungen beantwortet werden sollen, müssen normalerweise durch eine medizinische Ethikkommission geprüft werden. In Einzelfällen ist eine Begutachtung durch die nicht-medizinische Ethikkommission des Fachbereichs 1 der Universität Hildesheim möglich.}
+      UPB   {Antragsberechtigt sind Wissenschaftler*innen der Universität Paderborn (UPB); das schließt Promotionsstudierende der UPB ausdrücklich ein. Anträge zu studentischen Abschlussarbeiten, studiumsbezogenen Forschungsarbeiten oder Vorhaben von externen Promotionsstudierenden müssen von der Betreuerin bzw. dem Betreuer an der UPB gestellt werden.
+    
+            Der Ethikantrag ist vor Beginn einer Untersuchung mit Menschen einzureichen. Das Erteilen eines nachträglichen Ethik-Votums ist nicht möglich.
+    
+            Die Ethik-Kommission der Universität Paderborn nimmt nicht die Aufgaben einer öffentlich-rechtlichen Ethik-Kommission nach dem Heilberufsgesetz Nordrhein-Westfalen wahr und begutachtet nicht Forschungsvorhaben mit medizinischen oder pharmakologischen Fragestellungen. Forschungsvorhaben im medizinischen Bereich müssen bei einer medizinischen Ethikkommission eingereicht werden.}
       other {Sie erstellen einen Test-Ethikantrag, für den <b>keine Einreichung bei einer Ethikkommission</b> vorgesehen ist. Daher sind auch keine Voraussetzungen für die Antragstellung zu erfüllen.}}
   newFormModal:
     title: 'Wechsel zu Neuer Antrag'
@@ -439,7 +453,7 @@ coreData:
     types:
       same: 'identisch zum Projekttitel'
       different: 'unterscheidet sich vom Projekttitel'
-      notApplicable: 'nicht zutreffend: Es werden keine Teilnahmedokumente erstellt, da es weder eine Vorab- noch eine nachträgliche Aufklärung gibt und auch keine Einwilligung in die Studienteilnahme bzw. Datenverarbeitung eingeholt wird.'
+      notApplicable: 'nicht zutreffend: Es werden keine Teilnahmedokumente erstellt, da es weder eine Vorab- noch eine nachträgliche Aufklärung gibt und auch keine Einwilligung in die Studienteilnahme bzw. Verwendung der Daten eingeholt wird.'
   appType:
     title: 'Antragstyp'
     headingHint: 'Wenn der Antrag noch nicht von {committeeDat} begutachtet wurde, wählen Sie bitte „Neuer Antrag“. Wenn Sie bereits ein positives Votum erhalten haben, wählen Sie „Erweiterung/Änderung“. Wenn Sie im Rahmen der Begutachtung Nachfragen oder Auflagen adressieren müssen, wählen Sie „Wiedervorlage nach Antrags-Überarbeitung“. Wenn das positive Votum unter dem Vorbehalt stand, dass mit dem Entscheid über die Bewilligung der Fördermittel die Teilnahmedokumente nachgereicht werden müssen, wählen Sie „Wiedervorlage nach Mittelakquise“.'
@@ -459,7 +473,7 @@ coreData:
         other        {Beantragte Drittmittel}}
     content: >-
       {type, select,
-        fullToShort  {Sie haben als Antragsverfahren „Kurzantrag“ ausgewählt. Aus diesem Grund sind einige Eingaben auf den „Projektdetails“-Seiten nicht mehr erforderlich. Die betroffenen Eingaben werden gelöscht, wenn Sie diese Seite verlassen. {hasShortDocs, select,
+        fullToShort  {Sie haben als Antragsverfahren „Kurzantrag“ ausgewählt. Aus diesem Grund sind einige Eingaben auf den „Projektstruktur“-Seiten nicht mehr erforderlich. Die betroffenen Eingaben werden gelöscht, wenn Sie diese Seite verlassen. {hasShortDocs, select,
               true  {Dies betrifft auch viele Eingaben, die für die Teilnahmedokumente erfragt werden, da bei einem Kurzantrag zur Einreichung bei {committeeDat} keine Begutachtung der Teilnahmedokumente erfolgt. Sie haben jedoch die Möglichkeit, die Teilnahmedokumente für Ihre eigene Verwendung erstellen zu lassen. Diese Option finden Sie direkt nach der Auswahl des Antragsverfahrens. Wenn Sie sich für diese Möglichkeit entscheiden, bleiben die Eingaben, die ausschließlich für die Teilnahmedokumente erfragt werden, erhalten.}
               other {}}}
         shortToShort {Sie haben ausgewählt, dass Sie keine Teilnahmedokumente für die eigene Verwendung erstellen möchten. Aus diesem Grund sind viele Eingaben, die für die Teilnahmedokumente erfragt werden, nicht mehr erforderlich. Die betroffenen Eingaben werden gelöscht, wenn Sie diese Seite verlassen.}
@@ -527,7 +541,7 @@ coreData:
       granted: 'Es handelt sich um ein bewilligtes Drittmittelprojekt.'
       requested: 'Es handelt sich um ein beantragtes Drittmittelprojekt.'
     removeHint: >-
-      Durch die Änderung, die Sie gerade vorgenommen haben, sind auf den „Projektdetails“-Seiten „Einwilligung“{reviewProcess, select,
+      Durch die Änderung, die Sie gerade vorgenommen haben, sind auf den „Projektstruktur“-Seiten „Einwilligung“{reviewProcess, select,
         shortBegun { bzw. „Aufwandsentschädigung“}
         other      {, „Aufwandsentschädigung“ bzw. „Nachnutzung“}} keine Eingaben mehr zu der Frage nach dem Umgang mit den Daten bei individuellem Abbruch{reviewProcess, select,
           shortBegun { bzw. der Abwicklung der Aufwandsentschädigung}
@@ -544,6 +558,7 @@ coreData:
          TUD   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags {isFull, select,
                                                 true  {mit Teilnahmedokumenten und Angabe weiterer Details}
                                                 other {}} erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+         UPB   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
          other {{isFull, select,
                   true  {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
                   other {}}}}
@@ -611,7 +626,7 @@ votes:
 medicine:
   medicine:
     heading: 'Kann aus dem Projekt zukünftig medizinische, pharmazeutische Forschung oder anderweitige Forschung entstehen, die nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG/MPDG) oder anderen gesetzlichen Vorgaben bewertet werden muss?'
-    textHint: >- # other is TUC, DLR, UH1 and test committee
+    textHint: >- # other is TUC, DLR, UH1, UPB and test committee
       Forschungsprojekte, bei denen eine gesetzliche Vorgabe zur Prüfung durch eine medizinische Ethikkommission vorliegt, müssen - unabhängig von der Konstellation und Zugehörigkeit der Antragstellenden - bei einer medizinischen Ethikkommission eingereicht werden.
       {committeeType, select,
         EUB   {Weitere Informationen zu den Zuständigkeiten und weiteren, einzureichenden Unterlagen finden Sie <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">hier</a>.}
@@ -668,7 +683,7 @@ contributors:
     contact: 'Kontaktperson'
     data: 'Datenverantw.'
     other: 'Sonstiges'
-  hint: 'Mit dem Plus-Symbol können Sie weitere Projektbeteiligte hinzufügen. Mit dem Stift-Symbol können Sie die Daten und Funktionen einer bereits angelegten Person bearbeiten. Mit dem Mülleimer-Symbol können Sie die Daten einer bereits angelegten Person wieder löschen.</br></br>Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. Beide Funktionen sollten in der Regel nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht.</br> Bitte nehmen Sie frühzeitig Kontakt zu den zuständigen Datenschutzstellen auf, wenn mehr als eine Person verantwortlich für die Verarbeitung der Daten (im Sinne der DS-GVO) ist und insbesondere wenn die Verantwortlichkeiten über verschiedene Institutionen verteilt sind. Bitte beachten Sie auch, dass die DS-GVO-konforme Aufklärung über die Verarbeitung personenbezogener Daten in diesem Fall nicht mit dem Ethiktool erstellt werden kann.</br></br>Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) mit ihren geplanten Funktionen im Projekt hinzugefügt werden. Eine nachträgliche Ergänzung von Projektbeteiligten nach Erhalt eines positiven Ethikvotums ist möglich; falls dies allerdings die ethische Einschätzung berührt (z.B. durch einen neuen Interessenkonflikt), ist eine Nachbegutachtung erforderlich.</br>'
+  hint: 'Mit dem Plus-Symbol können Sie weitere Projektbeteiligte hinzufügen. Mit dem Stift-Symbol können Sie die Daten und Funktionen einer bereits angelegten Person bearbeiten. Mit dem Mülleimer-Symbol können Sie die Daten einer bereits angelegten Person wieder löschen.</br></br>Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. Beide Funktionen können nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht.</br> Bitte nehmen Sie frühzeitig Kontakt zu den zuständigen Datenschutzstellen auf, wenn mehr als eine Person verantwortlich für die Verarbeitung der Daten (im Sinne der DS-GVO) ist und insbesondere wenn die Verantwortlichkeiten über verschiedene Institutionen verteilt sind. Bitte beachten Sie auch, dass die DS-GVO-konforme Aufklärung über die Verarbeitung personenbezogener Daten in diesem Fall nicht mit dem Ethiktool erstellt werden kann.</br></br>Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) mit ihren geplanten Funktionen im Projekt hinzugefügt werden. Eine nachträgliche Ergänzung von Projektbeteiligten nach Erhalt eines positiven Ethikvotums ist möglich; falls dies allerdings die ethische Einschätzung berührt (z.B. durch einen neuen Interessenkonflikt), ist eine Nachbegutachtung erforderlich.</br>'
   errors:
     name: 'Achtung: Name nicht vollständig'
     eMail: 'Achtung: keine gültige E-Mail-Adresse'
@@ -880,13 +895,19 @@ projectdetails:
         wards: 'gesetzliche Vertretungspersonen:'
         participants: 'Teilnehmende:'
       voluntary:
-        title: 'Erfolgt die Teilnahme-Entscheidung freiwillig?'
-        headingHint: 'Die Freiwilligkeit der Teilnahme-Entscheidung kann u.a. gefährdet sein durch Zeitdruck zwischen Information und Einwilligung, Versprechen besonderer Vorteile durch die Studienteilnahme, Verschweigen der Freiwilligkeit im Rahmen der Aufklärung, Abhängigkeitsverhältnisse zwischen Teilnehmenden und Projektbeteiligten sowie Erwartungsdruck in geschlossenen Gruppen, insbesondere bei nicht-vertraulicher Einwilligung und Datenerhebung.'
+        title: >-
+          Erfolgt die {type, select,
+                        post  {Entscheidung zur Verwendung der Daten}
+                        other {Teilnahme-Entscheidung}} freiwillig?
+        headingHint: 'Die Freiwilligkeit kann u.a. gefährdet sein durch Zeitdruck zwischen Information und Einwilligung, Versprechen besonderer Vorteile, Verschweigen der Freiwilligkeit im Rahmen der Aufklärung, Abhängigkeitsverhältnisse zwischen Teilnehmenden und Projektbeteiligten sowie Erwartungsdruck in geschlossenen Gruppen, insbesondere bei nicht-vertraulicher Einwilligung und Datenerhebung.'
         types:
           yes: 'Ja'
           no: 'Nein'
-          notApplicable: 'nicht zutreffend: Die {addressee} werden nicht vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen'
-        textHintYes: 'Bitte erläutern Sie, wie die freiwillige Studienteilnahme gewährleistet wird. Im Fall der Erhebung in einer geschlossenen Gruppe erläutern Sie bspw., wie sichergestellt wird, dass einzelne Anwesende unauffällig einwilligen bzw. auf die Teilnahme verzichten können. Im Fall der Rekrutierung von Personen, die in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen, erläutern Sie, welche gesonderten Maßnahmen Sie zur Wahrung der Freiwilligkeit treffen (z.B. Durchführung der Studie in Abwesenheit der Lehrenden bzw. Prüfenden; anonyme Gestaltung der Erhebung; explizite Zusicherung, dass die Teilnahme oder deren Ablehnung keinen Einfluss auf Studien-, Prüfungsleistungen oder weitere studienbezogene Aspekte wie Platzvergaben o.ä. hat).'
+          notApplicable: 'nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen'
+        textHintYes: >-
+          {type, select,
+            post  {Bitte erläutern Sie, wie die freiwillige Entscheidung zur Verwendung der Daten gewährleistet wird. Im Fall der Erhebung in einer geschlossenen Gruppe erläutern Sie bspw., wie sichergestellt wird, dass einzelne Anwesende unauffällig (nicht) einwilligen können. Im Fall der Rekrutierung von Personen, die in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen, erläutern Sie, welche gesonderten Maßnahmen Sie zur Wahrung der Freiwilligkeit treffen (z.B. Entscheidung in Abwesenheit der Lehrenden bzw. Prüfenden; anonyme Entscheidung; explizite Zusicherung, dass die Entscheidung für oder gegen die Verwendung der Daten keinen Einfluss auf Studien-, Prüfungsleistungen oder weitere studienbezogene Aspekte wie Platzvergaben hat).}
+            other {Bitte erläutern Sie, wie die freiwillige Studienteilnahme gewährleistet wird. Im Fall der Erhebung in einer geschlossenen Gruppe erläutern Sie bspw., wie sichergestellt wird, dass einzelne Anwesende unauffällig einwilligen bzw. auf die Teilnahme verzichten können. Im Fall der Rekrutierung von Personen, die in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen, erläutern Sie, welche gesonderten Maßnahmen Sie zur Wahrung der Freiwilligkeit treffen (z.B. Durchführung der Studie in Abwesenheit der Lehrenden bzw. Prüfenden; anonyme Gestaltung der Erhebung; explizite Zusicherung, dass die Teilnahme oder deren Ablehnung keinen Einfluss auf Studien-, Prüfungsleistungen oder weitere studienbezogene Aspekte wie Platzvergaben hat).}}
         textHint: 'Bitte beschreiben und begründen Sie, inwiefern die Freiwilligkeit nicht garantiert ist.'
       consent:
         title: >- # other is pre (first select) respectively post (third select). Participants is children or wards in second select.
@@ -895,8 +916,8 @@ projectdetails:
                             other {}} Einwilligung {addressee, select,
                                                       Participants {bzw. Zustimmung}
                                                       other        {}} in die {type, select,
-                                                                                pre   {Studienteilnahme und die}
-                                                                                other {}} Datenverarbeitung?
+                                                                                pre   {Studienteilnahme und die Datenverarbeitung}
+                                                                                other {Verwendung der Daten}}?
         types: # Participants is children or wards
           written: 'schriftlich'
           digital: 'elektronisch'
@@ -1058,7 +1079,7 @@ projectdetails:
         breaks:
           title: 'Vor- und Nachbereitungszeit sowie Pausenzeiten'
           breaksMinutes: 'Minuten:'
-          hint: 'Sie können als Zeitwert auch ''0'' eintragen. Beachten Sie aber bitte, dass die Vorbereitung üblicherweise auch die Zeit umfasst, die für das Lesen der relevanten Dokumente (z.B. Studieninformation) benötigt wird.'
+          hint: 'Sie können als Zeitwert auch ''0'' eintragen.'
     burdensRisks: # other is burdens/risks for contributors
       textHint: >-
         Bitte beschreiben Sie die {type, select,
@@ -1250,9 +1271,15 @@ projectdetails:
           title: 'Sonstige Aufwandsentschädigung'
           textHint: 'Bitte beschreiben Sie die Ausgabe der sonstigen Aufwandsentschädigung in Satzform. Bitte stellen Sie dabei den Bezug zur Art der vergebenen sonstigen Aufwandsentschädigung her und erwähnen den Zeitpunkt der Vergabe und was organisatorisch für den Erhalt notwendig ist (z.B. „Im Anschluss an die Studie erhalten Sie kostenlosen Zugriff auf unsere Kursmaterialien; dazu benötigen wir Ihre E-Mail-Adresse.“).'
       compensationVoluntary:
-        title: 'Ist die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet?'
-        headingHint: 'Die Freiwilligkeit kann gefährdet sein, wenn die Aufwandsentschädigung im Vergleich zur Finanzkraft der Zielgruppe sehr hoch ausfällt (z.B. hohe finanzielle Aufwandsentschädigung, hoher Gewinn einer Verlosung) bzw. wenn eine Überkompensation des realen Aufwands erfolgt (z.B. vergebene Versuchspersonenstunden liegen deutlich oberhalb der Versuchsdauer). Einschränkungen können auch entstehen, wenn die Teilnahme sich über einen längeren Zeitraum erstreckt und der Rücktritt von der Teilnahme mit einem Komplettverlust der Aufwandsentschädigung verbunden ist.'
-        textHint: 'Bitte erläutern Sie, inwiefern die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet ist.'
+        title: >-
+          Ist die Freiwilligkeit der {isNotPre, select,
+                                        true  {Entscheidung zur Verwendung der Daten}
+                                        other {Teilnahme}} durch Art oder Höhe der Aufwandsentschädigung gefährdet?
+        headingHint: 'Die Freiwilligkeit kann gefährdet sein, wenn die Aufwandsentschädigung im Vergleich zur Finanzkraft der Zielgruppe sehr hoch ausfällt (z.B. hohe finanzielle Aufwandsentschädigung, hoher Gewinn einer Verlosung) bzw. wenn eine Überkompensation des realen Aufwands erfolgt (z.B. vergebene Versuchspersonenstunden liegen deutlich oberhalb der Versuchsdauer). Die Freiwilligkeit ist fraglich, wenn es naheliegend erscheint, dass die Teilnehmenden substanzielle Anteile ihres Einkommens über Studienteilnahmen bestreiten. Einschränkungen können auch entstehen, wenn die Teilnahme sich über einen längeren Zeitraum erstreckt und der Rücktritt von der Teilnahme mit einem Komplettverlust der Aufwandsentschädigung verbunden ist.'
+        textHint: >-
+          Bitte erläutern Sie, inwiefern die Freiwilligkeit der {isNotPre, select,
+                                                                  true  {Entscheidung zur Verwendung der Daten}
+                                                                  other {Teilnahme}} durch Art oder Höhe der Aufwandsentschädigung gefährdet ist.
       furtherDescription:
         title: 'Sonstige Erläuterungen zur Aufwandsentschädigung'
         textHint: '(optional) z.B. Begründung für außergewöhnlich hohe Aufwandsentschädigung; Begründung, warum die Teilnehmenden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt werden'
@@ -1272,6 +1299,11 @@ projectdetails:
                                                         children {Ihres Kindes}
                                                         wards    {der von Ihnen betreuten Person}
                                                         other    {}} an}} der Studie treffen.
+        noTemplate: >-
+          Aufgrund der <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">fehlenden Einwilligung</a> {addressee, select,
+                                                                                children {für die Erziehungsberechtigten}
+                                                                                wards    {für die gesetzlichen Vertretungspersonen}
+                                                                                other    {}} kann keine Vorlage erstellt werden.
       goals:
         title: 'Hintergrund und Zielsetzung der Studie:'
         headingHint: 'Beschreiben Sie hier kurz den allgemeinen Hintergrund des Forschungsprojekts und die Ziele der konkreten Studie.'
@@ -1975,14 +2007,15 @@ projectdetails:
       mandatory: '(verpflichtend)'
 
 checkDoc:
+  error: 'Fehler'
   noError: |
     Die technische Prüfung hat keine fehlenden oder fehlerhaften Eingaben gefunden. Bitte prüfen Sie dennoch sorgfältig Ihre Eintragungen, da nicht alle Unstimmigkeiten automatisch entdeckt werden können.
     
     Sie können nun den Antrag zur Einreichung bei {committeeDat} vorbereiten, indem Sie die Funktion „<a class="linkInternal" href="completeForm">Gesamtantrag erstellen</a>“ wählen.
   reviewMissing: >-
-    <span class="errorStyle">Mindestens eine der Angaben zu <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">der Art des Antragsverfahrens{hasBegun, select,
-            true  {, dem Beginn der Datenerhebung}
-            other {}} und der Finanzierung</a> fehlt. Diese Punkte haben großen Einfluss auf den Umfang nötiger Eingaben im Tool. Bitte vervollständigen Sie zunächst die fehlenden Angaben, bevor Sie weitere Fragen beantworten.</span>
+    <span style="font-weight: bold"><span class="errorStyle">Achtung</span>: Mindestens eine der Angaben zu <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">der Art des Antragsverfahrens</a>{hasBegun, select,
+            true  {, dem Beginn der <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">Datenerhebung</a>}
+            other {}} und der <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#funding">Finanzierung</a> fehlt. Diese Punkte haben großen Einfluss auf den Umfang nötiger Eingaben im Tool. Bitte vervollständigen Sie zunächst die fehlenden Angaben, bevor Sie weitere Fragen beantworten.</span>
   errorPage: "Fehlende oder <span class=\"errorStyle\">fehlerhafte</span> Eingaben:\n\n"
   noErrorPage: >-
     Die technische Prüfung hat keine fehlenden oder fehlerhaften Eingaben {page, select,
@@ -1991,7 +2024,7 @@ checkDoc:
                                                                                               study            {auf den Seiten der Gruppen und Zeitpunkte dieser Studie}
                                                                                               group            {auf den Seiten der Zeitpunkte dieser Gruppe}
                                                                                               measureTimePoint {auf den Seiten dieses Zeitpunkts}
-                                                                                              other            {auf den Projektdetails-Seiten}}}
+                                                                                              other            {auf den Projektstruktur-Seiten}}}
                                                                             other          {auf dieser Seite}} gefunden. Bitte prüfen Sie dennoch sorgfältig Ihre Eintragungen, da nicht alle Unstimmigkeiten automatisch entdeckt werden können.
   missing: # currently only once used at the same time, therefore no plural keyword
     single: ' fehlt.'
@@ -2000,7 +2033,7 @@ checkDoc:
       {isOther, select,
         true  {Benennung der }
         other {Beschreibung der }}
-  missingChosen: 'Antwort auf Frage nach {question} fehlt.'
+  missingChosen: 'Antwort auf Frage nach {question}'
   reviewProcess: >-
     Sie haben als <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">Antragsverfahren</a> „{isFull, select,
             true  {Vollantrag}
@@ -2044,7 +2077,7 @@ checkDoc:
       positionOther: >-
         {type, select,
           applicant {Antragstellende Person}
-          other     {Verantwortliche/r Betreuer/in}}: Beschreibung der sonstigen Position fehlt.
+          other     {Verantwortliche/r Betreuer/in}}: Beschreibung der sonstigen Position
       eMail: >-
         {type, select,
           applicant {Antragstellende Person}
@@ -2086,7 +2119,7 @@ checkDoc:
           description: 'Erläuterung, warum {committeeNom} trotz ärztlicher Beteiligung zuständig ist,'
   contributors:
     title: '<a class="linkInternal" href="contributors">Projektbeteiligte</a>'
-    lineTitle: 'Projektbeteiligte/r {index} ({name})'
+    lineTitle: 'Projektbeteiligte Person {index} ({name})'
     infos:
       name: 'Name ist nicht vollständig.'
       validEmail: 'E-Mail-Adresse ist ungültig.'
@@ -2104,7 +2137,7 @@ checkDoc:
                                                                   other {keine Funktion}}}
                                                         other {keine Funktion}} inne.
       missingMandatory: 'Funktion „{task}“ wurde bei keiner projektbeteiligten Person ausgewählt.'
-      missingOther: 'Projektbeteiligte Person {index} ({name}): Beschreibung der sonstigen Position fehlt.'
+      missingOther: 'Projektbeteiligte Person {index} ({name}): Beschreibung der sonstigen Position'
   projectdetails:
     missingTypes: 'Arten von {type}'
     pages:
@@ -2120,8 +2153,8 @@ checkDoc:
           types: 'Arten von geschlossenen Gruppen'
           other: 'sonstigen geschlossenen Gruppe'
         criteria:
-          include: 'Weitere Einschlusskriterien neben dem Alter fehlen.'
-          exclude: 'Ausschlusskriterien fehlen.'
+          include: 'Weitere Einschlusskriterien neben dem Alter'
+          exclude: 'Ausschlusskriterien'
         sampleSize: 'Stichprobengröße'
         planning: 'Fallzahlplanung'
         recruitment:
@@ -2137,7 +2170,7 @@ checkDoc:
       information:
         missingPre: 'Aufklärung über Studienteilnahme'
         typePre: 'Art der Vorab-Aufklärung'
-        preContent: 'Antwort auf Frage nach Vollständigkeit der Vorab-Aufklärung fehlt.'
+        preContent: 'Vollständigkeit der Vorab-Aufklärung'
         deceit: 'Antwort auf Frage nach nachträglicher vollständiger Aufklärung'
         deceitType: 'Art der nachträglichen vollständigen Aufklärung'
         deceitDescription: 'Begründung und Angabe, wann welche Informationen mitgeteilt werden,'
@@ -2167,11 +2200,11 @@ checkDoc:
                     wards    {für die {participant, select,
                                         thirdParty {gesetzlichen Vertretungspersonen}
                                         other      {betreuten Personen}}}
-                    other    {}} keine <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_{page}{type, select,
-                                  consent {">Vorab-Aufklärung und keine nachträgliche Aufklärung </a> gibt, muss die Frage nach der Art der {participant, select,
-                                                      thirdParty {Einwilligung}
-                                                      other      {Zustimmung}}}
-                                  other     {#pre">Vorab-Aufklärung</a> gibt, muss die Frage nach Freiwilligkeit}} mit „nicht zutreffend“ beantwortet werden.
+                    other    {}} keine <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_{page}">Vorab-Aufklärung und keine nachträgliche Aufklärung</a> gibt, muss die Frage nach {type, select,
+                                  consent {der Art der {participant, select,
+                                                          thirdParty {Einwilligung}
+                                                          other      {Zustimmung}}}
+                                  other   {Freiwilligkeit}} mit „nicht zutreffend“ beantwortet werden.
         notApplicableToInformation: >-
           Sie haben bei der Frage nach {type, select,
                                     consent {{participant, select,
@@ -2184,9 +2217,7 @@ checkDoc:
                                                                 wards    {für die {participant, select,
                                                                                     thirdParty {gesetzlichen Vertretungspersonen}
                                                                                     other {betreuten Personen}}}
-                                                                other    {}} „nicht zutreffend“ ausgewählt. {type, select,
-                          consent {Das ist nur möglich, wenn es <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt.}
-                          other   {Das ist nur möglich, wenn die Frage nach <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> mit „Nein“ beantwortet wird.}}
+                                                                other    {}} „nicht zutreffend“ ausgewählt. Das ist nur möglich, wenn es <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt.
         voluntary:
           title: 'Freiwilligkeit'
           voluntaryParticipants: 'Freiwilligkeit für Teilnehmende'
@@ -2212,7 +2243,9 @@ checkDoc:
                     wards    {für die {participant, select,
                                         thirdParty {gesetzlichen Vertretungspersonen}
                                         other      {betreuten Personen}}}
-                    other    {}} die Teilnahme nicht freiwillig erfolgt, muss die Frage nach der Art der {participant, select,
+                    other    {}} die {isNoPre, select,
+                                        true  {Entscheidung zur Verwendung der Daten}
+                                        other {Teilnahme}} nicht freiwillig erfolgt, muss die Frage nach der Art der {participant, select,
                                                                                                 thirdParty {Einwilligung}
                                                                                                 other      {Zustimmung}} mit „es erfolgt keine {participant, select,
                                                         thirdParty {Einwilligung}
@@ -2242,8 +2275,8 @@ checkDoc:
                                 wards    {gesetzlichen Vertretungspersonen}
                                 other    {Teilnehmenden}}
         terminateParticipants:
-          title: 'Datenverarbeitung bei vorzeitigem Abbruch' # 'Antwort auf Frage nach [] fehlt.'
-          description: 'Beschreibung der Datenverarbeitung bei vorzeitigem Abbruch' # '[] fehlt.'
+          title: 'Umgang mit den Daten bei vorzeitigem Abbruch' # 'Antwort auf Frage nach [] fehlt.'
+          description: 'Beschreibung des Umgangs mit den Daten bei vorzeitigem Abbruch' # '[] fehlt.'
           information: >-
               Wenn es keine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, müssen die erhobenen Daten bei vorzeitigem Abbruch entweder gelöscht werden oder die {addressee, select,
                   children {Erziehungsberechtigten}
@@ -2401,17 +2434,17 @@ checkDoc:
             money {Wenn die finanzielle Aufwandsentschädigung sofort vor Ort ausgezahlt werden soll}
             other {Wenn die Versuchspersonenstunden sofort vor Ort bescheinigt werden sollen}}, müssen Projektbeteiligte <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">bei der Erhebung anwesend</a> sein.
       texts:
-        intro: 'Einleitung fehlt.'
+        intro: 'Einleitung'
         goals: 'Hintergrund und Zielsetzung der Studie'
         pro: 'Vorteile'
-        con: 'Beschreibung der Nachteile fehlt.'
-        findingText: 'Aufklärung über (Zufalls-)Befunde fehlt.'
-        conflictText: 'Aufklärung über Interessenkonflikte fehlt.'
+        con: 'Nachteile'
+        findingText: 'Aufklärung über (Zufalls-)Befunde'
+        conflictText: 'Aufklärung über Interessenkonflikte'
       informationIII:
-        goals: 'Ziele der Studie fehlen.'
-        infoBefore: 'Vorab-Aufklärung fehlt.'
-        infoAfter: 'Nachträgliche Aufklärung fehlt.'
-        explain: 'Begründung fehlt.'
+        goals: 'Ziele der Studie'
+        infoBefore: 'Vorab-Aufklärung'
+        infoAfter: 'Nachträgliche Aufklärung'
+        explain: 'Begründung'
       legal:
         missing: >- # other is insurance
           {type, select,
@@ -2482,8 +2515,14 @@ checkDoc:
           description: 'Zeitpunkt der Löschung der Originaldaten' # '[] fehlt.'
         personalKeep:
           missing: 'Gründe für die Aufbewahrung der Daten mit Personenbezug' # '[] fehlen.'
-          description: 'Dauer der Aufbewahrung der Daten mit Personenbezug für die {type} fehlt.' # 1:1
-        personalKeepConsent: 'Antwort auf Frage, ob die Einwilligung in die Aufbewahrung der Forschungsdaten mit Personenbezug für die {type} obligatorisch oder optional ist, fehlt.' # 1:1
+          description: 'Dauer der Aufbewahrung der Daten mit Personenbezug für die {type}' # '[] fehlt.'
+        personalKeepConsent:
+          missing: 'Antwort auf Frage, ob die Einwilligung in die Aufbewahrung der Forschungsdaten mit Personenbezug für die {type} obligatorisch oder optional ist,' # '[] fehlt.'
+          consent: >-
+            Wenn {addressee, select,
+                    children {für die Erziehungsberechtigten}
+                    wards    {für die gesetzlichen Vertretungspersonen}
+                    other    {}} <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">keine Einwilligung</a> erfolgt, kann die Aufbewahrung der Daten mit Personenbezug für die {type} nicht optional sein.
         purposeResearch:
           missing: 'Weitere Zwecke der Kennzeichnung der Forschungsdaten' # '[] fehlen'.
           markingResearch: 'Wenn die Kennzeichnung der Forschungsdaten nur der Beantwortung der Forschungsfrage dient, darf keine personenbeziehbare Kennzeichnung verwendet werden.' # 1:1
@@ -2555,7 +2594,7 @@ checkDoc:
           closed: 'Dass die Art der Codebildung eine Identifikation einzelner Personen zulassen könnte, ist nur plausibel, wenn die <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">Erhebung in einer geschlossenen Gruppe</a> stattfindet.'
           video: 'Wenn als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, muss bei der Frage nach Personenbezug der Forschungsdaten ausgewählt werden, dass die Forschungsdaten selbst personenbezogen sind.'
           measuresToVideo: 'Wenn als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ gewählt wurde, müssen Tonaufnahmen, Fotos und/oder Videoaufnahmen in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
-          videoToMeasures: 'Wenn personenbezogene Daten in Form von Tonaufnahmen, Fotos und/oder Videoaufnahmen zur Beantwortung der Forschungsfrage verarbeitet werden, muss als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ ausgewählt werden.'
+          videoToMeasures: 'Wenn in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage Tonaufnahmen, Fotos und/oder Videoaufnahmen ausgewählt sind, muss als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> „Ton- und/oder Bildaufnahmen“ ausgewählt werden.'
           otherSources:
             create: 'Sie haben ausgewählt, dass <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individuell zuordenbare Daten von anderen Stellen</a> hinzugezogen werden. Das passt nicht dazu, dass nach Einschätzung der zuständigen Datenschutzstelle nur anonyme Daten verarbeitet werden.'
             marking: 'Wenn <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individuell zuordenbare Daten von anderen Stellen</a> hinzugezogen werden, muss eine Kennzeichnung der Forschungsdaten mittels eines außerhalb des Projekts vergebenen Codes, mittels Name oder über eine Schlüsselliste erfolgen.'
@@ -2622,6 +2661,7 @@ completeForm:
                           DLR   {<a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
                           TUD   {aktuelle Zusammensetzung {committeeGen}}
                           UH1   {<a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+                          UPB   {<a href="https://www.uni-paderborn.de/universitaet/ethik-kommission" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
                           other {aktuelle Zusammensetzung {committeeGen}}} und teilen Sie uns nachfolgend mögliche Befangenheiten mit:
     types:
       noBias: 'Es liegt keine Befangenheit eines Mitglieds der Ethikkommission vor.'
@@ -2637,6 +2677,7 @@ completeForm:
         DLR   {, abrufbar <a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">im Intranet des DLR</a>}
         TUD   {. Diese Regelungen sind mit der offiziellen Beschlussfassung hier abrufbar}
         UH1   {, abrufbar unter <a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/</a>}
+        UPB   {, abrufbar unter <a href="https://www.uni-paderborn.de/universitaet/ethik-kommission/regelungen-interne-links" target="_blank">https://www.uni-paderborn.de/universitaet/ethik-kommission/regelungen-interne-links</a>}
         other {}}.
       {committeeType, select,
         EUB   {}
@@ -2652,7 +2693,7 @@ completeForm:
            other {}}}}
     consent: 'Die obigen Hinweise zur Bearbeitung meines Ethikantrags habe ich zur Kenntnis genommen.'
   pdf:
-    text: 'Aufgrund Ihrer Eingaben im Ethiktool ist es erforderlich, Ihrem Antrag zusätzliche PDF-Dateien beizufügen. Bitte wählen Sie diese hier aus. Die maximale Dateigröße beträgt 7 MB.'
+    text: 'Aufgrund Ihrer Eingaben im Ethiktool ist es erforderlich, Ihrem Antrag zusätzliche PDF-Dateien beizufügen. Bitte wählen Sie diese hier aus. Die maximale Dateigröße beträgt 7 MB.</br> Wenn Sie mehrere Dokumente für denselben Aspekt beifügen möchten, fügen Sie diese bitte außerhalb des Ethiktools zu einer PDF-Datei zusammen und wählen diese Datei dann hier aus.'
     votes: 'Ergebnisschreiben der anderen Ethikkommission'
     projectdetails:
       begun: >-
@@ -2676,6 +2717,7 @@ completeForm:
     title: 'Gesamtantrag herunterladen'
     text:
       start: 'Der Gesamtantrag kann nun heruntergeladen werden:'
+      startMissing: 'Bevor Sie den Gesamtantrag herunterladen können, tätigen Sie bitte alle Eingaben auf dieser Seite.'
       end:
         title: >-
           Hinweise {isTool, select,
@@ -2698,6 +2740,7 @@ completeForm:
           DLR   {ethik@dlr.de}
           TUD   {der noch festzulegenden E-Mail-Adresse {committeeGen}}
           UH1   {ethikfb1@uni-hildesheim.de}
+          UPB   {ethik-kommission@zv.uni-paderborn.de}
           other {der E-Mail-Adresse {committeeGen}}}.</li>
 
 quitModal:
@@ -2716,10 +2759,12 @@ preview: # tab names in preview
 
 quit: |
     Sie haben das Ethiktool ordnungsgemäß beendet. Ethiktool-bezogene Formularinhalte wurden aus Ihrem Browser-Cache entfernt. Vielen Dank für die Nutzung des Ethiktools.
+    
+    Wir möchten Sie einladen, an einer <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=de" target="_blank">kurzen anonymen Befragung</a> zur Nutzung des Ethiktools teilzunehmen: <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=de" target="_blank">https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=de</a> - vielen Dank schon vorab!
   
-    Sie möchten das Ethiktool unterstützen? Das Ethiktool wird permanent weiterentwickelt. Daher sind Fehlermitteilungen, Fragen und Anmerkungen stets willkommen; bitte senden Sie dazu eine E-Mail an <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. Bei technischen Problemen mit der aktuellen Version wenden Sie sich bitte an <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
+    Das Ethiktool wird permanent weiterentwickelt. Daher sind Fehlermitteilungen, Fragen und Anmerkungen stets willkommen; bitte senden Sie dazu eine E-Mail an <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. Bei technischen Problemen mit der aktuellen Version wenden Sie sich bitte an <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
   
-    Wenn Sie das Ethiktool für Ihre Forschung verwenden, zitieren Sie gern unsere <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html#publications" target="_blank">Arbeiten</a>.
+    Sie möchten das Ethiktool unterstützen? Wenn Sie das Ethiktool für Ihre Forschung verwenden, zitieren Sie gern unsere <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html#publications" target="_blank">Arbeiten</a>.
   
     Das Ethiktool ist eine gemeinsame Entwicklung eines Projektteams unter Leitung von Prof. Dr. Alexandra Bendixen (Technische Universität Chemnitz) mit Team-Mitgliedern der TU Chemnitz, des Leibniz-Instituts für Psychologie (ZPID) und der Universität Bielefeld. Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
   
@@ -2734,7 +2779,6 @@ aboutUs:
     Dr. <a class="linkExternal" href="https://leibniz-psychology.org/profil-thomas-wegner" target="_blank">Thomas Wegner</a> (Leibniz-Institut für Psychologie (ZPID), Haupt-Softwareentwickler und Ansprechperson für technische Fragen)
     Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/wolfgang.html" target="_blank">Wolfgang Einhäuser-Treyer</a> (TU Chemnitz)
     M.Sc. <a href="https://www.tu-chemnitz.de/physik/SFKS/tinafrenzel.html" target="_blank">Tina Frenzel</a> (TU Chemnitz)
-    Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/inka/index.html" target="_blank">Inka Schmitz</a> (TU Chemnitz)
     Dr. <a class="linkExternal" href="https://leibniz-psychology.org/profil-katarina-blask" target="_blank">Katarina Blask</a> (Leibniz-Institut für Psychologie (ZPID))
     Dr. <a href="https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=22797466" target="_blank">Eva-Maria Berens</a> (Universität Bielefeld)
     
@@ -2762,7 +2806,7 @@ technicalHints:
   text: |
     Damit das Ethiktool ordnungsgemäß läuft, muss Ihr Browser Cookies und Javascript erlauben. Die Cookies dürfen während der Sitzung nicht gelöscht werden. Es ist nicht empfehlenswert, das Ethiktool gleichzeitig in mehr als einem Browser-Tab zu öffnen. Bitte navigieren Sie auch nicht im Browser vor und zurück, sondern innerhalb des Ethiktools („Nächste Seite“/„Vorherige Seite“).
 
-    Zum Ausfüllen der Antragsinhalte beginnen Sie am besten mit „Antragsdaten“ und klicken sich dann jeweils über „Nächste Seite“ Schritt für Schritt durch das Formular. Alternativ können Sie in der linksseitigen Navigationsleiste auch direkt zu bestimmten Bereichen (z.B. Projektdetails) springen.
+    Zum Ausfüllen der Antragsinhalte beginnen Sie am besten mit „Antragsdaten“ und klicken sich dann jeweils über „Nächste Seite“ Schritt für Schritt durch das Formular. Alternativ können Sie in der linksseitigen Navigationsleiste auch direkt zu bestimmten Bereichen (z.B. Projektstruktur) springen.
 
     Auf der rechten Seite sehen Sie eine Vorschau des Antragsdokuments und der Teilnahmedokumente. Sie können die Fragen bzw. Überschriften dort anwählen und darüber ebenfalls zu bestimmten Bereichen im Ethiktool springen. Oberhalb der Vorschau werden Sie auf fehlende oder fehlerhafte Eingaben hingewiesen.
 

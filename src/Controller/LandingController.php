@@ -7,7 +7,7 @@ use App\Form\LandingType;
 use App\Traits\LandingTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class LandingController extends ControllerAbstract
 {
@@ -116,8 +116,8 @@ class LandingController extends ControllerAbstract
                 $isEditRemove = $isRemove || str_contains($submitDummy, self::edit);
                 $name = ''; // name of new element
                 if ($isNewCopy || $isEditRemove) {
-                    // logic: $submitDummy has the form 'key:value\r\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\r\n' (substr call). The split the string by "\r" such that the first element contains "remove:..." (first explode). Then split again by the colon such that the second element contains the indices (second explode). Then split again by the underscore to get the individual indices (third explode). Same for 'edit'.
-                    $indicesString = explode(':', explode("\r", substr($submitDummy, strpos($submitDummy, $isNewCopy ? ($isNew ? self::newElement : self::copy) : ($isRemove ? self::remove : self::edit))))[0])[1];
+                    // logic: $submitDummy has the form 'key:value\n\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\n' (substr call). The split the string by "\n" such that the first element contains "remove:..." (first explode). Then split again by the colon such that the second element contains the indices (second explode). Then split again by the underscore to get the individual indices (third explode). Same for 'edit'.
+                    $indicesString = explode(':', explode("\n", substr($submitDummy, strpos($submitDummy, $isNewCopy ? ($isNew ? self::newElement : self::copy) : ($isRemove ? self::remove : self::edit))))[0])[1];
                     $indices = explode('_', $indicesString);
                     $name = !$isRemove ? $data[($isNewCopy ? self::newElement : self::editName).'_'.(!$isCopy ? $indicesString : implode('_',array_slice($indices,0,count($indices)-1)))] : '';
                 }
@@ -166,7 +166,7 @@ class LandingController extends ControllerAbstract
                         $this->updateNodesByReviewProcess($request,$projectdetailsNode->{self::studyNode}[$newIndices[0]]->{self::groupNode}[$newIndices[1]]->{self::measureTimePointNode}[$newIndices[2]],$this->getCurrentReviewProcess($appNode));
                     }
                 } elseif ($isEditRemove) {
-                    // logic: $submitDummy has the form 'key:value\r\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\r\n' (substr call). The split the string by "\r" such that the first element contains "remove:..." (first explode). Then split again by the colon such that the second element contains the indices (second explode). Then split again by the underscore to get the individual indices (third explode). Same for 'edit'.
+                    // logic: $submitDummy has the form 'key:value\n\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\n' (substr call). The split the string by "\n" such that the first element contains "remove:..." (first explode). Then split again by the colon such that the second element contains the indices (second explode). Then split again by the underscore to get the individual indices (third explode). Same for 'edit'.
                     $editRemoveNode = $projectdetailsNode->{self::studyNode}[intval($indices[0])];
                     $isNotStudy = array_key_exists(1,$indices);
                     try {

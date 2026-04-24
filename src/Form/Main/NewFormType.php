@@ -28,7 +28,7 @@ class NewFormType extends TypeAbstract
         $this->addDummyForms($builder);
     }
 
-    public function mapDataToForms(mixed $viewData, \Traversable $forms){}
+    public function mapDataToForms(mixed $viewData, \Traversable $forms):void{}
 
-    public function mapFormsToData(\Traversable $forms, mixed &$viewData){}
+    public function mapFormsToData(\Traversable $forms, mixed &$viewData):void{}
 }

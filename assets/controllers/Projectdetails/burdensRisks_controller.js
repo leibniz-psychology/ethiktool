@@ -11,7 +11,7 @@ export default class extends Controller {
      * @param event widget that invoked the method
      * */
     setTextInputHint(event) {
-        let params = event.params.textHintParams;
+        let params = event.params;
         if (this.hasTextInputTarget) {
             let visibility = (!getSelected(params['burdens'])[0] || !this.burdensEverydayYesTarget.checked) && !getSelected(params['risks'])[0];
             for (let target of this.textInputTargets) {

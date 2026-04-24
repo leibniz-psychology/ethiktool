@@ -8,7 +8,7 @@ use App\Traits\AppData\AppDataTrait;
 use App\Traits\Main\CompleteFormTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class CompleteFormController extends ControllerAbstract
 {
@@ -114,7 +114,7 @@ class CompleteFormController extends ControllerAbstract
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
         }
-        $tempPrefix = $translationPrefix.'finish.text.';
+        $tempPrefix = $translationPrefix.'finish.text.start';
         return $this->render('Main/completeForm.html.twig',
             $this->setRenderParameters($request,$completeForm,
                 [self::pageTitle => 'completeForm.title',
@@ -128,7 +128,7 @@ class CompleteFormController extends ControllerAbstract
                  'pdf' => $pdf,
                  'names' => $names,
                  'isMultiple' => $isMultiple,
-                 'finishText' => [$this->translateString($tempPrefix.'start'),$this->getFinishEndText($session,true)],
+                 'finishText' => [$this->translateString($tempPrefix),$this->translateString($tempPrefix.'Missing'),$this->getFinishEndText($session,true)],
                   self::isCommitteeBeta => $parameters[self::isCommitteeBeta]],'completeForm',addErrors: false));
     }
 

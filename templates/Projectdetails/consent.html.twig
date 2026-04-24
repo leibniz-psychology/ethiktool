@@ -2,8 +2,8 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set translationPrefix, informationParam, addresseeParamTextHint = 'projectdetails.pages.consent.', {'type': information in ['pre',''] ? 'pre' : 'post'},{'textHintParams': {'addressee': addresseeType}} %}
-    {% set isVoluntaryYesDefined, inputDiv, isTextInput, labelParams = content.voluntaryYesDescription is defined, 'inputDiv', textInput is not same as '', {'addressee': addresseeString, 'participant': participantsString} %}
+    {% set translationPrefix, informationParam, addresseeParamTextHint, consentValue = 'projectdetails.pages.consent.', {'type': information in ['pre',''] ? 'pre' : 'post'},{'textHintParams': {'addressee': addresseeType}}, content.consent.vars.value %}
+    {% set isVoluntaryYesDefined, inputDiv, inputDivConsent, isTextInput, isTextInputTexts, labelParams = content.voluntaryYesDescription is defined, 'inputDiv', 'inputDivConsent', textInput is not same as '', textInputTexts is not same as '', {'addressee': addresseeString, 'participant': participantsString} %}
     <div>
         {# voluntary and consent #}
         {% for type in ['voluntary','consent'] %}
@@ -23,19 +23,25 @@
                     {% endif %}
                     {{ formRender.renderButtons(widget,noHeading|merge({
                         'labelParams': (not isAddresseePart ? labelParams : labelParamsParticipants)|merge({'curAddressee': addressee}),
-                        'stimVisible': {'multi': [[[optionNo]|merge(isNotParticipants ? [type~'Participantsno'] : []),description~'Div']]|merge(isConsent ? [[optionOther,'consent_otherDescription'~addressee]] : (isClosedDependent ? [[['voluntaryyes']|merge(isNotParticipants ? ['voluntaryParticipantsyes'] : []),'voluntaryYesDescriptionDiv']]: []))|merge(addTextInput and not isAddresseePart ? [[[optionNo,type~'notApplicable',optionOther],inputDiv]] : []), 'setOr': true}})) }} {# last merge is only true if addressee is an empty string #}
+                        'stimVisible': {'multi': [[[optionNo]|merge(isNotParticipants ? [type~'Participantsno'] : []),description~'Div']]|merge(isConsent ? [[optionOther,'consent_otherDescription'~addressee]]|merge(isTextInputTexts ? [[optionNo,[],inputDivConsent]] : []) : (isClosedDependent ? [[['voluntaryyes']|merge(isNotParticipants ? ['voluntaryParticipantsyes'] : []),'voluntaryYesDescriptionDiv']]: []))|merge(addTextInput and not isAddresseePart ? [[[optionNo,type~'notApplicable',optionOther],inputDiv]] : []), 'setOr': true}})) }} {# last merge is only true if addressee is an empty string #}
                     {% if isConsent %}
                         <div class="MetaData-Widget" style="width: 20rem; margin-left: 2rem">{{ form_widget(content['otherDescription'~addressee],{'attr': addStyle(boolToDisplay(value is same as 'other'))}) }}</div>
+                        {% if not isAddresseePart and isTextInputTexts %}
+                            <div class="mt-4">{{ formRender.addHint(textInputTexts,{'id': inputDivConsent, 'visible': consentValue is not same as 'no', 'remove': true}) }}</div>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
                 {% if isClosedDependent %}
-                    {{ formRender.addTextfield(content.voluntaryYesDescription,fontNormal|merge({'visibility': anyYes})) }}
+                    {{ formRender.addTextfield(content.voluntaryYesDescription,fontNormal|merge({
+                        'visibility': anyYes,
+                        'hint': typePrefix~'textHintYes',
+                        'textHintParams': informationParam})) }}
                 {% endif %}
                 <div id="{{ type~'DescriptionDiv' }}" style="{{ boolToDisplay(visible) }}">
                     {{ formRender.addTextfield(content[description],addresseeParamTextHint|merge(fontNormal)|merge({'hint': typePrefix~'textHint'})) }}
                 </div>
                 {% if addTextInput %}
-                    <div class="mt-4">{{ formRender.addHint(textInput,{'id': inputDiv, 'visible': content.consent.vars.value in ['no','notApplicable','other'], 'remove': true}) }}</div>
+                    <div class="mt-4">{{ formRender.addHint(textInput,{'id': inputDiv, 'visible': consentValue in ['no','notApplicable','other'], 'remove': true}) }}</div>
                 {% endif %}
             </div>
         {% endfor %}

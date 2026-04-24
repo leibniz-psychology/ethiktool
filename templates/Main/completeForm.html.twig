@@ -45,7 +45,7 @@
             {% if pdf is not same as [] %}
                 <div class="mt-8">
                     {{ formRender.addHeading(titlesPrefix~'pdf') }}
-                    <div class="MetaData-Label">{{ (translationPrefix~'pdf.text')|trans }}</div>
+                    <div class="MetaData-Label">{{ (translationPrefix~'pdf.text')|trans|raw }}</div>
                     {% if pdf.votes is defined %}
                         {{ _self.addPDF(content.votes,completeFormController) }}
                     {% endif %}
@@ -59,10 +59,11 @@
             <div class="mt-8" {% if isLoadFailure %} {{ stimulus_action('base','showModal','load@window',{'target': failureName}) }} {% endif %}>
                 {{ formRender.addHeading(titlesPrefix~'finish') }}
                 <div class="MetaData-Label" {{ stimulus_target(completeFormController,'finishText') }}>{{ finishText[0] }}</div>
+                <div class="MetaData-Label" {{ stimulus_target(completeFormController,'finishTextMissing') }}>{{ finishText[1] }}</div>
                 <button class="Button_primary_act ms-4 mt-2 mb-2" type="button" name="finish" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target(completeFormController,'finish') }} onclick="{{ addTracking('Button','Complete Preparation') }}">{{ formRender.addButtonIcon(finishPrefix~'title','pdf') }}</button>
                 <div class="MetaData-Label" style="margin-left: -1.5rem">
                     {{ formRender.addExpandable(finishPrefix~'text.end.title',{'isTool': 'true'}) }}
-                    <div class="MetaData-Widget mx-4 mt-2 borderLight" style="display: none">{{ finishText[1]|raw }}</div>
+                    <div class="MetaData-Widget mx-4 mt-2 borderLight" style="display: none">{{ finishText[2]|raw }}</div>
                 </div>
             </div>
             {{ include('components/infoModal.html.twig',{'modalID': 'pdfLoad', 'prefix': tempPrefix~'failure.', 'params': {'type': 'pdf'}, 'targetName': 'pdfModal'}) }}

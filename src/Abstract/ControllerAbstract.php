@@ -1322,7 +1322,7 @@ abstract class ControllerAbstract extends AbstractController
                         $isConsentOther = in_array(self::consentOther, [$consentChosen, $tempArray[self::chosen2Node] ?? '']);
                         $tempArray = $consentArray[self::voluntaryNode];
                         $voluntary = [$tempArray[self::chosen], $tempArray[self::chosen2Node] ?? 'yes'];
-                        $isVoluntary = in_array(self::voluntaryNotApplicable, $voluntary) || array_key_exists(self::voluntaryYesDescription, $tempArray);
+                        $isVoluntary = in_array(self::voluntaryConsentNotApplicable, $voluntary) || array_key_exists(self::voluntaryYesDescription, $tempArray);
                         $compensationArray = $measureTimePoint[self::compensationNode];
                         $allShort = $allShort && $compensationArray[self::compensationTypeNode]!=='';
                         $parameters['isVoluntary'] = $this->getStringFromBool($isVoluntary);
@@ -1769,12 +1769,13 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'7';
+        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'8';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
         $isSmaller260 = $isMajor1 || $isMajor2 && $minor<'6';
+        $isSmaller270 = $isMajor1 || $isMajor2 && $minor>'7';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2107,8 +2108,15 @@ abstract class ControllerAbstract extends AbstractController
                             }
                         }
                         // updates for versions before 2.7.0
-                        if ($this->checkElement(self::preComplete,$informationNode) && ((string) $informationNode->{self::preComplete}->{self::chosen})==='0') { // add pre abort node
-                            $this->addChosenNode($informationNode->{self::preComplete},self::preAbort);
+                        if ($isSmaller270) {
+                            if ($this->checkElement(self::preComplete,$informationNode) && ((string) $informationNode->{self::preComplete}->{self::chosen})==='0') { // add pre abort node
+                                $this->addChosenNode($informationNode->{self::preComplete},self::preAbort);
+                            }
+                        }
+                        // updates for versions before 2.8.0
+                        $introNode = $measureTimePointNode->{self::textsNode}->{self::introNode};
+                        if (((string) $consentNode->{self::consent}->{self::chosen})===self::voluntaryConsentNo && ((string) $introNode->{self::introTemplate})==='1') { // no consent and template for intro should be used -> add description node
+                            $introNode->addChild(self::descriptionNode);
                         }
                     } // foreach measure time point
                 } // foreach group
@@ -2160,7 +2168,7 @@ abstract class ControllerAbstract extends AbstractController
                 $minutesNew = ($measureTimesInt[self::durationMeasureTimeMinutes] ?? 0)+$breaks;
                 if ($hours>0 && $minutesNew>=60) { // only split if hours were entered
                     $totalArray[self::durationMeasureTimeHours] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeHours,['time' => $hours+floor($minutesNew/60)]); // translate again in case hours changed from singular to plural
-                    $minutesNew = $minutesNew%60;
+                    $minutesNew %= 60;
                 }
                 if ($minutesNew>0) {
                     $totalArray[self::durationMeasureTimeMinutes] = $this->translateStringPDF($tempPrefix.self::durationMeasureTimeMinutes,['time' => $minutesNew]); // translate again in case minutes changed from singular to plural or vice versa

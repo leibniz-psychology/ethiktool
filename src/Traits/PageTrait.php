@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '2.7.0';
+    protected const toolVersion = '2.8.1';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -23,8 +23,8 @@ trait PageTrait
     protected const committeeParams = 'committeeParams';
     /** @var string name of parameter indicating if current committee type is in beta status. */
     protected const isCommitteeBeta = 'isCommitteeBeta';
-    protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.TUD' => 'TUD', 'newForm.committee.types.UH1' => 'UH1', 'newForm.committee.types.testCommittee' => 'testCommittee'];
-    protected const committeeTypesBeta = ['JGU','DLR','TUD','UH1']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
+    protected const committeeTypes = ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.TUD' => 'TUD', 'newForm.committee.types.UH1' => 'UH1', 'newForm.committee.types.UPB' => 'UPB', 'newForm.committee.types.testCommittee' => 'testCommittee'];
+    protected const committeeTypesBeta = ['JGU','DLR','TUD','UH1','UPB']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
     
     // constant variables
     /** Node name for nodes which indicate the selection of a radio button. */

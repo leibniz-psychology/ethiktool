@@ -12,10 +12,12 @@ class TextsType extends TypeAbstract
     use ProjectdetailsTrait;
 
     private bool $isBurdensRisks;
+    private bool $isNotInformationNoConsent;
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $dummyParams = $options[self::dummyParams];
         $this->isBurdensRisks = $dummyParams['isBurdensRisks'];
+        $this->isNotInformationNoConsent = $dummyParams['isNotInformationNoConsent'];
         $translationPrefix = 'projectdetails.pages.texts.';
         $templateArray = [self::introNode,self::proNode,self::conNode,self::findingTextNode];
         foreach (array_merge([self::introNode,self::goalsNode,self::proNode,self::conNode],$dummyParams['isFinding'] ? [self::findingTextNode] : [],$dummyParams['isConflict'] ? [self::conflictTextNode] : []) as  $type) {
@@ -67,7 +69,7 @@ class TextsType extends TypeAbstract
         // intro and goals
         $tempVal = $forms[self::introTemplate]->getData();
         $tempArray = [self::introTemplate => $tempVal];
-        if (!$tempVal) {
+        if (!$tempVal || !$this->isNotInformationNoConsent) { // if post information without consent, no template can be created
             $tempArray[self::descriptionNode] = $forms[self::introNode]->getData();
         }
         $newData = [self::introNode => $tempArray, self::goalsNode => $forms[self::goalsNode]->getData()];

@@ -127,14 +127,21 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                               other {{children, select,
                                         true  {}
                                         other {Erziehungsberechtigten bzw. gesetzlichen Vertretungspersonen}}}} bei der Erhebung anwesend?
-    voluntary: 'Erfolgt die Teilnahme-Entscheidung freiwillig?'
+    voluntary: >-
+      Erfolgt die Entscheidung zur {isPre, select,
+                                      true  {Teilnahme}
+                                      other {}} {anyPreNo, select,
+                                                  true  {{isPre, select,
+                                                            true  {und Datenverarbeitung}
+                                                            other {Verwendung der Daten}}}
+                                                  other {}} freiwillig?
     voluntarySub: 'Begründung(en):'
     consent: >-
       Wie erfolgt die Einwilligung {isAssent, select,
                                       true  {bzw. Zustimmung}
                                       other {}} in die {isPre, select,
-                                                          true  {Studienteilnahme und}
-                                                          other {}} Datenverarbeitung?
+                                                          true  {Studienteilnahme und Datenverarbeitung}
+                                                          other {Verwendung der Daten}}?
     consentSub: >-
       {isReviewFull, select,
         true  {Begründung für fehlende {anyConsentNo, select,
@@ -182,10 +189,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     feedback: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
     feedbackSub: 'Beschreibung von Art und Rahmung der Rückmeldungen:'
     compensationVoluntary: 'Aufwandsentschädigung'
-    compensationVoluntarySub: >-
-      {isCompensationVoluntary, select,
-        true  {Begründung der Gefährdung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung; sonstige}
-        other {Sonstige}} Erläuterungen zur Aufwandsentschädigung:
+    compensationVoluntarySub: 'SonstigeErläuterungen zur Aufwandsentschädigung:'
     processing: 'Beschreibung der Datenverarbeitung'
     dataReuse: 'Werden die Forschungsdaten nachgenutzt?'
 
@@ -444,7 +448,7 @@ projectdetails:
       {chosen, select,
         yes           {Ja}
         no            {Nein}
-        notApplicable {nicht zutreffend: Die {addressee} werden nicht vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
+        notApplicable {nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
         other         {}}
     voluntaryDescription:
       yes: "• Erläuterung zur Sicherstellung der Freiwilligkeit trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis):\n"
@@ -508,7 +512,14 @@ projectdetails:
                         wards    {gesetzlichen Vertretungspersonen}
                         other    {Teilnehmenden}} können in der Einwilligung auswählen, ob sie über aufgetretene (Zufalls-)Befunde informiert werden möchten. (Mitteilung optional)}
         other   {}}
-  compensationVoluntary: 'Ist die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet?'
+  compensationVoluntary: >-
+    Ist die Freiwilligkeit der {isPreCompensation, select,
+                                  true  {Teilnahme}
+                                  other {}} {anyPreNoCompensation, select,
+                                              true  {{isPreCompensation, select,
+                                                        true  {bzw. der}
+                                                        other {}} Entscheidung zur Verwendung der Daten}
+                                              other {}} durch Art oder Höhe der Aufwandsentschädigung gefährdet?
   dataReuse:
     yes: 'Ja (siehe Abschnitt „Datenschutz und Datennutzung“ der Studieninformation)'
     dataReuse: >- # other selection is personal. other reuseType is used if dataReuse is not asked.
@@ -1051,6 +1062,10 @@ dataPrivacy:
                 Universitätsplatz 1
                 31141 Hildesheim
                 Web: https://www.uni-hildesheim.de}
+          UPB   {Universität Paderborn
+                 Warburger Str. 100
+                 33098 Paderborn
+                 Web: https://www.uni-paderborn.de}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1078,8 +1093,10 @@ dataPrivacy:
                  E-Mail: datenschutz@dlr.de}
           TUD   {Tel.: 0351 463-32839
                  E-Mail: informationssicherheit@tu-dresden.de}
-          UH1   {Tel.: +49 5121-883-10922
+          UH1   {Tel.: 05121-883-10922
                  E-Mail: datenschutz@uni-hildesheim.de}
+          UPB   {Tel.: 05251 / 60–4444
+                 E-Mail: datenschutz@uni-paderborn.de}
           other {Tel.: 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1239,17 +1256,17 @@ dataPrivacy:
         TUC   {Sächsische Datenschutz- und Transparenzbeauftragte
                Postfach 11 01 32
                01330 Dresden
-               Tel.: +49 351 85471-101
+               Tel.: +49 (0)351 85471-101
                E-Mail: post@sdtb.sachsen.de}
         EUB   {Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
                Kavalleriestraße 2-4
                40213 Düsseldorf
-               Tel.: +49 211/384 24-0
+               Tel.: +49 (0)211/384 24-0
                E-Mail: poststelle@ldi.nrw.de}
         JGU   {Landesbeauftragter für den Datenschutz und die Informationsfreiheit Rheinland-Pfalz
                Hintere Bleiche 34
                55116 Mainz
-               Tel.: 06131 8920-0
+               Tel.: +49 (0)6131 8920-0
                E-Mail: poststelle@datenschutz.rlp.de}
         DLR   {Bundesbeauftragte für den Datenschutz und die Informationsfreiheit (BfDI)
                Graurheindorfer Straße 153
@@ -1259,13 +1276,18 @@ dataPrivacy:
         TUD   {Sächsische Datenschutz- und Transparenzbeauftragte
                Postfach 11 01 32
                01330 Dresden
-               Tel.: +49 351 85471-101
+               Tel.: +49 (0)351 85471-101
                E-Mail: post@sdtb.sachsen.de}
         UH1   {Landesbeauftragter für den Datenschutz Niedersachsen
                Prinzenstraße 5
                30159 Hannover
-               Telefon: 0511 120-4500
+               Telefon: +49 (0)511 120-4500
                E-Mail: poststelle@lfd.niedersachsen.de}
+        UPB   {Landesbeauftragte*r für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
+               Kavalleriestraße 2-4
+               40213 Düsseldorf
+               Tel.: +49 (0)211/384 24-0
+               E-Mail: poststelle@ldi.nrw.de}
         other {}}
     textEnd: "\n\nSollten Sie Fragen zur Datenverarbeitung in dieser Studie haben, wenden Sie sich gern an die verantwortlichen Projektbeteiligten (siehe Abschnitt 1)."
 
@@ -1304,6 +1326,7 @@ completePost:
                                                               children {der Daten meines Kindes}
                                                               wards    {der Daten der von mir betreuten Person}
                                                               other    {meiner Daten}} zurück.
+    compensation: 'Ihre Entscheidung hat keine Auswirkung auf die in Aussicht gestellte Aufwandsentschädigung.'
 
 # consent for participation
 consent:
@@ -1597,7 +1620,7 @@ completeForm:
       conflict: 'Interessenkonflikt'
       medicine: 'Medizinbezug'
     information: 'Eine vollständige Vorab-Aufklärung ist gewährleistet.'
-    voluntary: 'Die Freiwilligkeit der Teilnahme ist gewährleistet.'
+    voluntary: 'Die Entscheidung über die Teilnahme bzw. Verwendung der Daten ist freiwillig.'
     terminateCons: 'Die Teilnahme kann jederzeit ohne Nachteile beendet werden.'
     examinedPeople: 'An der Studie nehmen Personen teil, die in Bezug auf den Forschungsgegenstand einer vulnerablen Gruppe angehören.'
     wards:  'An der Studie nehmen nur Personen teil, die selbst ihre Einwilligung geben können.'
@@ -1628,3 +1651,4 @@ logo:
   DLR: 'Logo des Deutschen Zentrums für Luft- und Raumfahrt'
   TUD: 'Logo der Technischen Universität Dresden'
   UH1: 'Logo der Universität Hildesheim'
+  UPB: 'Logo der Universität Paderborn'

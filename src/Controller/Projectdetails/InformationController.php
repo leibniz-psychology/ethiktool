@@ -7,7 +7,7 @@ use App\Form\Projectdetails\InformationType;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class InformationController extends ControllerAbstract
 {
@@ -54,25 +54,24 @@ class InformationController extends ControllerAbstract
             }
             // legal
             $textInputPre = $this->getLegalInput($inputArray,$measureArray);
-            // post
-            $inputArray = $this->setInputArray();
             // texts
             $textsArray = $measureArray[self::textsNode];
             $conArray = $textsArray[self::conNode] ?? null; // can only be null if tempArray is an empty string
             $findingConsentArray = $textsArray[self::findingTextNode] ?? [];
             $isConflict = $textsArray!=='' && array_key_exists(self::conflictTextNode,$textsArray);
-            if ($textsArray!=='' &&
-                ($this->checkInput($textsArray[self::introNode],[self::introTemplate => '', self::descriptionNode => '']) ||
-                 $this->checkInput($textsArray,[self::goalsNode => '']) ||
-                 $this->checkInput($textsArray[self::proNode],[self::proTemplate => '', self::descriptionNode => '']) ||
-                 $this->checkInput($conArray,array_fill_keys(array_keys($conArray),'')) ||
-                 $findingConsentArray!==[] && $this->checkInput($findingConsentArray,array_fill_keys(array_keys($findingConsentArray),'')) ||
-                 $isConflict && $this->checkInput($textsArray, [self::conflictTextNode => ''])
-                )
-               ) {
-                $this->addInputPage($translationPrefix,self::textsNode,$inputArray,['isFinding' => $this->getStringFromBool($isFinding), 'isConflict' => $this->getStringFromBool($isConflict)]);
+            if ($textsArray!=='') {
+                // post
+                $inputArray = $this->setInputArray();
+                if ($this->checkInput($textsArray[self::introNode],[self::introTemplate => '', self::descriptionNode => '']) ||
+                    $this->checkInput($textsArray,[self::goalsNode => '']) ||
+                    $this->checkInput($textsArray[self::proNode],[self::proTemplate => '', self::descriptionNode => '']) ||
+                    $this->checkInput($conArray,array_fill_keys(array_keys($conArray),'')) ||
+                    $findingConsentArray!==[] && $this->checkInput($findingConsentArray,array_fill_keys(array_keys($findingConsentArray),'')) ||
+                    $isConflict && $this->checkInput($textsArray, [self::conflictTextNode => ''])) {
+                    $this->addInputPage($translationPrefix,self::textsNode,$inputArray,['isFinding' => $this->getStringFromBool($isFinding), 'isConflict' => $this->getStringFromBool($isConflict)]);
+                }
+                $textInputPost = $this->setInputHint($inputArray);
             }
-            $textInputPost = $this->setInputHint($inputArray);
         }
 
         $information = $this->createFormAndHandleRequest(InformationType::class,$this->xmlToArray($informationNode),$request,
@@ -100,7 +99,7 @@ class InformationController extends ControllerAbstract
                 $consentNode = $measureNodeNew->{self::consentNode};
                 $textsNode = $measureNodeNew->{self::textsNode};
                 $legalNode = $measureNodeNew->{self::legalNode};
-                if ($isPreOld && !$isPre) { // pre information and now no pre information -> remove terminateConsParticipation and legal nodes
+                if ($isPreOld && !$isPre) { // pre information and now no pre information -> remove terminateConsParticipation and legal nodes and eventually add description node for intro
                     $this->removeElement(self::terminateConsParticipationNode,$consentNode);
                     $this->removeAllChildNodes($legalNode);
                 }

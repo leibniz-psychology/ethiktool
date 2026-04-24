@@ -5,7 +5,7 @@ namespace App\Controller\Main;
 use App\Abstract\ControllerAbstract;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class QuitController extends ControllerAbstract
 {

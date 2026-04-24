@@ -54,8 +54,7 @@ class CompensationType extends TypeAbstract
         $tempPrefix = $translationPrefix.self::terminateNode.'.';
         $this->addRadioGroup($builder,self::terminateNode,$this->translateArray($tempPrefix.'types.',array_merge(self::terminateTypes,[self::terminateNothing,self::terminateOther])),$tempPrefix.'title',self::terminateNode.self::descriptionCap);
         // compensation voluntary
-        $tempPrefix = $translationPrefix.self::compensationVoluntaryNode.'.';
-        $this->addBinaryRadio($builder,self::compensationVoluntaryNode,$tempPrefix.'title',self::compensationVoluntaryNode.self::descriptionCap,$tempPrefix.self::textHint);
+        $this->addBinaryRadio($builder,self::compensationVoluntaryNode,$translationPrefix.self::compensationVoluntaryNode.'.title',self::compensationVoluntaryNode.self::descriptionCap,options: [self::labelParams => ['isNotPre' => $this->getStringFromBool(!in_array($options[self::informationNode],['',self::pre]))]]);
         // further description
         $this->addFormElement($builder,self::compensationTextNode,'textarea',hint: $translationPrefix.self::compensationTextNode.'.'.self::textHint);
         // dummy forms

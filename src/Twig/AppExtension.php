@@ -10,16 +10,16 @@ class AppExtension extends AbstractExtension
 {
     public function getFunctions(): array
     {
-        return [new TwigFunction('boolToDisplay',[$this,'boolToDisplay']),
-                new TwigFunction('boolToString',[$this,'boolToString']),
-                new TwigFunction('addDisableTarget',[$this,'addDisableTarget']),
-                new TwigFunction('addTargetArray',[$this,'addTargetArray']),
-                new TwigFunction('addTarget',[$this,'addTarget']),
-                new TwigFunction('addLabelAttributes',[$this,'addLabelAttributes']),
-                new TwigFunction('addClass',[$this,'addClass']),
-                new TwigFunction('addStyle',[$this,'addStyle']),
-                new TwigFunction('getAnySelected',[$this,'getAnySelected']),
-                new TwigFunction('addTracking',[$this,'addTracking']),];
+        return [new TwigFunction('boolToDisplay',$this->boolToDisplay(...)),
+                new TwigFunction('boolToString',$this->boolToString(...)),
+                new TwigFunction('addDisableTarget',$this->addDisableTarget(...)),
+                new TwigFunction('addTargetArray',$this->addTargetArray(...)),
+                new TwigFunction('addTarget',$this->addTarget(...)),
+                new TwigFunction('addLabelAttributes',$this->addLabelAttributes(...)),
+                new TwigFunction('addClass',$this->addClass(...)),
+                new TwigFunction('addStyle',$this->addStyle(...)),
+                new TwigFunction('getAnySelected',$this->getAnySelected(...)),
+                new TwigFunction('addTracking',$this->addTracking(...)),];
     }
 
     /** Returns the display value for a tag.
