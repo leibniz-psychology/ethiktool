@@ -6,7 +6,7 @@
         <meta charset="UTF-8">
         <title>PDF</title>
     </head>
-    <div class="pdfDocument {% if isCommitteeBeta and savePDF %} demo demo_{{ locale }} {% endif %}">
+    <div class="{{ 'pdfDocument'~(savePDF and isNotParticipation is not defined ? 'Margin')}} {% if savePDF and isCommitteeBeta %} demo demo_{{ locale }} {% endif %}">
         {% block pdfBody %}{% endblock %}
     </div>
 </html>

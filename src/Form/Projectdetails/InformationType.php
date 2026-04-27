@@ -92,11 +92,9 @@ class InformationType extends TypeAbstract
         $isPre = $pre===0;
         $isPost = false;
         $newData = [self::pre => $pre];
-        $informationType = ''; // type of pre/post information
         if ($isPre) { // pre information
             if (array_key_exists(self::preType,$forms)) {
-                $informationType = $forms[self::preType]->getData();
-                $newData[self::preType] = $informationType; // type of pre information
+                $newData[self::preType] = $forms[self::preType]->getData(); // type of pre information
             }
             // pre content
             $tempVal = $forms[self::preContent]->getData();
@@ -119,11 +117,7 @@ class InformationType extends TypeAbstract
             $tempArray = [self::chosen => $tempVal];
             $isPost = $tempVal===0;
             if ($tempVal!==null) {
-                $tempVal = $forms[$isPost ? self::postType : self::postText]->getData();
-                $tempArray[self::descriptionNode] = $tempVal; // type of post information or description
-                if ($isPost) {
-                    $informationType = $tempVal;
-                }
+                $tempArray[self::descriptionNode] = $forms[$isPost ? self::postType : self::postText]->getData(); // type of post information or description
             }
             $newData[self::post] = $tempArray;
         }
@@ -132,7 +126,7 @@ class InformationType extends TypeAbstract
             $newData[self::attendanceNode] = $forms[self::attendanceNode]->getData();
         }
         // document translation
-        if (array_key_exists(self::documentTranslationNode,$forms) && $informationType!==self::informationOral && ($isPre || $isPost)) {
+        if (array_key_exists(self::documentTranslationNode,$forms) && ($isPre || $isPost)) {
             $newData[self::documentTranslationNode] = $this->getChosenArray($forms,self::documentTranslationNode,0,[self::descriptionNode => self::documentTranslationNode.self::descriptionCap]);
             if ($newData[self::documentTranslationNode][self::chosen]===0 && array_key_exists(self::documentTranslationPDF,$forms) && $forms[self::documentTranslationPDF]->getData()) {
                 $newData[self::documentTranslationPDF] = '';

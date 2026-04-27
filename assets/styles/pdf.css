@@ -45,6 +45,14 @@ li { /* needed for hints in complete form */
     color: #dddddd;
 }
 
+.pdfDocumentMargin {
+    font-family: montserrat-regular, sans-serif;
+    padding-right: 0.1em;
+    page-break-after: always;
+    margin-left: 2cm;
+    margin-right: 2cm;
+}
+
 .pdfDocument {
     font-family: montserrat-regular, sans-serif;
     padding-right: 0.1em;
@@ -77,7 +85,6 @@ li { /* needed for hints in complete form */
 }
 
 .markInput { /* must equal the attributes in app.scss */
-    font-style: italic;
     color: #028702;
 }
 

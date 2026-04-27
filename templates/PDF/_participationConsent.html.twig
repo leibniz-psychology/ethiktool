@@ -5,46 +5,44 @@
 {% block pdfBody %}
     {% set textPreview = not savePDF ? 'previewSmall' %}
     {% set justify = 'textJustify '~textPreview %}
-    <div>
-        {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
-        <div class="noPageBreak {% if not isSeparate %} pdfMargin {% endif %}">  {# avoid page break between heading and first paragraph #}
-            <div>{{ pdfMacros.addHeading(consentHeading,savePDF) }}</div>
-            <div class="{{ justify }}">{{ consent[0]|raw|nl2br }}</div>
-        </div>
-        {% for paragraph in consent|slice(1) %}
-            <div class="{{ justify}}">{{ paragraph|raw|nl2br }}</div>
-        {% endfor %}
-        <div class="noPageBreak">
-            <div class="{{ justify}}" style="margin-bottom: 2em; font-weight: bold">{{ 'consent.confirm'|trans({'addressee': addressee, 'information': information, 'isPersonal': isPersonal}) }}</div>
-            {% if optionalConsent is not same as [] %}
-                {% set classes = 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : '') %}
-                <div class="{{ textPreview }}" style="page-break-inside: avoid">
-                    <div style="margin-bottom: 1rem; font-weight: bold">{{ 'consent.optionalHeading'|trans }}</div>
-                    {% for text in optionalConsent %}
-                        <table style="margin-bottom: 2em">
-                            <tr><td class="{{ justify }}" colspan="5">{{ text }}</td></tr>
-                            <tr>
-                                {% for answer in [yesTrans,noTrans] %}
-                                    <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5em; margin-right: 0.375em"></div></td>
-                                    <td style="width: 1px; padding-right: 1em">{{ answer }}</td>
-                                {% endfor %}
-                                <td></td>
-                            </tr>
-                        </table>
-                    {% endfor %}
-                </div>
-            {% endif %}
-            {% if consentType in ['digital','oral'] %}
-                <div class="{{ justify}}">{{ ('consent.'~consentType)|trans }}</div>
-            {% else %}
-                <div style="page-break-inside: avoid">
-                    {{ pdfMacros.addSignature(savePDF,addressee,true) }}
-                </div>
-            {% endif %}
-            <b class="{{ textPreview }}" style="display: flex; justify-content: center; margin-top: 50px">{{ 'consent.end'|trans }}</b>
-        </div>
-        {% if not savePDF %}
-            {{ pdfMacros.addLine() }}
-        {% endif %}
+    {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
+    <div class="noPageBreak {% if not isSeparate %} pdfMargin {% endif %}">  {# avoid page break between heading and first paragraph #}
+        <div>{{ pdfMacros.addHeading(consentHeading,savePDF) }}</div>
+        <div class="{{ justify }}">{{ consent[0]|raw|nl2br }}</div>
     </div>
+    {% for paragraph in consent|slice(1) %}
+        <div class="{{ justify}}">{{ paragraph|raw|nl2br }}</div>
+    {% endfor %}
+    <div class="noPageBreak">
+        <div class="{{ justify}}" style="margin-bottom: 2em; font-weight: bold">{{ 'consent.confirm'|trans({'addressee': addressee, 'information': information, 'isPersonal': isPersonal}) }}</div>
+        {% if optionalConsent is not same as [] %}
+            {% set classes = 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : '') %}
+            <div class="{{ textPreview }}" style="page-break-inside: avoid">
+                <div style="margin-bottom: 1rem; font-weight: bold">{{ 'consent.optionalHeading'|trans }}</div>
+                {% for text in optionalConsent %}
+                    <table style="margin-bottom: 2em">
+                        <tr><td class="{{ justify }}" colspan="5">{{ text }}</td></tr>
+                        <tr>
+                            {% for answer in [yesTrans,noTrans] %}
+                                <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5em; margin-right: 0.375em"></div></td>
+                                <td style="width: 1px; padding-right: 1em">{{ answer }}</td>
+                            {% endfor %}
+                            <td></td>
+                        </tr>
+                    </table>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if consentType in ['digital','oral'] %}
+            <div class="{{ justify}}">{{ ('consent.'~consentType)|trans }}</div>
+        {% else %}
+            <div style="page-break-inside: avoid">
+                {{ pdfMacros.addSignature(savePDF,addressee,true) }}
+            </div>
+        {% endif %}
+        <b class="{{ textPreview }}" style="display: flex; justify-content: center; margin-top: 50px">{{ 'consent.end'|trans }}</b>
+    </div>
+    {% if not savePDF %}
+        {{ pdfMacros.addLine() }}
+    {% endif %}
 {% endblock %}

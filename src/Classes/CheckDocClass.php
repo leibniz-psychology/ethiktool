@@ -694,15 +694,6 @@ class CheckDocClass extends ControllerAbstract
         $pageArray = $this->measure[self::groupsNode];
         // age
         $this->checkMissingContent($pageArray,[self::minAge => $translationPage.'minAge',self::maxAge => $translationPage.'maxAge']);
-        $minAge = $this->getIntFromString($pageArray[self::minAge],101);
-        $maxAge = $this->getIntFromString($pageArray[self::maxAge],101);
-        $isMaxAge = $maxAge!==101; // if upper limit of minAge or maxAge is changed in groups template, it maybe has to be changed here, too
-        if ($minAge<16 && $isMaxAge && $maxAge>17) {
-            $this->addCheckLabelString($translationPage.'minAgeWards');
-        }
-        if ($maxAge>-1 && $minAge<101 && $isMaxAge && $minAge>$maxAge) {
-            $this->addCheckLabelString($translationPage.'maxGreaterMin');
-        }
         // examined people
         $isExamined = $this->checkMissingChildrenOther($pageArray, self::examinedPeopleNode, $translationPage.self::examinedPeopleNode);
         if ($isExamined) { // at least one group is selected

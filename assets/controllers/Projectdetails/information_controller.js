@@ -3,7 +3,7 @@ import {setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['preTypeOral','preNo','preText','preComplete','preCompleteType','preCompleteText','preAbort','postYes','postTypeOral','postText','documentTranslation'];
+    static targets = ['preNo','preText','preComplete','preCompleteType','preCompleteText','preAbort','postYes','postText','documentTranslation'];
 
     static values = {
         pre: String,
@@ -88,7 +88,7 @@ export default class extends Controller {
     /** Sets the visibility of the document translation question. */
     setDocumentTranslation() {
         if (this.hasDocumentTranslationTarget) {
-            setElementVisibility(this.documentTranslationTarget,this.preValue==='0' && !this.preTypeOralTarget.checked || this.getPost() && !this.postTypeOralTarget.checked);
+            setElementVisibility(this.documentTranslationTarget,this.preValue==='0' || this.getPost());
         }
     }
 

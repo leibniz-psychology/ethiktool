@@ -462,13 +462,13 @@ class ApplicationController extends PDFAbstract
                         $minAge = $groupsArray[self::minAge];
                         $maxAge = $groupsArray[self::maxAge];
                         $examinedArray = $groupsArray[self::examinedPeopleNode];
-                        $isSmaller16 = $minAge!=='' && $minAge<16;
-                        if ($isSmaller16) {
-                            unset($examinedArray[self::wardsExaminedNode]); // if min age is below 16, wards is selected automatically
+                        $isSmaller14 = $minAge!=='' && $minAge<14;
+                        if ($isSmaller14) {
+                            unset($examinedArray[self::wardsExaminedNode]); // if min age is below 14, wards is selected automatically
                         }
                         $tempArray = $this->getSelectedCheckboxes($examinedArray, $examinedPrefix.'types.', false);
                         $numSelected = count($tempArray);
-                        $this->addBoxContent(self::examinedPeopleNode, implode(', ', $tempArray).$this->translateStringPDF($examinedPrefix.'title', ['number' => $numSelected, 'limits' => $maxAge==='-1' ? 'noUpperLimit' : ($minAge===$maxAge ? 'sameLimit' : 'other'), self::minAge => $minAge, self::maxAge => $maxAge, 'isWardsOnly' => $this->getStringFromBool($isSmaller16 && $numSelected===0), 'isWardsAge' => $this->getStringFromBool($isSmaller16)]), $groupsArray[self::peopleDescription] ?? '', paragraph: self::examinedPeopleNode,fragment: $this->addDiv(self::examinedPeopleNode));
+                        $this->addBoxContent(self::examinedPeopleNode, implode(', ', $tempArray).$this->translateStringPDF($examinedPrefix.'title', ['number' => $numSelected, 'limits' => $maxAge==='-1' ? 'noUpperLimit' : ($minAge===$maxAge ? 'sameLimit' : 'other'), self::minAge => $minAge, self::maxAge => $maxAge, 'isWardsOnly' => $this->getStringFromBool($isSmaller14 && $numSelected===0), 'isWardsAge' => $this->getStringFromBool($isSmaller14)]), $groupsArray[self::peopleDescription] ?? '', paragraph: self::examinedPeopleNode,fragment: $this->addDiv(self::examinedPeopleNode));
                         // closed (groups)
                         $tempArray = $groupsArray[self::closedNode];
                         $closedTypes = $tempArray[self::closedTypesNode] ?? [];
@@ -835,7 +835,8 @@ class ApplicationController extends PDFAbstract
                     'levelNames' => $names,
                     'levelHeading' => $levelHeading,
                     'boxContent' => $this->content,
-                    'savePDF' => self::$savePDF]);
+                    'savePDF' => self::$savePDF,
+                    'isNotParticipation' => true]);
             $html = $this->renderView('PDF/_application.html.twig', $renderParameters);
             $htmlWithVotes = $html;
             if (self::$savePDF && self::$isCompleteForm) {

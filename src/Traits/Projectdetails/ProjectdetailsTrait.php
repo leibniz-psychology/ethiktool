@@ -376,7 +376,7 @@ trait ProjectdetailsTrait
         $examined = $groups[self::examinedPeopleNode];
         $isWards = $examined!=='' && array_key_exists(self::wardsExaminedNode,$examined);
         $maxAge = $this->getIntFromString($groups[self::maxAge],101); // if upper limit of minAge or maxAge is changed in groups template, it maybe has to be changed here, too
-        return ($this->getIntFromString($groups[self::minAge],101)<16 || ($maxAge>=0 && $maxAge<18 && $isWards)) ? self::addresseeChildren : ($isWards ? self::addresseeWards : self::addresseeParticipants);
+        return ($this->getIntFromString($groups[self::minAge],101)<14 || ($maxAge>=0 && $maxAge<18 && $isWards)) ? self::addresseeChildren : ($isWards ? self::addresseeWards : self::addresseeParticipants);
     }
 
     /** Returns the translated string for the addressee.

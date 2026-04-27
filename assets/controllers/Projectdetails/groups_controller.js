@@ -49,7 +49,7 @@ export default class extends Controller {
         let isUnlimited = this.unlimitedTarget.checked;
         let isHealthy = this.healthyTarget.checked;
         let isWards = this.wardsTarget.checked;
-        let isUnder16 = isMinAge && minAge<16;
+        let isUnder14 = isMinAge && minAge<14;
         // set age
         if (isHealthy && isWards) { // healthy and wards can both be checked only if both ages are below 18
             if (isMinAge && minAge>17) {
@@ -59,7 +59,7 @@ export default class extends Controller {
                 maxAge = 17;
             }
         }
-        if (isUnder16) {
+        if (isUnder14) {
             this.unlimitedTarget.checked = false;
             isUnlimited = false;
             maxAge = isMax18 ? 17 : maxAge;
@@ -73,14 +73,14 @@ export default class extends Controller {
         }
         this.minAgeTarget.value = minAge;
         this.maxAgeTarget.value = maxAge;
-        isWards = isWards || isUnder16;
+        isWards = isWards || isUnder14;
         this.wardsTarget.checked = isWards;
         // enable/disable widgets
         this.maxAgeTarget.disabled = isUnlimited;
-        this.unlimitedTarget.disabled = isUnder16 || isHealthy && isWards;
-        let healthyWards = !isUnder16 && (isMaxAge && maxAge>17 || isUnlimited);
+        this.unlimitedTarget.disabled = isUnder14 || isHealthy && isWards;
+        let healthyWards = !isUnder14 && (isMaxAge && maxAge>17 || isUnlimited);
         this.healthyTarget.disabled = isWards && healthyWards;
-        if (isUnder16) {
+        if (isUnder14) {
             this.wardsTarget.addEventListener('click',this.preventEvent);
         } else {
             this.wardsTarget.removeEventListener('click',this.preventEvent);
@@ -98,7 +98,7 @@ export default class extends Controller {
         if (this.hasCriteriaHintTarget) {
             let addressee = 0; // participants
             if (isWards) {
-                if (isUnder16 || isMaxAge && maxAge<18 && !isUnlimited) {
+                if (isUnder14 || isMaxAge && maxAge<18 && !isUnlimited) {
                     addressee = 1; // children
                 } else {
                     addressee = 2; // wards

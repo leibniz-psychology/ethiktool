@@ -78,7 +78,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     physician: 'Sind Ärztinnen oder Ärzte unter den Projektbeteiligten?'
     physicianSub: 'Warum ist aus Ihrer Sicht trotz der ärztlichen Beteiligung {committeeNom} zuständig?'
   summary: 'Zusammenfassung des Forschungsprojekts'
-    
+
   projectdetails:
     hint: >-
       Die Eingaben zu diesem Feld {noBox, select,
@@ -176,7 +176,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     risksSub: 'Beschreibung der Risiken:'
     risksCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     burdensRisksContributors: 'Werden die Projektbeteiligten oder unbeteiligte Dritte Belastungen bzw. Risiken ausgesetzt, die über das im Alltag zu erwartende Maß hinausgehen?'
-    burdensRisksContributorsSub: 'Beschreibung der Belastungen bzw. Risiken' 
+    burdensRisksContributorsSub: 'Beschreibung der Belastungen bzw. Risiken'
     burdensRisksContributorsCompensation: 'Sind bezogen auf die in dem vorherigen Feld genannten Belastungen bzw. Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     burdensRisksDescription: >- # if both questions are not answered yet, both will be named
       Die {burdens, select,
@@ -436,7 +436,7 @@ projectdetails:
                     writtenOral {schriftlich mit mündlicher Erläuterung}
                     oral        {mündlich}
                     other       {{description}}}
-    documentTranslation: 'Die Teilnahmedokumente werden in leichte bzw. einfache Sprache und/oder eine Fremdsprache übersetzt, und zwar: {description}.'
+    documentTranslation: 'Der Wortlaut der Teilnahmedokumente wird in leichte bzw. einfache Sprache und/oder eine Fremdsprache übersetzt, und zwar: {description}.'
     preContent: >-
       {chosen, select,
         complete {Die {addressee} werden vollständig aufgeklärt.}
@@ -454,15 +454,15 @@ projectdetails:
       yes: "• Erläuterung zur Sicherstellung der Freiwilligkeit trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis):\n"
       no: "• Begründung, inwiefern die Freiwilligkeit nicht garantiert ist:\n"
     consent: >-
-       {chosen, select,
-        written       {schriftlich}
-        digital       {elektronisch}
-        oral          {mündlich mit schriftlicher Dokumentation seitens einer projektbeteiligten Person}
-        no            {Es erfolgt keine {addresseeType, select,
-                                          participants {Einwilligung}
-                                          other        {Zustimmung}}.}
-        notApplicable {nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
-        other         {auf folgende Art: {otherDescription}}}
+      {chosen, select,
+       written       {schriftlich}
+       digital       {elektronisch}
+       oral          {mündlich mit schriftlicher Dokumentation seitens einer projektbeteiligten Person}
+       no            {Es erfolgt keine {addresseeType, select,
+                                         participants {Einwilligung}
+                                         other        {Zustimmung}}.}
+       notApplicable {nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
+       other         {auf folgende Art: {otherDescription}}}
   measures:
     measuresTypes:
       measuresObservation: 'Beobachtung des Verhaltens der Teilnehmenden durch eine projektbeteiligte Person'
@@ -527,10 +527,10 @@ projectdetails:
              anonymous  {anonyme Forschungsdaten}
              anonymized {Forschungsdaten in anonymisierter Form}
              other      {personenbezogene Forschungsdaten}} werden {reuseType, select,
-                            class0 {öffentlich zugänglich gemacht. Dies erfolgt unter Nutzung von {description}.}
-                            class1 {Dritten unter Standardbedingungen, wie z.B. Bestätigung ausschließlich wissenschaftlicher Nutzung, zugänglich gemacht. Dies erfolgt unter Nutzung von {description}.}
-                            class2 {Dritten über individualisierte Nutzungsverträge zugänglich gemacht. Dies erfolgt unter Nutzung von {description}.}
-                            class3 {Dritten nur unter datenschutzrechtlich gebotenen Einschränkungen (z.B. online über einen entsprechend abgesicherten Kanal oder vor Ort in einem Forschungsdatenzentrum) im Rahmen eines individuellen Vertrags zugänglich gemacht. Dies erfolgt unter Nutzung von {description}.}
+                            class0 {öffentlich zugänglich gemacht. Dies erfolgt unter Nutzung {description}.}
+                            class1 {Dritten unter Standardbedingungen, wie z.B. Bestätigung ausschließlich wissenschaftlicher Nutzung, zugänglich gemacht. Dies erfolgt unter Nutzung {description}.}
+                            class2 {Dritten über individualisierte Nutzungsverträge zugänglich gemacht. Dies erfolgt unter Nutzung {description}.}
+                            class3 {Dritten nur unter datenschutzrechtlich gebotenen Einschränkungen (z.B. online über einen entsprechend abgesicherten Kanal oder vor Ort in einem Forschungsdatenzentrum) im Rahmen eines individuellen Vertrags zugänglich gemacht. Dies erfolgt unter Nutzung {description}.}
                             other  {anderen zur Nachnutzung zur Verfügung gestellt.}}
     dataReuseSelf: 'Ja, aber nur für die eigene Nachnutzung. Anderen werden die Forschungsdaten nicht zugänglich gemacht.'
     no: 'Nein, die Daten werden weder selbst nachgenutzt noch anderen für die Nachnutzung zugänglich gemacht.'
@@ -1070,7 +1070,7 @@ dataPrivacy:
                  Teststraße 123
                  D-12345 Teststadt
                  Web: https://www.test-institution.de}}
-  # added empty line to have same line numbers in all translation files.
+    # added empty line to have same line numbers in all translation files.
     infos:
       name: 'Name: '
       eMail: 'E-Mail: '
@@ -1245,7 +1245,7 @@ dataPrivacy:
       • das Recht auf Datenübertragung der personenbezogenen Daten (Art. 20 DS-GVO).
 
       Sie können diese Rechte wahrnehmen, indem Sie sich an die verantwortlichen Projektbeteiligten (siehe Abschnitt 1) wenden. Bitte beachten Sie, dass die Ausübung der zuvor genannten Rechte nur bis zum Zeitpunkt der Anonymisierung bzw. Löschung (siehe Abschnitt 5) möglich ist. 
-
+      
       
       Sonstige Einwände und mögliche Beschwerden können Sie auch an die in Abschnitt 1 genannten Datenschutzbeauftragten {committeeLocationGen} richten.
 
@@ -1337,12 +1337,12 @@ consent:
                                                                                 other    {Teilnehmenden}} erstellt, da {savePDF, select,
                     true  {{consent, select,
                              no    {keine Einwilligung erfolgt (vgl. Feld 28 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
-                             other {die Einwilligung auf eine andere Art ({description}) erfolgt (vgl. Feld {isFull, select,
+                             other {die Einwilligung auf eine andere Art ({descriptionOther}) erfolgt (vgl. Feld {isFull, select,
                                                                                                               true  {28}
                                                                                                               other {16}} des Antragsformulars).}}}
                     other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">{consent, select,
                          no    {keine Einwilligung</a> erfolgt (vgl. Feld 28 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}}
-                         other {die Einwilligung auf eine andere Art</a> ({description}) erfolgt (vgl. Feld {isFull, select,
+                         other {die Einwilligung auf eine andere Art</a> ({descriptionOther}) erfolgt (vgl. Feld {isFull, select,
                                                                                                               true  {28}
                                                                                                               other {16}} des Antragsformulars).}}}}
   title: >-
@@ -1357,7 +1357,7 @@ consent:
           other {}} {informationType, select,
                       oral  {erhalten}
                       other {gelesen}} und verstanden. Ich bin ausreichend informiert worden und hatte die Möglichkeit, Fragen zu stellen.
-      
+    
     Mir ist bewusst, dass {information, select,
                             post  {die Zustimmung zur Verwendung {addressee, select,
                                                          children {der Daten meines Kindes freiwillig ist und dass weder meinem Kind noch mir bei einer Nicht-Einwilligung Nachteile entstehen.}

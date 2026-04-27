@@ -10,9 +10,9 @@ multiple:
     loadSuccess: # info modal if an xml-file was successfully loaded without being updated
       title: 'XML file loaded'
       text: >-
-          The XML file of the ethics application was loaded successfully. {isMain, select,
-                                          true  {}
-                                          other {You were re-directed to the main page.}} You can now continue editing the application.
+        The XML file of the ethics application was loaded successfully. {isMain, select,
+                                        true  {}
+                                        other {You were re-directed to the main page.}} You can now continue editing the application.
       content: >- # for loaded versions smaller than 2.0.0
         The XML file of the ethics application was loaded successfully. {isMain, select,
                                         true  {}
@@ -146,11 +146,11 @@ dateFormat: >-
          other { H:i:s}}
 
 header: # alternative texts for logos
-    ZPID: 'Website of ZPID'
-    TUC: 'Website of Chemnitz University of Technology'
-    update:
-      before: 'Weekly maintenance of the Ethiktool is about to take place (on Mondays at around 8 am). Please save your ethics proposal and resume later.'
-      during: 'Weekly maintenance of the Ethiktool is ongoing. Please resume working on your ethics proposal at about 8:30 am.'
+  ZPID: 'Website of ZPID'
+  TUC: 'Website of Chemnitz University of Technology'
+  update:
+    before: 'Weekly maintenance of the Ethiktool is about to take place (on Mondays at around 8 am). Please save your ethics proposal and resume later.'
+    during: 'Weekly maintenance of the Ethiktool is ongoing. Please resume working on your ethics proposal at about 8:30 am.'
 
 committee:
   committeeNom: >-
@@ -284,7 +284,7 @@ pages:
     informationIII: 'Debriefing'
     informationIIISidebar: 'Debriefing'
     legal: 'Legal aspects'
-    dataPrivacy: 'Data privacy' 
+    dataPrivacy: 'Data privacy'
     dataReuse: 'Data re-use'
     contributor: 'Contributors'
   checkDoc:
@@ -356,29 +356,29 @@ main:
              The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review. Further information on the procedure for retrospective assessments can be found <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/faq/index.xml" target="_blank">here</a>.
     
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee.
-              
+    
              Research projects involving physicians as project contributors usually have to be evaluated by a medical ethics committee. In individual cases a review by the non-medical Bielefeld University Ethics Review Board may be possible. Further information can be found <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">here</a>.}
       JGU   {All members of the Department of Psychology of Johannes Gutenberg University Mainz are eligible to apply. The eligibility to apply extends to researchers who are preparing an application for their own position (e.g., with the DFG) in a project to be conducted at the Department of Psychology of JGU Mainz; in this case, a brief statement by the leader of the lab in whose group the project shall be conducted must be submitted with the ethics application.
-             
+    
              The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible.
     
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. (For further specifications, see <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
       DLR   {Any person working at the German Aerospace Center (DLR) is eligible to apply; this also includes students with an employment contract at the DLR. Students without an employment contract must discuss with a scientific contributor to their project working at the DLR whether this person applies for ethics approval at the DLR or whether the ethics committee of the student's home university is responsible.
-             
+    
              The ethics proposal should be submitted <i>before</i> the start of a research project. Retrospective review is possible only in justified exceptional cases. In such cases, please contact the Research Ethics Office of the German Aerospace Center and ask whether authorisation for retrospective review can be granted.
-             
+    
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. The same applies to research projects involving physicians as project contributors.}
       TUD   {Eligibility criteria for applying to the Ethics Board of Dresden University of Technology After will be announced here after the official resolution on the Board's establishment.
-      
+    
              Furthermore, the dinstinction between proposals to the Ethics Board and proposals to the Ethics Committee of TU Dresden (for medical research) will be explained.
-             
+    
              The ethics proposal should be submitted <i>before</i> the start of a research project. Retrospective review is possible only in justified exceptional cases. Further instructions on how to proceed in such cases will follow.}
       UH1   {Any person carrying out independent research at Faculty 1 of Hildesheim University is eligible to apply; this explicitly includes doctoral candidates. Students can also file an application for their final theses and other student research, the teaching staff or supervisor(s) have to check and approve the application before submission.
     
              The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review.
-             
+    
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. 
-             
+    
              Research projects involving physicians as project contributors, in which clearly delimitable medical research questions shall be addressed, usually have to be evaluated by a medical ethics committee. In individual cases a review by the non-medical Ethics Review Board of Faculty 1 of Hildesheim University may be possible.}
       UPB   {Eligible applicants are researchers affiliated with Paderborn University (UPB); this explicitly includes doctoral candidates of UPB. Applications for student theses, study-related research projects, or projects by external doctoral candidates must be submitted by the respective supervisor at UPB.
     
@@ -510,12 +510,12 @@ coreData:
         current: 'Please describe which parts of the data collection have already been completed (e.g., contacting participants, number of datasets collected) and which parts are still ongoing. Further information in the Ethiktool must be completed prospectively.'
         retrospective: 'Why are you asking for retrospective ethics review?'
       begun: >-
-          Data collection has already started.
-          {committeeType, select,
-            UH1   {Justification}
-            TUD   {Justification}
-            other {Authorisation}}
-          for retrospective review is needed.
+        Data collection has already started.
+        {committeeType, select,
+          UH1   {Justification}
+          TUD   {Justification}
+          other {Authorisation}}
+        for retrospective review is needed.
     next: 'as soon as possible (after approval by the ethics committee)'
     end:
       title: >-
@@ -549,19 +549,19 @@ coreData:
     requestedConfirm:
       title: 'Confirmation of congruence'
       headingHint: >- # other in committeeType is those without participant documents for short proposals and with no special requirements (currently EUB, UH1, test ethics committee)
-       Funding institutions usually require an ethics vote for the exact content of the funding proposal. Therefore, the studies laid out in the ethics proposal must be congruent to those in the funding proposal in terms of content. For consistency from the funder's perspective, the title of the ethics proposal and the funding proposal should be identical. 
-       Please do not combine third-party-funding-dependent and -independent studies within one ethics proposal. The ethics committee acts on the assumption that the studies laid out in the ethics proposal will only be conducted if third-party funding is granted.
-       {committeeType, select,
-         TUC   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
-         JGU   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
-         DLR   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
-         TUD   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted {isFull, select,
-                            true  {with participant documents and further details}
-                            other {}} for receiving a final ethics vote.}
-         UPB   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
-         other {{isFull, select,
-                  true  {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
-                  other {}}}}
+        Funding institutions usually require an ethics vote for the exact content of the funding proposal. Therefore, the studies laid out in the ethics proposal must be congruent to those in the funding proposal in terms of content. For consistency from the funder's perspective, the title of the ethics proposal and the funding proposal should be identical. 
+        Please do not combine third-party-funding-dependent and -independent studies within one ethics proposal. The ethics committee acts on the assumption that the studies laid out in the ethics proposal will only be conducted if third-party funding is granted.
+        {committeeType, select,
+          TUC   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+          JGU   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+          DLR   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+          TUD   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted {isFull, select,
+                             true  {with participant documents and further details}
+                             other {}} for receiving a final ethics vote.}
+          UPB   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+          other {{isFull, select,
+                   true  {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+                   other {}}}}
       confirm: 'I confirm that the studies laid out in the ethics proposal are congruent to those in the funding application in terms of content.'
   qualification:
     title: 'Is the research project exclusively carried out within the scope of your own qualification work (Bachelor/Master/PhD thesis)?'
@@ -648,7 +648,7 @@ medicine:
 summary:
   heading: '(setting the context for the ethics evaluation)'
   headingHint: 'Please briefly describe the background, content and aims or questions of your research project as well as its general methodological approach (e.g., experiment, observation, cross-sectional/longitudinal measurement, division into substudies if applicable) and the expected gain of knowledge.'
-  textHint: 'This summary aims at giving the ethics committee a comprehensible preview of the research project in order to contextualise the detailed information that follows. Keep in mind that the members of the ethics committee usually come from different disciplines. Therefore, your descriptions should be written in a way as to facilitate understanding also for non-specialists.' 
+  textHint: 'This summary aims at giving the ethics committee a comprehensible preview of the research project in order to contextualise the detailed information that follows. Keep in mind that the members of the ethics committee usually come from different disciplines. Therefore, your descriptions should be written in a way as to facilitate understanding also for non-specialists.'
 
 # contributors
 contributors:
@@ -884,7 +884,7 @@ projectdetails:
       pdf: 'The wording of the study information sheet for the {participant} needs to be adapted to the target group and can therefore not be generated automatically by the Ethiktool. Please prepare a self-formulated PDF file that directly addresses the {participant} and contains the following parts: information on study participation, assent form, annex on processing personal data (if applicable). The automatically generated documents for the {addressee} can serve as a guide. When completing the ethics proposal, you will be asked to add the study information sheet for {participant} as a PDF file.'
       attendance: 'Are the {addressee} present during data collection?'
       documentTranslation:
-        title: 'Are the participant documents translated into easy or simple language and/or into a foreign language?'
+        title: 'Is the wording of the participant documents translated into easy or simple language and/or into a foreign language?'
         textHint: 'Into which language(s)?'
         pdf:
           title: 'I want to add the translated version of the participant documents.'
@@ -1300,9 +1300,9 @@ projectdetails:
                                   wards    {of the individual under your supervision}
                                   other    {}} in}} the study.
         noTemplate: >-
-          Due to the <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">missing consent</a> {addressee, select,
-                                                                          children {for the legal guardians}
-                                                                          wards    {for the legal guardians}
+          Due to <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">missing consent</a> {addressee, select,
+                                                                          children {by the legal guardians}
+                                                                          wards    {by the legal guardians}
                                                                           other    {}}, no template can be generated.
       goals:
         title: 'Background and aims:'
@@ -1820,7 +1820,7 @@ projectdetails:
           keep: 'Please justify briefly why this is necessary:'
       access:
         title: 'Who has access to the personal data for <u>{purpose}</u>?'
-        headingHint: "Please consider all persons/institutions/services with access to personal data at any point in time throughout the research project. This includes, for example, collecting and processing data by survey companies for the research project (e.g., IP addresses, contact data) as well as the transmission of collected data to project contributors or services (e.g., for transcription or data analysis). It also includes collecting or processing data by means of external tools such as socisurvey, mpath, transcription software or the use of file transfer services for transmitting personal data, as the data are at least briefly stored on servers of these tools.</br> Bear in mind that this is about access to personal data, not to anonymous or anonymized data. If, for example, research data can be related to individual persons only via an allocation list, only persons with access to that list must be indicated here. For the other project contributors, the data are not person-related unless they can identify individual persons by other means.</br> Please also bear in mind that access to personal data must be restricted to persons inside of the EEA. If data access is possible from outside of the EEA, the corresponding question must be answered with yes.)" 
+        headingHint: "Please consider all persons/institutions/services with access to personal data at any point in time throughout the research project. This includes, for example, collecting and processing data by survey companies for the research project (e.g., IP addresses, contact data) as well as the transmission of collected data to project contributors or services (e.g., for transcription or data analysis). It also includes collecting or processing data by means of external tools such as socisurvey, mpath, transcription software or the use of file transfer services for transmitting personal data, as the data are at least briefly stored on servers of these tools.</br> Bear in mind that this is about access to personal data, not to anonymous or anonymized data. If, for example, research data can be related to individual persons only via an allocation list, only persons with access to that list must be indicated here. For the other project contributors, the data are not person-related unless they can identify individual persons by other means.</br> Please also bear in mind that access to personal data must be restricted to persons inside of the EEA. If data access is possible from outside of the EEA, the corresponding question must be answered with yes.)"
         types:
           contributors: 'All project contributors {committeeLocationGen}'
           contributorsPart: 'Individual project contributors {committeeLocationGen}'
@@ -1936,16 +1936,16 @@ projectdetails:
           personal: 'According to your selections on page “<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">data privacy</a>“, the person-related research data are stored, but not for the purpose of re-using them.'
           noTool: '' # key must exist for technical reasons. Also used if first question in data privacy (create) is not yet answered
         title: >- # other is anonymous in second select
-           Are{personal, select,
-                   keep  {, independent of that,}
-                   other {}} the {personal, select,
-                                   immediately {anonymized research data}
-                                   marking     {anonymized research data}
-                                   keep        {anonymized research data}
-                                   noTool      {research data}
-                                   purpose     {anonymized research data}
-                                   personal    {person-related research data}
-                                   other       {anonymous research data}} shared with others for re-use?
+          Are{personal, select,
+                  keep  {, independent of that,}
+                  other {}} the {personal, select,
+                                  immediately {anonymized research data}
+                                  marking     {anonymized research data}
+                                  keep        {anonymized research data}
+                                  noTool      {research data}
+                                  purpose     {anonymized research data}
+                                  personal    {person-related research data}
+                                  other       {anonymous research data}} shared with others for re-use?
         headingHint: 'Following the Open Science principle and current <a href="https://zenodo.org/records/14281892" target="_blank">codes of practice by the DFG</a> and other institutions, research data should be made accessible - whenever possible - for reasons of transparency and re-usability, amongst others. Data sharing should follow the FAIR principles (“Findable, Accessible, Interoperable, Re-Usable“) as well as domain-specific recommendations on standards, methods and infrastructures, such as the <a href="https://doi.org/10.1026/0033-3042/a000514" target="_blank">recommendations by the “Open Science“ committee of the DGPs</a> (German Psychological Society).'
         types:
           yes: 'Yes'
@@ -2144,8 +2144,6 @@ checkDoc:
       groups:
         minAge: 'minimum age'
         maxAge: 'maximum age'
-        maxGreaterMin: 'The maximum age cannot be lower than the minimum age.'
-        minAgeWards: 'If the minimum age is less than 16, the maximum age must be less than 18. If applicable, create a separate group for adult participants.'
         examinedPeople: 'participant groups'
         description: 'participant groups'
         closed:
@@ -2430,9 +2428,9 @@ checkDoc:
           missing: 'whether the voluntary nature of participation is compromised by the type or amount of compensation'
           description: 'Explanation of how the voluntary nature of participation is compromised by the type or amount of compensation' # [...] is missing.
         presence: >- # other is hours
-           {compensation, select,
-             money {If financial compensation shall be paid}
-             other {If participation hours shall be certified}} immediately on site, project contributors must be <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">present during data collection</a>.
+          {compensation, select,
+            money {If financial compensation shall be paid}
+            other {If participation hours shall be certified}} immediately on site, project contributors must be <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">present during data collection</a>.
       texts:
         intro: 'introduction'
         goals: 'background and goals/aims of the study'
@@ -2758,17 +2756,17 @@ preview: # tab names in preview
   tabParticipation: 'Participant documents'
 
 quit: |
-    You successfully terminated the Ethiktool. Any Ethiktool-related form content was removed from your browser cache. Thank you for using the Ethiktool.
-    
-    We would like to invite you to participate in a <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=en" target="_blank">brief anonymous survey</a> regarding the use of the Ethiktool: <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=en" target="_blank">https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=en</a> - thank you very much in advance!
+  You successfully terminated the Ethiktool. Any Ethiktool-related form content was removed from your browser cache. Thank you for using the Ethiktool.
   
-    We continuously extend and improve the Ethiktool. We therefore greatly appreciate your support by sending us error reports, questions and remarks via email to <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. If you experience technical issues with the current version, please contact <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
+  We would like to invite you to participate in a <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=en" target="_blank">brief anonymous survey</a> regarding the use of the Ethiktool - thank you very much in advance!
   
-    If you use the Ethiktool for your research, please cite our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en#publications" target="_blank">work</a>.
-    
-    The Ethiktool is a joint development of a project team headed by Prof. Dr. Alexandra Bendixen (Chemnitz University of Technology, TUC), which comprises members from TUC, the Leibniz Institute for Psychology (ZPID), and Bielefeld University. You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
-    
-    *E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).
+  We continuously extend and improve the Ethiktool. We therefore greatly appreciate your support by sending us error reports, questions and remarks via email to <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. If you experience technical issues with the current version, please contact <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
+  
+  If you use the Ethiktool for your research, please cite our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en#publications" target="_blank">work</a>.
+  
+  The Ethiktool is a joint development of a project team headed by Prof. Dr. Alexandra Bendixen (Chemnitz University of Technology, TUC), which comprises members from TUC, the Leibniz Institute for Psychology (ZPID), and Bielefeld University. You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
+  
+  *E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).
 
 # header modals
 aboutUs:
@@ -2785,7 +2783,7 @@ aboutUs:
     Our mission is to facilitate the generation and evaluation of ethics proposals. Hence we provide the Ethiktool free of charge to all interested ethics committees. The Ethiktool development is based on our longstanding experience in ethics committee work and our experience with the predecessor software, which was developed under the leadership of Alexandra Bendixen and introduced at TU Chemnitz in 2021. The development of the current version has been financially supported by the Volkswagen Foundation since 2023, with their support set to continue until 2026.
 
     For more information about us, please visit our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
-    
+
 aboutTool:
   title: 'About the Ethiktool'
   text: |
@@ -2823,7 +2821,7 @@ technicalHints:
                                                 other       {{committeeAcc}}}. You will also receive individual documents for each part of the application for your own use. Please note that you will need the XML file for any revisions to your application.}}
     
     At any time, you can download the XML file as well as the individual documents for the various parts of the application as PDF files using the button “Single documents“. Please note that the single documents are <b>not</b> intended for submission to the ethics committee.
-                                                
+    
     The Ethiktool is regularly updated automatically. You are using version {toolVersion}; a version history can be found <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html.en" target="_blank">here</a>.
 
 termsOfUse:
@@ -2843,7 +2841,7 @@ termsOfUse:
 
 contactModal:
   title: 'Contact'
-  text: | 
+  text: |
     We are looking forward to your feedback. For questions and suggestions on content, please refer to the Ethiktool contributors at Chemnitz University of Technology (<a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*). For technical questions, please refer to the Ethiktool contributors at Leibniz Institute for Psychology (ZPID) (<a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>).'
-  
+    
     *E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).

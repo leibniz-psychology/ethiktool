@@ -3,7 +3,7 @@
 {% trans_default_domain 'pdf' %}
 {% block pdfBody %}
     {% set textPreview = not savePDF ? 'previewSmall' %}
-    <div class="pdfDocument">
+{#    <div>#}
         {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
         <div class="pdfHeadingCenter pdfHeadingMain pdfBorderMain {% if not savePDF %}previewXLarge{% endif %}">{{ completePostHeading|raw }}</div>
         {% if isOral %}
@@ -36,7 +36,7 @@
                 <div class="{{ textPreview }}" style="margin-top: 1em">{{ (tempPrefix~'compensation')|trans }}</div>
             {% endif %}
         </div>
-    </div>
+{#    </div>#}
     {% if not savePDF %}
         {{ pdfMacros.addLine() }}
     {% endif %}

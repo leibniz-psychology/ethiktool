@@ -38,8 +38,8 @@ multiple:
                 sizeExceed {}
                 other      {</br></br>Sollten weitere selbst formulierte PDF-Dateien erforderlich sein, müssen diese ebenfalls neu hinzugefügt werden. Die Fehlermeldung bezieht sich nur auf die oben genannte Datei.}}
     errorMessage: # info modal if an error occurred
-        title: 'Fehler'
-        text: 'Ein Fehler ist aufgetreten. Sie wurden daher auf die Hauptseite zurückgeleitet. Bitte teilen Sie uns über <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a> mit, welche Aktionen Sie ausgeführt haben, unmittelbar bevor der Fehler auftrat. Wir beheben den Fehler schnellstmöglich. </br> Sollten weiterhin Fehler auftreten, laden Sie bitte Ihren Antrag (XML-Datei) erneut.'
+      title: 'Fehler'
+      text: 'Ein Fehler ist aufgetreten. Sie wurden daher auf die Hauptseite zurückgeleitet. Bitte teilen Sie uns über <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a> mit, welche Aktionen Sie ausgeführt haben, unmittelbar bevor der Fehler auftrat. Wir beheben den Fehler schnellstmöglich. </br> Sollten weiterhin Fehler auftreten, laden Sie bitte Ihren Antrag (XML-Datei) erneut.'
   confirm: 'OK'
   charCount: 'Zeichenanzahl:'
   charCountHint: 'Die empfohlene Maximalanzahl an Zeichen wurde überschritten. Die Einreichung des Antrags ist auch bei Überschreitung möglich; bitte prüfen Sie dennoch, ob Sie (ohne Informationsverlust für die ethische Begutachtung) kürzen können.'
@@ -146,11 +146,11 @@ dateFormat: >-
          other { H:i:s}}
 
 header: # alternative texts for logos
-    ZPID: 'zur Webseite des ZPID'
-    TUC: 'zur Webseite der TU Chemnitz'
-    update:
-      before: 'In wenigen Minuten (montags gegen 8 Uhr) beginnt die wöchentliche Wartung des Ethiktools. Bitte speichern Sie Ihren Ethikantrag und setzen Sie ihn später fort.'
-      during: 'Momentan findet die wöchentliche Wartung des Ethiktools statt. Bitte arbeiten Sie ab 8:30 Uhr an Ihrem Ethikantrag weiter.'
+  ZPID: 'zur Webseite des ZPID'
+  TUC: 'zur Webseite der TU Chemnitz'
+  update:
+    before: 'In wenigen Minuten (montags gegen 8 Uhr) beginnt die wöchentliche Wartung des Ethiktools. Bitte speichern Sie Ihren Ethikantrag und setzen Sie ihn später fort.'
+    during: 'Momentan findet die wöchentliche Wartung des Ethiktools statt. Bitte arbeiten Sie ab 8:30 Uhr an Ihrem Ethikantrag weiter.'
 
 committee:
   committeeNom: >-
@@ -349,36 +349,36 @@ main:
       TUC   {Antragsberechtigt sind Personen, die an der Technischen Universität Chemnitz eigenständig wissenschaftlich tätig sind; das schließt Promovierende ausdrücklich ein. Die Verantwortung für die Ethikantragstellung im Fall von Studienabschlussarbeiten und anderen studentischen Forschungsprojekten liegt bei den Lehrpersonen bzw. Betreuenden.
 
              Der Ethikantrag muss <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden; ein rückwirkendes Ethikvotum ist ausgeschlossen.
- 
+    
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden.}
       EUB   {Antragsberechtigt sind Mitglieder und Angehörige der Universität Bielefeld. Studierende können ebenfalls einen Ethikantrag für ihre Abschlussarbeit oder andere studentische Forschungsprojekte einreichen; die Lehrpersonen bzw. Betreuenden müssen den Antrag vor der Einreichung gelesen und genehmigt haben.
 
              Ein Antrag soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann die Ethik-Kommission eine nachträgliche Prüfung vornehmen. Weitere Informationen zur Verfahrensweise bei nachträglichen Begutachtungen finden Sie <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/faq/index.xml" target="_blank">hier</a>.
- 
+    
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden.
-             
+    
              Forschungsprojekte mit Ärztinnen bzw. Ärzten als Projektbeteiligte müssen normalerweise durch eine medizinische Ethikkommission geprüft werden. In Einzelfällen ist eine Begutachtung durch die nicht-medizinische Ethik-Kommission der Universität Bielefeld möglich. Weitere Informationen finden Sie <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">hier</a>.}
       JGU   {Antragsberechtigt sind Mitglieder des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz. Antragsberechtigt sind außerdem Forscherinnen und Forscher, die einen Antrag auf eigene Stelle (z.B. bei der DFG) vorbereiten, um im Rahmen ihres Projekts in einer Abteilung des Psychologischen Instituts der JGU Mainz zu arbeiten; in diesem Fall ist den Antragsunterlagen eine kurze Erklärung der Abteilungsleiterin bzw. des Abteilungsleiters der aufnehmenden Abteilung beizulegen.
-             
+    
              Der Ethikantrag muss <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden; ein rückwirkendes Ethikvotum ist ausgeschlossen.
- 
+    
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden. (Zu weiteren Eingrenzungen siehe auch: <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
       DLR   {Antragsberechtigt sind Mitarbeitende des DLR; das schließt auch Studierende mit laufendem Arbeitsvertrag am DLR ein. Studierende ohne Arbeitsvertrag am DLR besprechen bitte mit einer wissenschaftlich beteiligten Person am DLR, ob diese den Ethikantrag beim DLR stellt oder ob die Ethikkommission der Universität zuständig ist, an der das Studium absolviert wird.
-             
+    
              Ein Antrag soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann eine nachträgliche Begutachtung erfolgen. Bitte nehmen Sie in solchen Fällen vorab Kontakt zur Geschäftsstelle Forschungsethik des DLR auf und klären Sie, ob eine Ausnahmegenehmigung für die nachträgliche Begutachtung erteilt werden kann.
-             
+    
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden. Gleiches gilt für Forschungsprojekte, an denen Ärztinnen bzw. Ärzte beteiligt sind.}
       TUD   {Nach der offiziellen Beschlussfassung zur Gründung des Ethikbeirats der Technischen Universität Dresden finden sich hier die Kriterien für die Antragsberechtigung.
-      
+    
              Weiterhin wird hier die Abgrenzung zwischen Anträgen an den Ethikbeirat und Anträgen an die Ethikkommission der TU Dresden (für medizinische Forschungsvorhaben) erläutert.
-             
+    
              Ein Antrag an den Ethikbeirat soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann eine nachträgliche Begutachtung erfolgen. Das Vorgehen in solchen Fällen wird demnächst hier erläutert.}
       UH1   {Antragsberechtigt sind Personen, die am Fachbereich 1 der Universität Hildesheim eigenständig wissenschaftlich tätig sind; das schließt Promovierende ausdrücklich ein. Studierende können ebenfalls einen Ethikantrag für ihre Abschlussarbeit oder andere studentische Forschungsprojekte einreichen, die Lehrpersonen bzw. Betreuenden müssen den Antrag vor der Einreichung gelesen und genehmigt haben.
     
              Ein Antrag soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann die Ethikkommission eine nachträgliche Prüfung vornehmen.
-             
+    
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG) bzw. Medizinprodukterecht-Durchführungsgesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethikkommission eingereicht werden. 
-             
+    
              Forschungsprojekte mit Ärztinnen bzw. Ärzten als Projektbeteiligte, bei denen klar abgrenzbare medizinische Fragestellungen beantwortet werden sollen, müssen normalerweise durch eine medizinische Ethikkommission geprüft werden. In Einzelfällen ist eine Begutachtung durch die nicht-medizinische Ethikkommission des Fachbereichs 1 der Universität Hildesheim möglich.}
       UPB   {Antragsberechtigt sind Wissenschaftler*innen der Universität Paderborn (UPB); das schließt Promotionsstudierende der UPB ausdrücklich ein. Anträge zu studentischen Abschlussarbeiten, studiumsbezogenen Forschungsarbeiten oder Vorhaben von externen Promotionsstudierenden müssen von der Betreuerin bzw. dem Betreuer an der UPB gestellt werden.
     
@@ -510,12 +510,12 @@ coreData:
         current: 'Bitte beschreiben Sie hier, welche Teile der Datenerhebung bereits abgeschlossen sind (z.B. Kontaktierung der Teilnehmenden, Anzahl erhobener Datensätze) und welche Teile noch ausstehen. Die weiteren Angaben im Ethiktool sind prospektiv auszufüllen.'
         retrospective: 'Warum stellen Sie den Ethikantrag nachträglich?'
       begun: >-
-          Die Datenerhebung hat bereits begonnen. Eine
-          {committeeType, select,
-            UH1   {Begründung für die nachträgliche}
-            TUD   {Begründung für die nachträgliche}
-            other {Genehmigung zur nachträglichen}}
-          Begutachtung ist notwendig.
+        Die Datenerhebung hat bereits begonnen. Eine
+        {committeeType, select,
+          UH1   {Begründung für die nachträgliche}
+          TUD   {Begründung für die nachträgliche}
+          other {Genehmigung zur nachträglichen}}
+        Begutachtung ist notwendig.
     next: 'nächstmöglicher Zeitpunkt (nach Vorliegen eines positiven Ethikvotums)'
     end:
       title: >-
@@ -549,19 +549,19 @@ coreData:
     requestedConfirm:
       title: 'Bestätigung der Deckungsgleichheit'
       headingHint: >- # other in committeeType is those without participant documents for short proposals and with no special requirements (currently EUB, UH1, test ethics committee)
-       Fördermittelgeber fordern in der Regel ein Ethikvotum für genau den beantragten Projektinhalt. Daher müssen die im Ethikantrag beschriebenen Studien inhaltlich identisch zu den Studien im Drittmittelantrag sein. Zur Zuordenbarkeit für den Fördermittelgeber sollten der Titel des Drittmittelantrags und des Ethikantrags gleich lauten. 
-       Bitte kombinieren Sie keine drittmittelabhängigen und davon unabhängigen Studien in einem Ethikantrag. Die Ethikkommission geht davon aus, dass die im Ethikantrag beschriebenen Studien nur bei Bewilligung der Drittmittel durchgeführt werden.
-       {committeeType, select,
-         TUC   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
-         JGU   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
-         DLR   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
-         TUD   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags {isFull, select,
-                                                true  {mit Teilnahmedokumenten und Angabe weiterer Details}
-                                                other {}} erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
-         UPB   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
-         other {{isFull, select,
-                  true  {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
-                  other {}}}}
+        Fördermittelgeber fordern in der Regel ein Ethikvotum für genau den beantragten Projektinhalt. Daher müssen die im Ethikantrag beschriebenen Studien inhaltlich identisch zu den Studien im Drittmittelantrag sein. Zur Zuordenbarkeit für den Fördermittelgeber sollten der Titel des Drittmittelantrags und des Ethikantrags gleich lauten. 
+        Bitte kombinieren Sie keine drittmittelabhängigen und davon unabhängigen Studien in einem Ethikantrag. Die Ethikkommission geht davon aus, dass die im Ethikantrag beschriebenen Studien nur bei Bewilligung der Drittmittel durchgeführt werden.
+        {committeeType, select,
+          TUC   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+          JGU   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+          DLR   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+          TUD   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags {isFull, select,
+                                                 true  {mit Teilnahmedokumenten und Angabe weiterer Details}
+                                                 other {}} erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+          UPB   {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+          other {{isFull, select,
+                   true  {Aus diesem Grund erstellt die Ethikkommission zunächst ein vorläufiges Votum zur Vorlage beim Fördermittelgeber. Im Falle einer erfolgreichen Mittelakquise ist eine Wiedervorlage des Ethikantrags mit Teilnahmedokumenten und Angabe weiterer Details erforderlich, um ein endgültiges Ethikvotum zu erhalten.}
+                   other {}}}}
       confirm: 'Ich bestätige, dass die im Ethikantrag dargelegten Studien inhaltlich deckungsgleich zu den Studien im Drittmittelantrag sind.'
   qualification:
     title: 'Wird das Forschungsprojekt ausschließlich im Rahmen der eigenen Qualifikationsarbeit durchgeführt (Bachelor-/Masterarbeit/Promotion)?'
@@ -884,7 +884,7 @@ projectdetails:
       pdf: 'Die Studieninformation für die {participant} erfordert eine an die Zielgruppe angepasste Darstellung und kann daher nicht automatisch aus dem Ethiktool heraus erstellt werden. Bitte bereiten Sie eine selbst formulierte PDF-Datei vor, die sich direkt an die {participant} richtet und folgende Abschnitte enthält: Informationen zur Studienteilnahme, Zustimmung, ggf. Anlage zur Verarbeitung personenbezogener Daten. Zur Orientierung können Ihnen die automatisch erstellten Dokumente für die {addressee} dienen. Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, diese PDF-Datei beizufügen.'
       attendance: 'Sind die {addressee} bei der Erhebung anwesend?'
       documentTranslation:
-        title: 'Werden die Teilnahmedokumente in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?'
+        title: 'Wird der Wortlaut der Teilnahmedokumente in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?'
         textHint: 'In welche Sprache(n)?'
         pdf:
           title: 'Ich möchte die übersetzte Version der Teilnahmedokumente für die Begutachtung beifügen.'
@@ -966,7 +966,7 @@ projectdetails:
               post  {Bei individuellem Abbruch der Studienteilnahme kann die teilnehmende (bzw. deren vertretungsberechtigte) Person entscheiden, ob die bis dahin erhobenen Daten gelöscht werden oder in die Auswertung einfließen.}
               other {Bei individuellem Abbruch der Studienteilnahme kann die teilnehmende (bzw. deren vertretungsberechtigte) Person entscheiden, ob die bis dahin erhobenen Daten gelöscht werden oder in die Auswertung einfließen.}}
           terminateParticipantsOther: 'Sonstiges'
-        textHint: 'Bitte beschreiben Sie das Vorgehen, beispielsweise wenn Sie über einen Abbruch-Button die bis dahin erhobenen Daten verwenden wollen und bei Schließen des Browserfensters alle Daten automatisch löschen.' 
+        textHint: 'Bitte beschreiben Sie das Vorgehen, beispielsweise wenn Sie über einen Abbruch-Button die bis dahin erhobenen Daten verwenden wollen und bei Schließen des Browserfensters alle Daten automatisch löschen.'
       terminateCriteria:
         title: 'Unter welchen Umständen wird die Datenerhebung durch die Projektbeteiligten vorzeitig abgebrochen?'
         textHint: 'Im Regelfall bezieht sich dies auf den Abbruch der Datenerhebung bei einer Einzelperson (z.B. Abbruch bei bestimmten Belastungsanzeichen); wenn ein solcher Abbruch seitens der Projektbeteiligten nicht möglich ist, erläutern Sie dies bitte. Der Umgang mit einem Abbruchwunsch durch die Teilnehmenden selbst und ggf. deren Vertretungspersonen wird an anderer Stelle thematisiert und muss hier nicht explizit erwähnt werden. Falls es auch Kriterien für den Abbruch der gesamten Studie gibt, benennen Sie diese ebenfalls hier.'
@@ -1301,8 +1301,8 @@ projectdetails:
                                                         other    {}} an}} der Studie treffen.
         noTemplate: >-
           Aufgrund der <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">fehlenden Einwilligung</a> {addressee, select,
-                                                                                children {für die Erziehungsberechtigten}
-                                                                                wards    {für die gesetzlichen Vertretungspersonen}
+                                                                                children {der Erziehungsberechtigten}
+                                                                                wards    {der gesetzlichen Vertretungspersonen}
                                                                                 other    {}} kann keine Vorlage erstellt werden.
       goals:
         title: 'Hintergrund und Zielsetzung der Studie:'
@@ -1936,16 +1936,16 @@ projectdetails:
           personal: 'Gemäß Ihrer Angaben auf der Seite „<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">Datenschutz</a>“ werden die personenbezogenen Forschungsdaten aufbewahrt, aber nicht zum Zweck der Nachnutzung.'
           noTool: '' # key must exist for technical reasons. Also used if first question in data privacy (create) is not yet answered
         title: >- # other is anonymous in second select. personal equals 'purpose' only if reuse is asked for personal and anonymized data
-           Werden {personal, select,
-                    keep  {unabhängig davon}
-                    other {}} die {personal, select,
-                                    immediately {anonymisierten Forschungsdaten}
-                                    marking     {anonymisierten Forschungsdaten}
-                                    keep        {anonymisierten Forschungsdaten}
-                                    noTool      {Forschungsdaten}
-                                    purpose     {anonymisierten Forschungsdaten}
-                                    personal    {personenbezogenen Forschungsdaten}
-                                    other       {anonymen Forschungsdaten}} anderen zur Nachnutzung zur Verfügung gestellt?
+          Werden {personal, select,
+                   keep  {unabhängig davon}
+                   other {}} die {personal, select,
+                                   immediately {anonymisierten Forschungsdaten}
+                                   marking     {anonymisierten Forschungsdaten}
+                                   keep        {anonymisierten Forschungsdaten}
+                                   noTool      {Forschungsdaten}
+                                   purpose     {anonymisierten Forschungsdaten}
+                                   personal    {personenbezogenen Forschungsdaten}
+                                   other       {anonymen Forschungsdaten}} anderen zur Nachnutzung zur Verfügung gestellt?
         headingHint: 'Dem Open-Science-Prinzip und gängigen <a href="https://doi.org/10.5281/zenodo.14281892" target="_blank">Richtlinien der DFG</a> und anderer Institutionen folgend, sollten die Forschungsdaten - wann immer möglich - u.a. aus Gründen der Nachvollziehbarkeit und Nachnutzbarkeit der Forschung zugänglich gemacht werden. Dabei sollten die FAIR-Prinzipien („Findable, Accessible, Interoperable, Re-Usable“) sowie fachspezifisch einschlägige Empfehlungen zu Standards, Methoden und Infrastrukturen berücksichtigt werden, wie beispielsweise die <a href="https://doi.org/10.1026/0033-3042/a000514" target="_blank">Empfehlungen der DGPs-Kommission „Open Science“</a>.'
         types:
           yes: 'Ja'
@@ -1992,7 +1992,7 @@ projectdetails:
           class2: ' Dritten über individualisierte Nutzungsverträge zugänglich gemacht.'
           class3: ' Dritten nur unter datenschutzrechtlich gebotenen Einschränkungen (z.B. online über einen entsprechend abgesicherten Kanal oder vor Ort in einem Forschungsdatenzentrum) im Rahmen eines individuellen Vertrags zugänglich gemacht.'
           own: ' nicht für andere zugänglich gemacht, aber für die eigene Nachnutzung verwendet.'
-        descriptionStart: ' Dies erfolgt unter Nutzung von '
+        descriptionStart: ' Dies erfolgt unter Nutzung '
         hints: # icons except keys textHint and hint
           textHint: 'Bitte Datenarchiv, Forschungsdatenzentrum bzw. andere datenhaltende Infrastruktur benennen (z.B. OSF, Zenodo, PsychArchives/FDZ am ZPID).'
           class0: 'Zugriffsklasse 0 gemäß DGPs-Kommission Open Science'
@@ -2144,8 +2144,6 @@ checkDoc:
       groups:
         minAge: 'Mindestalter'
         maxAge: 'maximales Alter'
-        maxGreaterMin: 'Das maximale Alter darf nicht kleiner als das Mindestalter sein.'
-        minAgeWards: 'Wenn das Mindestalter kleiner als 16 ist, muss das maximale Alter kleiner als 18 sein. Legen Sie bei Bedarf eine zweite Gruppe für die Erwachsenen an.'
         examinedPeople: 'Teilnehmende Personengruppen'
         description: 'teilnehmenden Personengruppen'
         closed:
@@ -2278,10 +2276,10 @@ checkDoc:
           title: 'Umgang mit den Daten bei vorzeitigem Abbruch' # 'Antwort auf Frage nach [] fehlt.'
           description: 'Beschreibung des Umgangs mit den Daten bei vorzeitigem Abbruch' # '[] fehlt.'
           information: >-
-              Wenn es keine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, müssen die erhobenen Daten bei vorzeitigem Abbruch entweder gelöscht werden oder die {addressee, select,
-                  children {Erziehungsberechtigten}
-                  wards    {gesetzlichen Vertretungspersonen}
-                  other    {Teilnehmenden}} müssen über die Nutzung entscheiden können.
+            Wenn es keine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, müssen die erhobenen Daten bei vorzeitigem Abbruch entweder gelöscht werden oder die {addressee, select,
+                children {Erziehungsberechtigten}
+                wards    {gesetzlichen Vertretungspersonen}
+                other    {Teilnehmenden}} müssen über die Nutzung entscheiden können.
           noInformation: >-
             Sie haben ausgewählt, dass es <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt. Das passt nicht dazu, dass die {addressee, select,
                   children {Erziehungsberechtigten}
@@ -2758,17 +2756,17 @@ preview: # tab names in preview
   tabParticipation: 'Teilnahmedokumente'
 
 quit: |
-    Sie haben das Ethiktool ordnungsgemäß beendet. Ethiktool-bezogene Formularinhalte wurden aus Ihrem Browser-Cache entfernt. Vielen Dank für die Nutzung des Ethiktools.
-    
-    Wir möchten Sie einladen, an einer <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=de" target="_blank">kurzen anonymen Befragung</a> zur Nutzung des Ethiktools teilzunehmen: <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=de" target="_blank">https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=de</a> - vielen Dank schon vorab!
+  Sie haben das Ethiktool ordnungsgemäß beendet. Ethiktool-bezogene Formularinhalte wurden aus Ihrem Browser-Cache entfernt. Vielen Dank für die Nutzung des Ethiktools.
   
-    Das Ethiktool wird permanent weiterentwickelt. Daher sind Fehlermitteilungen, Fragen und Anmerkungen stets willkommen; bitte senden Sie dazu eine E-Mail an <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. Bei technischen Problemen mit der aktuellen Version wenden Sie sich bitte an <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
+  Wir möchten Sie einladen, an einer <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=de" target="_blank">kurzen anonymen Befragung</a> zur Nutzung des Ethiktools teilzunehmen - vielen Dank schon vorab!
   
-    Sie möchten das Ethiktool unterstützen? Wenn Sie das Ethiktool für Ihre Forschung verwenden, zitieren Sie gern unsere <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html#publications" target="_blank">Arbeiten</a>.
+  Das Ethiktool wird permanent weiterentwickelt. Daher sind Fehlermitteilungen, Fragen und Anmerkungen stets willkommen; bitte senden Sie dazu eine E-Mail an <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. Bei technischen Problemen mit der aktuellen Version wenden Sie sich bitte an <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
   
-    Das Ethiktool ist eine gemeinsame Entwicklung eines Projektteams unter Leitung von Prof. Dr. Alexandra Bendixen (Technische Universität Chemnitz) mit Team-Mitgliedern der TU Chemnitz, des Leibniz-Instituts für Psychologie (ZPID) und der Universität Bielefeld. Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
+  Sie möchten das Ethiktool unterstützen? Wenn Sie das Ethiktool für Ihre Forschung verwenden, zitieren Sie gern unsere <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html#publications" target="_blank">Arbeiten</a>.
   
-    *E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.
+  Das Ethiktool ist eine gemeinsame Entwicklung eines Projektteams unter Leitung von Prof. Dr. Alexandra Bendixen (Technische Universität Chemnitz) mit Team-Mitgliedern der TU Chemnitz, des Leibniz-Instituts für Psychologie (ZPID) und der Universität Bielefeld. Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
+  
+  *E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.
 
 # header modals
 aboutUs:
@@ -2843,7 +2841,7 @@ termsOfUse:
 
 contactModal:
   title: 'Kontakt'
-  text: | 
+  text: |
     Wir freuen uns, wenn Sie mit uns Kontakt aufnehmen. Für inhaltliche Fragen und Anregungen wenden Sie sich bitte an die Ethiktool-Projektbeteiligten an der TU Chemnitz (<a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*). Für technische Fragen wenden Sie sich bitte an die Ethiktool-Projektbeteiligten am Leibniz-Institut für Psychologie (ZPID) (<a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>).
     
     *E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.

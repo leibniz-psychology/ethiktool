@@ -27,7 +27,8 @@ class CompletePDFController extends PDFAbstract
             self::content => $additional,
             'messages' => $completeArray[self::descriptionNode],
             self::bias => $completeArray[self::bias],
-            'toolVersion' => self::toolVersion]));
+            'toolVersion' => self::toolVersion,
+            'isNotParticipation' => true]));
 
         if (self::$savePDF) {
             $this->forward('App\Controller\PDF\ApplicationController::createPDF');

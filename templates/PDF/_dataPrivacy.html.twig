@@ -3,36 +3,34 @@
 {% trans_default_domain 'pdf' %}
 {% set textPreview, style = not savePDF ? 'previewSmall', 'text-align: justify; line-height: 1.5;' %}
 {% block pdfBody %}
-    <div>
-        {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
-        <div class="noPageBreak"> {# avoid page break between heading and first paragraph #}
-            {{ pdfMacros.addHeading(privacyHeading,savePDF) }}
-            <div class="{{ textPreview }}" style="{{ style }}">
-                {{ privacyIntro|raw|nl2br }}
-            </div>
+    {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
+    <div class="noPageBreak"> {# avoid page break between heading and first paragraph #}
+        {{ pdfMacros.addHeading(privacyHeading,savePDF) }}
+        <div class="{{ textPreview }}" style="{{ style }}">
+            {{ privacyIntro|raw|nl2br }}
         </div>
-        {# contact #}
-        {% set paragraph, contactPrefix = 1, 'dataPrivacy.contact.' %}
-        {# set the height of the heading div to cover one more line to avoid page-break immediately after the heading #}
-        {% set responsiblePrefix, representativePrefix = contactPrefix~'responsible.', contactPrefix~'representative.' %}
-        {% for heading, text in {((responsiblePrefix~'title')|trans): [(responsiblePrefix~'text')|trans(committeeParams)], ((contactPrefix~'data')|trans): data}|merge({((representativePrefix~'title')|trans) : [(representativePrefix~'text')|trans(committeeParams)]}) %}
-            <div class="noPageBreak {{ textPreview }}" style="margin-top: 0.5em">
-                {% if loop.index==1 %} {# add here to keep on same page as the first sub-paragraph #}
-                    {{ _self.addParagraphHeading(textPreview,paragraph,(contactPrefix~'title')|trans,savePDF) }}
-                {% endif %}
-                {{ heading }}
-                {% for curText in text %}
-                    <div class="{{ textPreview }}" style="{{ style }} margin-left: 1em; margin-top: 0.25em">{{ curText|raw|nl2br }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
-        {# further paragraphs #}
-        {% for heading, content in privacyContent %}
-            {% set paragraph = paragraph+1 %}
-            {{ _self.addParagraphHeading(textPreview,paragraph,heading,savePDF) }}
-            <div class="{{ textPreview }}" style="{{ style }}">{{ content|raw|nl2br }}</div>
-        {% endfor %}
     </div>
+    {# contact #}
+    {% set paragraph, contactPrefix = 1, 'dataPrivacy.contact.' %}
+    {# set the height of the heading div to cover one more line to avoid page-break immediately after the heading #}
+    {% set responsiblePrefix, representativePrefix = contactPrefix~'responsible.', contactPrefix~'representative.' %}
+    {% for heading, text in {((responsiblePrefix~'title')|trans): [(responsiblePrefix~'text')|trans(committeeParams)], ((contactPrefix~'data')|trans): data}|merge({((representativePrefix~'title')|trans) : [(representativePrefix~'text')|trans(committeeParams)]}) %}
+        <div class="noPageBreak {{ textPreview }}" style="margin-top: 0.5em">
+            {% if loop.index==1 %} {# add here to keep on same page as the first sub-paragraph #}
+                {{ _self.addParagraphHeading(textPreview,paragraph,(contactPrefix~'title')|trans,savePDF) }}
+            {% endif %}
+            {{ heading }}
+            {% for curText in text %}
+                <div class="{{ textPreview }}" style="{{ style }} margin-left: 1em; margin-top: 0.25em">{{ curText|raw|nl2br }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    {# further paragraphs #}
+    {% for heading, content in privacyContent %}
+        {% set paragraph = paragraph+1 %}
+        {{ _self.addParagraphHeading(textPreview,paragraph,heading,savePDF) }}
+        <div class="{{ textPreview }}" style="{{ style }}">{{ content|raw|nl2br }}</div>
+    {% endfor %}
     {% if not savePDF %}
         {{ pdfMacros.addLine() }}
     {% endif %}

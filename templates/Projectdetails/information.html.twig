@@ -110,14 +110,14 @@
       pdf:           if true, a hint is added that, when completing the application, a pdf must be uploaded
       addresseeType: addressee
       id:            id of the surrounding div
-      target:        if provided, an array of one or two elements: stimulus controller and target name. If only one element is provided, it will be added to the renderButtons() call.
+      target:        if provided, an array of two elements: stimulus controller and target name. If only one element is provided, it will be added to the renderButtons() call.
     #}
     {% set name, stimCont, translationPrefix = form.vars.name, target[0], 'projectdetails.pages.information.' %}
     <div id="{{ id }}" style="{{ boolToDisplay(visible) }}" {% if target[1] is defined %} {{ stimulus_target(stimCont,target[1]) }} {% endif %}>
         <div class="MetaData-Label mt-4">{{ form_label(form,null,labelDummy) }}</div>
         {{ formRender.renderButtons(form, noHeading|
             merge({'icons': {(name~'written'): translationPrefix~'type.hintWritten'}})|
-            merge(name is not same as 'preCompleteType' ? {'contTarget': [name~'oral',stimCont,name~'Oral'], 'stim': [stimCont,'setDocumentTranslation']} : {})) }}
+            merge(name is not same as 'preCompleteType' ? {'stim': [stimCont,'setDocumentTranslation']} : {})) }}
         {% if addPDF %}
             {% set prefix = 'projectdetails.addressee.' %}
             <div>{{ formRender.addHint(translationPrefix~'pdf',{'params': {'addressee': (prefix~'thirdParties.'~addresseeType)|trans, 'participant': (prefix~'participants.'~addresseeType)|trans}}) }}</div>

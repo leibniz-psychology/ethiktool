@@ -109,9 +109,7 @@ export default class extends Controller {
         let isBegun = this.hasProjectStartBegunTarget && this.projectStartBegunTarget.checked;
         let isRequested = this.fundingResearchTarget.checked && this.fundingResearchRequestedTarget.checked || this.fundingExternalTarget.checked && this.fundingExternalRequestedTarget.checked;
         let isBegunRequested = isBegun || isRequested;
-        setElementVisibility(this.projectTitleParticipationTarget,isFull
-            ? (!isBegunRequested)
-            : (!this.hasShortDocsYesTarget && !isBegunRequested || this.hasShortDocsYesTarget && this.shortDocsYesTarget.checked));
+        setElementVisibility(this.projectTitleParticipationTarget, !isBegunRequested && (isFull || !this.hasShortDocsYesTarget || this.shortDocsYesTarget.checked));
         this.setConflictDescription();
         let oldProcess = this.reviewProcessValue; // review process before a change has been made
         if (this.applicationProcessValue!=='') { // get review process after a change has been made

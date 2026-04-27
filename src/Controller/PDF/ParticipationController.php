@@ -459,7 +459,7 @@ class ParticipationController extends PDFAbstract
                         // voluntary
                         $tempArray = $consentArray[self::consentNode];
                         $consentType = $tempArray[self::chosen];
-                        $noConsentParams = [self::consent => $consentType, self::descriptionNode => $tempArray[self::descriptionNode] ?? ($tempArray[self::otherDescription] ?? '')];
+                        $noConsentParams = [self::consent => $consentType, self::descriptionNode => $tempArray[self::descriptionNode] ?? '', self::descriptionNode.'Other' => $tempArray[self::otherDescription] ?? ''];
                         $isConsent = in_array($consentType,self::consentTypesAny);
                         $tempPrefix = $participationPrefix.self::voluntaryNode.'.';
                         $tempVal = $isCompensationTerminate ? ' '.$this->translateStringPDF($compensationTerminateTrans,array_merge($compensationTerminateParams,['isDocs' => 'true'])).$compensationTerminateDescription : ''; // compensation terminate

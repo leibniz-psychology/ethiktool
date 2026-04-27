@@ -100,7 +100,7 @@ class GroupsType extends TypeAbstract
         $newData = [self::minAge => $minAge];
         $newData[self::maxAge] = $forms[self::unlimited]->getData() ? '-1' : $forms[self::maxAge]->getData();
         $tempArray = $this->getSelectedCheckboxes($forms,self::examinedTypes);
-        if ($minAge!==null && $minAge<16) { // if min age is smaller than 16, wards is selected, but disabled, i.e., is not get submitted
+        if ($minAge!==null && $minAge<14) { // if min age is smaller than 14, wards is selected, but disabled, i.e., is not submitted
             $tempArray = array_merge($tempArray,[self::wardsExaminedNode => '']);
         }
         $newData[self::examinedPeopleNode] = $tempArray;

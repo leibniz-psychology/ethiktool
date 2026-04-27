@@ -436,7 +436,7 @@ projectdetails:
                     writtenOral {in writing with oral explanation}
                     oral        {orally}
                     other       {{description}}}
-    documentTranslation: 'The participant documents are translated into easy or simple language and/or into a foreign language, namely: {description}.'
+    documentTranslation: 'The wording of the participant documents is translated into easy or simple language and/or into a foreign language, namely: {description}.'
     preContent: >-
       {chosen, select,
         complete {The {addressee} are fully informed.}
@@ -883,16 +883,16 @@ participation:
     marking: # types-keys are copied from messages. Examples are removed and addressee is added where applicable
       start: 'As part of this study, data will be collected and processed. {otherSources} {codeMarking} '
       codeMarking: >- # other is by name in type-select and participants in addressee-select. Also used in privacy document
-           The research data are {isSecond, select,
-                        true  {additionally}
-                        other {}} labelled with {type, select,
-                                                  consecutive {a consecutive number. This number is only used for labelling datasets; it does not enable the identification of individual persons.}
-                                                  external    {a code assigned outside of the project, namely }
-                                                  internal    {an internal code in the project. }
-                                                  other       {{addressee, select,
-                                                                  children {your child's name. }
-                                                                  wards    {the name of the individual under your supervision. }
-                                                                  other    {your name. }}}}
+        The research data are {isSecond, select,
+                     true  {additionally}
+                     other {}} labelled with {type, select,
+                                               consecutive {a consecutive number. This number is only used for labelling datasets; it does not enable the identification of individual persons.}
+                                               external    {a code assigned outside of the project, namely }
+                                               internal    {an internal code in the project. }
+                                               other       {{addressee, select,
+                                                               children {your child's name. }
+                                                               wards    {the name of the individual under your supervision. }
+                                                               other    {your name. }}}}
       external:
         types:
           anonymous: 'The code itself does not allow inference on specific persons. The mapping of codes to personally identifying information is possible only for the institution or body that assigned the code originally. Information on the handling of personal data is available there.'
@@ -1030,8 +1030,8 @@ dataPrivacy:
   title: 'Annex on data processing'
   intro:
     Information on processing personal data within the {numStudies, plural,
-                                                         =1    {study “{projectTitle}“}
-                                                         other {research project “{projectTitle}“, study {studyID}}} (version of {curDate}).
+    =1    {study “{projectTitle}“}
+    other {research project “{projectTitle}“, study {studyID}}} (version of {curDate}).
     With this data privacy statement, {committeeLocation} fulfills its obligation to provide information according to article 13 and 14 of the European Union's General Data Protection regulation (EU-GDPR).
     
     Please refer to the definitions in article 4 EU-GDPR with respect to the terms used herein, such as “personal data“, “processing“, “data controller“, “third party“ etc.
@@ -1160,7 +1160,7 @@ dataPrivacy:
     title: 'Data transfer'
     access:
       start: 'Only the following persons/entities have access to the personal data for {purpose}:'
-      types: 
+      types:
         contributors: 'All project contributors {committeeLocationGen}'
         contributorsPart: 'Individual project contributors {committeeLocationGen}: '
         institution: 'The following non-project contributors {committeeLocationGen}: '
@@ -1245,7 +1245,7 @@ dataPrivacy:
       • the right to receive the personal data (data portability, article 20 EU-GDPR).
 
       You can exercise these rights by contacting the responsible project contributors (see section 1). Please note that exercising the specified rights is possible only until the time point of anonymization or deletion (see section 5). 
-   
+      
       
       Further objections or potential complaints can also be placed with the data protection officer {committeeLocationGen} specified in section 1.
 
@@ -1337,12 +1337,12 @@ consent:
                                                             other    {participants}} {levelNamesString} because {savePDF, select,
           true  {{consent, select,
                     no    {no consent is given (see field 28 of the application form). This is justified as follows: {description}}
-                    other {consent is given in a different way ({description}; see field {isFull, select,
+                    other {consent is given in a different way ({descriptionOther}; see field {isFull, select,
                                                                                             true  {28}
                                                                                             other {16}} of the application form).}}}
           other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">{consent, select,
                           no    {no consent</a> is given (see field 28 of the application form). This is justified as follows: {description}}
-                          other {consent is given in a different way</a> ({description}; see field {isFull, select,
+                          other {consent is given in a different way</a> ({descriptionOther}; see field {isFull, select,
                                                                                                       true  {28}
                                                                                                       other {16}} of the application form).}}}}
   title: >-
@@ -1357,7 +1357,7 @@ consent:
                                                                     other {participation in}} the study within the research project entitled “{projectTitle}“{isPersonal, select,
           true  { and the annex on data processing}
           other {}}. I have been sufficiently informed and had the opportunity to ask questions.
-      
+    
     I am aware that {information, select,
                       post  {the consent on the use {addressee, select,
                                                    children {of my child''s data is voluntary and that my child and I will not experience any disadvantages if I do not give my consent.}

@@ -13,7 +13,7 @@
         <h2 class="{{ headingCenter }}">{{ (translationPrefix~'consent')|trans(committeeParams) }}</h2>
         {% for curContent, checkbox in content %}
             {% if curContent is not same as '' %}
-                <div class="{{ textPreview }}" style="margin-bottom: 5em">
+                <div class="{{ textPreview }}" style="page-break-inside: avoid" >
                     {{ curContent|raw|nl2br }}
                         <table class="mt-1 mb-5">
                             <tr>
@@ -58,7 +58,7 @@
     {% set tempPrefix = translationPrefix~'briefReport.' %}
     <div>
         {{ pdfMacros.addLogoDate(committeeType,savePDF,toolVersion) }}
-        <h2 class="{{ headingCenter }}">{{ (tempPrefix~'title')|trans }}</h2>
+        <h2 class="{{ headingCenter }}" style="margin-bottom: 0; margin-top: 0">{{ (tempPrefix~'title')|trans }}</h2>
         <div class="{{ textPreview }}" {% if savePDF %} style="margin-bottom: 1em" {% endif %}>{{ (tempPrefix~'intro')|trans({'isFull': isFull})|raw }}</div>
         {% for report in briefReports %}
             {% set heading, content = report.heading, report.content %}
