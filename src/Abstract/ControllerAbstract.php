@@ -1769,7 +1769,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'9';
+        $isSmallerCurrent = $isMajor1 || $isMajor2 && ($minor<'9' || $patch<'1');
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
@@ -1777,6 +1777,7 @@ abstract class ControllerAbstract extends AbstractController
         $isSmaller260 = $isMajor1 || $isMajor2 && $minor<'6';
         $isSmaller270 = $isMajor1 || $isMajor2 && $minor<'7';
         $isSmaller281 = $isMajor1 || $isMajor2 && $minor<'8'; // only productive minor version 8 is 2.8.1
+        $isSmaller290 = $isMajor1 || $isMajor2 && $minor<'9';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2122,9 +2123,11 @@ abstract class ControllerAbstract extends AbstractController
                             }
                         }
                         // updates for versions before 2.9.0
-                        $pre = (string) $informationNode->{self::pre};
-                        if (($pre==='0' || $pre==='1' && ((string) $informationNode->{self::post}->{self::chosen})==='0') && !$this->checkElement(self::documentTranslationNode,$informationNode)) { // add document translation again if information is oral
-                            $this->addChosenNode($informationNode,self::documentTranslationNode);
+                        if ($isSmaller290) {
+                            $pre = (string) $informationNode->{self::pre};
+                            if (($pre==='0' || $pre==='1' && ((string) $informationNode->{self::post}->{self::chosen})==='0') && !$this->checkElement(self::documentTranslationNode,$informationNode)) { // add document translation again if information is oral
+                                $this->addChosenNode($informationNode,self::documentTranslationNode);
+                            }
                         }
                     } // foreach measure time point
                 } // foreach group

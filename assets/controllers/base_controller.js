@@ -510,6 +510,11 @@ export default class extends Controller {
                 });
             }
             if (type==='number') { // spinner
+                inputField.addEventListener('beforeinput',event => { // on firefox, clicking the arrows does not set focus
+                    if (document.activeElement!==event.target) { // set focus only if not set already
+                        event.target.focus();
+                    }
+                });
                 inputField.addEventListener('focusin', event => {
                     this.spinnerVal = event.target.value;
                 });

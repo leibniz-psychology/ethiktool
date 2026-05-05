@@ -726,7 +726,7 @@ projectdetails:
         minAge: 'minimum age'
         maxAge: 'maximum age'
         unlimited: 'unlimited'
-      wardsHint: 'The selected groups include participants who cannot give consent themselves. Further information and documents are therefore required for the legal guardians. If you also want to examine individuals who are capable of giving consent themselves, please create an additional group on the <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-route-i-ds-param="{studyID}" data-base-page-param="Projectdetails">overview page of this study</a>.'
+      wardsHint: 'The selected groups include participants who cannot give consent themselves. Further information and documents are therefore required for the legal guardians. If you also want to examine individuals who are capable of giving consent themselves, please create an additional group for this study on the “<a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Project Structure</a>“ page.'
       examined:
         title: 'Which group(s) shall be investigated?'
         headingHint: 'Please choose all participant groups that are being studied at this time point of the study and for which you have not created a separate group in the menu. Please select only those characteristics that are relevant to the research question. For example, if you specifically want to examine individuals with physical illnesses, the corresponding category must be selected; if, on the other hand, you assume that a large online sample will happen to also include some individuals with physical illnesses, the category does not have to be selected.'
@@ -2024,7 +2024,7 @@ checkDoc:
                                                                                               study            {on the pages for the groups and time points of this study}
                                                                                               group            {on the pages for the time points of this group}
                                                                                               measureTimePoint {on the pages of this time point}
-                                                                                              other            {on the project structure pages}}}
+                                                                                              other            {on the Project structure pages}}}
                                                                             other          {on this page}}. However, please check your entries carefully, as not all discrepancies can be detected automatically.
   missing: # currently only once used at the same time, therefore no plural keyword
     single: ' is missing.'
@@ -2804,7 +2804,7 @@ technicalHints:
   text: |
     Your browser must have cookies and JavaScript enabled for the Ethiktool to function properly. Please do not delete cookies during the session. It is not advisable to work with the Ethiktool in more than one open browser tab. Moreover, please do not navigate forward and backward within the browser; instead, use the Ethiktool's “next page“ and “previous page“ buttons.
 
-    To start the application process, begin with “Proposal data“ and click through the form step by step via the “next page“ button. Alternatively, you can also jump directly to specific sections (e.g., project structure) in the navigation bar on the left.
+    To start the application process, begin with “Proposal data“ and click through the form step by step via the “next page“ button. Alternatively, you can also jump directly to specific sections (e.g., Project structure) in the navigation bar on the left.
 
     On the right-hand side, you will see a preview of the application document and the participant documents. You can click on the questions or headings to jump directly to the related sections in the Ethiktool. In the area above the preview, you are informed about missing or incorrect input.
 

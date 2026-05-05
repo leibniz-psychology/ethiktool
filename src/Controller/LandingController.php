@@ -40,6 +40,8 @@ class LandingController extends ControllerAbstract
         $copyTrans = []; // hint above text field for copying an element
         $removeTrans = []; // heading and text for the remove modal
         $pageHeading = (!$isProjectdetailsOverview ? $this->translateString('pages.'.self::landing) : ''); // heading on page
+        $tabNameStart = $this->translateString('pages.tabName').$pageHeading;
+        $tabName = $tabNameStart; // tab name -> without given names of levels;
         $removePrefix = $projectdetailsPrefix.'removeModal.';
         $currentElement = $allStudies;
         foreach ([self::studyNode,self::groupNode,self::measureTimePointNode] as $index => $type) {
@@ -55,17 +57,18 @@ class LandingController extends ControllerAbstract
                 $currentElement = $isNotStudy ? $this->addZeroIndex($currentElement[$type])[$curID] : $currentElement[$curID];
                 $IDs[$index] = $curID;
                 $curName = $currentElement[self::nameNode];
-                $pageHeading .= ($isNotStudy ? ' / ' : '').$typeTrans.($curID+1).($curName!=='' ? ' ('.$curName.')' : '');
+                $tempVal = ($isNotStudy ? ' / ' : '').$typeTrans.($curID+1);
+                $pageHeading .= $tempVal.($curName!=='' ? ' ('.$curName.')' : '');
+                $tabName .= $tempVal;
             }
         }
         $tempVal = $pageHeading.($isPageOverview ? '' : $this->translateString('pages.'.lcfirst($title).'.title'));
-        $tabName = $this->translateString('pages.tabName');
-        if ($isPageOverview && !$this->getMultiStudyGroupMeasure($appNode)) {
+        if ($isPageOverview && !$this->getMultiStudyGroupMeasure($appNode)) { // overview of one measure time point
             $studyDetailsTrans = $this->translateString('projectdetails.sidebar');
             $pageHeading = $studyDetailsTrans;
-            $tabName .= $studyDetailsTrans;
-        } else {
-            $tabName .= $tempVal;
+            $tabName = $tabNameStart.$studyDetailsTrans;
+        } elseif (!$isPageOverview) { // overview of project structure
+            $tabName = $tabNameStart.$tempVal;
         }
         $pageHeading = !$isPageOverview ? $tempVal : $pageHeading;
 
