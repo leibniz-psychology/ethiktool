@@ -85,7 +85,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                                       true  {würden}
                                       other {wurden}} auf {numPages, plural,
                                                             =1    {der Seite „{inputPage}“}
-                                                            other {den Seiten „Aufklärung“ und „AufklärungII“}} getätigt{noBox, select,
+                                                            other {den Seiten „Aufklärung“ und „Aufklärung II“}} getätigt{noBox, select,
                                                                                                                           true  { werden.}
                                                                                                                           other {.}}
     study: 'Studie '
@@ -1184,7 +1184,7 @@ dataPrivacy:
     types: # also used for consent if consent is optional
       documentation: 'zur Qualitätssicherung/Dokumentation'
       reuse: 'zur Nachnutzung für weitere Forschung'
-      teaching: 'zur Verwendung im Rahmen der Lehre'
+      teaching: 'zur Nutzung im Rahmen der Lehre'
       demonstration: 'zur beispielhaften Demonstration'
   markingRemove: # start of sentence: 'Die Verknüpfung der Forschungsdaten mit personenbezogenen Daten zum Zweck {purpose} wird '
     markingRemoveImmediately: 'unverzüglich nach Erfüllung des Zwecks, also voraussichtlich '
@@ -1407,7 +1407,7 @@ consent:
                                                                                         children {der Daten meines Kindes}
                                                                                         wards    {der Daten der von mir betreuten Person}
                                                                                         other    {meiner Daten}}}}}} ein. {addressee, select,
-            children {Hiermit erkläre ich, die Einwilligung im Namen aller Erziehungsberechtigten abzugeben.}
+            children {Weiterhin erkläre ich, die Einwilligung im Namen aller Erziehungsberechtigten abzugeben.}
             other    {}}
   optionalHeading: 'Darüber hinaus treffe ich folgende Entscheidungen:'
   finding: 'Sollten sich Hinweise auf ein ungewöhnliches Untersuchungsergebnis ergeben, bin ich damit einverstanden, dass mir diese mitgeteilt werden, so dass ich diese ggf. weiter abklären lassen kann. Ich wurde darüber aufgeklärt, dass die Kenntnis von einem Krankheitsbild dazu führen kann, dass daraus resultierende Schäden nicht mehr versichert werden können.'
@@ -1457,7 +1457,7 @@ completeForm:
       Die Antworten auf die folgenden Basisfragen wurden vom Ethiktool anhand der Eingaben der antragstellenden Person zusammengefasst.
       {isFull, select,
         true  {Ausführlichere Angaben zu allen Fragen finden sich im Antragsformular.}
-        other {}} Das Ethiktool kann die Stimmigkeit der Angaben nur teilweise verifizieren; die inhaltliche Prüfung obliegt den Antragstellenden und der Ethikkommission. <span style="color: red">Rot</span> markierte Felder signalisieren genaueren Prüfbedarf aufgrund bestimmter Besonderheiten im Forschungsprojekt. Der Eintrag „<span style="color: grey">unklar</span>“ kennzeichnet Aspekte, deren ethische Implikationen vom Ethiktool nicht eindeutig interpretierbar sind; hier wird die Selbsteinschätzung der Antragstellenden hinsichtlich des Verfahrens (Kurz- oder Vollantrag) überprüft.
+        other {}} Das Ethiktool kann die Stimmigkeit der Angaben nur teilweise verifizieren; die inhaltliche Prüfung obliegt den Antragstellenden und der Ethikkommission. <span style="color: red">Rot</span> markierte Felder signalisieren genaueren Prüfbedarf aufgrund bestimmter Besonderheiten im Forschungsprojekt. Der Eintrag „<span style="color: grey">Unklar</span>“ kennzeichnet Aspekte, deren ethische Implikationen vom Ethiktool nicht eindeutig interpretierbar sind; hier wird die Selbsteinschätzung der Antragstellenden hinsichtlich des Verfahrens (Kurz- oder Vollantrag) überprüft.
     types:
       yes: 'Ja'
       no: 'Nein'

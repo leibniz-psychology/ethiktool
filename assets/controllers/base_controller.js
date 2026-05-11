@@ -598,6 +598,7 @@ export default class extends Controller {
             this.quitModalTarget.innerHTML = params.body; // set text of modal body
             target.nextElementSibling.textContent = params.button; // change text of middle button from "Quit without saving" to "Quit"
         } else { // quit without saving
+            this.removeHash();
             this.formSubmit('quit');
         }
     }

@@ -36,7 +36,7 @@ or: ' or '
 paragraphHeadings:
   appType: 'Proposal data and Project contributors'
   examinedPeople: 'Participants'
-  information: 'Participant information'
+  information: 'Information'
   voluntary: 'Consent and withdrawal'
   measures: 'Data collection'
   measuresSub: 'Information about procedure, location and duration of the investigation can be found {informationHint}.'
@@ -85,7 +85,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                                       true  {would be made}
                                       other {were made}} on {numPages, plural,
                                                               =1    {page “{inputPage}“}
-                                                              other {pages “participant information“ and “participant informationII“}} {noBox, select,
+                                                              other {pages “Information“ and “Information II“}} {noBox, select,
                                                                                                                                           true  {.}
                                                                                                                                           other {.}}
     study: 'study '
@@ -1184,7 +1184,7 @@ dataPrivacy:
     types: # also used for consent if consent is optional
       documentation: 'for quality assurance/documentation'
       reuse: 'for re-use in further research projects'
-      teaching: 'for use in teaching'
+      teaching: 'for practice in teaching'
       demonstration: 'for exemplary demonstration'
   markingRemove: # start of sentence: 'The link of the research data with personal data for the purpose of {purpose} is removed '
     markingRemoveImmediately: 'immediately after the purpose is fulfilled, thus in all probability '
@@ -1407,7 +1407,7 @@ consent:
                                                                                         children {the data of my child}
                                                                                         wards    {the data of the individual under my supervision}
                                                                                         other    {my data}}}}.}} {addressee, select,
-            children {I hereby declare to give consent on behalf of all legal guardians.}
+            children {I further declare to give consent on behalf of all legal guardians.}
             other    {}}
   optionalHeading: 'Additionally, I take the following decisions:'
   finding: 'If the investigation points towards an unusual test result (incidental finding), I agree to being told about this for me to possibly seek further diagnostic assessment. I was informed that knowing about a disease could lead to difficulties in contracting insurance for resulting adversities.'
@@ -1457,7 +1457,7 @@ completeForm:
       The answers to the following basic questions were extracted by the Ethiktool from the entries of the ethics applicant.
       {isFull, select,
         true  {More detailed information on each question is available in the ethics proposal form.}
-        other {}} The Ethiktool can verify the plausibility of the entries only partially; the responsibility for checking all entries by content remains with the applicants and the ethics committee. Cells marked in <span style="color: red">red</span> indicate the demand for specific inspection due to certain characteristics of the research project. The entry “<span style="color: grey">unclear</span>“ indicates aspects whose ethical implications are difficult to interpret for the Ethiktool; this requires verification of the applicants' self-judgment regarding the review process (short or full proposal).
+        other {}} The Ethiktool can verify the plausibility of the entries only partially; the responsibility for checking all entries by content remains with the applicants and the ethics committee. Cells marked in <span style="color: red">red</span> indicate the demand for specific inspection due to certain characteristics of the research project. The entry “<span style="color: grey">Unclear</span>“ indicates aspects whose ethical implications are difficult to interpret for the Ethiktool; this requires verification of the applicants' self-judgment regarding the review process (short or full proposal).
     types:
       yes: 'Yes'
       no: 'No'

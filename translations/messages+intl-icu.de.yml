@@ -272,8 +272,8 @@ pages:
     groups: 'Personengruppen'
     information: 'Aufklärung'
     informationSidebar: 'Aufklärung'
-    informationII: 'AufklärungII'
-    informationIISidebar: 'AufklärungII'
+    informationII: 'Aufklärung II'
+    informationIISidebar: 'Aufklärung II'
     consent: 'Einwilligung'
     measures: 'Datenerhebung'
     burdensRisks: 'Belastungen/Risiken'
@@ -456,7 +456,7 @@ coreData:
       notApplicable: 'nicht zutreffend: Es werden keine Teilnahmedokumente erstellt, da es weder eine Vorab- noch eine nachträgliche Aufklärung gibt und auch keine Einwilligung in die Studienteilnahme bzw. Verwendung der Daten eingeholt wird.'
   appType:
     title: 'Antragstyp'
-    headingHint: 'Wenn der Antrag noch nicht von {committeeDat} begutachtet wurde, wählen Sie bitte „Neuer Antrag“. Wenn Sie bereits ein positives Votum erhalten haben, wählen Sie „Erweiterung/Änderung“. Wenn Sie im Rahmen der Begutachtung Nachfragen oder Auflagen adressieren müssen, wählen Sie „Wiedervorlage nach Antrags-Überarbeitung“. Wenn das positive Votum unter dem Vorbehalt stand, dass mit dem Entscheid über die Bewilligung der Fördermittel die Teilnahmedokumente nachgereicht werden müssen, wählen Sie „Wiedervorlage nach Mittelakquise“.'
+    headingHint: 'Wenn der Antrag noch nicht von {committeeDat} begutachtet wurde, wählen Sie bitte „Neuer Antrag“. Wenn Sie bereits ein positives Ethikvotum erhalten haben, wählen Sie „Erweiterung/Änderung“. Wenn Sie im Rahmen der Begutachtung Nachfragen oder Auflagen adressieren müssen, wählen Sie „Wiedervorlage nach Antrags-Überarbeitung“. Wenn das positive Ethikvotum unter dem Vorbehalt stand, dass mit dem Entscheid über die Bewilligung der Fördermittel die Teilnahmedokumente nachgereicht werden müssen, wählen Sie „Wiedervorlage nach Mittelakquise“.'
     type:
       new: 'Neuer Antrag'
       extended: 'Erweiterung/Änderung eines bereits bewilligten Antrags'
@@ -524,7 +524,7 @@ coreData:
           TUD   {(geplantes)}
           UH1   {(geplantes)}
           other {geplantes}} Projektende
-      hint: 'Damit ist nicht das Ende der Datenerhebung gemeint, sondern der Abschluss der Datenauswertung und Verschriftlichung. Das ausgestellte Votum ist für das Forschungsprojekt mit der hier angegebenen Laufzeit gültig.'
+      hint: 'Damit ist nicht das Ende der Datenerhebung gemeint, sondern der Abschluss der Datenauswertung und Verschriftlichung. Das ausgestellte Ethikvotum ist für das Forschungsprojekt mit der hier angegebenen Laufzeit gültig.'
   funding:
     title: 'Quelle(n) der Finanzierung'
     fundingQuali: 'keine gesonderte Finanzierung (Qualifikationsarbeit)'
@@ -807,7 +807,7 @@ projectdetails:
       sampleSize:
         title: 'Stichprobengröße'
         total:
-          title: 'Wie viele Personen der ausgewählten Gruppe sollen in diesen Zeitpunkt der Studie eingeschlossen werden?'
+          title: 'Wie viele Personen sollen in diese Kombination aus Studie/Gruppe/Zeitpunkt eingeschlossen werden?'
           textHint: 'Gemeint ist die Anzahl an Personen, an denen Daten erhoben werden (inkl. Puffer für Pilotierung, etwaigen Ausschluss aus der Analyse u.a.).'
         furtherParticulars: '(optional) Weitere Angaben zur Stichprobengröße (z.B. Verteilung der Gesamtzahl auf verschiedene Untergruppen)'
         plan:
@@ -1696,12 +1696,12 @@ projectdetails:
         types:
           documentation: 'zur Qualitätssicherung/Dokumentation'
           reuse: 'zur Nachnutzung für weitere Forschung'
-          teaching: 'zur Verwendung im Rahmen der Lehre'
+          teaching: 'zur Nutzung im Rahmen der Lehre'
           demonstration: 'zur beispielhaften Demonstration'
         typesShort: # for {type} in personalKeepConsent
           documentation: 'Qualitätssicherung/Dokumentation'
           reuse: 'Nachnutzung für weitere Forschung'
-          teaching: 'Verwendung im Rahmen der Lehre'
+          teaching: 'Nutzung im Rahmen der Lehre'
           demonstration: 'beispielhafte Demonstration'
         start: 'Die Originaldaten und/oder sonstige Unterlagen, aus denen sich der Personenbezug wiederherstellen lässt, werden '
         end: ' aufbewahrt.'
@@ -2100,10 +2100,10 @@ checkDoc:
           supportOther: 'Beschreibung anderer Beratungsangebote'
       guidelines: 'gewünschten Begutachtungsrichtlinien'
     votes:
-      otherVote: 'anderem Votum'
+      otherVote: 'anderem Ethikvotum'
       otherVoteCommittee: 'Damalige Ethikkommission'
-      otherVoteResult: 'Ergebnis des damaligen Votums'
-      otherVotePositiveNo: 'Begründung für weiteres Votum'
+      otherVoteResult: 'Ergebnis des damaligen Ethikvotums'
+      otherVotePositiveNo: 'Begründung für weiteres Ethikvotum'
       otherVoteNegative: 'Begründung der anderen Ethikkommission'
       instVote: 'Votum {committeeGen}'
       instVoteReference: 'Aktenzeichen'
@@ -2772,13 +2772,14 @@ quit: |
 aboutUs:
   title: 'Über uns'
   text: |
-    Mitglieder des aktuellen Ethiktool-Projektteams sind:
+    Mitglieder des Ethiktool-Projektteams sind:
     Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/SFKS/alexandrabendixen.html" target="_blank">Alexandra Bendixen</a> (TU Chemnitz, Projektleitung und Ansprechperson für inhaltliche Fragen)
     Dr. <a class="linkExternal" href="https://leibniz-psychology.org/profil-thomas-wegner" target="_blank">Thomas Wegner</a> (Leibniz-Institut für Psychologie (ZPID), Haupt-Softwareentwickler und Ansprechperson für technische Fragen)
+    Dr. <a href="https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=22797466" target="_blank">Eva-Maria Berens</a> (Universität Bielefeld)
     Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/wolfgang.html" target="_blank">Wolfgang Einhäuser-Treyer</a> (TU Chemnitz)
     M.Sc. <a href="https://www.tu-chemnitz.de/physik/SFKS/tinafrenzel.html" target="_blank">Tina Frenzel</a> (TU Chemnitz)
     Dr. <a class="linkExternal" href="https://leibniz-psychology.org/profil-katarina-blask" target="_blank">Katarina Blask</a> (Leibniz-Institut für Psychologie (ZPID))
-    Dr. <a href="https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=22797466" target="_blank">Eva-Maria Berens</a> (Universität Bielefeld)
+    Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/inka/index.html" target="_blank">Inka Schmitz</a> (ehemaliges Mitglied)
     
     Unser Ziel ist es, die Erstellung und Begutachtung von Ethikanträgen zu erleichtern. Hierfür stellen wir das Ethiktool allen interessierten Ethikkommissionen kostenfrei zur Verfügung. Die Ethiktool-Entwicklung basiert auf unserer langjährigen Ethikkommissionsarbeit und auf unseren Erfahrungen mit der Vorgängersoftware, die unter der Leitung von Alexandra Bendixen für die Ethikkommission der TU Chemnitz entwickelt und dort 2021 eingeführt wurde. Die Entwicklung der aktuellen Ethiktool-Version wird seit 2023 und noch bis 2026 von der VolkswagenStiftung finanziell unterstützt.
     

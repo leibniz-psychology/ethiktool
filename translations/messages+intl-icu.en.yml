@@ -270,10 +270,10 @@ pages:
   projectdetails:
     title: 'Project structure'
     groups: 'Participants'
-    information: 'Participant Information'
-    informationSidebar: 'Part.Information'
-    informationII: 'Participant Information II'
-    informationIISidebar: 'Part.InformationII'
+    information: 'Information'
+    informationSidebar: 'Information'
+    informationII: 'Information II'
+    informationIISidebar: 'Information II'
     consent: 'Consent'
     measures: 'Data collection'
     burdensRisks: 'Burdens/risks'
@@ -456,7 +456,7 @@ coreData:
       notApplicable: 'not applicable: No participant documents are prepared, as there is neither prior nor after-the-fact information, nor is consent obtained for participation or data use.'
   appType:
     title: 'Type of proposal'
-    headingHint: 'If the proposal has not yet been reviewed by {committeeDat}, please choose “new proposal“. If you already received a positive vote, choose “amendment“. If you need to address questions or change requests by the ethics committee, choose “resubmission after proposal revision“. If the positive vote was conditional upon handing in the participant documents after the funding decision, choose “resubmission after funding acquisition“.'
+    headingHint: 'If the proposal has not yet been reviewed by {committeeDat}, please choose “new proposal“. If you already received a positive ethics vote, choose “amendment“. If you need to address questions or change requests by the ethics committee, choose “resubmission after proposal revision“. If the positive ethics vote was conditional upon handing in the participant documents after the funding decision, choose “resubmission after funding acquisition“.'
     type:
       new: 'new proposal'
       extended: 'amendment of an already approved proposal'
@@ -524,7 +524,7 @@ coreData:
           TUD   {(Planned)}
           UH1   {(Planned)}
           other {Planned}} end of the project
-      hint: 'This does not refer to the end of data collection, but to finalizing data analysis and compilation. The vote issued is valid for the research project with the duration specified here.'
+      hint: 'This does not refer to the end of data collection, but to finalizing data analysis and compilation. The ethics vote issued is valid for the research project with the duration specified here.'
   funding:
     title: 'Funding source(s)'
     fundingQuali: 'no separate funding (qualification thesis)'
@@ -666,7 +666,7 @@ contributors:
       position:
         noSelection: 'Please select a position first.'
         selection: 'Please select all roles of this person in the research project.</br> At least one role must be selected.'
-      mandatory: '<i>This role must be occupied by at least one project contributor for each study.</i>'
+      mandatory: '<i>This role must be occupied by at least one project contributor for each data collection.</i>'
       responsibility: "\nIn case more than one person is responsible for data processing, responsibilities must be settled."
     nodeTitle: 'Tasks'
     leader: 'principal investigator/project lead'
@@ -726,7 +726,7 @@ projectdetails:
         minAge: 'minimum age'
         maxAge: 'maximum age'
         unlimited: 'unlimited'
-      wardsHint: 'The selected groups include participants who cannot give consent themselves. Further information and documents are therefore required for the legal guardians. If you also want to examine individuals who are capable of giving consent themselves, please create an additional group for this study on the “<a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Project Structure</a>“ page.'
+      wardsHint: 'The selected groups include participants who cannot give consent themselves. Further information and documents are therefore required for the legal guardians. If you also want to examine individuals who are capable of giving consent themselves, please create an additional group for this study on the “<a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Project structure</a>“ page.'
       examined:
         title: 'Which group(s) shall be investigated?'
         headingHint: 'Please choose all participant groups that are being studied at this time point of the study and for which you have not created a separate group in the menu. Please select only those characteristics that are relevant to the research question. For example, if you specifically want to examine individuals with physical illnesses, the corresponding category must be selected; if, on the other hand, you assume that a large online sample will happen to also include some individuals with physical illnesses, the category does not have to be selected.'
@@ -807,7 +807,7 @@ projectdetails:
       sampleSize:
         title: 'Sample size'
         total:
-          title: 'How many individuals from the selected group shall be included in this time point of the study?'
+          title: 'How many individuals from this study/group/time point combination shall be included?'
           textHint: 'This refers to the number of individuals on whom data will be collected (including buffer for piloting, possible exclusion from the analysis, etc.).'
         furtherParticulars: '(optional) Further information on the sample size (e.g., distribution of the total number across different sub-groups)'
         plan:
@@ -1696,12 +1696,12 @@ projectdetails:
         types:
           documentation: 'for quality assurance/documentation'
           reuse: 'for re-use in further research projects'
-          teaching: 'for use in teaching'
+          teaching: 'for practice in teaching'
           demonstration: 'for exemplary demonstration'
         typesShort: # for {type} in personalKeepConsent
           documentation: 'quality assurance/documentation'
           reuse: 're-use in further research projects'
-          teaching: 'use in teaching'
+          teaching: 'practice in teaching'
           demonstration: 'exemplary demonstration'
         start: 'The original data or other documents from which personal identifiability can be retrieved, are stored '
         end: '.'
@@ -2039,7 +2039,7 @@ checkDoc:
         true  {full}
         other {short}} proposal“ for the <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">review process</a>. However, due to the information you provided in the Ethiktool, a {isFull, select,
         true  {short proposal is sufficient}
-        other {full proposal is required}}. Please change the type of review process to {isFull, select,
+        other {full proposal is required}}. Please change the type of review process to “{isFull, select,
                                                                                   true  {short}
                                                                                   other {full}} proposal“.
   appData:
@@ -2100,10 +2100,10 @@ checkDoc:
           supportOther: 'description of other consulting/support services'
       guidelines: 'requested evaluation guidelines'
     votes:
-      otherVote: 'other vote'
+      otherVote: 'other ethics vote'
       otherVoteCommittee: 'ethics committee at the time'
-      otherVoteResult: 'result of the vote at the time'
-      otherVotePositiveNo: 'Reasons for further vote'
+      otherVoteResult: 'result of the ethics vote at the time'
+      otherVotePositiveNo: 'Reasons for further ethics vote'
       otherVoteNegative: 'Justification by the other ethics committee'
       instVote: 'vote from {committeeDat}'
       instVoteReference: 'case number'
@@ -2772,13 +2772,14 @@ quit: |
 aboutUs:
   title: 'About us'
   text: |
-    These are the current members of the Ethiktool team:
+    These are the members of the Ethiktool team:
     Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/SFKS/alexandrabendixen.html.en" target="_blank">Alexandra Bendixen</a> (TU Chemnitz, project lead and contact for general question)
     Dr. <a href="https://leibniz-psychology.org/profil-thomas-wegner" target="_blank">Thomas Wegner</a> (Leibniz Institute for Psychology (ZPID), main software developer and contact for technical questions)
+    Dr. <a href="https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=22797466" target="_blank">Eva-Maria Berens</a> (Bielefeld University)
     Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/wolfgang.html.en" target="_blank">Wolfgang Einhäuser-Treyer</a> (TU Chemnitz)
     <a href="https://www.tu-chemnitz.de/physik/SFKS/tinafrenzel.html.en" target="_blank">Tina Frenzel</a>, M.Sc. (TU Chemnitz)
     Dr. <a href="https://leibniz-psychology.org/profil-katarina-blask" target="_blank">Katarina Blask</a> (Leibniz Institute for Psychology (ZPID))
-    Dr. <a href="https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=22797466" target="_blank">Eva-Maria Berens</a> (Bielefeld University)
+    Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/inka/index.html.en" target="_blank">Inka Schmitz</a> (former member)
     
     Our mission is to facilitate the generation and evaluation of ethics proposals. Hence we provide the Ethiktool free of charge to all interested ethics committees. The Ethiktool development is based on our longstanding experience in ethics committee work and our experience with the predecessor software, which was developed under the leadership of Alexandra Bendixen and introduced at TU Chemnitz in 2021. The development of the current version has been financially supported by the Volkswagen Foundation since 2023, with their support set to continue until 2026.
 

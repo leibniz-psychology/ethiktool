@@ -266,7 +266,8 @@ abstract class ControllerAbstract extends AbstractController
             $nodeName = !in_array($nodeName, ['main', 'check_doc']) ? $nodeName : 'dummy';
             $formContent = $response[$nodeName] ?? $response['dummy'];
             $submitDummy = $formContent[self::submitDummy];
-            if (str_starts_with($submitDummy, self::preview)) {
+            $hasPreview = str_starts_with($submitDummy, self::preview);
+            if ($hasPreview) {
                 $submitDummy = explode("\n", $submitDummy);
                 $preview = explode(':',trim($submitDummy[0])); // 0: 'preview', 1: scroll position of preview, 2: active preview tab
                 $session->set(self::preview, $preview[1] ?? 0);
@@ -564,7 +565,7 @@ abstract class ControllerAbstract extends AbstractController
                             self::$savePDF = true;
                             return $this->forward('App\Controller\PDF\ApplicationController::createPDF');
                         } else {
-                            if ($route!=='' && $route!==$curRoute) { // go to another page
+                            if ($route!=='' && ($route!==$curRoute || $hasPreview)) { // go to another page. If link in preview is clicked which leads to same page, $route and $curRoute are equal
                                 $this->resetDocContributors($session, $isCoreDataContributors);
                             } elseif (!$hasAppNodeNew) { // on some pages, creation of appNodeNew depends also on the review process, i.e., it may be set, but not updated; therefore, remove 'docNameRecent' to always get the 'docName' appNode while still on the page
                                 $session->remove(self::docNameRecent);
@@ -2125,7 +2126,7 @@ abstract class ControllerAbstract extends AbstractController
                         // updates for versions before 2.9.0
                         if ($isSmaller290) {
                             $pre = (string) $informationNode->{self::pre};
-                            if (($pre==='0' || $pre==='1' && ((string) $informationNode->{self::post}->{self::chosen})==='0') && !$this->checkElement(self::documentTranslationNode,$informationNode)) { // add document translation again if information is oral
+                            if (in_array($reviewProcess,self::reviewQuestions[self::informationNode][self::documentTranslationNode]) && ($pre==='0' || $pre==='1' && ((string) $informationNode->{self::post}->{self::chosen})==='0') && !$this->checkElement(self::documentTranslationNode,$informationNode)) { // add document translation again if information is oral
                                 $this->addChosenNode($informationNode,self::documentTranslationNode);
                             }
                         }
