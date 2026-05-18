@@ -30,6 +30,51 @@ trait ProjectdetailsTrait
     protected const template = 'template'; // must equal one of the values in $templateChoices
     protected const templateText = 'text'; // must equal one of the values in $templateTypes
     protected const templateTypes = ['projectdetails.templateChoices.template' => 'template', 'projectdetails.templateChoices.text' => 'text', 'projectdetails.templateChoices.no' => 'no'];
+    // data source
+    protected const dataSourceNode = 'dataSource';
+    protected const originNode = 'origin';
+    protected const originTypes = ['projectdetails.pages.dataSource.origin.types.new' => 'new', 'projectdetails.pages.dataSource.origin.types.existing' => 'existing'];
+    protected const originNew = 'new'; // value must equal one value in $originTypes
+    protected const originExisting = 'existing'; // value must equal one value in $originTypes
+    protected const originSourcesNode = 'originSources';
+    protected const originSourcesTypes = ['research','originSourcesOther','widespread','documents'];
+    protected const dataSourceVotesNode = 'dataSourceVotes';
+    protected const dataSourceCommitteeNode = 'dataSourceCommittee';
+    protected const dataSourceCommitteeTypes = ['projectdetails.pages.dataSource.dataSourceVotes.dataSourceCommittee.types.committeeSame' => 'committeeSame', 'projectdetails.pages.dataSource.dataSourceVotes.dataSourceCommittee.types.committeeOther' => 'committeeOther']; // values must equal the values of the following variables
+    protected const dataSourceCommitteeSame = 'committeeSame';
+    protected const dataSourceResultNode = 'committeeResult';
+    protected const dataSourceResultTypes = ['projectdetails.pages.dataSource.dataSourceVotes.dataSourceCommittee.committeeResult.types.positive' => 'positive', 'projectdetails.pages.dataSource.dataSourceVotes.dataSourceCommittee.committeeResult.types.negative' => 'negative', 'projectdetails.pages.dataSource.dataSourceVotes.dataSourceCommittee.committeeResult.types.noVote' => 'noVote'];
+    protected const dataSourceResultPositive = 'positive'; // value must equal one value in $dataSourceResultTypes
+    protected const dataSourceResultNegative = 'negative'; // value must equal one value in $dataSourceResultTypes
+    protected const dataSourceResultNoVote = 'noVote'; // value must equal one value in $dataSourceResultTypes
+    protected const committeeResultPositiveNode = 'resultPositive';
+    protected const committeeResultPositiveTypes = ['question','access','committeeResultPositiveOther'];
+    protected const committeeResultPositiveOther = 'committeeResultPositiveOther'; // value must equal one value in $committeeResultPositiveTypes
+    protected const committeeResultNegativeNode = 'resultNegative';
+    protected const voteContributorsNode = 'voteContributors';
+    protected const voteContributorsConfirm = 'voteContributorsConfirm';
+    protected const dataSetNode = 'dataSet';
+    protected const dataSetPDF = 'dataSetPDF';
+    protected const dataSourceProcedureNode = 'dataSourceProcedure';
+    protected const restrictionNode = 'restriction';
+    protected const restrictionTypes = ['projectdetails.pages.dataSource.restriction.types.free' => 'free', 'projectdetails.pages.dataSource.restriction.types.restricted' => 'restricted'];
+    protected const restrictionFree = 'free'; // value must equal one value in $restrictionTypes
+    protected const restrictionRestricted = 'restricted'; // value must equal one value in $restrictionTypes
+    protected const dataSourceAccessNode = 'dataSourceAccess';
+    protected const dataSourceAccessTypes = ['accessOwn','center','collect'];
+    protected const legitimizationNode = 'legitimization';
+    protected const legitimizationTypes = ['consentNew','consentExisting','conditions','contract','legalBasis','legitimizationOther'];
+    protected const legitimizationConsentNew = 'consentNew'; // value must equal one value in $legitimizationTypes
+    protected const legitimizationOtherTypes = ['consentExisting','conditions','contract','legalBasis','legitimizationOther'];
+    protected const dataSourceIdentificationNode = 'dataSourceIdentification';
+    protected const dataSourceIdentificationTypes = ['projectdetails.pages.dataSource.dataSourceIdentification.types.yes' => 'yes', 'projectdetails.pages.dataSource.dataSourceIdentification.types.partly' => 'partly', 'projectdetails.pages.dataSource.dataSourceIdentification.types.temporary' => 'temporary', 'projectdetails.pages.dataSource.dataSourceIdentification.types.no' => 'no'];
+    protected const dataSourceIdentificationNo = 'no'; // value must equal one value in $dataSourceIdentificationTypes
+    protected const publicationNode = 'publication';
+    protected const publicationTypes = ['projectdetails.pages.dataSource.publication.types.less' => 'less', 'projectdetails.pages.dataSource.publication.types.more' => 'more', 'projectdetails.pages.dataSource.publication.types.no' => 'no'];
+    protected const publicationLess = 'less'; // value must equal one value in $publicationTypes
+    protected const dataSourceBurdensRisksNodes = ['dataSourceBurdensRisks','dataSourceBurdensRisksContributors'];
+    protected const dataSourceBurdensRisks = 'dataSourceBurdensRisks'; // value must equal one value in $dataSourceBurdensRisksNodes
+    protected const projectdetailsNodes = ['groups','information','informationII','consent','measures','burdensRisks','compensation','texts','informationIII','legal','dataPrivacy','dataReuse','contributor']; // all projectdetails pages except data source. Must equal the node names
     // groups
     protected const groupsNode = 'groups';
     protected const minAge = 'minAge';
@@ -456,57 +501,9 @@ trait ProjectdetailsTrait
                     $newNode->addChild(self::nameNode);
                 }
             }
-            // groups
-            $groupsNode = $newNode->addChild(self::groupsNode);
-            $this->addChildNodes($groupsNode,[self::minAge,self::maxAge,self::examinedPeopleNode,self::peopleDescription]);
-            $includeNode = $groupsNode->addChild(self::criteriaIncludeNode);
-            $this->addChildNodes($includeNode,[self::noCriteriaNode,self::criteriaNode]);
-            $includeNode->{self::criteriaNode}->addChild(self::criteriaIncludeNode.'0',str_replace('0','X',$this->translateString('projectdetails.pages.groups.criteria.include.addressee',[self::addressee => 'other', 'limits' => 'sameLimit', 'minAge' => '0'])));
-            $this->addChildNodesChosen($groupsNode,[self::closedNode]);
-            $this->addChildNodes($groupsNode->addChild(self::criteriaExcludeNode),[self::noCriteriaNode,self::criteriaNode]);
-            $this->addChildNodes($groupsNode->addChild(self::sampleSizeNode),[self::sampleSizeTotalNode,self::sampleSizeFurtherNode,self::sampleSizePlanNode]);
-            $this->addChildNodes($groupsNode,[self::recruitment,self::recruitmentFurther]);
-            // information(II)
-            $newNode->addChild(self::informationNode)->addChild(self::pre);
-            $newNode->addChild(self::informationIINode);
-            // consent
-            $consentNode = $newNode->addChild(self::consentNode);
-            $this->addChildNodesChosen($consentNode,[self::voluntaryNode,self::consentNode]);
-            $this->addChosenNode($consentNode,self::terminateConsNode);
-            $this->addChosenNode($consentNode,self::terminateParticipantsNode);
-            $consentNode->addChild(self::terminateCriteriaNode);
-            // measures
-            $measuresNode = $newNode->addChild(self::measuresNode);
-            $this->addChildNodes($measuresNode,[self::procedureNode,self::measuresNode,self::measuresDescription,self::interventionsNode]);
-            $this->addChosenNode($measuresNode,self::otherSourcesNode);
-            $this->addChosenNode($measuresNode,self::loanNode);
-            $this->addChosenNode($measuresNode,self::locationNode)->addChild(self::descriptionNode);
-            $this->addChosenNode($measuresNode,self::presenceNode);
-            $this->addChildNodes($measuresNode->addChild(self::durationNode),self::durationTypes);
-            // burdens/risks
-            $burdensRisksNode = $newNode->addChild(self::burdensRisksNode);
-            $this->addChildNodes($burdensRisksNode->addChild(self::burdensNode),[self::burdensTypesNode]);
-            $this->addChildNodes($burdensRisksNode->addChild(self::risksNode),[self::risksTypesNode]);
-            $this->addChosenNode($burdensRisksNode,self::burdensRisksContributorsNode);
-            $this->addChildNodesChosen($burdensRisksNode,[self::findingNode,self::feedbackNode]);
-            // compensation
-            $newNode->addChild(self::compensationNode)->addChild(self::compensationTypeNode);
-            // texts
-            $newNode->addChild(self::textsNode);
-            // informationIII
-            $newNode->addChild(self::informationIIINode);
-            // legal
-            $newNode->addChild(self::legalNode);
-            // data privacy
-            $privacyNode = $newNode->addChild(self::privacyNode);
-            $privacyNode->addChild(self::processingNode);
-            $this->addChosenNode($privacyNode,self::createNode);
-            // data reuse
-            $newNode->addChild(self::dataReuseNode)->addChild(self::confirmIntroNode);
-            // contributor (Beteiligte)
-            $contributor = $newNode->addChild(self::contributorNode);
-            foreach (self::tasksNodes as $task) {
-                $contributor->addChild($task);
+            $this->addChosenNode($newNode->addChild(self::dataSourceNode),self::originNode); // data source
+            foreach (self::projectdetailsNodes as $nodeName) {
+                $newNode->addChild($nodeName);
             }
         }
     }

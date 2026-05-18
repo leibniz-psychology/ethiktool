@@ -18,7 +18,7 @@ class DataReuseController extends ControllerAbstract
     {
         $routeParams = $request->get('_route_params');
         $measure = $this->getMeasureTimePointNode($request,$routeParams);
-        if ($measure===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
+        if ($this->checkInactivePage($measure,self::dataReuseNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
         $translationPrefix = 'projectdetails.pages.'.self::dataReuseNode.'.';

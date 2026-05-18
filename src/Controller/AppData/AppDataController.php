@@ -48,35 +48,37 @@ class AppDataController extends ControllerAbstract
         foreach ($this->addZeroIndex($this->xmlToArray($appNodeOld->{self::projectdetailsNodeName}->{self::studyNode})) as $study) {
             foreach ($this->addZeroIndex($study[self::groupNode]) as $group) {
                 foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureTimePoint) {
-                    if ($isBegunOld) {
-                        $hasInput = false;
-                        if ($isFullBegunOld) { // inputs for compensation and data reuse that may be removed are only necessary in full applications
-                            $tempArray = $measureTimePoint[self::dataReuseNode];
-                            if (($tempArray[self::dataReuseHowNode][self::chosen] ?? '')!='' || ($tempArray[self::dataReuseHowNode.'reuse'][self::chosen] ?? '')!=='') { // data reuse how
-                                $hasInput = true;
-                            }
-                            $compensationArray = $measureTimePoint[self::compensationNode];
-                            $tempArray = $compensationArray[self::compensationTypeNode];
-                            if ($tempArray!=='' && !array_key_exists(self::compensationNo,$tempArray)) { // compensation awarding
-                                foreach (array_keys($tempArray) as $selection) {
-                                    $awardingArray = $compensationArray[$selection.self::awardingNode] ?? '';
-                                    if ($awardingArray!=='' && $awardingArray[self::chosen]!=='' || $selection===self::compensationLottery && ($awardingArray[self::lotteryStart.self::descriptionCap]!=='' || $awardingArray[self::lotteryStart]!=='')) {
-                                        $hasInput = true;
+                    if ($measureTimePoint[self::groupsNode]!=='') {
+                        if ($isBegunOld) {
+                            $hasInput = false;
+                            if ($isFullBegunOld) { // inputs for compensation and data reuse that may be removed are only necessary in full applications
+                                $tempArray = $measureTimePoint[self::dataReuseNode];
+                                if (($tempArray[self::dataReuseHowNode][self::chosen] ?? '')!='' || ($tempArray[self::dataReuseHowNode.'reuse'][self::chosen] ?? '')!=='') { // data reuse how
+                                    $hasInput = true;
+                                }
+                                $compensationArray = $measureTimePoint[self::compensationNode];
+                                $tempArray = $compensationArray[self::compensationTypeNode];
+                                if ($tempArray!=='' && !array_key_exists(self::compensationNo, $tempArray)) { // compensation awarding
+                                    foreach (array_keys($tempArray) as $selection) {
+                                        $awardingArray = $compensationArray[$selection.self::awardingNode] ?? '';
+                                        if ($awardingArray!=='' && $awardingArray[self::chosen]!=='' || $selection===self::compensationLottery && ($awardingArray[self::lotteryStart.self::descriptionCap]!=='' || $awardingArray[self::lotteryStart]!=='')) {
+                                            $hasInput = true;
+                                        }
                                     }
                                 }
                             }
+                            if (($measureTimePoint[self::consentNode][self::terminateParticipantsNode][self::chosen] ?? '')!=='') {
+                                $hasInput = true;
+                            }
+                            if ($hasInput) {
+                                $hasBegunInput = true;
+                            }
                         }
-                        if (($measureTimePoint[self::consentNode][self::terminateParticipantsNode][self::chosen] ?? '')!=='') {
-                            $hasInput = true;
+                        $textsArray = $measureTimePoint[self::textsNode];
+                        $hasTexts = $hasTexts || $textsArray!=='';
+                        if (($textsArray[self::conflictTextNode] ?? '')!=='') {
+                            $hasConflictDescription = true;
                         }
-                        if ($hasInput) {
-                            $hasBegunInput = true;
-                        }
-                    }
-                    $textsArray = $measureTimePoint[self::textsNode];
-                    $hasTexts = $hasTexts || $textsArray!=='';
-                    if (($textsArray[self::conflictTextNode] ?? '')!=='') {
-                        $hasConflictDescription = true;
                     }
                     if ($hasConflictDescription && $hasBegunInput) {
                         break(3);

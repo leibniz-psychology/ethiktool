@@ -20,7 +20,7 @@ class BurdensRisksController extends ControllerAbstract
         $routeParams = $request->get('_route_params');
         $appNode = $this->getXMLfromSession($session); // no setRecent because first it needs to be checked if docNameRecent needs to be set
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
-        if ($measureNode===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
+        if ($this->checkInactivePage($measureNode,self::burdensRisksNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
         $textsArray = $this->xmlToArray($measureNode->{self::textsNode});

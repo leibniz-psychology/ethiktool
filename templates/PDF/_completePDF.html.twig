@@ -69,7 +69,7 @@
                         {% set color = answer[1] %}
                         <tr>
                             <td>{{ question|raw|nl2br }}</td>
-                            <td style="text-align: center; {% if color is not same as '' %} color: {{ color }} {% endif %}">{{ answer[0] }}</td>
+                            <td style="text-align: center; min-width: 5em; {% if color is not same as '' %} color: {{ color }} {% endif %}">{{ answer[0] }}</td>
                         </tr>
                     {% endfor %}
                 </table>

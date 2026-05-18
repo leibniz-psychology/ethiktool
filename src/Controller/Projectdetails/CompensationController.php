@@ -20,7 +20,7 @@ class CompensationController extends ControllerAbstract
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session);
         $measure = $this->getMeasureTimePointNode($appNode,$routeParams);
-        if ($measure===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
+        if ($this->checkInactivePage($measure,self::compensationNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
         $compensationNode = $measure->{self::compensationNode}[0];

@@ -30,6 +30,7 @@ use Tomsgu\PdfMerger\Exception\InvalidArgumentException;
 use Tomsgu\PdfMerger\PdfCollection;
 use Tomsgu\PdfMerger\PdfMerger;
 use ZipArchive;
+use function RectorPrefix202604\React\Promise\all;
 
 /** Contains all variables, functions and methods that are used in several controller classes. Therefore, it extends AbstractController. All controller classes inherit this class. */
 abstract class ControllerAbstract extends AbstractController
@@ -40,7 +41,7 @@ abstract class ControllerAbstract extends AbstractController
     public const submitDummy = 'submitDummy'; // name of the form element that hold the route to redirect to; needed in TypeAbstract, therefore public
     protected const landing = 'landing'; // name of the session variable
     protected const content = 'content'; // name of the variable that is passed to the template
-    protected const routeOrder = ['app_coreData','app_votes','app_medicine','app_summary','app_contributors','app_landing','app_groups','app_information','app_informationII','app_consent','app_measures','app_burdensRisks','app_compensation','app_texts','app_informationIII','app_legal','app_dataPrivacy','app_dataReuse','app_contributor']; // must equal the route names
+    protected const routeOrder = ['app_coreData','app_votes','app_medicine','app_summary','app_contributors','app_landing','app_dataSource','app_groups','app_information','app_informationII','app_consent','app_measures','app_burdensRisks','app_compensation','app_texts','app_informationIII','app_legal','app_dataPrivacy','app_dataReuse','app_contributor']; // must equal the route names
     // constant variables for node names
     protected const docName = 'document'; // array of documents. Each time an input is made, a copy is added. If the page is left, all copies except the most recent one are removed.
     protected const docNameRecent = 'documentRecent'; // Same as 'document' but including changes on other pages. Will be used if the xml-file or the single documents are downloaded before the page is left, but only on pages whose inputs may affect other pages. Therefore, the key only exists on such pages.
@@ -55,7 +56,7 @@ abstract class ControllerAbstract extends AbstractController
     protected const language = 'language'; // value needs to be the same as in PageTrait
     protected static bool $savePDF = false; // indicates if the pdf should be saved
     protected static bool $isCompleteForm = false; // indicates if the complete proposal should be created
-    protected const customPDForder = [self::privacyNode, 'begun', self::informationNode, self::informationIINode, self::measuresNode, self::interventionsNode, self::otherSourcesNode]; // order of custom PDFs
+    protected const customPDForder = [self::dataSetNode, self::legitimizationNode, self::privacyNode, 'begun', self::informationNode, self::informationIINode, self::measuresNode, self::interventionsNode, self::otherSourcesNode]; // order of custom PDFs
     public const loadInput = 'loadInput'; // form element that holds the loaded xml-file; needed in TypeAbstract, therefore public
     protected const subPages = 'subPages';
     protected const label = 'label';
@@ -78,6 +79,7 @@ abstract class ControllerAbstract extends AbstractController
     private const answerNo = 'no';
     private const answerUnclear = 'unclear';
     private const answerRestricted = 'restricted';
+    private const answerNotApplicable = 'notApplicable';
     private Fpdi $fpdi; // used for merging PDFs
     private string $failureName;
     private PdfCollection $pdfParticipation;
@@ -234,13 +236,16 @@ abstract class ControllerAbstract extends AbstractController
         $returnArray[self::studyName] = (string) $studyNode->{self::nameNode};
         $groupNode = $studyNode->{self::groupNode}[$groupID-1];
         $returnArray[self::groupName] = (string) $groupNode->{self::nameNode};
-        $returnArray['measureName'] = (string) $groupNode->{self::measureTimePointNode}[$measureID-1]->{self::nameNode};
+        $measureNode = $groupNode->{self::measureTimePointNode}[$measureID-1];
+        $returnArray['measureName'] = (string) $measureNode->{self::nameNode};
         $returnArray['multipleStudyGroupMeasure'] = $this->getMultiStudyGroupMeasure($appNode); // indicates if there are multiple studies, groups, or measure points in time
-        $addressee = $this->getAddresseeFromRequest($request);
-        $returnArray[self::addresseeType] = $addressee;
-        $returnArray[self::participantsString] = $this->getAddresseeString($addressee,false,true,$addressee===self::addresseeParticipants);
-        $returnArray[self::addresseeString] = $this->getAddresseeString($addressee);
-        $returnArray[self::informationNode] = $this->getInformation($request);
+        if (count($measureNode->{self::groupsNode}->children())>0) {
+            $addressee = $this->getAddresseeFromRequest($request);
+            $returnArray[self::addresseeType] = $addressee;
+            $returnArray[self::participantsString] = $this->getAddresseeString($addressee, false, true, $addressee===self::addresseeParticipants);
+            $returnArray[self::addresseeString] = $this->getAddresseeString($addressee);
+            $returnArray[self::informationNode] = $this->getInformation($request);
+        }
         $returnArray[self::reviewProcess] = $this->getCurrentReviewProcess($appNode);
         return $returnArray;
     }
@@ -420,7 +425,7 @@ abstract class ControllerAbstract extends AbstractController
                                         }
                                     }
                                     if ($isPagesOverview) {
-                                        $nextRoute = 'app_groups';
+                                        $nextRoute = 'app_dataSource';
                                         unset($landingArray['page']);
                                         $routeParams = array_merge($routeParams, $tempArray, $landingArray); // add IDs
                                     } else {
@@ -448,9 +453,9 @@ abstract class ControllerAbstract extends AbstractController
                             $nextRoute = self::routeOrder[$curRouteIndex+$addVal] ?? '';
                             $isContributor = $curRoute==='app_contributor';
                             $isLastPage = $isContributor;
-                            $isGroupsPrevious = $curRoute==='app_groups' && $isPrevious;
+                            $isDataSourcePrevious = $curRoute==='app_dataSource' && $isPrevious;
                             $hasNotMultiple = !$this->getMultiStudyGroupMeasure($appNode);
-                            if (!$isGroupsPrevious && !$isContributor && $curRouteIndex>array_search('app_landing', self::routeOrder)) { // current route is a projectdetails page
+                            if (!$isDataSourcePrevious && !$isContributor && $curRouteIndex>array_search('app_landing', self::routeOrder)) { // current route is a projectdetails page
                                 $measureArray = $this->xmlToArray($this->getMeasureTimePointNode($appNode, $routeParams)); // time point of the currently active page
                                 while ($nextRoute!=='' && $measureArray[substr($nextRoute, 4)]==='') { // next page is not active
                                     $curRouteIndex += $addVal;
@@ -468,7 +473,7 @@ abstract class ControllerAbstract extends AbstractController
                             } elseif ($isNext && $isContributors) { // contributors
                                 $nextRoute = 'app_landing';
                                 $session->set(self::landing, ['page' => self::projectdetailsNodeName]);
-                            } elseif ($isLastPageNext || $isGroupsPrevious) { // groups or last active page of current measure time point
+                            } elseif ($isLastPageNext || $isDataSourcePrevious) { // data source or last active page of current measure time point
                                 $hasNextPrevious = false;
                                 $newID = $routeParams[self::measureID]+$addVal;
                                 $newRouteParams = array_merge($routeParams,[self::measureID => $newID]);
@@ -497,8 +502,8 @@ abstract class ControllerAbstract extends AbstractController
                                     }
                                 }
                                 if ($isNext) {
-                                    $nextRoute = $hasNextPrevious ? 'app_groups' : 'app_checkDoc';
-                                } elseif ($hasNextPrevious) { // groups and previous study / group / measure time point exists
+                                    $nextRoute = $hasNextPrevious ? 'app_dataSource' : 'app_checkDoc';
+                                } elseif ($hasNextPrevious) { // dats source and previous study / group / measure time point exists
                                     $measureTimePointArray = $this->xmlToArray($this->getMeasureTimePointNode($appNode,$newRouteParams)); // time point where the next page wil be opened
                                     $newIndex = count(self::routeOrder)-1;
                                     while ($measureTimePointArray[substr(self::routeOrder[$newIndex],4)]==='') { // page is not active
@@ -512,10 +517,10 @@ abstract class ControllerAbstract extends AbstractController
                                 if ($nextRoute==='app_landing') {
                                     $session->set(self::landing, array_merge($routeParams, ['page' => self::projectdetailsNodeName]));
                                 }
-                                if ($isGroupsPrevious && !$hasNextPrevious) { // first measure time point and next route is landing -> remove route IDs and further parameters
+                                if ($isDataSourcePrevious && !$hasNextPrevious) { // first measure time point and next route is landing -> remove route IDs and further parameters
                                     $routeParams = [];
                                 }
-                            } else { // $curRoute is a projectdetails subpage unlike groups (and 'previous' was clicked) and unlike the last page of the current measure time point
+                            } else { // $curRoute is a projectdetails subpage unlike data source (and 'previous' was clicked) and unlike the last page of the current measure time point
                                 $curRouteIndex = array_search($curRoute, self::routeOrder); // can not be the index of app_landing at this point
                                 $nextRoute = self::routeOrder[$curRouteIndex+$addVal] ?? '';
                                 if ($curRouteIndex>array_search('app_landing', self::routeOrder)) {
@@ -627,7 +632,7 @@ abstract class ControllerAbstract extends AbstractController
             $returnArray = [self::label => $this->translateString($tempVal.'title'),self::route => 'app_landing',self::subPages => $tempArray, self::error => CheckDocClass::getDocumentCheck($request,self::appDataNodeName)];
         } else {
             $session = $request->getSession();
-            $appNode = $this->getXMLfromSession($session);
+            $appNode = $this->getXMLfromSession($session,getRecent: true);
             if ($isOverview) { // overview of one combination in the sidebar
                 if ($this->getMultiStudyGroupMeasure($appNode)) {
                     $headingTrans = $this->getProjectdetailsHeadings();
@@ -652,13 +657,14 @@ abstract class ControllerAbstract extends AbstractController
                 $prefix = 'pages.projectdetails.';
                 $routeIDs = [self::studyID => $studyID+1, self::groupID => $groupID+1, self::measureID => $measureID+1];
                 $measure = $this->xmlToArray($this->getMeasureTimePointNode($appNode,$routeIDs));
+                $isDataCollection = $measure[self::groupsNode]!=='';
                 $isMultiple = $this->getMultiStudyGroupMeasure($appNode);
-                $information = $this->getInformation($appNode,$routeIDs);
-                $isPre = $information===self::pre;
+                $information = $isDataCollection ? $this->getInformation($appNode,$routeIDs) : '';
+                $isPre = $isDataCollection && $information===self::pre;
                 $sidebarSuffix = $cutName ? 'Sidebar' : ''; // use abbreviation for information pages only in sidebar
                 $returnArray = [];
-                foreach ([self::groupsNode,self::informationNode,self::informationIINode,self::consentNode,self::measuresNode,self::burdensRisksNode,self::compensationNode,self::textsNode,self::informationIIINode,self::legalNode,self::privacyNode,self::dataReuseNode,self::contributorNode] as $page) {
-                    $route = match ($page) {
+                foreach ([self::dataSourceNode,self::groupsNode,self::informationNode,self::informationIINode,self::consentNode,self::measuresNode,self::burdensRisksNode,self::compensationNode,self::textsNode,self::informationIIINode,self::legalNode,self::privacyNode,self::dataReuseNode,self::contributorNode] as $page) {
+                    $route = $isDataCollection || $page===self::dataSourceNode ? match ($page) {
                         self::informationIINode => $this->getAddressee($measure[self::groupsNode])!==self::addresseeParticipants ? 'app_informationII' : '',
                         self::textsNode => $hasDocs && ($isPre || $information===self::post) ? 'app_texts' : '',
                         self::informationIIINode => $hasDocs && $this->getInformationIII($measure[self::informationNode]) ? 'app_informationIII' : '',
@@ -666,7 +672,7 @@ abstract class ControllerAbstract extends AbstractController
                         self::privacyNode => in_array($reviewProcess,self::reviewTypePages[self::privacyNode]) ? 'app_dataPrivacy' : '',
                         self::dataReuseNode => in_array($reviewProcess,self::reviewTypePages[self::dataReuseNode]) ? 'app_dataReuse' : '',
                         self::contributorNode => $hasDocs && $isMultiple ? 'app_contributor' : '',
-                        default => 'app_'.$page};
+                        default => 'app_'.$page} : '';
                     $returnArray[] =
                         [self::label => $this->translateString($prefix.$page.(str_contains($page,self::informationNode) ? $sidebarSuffix : '')),
                             self::route => $route,
@@ -911,17 +917,18 @@ abstract class ControllerAbstract extends AbstractController
     }
 
     /** Checks if either burdens, risks, or burdens/risks for contributors are selected.
-     * @param array $burdensRisksArray array containing the burdens and risks information
+     * @param array|string $burdensRisksArray array containing the burdens and risks information
      * @param string $type must equal 'burdens','risks', or 'burdensRisksContributors
      * @param bool $checkEveryday if true and $type equals 'burdens', the first element of the return array is only true if the 'burdensEveryday' question is answered with yes
      * @return array 0: true if any option except 'no' is selected (burdens/risks for contributors: if 'yes' is selected), 1: true if 'no' is selected; otherwise false in both cases
      */
-    protected function getBurdensOrRisks(array $burdensRisksArray, string $type, bool $checkEveryday = true): array
+    protected function getBurdensOrRisks(array|string $burdensRisksArray, string $type, bool $checkEveryday = true): array
     {
-        $typeArray = $burdensRisksArray[$type];
+        $typeArray = $burdensRisksArray[$type] ?? [];
         if ($type!==self::burdensRisksContributorsNode) {
-            $tempArray = $typeArray[$type.'Type'];
-            if ($tempArray==='' || $tempArray==[]) { // depending on where the function is called, the 'Type' key can either be an empty string or an empty array if nothing was chosen yet
+            $tempArray = $typeArray[$type.'Type'] ?? '';
+            $tempArray = $tempArray==='' ? [] : $tempArray;
+            if ($tempArray==[]) {
                 return [false,false];
             }
             $isBurdens = $type===self::burdensNode;
@@ -1265,7 +1272,7 @@ abstract class ControllerAbstract extends AbstractController
         $coreDataArray = $appDataArray[self::coreDataNode];
         $tempVal = $coreDataArray[self::conflictNode][self::chosen];
         $allShort = $tempVal==='1'; // gets false if any question is either not yet answered or answered such that a full proposal is required
-        $briefReport = [$this->getBriefReportHeading(self::conflictNode) => $this->getBriefReportAnswer(self::conflictNode,$tempVal==='0' ? self::answerYes : self::answerNo,$parameters,$getReviewError)];
+        $conflictMedicine = [$this->getBriefReportHeading(self::conflictNode) => $this->getBriefReportAnswer(self::conflictNode,$tempVal==='0' ? self::answerYes : self::answerNo,$parameters,$getReviewError)];
         $isMedicinePhysician = false;
         foreach ([self::medicine,self::physicianNode] as $type) {
             $tempVal = $medicineArray[$type][self::chosen];
@@ -1274,13 +1281,29 @@ abstract class ControllerAbstract extends AbstractController
             $isMedicinePhysician = $isMedicinePhysician || $tempVal;
             $parameters['is'.ucfirst($type)] = $this->getStringFromBool($tempVal);
         }
-        $briefReport[$this->getBriefReportHeading(self::medicine)] = $this->getBriefReportAnswer(self::medicine,$isMedicinePhysician ? self::answerYes : self::answerNo,$parameters,$getReviewError);
-        $conflictMedicine = $briefReport;
-        $briefReport = [];
+        $conflictMedicine[$this->getBriefReportHeading(self::medicine)] = $this->getBriefReportAnswer(self::medicine,$isMedicinePhysician ? self::answerYes : self::answerNo,$parameters,$getReviewError);
         $tempArray = array_values($conflictMedicine);
         $anyFull = $getReviewError && (($tempArray[0][0] || $tempArray[1][0])); // (gets) true if any information makes a full review process necessary
         $anyUnclear = false; // gets true if any information is 'unclear'
         if (!($getReviewError && $anyFull)) { // check projectdetails only if conflict and medicine are 'no'
+            $isMixed = false;
+            $isAny = [false,false]; // 0: new, 1: existing
+            foreach ($studyArray as $study) {
+                foreach ($this->addZeroIndex($study[self::groupNode]) as $group) {
+                    foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureTimePoint) {
+                        $origin = $measureTimePoint[self::dataSourceNode][self::originNode][self::chosen];
+                        if ($origin!=='') {
+                            $isAny[$origin===self::originNew ? 0 : 1] = true;
+                        }
+                        if (!in_array(false,$isAny)) {
+                            $isMixed = true;
+                            break(3);
+                        }
+                    }
+                }
+            }
+            $tempPrefix = 'completeForm.briefReport.levelHeadings.';
+            $levelHeadings = $isMixed ? [self::originNew => $this->translateStringPDF($tempPrefix.self::originNew), self::originExisting => $this->translateStringPDF($tempPrefix.self::originExisting)] : [self::originNew => '', self::originExisting => '']; // information after level names whether new or existing data
             foreach ($studyArray as $studyID => $study) {
                 $heading = $multipleStudies ? [self::studyNode => $headingTrans[self::studyNode].($studyID + 1)] : [];
                 $groupArray = $this->addZeroIndex($study[self::groupNode]);
@@ -1294,139 +1317,194 @@ abstract class ControllerAbstract extends AbstractController
                     $measureArray = $this->addZeroIndex($group[self::measureTimePointNode]);
                     $multipleMeasureTimePoints = count($measureArray)>1;
                     foreach ($measureArray as $measureID => $measureTimePoint) {
+                        $briefReport = [];
                         if ($multipleMeasureTimePoints) {
                             $heading[self::measureTimePointNode] = $headingTrans[self::measureTimePointNode].($measureID + 1);
                         } else {
                             unset($heading[self::measureTimePointNode]);
                         }
-                        $informationArray = $measureTimePoint[self::informationNode];
-                        $information = $this->getInformationString($informationArray);
-                        $parameters[self::informationNode] = $information;
-                        $informationIIArray = $measureTimePoint[self::informationIINode];
-                        $isInformationII = $informationIIArray!=='';
-                        $informationII = $isInformationII ? $this->getInformationString($informationIIArray) : '';
-                        $allInformation = [$information, $informationII];
-                        // information -> no need to check for informationII because 'examined' will falsify $allShort anyway if informationII is active
-                        $preContentChosen = $informationArray[self::preContent] ?? '';
-                        $allShort = $allShort && $preContentChosen===self::complete;
-                        $preContent = [$preContentChosen, $isInformationII ? ($informationIIArray[self::preContent] ?? '') : ''];
-                        $isNotPre = array_diff($allInformation, ['', self::pre])!==[];
-                        $parameters['isNotPre'] = $this->getStringFromBool($isNotPre);
-                        $isIncomplete = array_intersect($preContent, self::preContentIncomplete)!==[];
-                        $parameters['isIncomplete'] = $this->getStringFromBool($isIncomplete);
-                        $parameters['isCompletePost'] = $this->getStringFromBool(($informationArray[self::preComplete][self::chosen] ?? '')==='0' || $isInformationII && ($informationIIArray[self::preComplete][self::chosen] ?? '')==='0'); // needed for preContent
-                        $briefReport[$this->getBriefReportHeading(self::informationNode)] = $this->getBriefReportAnswer(self::informationNode, $isNotPre || $isIncomplete ? self::answerNo : self::answerYes, $parameters, $getReviewError, [self::answerNo]);
-                        // voluntary -> no need to check for chosen2 because if it exists, 'examined' will falsify $allShort anyway
-                        $consentArray = $measureTimePoint[self::consentNode];
-                        $tempArray = $consentArray[self::consentNode];
-                        $consentChosen = $tempArray[self::chosen];
-                        $isConsentOther = in_array(self::consentOther, [$consentChosen, $tempArray[self::chosen2Node] ?? '']);
-                        $tempArray = $consentArray[self::voluntaryNode];
-                        $voluntary = [$tempArray[self::chosen], $tempArray[self::chosen2Node] ?? 'yes'];
-                        $isVoluntary = in_array(self::voluntaryConsentNotApplicable, $voluntary) || array_key_exists(self::voluntaryYesDescription, $tempArray);
-                        $compensationArray = $measureTimePoint[self::compensationNode];
-                        $allShort = $allShort && $compensationArray[self::compensationTypeNode]!=='';
-                        $parameters['isVoluntary'] = $this->getStringFromBool($isVoluntary);
-                        $parameters['isConsent'] = $this->getStringFromBool($isConsentOther);
-                        $compensationVoluntary = $compensationArray[self::compensationVoluntaryNode][self::chosen] ?? '';
-                        $allShort = $allShort && array_diff($voluntary, ['yes'])===[] && (!array_key_exists(self::compensationVoluntaryNode, $compensationArray) || $compensationVoluntary==='1') && in_array($consentChosen, self::consentTypesAny);
-                        $briefReport[$this->getBriefReportHeading(self::voluntaryNode)] = $this->getBriefReportAnswer(self::voluntaryNode, in_array(self::voluntaryConsentNo, $voluntary)
-                            ? self::answerNo
-                            : ($compensationVoluntary==='0' // compensation may compromise voluntariness
-                                ? self::answerRestricted
-                                : ($isVoluntary || // voluntariness not applicable, closed group or dependent
-                                $isConsentOther // consent is 'other'
-                                    ? self::answerUnclear : self::answerYes)), $parameters, $getReviewError, [self::answerRestricted, self::answerNo]);
-                        // terminate cons
-                        $measuresArray = $measureTimePoint[self::measuresNode];
-                        $isLonger30 = $this->getDuration($measuresArray[self::durationNode])>30;
-                        $compensationTerminate = $compensationArray[self::terminateNode][self::chosen] ?? '';
-                        $isNoCompensationTerminate = $compensationTerminate===self::terminateNothing;
-                        $terminateCons = $consentArray[self::terminateConsNode][self::chosen];
-                        $isTerminateCons = $terminateCons==='1';
-                        $isShorter30Terminate = !$isLonger30 && $isNoCompensationTerminate;
-                        $parameters['isTerminateCons'] = $this->getStringFromBool($isTerminateCons);
-                        $parameters['isDuration'] = $this->getStringFromBool($isShorter30Terminate);
-                        $isInformation = in_array($information,self::prePostArray);
-                        $parameters['isFullInformation'] = $this->getStringFromBool($isFullDocs && $isInformation);
-                        $parameters['isDocHint'] = $this->getStringFromBool(!($isTerminateCons && !$isShorter30Terminate && (!$isInformation || !$isFullDocs)));
-                        $allShort = $allShort && $terminateCons==='0' && (!array_key_exists(self::terminateNode, $compensationArray) || in_array($compensationTerminate, self::terminateTypes));
-                        $briefReport[$this->getBriefReportHeading(self::terminateConsNode)] = $this->getBriefReportAnswer(self::terminateConsNode, $isTerminateCons || $isLonger30 && $isNoCompensationTerminate // cons if withdrawal or duration>30min and no compensation if withdrawal
-                            ? self::answerNo
-                            : ($compensationTerminate===self::terminateOther || $isShorter30Terminate // other compensation if withdrawal or duration at most 30 minutes and no compensation if withdrawal
-                                ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, [self::answerNo]);
-                        // examined
-                        $groupsArray = $measureTimePoint[self::groupsNode];
-                        $examinedArray = $groupsArray[self::examinedPeopleNode];
-                        $examinedArray = is_array($examinedArray) ? $examinedArray : []; // if not an array, then is must be an empty string, i.e., nothing chosen yet
-                        $minAge = $groupsArray[self::minAge];
-                        $isMinAge = $minAge!=='';
-                        $isUnder18 = $isMinAge && $minAge<18;
-                        $isOnlyHealthyDependentOther = array_diff_key($examinedArray, [self::healthyExaminedNode => '', self::dependentExaminedNode => '', 'otherPeople' => ''])===[];
-                        $isOther = array_key_exists('otherPeople', $examinedArray);
-                        $allShort = $allShort && $isMinAge && !$isUnder18 && $isOnlyHealthyDependentOther && (!$isOther || count($examinedArray)>1);
-                        $briefReport[$this->getBriefReportHeading(self::examinedPeopleNode)] = $this->getBriefReportAnswer(self::examinedPeopleNode, !$isOnlyHealthyDependentOther // people other than healthy, dependent, and other are examined
-                            ? self::answerYes
-                            : ($isOther || // only other is selected
-                            $isUnder18 // underage
-                                ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
-                        // wards -> no need to set $allShort because checks for wards are implicitly included in checks for examined
-                        $briefReport[$this->getBriefReportHeading(self::wardsExaminedNode)] = $this->getBriefReportAnswer(self::wardsExaminedNode, array_key_exists(self::wardsExaminedNode, $examinedArray) ? self::answerNo : ($isUnder18 ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, [self::answerNo]);
-                        // pre content -> no need to set $allShort because checks for pre content are implicitly included in checks for information
-                        $briefReport[$this->getBriefReportHeading(self::preContent)] = $this->getBriefReportAnswer(self::preContent, in_array(self::deceit, $preContent) // deceit was chosen
-                            ? self::answerYes
-                            : (array_intersect($allInformation, [self::post, 'noPost'])!==[] // no information is given
-                                ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
-                        // burdens and risks
-                        $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
-                        $tempVal = $burdensRisksArray[self::burdensRisksContributorsNode][self::chosen];
-                        $isBurdensRisksContributors = $tempVal==='0';
-                        $burdensEveryday = $burdensRisksArray[self::burdensNode][self::burdensEveryday] ?? '';
-                        $allShort = $allShort && $tempVal==='1';
-                        $parameters['isBurdensRisksContributors'] = $this->getStringFromBool($isBurdensRisksContributors);
-                        foreach ([self::burdensNode, self::risksNode] as $type) {
-                            $isBurdens = $type===self::burdensNode;
-                            $tempArray = $burdensRisksArray[$type][$type.'Type'];
-                            $isChosen = is_array($tempArray);
-                            $isCurrent = $isChosen && array_diff_key($tempArray, [($isBurdens ? self::noBurdens : self::noRisks) => ''])!==[];
-                            $allShort = $allShort && $isChosen && !$isCurrent;
-                            $parameters['is'.ucfirst($type)] = $this->getStringFromBool($isCurrent);
-                            $briefReport[$this->getBriefReportHeading($type)] = $this->getBriefReportAnswer($type, $isBurdensRisksContributors || $isCurrent && (!$isBurdens || $burdensEveryday==='0') ? self::answerYes : ($isBurdens && $burdensEveryday==='1' ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
-                        }
-                        // finding
-                        $tempVal = $burdensRisksArray[self::findingNode][self::chosen];
-                        $allShort = $allShort && $tempVal==='1';
-                        $briefReport[$this->getBriefReportHeading(self::findingNode)] = $this->getBriefReportAnswer(self::findingNode, $tempVal==='0' ? self::answerYes : self::answerNo, $parameters, $getReviewError);
-                        // data privacy -> no set of $allShort because data privacy is only relevant for full proposals
-                        if ($isReviewFull) {
-                            $dataPrivacyArray = $measureTimePoint[self::privacyNode];
-                            if (array_key_exists(self::createNode, $dataPrivacyArray)) {
-                                $create = $dataPrivacyArray[self::createNode][self::chosen];
-                                $isTool = $create===self::createTool;
-                                $responsibility = $dataPrivacyArray[self::responsibilityNode] ?? '';
-                                $marking = $dataPrivacyArray[self::markingNode][self::chosen] ?? '';
-                                $isMarkingOther = $marking===self::markingOther; // marking can not be created by the tool
-                                $answer = $create===self::createSeparate || // personal data are collected, but document should not be created by the tool
-                                          $isTool && (!$isMarkingOther && $responsibility!==self::privacyNotApplicable || // if responsibility does not equal 'not applicable', personal data are collected
-                                          in_array($dataPrivacyArray[self::dataPersonalNode] ?? '',self::dataPersonal)) || // research data are personal
-                                          in_array($dataPrivacyArray[self::dataOnlineNode][self::chosen] ?? '',self::dataOnlinePersonal) // ip-addresses are collected
-                                         ? self::answerYes
-                                         : (in_array($create,[self::createSeparateLater,self::privacyNotApplicable]) || // data privacy is checked later or no information is given
-                                            $isTool && $isMarkingOther // marking can not be created by the tool
-                                                ? self::answerUnclear : self::answerNo);
-                            } else { // data collection has already begun or funding is requested
-                                $answer = self::answerUnclear;
+                        $hasGroups = $measureTimePoint[self::groupsNode]!=='';
+                        if ($hasGroups) { // checks if new data is collected
+                            $informationArray = $measureTimePoint[self::informationNode];
+                            $information = $this->getInformationString($informationArray);
+                            $parameters[self::informationNode] = $information;
+                            $informationIIArray = $measureTimePoint[self::informationIINode];
+                            $isInformationII = $informationIIArray!=='';
+                            $informationII = $isInformationII ? $this->getInformationString($informationIIArray) : '';
+                            $allInformation = [$information, $informationII];
+                            // information -> no need to check for informationII because 'examined' will falsify $allShort anyway if informationII is active
+                            $preContentChosen = $informationArray[self::preContent] ?? '';
+                            $allShort = $allShort && $preContentChosen===self::complete;
+                            $preContent = [$preContentChosen, $isInformationII ? ($informationIIArray[self::preContent] ?? '') : ''];
+                            $isNotPre = array_diff($allInformation, ['', self::pre])!==[];
+                            $parameters['isNotPre'] = $this->getStringFromBool($isNotPre);
+                            $isIncomplete = array_intersect($preContent, self::preContentIncomplete)!==[];
+                            $parameters['isIncomplete'] = $this->getStringFromBool($isIncomplete);
+                            $parameters['isCompletePost'] = $this->getStringFromBool(($informationArray[self::preComplete][self::chosen] ?? '')==='0' || $isInformationII && ($informationIIArray[self::preComplete][self::chosen] ?? '')==='0'); // needed for preContent
+                            $briefReport[$this->getBriefReportHeading(self::informationNode)] = $this->getBriefReportAnswer(self::informationNode, $isNotPre || $isIncomplete ? self::answerNo : self::answerYes, $parameters, $getReviewError, [self::answerNo]);
+                            // voluntary -> no need to check for chosen2 because if it exists, 'examined' will falsify $allShort anyway
+                            $consentArray = $measureTimePoint[self::consentNode];
+                            $tempArray = $consentArray[self::consentNode];
+                            $consentChosen = $tempArray[self::chosen];
+                            $isConsentOther = in_array(self::consentOther, [$consentChosen, $tempArray[self::chosen2Node] ?? '']);
+                            $tempArray = $consentArray[self::voluntaryNode];
+                            $voluntary = [$tempArray[self::chosen], $tempArray[self::chosen2Node] ?? 'yes'];
+                            $isVoluntary = in_array(self::voluntaryConsentNotApplicable, $voluntary) || array_key_exists(self::voluntaryYesDescription, $tempArray);
+                            $compensationArray = $measureTimePoint[self::compensationNode];
+                            $allShort = $allShort && $compensationArray[self::compensationTypeNode]!=='';
+                            $parameters['isVoluntary'] = $this->getStringFromBool($isVoluntary);
+                            $parameters['isConsent'] = $this->getStringFromBool($isConsentOther);
+                            $compensationVoluntary = $compensationArray[self::compensationVoluntaryNode][self::chosen] ?? '';
+                            $allShort = $allShort && array_diff($voluntary, ['yes'])===[] && (!array_key_exists(self::compensationVoluntaryNode, $compensationArray) || $compensationVoluntary==='1') && in_array($consentChosen, self::consentTypesAny);
+                            $briefReport[$this->getBriefReportHeading(self::voluntaryNode)] = $this->getBriefReportAnswer(self::voluntaryNode, in_array(self::voluntaryConsentNo, $voluntary)
+                                ? self::answerNo
+                                : ($compensationVoluntary==='0' // compensation may compromise voluntariness
+                                    ? self::answerRestricted
+                                    : ($isVoluntary || // voluntariness not applicable, closed group or dependent
+                                    $isConsentOther // consent is 'other'
+                                        ? self::answerUnclear : self::answerYes)), $parameters, $getReviewError, [self::answerRestricted, self::answerNo]);
+                            // terminate cons
+                            $measuresArray = $measureTimePoint[self::measuresNode];
+                            $isLonger30 = $this->getDuration($measuresArray[self::durationNode])>30;
+                            $compensationTerminate = $compensationArray[self::terminateNode][self::chosen] ?? '';
+                            $isNoCompensationTerminate = $compensationTerminate===self::terminateNothing;
+                            $terminateCons = $consentArray[self::terminateConsNode][self::chosen];
+                            $isTerminateCons = $terminateCons==='1';
+                            $isShorter30Terminate = !$isLonger30 && $isNoCompensationTerminate;
+                            $parameters['isTerminateCons'] = $this->getStringFromBool($isTerminateCons);
+                            $parameters['isDuration'] = $this->getStringFromBool($isShorter30Terminate);
+                            $isInformation = in_array($information, self::prePostArray);
+                            $parameters['isFullInformation'] = $this->getStringFromBool($isFullDocs && $isInformation);
+                            $parameters['isDocHint'] = $this->getStringFromBool(!($isTerminateCons && !$isShorter30Terminate && (!$isInformation || !$isFullDocs)));
+                            $allShort = $allShort && $terminateCons==='0' && (!array_key_exists(self::terminateNode, $compensationArray) || in_array($compensationTerminate, self::terminateTypes));
+                            $briefReport[$this->getBriefReportHeading(self::terminateConsNode)] = $this->getBriefReportAnswer(self::terminateConsNode, $isTerminateCons || $isLonger30 && $isNoCompensationTerminate // cons if withdrawal or duration>30min and no compensation if withdrawal
+                                ? self::answerNo
+                                : ($compensationTerminate===self::terminateOther || $isShorter30Terminate // other compensation if withdrawal or duration at most 30 minutes and no compensation if withdrawal
+                                    ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, [self::answerNo]);
+                            // examined
+                            $groupsArray = $measureTimePoint[self::groupsNode];
+                            $examinedArray = $groupsArray[self::examinedPeopleNode];
+                            $examinedArray = is_array($examinedArray) ? $examinedArray : []; // if not an array, then is must be an empty string, i.e., nothing chosen yet
+                            $minAge = $groupsArray[self::minAge];
+                            $isMinAge = $minAge!=='';
+                            $isUnder18 = $isMinAge && $minAge<18;
+                            $isOnlyHealthyDependentOther = array_diff_key($examinedArray, [self::healthyExaminedNode => '', self::dependentExaminedNode => '', 'otherPeople' => ''])===[];
+                            $isOther = array_key_exists('otherPeople', $examinedArray);
+                            $allShort = $allShort && $isMinAge && !$isUnder18 && $isOnlyHealthyDependentOther && (!$isOther || count($examinedArray)>1);
+                            $briefReport[$this->getBriefReportHeading(self::examinedPeopleNode)] = $this->getBriefReportAnswer(self::examinedPeopleNode, !$isOnlyHealthyDependentOther // people other than healthy, dependent, and other are examined
+                                ? self::answerYes
+                                : ($isOther || // only other is selected
+                                $isUnder18 // underage
+                                    ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
+                            // wards -> no need to set $allShort because checks for wards are implicitly included in checks for examined
+                            $briefReport[$this->getBriefReportHeading(self::wardsExaminedNode)] = $this->getBriefReportAnswer(self::wardsExaminedNode, array_key_exists(self::wardsExaminedNode, $examinedArray) ? self::answerNo : ($isUnder18 ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, [self::answerNo]);
+                            // pre content -> no need to set $allShort because checks for pre content are implicitly included in checks for information
+                            $briefReport[$this->getBriefReportHeading(self::preContent)] = $this->getBriefReportAnswer(self::preContent, in_array(self::deceit, $preContent) // deceit was chosen
+                                ? self::answerYes
+                                : (array_intersect($allInformation, [self::post, 'noPost'])!==[] // no information is given
+                                    ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
+                            // burdens and risks
+                            $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
+                            $tempVal = $burdensRisksArray[self::burdensRisksContributorsNode][self::chosen];
+                            $isBurdensRisksContributors = $tempVal==='0';
+                            $burdensEveryday = $burdensRisksArray[self::burdensNode][self::burdensEveryday] ?? '';
+                            $allShort = $allShort && $tempVal==='1';
+                            $parameters['isBurdensRisksContributors'] = $this->getStringFromBool($isBurdensRisksContributors);
+                            foreach ([self::burdensNode, self::risksNode] as $type) {
+                                $isBurdens = $type===self::burdensNode;
+                                $tempArray = $burdensRisksArray[$type][$type.'Type'];
+                                $isChosen = is_array($tempArray);
+                                $isCurrent = $isChosen && array_diff_key($tempArray, [($isBurdens ? self::noBurdens : self::noRisks) => ''])!==[];
+                                $allShort = $allShort && $isChosen && !$isCurrent;
+                                $parameters['is'.ucfirst($type)] = $this->getStringFromBool($isCurrent);
+                                $briefReport[$this->getBriefReportHeading($type)] = $this->getBriefReportAnswer($type, $isBurdensRisksContributors || $isCurrent && (!$isBurdens || $burdensEveryday==='0') ? self::answerYes : ($isBurdens && $burdensEveryday==='1' ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
                             }
-                            if (!$getReviewError) { // add only if brief report gets created to avoid using the answer for checking if the correct application process is chosen
-                                $briefReport[$this->getBriefReportHeading(self::privacyNode)] = $this->getBriefReportAnswer(self::privacyNode, $answer, $parameters, $getReviewError);
+                            // finding
+                            $tempVal = $burdensRisksArray[self::findingNode][self::chosen];
+                            $allShort = $allShort && $tempVal==='1';
+                            $briefReport[$this->getBriefReportHeading(self::findingNode)] = $this->getBriefReportAnswer(self::findingNode, $tempVal==='0' ? self::answerYes : self::answerNo, $parameters, $getReviewError);
+                            // data privacy -> no set of $allShort because data privacy is only relevant for full proposals
+                            if ($isReviewFull) {
+                                $dataPrivacyArray = $measureTimePoint[self::privacyNode];
+                                if (array_key_exists(self::createNode, $dataPrivacyArray)) {
+                                    $create = $dataPrivacyArray[self::createNode][self::chosen];
+                                    $isTool = $create===self::createTool;
+                                    $responsibility = $dataPrivacyArray[self::responsibilityNode] ?? '';
+                                    $marking = $dataPrivacyArray[self::markingNode][self::chosen] ?? '';
+                                    $isMarkingOther = $marking===self::markingOther; // marking can not be created by the tool
+                                    $answer = $create===self::createSeparate || // personal data are collected, but document should not be created by the tool
+                                    $isTool && (!$isMarkingOther && $responsibility!==self::privacyNotApplicable || // if responsibility does not equal 'not applicable', personal data are collected
+                                        in_array($dataPrivacyArray[self::dataPersonalNode] ?? '', self::dataPersonal)) || // research data are personal
+                                    in_array($dataPrivacyArray[self::dataOnlineNode][self::chosen] ?? '', self::dataOnlinePersonal) // ip-addresses are collected
+                                        ? self::answerYes
+                                        : (in_array($create, [self::createSeparateLater, self::privacyNotApplicable]) || // data privacy is checked later or no information is given
+                                        $isTool && $isMarkingOther // marking can not be created by the tool
+                                            ? self::answerUnclear : self::answerNo);
+                                } else { // data collection has already begun or funding is requested
+                                    $answer = self::answerUnclear;
+                                }
+                                if (!$getReviewError) { // add only if brief report gets created to avoid using the answer for checking if the correct application process is chosen
+                                    $briefReport[$this->getBriefReportHeading(self::privacyNode)] = $this->getBriefReportAnswer(self::privacyNode, $answer, $parameters, $getReviewError);
+                                }
                             }
-                        }
-                        // other sources
-                        $tempVal = $measuresArray[self::otherSourcesNode][self::chosen];
-                        $allShort = $allShort && $tempVal==='1';
-                        $briefReport[$this->getBriefReportHeading(self::otherSourcesNode)] = $this->getBriefReportAnswer(self::otherSourcesNode, $tempVal==='0' ? self::answerYes : self::answerNo, $parameters, $getReviewError);
-                        // add question to time point
-                        $allBriefReports[] = ['heading' => implode(', ', $heading), 'content' => array_merge($briefReport, $conflictMedicine)];
+                            // other sources
+                            $tempVal = $measuresArray[self::otherSourcesNode][self::chosen];
+                            $allShort = $allShort && $tempVal==='1';
+                            $briefReport[$this->getBriefReportHeading(self::otherSourcesNode)] = $this->getBriefReportAnswer(self::otherSourcesNode, $tempVal==='0' ? self::answerYes : self::answerNo, $parameters, $getReviewError);
+                        } else {
+                            $dataSourceArray = $measureTimePoint[self::dataSourceNode];
+                            $tempArray = $dataSourceArray[self::originNode];
+                            if ($tempArray[self::chosen]===self::originExisting) { // checks if existing data is re-analysed
+                                $originSourcesArray = $tempArray[self::originSourcesNode];
+                                $hasOriginSources = $originSourcesArray!=='';
+                                $originSourcesArray = !$hasOriginSources ? [] : $originSourcesArray;
+                                // data source votes
+                                $isOriginSourcesResearch = array_key_exists('research',$originSourcesArray);
+                                $isOriginSourcesDocuments = array_key_exists('documents',$originSourcesArray);
+                                $dataSourceVotesArray = $dataSourceArray[self::dataSourceVotesNode] ?? [];
+                                $votesResult = $dataSourceVotesArray[self::dataSourceResultNode][self::chosen] ?? '';
+                                $votesContributors = $dataSourceVotesArray[self::voteContributorsNode][self::chosen] ?? '';
+                                $allShort = $allShort && $hasOriginSources && (!$isOriginSourcesResearch || in_array($votesResult,[self::dataSourceResultPositive,self::dataSourceResultNoVote]));
+                                $briefReport[$this->getBriefReportHeading(self::dataSourceVotesNode)] = $this->getBriefReportAnswer(self::dataSourceVotesNode,
+                                    $isOriginSourcesResearch
+                                    ? (($votesResult===self::dataSourceResultNegative || $votesContributors==='0'
+                                        ? self::answerNo
+                                        : ($votesContributors==='1'
+                                            ? self::answerUnclear : self::answerYes)))
+                                    : self::answerNotApplicable, $parameters,$getReviewError,[self::answerNo]);
+                                if (array_key_exists(self::legitimizationNode,$dataSourceArray)) { // either all of the following keys exist or none
+                                    // legitimization
+                                    $tempArray = $dataSourceArray[self::legitimizationNode];
+                                    $hasLegitimization = $tempArray!=='';
+                                    $legitimizationOtherConsent = $hasLegitimization && array_diff_key($tempArray,[self::legitimizationConsentNew => '', 'consentExisting' => ''])!==[];
+                                    $allShort = $allShort && $hasOriginSources && !$isOriginSourcesDocuments && $hasLegitimization && !$legitimizationOtherConsent;
+                                    $briefReport[$this->getBriefReportHeading(self::legitimizationNode)] = $this->getBriefReportAnswer(self::legitimizationNode,
+                                    $isOriginSourcesDocuments
+                                    ? self::answerNo
+                                    : ($hasOriginSources && $hasLegitimization && $legitimizationOtherConsent
+                                        ? self::answerUnclear : self::answerYes),$parameters,$getReviewError,[self::answerNo]);
+                                    // restriction
+                                    $restriction = $dataSourceArray[self::restrictionNode][self::chosen];
+                                    $publication = $dataSourceArray[self::publicationNode];
+                                    $isRestricted = $restriction===self::restrictionRestricted;
+                                    $allShort = $allShort && ($restriction===self::restrictionFree || $isRestricted && in_array($publication,['more','no']));
+                                    $briefReport[$this->getBriefReportHeading(self::restrictionNode)] = $this->getBriefReportAnswer(self::restrictionNode,$isRestricted && $publication===self::publicationLess ? self::answerYes : self::answerNo,$parameters,$getReviewError);
+                                    // data source identification
+                                    $tempVal = $dataSourceArray[self::dataSourceIdentificationNode];
+                                    $allShort = $allShort && $tempVal===self::dataSourceIdentificationNo;
+                                    $briefReport[$this->getBriefReportHeading(self::dataSourceIdentificationNode)] = $this->getBriefReportAnswer(self::dataSourceIdentificationNode,in_array($tempVal,['yes','partly']) ? self::answerYes : self::answerNo,$parameters,$getReviewError);
+                                    // data source burdens risks (contributors)
+                                    $tempArray = [];
+                                    foreach (self::dataSourceBurdensRisksNodes as $type) {
+                                        $tempArray[$type] = $dataSourceArray[$type][self::chosen];
+                                    }
+                                    $allShort = $allShort && array_diff_key($tempArray,['1' => ''])===[];
+                                    $briefReport[self::getBriefReportHeading(self::dataSourceBurdensRisks)] = $this->getBriefReportAnswer(self::dataSourceBurdensRisks,in_array('0',$tempArray) ? self::answerYes : self::answerNo,array_merge($parameters,['isDataSourceBurdensRisks' => $this->getStringFromBool($tempArray[self::dataSourceBurdensRisks]==='0'), 'isDataSourceBurdensRisksContributors' => $this->getStringFromBool($tempArray[self::dataSourceBurdensRisks.'Contributors']==='0')]),$getReviewError);
+                                }
+                            }
+                        } // data source
+                        // add questions to time point
+                        $allBriefReports[] = ['heading' => implode(', ', $heading).($levelHeadings[$hasGroups ? self::originNew : self::originExisting]), 'content' => array_merge($briefReport, $conflictMedicine)];
                         if ($getReviewError) {
                             foreach ($briefReport as $values) {
                                 $anyFull = $anyFull || $values[0];
@@ -1576,6 +1654,16 @@ abstract class ControllerAbstract extends AbstractController
         return !$appNode ? null : $appNode->{self::projectdetailsNodeName}->{self::studyNode}[$params[self::studyID]-1]->{self::groupNode}[$params[self::groupID]-1]->{self::measureTimePointNode}[$params[self::measureID]-1] ?? null;
     }
 
+    /** Checks whether a page is active or not.
+     * @param SimpleXMLElement|null $measure current measure time point
+     * @param string $page name of page to be checked
+     * @return bool true if the page is inactive, false otherwise
+     */
+    protected function checkInactivePage(SimpleXMLElement|null $measure, string $page): bool
+    {
+        return $measure===null || count($measure->{$page}->children())===0;
+    }
+
     /** Creates an empty DomDocument.
      * @return DOMDocument empty DomDocument
      */
@@ -1635,8 +1723,10 @@ abstract class ControllerAbstract extends AbstractController
             return false;
         }
         $nextRoute = explode("\n",$submitDummy);
-        $nextRoute = trim($nextRoute[str_contains($nextRoute[0],self::preview) ? 1 : 0]); // first entry (and maybe the second, too) may be the position of the preview scrollbar
-        $isLeave = substr($nextRoute,4)!==$route && ($submitDummy==='' || !in_array($nextRoute,['undo','download','documents',''])); // route in submitDummy starts with 'app_' (first check); check submitDummy in case the preview line exists twice
+        $hasPreview = str_contains($nextRoute[0],self::preview);
+        $nextRoute = trim($nextRoute[$hasPreview ? 1 : 0]); // first entry (and maybe the second, too) may be the position of the preview scrollbar
+        $isSameRoute = substr($nextRoute,4)===$route;
+        $isLeave = !$isSameRoute && ($submitDummy==='' || !in_array($nextRoute,['undo','download','documents',''])) || $isSameRoute && $hasPreview; // route in submitDummy starts with 'app_' (first check); check submitDummy in case the preview line exists twice; current and next route may be the same if a link in the preview is clicked that leads to the same page or the same page of another time point was clicked (last check)
         if ($isLeave) {
             $session->remove(self::docNameRecent);
         }
@@ -1770,7 +1860,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajor1 || $isMajor2 && ($minor<'9' || $patch<'1');
+        $isSmallerCurrent = $isMajor1 || $isMajor2 && $minor<'10';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
@@ -2130,6 +2220,16 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->addChosenNode($informationNode,self::documentTranslationNode);
                             }
                         }
+                        // updates for versions before 2.10.0
+                        $applicationProcessNode = $coreDataNode->{self::applicationProcessNode};
+                        if ($this->checkElement(self::shortDocsNode,$applicationProcessNode)) { // review process short without review of participant documents -> update value for choice of short docs
+                            $tempVal = (string) $applicationProcessNode->{self::shortDocsNode};
+                            $applicationProcessNode->{self::shortDocsNode} = $tempVal!=='' ? ($tempVal==='0' ? self::shortDocsYes : 'no') : '';
+                        }
+                        $this->insertElementBefore(self::dataSourceNode,$groupsNode); // add new page data source
+                        $dataSourceNode = $measureTimePointNode->{self::dataSourceNode};
+                        $this->addChosenNode($dataSourceNode,self::originNode);
+                        $dataSourceNode->{self::originNode}->{self::chosen} = self::originNew; // select 'new' to keep existing inputs
                     } // foreach measure time point
                 } // foreach group
             } // foreach study

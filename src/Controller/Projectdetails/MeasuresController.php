@@ -18,10 +18,9 @@ class MeasuresController extends ControllerAbstract
     {
         $session = $request->getSession();
         $routeParams = $request->get('_route_params');
-        $isPre = $this->getInformation($request)===self::pre;
-        $appNode = $this->getXMLfromSession($session,setRecent: $isPre);
+        $appNode = $this->getXMLfromSession($session,setRecent: true); // if no pre information is given, docNameRecent and docName are equal
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
-        if ($measureNode===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
+        if ($this->checkInactivePage($measureNode,self::measuresNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
         $hasDocs = $this->getReviewDocs($session);
@@ -94,7 +93,7 @@ class MeasuresController extends ControllerAbstract
                 $location = $data[self::locationNode][self::chosen];
                 $isLocationOnline = $location===self::locationOnline;
                 $isLocationNotOnline = $location!==null && !$isLocationOnline;
-                if ($isPre) { // only update if information is pre and
+                if ($this->getInformationString($measureArrayOld[self::informationNode])===self::pre) { // only update if information is pre
                     // update legal
                     $legalNode = $measureNodeNew->{self::legalNode};
                     $loanArray = $data[self::loanNode];

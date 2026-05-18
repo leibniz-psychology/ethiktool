@@ -41,6 +41,8 @@ class CheckDocClass extends ControllerAbstract
     private string $committeeType = '';
     private array $contributorTasks = []; // one sub-array for each task containing all contributor that have this task. Each sub-array: key: index of the contributor. value: either empty of description of 'other'
     private array $isMandatory = []; // for each mandatory task, indicates if at least one contributor has this task
+    private bool $isDataCollection = false; // gets true if for any time point data are collected
+    private bool $allOriginSelected = true; // gets false if any origin question is not answered
     private array $measure = []; // contains all data of the current time point that is checked
     private array $routeIDs = []; // route IDs of the current time point that is checked
     private string $addressee = ''; // addressee of the current time point that is checked
@@ -98,6 +100,17 @@ class CheckDocClass extends ControllerAbstract
                             $checkDoc->isMandatory[$key] = true; // may already be true
                         }
                         $checkDoc->contributorTasks[$key][$index] = $value;
+                    }
+                }
+            }
+        }
+        foreach ($checkDoc->addZeroIndex($checkDoc->appArray[self::projectdetailsNodeName][self::studyNode]) as $study) {
+            foreach ($checkDoc->addZeroIndex($study[self::groupNode]) as $group) {
+                foreach ($checkDoc->addZeroIndex($group[self::measureTimePointNode]) as $measure) {
+                    $chosen = $measure[self::dataSourceNode][self::originNode][self::chosen];
+                    $checkDoc->allOriginSelected = $checkDoc->allOriginSelected && $chosen!=='';
+                    if ($chosen===self::originNew) {
+                        $checkDoc->isDataCollection = true;
                     }
                 }
             }
@@ -171,24 +184,30 @@ class CheckDocClass extends ControllerAbstract
                                             $checkDoc->IDs = [self::studyNode => $studyID+1, self::groupNode => $groupID+1,self::measureTimePointNode => $measureID+1];
                                             $checkDoc->measure = $measure;
                                             $checkDoc->setProjectdetailsVariables();
-                                            $checkDoc->checkGroups();
-                                            $checkDoc->checkInformation(self::informationNode);
-                                            $checkDoc->checkInformation(self::informationIINode);
-                                            $checkDoc->checkConsent();
-                                            $checkDoc->checkMeasures();
-                                            $checkDoc->checkBurdensRisks();
-                                            $checkDoc->checkCompensation();
-                                            $checkDoc->checkTexts();
-                                            $checkDoc->checkInformationIII();
-                                            $checkDoc->checkLegal();
-                                            $checkDoc->checkDataPrivacy();
-                                            $checkDoc->checkDataReuse();
-                                            $checkDoc->checkContributor();
+                                            $checkDoc->checkDataSource();
+                                            if ($measure[self::groupsNode]!=='') {
+                                                $checkDoc->checkGroups();
+                                                $checkDoc->checkInformation(self::informationNode);
+                                                $checkDoc->checkInformation(self::informationIINode);
+                                                $checkDoc->checkConsent();
+                                                $checkDoc->checkMeasures();
+                                                $checkDoc->checkBurdensRisks();
+                                                $checkDoc->checkCompensation();
+                                                $checkDoc->checkTexts();
+                                                $checkDoc->checkInformationIII();
+                                                $checkDoc->checkLegal();
+                                                $checkDoc->checkDataPrivacy();
+                                                $checkDoc->checkDataReuse();
+                                                $checkDoc->checkContributor();
+                                            }
                                         }
                                     }
                                     $checkDoc->setProjectdetailsTitle(subPage: self::groupNode);
                                 }
                                 $checkDoc->setProjectdetailsTitle(subPage: self::studyNode);
+                                break;
+                            case self::dataSourceNode:
+                                $checkDoc->checkDataSource(false);
                                 break;
                             case self::groupsNode:
                                 $checkDoc->checkGroups(false);
@@ -293,6 +312,8 @@ class CheckDocClass extends ControllerAbstract
             $this->isOne[self::studyNode] = count($windowArray)===1;
             $anyInformation = false; // gets true if any information is pre or post
             $allInformationChosen = true; // gets false if any pre or post information question is not yet answered
+            $anyOriginNew = false; // gets true if any origin is answered with 'new'
+            $allOriginChosen = true; // gets false if any origin question is not yet answered
             foreach ($windowArray as $studyID => $study) {
                 $this->studyGroupMeasureName[self::studyNode] = $study[self::nameNode]; // is set again in setProjectdetailsVariables, but needed for setStudyGroup
                 foreach ($this->setStudyGroup(self::studyNode,$studyID,$study) as $groupID => $group) {
@@ -301,56 +322,36 @@ class CheckDocClass extends ControllerAbstract
                         $this->measure = $measure;
                         $this->IDs[self::measureTimePointNode] = $measureID+1;
                         $this->setProjectdetailsVariables();
-                        $anyInformation = $anyInformation || in_array(0,$this->information);
-                        $allInformationChosen = $allInformationChosen && ($this->isPre || $this->information[1]!==2);
-
-                        // groups
-                        $this->checkGroups();
-
-                        // information
-                        $this->checkInformation(self::informationNode);
-
-                        // informationII
-                        if ($this->isInformationII) {
-                            $this->checkInformation(self::informationIINode);
+                        $tempVal = $measure[self::dataSourceNode][self::originNode][self::chosen];
+                        $anyOriginNew = $tempVal===self::originNew;
+                        $allOriginChosen = $allOriginChosen && $tempVal!=='';
+                        $this->checkDataSource(); // data source
+                        if ($measure[self::groupsNode]!=='') {
+                            $anyInformation = $anyInformation || in_array(0,$this->information);
+                            $allInformationChosen = $allInformationChosen && ($this->isPre || $this->information[1]!==2);
+                            $this->checkGroups(); // groups
+                            $this->checkInformation(self::informationNode); // information
+                            if ($this->isInformationII) {
+                                $this->checkInformation(self::informationIINode); // informationII
+                            }
+                            $this->checkConsent(); // consent
+                            $this->checkMeasures(); // measures
+                            $this->checkBurdensRisks(); // burdens/risks
+                            $this->checkCompensation(); // compensation
+                            $this->checkTexts(); // texts
+                            $this->checkInformationIII(); // informationIII
+                            $this->checkLegal(); // legal
+                            $this->checkDataPrivacy(); // data privacy
+                            $this->checkDataReuse(); // data Reuse
+                            $this->checkContributor(); // contributor
                         }
-
-                        // consent
-                        $this->checkConsent();
-
-                        // measures
-                        $this->checkMeasures();
-
-                        // burdens/risks
-                        $this->checkBurdensRisks();
-
-                        // compensation
-                        $this->checkCompensation();
-
-                        // texts
-                        $this->checkTexts();
-
-                        // informationIII
-                        $this->checkInformationIII();
-
-                        // legal
-                        $this->checkLegal();
-
-                        // data privacy
-                        $this->checkDataPrivacy();
-
-                        // data Reuse
-                        $this->checkDataReuse();
-
-                        // contributor
-                        $this->checkContributor();
                     }
                 }
                 $this->setProjectdetailsTitle(subPage: self::groupNode);
             }
             $this->setProjectdetailsTitle(subPage: self::studyNode);
             // error messages if a task of a contributor is not selected in any measure time point
-            if ($this->getMultiStudyGroupMeasure($appNode) && in_array($this->reviewProcess,self::reviewDocs)) {
+            if ($anyOriginNew && $this->getMultiStudyGroupMeasure($appNode) && in_array($this->reviewProcess,self::reviewDocs)) {
                 $this->checkLabel = trim($this->checkLabel)."\n";
                 $contributor = $this->getContributorsArray($this->appArray);
                 $translationPage = self::projectdetailsPrefix.self::contributorNode.'.task';
@@ -378,13 +379,22 @@ class CheckDocClass extends ControllerAbstract
                 }
             }
             // error messages for project title participation and information
-            if ($allInformationChosen) {
+            if ($allOriginChosen) {
                 $this->checkLabel = trim($this->checkLabel)."\n";
+                // check project title participation
                 $tempVal = $this->coreDataArray[self::projectTitleParticipation][self::chosen] ?? '';
                 if ($tempVal===self::projectTitleNotApplicable && $anyInformation) {
                     $this->addCheckLabelString('checkDoc.projectTitleToInformation');
                 } elseif (!$anyInformation && !in_array($tempVal,['',self::projectTitleNotApplicable])) {
                     $this->addCheckLabelString('checkDoc.informationToProjectTitle');
+                }
+                // check short docs
+                $tempVal = $this->coreDataArray[self::applicationProcessNode][self::shortDocsNode] ?? '';
+                $tempPrefix = 'checkDoc.appData.'.self::coreDataNode.'.'.self::applicationProcessNode.'.'.self::shortDocsNode.'.';
+                if ($tempVal===self::shortDocsNotApplicable && $anyOriginNew) {
+                    $this->addCheckLabelString($tempPrefix.'notApplicableToOrigin');
+                } elseif (!$anyOriginNew && !in_array($tempVal,['',self::shortDocsNotApplicable])) {
+                    $this->addCheckLabelString($tempPrefix.'originToNotApplicable');
                 }
             }
             $this->setTitle();
@@ -446,7 +456,7 @@ class CheckDocClass extends ControllerAbstract
         $tempPrefix = $translationPrefix.self::applicationProcessNode.'.';
         $this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::applicationProcessNode,true);
         if (array_key_exists(self::shortDocsNode,$tempArray)) {
-            $this->checkMissingContent($tempArray,[self::shortDocsNode => $tempPrefix.self::shortDocsNode]);
+            $this->checkMissingContent($tempArray,[self::shortDocsNode => $tempPrefix.self::shortDocsNode.'.missing']);
         }
         // project start and end
         $tempArray = $this->coreDataArray[self::projectStart];
@@ -488,16 +498,14 @@ class CheckDocClass extends ControllerAbstract
         // funding
         $tempArray = $this->coreDataArray[self::funding];
         $fundingPrefix = 'coreData.funding.';
-        $isFunding = $tempArray!=='';
-        $isFundingQuali = $isFunding && array_key_exists(self::fundingQuali,$tempArray);
-        if (!$isFunding) {
+        if ($tempArray==='') {
             $this->errorMessage = $fundingPrefix.'title';
             $this->addCheckLabelString(self::missingSingle,self::funding,colorRed: false);
         } else {
             $allFundingState = true;
             $anyRequested = false;
             $tempPrefix = $translationPrefix.self::funding.'.';
-            if (!$isFundingQuali) {
+            if (!array_key_exists(self::fundingQuali,$tempArray)) {
                 foreach ($tempArray as $key => $source) {
                     $this->checkMissingContent($source,[self::descriptionNode => $fundingPrefix.$key],true,hash: $this->addDiv($key,true));
                     if (array_key_exists(self::fundingStateNode,$source)) {
@@ -519,12 +527,8 @@ class CheckDocClass extends ControllerAbstract
             }
         }
         // qualification
-        $tempPrefix = $translationPrefix.self::qualification.'.';
         if (array_key_exists(self::qualification,$this->coreDataArray)) {
-            $this->checkMissingContent($this->coreDataArray,[self::qualification => $tempPrefix.'missing']);
-            if ($this->coreDataArray[self::qualification]==='1' && $isFundingQuali) { // no separate funding -> qualification yes
-                $this->addCheckLabelString($tempPrefix.self::funding);
-            }
+            $this->checkMissingContent($this->coreDataArray,[self::qualification => $translationPrefix.self::qualification]);
         }
         // applicant and supervisor
         foreach (array_merge([self::applicant],array_key_exists(self::supervisor,$this->coreDataArray) ? [self::supervisor] : []) as $type) {
@@ -674,12 +678,137 @@ class CheckDocClass extends ControllerAbstract
                 $this->addCheckLabelString($tasksPrefix.'missing',parameters: $parameter);
             }
         }
-        // check if any mandatory task is missing
+        // check if any mandatory task is missing or any task that must not be selected is selected
+        $isAllOriginNoCollection = $this->allOriginSelected && !$this->isDataCollection;
         foreach ($this->isMandatory as $task => $value) {
-            if (!$value) {
-                $this->addCheckLabelString($tasksPrefix.'missingMandatory',parameters: ['task' => $this->translateString('contributors.tasks.'.$task)]);
+            $isTaskDataCollection = in_array($task,['experiment','contact']);
+            $taskParam = ['task' => $this->translateString('contributors.tasks.'.$task)];
+            if (!$value && ($this->isDataCollection || !$isTaskDataCollection)) { // mandatory task is missing
+                $this->addCheckLabelString($tasksPrefix.'missingMandatory',parameters: $taskParam);
+            } elseif ($value && $isAllOriginNoCollection && $isTaskDataCollection) { // task that must not be selected is selected
+                $this->addCheckLabelString($tasksPrefix.self::dataSourceNode,parameters: $taskParam);
             }
         }
+    }
+
+    /** Checks for errors on the data source page.
+     * @param bool $setTitle if true, the page title will be added above the errors
+     * @return void
+     */
+    private function checkDataSource(bool $setTitle = true): void
+    {
+        $this->addProjectdetailsTitle(setTitle: $setTitle,subPage: self::measureTimePointNode);
+        $translationPage = self::projectdetailsPrefix.self::dataSourceNode.'.';
+        $this->addProjectdetailsTitle(self::dataSourceNode,$setTitle);
+        $pageArray = $this->measure[self::dataSourceNode];
+        // origin
+        $tempArray = $pageArray[self::originNode];
+        if ($this->checkMissingChosen($tempArray,$translationPage.self::originNode,null,self::originNode,true)===self::originExisting) {
+            // origin sources
+            $tempPrefix = $translationPage.self::originSourcesNode.'.';
+            $this->checkMissingChildrenOther($tempArray,self::originSourcesNode,$tempPrefix.'missing',array_combine(self::originSourcesTypes,$this->prefixArray(self::originSourcesTypes,$tempPrefix.'types.')));
+            // votes
+            $isNotContributors = false; // gets true if contributors were part of the initial project
+            if (array_key_exists(self::dataSourceVotesNode,$pageArray)) {
+                $votesArray = $pageArray[self::dataSourceVotesNode];
+                $this->checkMissingChosen($votesArray,$translationPage.self::dataSourceVotesNode,2,self::dataSourceVotesNode,true);
+                if (array_key_exists(self::dataSourceCommitteeNode,$votesArray)) {
+                    // committee
+                    $tempPrefix = $translationPage.self::dataSourceCommitteeNode.'.';
+                    $tempArray = $votesArray[self::dataSourceCommitteeNode];
+                    $this->checkMissingTextfieldEmpty($tempArray,$tempPrefix.'missing',$tempPrefix.self::descriptionNode,self::dataSourceCommitteeNode,false,hashDescription: $this->addDiv(self::dataSourceCommitteeNode,true),parameters: ['type' => $tempArray[self::chosen]]);
+                    // result
+                    $tempArray = $votesArray[self::dataSourceResultNode];
+                    $tempPrefix = $translationPage.self::dataSourceResultNode.'.';
+                    $tempVal = $this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::dataSourceResultNode,true);
+                    // further question if positive vote
+                    if (array_key_exists(self::committeeResultPositiveNode,$tempArray)) {
+                        $tempPrefix = $translationPage.self::committeeResultPositiveNode.'.';
+                        $this->checkMissingChildrenOther($tempArray,self::committeeResultPositiveNode,$tempPrefix.'missing',[self::committeeResultPositiveOther => $tempPrefix.self::descriptionNode],addDescription: false);
+                    }
+                    // description if negative or no vote
+                    if (array_key_exists(self::descriptionNode,$tempArray)) {
+                        if ($tempArray[self::descriptionNode]==='') {
+                            $tempPrefix .= self::descriptionNode.'.';
+                            $this->errorMessage = $tempPrefix.'start';
+                            $this->addCheckLabelString($tempPrefix.'end',$this->addDiv(self::dataSourceResultNode,true,false),['type' => $tempVal]);
+                        }
+                    }
+                    // checkbox if negative vote
+                    if (array_key_exists(self::committeeResultNegativeNode,$tempArray)) {
+                        $this->checkMissingContent($tempArray,[self::committeeResultNegativeNode => $translationPage.self::committeeResultNegativeNode], parameter: $this->committeeParam);
+                    }
+                } elseif (array_key_exists(self::voteContributorsNode,$votesArray)) {
+                    // vote contributors
+                    $tempArray = $votesArray[self::voteContributorsNode];
+                    $tempPrefix = $translationPage.self::voteContributorsNode.'.';
+                    $tempVal = $this->checkMissingChosen($tempArray,$tempPrefix.'missing',2,self::voteContributorsNode,true);
+                    $isNotContributors = $tempVal===1;
+                    if ($tempVal===0) {
+                        if (array_key_exists(self::descriptionNode,$tempArray)) {
+                            $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.self::descriptionNode],hash: $this->addDiv(self::voteContributorsNode,true,false));
+                            $supportArray = $this->coreDataArray[self::supportNode];
+                            $this->checkMissingContent($tempArray,[self::voteContributorsConfirm => $tempPrefix.'confirm'],parameter: $this->committeeParam);
+                            if ($tempArray[self::voteContributorsConfirm]==='1' && $supportArray!=='' && !array_key_exists(self::supportCommittee,$supportArray)) { // no vote, but contributors from old project are also in this project and begun is not possible -> support by committee must be selected
+                                $this->addCheckLabelString($tempPrefix.self::supportCommittee,parameters: $this->committeeParam);
+                            }
+                        }
+                        if (in_array($this->committeeType,self::begunCommittees)) { // no vote, but contributors from old project are also in this project and begun is possible -> project start must be begun and origin must be 'new'
+                            $tempPrefix .= 'begun.';
+                            $this->errorMessage = $tempPrefix.'start';
+                            $this->addCheckLabelString($tempPrefix.'end',$this->addDiv(self::voteContributorsConfirm));
+                        }
+                    }
+                }
+                // data set
+                if (array_key_exists(self::dataSetNode,$pageArray)) {
+                    $this->checkMissingContent($pageArray,[self::dataSetNode => $translationPage.self::dataSetNode],true);
+                }
+            }
+            if (array_key_exists(self::dataSourceProcedureNode,$pageArray)) { // if dataSourceProcedure exists, all further keys exist, too
+                // data source procedure
+                $this->checkMissingContent($pageArray,[self::dataSourceProcedureNode => $translationPage.self::dataSourceProcedureNode]);
+                // restriction
+                $tempPrefix = $translationPage.self::restrictionNode.'.';
+                $restriction = $this->checkMissingTextfield($pageArray[self::restrictionNode],null,self::restrictionRestricted,$tempPrefix.'missing',self::restrictionNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::restrictionNode,true,false));
+                // data source access
+                $tempPrefix = $translationPage.self::dataSourceAccessNode.'.';
+                if ($this->checkMissingChildren($pageArray,self::dataSourceAccessNode,$tempPrefix.'missing') && array_key_exists('accessOwn',$pageArray[self::dataSourceAccessNode]) && $isNotContributors) { // contributors not part of initial project -> can not be own dataset
+                    $this->addCheckLabelString($tempPrefix.'contributors');
+                }
+                // legitimization
+                $tempPrefix = $translationPage.self::legitimizationNode.'.';
+                $tempArray = $pageArray[self::legitimizationNode];
+                if ($tempArray==='') {
+                    $this->errorMessage = $tempPrefix.'missing';
+                    $this->addCheckLabelString(self::missingSingle,self::legitimizationNode,colorRed: false);
+                } else {
+                    foreach ($tempArray as $selection => $description) {
+                        if ($selection!==self::legitimizationConsentNew && $description==='') {
+                            $this->errorMessage = $tempPrefix.'types.'.$selection;
+                            $this->addCheckLabelString(self::missingSingle,$this->addDiv($selection,true),colorRed: false);
+                        }
+                    }
+                }
+                // data source identification
+                $tempPrefix = $translationPage.self::dataSourceIdentificationNode.'.';
+                $tempArray = $pageArray[self::legitimizationNode];
+                if (in_array($this->checkMissingChosen($pageArray,$tempPrefix.'missing',null,self::dataSourceIdentificationNode,true,self::dataSourceIdentificationNode),[self::dataSourceIdentificationNo,'partly']) && $tempArray!=='' && array_key_exists(self::legitimizationConsentNew,$tempArray)) { // information and consent for re-using data -> re-identification must be possible
+                    $this->addCheckLabelString($tempPrefix.self::legitimizationNode);
+                }
+                // publication
+                $tempPrefix = $translationPage.self::publicationNode.'.';
+                if ($this->checkMissingChosen($pageArray,$tempPrefix.'missing',null,self::publicationNode,true,self::publicationNode)===self::publicationLess && $restriction===self::restrictionFree) { // original data set is freely available -> new data set can not be less restrictive
+                    $this->addCheckLabelString($tempPrefix.self::restrictionNode);
+                }
+                // data source burdens risks and burdens risks contributors
+                $tempPrefix = $translationPage.'dataSourceBurdensRisks.';
+                foreach (self::dataSourceBurdensRisksNodes as $type) {
+                    $this->checkMissingTextfield($pageArray[$type],2,0,$tempPrefix.'missing',$type,$tempPrefix.self::descriptionNode,$this->addDiv($type,true,false),true,parameters: ['type' => $type]);
+                }
+            }
+        }
+        $this->setProjectdetailsTitle($setTitle);
     }
 
     /** Checks for errors on the groups page.
@@ -1751,31 +1880,34 @@ class CheckDocClass extends ControllerAbstract
             $tempArray = $tempArray[$this->IDs[$type]-1];
             $this->studyGroupMeasureName[$type] = $tempArray[self::nameNode];
         }
-        $this->addressee = $this->getAddressee($this->measure[self::groupsNode]);
-        $this->isTwoAddressees = $this->addressee!==self::addresseeParticipants;
-        // set parameters for translations -> contains all parameters that are needed somewhere, i.e., not all parameters are used in every translation
-        $this->paramsAddressee = array_merge($this->routeIDs,[self::addressee => $this->addressee, 'participant' => 'thirdParty', 'page' => self::informationNode, 'type' => self::voluntaryNode]);
-        $this->paramsParticipants = array_merge($this->routeIDs,[self::addressee => $this->addressee, 'participant' => 'participant', 'page' => self::informationIINode, 'type' => self::voluntaryNode]);
-        // information
-        $tempArray = $this->measure[self::informationNode];
-        $chosen = $tempArray[self::pre];
-        $this->isPre = $chosen==='0';
-        $this->noPre = $chosen==='1';
-        $post = $tempArray[self::post][self::chosen] ?? '';
-        $this->noPost = $this->noPre && $post==='1';
-        $this->information = [(int) ($chosen!=='' ? $chosen : 2), (int) ($post!=='' ? $post : 2)]; // no "?:" because values can be "0" which would translate to false
-        // informationII
-        $tempArray  = $this->measure[self::informationIINode] ?: [];
-        if ($tempArray!==[]) {
-            $this->isInformationII = true;
+        $groupsArray = $this->measure[self::groupsNode];
+        if ($groupsArray!=='') {
+            $this->addressee = $this->getAddressee($groupsArray);
+            $this->isTwoAddressees = $this->addressee!==self::addresseeParticipants;
+            // set parameters for translations -> contains all parameters that are needed somewhere, i.e., not all parameters are used in every translation
+            $this->paramsAddressee = array_merge($this->routeIDs, [self::addressee => $this->addressee, 'participant' => 'thirdParty', 'page' => self::informationNode, 'type' => self::voluntaryNode]);
+            $this->paramsParticipants = array_merge($this->routeIDs, [self::addressee => $this->addressee, 'participant' => 'participant', 'page' => self::informationIINode, 'type' => self::voluntaryNode]);
+            // information
+            $tempArray = $this->measure[self::informationNode];
             $chosen = $tempArray[self::pre];
-            $this->noPreParticipants = $chosen==='1';
-            $post = $this->noPreParticipants ? $tempArray[self::post][self::chosen] : '';
-            $this->noPostParticipants = $this->noPreParticipants && $post==='1';
-            $this->informationII = [(int) ($chosen!=='' ? $chosen : 2), (int) ($post!=='' ? $post : 2)]; // no "?:" because values can be "0" which would translate to false
+            $this->isPre = $chosen==='0';
+            $this->noPre = $chosen==='1';
+            $post = $tempArray[self::post][self::chosen] ?? '';
+            $this->noPost = $this->noPre && $post==='1';
+            $this->information = [(int)($chosen!=='' ? $chosen : 2), (int)($post!=='' ? $post : 2)]; // no "?:" because values can be "0" which would translate to false
+            // informationII
+            $tempArray = $this->measure[self::informationIINode] ?: [];
+            if ($tempArray!==[]) {
+                $this->isInformationII = true;
+                $chosen = $tempArray[self::pre];
+                $this->noPreParticipants = $chosen==='1';
+                $post = $this->noPreParticipants ? $tempArray[self::post][self::chosen] : '';
+                $this->noPostParticipants = $this->noPreParticipants && $post==='1';
+                $this->informationII = [(int)($chosen!=='' ? $chosen : 2), (int)($post!=='' ? $post : 2)]; // no "?:" because values can be "0" which would translate to false
+            }
+            // consent
+            $this->consentAddressee = $this->measure[self::consentNode][self::consentNode][self::chosen];
         }
-        // consent
-        $this->consentAddressee = $this->measure[self::consentNode][self::consentNode][self::chosen];
     }
 
     /** Creates the string saying that no errors were found.
@@ -2005,10 +2137,11 @@ class CheckDocClass extends ControllerAbstract
             }
         }
         $isNotBegun = !array_key_exists(self::descriptionNode,$projectStartArray);
+        $hasBegun = in_array($this->committeeType,self::begunCommittees);
         return $this->coreDataArray[self::applicationProcessNode][self::chosen]==='' || // no application process chosen
                 !$isFunding || // funding (state) is missing
-                !$anyRequested && in_array($this->committeeType,self::begunCommittees) && $projectStartArray[self::chosen]==='' && $isNotBegun // neither project start nor that data collection has already started is chosen -> check only if no funding is requested
-                ? $this->translateString('checkDoc.reviewMissing',['hasBegun' => $this->getStringFromBool(in_array($this->committeeType,self::begunCommittees))])."\n\n" : '';
+                !$anyRequested && $hasBegun && $projectStartArray[self::chosen]==='' && $isNotBegun // neither project start nor that data collection has already started is chosen -> check only if no funding is requested
+                ? $this->translateString('checkDoc.reviewMissing',['hasBegun' => $this->getStringFromBool($hasBegun)])."\n\n" : '';
     }
 
     // methods for checking if a valid input was made

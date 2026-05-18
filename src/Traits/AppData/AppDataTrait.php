@@ -33,6 +33,9 @@ trait AppDataTrait
     protected const applicationProcessNode = 'applicationProcess';
     protected const applicationProcessTypes = ['coreData.applicationProcess.types.short' => 'short', 'coreData.applicationProcess.types.full' => 'full']; // values must equal the value of $reviewProcessShort and $reviewProcessFull in PageTrait
     protected const shortDocsNode = 'shortDocs';
+    protected const shortDocsTypes = ['coreData.shortDocs.types.yes' => 'yes', 'coreData.shortDocs.types.no' => 'no', 'coreData.shortDocs.types.notApplicable' => 'notApplicable'];
+    protected const shortDocsYes = 'yes'; // must equal one value in $shortDocsTypes
+    protected const shortDocsNotApplicable = 'notApplicable'; // must equal one value in $shortDocsTypes
     protected const supervisor = 'supervisor';
     protected const committeeStudent = ['EUB','JGU','DLR','UH1']; // committees where position can be 'student'
     protected const committeeSupervisor = ['EUB','JGU','UH1']; // committees where a supervisor must be added if the position is student. Value must equal the values of $committeeStudent
@@ -46,6 +49,7 @@ trait AppDataTrait
     protected const supportNode = 'support';
     protected const noSupport = 'noSupport'; // must equal one of the keys in $supportChoices
     protected const supportCenter = 'supportCenter'; // must equal one of the keys in $supportChoices
+    protected const supportCommittee = 'supportCommittee'; // must equal one of the keys in $supportChoices
     protected const supportTypes = ['noSupport' => 'coreData.support.type.noSupport', 'supportCommittee' => 'coreData.support.type.supportCommittee', 'supportCenter' => 'coreData.support.type.supportCenter', 'supportData' => 'coreData.support.type.supportData', 'supportOther' => 'coreData.support.type.supportOther'];
     protected const guidelinesNode = 'guidelines';
     // votes

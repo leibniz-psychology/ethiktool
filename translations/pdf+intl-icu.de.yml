@@ -36,12 +36,15 @@ or: ' oder '
 paragraphHeadings:
   appType: 'Antragsdaten und Projektbeteiligte'
   examinedPeople: 'Personengruppen'
+  examinedPeopleTop: 'Eigene Datenerhebung'
   information: 'Aufklärung'
   voluntary: 'Einwilligung und Abbruch'
   measures: 'Datenerhebung'
   measuresSub: 'Informationen zu Ablauf, Ort und Dauer der Datenerhebung finden sich {informationHint}.'
   burdens: 'Belastungen/Risiken und Aufwandsentschädigung'
-  processing: 'Datenschutz und Nachnutzung der Daten'
+  processing: 'Verarbeitung und Nachnutzung der hier erhobenen Daten'
+  origin: ''
+  originTop: 'Nutzung/Reanalyse vorhandener Daten'
 
 boxHeadings: # key: heading of the box. keySub: sub heading inside the box if additional inputs may be necessary
   coreData:
@@ -95,12 +98,24 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     measureTimePoint: 'Zeitpunkt '
     measureTimePointAll: 'alle Zeitpunkte'
     overview: 'Übersicht über die Studien, Gruppen und Zeitpunkte'
+    overviewBoxSub: >-
+      Die Felder {isOrigin, select,
+                    true  {{isReviewFull, select,
+                              true  {16-45}
+                              other {13-19}} entfallen, da in diesem Forschungsprojekt keine Daten neu erhoben werden.}
+                    other {{isReviewFull, select,
+                              true  {16-{anyOriginExisting, select,
+                                          true  {45}
+                                          other {56}}}
+                              other {13-{anyOriginExisting, select,
+                                          true  {19}
+                                          other {30}}}} entfallen, da noch Angaben zum Ursprung der Daten fehlen.}}
     examinedPeople: 'Welche Personen sollen teilnehmen?'
     examinedPeopleSub: 'Beschreibung der Personengruppen:'
     closed: 'Findet die Erhebung in einer geschlossenen Gruppe statt?'
-    sampleSize: 'Wie viele Personen der ausgewählten Gruppe sollen in diesen Zeitpunkt der Studie eingeschlossen werden?'
-    sampleSizeSub: 'Weitere Angaben zur Stichprobengröße:'
-    sampleSizePlan: 'Auf welcher Basis wurde die Fallzahlplanung durchgeführt?'
+    sampleSize: 'Wie viele Personen sollen in diese Kombination aus Studie/Gruppe/Zeitpunkt einbezogen werden?'
+    sampleSizeSub: 'Weitere Angaben zur Personenzahl:'
+    sampleSizePlan: 'Auf welcher Basis wurde diese Anzahl an Personen gewählt?'
     recruitment: 'Wie werden die Teilnehmenden rekrutiert?'
     recruitmentSub: 'Weitere Angaben zur Rekrutierung:'
     information: 'Wird vorab darüber aufgeklärt, dass eine Studienteilnahme erfolgt?'
@@ -171,6 +186,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                               true {bzw. }
                               other {}} Begründung, warum keine Belastungen bzw. Beanspruchungen erwartet werden}
                     other {}}:
+    burdensBoxSub: 'Die Felder 20-30 entfallen, da in diesem Forschungsprojekt keine vorhandenen Daten reanalysiert/nachgenutzt werden.'
     burdensCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Belastungen Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     risks: 'Welche potenziellen Gefährdungen oder Risiken bringt die Teilnahme mit sich?'
     risksSub: 'Beschreibung der Risiken:'
@@ -192,6 +208,27 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     compensationVoluntarySub: 'SonstigeErläuterungen zur Aufwandsentschädigung:'
     processing: 'Beschreibung der Datenverarbeitung'
     dataReuse: 'Werden die Forschungsdaten nachgenutzt?'
+    dataReuseBoxSub: >-
+      Die Felder {isReviewFull, select,
+                    true  {46-56}
+                    other {20-30}} entfallen, da {isOrigin, select,
+                                                    true  {in diesem Forschungsprojekt keine vorhandenen Daten reanalysiert/nachgenutzt werden.}
+                                                    other {noch Angaben zum Ursprung der Daten fehlen.}}
+    originSources: 'Aus welchen Quellen werden Daten genutzt?'
+    dataSourceVotes: 'Wurde das Forschungsprojekt, aus dem die Daten nachgenutzt werden sollen, von einer Ethikkommission begutachtet?'
+    dataSourceVotesSub: 'Weitere Erläuterungen:'
+    dataSet: 'Wie wurden die ursprünglichen Forschungsdaten gewonnen?'
+    dataSourceProcedure: 'Beschreibung des Vorgehens für die (Nach-)Nutzung bzw. Reanalyse der Daten'
+    restriction: 'Unterliegen die Daten, die genutzt werden sollen, einer Zugangsbeschränkung?'
+    restrictionSub: 'Beschreibung, wer unter welchen Voraussetzungen Zugang zu den Daten hat:'
+    dataSourceAccess: 'Wie erfolgt der Zugriff auf die Daten?'
+    legitimization: 'Wodurch ist die Nutzung der Daten für das Forschungsprojekt legitimiert?'
+    dataSourceIdentification: 'Ist eine Re-Identifikation einzelner Personen möglich?'
+    publication: 'Wird als Ergebnis des Reanalyse-Projekts ein neu generierter Forschungsdatensatz veröffentlicht?'
+    dataSourceBurdensRisks: 'Ergeben sich durch die (Nach-)Nutzung/Reanalyse Belastungen und/oder Risiken für die Personen, deren Daten analysiert werden, oder für Gruppen, denen die Personen angehören?'
+    dataSourceBurdensRisksSub: 'Beschreibung der Belastungen bzw. Risiken und Vorsichtsmaßnahmen bzw. Kompensationen:'
+    dataSourceBurdensRisksContributors: 'Ergeben sich durch die (Nach-)Nutzung/Reanalyse Belastungen und/oder Risiken für Projektbeteiligte?'
+    dataSourceBurdensRisksContributorsSub: 'Beschreibung der Belastungen bzw. Risiken und Vorsichtsmaßnahmen bzw. Kompensationen:'
 
 boxSubHeadings:
   projectdetails:
@@ -257,7 +294,7 @@ coreData:
     start: 'Von: '
     end: 'Bis: '
     next: 'nächstmöglicher Zeitpunkt '
-    startedDescription: "\n\nDie Datenerhebung hat bereits begonnen. Beschreibung des Stands der Datenerhebung:\n"
+    startedDescription: "\n\nDas Forschungsprojekt hat bereits begonnen. Beschreibung des Projektstands:\n"
     retrospective: "\n\nBegründung, warum der Ethikantrag nachträglich gestellt wird:\n"
   funding: "\n\nEs wurde bestätigt, dass der Inhalt der im Ethikantrag beschriebenen Studien deckungsgleich zu den Studien im Drittmittelantrag ist."
   conflict: 'Für die Teilnehmenden wird der Interessenkonflikt in der Studieninformation offengelegt.'
@@ -306,9 +343,14 @@ projectdetails:
     measureTimePoint: >-
       ein Zeitpunkt {isMeasureTimePointName, select,
                       true  {({measureTimePointName})}
-                      other {}}
+                      other {}}{origin}
+    origin:
+      new: 'Eigene Datenerhebung'
+      existing: 'Nutzung vorhandener Daten'
   sampleSizeMultiple: 'je X'
   pdf:
+    dataSet: 'Das damalige Aufklärungs- und Einwilligungsschreiben befindet sich nach den vom Ethiktool erzeugten Dokumenten.'
+    legitimization: 'Das Aufklärungs- und Einwilligungsschreiben befindet sich nach den vom Ethiktool erzeugten Dokumenten.'
     examinedPeople: 'Die genauen Ein- und Ausschlusskriterien finden sich {informationHint}.'
     measures: 'Ergänzende Materialien zu den Erhebungsmethoden befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
     interventions: 'Ergänzende Materialien zu den Maßnahmen befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
@@ -332,8 +374,10 @@ projectdetails:
         =0    {}
         other { für {levelNames}}}
     votes: 'Dieses Forschungsvorhaben wurde schon einmal von einer anderen Ethikkommission begutachtet. Auf der/den nächsten Seite(n) folgt das Ergebnisschreiben der anderen Ethikkommission oder eine von der antragstellenden Person erstellte PDF-Datei mit näheren Erläuterungen.'
+    dataSet: 'Auf der/den nächsten Seite(n) finden sich das Aufklärungs- und Einwilligungsschreiben für die Gewinnung der ursprünglichen Forschungsdaten, die hier reanalysiert/nachgenutzt werden sollen.'
+    legitimization: 'Auf der/den nächsten Seite(n) finden sich das Aufklärungs- und Einwilligungsschreiben für die <span class="noWrap">(Nach-)Nutzung/Reanalyse</span> der Daten.'
     begun: >-
-      Die Datenerhebung hat bereits begonnen. Auf der/den nächsten Seite(n) finden sich die verwendeten Teilnahmedokumente für die {addressee, select,
+      Das Forschungsprojekt hat bereits begonnen. Auf der/den nächsten Seite(n) finden sich die verwendeten Teilnahmedokumente für die {addressee, select,
                   children {Erziehungsberechtigten}
                   wards    {gesetzlichen Vertretungspersonen}
                   other    {Teilnehmenden}}{levelNamesString}.
@@ -534,6 +578,40 @@ projectdetails:
                             other  {anderen zur Nachnutzung zur Verfügung gestellt.}}
     dataReuseSelf: 'Ja, aber nur für die eigene Nachnutzung. Anderen werden die Forschungsdaten nicht zugänglich gemacht.'
     no: 'Nein, die Daten werden weder selbst nachgenutzt noch anderen für die Nachnutzung zugänglich gemacht.'
+  dataSource:
+    origin:
+      new: 'Es werden Daten explizit für das Forschungsprojekt neu erhoben.'
+      existing: 'Es werden ausschließlich vorliegende Daten aus anderen (eigenen oder fremdem) Quellen genutzt.'
+    originSources:
+      research: 'Daten, die selbst oder von anderen zu Forschungszwecken erhoben wurden ({description})'
+      originSourcesOther: 'Daten, die zu anderen Zwecken erhoben wurden ({description})'
+      widespread: 'Daten, die Personen selbst im Wissen über deren Sichtbarkeit für andere verbreitet haben ({description})'
+      documents: 'Vorliegende Berichte/Dokumente über konkrete Personen oder Gruppen ({description})'
+    committeeResult: 'Ergebnis der damaligen Ethikbegutachtung: '
+    resultPositive:
+      question: 'Das damalige Votum umfasste nicht die Fragestellung, die hier betrachtet werden soll.'
+      access: 'Der Zugang zu den Daten wird nur bei Vorlage eines Ethikvotums gewährt.'
+      committeeResultPositiveOther: 'andere Begründung: {description}'
+    voteContributors:
+      title: "Waren hier projektbeteiligte Personen auch an dem ursprünglichen Forschungsprojekt beteiligt, aus dem die Daten nachgenutzt werden sollen?\n"
+      description: "\nBegründung, warum kein Ethikantrag gestellt wurde:\n"
+    dataSourceAccess:
+      accessOwn: 'Es handelt sich um einen eigenen Datensatz, der den Forschenden bereits vorliegt.'
+      center: 'Der Forschungsdatensatz wird von einem Datenzentrum bzw. der datenhaltenden Struktur bereitgestellt.'
+      collect: 'Die Daten werden selbst zusammengetragen.'
+    legitimization:
+      consentNew: 'Die Personen werden explizit über dieses Reanalyse-Projekt aufgeklärt und willigen in die Verwendung der Daten ein.'
+      consentExisting: "Bereits im Rahmen der Gewinnung der Daten/Materialien wurden die Personen über die mögliche (Nach-)Nutzung ihrer Daten für weitere Zwecke/Forschungszwecke aufgeklärt und haben eingewilligt. Die relevanten Abschnitte der Einwilligungserklärung lauten wie folgt:\n {description}"
+      conditions: "Die Geschäftsbedingungen des Anbieters decken den geplanten Abruf der Daten (ggf. inkl. Webscraping) und eine Verwendung der Daten für Forschungszwecke ab. Bei der Anmeldung/Registrierung haben die Nutzenden diese Geschäftsbedingungen aktiv bestätigt. Die relevanten Abschnitte der Geschäftsbedingungen lauten wie folgt:\n {description}"
+      contract: "Die Nutzung der Daten ist durch einen Vertrag mit dem Datenzentrum bzw. der datenhaltenden Struktur legitimiert. Die relevanten Abschnitte des Vertrags lauten wie folgt:\n {description}"
+      legalBasis: "Die Nutzung der Daten ist durch folgende Rechtsgrundlage legitimiert:\n {description}"
+      legitimizationOther: "Die Nutzung der Daten ist wie folgt legitimiert:\n {description}"
+      pdf: ''
+    dataSourceIdentification:
+      yes: 'Ja: Die Daten sind zum Zeitpunkt des Datenzugangs personenbeziehbar und bleiben im Rahmen der <span class="noWrap">(Nach-)Nutzung/Reanalyse</span> personenbeziehbar.'
+      partly: 'Ja: Die Daten sind zum Zeitpunkt des Datenzugangs (teilweise) anonymisiert, durch Kombination mit weiteren Daten sind jedoch Rückschlüsse auf einzelne Personen möglich.'
+      temporary: 'Vorübergehend: Die Daten sind zum Zeitpunkt des Datenzugangs (teilweise) personenbeziehbar, werden aber für die <span class="noWrap">(Nach-)Nutzung/Reanalyse</span> vollständig anonymisiert.'
+      no: 'Nein: Alle Daten sind zum Zeitpunkt des Datenzugangs anonym/anonymisiert und werden auch nur in anonymer/anonymisierter Form weiterverarbeitet.'
 
 # participation
 participation:
@@ -604,10 +682,18 @@ participation:
     projectStart: >-
       {information, select,
         noPost {weil {informationSentence} und weil}
-        other  {}} es sich um eine Begutachtung nach Beginn der Datenerhebung handelt{information, select,
+        other  {}} es sich um eine Begutachtung nach Beginn des Forschungsprojekts handelt{information, select,
                 noPost {}
                 other  { und daher die Teilnahmedokumente schon existieren}}
     short: 'bei {committeeDat} für die Begutachtung von Kurzanträgen keine Vorlage von Teilnahmedokumenten vorgesehen ist'
+    origin: >-
+      {origin, select,
+        existing { es sich um eine {savePDF, select,
+                                      true  {Reanalyse vorhandener Daten}
+                                      other {<a href="dataSource" data-action="base#setDummySubmit" data-base-url-param="app_dataSource#origin" data-base-route-i-ds-param="{routeIDs}">Reanalyse vorhandener Daten</a>}} handelt.}
+        other    { noch Angaben zum {savePDF, select,
+                                      true  {Ursprung der Daten}
+                                      other {<a href="dataSource" data-action="base#setDummySubmit" data-base-url-param="app_dataSource#origin" data-base-route-i-ds-param="{routeIDs}">Ursprung der Daten</a>}} fehlen.}}
     end: >-
       . Aus diesem Grund wurde auch keine Datenschutzerklärung erstellt. {isInformation, select,
               true  {Folgende Informationen, die sonst in die Teilnahmedokumente übernommen worden wären, sind für die Begutachtung zu berücksichtigen:}
@@ -622,10 +708,7 @@ participation:
       title: '<b>Projektleitung:</b>'
       text: 'Die Gesamtverantwortung für diese Studie liegt bei '
     contributors: 'Zudem sind folgende Personen an der Studie beteiligt: {contributors}.'
-    funding: >-
-      {isQualiFunding, select,
-        true  {Die Studie findet im Rahmen einer Qualifikationsarbeit statt und hat keine gesonderte Finanzierung.}
-        other {Die Studie wird finanziert durch {funding}.}}
+    funding: 'Die Studie wird finanziert durch {funding}.'
   location: 'Ort'
   locationContent:
     start: >-
@@ -936,16 +1019,16 @@ participation:
         codePersonal: '{codePersonal} Zudem sind die Forschungsdaten selbst zwar nicht direkt personenbezogen, es lässt sich aber nicht vollkommen ausschließen, dass durch Kombination eines Teils der Forschungsdaten mit Zusatzwissen einzelne Personen identifiziert werden können.'
         no: 'Die Forschungsdaten selbst sind nicht direkt personenbezogen, es lässt sich jedoch nicht vollkommen ausschließen, dass durch Kombination eines Teils der Forschungsdaten mit Zusatzwissen einzelne Personen identifiziert werden können.'
       personalNo:
-        consecutive: 'Für die Projektbeteiligten sind die Forschungsdaten anonym. Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
-        external: 'Für die Nutzung im Rahmen dieser Studie sind die Forschungsdaten anonym. Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
-        internal: 'Für die Projektbeteiligten sind die Forschungsdaten anonym. Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
+        consecutive: 'Für die Projektbeteiligten sind die Forschungsdaten anonym. Durch die Anzahl der Teilnehmenden in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
+        external: 'Für die Nutzung im Rahmen dieser Studie sind die Forschungsdaten anonym. Durch die Anzahl der Teilnehmenden in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
+        internal: 'Für die Projektbeteiligten sind die Forschungsdaten anonym. Durch die Anzahl der Teilnehmenden in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
         no: >-
           {isPurposeFurther, select,
             true  {Für die Nutzung im Rahmen dieser Studie sind die Forschungsdaten anonym.}
             other {Dabei bleiben {addressee, select,
                                    children {Ihr Kind bzw.}
                                    wards    {die von Ihnen betreute Person bzw.}
-                                   other    {}} Sie anonym.}} Durch die Größe der Stichprobe in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.
+                                   other    {}} Sie anonym.}} Durch die Anzahl der Teilnehmenden in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.
         codePersonal: '{codePersonal} '
       codePersonal: >- # for the {codePersonal} placeholder above
         Durch {isName, select,
@@ -1463,6 +1546,7 @@ completeForm:
       no: 'Nein'
       unclear: 'Unklar'
       restricted: 'Eingeschränkt'
+      notApplicable: 'Nicht zutreffend'
     linking: # answer-keys must equal the 'types' keys. If order of boxes changes, numbers have to be updated here, too
       information: >-
         {answer, select,
@@ -1605,6 +1689,46 @@ completeForm:
           yes     { (siehe Anlage zur Datenverarbeitung)}
           unclear { (siehe Feld 44)}
           other   {}}
+      dataSourceVotes: >-
+        {answer, select,
+          yes   {}
+          other { (siehe Feld {isFull, select,
+                                true  {47}
+                                other {21}})}}
+      legitimization: >-
+        {answer, select,
+          unclear { (siehe Feld {isFull, select,
+                                  true  {52}
+                                  other {26}})}
+          no      { (siehe Feld 46)}
+          other   {}}
+      restriction: >-
+        {isFull, select,
+          true  {{answer, select,
+                    yes   { (siehe Feld 50/54)}
+                    other {}}}
+          other {}}
+      dataSourceIdentification: >-
+        {isFull, select,
+          true  {{answer, select,
+                    yes   { (siehe Feld 53)}
+                    other {}}}
+          other {}}
+      dataSourceBurdensRisks: >-
+        {isFull, select,
+          true  {{answer, select,
+                    yes   { (siehe Feld {isDataSourceBurdensRisks, select,
+                                          true  {55}
+                                          other {}}{isDataSourceBurdensRisksContributors, select,
+                                                      true  {{isDataSourceBurdensRisks, select,
+                                                                true  {/}
+                                                                other {}}56}
+                                                      other {}})}
+                    other {}}}
+          other {}}
+    levelHeadings:
+      new: ' (eigene Datenerhebung)'
+      existing: ' (Nutzung vorhandener Daten)'
     headings:
       information: 'Aufklärung'
       voluntary: 'Freiwilligkeit'
@@ -1617,6 +1741,11 @@ completeForm:
       finding: '(Zufalls-)Befunde'
       dataPrivacy: 'Personenbezogene Daten'
       otherSources: 'Daten anderer Stellen'
+      dataSourceVotes: 'Forschungsethische Standards'
+      legitimization: 'Aufklärung/Einwilligung'
+      restriction: 'Zugangsbeschränkung/Datenverbreitung'
+      dataSourceIdentification: 'Personenbezug'
+      dataSourceBurdensRisks: 'Belastungen/Risiken'
       conflict: 'Interessenkonflikt'
       medicine: 'Medizinbezug'
     information: 'Eine vollständige Vorab-Aufklärung ist gewährleistet.'
@@ -1630,6 +1759,11 @@ completeForm:
     finding: 'In der Studie werden u.U. klinisch relevante (Zufalls-)Befunde aufgedeckt.'
     dataPrivacy: 'In der Studie findet eine relevante Verarbeitung personenbezogener Daten statt.'
     otherSources: 'Es werden individuell zuordenbare Daten anderer Stellen hinzugezogen.'
+    dataSourceVotes: 'Die nachgenutzten Forschungsdaten wurden ursprünglich unter Einhaltung forschungsethischer Standards gewonnen.'
+    legitimization: 'Die Personen, deren Daten analysiert werden, haben eingewilligt bzw. es war ihnen zumindest bewusst, dass ihre Daten zu Forschungszwecken nachgenutzt werden können.'
+    restriction: 'Durch die Reanalyse werden ursprünglich zugangsbeschränkte Daten einem größeren Personenkreis zugänglich als vorher.'
+    dataSourceIdentification: 'Als Resultat der Reanalyse liegt ein Datensatz vor, in dem einzelne Personen identifizierbar sind.'
+    dataSourceBurdensRisks: 'Aus der Reanalyse ergeben sich Belastungen, Gefährdungen oder Risiken für die Projektbeteiligten oder für die analysierten Personen/Gruppen.'
     conflict: 'Bei den Projektbeteiligten besteht ein Interessenkonflikt in Bezug auf das Forschungsprojekt.'
     medicine: 'Aus dem Projekt kann zukünftig Forschung nach AMG/MPG/MPDG entstehen und/oder Ärztinnen bzw. Ärzte sind projektbeteiligt.'
 

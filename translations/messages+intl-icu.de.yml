@@ -269,6 +269,7 @@ pages:
     contributors: 'Projektbeteiligte'
   projectdetails:
     title: 'Projektstruktur'
+    dataSource: 'Datenbasis'
     groups: 'Personengruppen'
     information: 'Aufklärung'
     informationSidebar: 'Aufklärung'
@@ -322,7 +323,7 @@ main:
   title: 'Ethiktool'
   textNoCommittee: |
     Die Software „Ethiktool“ unterstützt Sie beim Verfassen von Ethikanträgen. Die relevanten Aspekte für die ethische Begutachtung werden fallbezogen abgefragt.
-    Das Ethiktool erzeugt am Ende alle Dokumente, die durch die Ethikkommission begutachtet werden: das Antragsformular und die Teilnahmedokumente, die sich an die teilnahmeinteressierten Personen richten (Informations- und Einwilligungstexte).
+    Das Ethiktool erzeugt am Ende alle Dokumente, die durch die Ethikkommission begutachtet werden: das Antragsformular und die Teilnahmedokumente (Informations- und Einwilligungstexte), die sich an die teilnahmeinteressierten Personen richten (sofern diese selbst einwilligungsfähig sind - andernfalls erzeugt das Ethiktool die Dokumente für die Bezugspersonen).
 
     Weitere Informationen finden Sie in den Abschnitten „Über uns“ und „Über das Ethiktool“. Bitte beachten Sie die technischen Hinweise und die Nutzungsbedingungen des Ethiktools.
     Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
@@ -341,7 +342,7 @@ main:
     
     
     {committeeType, select,
-              EUB   {Bitte beachten Sie, dass die Dokumente für die Aufklärung der Teilnehmenden automatisch mit dem Ethiktool generiert werden und Sie die Information <b>nicht</b> vorab auf Basis des Templates auf der Webseite der Ethik-Kommission vorbereiten müssen. Aus den Angaben im Tool werden automatisch die Information (Teil 1 des Templates) und die Einwilligung (Teil 2) sowie auf Wunsch auch die Angaben zum Datenschutz (Teil 3) fallspezifisch automatisch generiert. Sie erhalten ein PDF-Dokument zu Ihrer weiteren Verwendung.</br></br>}
+              EUB   {Bitte beachten Sie, dass die Dokumente für die Aufklärung der selbst-einwilligungsfähigen Teilnehmenden (bzw. bei nicht-einwilligungsfähigen Teilnehmenden: die Dokumente für die Bezugspersonen) automatisch mit dem Ethiktool generiert werden und Sie die Information <b>nicht</b> vorab auf Basis des Templates auf der Webseite der Ethik-Kommission vorbereiten müssen. Aus den Angaben im Tool werden automatisch die Information (Teil 1 des Templates) und die Einwilligung (Teil 2) sowie auf Wunsch auch die Angaben zum Datenschutz (Teil 3) fallspezifisch automatisch generiert. Sie erhalten ein PDF-Dokument zu Ihrer weiteren Verwendung.</br></br>}
               other {}} Bitte beachten Sie, dass mit Erstellung des Antrags bestätigt wurde, dass die <a class="linkInternal" href data-bs-toggle="modal" data-bs-target="#technicalHints">technischen Hinweise</a> zur Kenntnis genommen wurden und dass folgende <b>Voraussetzungen für die Antragstellung</b> erfüllt sind:</br></br>
   textRequirementsTitle: 'Voraussetzungen für die Antragstellung'
   textRequirements: | # other in select is test committee. For readability of the translation files newlines instead of br-tags are used.
@@ -453,7 +454,8 @@ coreData:
     types:
       same: 'identisch zum Projekttitel'
       different: 'unterscheidet sich vom Projekttitel'
-      notApplicable: 'nicht zutreffend: Es werden keine Teilnahmedokumente erstellt, da es weder eine Vorab- noch eine nachträgliche Aufklärung gibt und auch keine Einwilligung in die Studienteilnahme bzw. Verwendung der Daten eingeholt wird.'
+      notApplicable: 'nicht zutreffend: Es werden keine Teilnahmedokumente erstellt.'
+    hint: 'z.B. weil nur vorhandene Daten analysiert werden oder weil es im Rahmen der eigenen Datenerhebung weder eine Vorab- noch eine nachträgliche Aufklärung gibt'
   appType:
     title: 'Antragstyp'
     headingHint: 'Wenn der Antrag noch nicht von {committeeDat} begutachtet wurde, wählen Sie bitte „Neuer Antrag“. Wenn Sie bereits ein positives Ethikvotum erhalten haben, wählen Sie „Erweiterung/Änderung“. Wenn Sie im Rahmen der Begutachtung Nachfragen oder Auflagen adressieren müssen, wählen Sie „Wiedervorlage nach Antrags-Überarbeitung“. Wenn das positive Ethikvotum unter dem Vorbehalt stand, dass mit dem Entscheid über die Bewilligung der Fördermittel die Teilnahmedokumente nachgereicht werden müssen, wählen Sie „Wiedervorlage nach Mittelakquise“.'
@@ -477,7 +479,7 @@ coreData:
               true  {Dies betrifft auch viele Eingaben, die für die Teilnahmedokumente erfragt werden, da bei einem Kurzantrag zur Einreichung bei {committeeDat} keine Begutachtung der Teilnahmedokumente erfolgt. Sie haben jedoch die Möglichkeit, die Teilnahmedokumente für Ihre eigene Verwendung erstellen zu lassen. Diese Option finden Sie direkt nach der Auswahl des Antragsverfahrens. Wenn Sie sich für diese Möglichkeit entscheiden, bleiben die Eingaben, die ausschließlich für die Teilnahmedokumente erfragt werden, erhalten.}
               other {}}}
         shortToShort {Sie haben ausgewählt, dass Sie keine Teilnahmedokumente für die eigene Verwendung erstellen möchten. Aus diesem Grund sind viele Eingaben, die für die Teilnahmedokumente erfragt werden, nicht mehr erforderlich. Die betroffenen Eingaben werden gelöscht, wenn Sie diese Seite verlassen.}
-        projectStart {Sie haben ausgewählt, dass die Datenerhebung bereits begonnen hat. Somit sollten schon Teilnahmedokumente existieren. Daher sind viele Eingaben, die für die Teilnahmedokumente erfragt werden, nicht mehr erforderlich. Die betroffenen Eingaben werden gelöscht, wenn Sie diese Seite verlassen.}
+        projectStart {Sie haben ausgewählt, dass das Forschungsprojekt bereits begonnen hat. Somit sollten schon Teilnahmedokumente existieren. Daher sind viele Eingaben, die für die Teilnahmedokumente erfragt werden, nicht mehr erforderlich. Die betroffenen Eingaben werden gelöscht, wenn Sie diese Seite verlassen.}
         other        {Sie haben ausgewählt, dass die Fördermittel erst noch beantragt werden. Die Kommission begutachtet zunächst nur die allgemeinen Informationen zum Forschungsprojekt. Die Teilnahmedokumente sind bei Bewilligung der Fördermittel nachzureichen. Aus diesem Grund sind viele Eingaben, die für die Teilnahmedokumente erfragt werden, nicht mehr erforderlich. Die betroffenen Eingaben werden gelöscht, wenn Sie diese Seite verlassen.}} Möchten Sie die XML-Datei mit allen bisherigen Eingaben vorher speichern?
     buttons:
       save: 'Speichern und fortfahren'
@@ -488,7 +490,12 @@ coreData:
     types:
       short: 'Kurzantrag'
       full: 'Vollantrag'
-  shortDocs: 'Bei einem Kurzantrag zur Einreichung bei {committeeDat} erfolgt keine Begutachtung der Teilnahmedokumente. Möchten Sie dennoch die Teilnahmedokumente für Ihre eigene Verwendung mit Hilfe des Ethiktools erstellen?'
+  shortDocs:
+    title: 'Bei einem Kurzantrag zur Einreichung bei {committeeDat} erfolgt keine Begutachtung der Teilnahmedokumente. Möchten Sie dennoch die Teilnahmedokumente für Ihre eigene Verwendung mit Hilfe des Ethiktools erstellen?'
+    types:
+      yes: 'Ja'
+      no: 'Nein'
+      notApplicable: 'nicht zutreffend: Es werden keine eigenen Daten erhoben.'
   project:
     title: 'Projektlaufzeit'
     start:
@@ -498,24 +505,26 @@ coreData:
           DLR   {(geplanter)}
           TUD   {(geplanter)}
           UH1   {(geplanter)}
-          other {geplanter}} Beginn der Datenerhebung
-      hint: >-
-        {committeeType, select,
-          EUB   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender Datenerhebung ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
-          DLR   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
-          TUD   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.}
-          UH1   {Ethikanträge sind grundsätzlich vor Beginn der Datenerhebung zu stellen. Die Erteilung eines Ethikvotums bei bereits laufender oder abgeschlossener Datenerhebung ist nur in besonders begründeten Ausnahmefällen möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil der Datenerhebung erstreckt, in dem die Auflagen noch nicht erfüllt waren.}
-          other {}}
-      textHint:
-        current: 'Bitte beschreiben Sie hier, welche Teile der Datenerhebung bereits abgeschlossen sind (z.B. Kontaktierung der Teilnehmenden, Anzahl erhobener Datensätze) und welche Teile noch ausstehen. Die weiteren Angaben im Ethiktool sind prospektiv auszufüllen.'
-        retrospective: 'Warum stellen Sie den Ethikantrag nachträglich?'
+          other {geplanter}} Projektbeginn
+      hints:
+        headingHint: 'Beginn der Datenerhebung; wenn Daten nicht neu erhoben, sondern vorhandene Daten nachgenutzt werden sollen: Beginn der Reanalyse'
+        begun: >-
+          {committeeType, select,
+            EUB   {Ethikanträge sind grundsätzlich vor Projektbeginn zu stellen. Die Erteilung eines Ethikvotums bei einem bereits laufenden Forschungsprojekt ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil des Forschungsprojekts erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
+            DLR   {Ethikanträge sind grundsätzlich vor Projektbeginn zu stellen. Die Erteilung eines Ethikvotums bei einem bereits laufenden oder abgeschlossenen Forschungsprojekt ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil des Forschungsprojekts erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
+            TUD   {Ethikanträge sind grundsätzlich vor Projektbeginn zu stellen. Die Erteilung eines Ethikvotums bei einem bereits laufenden oder abgeschlossenen Forschungsprojekt ist nur in besonders begründeten Ausnahmefällen möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil des Forschungsprojekts erstreckt, in dem die Auflagen noch nicht erfüllt waren.}
+            UH1   {Ethikanträge sind grundsätzlich vor Projektbeginn zu stellen. Die Erteilung eines Ethikvotums bei einem bereits laufenden oder abgeschlossenen Forschungsprojekt ist nur in besonders begründeten Ausnahmefällen möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil des Forschungsprojekts erstreckt, in dem die Auflagen noch nicht erfüllt waren.}
+            other {}}
+        textHint:
+          current: 'Bitte beschreiben Sie hier, welche Teile des Projekts bereits abgeschlossen sind (z.B. Kontaktierung der Teilnehmenden, Anzahl erhobener Datensätze) und welche Teile noch ausstehen. Die weiteren Angaben im Ethiktool sind prospektiv auszufüllen.'
+          retrospective: 'Warum stellen Sie den Ethikantrag nachträglich?'
       begun: >-
-        Die Datenerhebung hat bereits begonnen. Eine
-        {committeeType, select,
-          UH1   {Begründung für die nachträgliche}
-          TUD   {Begründung für die nachträgliche}
-          other {Genehmigung zur nachträglichen}}
-        Begutachtung ist notwendig.
+          Das Forschungsprojekt hat bereits begonnen. Eine
+          {committeeType, select,
+            UH1   {Begründung für die nachträgliche}
+            TUD   {Begründung für die nachträgliche}
+            other {Genehmigung zur nachträglichen}}
+          Begutachtung ist notwendig.
     next: 'nächstmöglicher Zeitpunkt (nach Vorliegen eines positiven Ethikvotums)'
     end:
       title: >-
@@ -527,7 +536,7 @@ coreData:
       hint: 'Damit ist nicht das Ende der Datenerhebung gemeint, sondern der Abschluss der Datenauswertung und Verschriftlichung. Das ausgestellte Ethikvotum ist für das Forschungsprojekt mit der hier angegebenen Laufzeit gültig.'
   funding:
     title: 'Quelle(n) der Finanzierung'
-    fundingQuali: 'keine gesonderte Finanzierung (Qualifikationsarbeit)'
+    fundingQuali: 'keine gesonderte Finanzierung'
     fundingBudget: 'Haushaltsmittel'
     fundingResearch: 'Mittel einer Forschungsförderorganisation/Stiftung'
     fundingExternal: 'Industriedrittmittel'
@@ -591,6 +600,7 @@ coreData:
     choice: 'Ich benötige ein Votum, das sich auf andere ethische Richtlinien bezieht (<a href="https://www.konsortswd.de/ratswd/best-practice-forschungsethik/ethikleitlinien-kodices/" target="_blank">eine Übersicht finden Sie hier</a>), nämlich:'
 
 votes:
+  hint: 'Die beiden nachfolgenden Fragen beziehen sich auf die im Rahmen dieses Ethikantrags geplanten Erhebungen bzw. Analysen. Ethikvoten für die ursprüngliche Gewinnung von Forschungsdaten, die hier nachgenutzt bzw. reanalysiert werden sollen, werden an anderer Stelle abgefragt.'
   otherVote:
     title: 'Wurde dieses Forschungsprojekt schon einmal von einer anderen Ethikkommission begutachtet?'
     committee: 'Von welcher Ethikkommission?'
@@ -721,6 +731,135 @@ projectdetails:
     text: 'Ja, mit eigenem Text'
     no: 'Nein'
   pages:
+    dataSource:
+      origin:
+        title: 'Welchen Ursprung haben die Daten?'
+        headingHint: 'Wenn Sie Daten verschiedenen Ursprungs (vorliegende und neu erhobene) verwenden, legen Sie bitte separate Studien bzw. Gruppen dafür an. Wenn Sie neu erhobene Daten mit bereits vorliegenden Daten in einem Datensatz zusammenführen wollen, wählen Sie hier bitte „neu erhoben“ und geben die zu verknüpfenden Daten als „hinzugezogene Daten anderer Stellen“ an.'
+        types:
+          new: 'Es werden Daten explizit für das Forschungsprojekt neu erhoben.'
+          existing: 'Es werden ausschließlich vorliegende Daten aus anderen (eigenen oder fremden) Quellen genutzt.'
+        hints:
+          new: 'Mit „erhoben“ ist die Neu-Erfassung/-Erzeugung/-Generierung von Daten gemeint, nicht das Zusammentragen und die Nutzbarmachung von Daten aus anderen Quellen, z.B. Social Media.'
+          existing: 'Das schließt auch Daten ein, die vor der eigenen Nutzung von ihrer Ursprungsform in eine andere Form überführt werden.'
+        modal:
+          title: 'Nutzung vorhandener Daten'
+          content: >-
+            Sie haben ausgewählt, dass ausschließlich vorliegende Daten genutzt werden. Aus diesem Grund sind die Eingaben auf den übrigen „Projektstruktur“-Seiten {isMultiple, select,
+                true  {für diese Kombination von Studie/Gruppe/Zeitpunkt}
+                other {}} nicht mehr erforderlich. Die betroffenen Eingaben werden gelöscht, wenn Sie diese Seite verlassen. Möchten Sie die XML-Datei mit allen bisherigen Eingaben vorher speichern?
+          buttons:
+            save: 'Speichern und fortfahren'
+            cancel: 'Fortfahren ohne zu speichern'
+      originSources:
+        title: 'Aus welchen Quellen werden Daten genutzt?'
+        types:
+          research: 'Daten, die selbst oder von anderen zu Forschungszwecken erhoben wurden'
+          originSourcesOther: 'Daten, die zu anderen Zwecken erhoben wurden (z.B. praxis-/krankenhausgeführte Patient/innenakten, Daten aus Hochschulambulanzen, Bioproben, Daten von Mobilfunkanbietern/Internetprovidern)'
+          widespread: 'Daten, die Personen selbst im Wissen über deren Sichtbarkeit für andere verbreitet haben (z.B. Social-Media-Daten/Posts)'
+          documents: 'Vorliegende Berichte/Dokumente über konkrete Personen oder Gruppen (z.B. Medienberichterstattung, historische Dokumente, Archivdaten)'
+        placeholder: 'bitte spezifizieren'
+        widespreadHint: 'Wenn Sie auf solche Daten in irgendeiner Weise einwirken, z.B. durch gezielte Platzierung von Posts im Rahmen von Social-Media-Forschung, wählen Sie oben aus, dass „Daten explizit für das Forschungsprojekt neu erhoben“ werden.'
+      dataSourceVotes:
+        title: 'Wurde das Forschungsprojekt, aus dem die Daten nachgenutzt werden sollen, von einer Ethikkommission begutachtet?'
+        headingHint: 'Wenn die Daten aus mehreren Studien mit Unterschieden in der vorherigen Ethikbegutachtung stammen, wählen Sie hier bitte „Nein“ und führen die Ergebnisse der jeweiligen Ethikbegutachtung bei der Frage auf, wie die ursprünglichen Forschungsdaten gewonnen wurden.'
+        dataSourceCommittee:
+          title: 'Von welcher Ethikkommission?'
+          types:
+            committeeSame: 'von {committeeDat}'
+            committeeOther: 'von einer anderen Ethikkommission'
+          textHint:
+            committeeSame: 'Aktenzeichen'
+            committeeOther: 'Bitte benennen Sie die Ethikkommission.'
+          committeeResult:
+            title: 'Wie lautete das Ergebnis der damaligen Begutachtung?'
+            types:
+              positive: 'Positives Votum'
+              negative: 'Negatives Votum'
+              noVote: 'kein Votum (Forschungsprojekt wurde von der Ethikkommission als nicht begutachtungsrelevant eingestuft, diese Einschätzung liegt in Schriftform vor)'
+          description:
+            negative: 'Wie lautete die Begründung der Ethikkommission?'
+            noVote: 'Warum ist eine Begutachtung jetzt erforderlich?'
+          resultPositive:
+            title: 'Warum ist eine weitere Begutachtung erforderlich?'
+            types:
+              question: 'Das damalige Votum umfasste nicht die Fragestellung, die hier betrachtet werden soll.'
+              access: 'Der Zugang zu den Daten wird nur bei Vorlage eines Ethikvotums gewährt.'
+              committeeResultPositiveOther: 'andere Begründung'
+            placeholder: 'bitte spezifizieren'
+          resultNegative:
+            text: 'Die Reanalyse von Daten, die trotz eines negativen Ethikvotums erhoben wurden, ist forschungsethisch besonders heikel. Bitte lassen Sie sich von {committeeDat} beraten, ehe Sie das Reanalyse-Vorhaben zur Begutachtung einreichen.'
+            confirm: 'Hiermit bestätige ich, dass ich Kontakt zu {committeeDat} aufgenommen habe und dass mir zugesichert wurde, dass ich das Reanalyse-Vorhaben zur Begutachtung einreichen darf.'
+        voteContributors:
+          title: 'Waren Sie selbst oder eine andere hier projektbeteiligte Person auch an dem Forschungsprojekt beteiligt, aus dem die Daten nachgenutzt werden sollen?'
+          hints:
+            yesBegun: 'Bitte stellen Sie einen nachträglichen Ethikantrag für das durchgeführte Forschungsprojekt und für die Reanalyse. Wählen Sie oben aus, dass „Daten explizit für das Forschungsprojekt neu erhoben“ werden, und ändern Sie den <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">Projektbeginn</a> auf den Beginn der damaligen Datenerhebung. Füllen Sie alle weiteren Punkte mit Blick auf die Datenerhebung aus und kennzeichnen Sie die zusätzliche Fragestellung für die Reanalyse explizit in der <a class="linkInternal" href="summary" data-action="base#setDummySubmit" data-base-url-param="app_summary">Zusammenfassung</a>.'
+            yesBegunNo: 'Bitte lassen Sie sich von {committeeDat} beraten, ob diese Begründung tragfähig ist, ehe Sie das Reanalyse-Vorhaben zur Begutachtung einreichen.'
+            textHint: 'Bitte begründen Sie, warum kein Ethikantrag gestellt wurde.'
+          confirm: 'Hiermit bestätige ich, dass ich Kontakt zu {committeeDat} aufgenommen habe und dass mir zugesichert wurde, dass ich das Reanalyse-Vorhaben zur Begutachtung einreichen darf.'
+      dataSet:
+        title: 'Wie wurden die ursprünglichem Forschungsdaten gewonnen?'
+        textHint: >-
+          Für die Ethikkommission muss ersichtlich werden, ob der Datensatz unter Einhaltung forschungsethischer Standards gewonnen wurde. <span style="font-weight: bold">Bitte beschreiben Sie, soweit es Ihnen möglich ist, alle ethisch relevanten Details zur damaligen Datenerhebung</span> (z.B. Teilnehmende, Rekrutierung, Vorab- und ggf. nachträgliche Aufklärung, Sicherstellung der Freiwilligkeit und Einwilligung, Belastungen/Risiken und ggf. Kompensationsmaßnahmen, Aufwandsentschädigung, Datenverarbeitung, Umfang der angekündigten Datennutzung). {hasDocs, select,
+                  true  {Sofern es Ihnen vorliegt, fügen Sie Ihrem Antrag bitte das damalige Aufklärungs- und Einwilligungsschreiben hinzu.}
+                  other {}}
+        pdf: 'Ich möchte das damalige Aufklärungs- und Einwilligungsschreiben beifügen.'
+      dataSourceProcedure:
+        title: 'Bitte beschreiben Sie das Vorgehen für die Nachnutzung bzw. Reanalyse der Daten'
+        textHint: 'Bitte beschreiben Sie für die verwendete(n) <span style="font-weight: bold">Datengrundlage(n)/Datenquelle(n)</span> das genutzte Datenmaterial und die daran angelegten Ein- und Ausschlusskriterien, enthaltene Personengruppen/Merkmale sowie den Zeitraum, in dem die verwendeten Daten gewonnen wurden bzw. entstanden sind. Erläutern Sie zudem die <span style="font-weight: bold">Datenverarbeitung</span> im Rahmen des Forschungsprozesses (ggf. Überführung der Originaldaten in andere Formen, Anonymisierung, Veröffentlichung) und schildern Sie die geplanten Analysen und Auswertungsmethoden. Sofern zutreffend, legen Sie bitte auch dar, inwiefern im Rahmen einer Veröffentlichung der Daten und/oder Ergebnisse Urheberrechtsaspekte beachtet werden.'
+      restriction:
+        title: 'Unterliegen die Daten, die genutzt werden sollen, einer Zugangsbeschränkung?'
+        types:
+          free: 'Alle genutzten Daten sind frei zugänglich.'
+          restricted: 'Die genutzten Daten sind (teilweise) zugangsbeschränkt.'
+        hints:
+          free: 'z.B. ohne Account frei im Internet abrufbar'
+          restricted: 'Es ist z.B. ein Account einer Plattform, ein Mitarbeitendenstatus oder Zugangsantrag zum Archiv notwendig.'
+          textHint: 'Bitte beschreiben Sie, wer unter welchen Voraussetzungen Zugang zu den Daten hat (z.B. Personen mit Nutzungsaccount des Anbieters, zusätzlich ggf. Admin-Freigabe bei Gruppen in Sozialen Medien, Mitarbeitende einer Einrichtung/Abteilung).'
+      dataSourceAccess:
+        title: 'Wie erfolgt der Zugriff auf die Daten?'
+        types:
+          accessOwn: 'Es handelt sich um einen eigenen Datensatz, der den Forschenden bereits vorliegt.'
+          center: 'Der Forschungsdatensatz wird von einem Datenzentrum bzw. der datenhaltenden Struktur bereitgestellt (z.B. Repositorium, Biobank, Archiv, Unternehmen, über eine API-Schnittstelle eines Social-Media-Anbieters).'
+          collect: 'Die Daten werden selbst zusammengetragen (z.B. über Webscraping von Social-Media-Daten, Recherche in Archiven).'
+      legitimization:
+        title: 'Wodurch ist die Nutzung der Daten für das Forschungsprojekt legitimiert?'
+        headingHint: 'Die Legitimation muss sich auf sämtliche Schritte erstrecken, die Sie mit dem Datensatz vorhaben, also auch - sofern geplant - auf dessen Veröffentlichung.'
+        types:
+          consentNew: 'Die Personen werden explizit über dieses Reanalyse-Projekt aufgeklärt und willigen in die Verwendung der Daten ein.'
+          consentExisting: 'Bereits im Rahmen der Gewinnung der Daten/Materialien wurden die Personen über die mögliche Nachnutzung ihrer Daten für weitere (Forschungs-)Zwecke aufgeklärt und haben eingewilligt.'
+          conditions: 'Die Geschäftsbedingungen des Anbieters decken den geplanten Abruf der Daten (ggf. inkl. Webscraping) und eine Verwendung der Daten für Forschungszwecke ab. Bei der Anmeldung/Registrierung haben die Nutzenden diese Geschäftsbedingungen aktiv bestätigt.'
+          contract: 'Die Nutzung der Daten ist durch einen Vertrag mit dem Datenzentrum bzw. der datenhaltenden Struktur legitimiert.'
+          legalBasis: 'Die Nutzung der Daten ist durch eine andere Rechtsgrundlage legitimiert.'
+          legitimizationOther: 'Die Nutzung der Daten ist anderweitig legitimiert.'
+        textHints:
+          consentExisting: 'Bitte geben Sie die relevanten Abschnitte der Einwilligungserklärung wieder.'
+          conditions: 'Bitte geben Sie die relevanten Abschnitte der Geschäftsbedingungen wieder.'
+          contract: 'Bitte geben Sie die relevanten Abschnitte des Vertrags wieder.'
+          legalBasis: 'Bitte beschreiben Sie, durch welche Rechtsgrundlage die Verwendung der Daten legitimiert ist (z.B. berechtigtes Interesse gemäß DS-GVO).'
+          legitimizationOther: 'Bitte beschreiben Sie, wodurch die Verwendung der Daten legitimiert ist.'
+        pdf: 'Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, das Aufklärungs- und Einwilligungsschreiben für die Nachnutzung der Daten beizufügen.'
+      dataSourceIdentification:
+        title: 'Ist eine Re-Identifikation einzelner Personen möglich?'
+        headingHint: 'Gemeint ist die Re-Identifizierbarkeit für jegliche (auch außenstehende) Personen, nicht nur für die Projektbeteiligten.'
+        types:
+          yes: 'Ja: Die Daten sind zum Zeitpunkt des Datenzugangs personenbeziehbar und bleiben im Rahmen der Nachnutzung/Reanalyse personenbeziehbar (z.B. Bioproben, Videodaten, Posts im Wortlaut).'
+          partly: 'Ja: Die Daten sind zum Zeitpunkt des Datenzugangs (teilweise) anonymisiert, durch Kombination mit weiteren Daten sind jedoch Rückschlüsse auf einzelne Personen möglich (z.B. durch Verknüpfung von Datensätzen).'
+          temporary: 'Vorübergehend: Die Daten sind zum Zeitpunkt des Datenzugangs (teilweise) personenbeziehbar (z.B. personenbezogene Forschungsdaten, personenbezogene Patient/innenakten, Namen und andere Angaben in User-Profilen, Posts im Wortlaut, Daten von Mobilfunkanbietern), werden aber für die Nachnutzung/Reanalyse vollständig anonymisiert.'
+          no: 'Nein: Alle Daten sind zum Zeitpunkt des Datenzugangs anonym/anonymisiert und werden auch nur in anonymer/anonymisierter Form weiterverarbeitet (z.B. anonymisierte Forschungsdaten, anonymisierte Patient/innenakten, Ergebnisse aus Umfragen in Chatgruppen, anonyme Metadaten wie Anzahl Likes, Aktivitätsanzeige in Videoverlaufsanzeigen).'
+      publication:
+        title: 'Wird als Ergebnis des Reanalyse-Projekts ein neu generierter Forschungsdatensatz veröffentlicht?'
+        types:
+          less: 'Ja, mit weniger strenger Zugangsbeschränkung als die ursprünglichen Daten'
+          more: 'Ja, mit (mindestens) derselben Zugangsbeschränkung wie die ursprünglichen Daten'
+          no: 'Nein'
+      dataSourceBurdensRisks:
+        title: 'Ergeben sich durch die Nachnutzung/Reanalyse Belastungen und/oder Risiken für die Personen, deren Daten analysiert werden, oder für Gruppen, denen die Personen angehören?'
+        headingHint: 'Zu reflektieren ist beispielsweise, ob sich soziale, ökonomische oder politische Konsequenzen für die analysierten Personen/Gruppen ergeben können (z.B. für ein Arbeits- oder Versicherungsverhältnis, Reputationsschaden, soziale Stigmatisierung, politische Isolation/Anfeindung).'
+        textHint: 'Welche Belastungen und/oder Risiken können auftreten und welche Vorsichtsmaßnahmen bzw. Kompensationen sind vorgesehen?'
+      dataSourceBurdensRisksContributors:
+        title: 'Ergeben sich durch die Nachnutzung/Reanalyse Belastungen und/oder Risiken für Projektbeteiligte?'
+        headingHint: 'Gemeint sind beispielsweise emotionale Belastungen der datenauswertenden Person(en) durch Sichtung der Materialien.'
+        textHint: 'Welche Belastungen und/oder Risiken können auftreten und welche Vorsichtsmaßnahmen bzw. Kompensationen sind vorgesehen?'
     groups:
       age:
         minAge: 'Mindestalter'
@@ -805,14 +944,14 @@ projectdetails:
               other {Eine Teilnahme an der Studie ist nicht möglich, wenn ...}}
           noCriteria: 'keine Ausschlusskriterien'
       sampleSize:
-        title: 'Stichprobengröße'
+        title: 'Personenzahl'
         total:
-          title: 'Wie viele Personen sollen in diese Kombination aus Studie/Gruppe/Zeitpunkt eingeschlossen werden?'
-          textHint: 'Gemeint ist die Anzahl an Personen, an denen Daten erhoben werden (inkl. Puffer für Pilotierung, etwaigen Ausschluss aus der Analyse u.a.).'
-        furtherParticulars: '(optional) Weitere Angaben zur Stichprobengröße (z.B. Verteilung der Gesamtzahl auf verschiedene Untergruppen)'
+          title: 'Wie viele Personen sollen in diese Kombination aus Studie/Gruppe/Zeitpunkt einbezogen werden?'
+          textHint: 'Gemeint ist die Anzahl an Personen, an denen Daten erhoben werden (inkl. Puffer für Pilotierung, etwaigen Ausschluss aus der Analyse u.a.). Wenn Sie aufgrund der Art der Erhebung keine genaue Personenzahl angeben können, vermerken Sie bei den optionalen Angaben, dass es sich um eine Schätzung handelt.'
+        furtherParticulars: '(optional) Weitere Angaben zur Personenzahl (z.B. Verteilung der Gesamtzahl auf verschiedene Untergruppen, Hinweis dass es sich bei der angegebenen Zahl um eine grobe Schätzung handelt)'
         plan:
-          title: 'Auf welcher Basis wurde die Fallzahlplanung durchgeführt?'
-          textHint: 'Bitte führen Sie aus, worauf die Wahl Ihrer Stichprobengröße basiert (z.B. statistische Poweranalyse, theoretische Sättigung). Benennen Sie etwaige Stellen, die Sie zur Fallzahlplanung beraten haben.'
+          title: 'Auf welcher Basis wurde diese Anzahl an Personen gewählt?'
+          textHint: 'Bitte führen Sie aus, worauf Ihre Wahl basiert (z.B. Fallzahlplanung mittels statistischer Poweranalyse, Überlegungen zu theoretischer Sättigung, Abschätzung der erreichbaren Teilnehmendenzahl bei Erhebungen im Feld). Benennen Sie etwaige Stellen, die Sie zur Stichprobengröße beraten haben.'
       recruitment:
         title: 'Wie werden die Teilnehmenden rekrutiert?'
         types:
@@ -1134,7 +1273,7 @@ projectdetails:
           risksIntegrity: 'z.B. durch Schmerzen, Verletzungen, Sinnesbeeinträchtigungen'
           risksMental: 'z.B. durch Konzentrationsanforderung, Tätigkeitsdauer'
           risksEmotional: 'z.B. Auslösung negativer Stimmung, nachhaltige Täuschung mit persönlicher Relevanz, Auslösung/Verschlimmerung von Symptomen psychischer Erkrankungen, Retraumatisierung'
-          risksSocial: 'z.B. negative Konsequenzen für ein Arbeits- oder Versicherungsverhältnis oder für soziale Beziehungen bei Bekanntwerden von Aussagen (z.B. über illegales oder abweichendes Verhalten wie Drogenkonsum/Gewalt, über sexuelle Präferenzen, ethnische Herkunft, politische, religiöse oder weltanschauliche Überzeugungen, Gewerkschaftszugehörigkeit, genetische und biometrische Daten, Gesundheitsdaten'
+          risksSocial: 'z.B. negative Konsequenzen für ein Arbeits- oder Versicherungsverhältnis oder für soziale Beziehungen bei Bekanntwerden von Aussagen (z.B. über illegales oder abweichendes Verhalten wie Drogenkonsum/Gewalt, über sexuelle Präferenzen, ethnische Herkunft, politische, religiöse oder weltanschauliche Überzeugungen, Gewerkschaftszugehörigkeit, genetische und biometrische Daten, Gesundheitsdaten)'
       burdensRisksContributors:
         title: 'Werden die Projektbeteiligten oder unbeteiligte Dritte Belastungen bzw. Risiken ausgesetzt, die über das im Alltag zu erwartende Maß hinausgehen?'
         hints:
@@ -1962,7 +2101,7 @@ projectdetails:
                         noTool      {Forschungsdaten}
                         purpose     {anonymisierten Forschungsdaten}
                         personal    {personenbezogenen Forschungsdaten}
-                        other       {anonymen Forschungsdaten}} zur eigenen Nachnutzung (z.B. Re-Analyse für andere Forschungsfragestellungen) verwendet?
+                        other       {anonymen Forschungsdaten}} zur eigenen Nachnutzung (z.B. Reanalyse für andere Forschungsfragestellungen) verwendet?
       dataReuseHow:
         hint: 'Gemäß Ihrer Angaben auf der Seite „<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">Datenschutz</a>“ werden die personenbezogenen Forschungsdaten zum Zweck der Nachnutzung aufbewahrt.' # above heading
         title: >- # other is anonymous in select
@@ -2014,7 +2153,7 @@ checkDoc:
     Sie können nun den Antrag zur Einreichung bei {committeeDat} vorbereiten, indem Sie die Funktion „<a class="linkInternal" href="completeForm">Gesamtantrag erstellen</a>“ wählen.
   reviewMissing: >-
     <span style="font-weight: bold"><span class="errorStyle">Achtung</span>: Mindestens eine der Angaben zu <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">der Art des Antragsverfahrens</a>{hasBegun, select,
-            true  {, dem Beginn der <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">Datenerhebung</a>}
+            true  {, dem <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">Projektbeginn</a>}
             other {}} und der <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#funding">Finanzierung</a> fehlt. Diese Punkte haben großen Einfluss auf den Umfang nötiger Eingaben im Tool. Bitte vervollständigen Sie zunächst die fehlenden Angaben, bevor Sie weitere Fragen beantworten.</span>
   errorPage: "Fehlende oder <span class=\"errorStyle\">fehlerhafte</span> Eingaben:\n\n"
   noErrorPage: >-
@@ -2049,14 +2188,17 @@ checkDoc:
       reference: 'Aktenzeichen'
       applicationProcess:
         missing: 'Art des Antragsverfahrens' # 'Antwort auf Frage nach [] fehlt.'
-        shortDocs: 'Antwort auf Frage nach Erstellung der Teilnahmedokumente' # '[] fehlt.'
+        shortDocs:
+          missing: 'Antwort auf Frage nach Erstellung der Teilnahmedokumente' # '[] fehlt.'
+          notApplicableToOrigin: 'Wenn es mindestens einen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit eigener Datenerhebung gibt, darf die Frage nach <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#shortDocs">Erstellung der Teilnahmedokumente</a> nicht mit „nicht zutreffend“ beantwortet werden.'
+          originToNotApplicable: 'Wenn es keinen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit neu erhobenen Daten gibt, muss die Frage nach <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#shortDocs">Erstellung der Teilnahmedokumente</a> mit „nicht zutreffend“ beantwortet werden.'
       start:
         past: >-
           {hasBegun, select,
-            true  {Das gewählte Datum für den Beginn der Datenerhebung liegt in der Vergangenheit. In diesem Fall muss auch „Die Datenerhebung hat bereits begonnen“ ausgewählt werden.}
-            other {Geplanter Beginn der Datenerhebung liegt in der Vergangenheit.}}
-        begunToPast: 'Sie haben ausgewählt, dass die Datenerhebung bereits begonnen hat. In diesem Fall muss auch das gewählte Datum für den Beginn der Datenerhebung in der Vergangenheit liegen.'
-      begun: 'Beschreibung des Stands der Datenerhebung'
+            true  {Das gewählte Datum für den Projektbeginn liegt in der Vergangenheit. In diesem Fall muss auch „Das Forschungsprojekt hat bereits begonnen“ ausgewählt werden.}
+            other {Geplanter Projektbeginn liegt in der Vergangenheit.}}
+        begunToPast: 'Sie haben ausgewählt, dass das Forschungsprojekt bereits begonnen hat. In diesem Fall muss auch das gewählte Datum für den Projektbeginn in der Vergangenheit liegen.'
+      begun: 'Beschreibung des Projektstands'
       retrospective: 'Begründung, warum der Ethikantrag nachträglich gestellt wird,'
       end: 'Geplantes Projektende liegt in der Vergangenheit.'
       endBeforeStart: 'Projektende liegt vor Projektstart.'
@@ -2066,10 +2208,8 @@ checkDoc:
             fundingResearch {Forschungsförderorganisation}
             other           {Industriedrittmittel}}: Auswahl, ob Drittmittelprojekt bewilligt oder beantragt ist,
         appType: 'Sie haben als Antragstyp „Wiedervorlage nach Mittelakquise“ ausgewählt. Das passt nicht zu der Auswahl, dass noch Drittmittel beantragt werden.'
-        begun: 'Sie haben ausgewählt, dass die Finanzierung durch Drittmittel noch beantragt wird. Das passt nicht dazu, dass die Datenerhebung bereits begonnen hat.'
-      qualification:
-        missing: 'Antwort auf Frage nach Qualifikationsarbeit'
-        funding: 'Wenn es keine gesonderte Finanzierung gibt, da es sich um eine Studie im Rahmen einer Qualifikationsarbeit handelt, muss die Frage nach Qualifikationsarbeit mit „Ja“ beantwortet werden.'
+        begun: 'Sie haben ausgewählt, dass die Finanzierung durch Drittmittel noch beantragt wird. Das passt nicht dazu, dass das Forschungsprojekt bereits begonnen hat.'
+      qualification: 'Antwort auf Frage nach Qualifikationsarbeit'
       name: >-
         {type, select,
           applicant {Antragstellende Person:}
@@ -2138,9 +2278,74 @@ checkDoc:
                                                         other {keine Funktion}} inne.
       missingMandatory: 'Funktion „{task}“ wurde bei keiner projektbeteiligten Person ausgewählt.'
       missingOther: 'Projektbeteiligte Person {index} ({name}): Beschreibung der sonstigen Position'
+      dataSource: 'Wenn es keinen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit neu erhobenen Daten gibt, kann keine <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">projektbeteiligte Person</a> die Funktion „{task}“ ausfüllen.'
   projectdetails:
     missingTypes: 'Arten von {type}'
     pages:
+      dataSource: # 'Antwort auf Frage nach [] fehlt.', wo nicht anders angegeben
+        origin: 'Ursprung der Daten'
+        originSources:
+          missing: 'Datenquellen'  #  [] fehlen.'
+          types: # 'Benennung der [] fehlt.'
+            research: 'Daten, die zu Forschungszwecken erhoben wurden,'
+            originSourcesOther: 'Daten, die zu anderen Zwecken erhoben wurden,'
+            widespread: 'Daten, die im Wissen über deren Sichtbarkeit verbreitet wurden,'
+            documents: 'Berichte/Dokumente'
+        dataSourceVotes: 'Begutachtung durch eine Ethikkommission'
+        dataSourceCommittee:
+          missing: 'Ethikkommission, die das ursprüngliche Forschungsprojekt begutachtet hat,'
+          description: >- # '[] fehlt.'
+            {type, select,
+              committeeSame {Aktenzeichen}
+              other         {Benennung der anderen Ethikkommission}}
+        committeeResult:
+          missing: 'Ergebnis der damaligen Begutachtung'
+          description: # start+end
+            start: >-
+              Begründung{type, select,
+                          negative { der Ethikkommission}
+                          other    {, warum eine Begutachtung jetzt erforderlich ist,}}
+            end: ' fehlt.'
+        resultPositive:
+          missing: 'Gründe für Notwendigkeit einer weiteren Begutachtung' # '[] fehlen.'
+          description: 'Andere Begründung' # '[] fehlt.'
+        resultNegative: 'Bestätigung der Kontaktaufnahme zu {committeeDat}' # '[] fehlt.'
+        voteContributors:
+          missing: 'Beteiligung an dem ursprünglichen Forschungsprojekt'
+          description: 'Begründung, warum kein Ethikantrag gestellt wurde,' # 1:1
+          confirm: 'Bestätigung der Kontaktaufnahme zu {committeeDat}' # '[] fehlt.'
+          begun: # 1:1
+            start: 'Wenn das Forschungsprojekt, aus dem die Daten nachgenutzt werden sollen, nicht von einer Ethikkommission begutachtet wurde, aber damalige Projektbeteiligte auch am aktuellen Forschungsprojekt beteiligt sind, muss ausgewählt werden, dass das Projekt <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">bereits begonnen</a> hat. Beachten Sie auch die weiteren '
+            end: 'Hinweise.'
+          supportCommittee: 'Sie haben angegeben, dass Sie Kontakt zu {committeeDat} aufgenommen haben. Das passt nicht dazu, dass keine <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">Beratung durch {committeeGen}</a> stattgefunden hat.'# 1:1
+        dataSet: 'Gewinnung der ursprünglichen Forschungsdaten' # 'Beschreibung der [] fehlt.'
+        dataSourceProcedure: 'Beschreibung des Vorgehens für die Nachnutzung bzw. Reanalyse' # '[] fehlt.'
+        restriction:
+          missing: 'Zugangsbeschränkung'
+          description: 'Beschreibung der Voraussetzungen des Datenzugangs' # '[] fehlt.'
+        dataSourceAccess:
+          missing: 'Arten des Zugriffs auf die Daten' # '[] fehlen.'
+          contributors: 'Sie haben ausgewählt, dass weder Sie noch andere Projektbeteiligte an dem Forschungsprojekt beteiligt waren, aus dem die Daten nachgenutzt werden sollen. Das passt nicht dazu, dass es sich um einen eigenen Datensatz handelt.'
+        legitimization:
+          missing: 'Legitimierung der Datennutzung' # '[] fehlt.'
+          types: # '[] fehlt.'
+            consentExisting: 'Beschreibung der relevanten Abschnitte der Einwilligungserklärung'
+            conditions: 'Beschreibung der relevanten Abschnitte der Geschäftsbedingungen'
+            contract: 'Beschreibung der relevanten Abschnitte des Vertrags'
+            legalBasis: 'Beschreibung der Rechtsgrundlage'
+            legitimizationOther: 'Beschreibung der anderweitigen Legitimierung'
+        dataSourceIdentification:
+          missing: 'Re-Identifizierbarkeit einzelner Personen'
+          legitimization: 'Sie haben ausgewählt, dass die ursprünglichen Teilnehmenden explizit über das Reanalyse-Projekt aufgeklärt werden und in die Verwendung ihrer Daten einwilligen. Das ist nur möglich, wenn die Personen zum Zeitpunkt des Datenzugangs re-identifizierbar sind.'
+        publication:
+          missing: 'Veröffentlichung des neu generierten Datensatzes'
+          restriction: 'Sie haben ausgewählt, dass der ursprüngliche Datensatz frei zugänglich ist. Das passt nicht dazu, dass der neu generierte Forschungsdatensatz eine weniger strenge Zugangsbeschränkung als der ursprüngliche Datensatz hat.'
+        dataSourceBurdensRisks:
+          missing: >- # other is dataSourceBurdensRisksContributors
+            Belastungen oder Risiken für {type, select,
+                                            dataSourceBurdensRisks {Personen bzw. Gruppen}
+                                            other                  {Projektbeteiligte}}
+          description: 'Belastungen/Risiken und Vorsichtsmaßnahmen bzw. Kompensationen' # 'Beschreibung der [] fehlt.'
       groups:
         minAge: 'Mindestalter'
         maxAge: 'maximales Alter'
@@ -2153,8 +2358,8 @@ checkDoc:
         criteria:
           include: 'Weitere Einschlusskriterien neben dem Alter'
           exclude: 'Ausschlusskriterien'
-        sampleSize: 'Stichprobengröße'
-        planning: 'Fallzahlplanung'
+        sampleSize: 'Personenzahl'
+        planning: 'Begründung für Personenzahl'
         recruitment:
           missing: 'Arten der Rekrutierung'
           description:
@@ -2616,7 +2821,7 @@ checkDoc:
           missing: 'Antwort auf Frage, wie bzw. wem die Forschungsdaten zur Nachnutzung zur Verfügung gestellt werden,'
           description: 'Beschreibung des Datenarchivs bzw. der Plattform zur Datenbereitstellung'
           public: 'Sie haben ausgewählt, dass personenbezogene Forschungsdaten öffentlich zugänglich gemacht werden. Das passt nicht dazu, dass keine personenbezogenen Daten <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">außerhalb des EWR weitergegeben</a> werden.'
-        dataReuseSelf: 'Antwort auf Frage, ob die Forschungsdaten zur eigenen Nachnutzung/Re-Analyse verwendet werden,' # '[] fehlt.'
+        dataReuseSelf: 'Antwort auf Frage, ob die Forschungsdaten zur eigenen Nachnutzung/Reanalyse verwendet werden,' # '[] fehlt.'
       contributor:
         mandatory: >-
           Es wurde keine {type, select,
@@ -2626,8 +2831,8 @@ checkDoc:
           Die Funktion „{task}“ der <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors"> {numContributor, plural,
                                         =1    {projektbeteiligten Person</a> }
                                         other {Projektbeteiligten</a>}} {contributor} wurde bei keinem Erhebungszeitpunkt ausgewählt.
-  projectTitleToInformation: 'Wenn es mindestens eine <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Studie</a> mit einer Vorab-Aufklärung oder einer nachträglichen Aufklärung gibt, darf die Frage nach dem <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">Projekttitel für die Teilnahmedokumente</a> nicht mit „nicht zutreffend“ beantwortet werden.'
-  informationToProjectTitle: 'Wenn es in keiner <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Studie</a> eine Vorab-Aufklärung oder eine nachträgliche Aufklärung gibt, muss die Frage nach dem <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">Projekttitel für die Teilnahmedokumente</a> mit „nicht zutreffend“ beantwortet werden.'
+  projectTitleToInformation: 'Wenn es mindestens einen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit eigener Datenerhebung und Vorab- oder nachträglicher Aufklärung gibt, darf die Frage nach dem <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">Projekttitel für die Teilnahmedokumente</a> nicht mit „nicht zutreffend“ beantwortet werden.'
+  informationToProjectTitle: 'Wenn in keinem <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> Teilnahmedokumente erstellt werden, muss die Frage nach dem <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">Projekttitel für die Teilnahmedokumente</a> mit „nicht zutreffend“ beantwortet werden.'
 
 completeForm:
   titles:
@@ -2681,19 +2886,33 @@ completeForm:
         EUB   {}
         DLR   {Ethikanträge werden mit allen zugehörigen Dokumenten in elektronischer Form (ausschließlich per PDF und XML) verarbeitet. An der Verarbeitung beteiligt sind die Mitarbeitenden der Geschäftsstelle Forschungsethik, ggf. ausgewählte Personen aus Datenschutz, Exportkontrolle, Recht und Compliance, sowie die Mitglieder der Ethikkommission am DLR. Die Beteiligten sind zur Verschwiegenheit und zur Einhaltung datenschutzrechtlicher Vorschriften verpflichtet. Die antragstellende Person hat in besonders begründeten Ausnahmefällen die Möglichkeit, den Zugriff auf die Antragsunterlagen für einzelne Personen aus diesem Kreise einzuschränken - in der Regel bei begründeter Sorge vor Informationsweitergabe.
           Nach Abschluss der ethischen Beurteilung durch die Geschäftsstelle Forschungsethik (ggf. auch durch den erweiterten Personenkreis bzw. die Ethikkommission) am DLR werden - unabhängig von der ethischen Beurteilung - sämtliche Unterlagen und Schriftwechsel für einen Zeitraum von 10 Jahren nach Antragseingang aufbewahrt. Der Zugang zu den aufbewahrten Daten erfolgt nur über die Mitarbeitenden der Geschäftsstelle Forschungsethik.
-            {isExRe, select,
-              true  {Zum Zweck und für die Dauer der Prüfung des hier vorliegenden überarbeiteten bzw. erweiterten Antrags erhalten die beteiligten Personen Einblick in die Unterlagen und Schriftwechsel im Zusammenhang mit dem ursprünglichen Antrag mit dem Aktenzeichen {reference}.}
-              other {}}}
+            {numReferences, plural,
+              =0    {}
+              other {Zum Zweck und für die Dauer der Prüfung des hier vorliegenden {isExRe, select,
+                          true  {überarbeiteten bzw. erweiterten}
+                          other {}} Antrags{isReUse, select,
+                                              true  {, welcher vorhandene Forschungsdaten nachnutzt,}
+                                              other {}} erhalten die beteiligten Personen Einblick in die Unterlagen und Schriftwechsel im Zusammenhang mit {numReferences, plural,
+                                                       =1    {dem ursprünglichen Antrag mit dem}
+                                                       other {den ursprünglichen Anträgen mit den}} Aktenzeichen {reference}.}}}
         other {Ethikanträge werden mit allen zugehörigen Dokumenten in elektronischer Form verarbeitet. An der Verarbeitung beteiligt sind die Mitarbeitenden der Geschäftsstelle sowie die Mitglieder {committeeGen}. Die Beteiligten sind zur Verschwiegenheit und zur Einhaltung datenschutzrechtlicher Vorschriften verpflichtet. Die antragstellende Person hat in besonders begründeten Ausnahmefällen die Möglichkeit, den Zugriff auf die Antragsunterlagen für einzelne Mitglieder der Ethikkommission einzuschränken (in der Regel bei begründeter Sorge vor Informationsweitergabe).
          Nach Abschluss der Begutachtung durch {committeeAcc} werden - unabhängig vom erteilten Votum - sämtliche Unterlagen und Schriftwechsel für einen Zeitraum von 10 Jahren nach dem im Antrag genannten Laufzeitende des Forschungsprojekts aufbewahrt. Zugang zu den aufbewahrten Daten haben die Mitarbeitenden der Geschäftsstelle {committeeGen}. 
-         {isExRe, select,
-           true  {Zum Zweck und für die Dauer der Prüfung des hier vorliegenden überarbeiteten bzw. erweiterten Antrags erhalten die Mitglieder {committeeGen} Einblick in die Unterlagen und Schriftwechsel im Zusammenhang mit dem ursprünglichen Antrag mit dem Aktenzeichen {reference}.}
-           other {}}}}
+         {numReferences, plural,
+           =0    {}
+           other {Zum Zweck und für die Dauer der Prüfung des hier vorliegenden {isExRe, select,
+                        true  {überarbeiteten bzw. erweiterten}
+                        other {}} Antrags{isReUse, select,
+                                            true  {, welcher vorhandene Forschungsdaten nachnutzt,}
+                                            other {}} erhalten die Mitglieder {committeeGen} Einblick in die Unterlagen und Schriftwechsel im Zusammenhang mit {numReferences, plural,
+                                                =1    {dem ursprünglichen Antrag mit dem}
+                                                other {den ursprünglichen Anträgen mit den}} Aktenzeichen {reference}.}}}}
     consent: 'Die obigen Hinweise zur Bearbeitung meines Ethikantrags habe ich zur Kenntnis genommen.'
   pdf:
     text: 'Aufgrund Ihrer Eingaben im Ethiktool ist es erforderlich, Ihrem Antrag zusätzliche PDF-Dateien beizufügen. Bitte wählen Sie diese hier aus. Die maximale Dateigröße beträgt 7 MB.</br> Wenn Sie mehrere Dokumente für denselben Aspekt beifügen möchten, fügen Sie diese bitte außerhalb des Ethiktools zu einer PDF-Datei zusammen und wählen diese Datei dann hier aus.'
     votes: 'Ergebnisschreiben der anderen Ethikkommission'
     projectdetails:
+      dataSet: 'Aufklärungs- und Einwilligungsschreiben für den ursprünglichen Forschungsdatensatz'
+      legitimization: 'Aufklärungs- und Einwilligungsschreiben für die Daten-Nachnutzung'
       begun: >-
         Teilnahmedokumente für die {addressee, select,
                                       children {Erziehungsberechtigten}
@@ -2790,7 +3009,7 @@ aboutTool:
   text: |
     Sie verwenden Version {toolVersion} des browserbasierten Ethiktools. Eine Liste der Änderungen gegenüber vorherigen Versionen finden Sie <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html" target="_blank">hier</a>.
     
-    Das Ethiktool dient der Vereinfachung der Antragstellung und Begutachtung von Ethikanträgen zu Forschung am Menschen und mit Menschen, insbesondere im nicht-medizinischen Bereich. Aus Ihren Antworten auf Fragen, die sich dynamisch an Ihre Eingaben anpassen, erstellt das Ethiktool sowohl die Antragsdokumente als auch die Informations-, Einwilligungs- und Datenschutzdokumente für die Studienteilnehmenden. Das Ethiktool ist eine gemeinsame Entwicklung eines Projektteams unter Leitung von Prof. Dr. Alexandra Bendixen (Technische Universität Chemnitz) mit Team-Mitgliedern der TU Chemnitz, des Leibniz-Instituts für Psychologie (ZPID) und der Universität Bielefeld. Es basiert auf den Erfahrungen mit einer Vorgängersoftware an der TU Chemnitz.
+    Das Ethiktool dient der Vereinfachung der Antragstellung und Begutachtung von Ethikanträgen zu Forschung am Menschen und mit Menschen, insbesondere im nicht-medizinischen Bereich. Aus Ihren Antworten auf Fragen, die sich dynamisch an Ihre Eingaben anpassen, erstellt das Ethiktool sowohl die Antragsdokumente als auch die Informations-, Einwilligungs- und Datenschutzdokumente für die Studienteilnehmenden (sofern diese selbst einwilligungsfähig sind - andernfalls erzeugt das Ethiktool die Dokumente für die Bezugspersonen). Das Ethiktool ist eine gemeinsame Entwicklung eines Projektteams unter Leitung von Prof. Dr. Alexandra Bendixen (Technische Universität Chemnitz) mit Team-Mitgliedern der TU Chemnitz, des Leibniz-Instituts für Psychologie (ZPID) und der Universität Bielefeld. Es basiert auf den Erfahrungen mit einer Vorgängersoftware an der TU Chemnitz.
     
     Sie möchten das Ethiktool unterstützen? Das Ethiktool wird permanent weiterentwickelt. Daher sind Fehlermitteilungen, Fragen und Anmerkungen stets willkommen; bitte senden Sie dazu eine E-Mail an <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. Bei technischen Problemen mit der aktuellen Version wenden Sie sich bitte an <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
     
@@ -2804,6 +3023,8 @@ technicalHints:
   title: 'Technische Hinweise'
   text: |
     Damit das Ethiktool ordnungsgemäß läuft, muss Ihr Browser Cookies und Javascript erlauben. Die Cookies dürfen während der Sitzung nicht gelöscht werden. Es ist nicht empfehlenswert, das Ethiktool gleichzeitig in mehr als einem Browser-Tab zu öffnen. Bitte navigieren Sie auch nicht im Browser vor und zurück, sondern innerhalb des Ethiktools („Nächste Seite“/„Vorherige Seite“).
+    
+    Es ist wichtig, dass Sie nach der Nutzung die „Beenden“-Funktion in der Buttonleiste links unten verwenden, damit alle Ethiktool-bezogenen Formularinhalte aus Ihrem Browser-Cache entfernt werden.
 
     Zum Ausfüllen der Antragsinhalte beginnen Sie am besten mit „Antragsdaten“ und klicken sich dann jeweils über „Nächste Seite“ Schritt für Schritt durch das Formular. Alternativ können Sie in der linksseitigen Navigationsleiste auch direkt zu bestimmten Bereichen (z.B. Projektstruktur) springen.
 

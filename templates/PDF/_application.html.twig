@@ -69,8 +69,7 @@
     {% set boxNumber = boxNumber+1 %}
     {# further boxes #}
     {% for box in boxContent|slice(2) %} {# first two entries are application type and project title #}
-        {% set heading = box['heading'] %}
-        {% if heading is not same as levelHeading %}
+        {% if box['heading'] is not same as levelHeading %}
             {{ _self.addBox(box,boxNumber,savePDF) }}
         {% else %}  {# overview of level names  #}
             <div class="pdfBox">
@@ -83,8 +82,10 @@
                     {% endif %}
                 </div>
             </div>
+            {{ _self.addBoxSub(box,savePDF) }}
         {% endif %}
-        {% set boxNumber = boxNumber+1 %}
+        {% set boxNumberNew = box['boxNumber'] ?? 0 %}
+        {% set boxNumber = (boxNumberNew>0 ? boxNumberNew : boxNumber+1) %}
     {% endfor %}
 {% endblock %}
 
@@ -99,14 +100,20 @@
         boxNumber:     number to be added to the heading
         savePDF:       if true, the pdf will be saved on disk
     #}
-    {% set isParagraph, content = boxContent['paragraph'] is defined, boxContent['content'] %}
-    {% set isNotApplicable, paragraphSub = content is same as 'noBox'|trans, boxContent['paragraphSub'] ?? '' %}
-    {% if isParagraph %}
+    {% set isParagraphTop, paragraph, content = boxContent['paragraphTop'] is defined, boxContent['paragraph'] ?? '', boxContent['content'] %}
+    {% set isNotApplicable, isParagraph, paragraphSub, boxSub = content is same as 'noBox'|trans, paragraph is not same as '', boxContent['paragraphSub'] ?? '', boxContent['boxSub'] ?? '' %}
+    {% set isAnyParagraph, paragraphStyle = isParagraphTop or isParagraph, 'margin-bottom: 1.25em; border-bottom: 1px solid black; border-top: 1px solid black; page-break-inside: avoid; page-break-after: avoid; ' %}
+    {% if isAnyParagraph %}
         <div class="noPageBreak">
-        <h1 class="pdfHeadingCenter {% if not savePDF %} previewXLarge {% endif %}" style="margin-bottom: 1.25em; border-bottom: 1px solid black; border-top: 1px solid black; page-break-inside: avoid; page-break-after: avoid{% if savePDF %};font-size: xx-large{% endif %}">{{ boxContent['paragraph'] }}</h1>
-        {% if paragraphSub is not same as '' %}
-            <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-bottom: 1em">{{ paragraphSub }}</div>
-        {% endif %}
+    {% endif %}
+    {% if isParagraphTop %}
+        <h1 class="pdfHeadingCenter" style="{{ paragraphStyle~'font-size: '~(savePDF ? 'xx-large' : 'large') }}">{{ boxContent['paragraphTop'] }}</h1>
+    {% endif %}
+    {% if isParagraph %}
+        <h2 class="pdfHeadingCenter {% if not savePDF %} previewXLarge {% endif %}" style="{{ paragraphStyle~(savePDF ? 'font-size: x-large') }}">{{ paragraph }}</h2>
+    {% endif %}
+    {% if paragraphSub is not same as '' %}
+        <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-bottom: 1em">{{ paragraphSub }}</div>
     {% endif %}
     <div class="pdfBox {% if isNotApplicable %}colorNA{% endif %}" {% if isParagraph %} style="page-break-before: avoid"{% endif %}>
         {{ _self.addHeading(boxNumber, boxContent['heading'], savePDF, boxContent['subHeading'] ?? '', isNotApplicable, boxContent['inputPage'] ?? '') }}
@@ -118,8 +125,20 @@
             {% endif %}
         </div>
     </div>
-    {% if isParagraph %}
+    {{ _self.addBoxSub(boxContent,savePDF) }}
+    {% if isAnyParagraph %}
         </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro addBoxSub(boxContent, savePDF) %}
+    {# Eventually adds text below a box. Input arguments:
+        boxContent: key-value object that may has a 'boxSub' key
+        savePDF:    if true, the pdf will be saved on disk
+    #}
+    {% set boxSub = boxContent['boxSub'] ?? '' %}
+    {% if boxSub is not same as '' %}
+        <div {% if not savePDF %} class="previewSmall" {% endif %} style="margin-bottom: 2em">{{ boxSub }}</div>
     {% endif %}
 {% endmacro %}
 

@@ -269,6 +269,7 @@ pages:
     contributors: 'Project contributors'
   projectdetails:
     title: 'Project structure'
+    dataSource: 'Data source'
     groups: 'Participants'
     information: 'Information'
     informationSidebar: 'Information'
@@ -321,7 +322,8 @@ navBar:
 main:
   title: 'Ethiktool'
   textNoCommittee: |
-    The “Ethiktool“ software supports applicants in writing their ethics proposal. A user-centered dialogue guides applicants through all relevant questions and requests information for the ethics application form, the informed consent form, and other participant documents.
+    The “Ethiktool“ software supports applicants in writing their ethics proposal. A user-centered dialogue guides applicants through all relevant questions for ethics review on a case-by-case basis.
+    As a result of the step-by-step query, the Ethiktool generates all documents that are reviewed by the ethics committee: the ethics application and the participant documents (i.e., texts for information and consent) addressing the persons who are interested in participation (provided they are capable of giving consent themselves - otherwise the Ethiktool generates the documents for the legal guardians).
     
     Further information is available in the sections “About us“ and “About the Ethiktool“. Please note the “Technical Information“ and “Terms of Use“ for the Ethiktool.
     You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
@@ -333,7 +335,6 @@ main:
 
     You can start creating an application for the respective committee via the “New proposal“ option.
     You can load and edit an existing XML file created by the Ethiktool via “Load proposal”.</i>
-  # added empty line to have same line numbers in all translation files.
   text: >-
     <b>You are preparing an ethics application for {committeeType, select,
                                                       testCommittee {testing the functionality of the Ethiktool}
@@ -341,7 +342,7 @@ main:
     
     
     {committeeType, select,
-              EUB   {Please note that documents for informing participants are generated automatically using the Ethiktool and you do <b>not</b> need to prepare the information in advance based on the template on the website of the Ethics Review Board. The information (part 1 of the template) and consent form (part 2) are automatically generated based on the details provided in the tool. If desired, the data privacy statement (part 3) can also be generated automatically on a case-by-case basis. You will receive a PDF document for further use.</br></br>}
+              EUB   {Please note that documents for informing participants who are capable of giving consent (or else the documents for the legal guardians) are generated automatically using the Ethiktool and you do <b>not</b> need to prepare the information in advance based on the template on the website of the Ethics Review Board. The information (part 1 of the template) and consent form (part 2) are automatically generated based on the details provided in the tool. If desired, the data privacy statement (part 3) can also be generated automatically on a case-by-case basis. You will receive a PDF document for further use.</br></br>}
               other {}} Please note that creating the application involved confirmation that the <a class="linkInternal" href data-bs-toggle="modal" data-bs-target="#technicalHints">technical information</a> has been noted and that the following <b>requirements for the application</b> are fulfilled:</br></br>
   textRequirementsTitle: 'Requirements for the application'
   textRequirements: | # other in select is test committee. For readability of the translation files newlines instead of br-tags are used.
@@ -453,7 +454,8 @@ coreData:
     types:
       same: 'identical to project title'
       different: 'different from project title'
-      notApplicable: 'not applicable: No participant documents are prepared, as there is neither prior nor after-the-fact information, nor is consent obtained for participation or data use.'
+      notApplicable: 'not applicable: No participant documents are prepared.'
+    hint: 'e.g., because only available data are re-analysed, or because there is neither prior nor after-the-fact information for collecting new data'
   appType:
     title: 'Type of proposal'
     headingHint: 'If the proposal has not yet been reviewed by {committeeDat}, please choose “new proposal“. If you already received a positive ethics vote, choose “amendment“. If you need to address questions or change requests by the ethics committee, choose “resubmission after proposal revision“. If the positive ethics vote was conditional upon handing in the participant documents after the funding decision, choose “resubmission after funding acquisition“.'
@@ -477,7 +479,7 @@ coreData:
               true  {This includes many inputs that are asked for the participant documents because in case of a short proposal submitted to {committeeDat}, the participant documents are not part of the review. However, you can choose to have the Ethiktool create the participant documents for your own use. This option is placed immediately after the selection of the review process. If you choose this option, the inputs that are asked solely for the participant documents will be kept.}
               other {}}}
         shortToShort {You selected that you do not want the Ethiktool to create participant documents for your own use. Therefore, many inputs that are asked for the participant documents are no longer needed. The respective entries will be deleted as soon as you leave the current page.}
-        projectStart {You selected that the data collection has already started, hence participant documents should already exist. Therefore, many inputs that are asked for the participant documents are no longer needed. The respective entries will be deleted as soon as you leave the current page.}
+        projectStart {You selected that the research project has already started, hence participant documents should already exist. Therefore, many inputs that are asked for the participant documents are no longer needed. The respective entries will be deleted as soon as you leave the current page.}
         other        {You selected that the research project is still in the stage of applying for funding. The committee will initially only evaluate general information about the research project. The participant documents must be handed in later, once the funding has been granted. Therefore, many inputs that are asked for the participant documents are no longer needed. The respective entries will be deleted as soon as you leave the current page.}} Would you like to save the XML file with all previous entries first?
     buttons:
       save: 'Save and continue'
@@ -488,7 +490,12 @@ coreData:
     types:
       short: 'short proposal'
       full: 'full proposal'
-  shortDocs: 'In case of a short proposal submitted to {committeeDat}, the participant documents are not part of the review process. Would you still like to create the participant documents for your own use with the Ethiktool?'
+  shortDocs:
+    title: 'In case of a short proposal submitted to {committeeDat}, the participant documents are not part of the review process. Would you still like to create the participant documents for your own use with the Ethiktool?'
+    types:
+      yes: 'Yes'
+      no: 'No'
+      notApplicable: 'not applicable: No new data are collected.'
   project:
     title: 'Project duration'
     start:
@@ -498,24 +505,26 @@ coreData:
           DLR   {(Planned)}
           TUD   {(Planned)}
           UH1   {(Planned)}
-          other {Planned}} beginning of data collection
-      hint: >-
-        {committeeType, select,
-          EUB   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
-          DLR   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
-          TUD   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.}
-          UH1   {Ethics applications must be submitted before the start of data collection. An ethics vote for research projects whose data collection has already started or been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the data collection after their fulfilment.}
-          other {}}
-      textHint:
-        current: 'Please describe which parts of the data collection have already been completed (e.g., contacting participants, number of datasets collected) and which parts are still ongoing. Further information in the Ethiktool must be completed prospectively.'
-        retrospective: 'Why are you asking for retrospective ethics review?'
+          other {Planned}} project start
+      hints:
+        headingHint: 'Beginning of data collection; if no new data are collected but available data re-analysed: Beginning of re-analysis'
+        begun: >-
+          {committeeType, select,
+            EUB   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
+            DLR   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started or have been completed is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
+            TUD   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started or have been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.}
+            UH1   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started or have been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.}
+            other {}}
+        textHint:
+          current: 'Please describe which parts of the data collection have already been completed (e.g., contacting participants, number of datasets collected) and which parts are still ongoing. Further information in the Ethiktool must be completed prospectively.'
+          retrospective: 'Why are you asking for retrospective ethics review?'
       begun: >-
-        Data collection has already started.
-        {committeeType, select,
-          UH1   {Justification}
-          TUD   {Justification}
-          other {Authorisation}}
-        for retrospective review is needed.
+          The research project has already started.
+          {committeeType, select,
+            UH1   {Justification}
+            TUD   {Justification}
+            other {Authorisation}}
+          for retrospective review is needed.
     next: 'as soon as possible (after approval by the ethics committee)'
     end:
       title: >-
@@ -527,7 +536,7 @@ coreData:
       hint: 'This does not refer to the end of data collection, but to finalizing data analysis and compilation. The ethics vote issued is valid for the research project with the duration specified here.'
   funding:
     title: 'Funding source(s)'
-    fundingQuali: 'no separate funding (qualification thesis)'
+    fundingQuali: 'no separate funding'
     fundingBudget: 'university/in-house budget'
     fundingResearch: 'third-party funding from a public or private research foundation'
     fundingExternal: 'industrial third-party funding'
@@ -591,6 +600,7 @@ coreData:
     choice: 'I need a vote referring to different ethics guidelines (<a href="https://www.konsortswd.de/ratswd/best-practice-forschungsethik/ethikleitlinien-kodices/" target="_blank">for an overview, see here</a>), namely:'
 
 votes:
+  hint: 'The following two questions refer to planned data collections and analyses within this ethics proposal. Ethics votes for the original collection of research data that shall be re-used or re-analysed here, are queried elsewhere.'
   otherVote:
     title: 'Has this research project been reviewed by another ethics committee before?'
     committee: 'By which ethics committee?'
@@ -599,7 +609,7 @@ votes:
       types:
         positive: 'positive vote'
         negative: 'negative vote'
-        noVote: 'no vote: research project was judged as not requiring in-depth ethics review'
+        noVote: 'waiver/no vote: research project was judged as not requiring in-depth ethics review'
     description:
       positiveNo: 'Why is another ethics review necessary?'
       negative: 'Which reasons did the other ethics committee state to justify their vote?'
@@ -721,6 +731,135 @@ projectdetails:
     text: 'yes, with own text'
     no: 'no'
   pages:
+    dataSource:
+      origin:
+        title: 'What is the origin of the data?'
+        headingHint: 'If you use data of different origin (availably and newly collected), please implement this as separate studies or groups. If you intend to link newly collected data with already available data into a joint dataset, please select “new data are collected“ here and enter the data to-be-linked as “individually traceable data from other sources“.'
+        types:
+          new: 'New data are collected explicitly for this research project.'
+          existing: 'Only available data from own or other sources are used.'
+        hints:
+          new: 'The term “collected“ refers to newly measured or generated data, not to gathering data from other sources (e.g., social media) and making them usable.'
+          existing: 'This also includes data that are converted from their original version into a different format prior to using them.'
+        modal:
+          title: 'Re-use of available data'
+          content: >-
+            You selected that only available data are used. Therefore, the inputs on all other “Project structure“ pages {isMultiple, select,
+                true  {for this combination of study/group/time point}
+                other {}} are no longer needed. The respective entries will be deleted as soon as you leave the current page. Would you like to save the XML file all previous entries first?
+          buttons:
+            save: 'Save and continue'
+            cancel: 'Continue without saving'
+      originSources:
+        title: 'From which sources are data retrieved?'
+        types:
+          research: 'Data that were collected by yourself or others for research purposes'
+          originSourcesOther: 'Data that were collected for other purposes (e.g., patient records from a hospital, outpatient data, biospecimen, data from mobile phone or internet providers)'
+          widespread: 'Data that persons disseminated themselves, being aware of their visibility for others (e.g., social media data/posts)'
+          documents: 'Available reports/documents concerning specific persons or groups (e.g., media reports, historical documents, data from archives)'
+        placeholder: 'please specify'
+        widespreadHint: 'If you act upon such data in any way (e.g., by seeding a social media post, please chose that “data are collected explicitly for this research project“ above.'
+      dataSourceVotes:
+        title: 'Was the research project from which the data shall be re-used reviewed by an ethics committee?'
+        headingHint: 'If the data stem from multiple studies with differences in prior ethics review, please choose “No“ here and state the results of the different ethics reviews with the question how the original research data were collected.'
+        dataSourceCommittee:
+          title: 'By which ethics committee?'
+          types:
+            committeeSame: 'by {committeeDat}'
+            committeeOther: 'by a different ethics committee'
+          textHint:
+            committeeSame: 'case number'
+            committeeOther: 'Please name the ethics committee.'
+          committeeResult:
+            title: 'What was the result of the ethics review at the time?'
+            types:
+              positive: 'positive vote'
+              negative: 'negative vote'
+              noVote: 'waiver/no vote (research project was judged as not requiring in-depth ethics review; this judgment by the ethics committee is available in writing)'
+          description:
+            negative: 'Which reasons did the other ethics committee state to justify their vote?'
+            noVote: 'Why is an ethics review necessary now?'
+          resultPositive:
+            title: 'Why is another ethics review necessary?'
+            types:
+              question: 'The previous ethics vote did not comprise the research question that shall be addressed here.'
+              access: 'Data access is only granted upon presenting an ethics vote.'
+              committeeResultPositiveOther: 'for a different reason'
+            placeholder: 'please specify'
+          resultNegative:
+            text: 'The re-analysis of data that were collected despite a negative ethics vote is particularly sensitive from the perspective of research ethics. Please consult {committeeDat} before submitting the re-analysis project for ethics review.'
+            confirm: 'I hereby confirm that I consulted {committeeDat} and was reassured that I am allowed to submit the re-analysis project for ethics review.'
+        voteContributors:
+          title: 'Were you or any other researchers involved in the current project also involved in the project from which the data shall be re-used?'
+          hints:
+            yesBegun: 'Please submit a retrospective ethics proposal for the original data collection and the re-analysis. Choose above that “data are collected explicitly for this research project“, and change the <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">project start</a> to the beginning of the original data collection. Make your entries for all further questions with respect to the data collection and mark the additional re-analysis question(s) explicitly in the <a class="linkInternal" href="summary" data-action="base#setDummySubmit" data-base-url-param="app_summary">project summary</a>.'
+            yesBegunNo: 'Please consult {committeeDat} to check whether this justification is acceptable, before submitting the re-analysis project for ethics review.'
+            textHint: 'Please justify why no ethics proposal was submitted.'
+          confirm: 'I hereby confirm that I consulted {committeeDat} and was reassured that I am allowed to submit the re-analysis project for ethics review.'
+      dataSet:
+        title: 'How were the original research data collected?'
+        textHint: >-
+          The ethics committee needs to be able to judge whether the original data collection adhered to standards of research ethics. <span style="font-weight: bold">Please describe, as far as possible, all ethically relevant details on the original data collection</span> (e.g., participants, recruitment, prior information and debriefing if applicable, how voluntariness and consent were ensured, burdens/risks and safety measures if applicable, compensation for participation, data processing, extent of indicated data use). {hasDocs, select,
+                  true  {If it is available to you, please add the original information and consent form to your proposal.}
+                  other {}}
+        pdf: 'I want to add the original information and consent form.'
+      dataSourceProcedure:
+        title: 'Please describe the procedure for (re-)using/re-analyzing the data'
+        textHint: 'Please describe, for each of the <span style="font-weight: bold">data sources</span> to be used, the retrieved data material and the criteria for data inclusion and exclusion, the included groups of persons and their characteristics, as well as the period in which the data emerged or were collected. Moreover, please describe the <span style="font-weight: bold">data processing</span> within the research process (if applicable, converting the data from their original version into a different format, anonymization, publication) and describe the planned analyses as well as the underlying methods. If applicable, state how legal aspects such as intellectual property and copyright are considered in case of publishing data or results.'
+      restriction:
+        title: 'Do the data that shall be used underlie access restrictions?'
+        types:
+          free: 'All data to be used are freely accessible.'
+          restricted: 'The data to be used are (partly) access-restricted.'
+        hints:
+          free: 'e.g., freely retrievable from the internet without account/login'
+          restricted: 'e.g., a platform account, employee status, or archive access request is necessary.'
+          textHint: 'Please describe who has data access to the data under which conditions (e.g., persons who have a user account with the provider, administrator approval for social media groups, employee status with an institution/department).'
+      dataSourceAccess:
+        title: 'How are the data accessed?'
+        types:
+          accessOwn: 'The data to be used are already at hand, as they stem from an own dataset.'
+          center: 'The research dataset is made available by a research data center or data-sharing infrastructure (e.g., repository, biobank, archive, company, via an API interface of a social media provider).'
+          collect: 'The data are specifically gathered by the researchers (e.g., via webscraping of social media data, search in archives).'
+      legitimization:
+        title: 'How is the use of the data for this research project legitimized?'
+        headingHint: 'Legitimization must extend to all steps that are planned with the dataset, thus - if applicable - also its publication.'
+        types:
+          consentNew: 'All individuals are explicitly informed about this re-analysis project and give consent to their data being used.'
+          consentExisting: 'During the original data/material collection, all individuals were informed about the potential re-use of their data for further (research) purposes and gave their consent.'
+          conditions: 'The terms and conditions of the provider cover the planned retrieval of the data (including webscraping) and their use for research purposes. All users actively confirmed these terms and conditions when registering with the provider.'
+          contract: 'Use of the data is legitimized by a contract with the research data center or data-sharing infrastructure.'
+          legalBasis: 'Use of the data is legitimized on a different legal basis.'
+          legitimizationOther: 'Use of the data is legitimized otherwise.'
+        textHints:
+          consentExisting: 'Please enter the relevant sections of the consent form.'
+          conditions: 'Please enter the relevant sections of the terms and conditions.'
+          contract: 'Please enter the relevant sections of the contract.'
+          legalBasis: 'Please describe on which legal basis the use of the data is legitimized (e.g., legitimate interest according to EU-GDPR).'
+          legitimizationOther: 'Please describe how the use of the data is legitimized.'
+        pdf: 'When completing the ethics proposal, you will be ask to add the information and consent form for data re-use.'
+      dataSourceIdentification:
+        title: 'Can individual persons be re-identified?'
+        headingHint: 'Gemeint ist die Re-Identifizierbarkeit für jegliche (auch außenstehende) Personen, nicht nur für die Projektbeteiligten.'
+        types:
+          yes: 'Yes: The data can be related to individual persons at the time of retrieval, and they remain in person-related form within re-use/re-analysis (e.g., biospecimen, video data, verbatim posts).'
+          partly: 'Yes: The data are (partly) anonymized at the time of retrieval, but combining them with additional data may allow for identifying individual persons (e.g., through linking different datasets).'
+          temporary: 'Temporarily: The data can (partly) be related to individual persons at the time of retrieval (e.g., person-related research data, person-related medical records, names and other entries in user profiles, verbatim posts, data of mobile phone providers), but they are fully anonymized for re-use/re-analysis.'
+          no: 'No: All data are anonymous/anonymized at the time of retrieval, and they remain in anonymous/anonymized form throughout data processing (e.g., anonymized research data, anonymized medical record, results of polls in chat groups, anonymous meta data such as number of likes, activity display in the course of a video).'
+      publication:
+        title: 'Is a newly generated research dataset published as a result of the reanalysis project?'
+        types:
+          less: 'Yes, with more liberal access restrictions than the original data'
+          more: 'Yes, with (at least) the same access restrictions as the original data'
+          no: 'No'
+      dataSourceBurdensRisks:
+        title: 'Does data re-use/re-analysis result in burdens or risks for the persons whose data are analyzed, or for groups to which they belong?'
+        headingHint: 'Please reflect whether social, economic or political consequences might arise for the analyzed persons/groups (e.g., for an employment or insurance contract, reputation damage, social stigma, political isolation/hostility).'
+        textHint: 'Which burdens or risks may occur and which precautionary measures or compensations are planned?'
+      dataSourceBurdensRisksContributors:
+        title: 'Does data re-use/re-analysis result in burdens or risks for project contributors?'
+        headingHint: 'This refers, for example, to emotional burdens of the person(s) involved in data analysis through inspection of the material.'
+        textHint: 'Which burdens or risks may occur and which precautionary measures or compensations are planned?'
     groups:
       age:
         minAge: 'minimum age'
@@ -805,14 +944,14 @@ projectdetails:
               other {Participation in the study is not possible if ...}}
           noCriteria: 'no exclusion criteria'
       sampleSize:
-        title: 'Sample size'
+        title: 'Number of participants'
         total:
-          title: 'How many individuals from this study/group/time point combination shall be included?'
-          textHint: 'This refers to the number of individuals on whom data will be collected (including buffer for piloting, possible exclusion from the analysis, etc.).'
-        furtherParticulars: '(optional) Further information on the sample size (e.g., distribution of the total number across different sub-groups)'
+          title: 'How many individuals shall be included in this study/group/time point combination?'
+          textHint: 'This refers to the number of individuals on whom data will be collected (including buffer for piloting, possible exclusion from the analysis, etc.). If, due to the specifics of data collection, no exact number of participants can be given, please state in the optional field below that the indicated number reflects an estimate.'
+        furtherParticulars: '(optional) Further information on the number of participants (e.g., distribution of the total number across different sub-groups, indication that the given number is a rough estimate)'
         plan:
-          title: 'How was the sample size chosen?'
-          textHint: 'Please describe the rationale for choosing your sample size (e.g., statistical power analysis, theoretical saturation). If applicable, state who supported you with sample size planning.'
+          title: 'On which grounds was this number of participants chosen?'
+          textHint: 'Please describe the rationale for your choice (e.g., sample size planning with statistical power analysis, considerations on theoretical saturation, estimation of feasible participant numbers in a field data collection). If applicable, state who supported you with sample size planning.'
       recruitment:
         title: 'How are participants recruited?'
         types:
@@ -2049,14 +2188,17 @@ checkDoc:
       reference: 'case number'
       applicationProcess:
         missing: 'type of review process' # 'Answer to question about [] is missing.'
-        shortDocs: 'Answer to question about creation of participant documents' # '[] is missing.'
+        shortDocs:
+          missing: 'Answer to question about generation of participant documents' # '[] is missing.'
+          notApplicableToOrigin: 'If at least one <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves prior or after-the-fact information for new data collection, the answer to the question about <a class="linkInternal" href="coreData#shortDocs" data-action="base#setDummySubmit" data-base-url-param="app_coreData">creating participant documents for own use</a> cannot be “not applicable“.'
+          originToNotApplicable: 'If no <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves collecting new data, the answer to the question about <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#shortDocs">creating participant documents for own use</a> must be “not applicable“.'
       start:
         past: >-
           {hasBegun, select,
-            true  {The chosen date for the start of data collection is in the past. In this case, "Data collection has already started“ must be selected as well.}
-            other {The planned start of data collection is in the past.}}
-        begunToPast: 'You chose that data collection has already started. In this case, the chosen date for the start of data collection must be in the past as well.'
-      begun: 'Description of current state of data collection'
+            true  {The chosen date for the project start is in the past. In this case, "The research project has already started“ must be selected as well.}
+            other {The planned project start is in the past.}}
+        begunToPast: 'You chose that the project has already started. In this case, the chosen date for the project start must be in the past as well.'
+      begun: 'Description of current state of the project'
       retrospective: 'Justification for necessity of retrospective ethics review'
       end: 'The planned end of the research project is in the past.'
       endBeforeStart: 'Project end is before project start.'
@@ -2066,10 +2208,8 @@ checkDoc:
             fundingResearch {source of funding/sponsor}
             other           {third-party funding from industry}}: Selection whether funding is applied for or already granted
         appType: 'You chose “resubmission after funding acquisition“ as the type of proposal. This is incompatible with the selection that third-party funding is being applied for.'
-        begun: 'You chose that third-party funding is being applied for. This is inconsistent with the choice that data collection has already started.'
-      qualification:
-        missing: 'Answer to question about qualification work'
-        funding: 'If there is no separate funding because the study is conducted within the scope of a qualification thesis, the question about qualification work must be answered with “Yes“.'
+        begun: 'You chose that third-party funding is being applied for. This is inconsistent with the choice that the research project has already started.'
+      qualification: 'Answer to question about qualification work'
       name: >-
         {type, select,
           applicant {applicant:}
@@ -2138,9 +2278,74 @@ checkDoc:
                                                                                 other {}}.
       missingMandatory: 'Role “{task}“ was not selected for any project contributor.'
       missingOther: 'Project contributor {index} ({name}): Description of other position'
+      dataSource: 'If no <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves newly collected data, the function “{task}“ cannot be selected for any <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">project contributor.</a>'
   projectdetails:
     missingTypes: 'types of {type}'
     pages:
+      dataSource: # 'Answer to question about [] is missing.', wo nicht anders angegeben
+        origin: 'data origin'
+        originSources:
+          missing: 'Data sources'  # '[] are missing.'
+          types: # 'Specification of [] is missing.'
+            research: 'datasets collected for research purposes'
+            originSourcesOther: 'datasets collected for other purposes'
+            widespread: 'datasets knowingly disseminated'
+            documents: 'reports/documents'
+        dataSourceVotes: 'review by an ethics committee'
+        dataSourceCommittee:
+          missing: 'ethics committee that reviewed the original research project'
+          description: >- # '[] is missing.'
+            {type, select,
+              committeeSame {Case number}
+              other         {Name of the other ethics committee}}
+        committeeResult:
+          missing: 'result of the ethics review at the time'
+          description: # start+end
+            start: >-
+              Reasons {type, select,
+                          negative {of the ethics committee}
+                          other    {of asking for ethics review now}}
+            end: ' are missing.'
+        resultPositive:
+          missing: 'Reasons of asking for another ethics review' # '[] are missing.'
+          description: 'Other reasoning' # '[] is missing.'
+        resultNegative: 'Confirmation of having consulted {committeeDat}' # '[] is missing.'
+        voteContributors:
+          missing: 'involvement of project contributors in the original research project'
+          description: 'Reason why no ethics proposal was submitted' # 1:1
+          confirm: 'Confirmation of having consulted {committeeDat}' # '[] is missing.'
+          begun: # 1:1
+            start: 'If the research project from which the data are re-used was not reviewed by an ethics committee, but project contributors partly overlap between the current and back-then research project, you must select that the <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">project has already started</a>. Please note the further '
+            end: 'hints.'
+          supportCommittee: 'You confirmed having consulted {committeeDat}. This is incompatible with the selection that no <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">support by the committee office or a member of the ethics committee</a> was given.'
+        dataSet: 'original data collection' # 'Description of [] is missing.'
+        dataSourceProcedure: 'Description of procedure for re-use/re-analysis' # '[] is missing.'
+        restriction:
+          missing: 'access restriction'
+          description: 'Description of access conditions' # '[] is missing.'
+        dataSourceAccess:
+          missing: 'ways of data access' # '[] are missing.'
+          contributors: 'You selected that neither you nor other project contributors were involved in the research project from which the data are re-used. This is incompatible with the selection that the research data stem from an own dataset.'
+        legitimization:
+          missing: 'Legitimization of data use' # '[] is missing.'
+          types: # '[] is missing.'
+            consentExisting: 'Description of relevant consent form sections'
+            conditions: 'Description of relevant sections of terms and conditions'
+            contract: 'Description of relevant contract sections'
+            legalBasis: 'Description of legal basis'
+            legitimizationOther: 'Description of other legitimization'
+        dataSourceIdentification:
+          missing: 're-identification of individual persons'
+          legitimization: 'You selected that individuals are explicitly informed about this re-analysis project and give consent to their data being used. This is only possible if the data can be related to individual persons at the time of retrieval.'
+        publication:
+          missing: 'publication of the newly generated dataset'
+          restriction: 'You selected that the original dataset is freely accessible. This is incompatible with the selection that the newly generated dataset has more liberal access restrictions than the original dataset.'
+        dataSourceBurdensRisks:
+          missing: >- # other is dataSourceBurdensRisksContributors
+            burdens or risks for {type, select,
+                                            dataSourceBurdensRisks {analyzed persons or groups}
+                                            other                  {project contributors}}
+          description: 'burdens/risks and precautionary measures or compensations' # 'Description of [] is missing.'
       groups:
         minAge: 'minimum age'
         maxAge: 'maximum age'
@@ -2153,8 +2358,8 @@ checkDoc:
         criteria:
           include: 'Further inclusion criteria besides age'
           exclude: 'exclusion criteria'
-        sampleSize: 'sample size'
-        planning: 'sample size calculation'
+        sampleSize: 'number of participants'
+        planning: 'rationale for participant number'
         recruitment:
           missing: 'ways of recruitment'
           description:
@@ -2558,7 +2763,7 @@ checkDoc:
                                               contributorsOther {project contributors from collaborating institutions}
                                               accessExternal    {external service providers}
                                               other             {external software/data services}} for {purpose}
-          description: 'project contributors from collaborating institutions with access to personal data' # 'Beschreibung der [] fehlt.'
+          description: 'project contributors from collaborating institutions with access to personal data' # 'Description of [] is missing.'
           externalService: >- # other is data service
             You selected that {type, select,
                                           accessExternal {external service providers}
@@ -2626,8 +2831,8 @@ checkDoc:
           The role “{task}“ of the <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors"> {numContributor, plural,
                                         =1    {project contributor</a> }
                                         other {project contributors</a>}} {contributor} was not selected for any data collection time point.
-  projectTitleToInformation: 'If at least one <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a> involves prior or after-the-fact information, the answer to question about <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for participant documents</a> must not be “not applicable“.'
-  informationToProjectTitle: 'If there is no prior information or after-the-fact information for any <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">study</a>, the answer to question about <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for participant documents</a> must be “not applicable“.'
+  projectTitleToInformation: 'If at least one <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves prior or after-the-fact information for new data collection, the answer to the question about the <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for the participant documents</a> cannot be “not applicable“.'
+  informationToProjectTitle: 'If no participant documents are created for any <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a>, the answer to the question about the <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for the participant documents</a> must be “not applicable“.'
 
 completeForm:
   titles:
@@ -2681,19 +2886,33 @@ completeForm:
         EUB   {}
         DLR   {Ethics proposals and all associated documents are processed electronically (only in PDF and XML form). The employees of the Research Ethics Office are involved in processing the documents; when necessary, this extends to selected individuals entrusted with data protection, export control, law and compliance, as well as the members of the ethics committee at the German Aerospace Center (DLR). The persons involved are obliged to maintain confidentiality and to comply with data protection regulations. In particularly justified exceptional cases, the applicant has the option of restricting access to the proposal documents for individual persons from this group - usually if there are justified concerns about the disclosure of information.
           After completion of ethics assessment by the Research Ethics Office (when necessary, also by the extended group of persons or the ethics committee) at the DLR, all documents and correspondence are stored, irrespective of the vote issued, for a period of 10 years after the receipt of application. Access to the stored data is granted only via employees of the DLR’s Research Ethics Office.
-            {isExRe, select,
-              true  {For the purpose and for the duration of the review of the current proposal revision or amendment, the involved persons are granted access to the documents and correspondence relating to the original proposal with the case number {reference}.}
-              other {}}}
+            {numReferences, plural,
+              =0    {}
+              other {For the purpose and for the duration of the review of the current proposal {isExRe, select,
+                          true  {revision or amendment}
+                          other {}}{isReUse,select,
+                                      true  { which re-uses available research data}
+                                      other {}}, the involved persons are granted access to the documents and correspondence relating to the original {numReferences, plural,
+                                                 =1    {proposal with the case number}
+                                                 other {proposals with the case numbers}} {reference}.}}}
         other {Ethics proposals and all associated documents are processed electronically. The employees of the office and the members of {committeeGen} are involved in processing the documents. The persons involved are obliged to maintain confidentiality and to comply with data protection regulations. In particularly justified exceptional cases, the applicant has the option of restricting access to the proposal documents for individual members of the ethics committee (usually if there are justified concerns about the disclosure of information).
          After completion of the review by {committeeAcc}, all documents and correspondence are stored, irrespective of the vote issued, for a period of 10 years after the end of the research project specified in the proposal. Access to the stored data is granted to employees of the office of {committeeGen}.  
-         {isExRe, select,
-           true  {For the purpose and for the duration of the review of the current proposal revision or amendment, the members of {committeeGen} are granted access to the documents and correspondence relating to the original proposal with the case number {reference}.}
-           other {}}}}
+         {numReferences, plural,
+           =0    {}
+           other {For the purpose and for the duration of the review of the current proposal {isExRe, select,
+                        true  {revision or amendment}
+                        other {}}{isReUse,select,
+                                   true  { which re-uses available research data}
+                                   other {}}, the members of {committeeGen} are granted access to the documents and correspondence relating to the original {numReferences, plural,
+                                          =1    {proposal with the case number}
+                                          other {proposals with the case numbers}} {reference}.}}}}
     consent: 'I have taken note of the above information on the processing of my ethics proposal.'
   pdf:
     text: 'Based on your entries in the Ethiktool, additional PDF documents are required to complement your proposal. Please add them here. The maximum file size is 7 MB. </br> If you would like to add multiple documents for the same facet, please combine them into a single PDF file outside of the Ethiktool and then add that file here.'
     votes: 'Decision letter of the other ethics committee'
     projectdetails:
+      dataSet: 'Information and consent form for the original dataset'
+      legitimization: 'Information and consent form for data re-use'
       begun: >-
         Participant documents for the {addressee, select,
                                           children {legal guardians}
@@ -2790,7 +3009,7 @@ aboutTool:
   text: |
     You are using version {toolVersion} of the browser-based Ethiktool. A list of changes relative to previous versions can be found <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html.en" target="_blank">here</a>. 
     
-    The Ethiktool simplifies the generation and evaluation of ethics proposals for research involving human participants, in particular for non-medical research. Based on your responses to questions that are automatically adapted to your input, the Ethiktool generates the application documents as well as all participant documents (including information, consent, and data privacy). The Ethiktool is a joint development of a project team headed by Prof. Dr. Alexandra Bendixen (Chemnitz University of Technology, TUC), which comprises members from TUC, the Leibniz Institute for Psychology (ZPID), and Bielefeld University. The development has been based on experience with a predecessor software developed and used at TUC. 
+    The Ethiktool simplifies the generation and evaluation of ethics proposals for research involving human participants, in particular for non-medical research. Based on your responses to questions that are automatically adapted to your input, the Ethiktool generates the application documents as well as all participant documents (including information, consent, and data privacy - provided the participants are capable of giving consent themselves; otherwise the Ethiktool generates the documents for their legal guardians). The Ethiktool is a joint development of a project team headed by Prof. Dr. Alexandra Bendixen (Chemnitz University of Technology, TUC), which comprises members from TUC, the Leibniz Institute for Psychology (ZPID), and Bielefeld University. The development has been based on experience with a predecessor software developed and used at TUC. 
     
     We continuously extend and improve the Ethiktool. We therefore greatly appreciate your support by sending us error reports, questions and remarks via email to <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. If you experience technical issues with the current version, please contact <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
     
@@ -2804,6 +3023,8 @@ technicalHints:
   title: 'Technical information'
   text: |
     Your browser must have cookies and JavaScript enabled for the Ethiktool to function properly. Please do not delete cookies during the session. It is not advisable to work with the Ethiktool in more than one open browser tab. Moreover, please do not navigate forward and backward within the browser; instead, use the Ethiktool's “next page“ and “previous page“ buttons.
+
+    It is important to use the “Quit“ function (downmost in the list of buttons on the left-hand side) after using the Ethiktool to ensure that all Ethiktool-related form content is removed from your browser cache.
 
     To start the application process, begin with “Proposal data“ and click through the form step by step via the “next page“ button. Alternatively, you can also jump directly to specific sections (e.g., Project structure) in the navigation bar on the left.
 

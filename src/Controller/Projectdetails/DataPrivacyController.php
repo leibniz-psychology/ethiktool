@@ -20,11 +20,10 @@ class DataPrivacyController extends ControllerAbstract
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session,setRecent: true); // changes on other pages are only made if $hasCreate is true, but it cannot be checked at this point
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
-        $hasMeasureNode = $measureNode!==null;
-        $privacyNode = $hasMeasureNode ? $measureNode->{self::privacyNode}[0] : null;
-        if (!$hasMeasureNode || count($privacyNode->children())===0) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened or page is not active for the current review process (second check)
+        if ($this->checkInactivePage($measureNode,self::privacyNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, page is not active for the current review process, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
+        $privacyNode = $measureNode->{self::privacyNode};
         $hasCreate = $this->checkElement(self::createNode,$privacyNode);
         if ($hasCreate) {
             $projectdetailsPrefix = 'projectdetails.pages.';

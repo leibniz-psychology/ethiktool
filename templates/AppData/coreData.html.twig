@@ -23,9 +23,13 @@
             <div class="MetaData-Widget">{{ form_widget(projectTitle,{'attr': projectLength|merge(textInput)}) }}</div>
         </div>
         {# project title for participation documents #}
-        {% set projectTitlePart, description = content.projectTitleParticipation, content.projectTitleParticipationDescription %}
+        {% set projectTitlePart, description, tempPrefix = content.projectTitleParticipation, content.projectTitleParticipationDescription, translationPrefix~'projectTitleParticipation.' %}
         <div class="mt-8" id="projectTitleParticipation" {{ stimulus_target(coreDataController,'projectTitleParticipation') }}>
-            {{ formRender.renderButtons(projectTitlePart,{'hint': [translationPrefix~'projectTitleParticipation.'], 'text': [description,{'attributes': projectLength, 'visibility': projectTitlePart.vars.value is same as 'different', 'transfer': [transferInfo,'participants']}], 'stimVisible': {'values': [['different', description.vars.name~'Div']]}}) }}
+            {{ formRender.renderButtons(projectTitlePart,{
+                'hint': [tempPrefix],
+                'icons': {'projectTitleParticipationnotApplicable': tempPrefix~'hint'},
+                'text': [description,{'attributes': projectLength, 'visibility': projectTitlePart.vars.value is same as 'different', 'transfer': [transferInfo,'participants']}],
+                'stimVisible': {'values': [['different', description.vars.name~'Div']]}}) }}
         </div>
         {# application type #}
         {% set appType, description = content.appType, content.description %}
@@ -44,21 +48,22 @@
             {{ formRender.renderButtons(appProcess,{'hint': [translationPrefix~'applicationProcess.'], 'contTarget': ['applicationProcessfull',coreDataController,'applicationFull']}) }}
             {% if content.shortDocs is defined %}
                 <div class="mt-4" id="shortDocs" {{ stimulus_target(coreDataController,'shortDocs') }}>
-                    <div class="MetaData-Label">{{ (translationPrefix~'shortDocs')|trans(committeeParams) }}</div>
-                    {{ formRender.renderButtons(content.shortDocs,noHeading|merge({'contTarget': ['shortDocs0',coreDataController,'shortDocsYes']})) }}
+                    <div class="MetaData-Label">{{ (translationPrefix~'shortDocs.title')|trans(committeeParams) }}</div>
+                    {{ formRender.renderButtons(content.shortDocs,noHeading|merge({'contTarget': ['shortDocsyes',coreDataController,'shortDocsYes']})) }}
                 </div>
             {% endif %}
         </div>
         {# project start  #}
         {% set projectStart, tempPrefix, anyRequested, fundingKeys = content.projectStart, translationPrefix~'project.', false, funding|keys %}
         {% set startPrefix, begun, hasBegunInput = tempPrefix~'start.', content.projectStartBegun ?? '', textInputRequested is not same as '' %}
+        {% set hintsPrefix = startPrefix~'hints.' %}
         {% if hasBegunInput %}
             {% for widget in fundingKeys %}
                 {% set anyRequested = anyRequested or content[widget].vars.checked and (content[widget~'FundingState'].vars.value ?? '') is same as 'requested' %}
             {% endfor %}
         {% endif %}
         <div class="mt-8" id="projectDates">
-            {{ formRender.addHeading(tempPrefix~'title') }}
+            {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[hintsPrefix~'headingHint']]}) }}
             {{ form_label(projectStart,(startPrefix~'title')|trans({'{committeeType}': committeeType})~':',addLabelAttributes(addClass('MetaData-Label'))) }}
             <div class="MetaData-Widget" style="height: min-content; width: fit-content" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
                 {{ form_widget(projectStart,{'attr': {'lang': 'en'}|merge(addTarget(coreDataController,'projectStart'))}) }}
@@ -72,7 +77,7 @@
                 <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
                     {{ formRender.addCheckbox(begun,{'target': [coreDataController,'projectStartBegun'], 'labelParams': committeeParams}) }}
                     <div {{ stimulus_target(coreDataController,'projectStartBegunText') }}>
-                        {{ formRender.addHint(startPrefix~'hint',{'params': committeeParams}) }}
+                        {{ formRender.addHint(hintsPrefix~'begun',{'params': committeeParams}) }}
                         {{ formRender.addTextfield(content.projectStartBegunText,fontNormal) }}
                         {% if content.retrospective is defined %}
                             {{ formRender.addTextfield(content.retrospective,fontNormal) }}

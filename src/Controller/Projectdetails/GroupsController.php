@@ -20,7 +20,7 @@ class GroupsController extends ControllerAbstract
         $appNode = $this->getXMLfromSession($session,setRecent: true);
         $routeParams = $request->get('_route_params');
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
-        if ($measureNode===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
+        if ($this->checkInactivePage($measureNode,self::groupsNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
         $measureArray = $this->xmlToArray($measureNode);

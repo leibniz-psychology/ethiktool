@@ -18,14 +18,13 @@ class ConsentController extends ControllerAbstract
     {
         $session = $request->getSession();
         $routeParams = $request->get('_route_params');
-        $information = $this->getInformation($request);
-        $isInformation = $information==='pre';
-        $appNode = $this->getXMLfromSession($session,setRecent: $isInformation);
+        $appNode = $this->getXMLfromSession($session,setRecent: true); // if no information is given/chosen, docNameRecent equals docName
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
-        if ($measureNode===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
+        if ($this->checkInactivePage($measureNode,self::consentNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
-        $isInformation = $isInformation && $this->getReviewDocs($session);
+        $information = $this->getInformation($appNode,$routeParams);
+        $isInformation = $information===self::pre && $this->getReviewDocs($session);
         $measureArray = $this->xmlToArray($measureNode);
         $consentNode = $measureNode->{self::consentNode};
         $isLoanReceipt = $this->getTemplateChoice($this->getLoanReceipt($measureArray[self::measuresNode][self::loanNode] ?? []));
@@ -48,7 +47,7 @@ class ConsentController extends ControllerAbstract
 
         $consent = $this->createFormAndHandleRequest(ConsentType::class,$this->xmlToArray($consentNode),$request,[self::informationNode => $information, self::addresseeType => $this->getAddresseeFromRequest($request), self::dummyParams => ['isAttendance' => ($measureArray[self::informationNode][self::attendanceNode] ?? '')==='0', 'isClosedDependent' => $examined!=='' && array_key_exists(self::dependentExaminedNode,$examined) || $groupsArray[self::closedNode][self::chosen]==='0', 'hasTerminateParticipants' => array_key_exists(self::terminateParticipantsNode,$measureArray[self::consentNode])]]);
         if ($consent->isSubmitted()) {
-            $isConsentOld = $this->getAnyConsent($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::consentNode}));
+            $isConsentOld = $this->getAnyConsent($measureArrayLoad[self::consentNode]);
             $consentNew = $this->getDataAndConvert($consent,$consentNode)[self::consentNode][self::chosen];
             $isConsent = in_array($consentNew,self::consentTypesAny);
             $isPrePost = $isInformation || $information===self::post;

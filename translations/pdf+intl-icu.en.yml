@@ -36,12 +36,15 @@ or: ' or '
 paragraphHeadings:
   appType: 'Proposal data and Project contributors'
   examinedPeople: 'Participants'
+  examinedPeopleTop: 'New data collection'
   information: 'Information'
   voluntary: 'Consent and withdrawal'
   measures: 'Data collection'
   measuresSub: 'Information about procedure, location and duration of the investigation can be found {informationHint}.'
   burdens: 'Burdens/risks and compensation'
-  processing: 'Data privacy and Data re-use'
+  processing: 'Processing and re-use of data collected here'
+  origin: ''
+  originTop: 'Use/Re-analysis of available data'
 
 boxHeadings: # key: heading of the box. keySub: sub heading inside the box if additional inputs may be necessary
   coreData:
@@ -95,12 +98,24 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     measureTimePoint: 'time point '
     measureTimePointAll: 'all time points'
     overview: 'Overview of the studies, groups and time points'
+    overviewBoxSub: >-
+      The fields {isOrigin, select,
+                    true  {{isReviewFull, select,
+                              true  {16-45}
+                              other {13-19}} are not applicable because the research project does not involve collecting new data.}
+                    other {{isReviewFull, select,
+                              true  {16-{anyOriginExisting, select,
+                                          true  {45}
+                                          other {56}}}
+                              other {13-{anyOriginExisting, select,
+                                          true  {19}
+                                          other {30}}}} are not applicable because entries on the origin of the data are missing.}}
     examinedPeople: 'Which group(s) shall be investigated?'
     examinedPeopleSub: 'Description of the group(s):'
     closed: 'Are the data collected in a closed group?'
-    sampleSize: 'How many individuals from the selected group shall be included in this time point of the study?'
-    sampleSizeSub: 'Further information on the sample size:'
-    sampleSizePlan: 'How was the sample size calculated?'
+    sampleSize: 'How many individuals shall be included in this study/group/time point combination?'
+    sampleSizeSub: 'Further information on the number of participants:'
+    sampleSizePlan: 'On which grounds was this number of participants chosen?'
     recruitment: 'How are participants recruited?'
     recruitmentSub: 'Further details on recruitment:'
     information: 'Is information about participating in a study given in advance?'
@@ -171,6 +186,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                               true {resp. }
                               other {}} justification why no burdens or strains are expected.}
                     other {}}:
+    burdensBoxSub: 'The fields 20-30 are not applicable because the research project does not involve re-analyzing available data.'
     burdensCompensation: 'Are precautionary measures or compensations planned for the burdens mentioned above?'
     risks: 'Which potential dangers or risks does participation involve?'
     risksSub: 'Description of the risks:'
@@ -192,6 +208,27 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     compensationVoluntarySub: 'Other remarks regarding the compensation:'
     processing: 'Description of data processing'
     dataReuse: 'Will the research data be re-used?'
+    dataReuseBoxSub: >-
+      The fields {isReviewFull, select,
+                    true  {46-56}
+                    other {20-30}} are not applicable because {isOrigin, select,
+                                                                true  {the research project does not involve re-analyzing available data.}
+                                                                other {entries on the origin of the data are missing.}}
+    originSources: 'From which sources are data retrieved?'
+    dataSourceVotes: 'Was the research project from which the data shall be re-used reviewed by an ethics committee?'
+    dataSourceVotesSub: 'Further explanation:'
+    dataSet: 'How were the original research data collected?'
+    dataSourceProcedure: 'Description of procedure for (re-)using/re-analyzing the data'
+    restriction: 'Do the data that shall be used underlie access restrictions?'
+    restrictionSub: 'Description who has data access to the data under which conditions:'
+    dataSourceAccess: 'How are the data accessed?'
+    legitimization: 'How is the use of the data for this research project legitimized?'
+    dataSourceIdentification: 'Can individual persons be re-identified?'
+    publication: 'Is a newly generated research data set published as a result of the reanalysis project?'
+    dataSourceBurdensRisks: 'Does data re-use/re-analysis result in burdens or risks for the persons whose data are analyzed, or for groups to which they belong?'
+    dataSourceBurdensRisksSub: 'Description of burdens or risks and of precautionary measures or compensations:'
+    dataSourceBurdensRisksContributors: 'Does data re-use/re-analysis result in burdens or risks for project contributors?'
+    dataSourceBurdensRisksContributorsSub: 'Description of burdens or risks and of precautionary measures or compensations:'
 
 boxSubHeadings:
   projectdetails:
@@ -257,7 +294,7 @@ coreData:
     start: 'From: '
     end: 'To: '
     next: 'as soon as possible '
-    startedDescription: "\n\nData collection has already started. Description of current state of data collection:\n"
+    startedDescription: "\n\nThe research project has already started. Description of current state of the project:\n"
     retrospective: "\n\nJustification for necessity of retrospective ethics review:\n"
   funding: "\n\nIt was confirmed that the studies laid out in the ethics proposal are congruent to those in the funding application in terms of content."
   conflict: 'The conflict of interest is disclosed to the participants in the study information sheet.'
@@ -306,9 +343,14 @@ projectdetails:
     measureTimePoint: >-
       one time point {isMeasureTimePointName, select,
                         true  {({measureTimePointName})}
-                        other {}}
+                        other {}}{origin}
+    origin:
+      new: 'New data collection'
+      existing: 'Re-use of available data'
   sampleSizeMultiple: 'X each'
   pdf:
+    dataSet: 'The information and consent form used for the original data collection can be found after the documents created by the Ethiktool.'
+    legitimization: 'The information and consent form can be found after the documents created by the Ethiktool.'
     examinedPeople: 'The precise inclusion and exclusion criteria can be found {informationHint}.'
     measures: 'Supplementary materials on the data collection methods are available after the participant documents created by the Ethiktool.'
     interventions: 'Supplementary materials on the interventions/measures are available after the participant documents created by the Ethiktool.'
@@ -332,8 +374,10 @@ projectdetails:
         =0    {}
         other { for {levelNames}}}
     votes: 'This research project has been reviewed by another ethics committee before. The following page(s) contain(s) the decision letter of the other ethics committee or a PDF file created by the applicant with further explanations.'
+    dataSet: 'The following page(s) contain(s) the information and consent form used for collecting the original data that shall be re-used/re-analyzed here.'
+    legitimization: 'The following page(s) contain(s) the information and consent form used for <span class="noWrap">data re-use/re-analysis.</span>'
     begun: >-
-      Data collection has already started. The following page(s) contain(s) the participant documents used for the {addressee, select,
+      The research project has already started. The following page(s) contain(s) the participant documents used for the {addressee, select,
                   children {legal guardians}
                   wards    {legal guardians}
                   other    {participants}}{levelNamesString}.
@@ -534,6 +578,39 @@ projectdetails:
                             other  {shared with others for re-use.}}
     dataReuseSelf: 'Yes, but only for own re-use. The research data are not made available to others.'
     no: 'No, the data are neither used for own re-use nor made available to others.'
+  dataSource:
+    origin:
+      new: 'New data are collected explicitly for this research project.'
+      existing: 'Only available data from own or other sources are used.'
+    originSources:
+      research: 'Data that were collected for research purposes ({description})'
+      originSourcesOther: 'Data that were collected for other purposes ({description})'
+      widespread: 'Data that persons disseminated themselves, being aware of their visibility for others ({description})'
+      documents: 'Available reports/documents concerning specific persons or groups ({description})'
+    committeeResult: 'Result of ethics review at the time: {description}'
+    resultPositive:
+      question: 'The previous ethics vote did not comprise the research question that shall be addressed here.'
+      access: 'Data access is only granted upon presenting an ethics vote.'
+      committeeResultPositiveOther: 'for the following reason: {description}'
+    voteContributors:
+      title: "Were some of the researchers involved in the current project also involved in the project from which the data shall be re-used?\n"
+      description: "\nJustification why no ethics proposal was submitted:\n"
+    dataSourceAccess:
+      accessOwn: 'The data to be used are already at hand, as they stem from one of the researchers'' own datasets.'
+      center: 'The research dataset is made available by a research data center or data-sharing infrastructure.'
+      collect: 'The data are specifically gathered by the researchers.'
+    legitimization:
+      consentNew: 'All individuals are explicitly informed about this re-analysis project and give consent to their data being used.'
+      consentExisting: "During the original data/material collection, all individuals were informed about the potential re-use of their data for further (research) purposes and gave their consent. The relevant sections of the consent form read as follows:\n {description}"
+      conditions: "The terms and conditions of the provider cover the planned retrieval of the data (including webscraping) and their use for research purposes. All users actively confirmed these terms and conditions when registering with the provider. The relevant sections of the terms and conditions read as follows:\n {description}"
+      contract: "Use of the data is legitimized by a contract with the research data center or data-sharing infrastructure. The relevant sections of the contract read as follows:\n {description}"
+      legalBasis: "Use of the data is legitimized on the following legal basis:\n {description}"
+      legitimizationOther: "Use of the data is legitimized as follows:\n {description}"
+    dataSourceIdentification:
+      yes: 'Yes: The data can be related to individual persons at the time of retrieval, and they remain in person-related form within <span class="noWrap">re-use/re-analysis.</span>'
+      partly: 'Yes: The data are (partly) anonymized at the time of retrieval, but combining them with additional data may allow for identifying individual persons.'
+      temporary: 'Temporarily: The data can (partly) be related to individual persons at the time of retrieval, but they are fully anonymized for <span class="noWrap">re-use/re-analysis.</span>'
+      no: 'No: All data are anonymous/anonymized at the time of retrieval, and they remain in anonymous/anonymized form throughout data processing.'
 
 # participation
 participation:
@@ -604,10 +681,18 @@ participation:
     projectStart: >-
       {information, select,
         noPost {because {informationSentence} and because}
-        other  {}} ethics review is requested after data collection has been started{information, select,
+        other  {}} ethics review is requested after the research project has been started{information, select,
                 noPost {}
                 other  {, and thus the participant documents already exist}}
     short: '{committeeDat} does not include participant documents in their review of short proposals'
+    origin: >-
+      {origin, select,
+        existing { ethics review is requested for {savePDF, select,
+                                      true  {re-analyzing available data}
+                                      other {<a href="dataSource" data-action="base#setDummySubmit" data-base-url-param="app_dataSource#origin" data-base-route-i-ds-param="{routeIDs}">re-analyzing available data</a>}}.}
+        other    { entries on the {savePDF, select,
+                                      true  {origin of the data}
+                                      other {<a href="dataSource" data-action="base#setDummySubmit" data-base-url-param="app_dataSource#origin" data-base-route-i-ds-param="{routeIDs}">origin of the data</a>}} are missing.}}
     end: >-
       . For the same reason, no data privacy statement was generated. {isInformation, select,
               true  {The following information, which otherwise would have been transferred to the participant documents, needs to be taken into account for review:}
@@ -622,10 +707,7 @@ participation:
       title: '<b>Project lead:</b>'
       text: 'The overall responsibility for this study lies with '
     contributors: 'The following persons are also involved in the study: {contributors}.'
-    funding: >-
-      {isQualiFunding, select,
-        true  {The study is conducted as part of a qualification thesis and has no separate funding.}
-        other {The study is funded by {funding}.}}
+    funding: 'The study is funded by {funding}.'
   location: 'Location'
   locationContent:
     start: >-
@@ -1463,6 +1545,7 @@ completeForm:
       no: 'No'
       unclear: 'Unclear'
       restricted: 'Restricted'
+      notApplicable: 'Not applicable'
     linking: # answer-keys must equal the 'types' keys. If order of boxes changes, numbers have to be updated here, too
       information: >-
         {answer, select,
@@ -1605,6 +1688,46 @@ completeForm:
           yes     { (see annex on data processing)}
           unclear { (see field 44)}
           other   {}}
+      dataSourceVotes: >-
+        {answer, select,
+          yes   {}
+          other { (see field {isFull, select,
+                                true  {47}
+                                other {21}})}}
+      legitimization: >-
+        {answer, select,
+          unclear { (see field {isFull, select,
+                                  true  {52}
+                                  other {26}})}
+          no      { (see field 46)}
+          other   {}}
+      restriction: >-
+        {isFull, select,
+          true  {{answer, select,
+                    yes   { (see field 50/54)}
+                    other {}}}
+          other {}}
+      dataSourceIdentification: >-
+        {isFull, select,
+          true  {{answer, select,
+                    yes   { (see field 53)}
+                    other {}}}
+          other {}}
+      dataSourceBurdensRisks: >-
+        {isFull, select,
+          true  {{answer, select,
+                    yes   { (see field {isDataSourceBurdensRisks, select,
+                                          true  {55}
+                                          other {}}{isDataSourceBurdensRisksContributors, select,
+                                                      true  {{isDataSourceBurdensRisks, select,
+                                                                true  {/}
+                                                                other {}}56}
+                                                      other {}})}
+                    other {}}}
+          other {}}
+    levelHeadings:
+      new: ' (new data collection)'
+      existing: ' (re-use of available data)'
     headings:
       information: 'Information'
       voluntary: 'Voluntariness'
@@ -1617,6 +1740,11 @@ completeForm:
       finding: '(Incidental) Findings'
       dataPrivacy: 'Personal data'
       otherSources: 'Data from other sources'
+      dataSourceVotes: 'Research ethics standards'
+      legitimization: 'Information/Consent'
+      restriction: 'Access restriction/Dissemination'
+      dataSourceIdentification: 'Personal identification'
+      dataSourceBurdensRisks: 'Burdens/Risks'
       conflict: 'Conflict of interest'
       medicine: 'Medical aspects'
     information: 'Full prior information is guaranteed.'
@@ -1630,6 +1758,11 @@ completeForm:
     finding: 'The study might reveal clinically relevant (incidental) findings.'
     dataPrivacy: 'The study involves relevant processing of personal data.'
     otherSources: 'Individually traceable data from other sources are retrieved.'
+    dataSourceVotes: 'The re-used research data were originally collected with adherence to standards of research ethics.'
+    legitimization: 'The persons whose data are analyzed agreed to or were at least aware of their data possibly being re-used for research purposes.'
+    restriction: 'The re-analysis leads to wider dissemination of data that were originally access-restricted.'
+    dataSourceIdentification: 'The re-analysis leads to a dataset in which individual persons are identifiable.'
+    dataSourceBurdensRisks: 'The re-analysis results in burdens, dangers, or risks for project contributors or for the analyzed persons/groups.'
     conflict: 'The project contributors have a conflict of interest with respect to the research project.'
     medicine: 'The project might head towards research relating to AMG/MPG/MPDG, or physicians are among the project contributors.'
 
@@ -1652,3 +1785,4 @@ logo:
   TUD: 'Logo of Dresden University of Technology'
   UH1: 'Logo of Hildesheim University'
   UPB: 'Logo of Paderborn University'
+  

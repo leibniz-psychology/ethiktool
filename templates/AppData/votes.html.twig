@@ -6,7 +6,8 @@
     {% set otherVote, otherVoteDescription, otherVoteResult, otherVoteResultDescription, translationPrefix = content.otherVote, content.description, content.otherVoteResult, content.otherVoteResultDescription, 'votes.' %}
     {% set isOtherVote, otherVoteResultValue, otherVoteDiv, otherVoteHint, tempPrefix = otherVote.vars.value is same as '0', otherVoteResult.vars.value, 'otherVoteDiv', 'otherVoteHint', translationPrefix~'otherVote.' %}
     {% set noOtherVoteResultSelected, targetParam = otherVoteResultValue is same as '', {'target': true} %}
-    <div id="otherVote">
+    <div class="borderHint">{{ (translationPrefix~'hint')|trans }}</div>
+    <div class="mt-8" id="otherVote">
         {{ formRender.renderButtons(otherVote,{'stimVisible': {'values': [['0',[otherVoteDiv,otherVoteDescription.vars.name~'Div']]]}, 'text': [otherVoteDescription,textInputAttr|merge(fontNormal)|merge({'visibility': isOtherVote, 'hint': tempPrefix~'committee'})]}) }}
         <div id="{{ otherVoteDiv }}" style="{{ boolToDisplay(isOtherVote) }}">
             <div class="MetaData-Label mt-4">{{ form_label(otherVoteResult,null,labelDummy) }}</div>

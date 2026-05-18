@@ -1,0 +1,159 @@
+{% extends 'threeColumns.html.twig' %}
+{% import 'macros.html.twig' as formRender %}
+
+{% block content %}
+    {% set translationPrefix, labelCommitteeParam, dataSourceController = 'projectdetails.pages.dataSource.', {'labelParams': committeeParams}, 'Projectdetails--dataSource' %}
+    {% set votes, voteContributors = content.dataSourceVotes, content.voteContributors %}
+    {% set votesValue, voteContributorsValue = votes.vars.value, voteContributors.vars.value %}
+    <div {{ stimulus_controller(dataSourceController,{
+            'originSources': originSourcesTypes,
+            'votes': votesValue,
+            'voteContributors': voteContributorsValue
+    }) }}>
+        {# origin #}
+        {% set originPrefix, origin = translationPrefix~'origin.', content.origin %}
+        {% set hintsPrefix = originPrefix~'hints.' %}
+        <div id="origin">
+            {{ formRender.renderButtons(origin,{
+                'hint': [originPrefix],
+                'stim': [dataSourceController,'setFurther'],
+                'contTarget': ['originexisting',dataSourceController,'originExisting'],
+                'icons': {'originnew': hintsPrefix~'new', 'originexisting': hintsPrefix~'existing'}}) }}
+        </div>
+        {# origin sources #}
+        {% set tempPrefix = translationPrefix~'originSources.' %}
+        <div class="mt-8" id="originSources" {{ stimulus_target(dataSourceController,'originSources') }}>
+            {{ formRender.addHeading(tempPrefix~'title') }}
+            <div class="MetaData-Widget" {{ stimulus_action(dataSourceController,'setVotesDiv','change') }}>
+                {{ formRender.addCheckboxGroup(content,originSourcesTypes,{
+                    'other': originSourcesTypes,
+                    'contTargets': {'research': [dataSourceController,'research']},
+                    'icons': {'widespread': tempPrefix~'widespreadHint'}}) }}
+            </div>
+            <div class="mt-8" id="dataSourceVotes" style="{{ boolToDisplay(content.research.vars.checked) }}" {{ stimulus_target(dataSourceController,'votesDiv') }}>
+                {# votes #}
+                {% set votesPrefix = translationPrefix~'dataSourceVotes.' %}
+                {{ formRender.renderButtons(votes,{'hint': [votesPrefix], 'stim': [dataSourceController,'setVotes']}) }}
+                <div style="{{ boolToDisplay(votesValue is same as '0') }}" {{ stimulus_target(dataSourceController,'votesYes') }}>
+                    {# committee #}
+                    {% set committee, result, committeePrefix = content.dataSourceCommittee, content.committeeResult, votesPrefix~'dataSourceCommittee.' %}
+                    {% set positive, negative, negativeNo = 'resultPositive', 'resultNegativeDiv', ['negative','noVote'] %}
+                    {% set committeeValue, resultValue = committee.vars.value, result.vars.value %}
+                    {% set isCommittee, tempPrefix = committeeValue is not same as '', committeePrefix~'textHint.' %}
+                    {{ formRender.renderButtons(committee,labelCommitteeParam|merge({
+                        'text': [content.dataSourceCommitteeText,fontNormal|merge({
+                            'hint': isCommittee ? tempPrefix~committeeValue : 'multiple.choiceTextHint'})|
+                            merge(not isCommittee ? {'target': true} : {})],
+                        'stim': ['base','setWidgetByValue',{'widgetValue': ['','dataSourceCommitteeText',{'committeeSame': (tempPrefix~'committeeSame')|trans, 'committeeOther': (tempPrefix~'committeeOther')|trans}]}],
+                        'addDiv': ['dataSourceCommittee']})) }}
+                    {# result #}
+                    {% set tempPrefix = committeePrefix~'description.' %}
+                    <div {{ stimulus_action(dataSourceController,'setDataSet','change') }}>
+                        <div class="mt-8" id="committeeResult" {{ stimulus_action('base','setWidgetByValue','change',{'widgetValue': ['','committeeResultDescription',{'negative': (tempPrefix~'negative')|trans, 'noVote': (tempPrefix~'noVote')|trans}]}) }}>
+                            {{ formRender.renderButtons(result,{
+                                'text': [content.committeeResultDescription,fontNormal|merge({'visibility': resultValue in negativeNo, 'hint': tempPrefix~resultValue})],
+                                'contTarget': ['committeeResultnegative',dataSourceController,'resultNegative'],
+                                'stimVisible': {'values': [['positive',positive],['negative',negative],[negativeNo,'committeeResultDescriptionDiv']]}}) }}
+                        </div>
+                        {# further question for positive vote #}
+                        <div class="mt-4" id="{{ positive }}" style="{{ boolToDisplay(resultValue is same as 'positive') }}">
+                            <div class="MetaData-Label">{{ (committeePrefix~'resultPositive.title')|trans }}</div>
+                            {{ formRender.addCheckboxGroup(content,resultPositiveTypes,{'other': ['committeeResultPositiveOther'], 'addDiv': ['']}) }}
+                        </div>
+                        {# checkbox if negative vote #}
+                        <div class="mt-4" id="{{ negative }}" style="{{ boolToDisplay(resultValue is same as 'negative') }}">
+                            <div class="borderHint">{{ (committeePrefix~'resultNegative.text')|trans(committeeParams) }}</div>
+                            <div class="MetaData-Widget">{{ formRender.addCheckbox(content.resultNegative,labelCommitteeParam|merge({'target': [dataSourceController,'resultNegativeConfirm'], 'addDiv': ['']})) }}</div>
+                        </div>
+                    </div>
+                </div>
+                {# vote contributors #}
+                {% set hasDescription, confirmDiv = content.voteContributorsDescription is defined, 'voteContributorsConfirmDiv' %}
+                {% set isVoteContributors = voteContributorsValue is same as '0' %}
+                <div class="mt-8" id="voteContributors" style="{{ boolToDisplay(votesValue is same as '1') }}" {{ stimulus_target(dataSourceController,'votesNo') }}>
+                    <div {{ stimulus_action(dataSourceController,'setVoteContributors','change') }}>
+                        {{ formRender.renderButtons(voteContributors,{
+                            'stimVisible': {'values': [['0',[confirmDiv]|merge(hasDescription ? ['voteContributorsDescriptionDiv'] : [])]]}}|
+                            merge(hasDescription ? {'text': [content.voteContributorsDescription,fontNormal|merge({'visibility': isVoteContributors})]} : {})) }}
+                    </div>
+                    <div class="mt-4" id="{{ confirmDiv }}" style="{{ boolToDisplay(isVoteContributors) }}">
+                        <div class="borderHint">{{ (votesPrefix~'voteContributors.hints.yesBegun'~(hasDescription ? 'No'))|trans(committeeParams)|raw }}</div>
+                        {% if hasDescription %} {# confirm checkbox #}
+                            <div class="MetaData-Widget" {{ stimulus_action(dataSourceController,'setDataSet','change') }}>{{ formRender.addCheckbox(content.voteContributorsConfirm,labelCommitteeParam|merge({'target': [dataSourceController,'voteContributorsConfirm']})) }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div {{ stimulus_target(dataSourceController,'further') }}>
+                {# data set #}
+                {% set tempPrefix, heightParam = translationPrefix~'dataSet.', fontNormal|merge({'attributes': textHeightLong}) %}
+                <div class="mt-8" id="dataSet" {{ stimulus_target(dataSourceController,'dataSet') }}>
+                    {{ formRender.addHeading(tempPrefix~'title') }}
+                    {{ formRender.addTextfield(content.dataSet,heightParam|merge({'hint': tempPrefix~'textHint', 'textHintParams': {'hasDocs': boolToString(hasDocs)}})) }}
+                    {% if content.dataSetPDF is defined %}
+                        <div class="MetaData-Label">{{ formRender.addCheckbox(content.dataSetPDF) }}</div>
+                    {% endif %}
+                </div>
+                {# data source procedure #}
+                <div class="mt-8" id="dataSourceProcedure">
+                    {{ formRender.addHeading(translationPrefix~'dataSourceProcedure.title') }}
+                    {{ formRender.addTextfield(content.dataSourceProcedure,heightParam) }}
+                </div>
+                {# restriction #}
+                {% set restriction, tempPrefix = content.restriction, translationPrefix~'restriction.hints.' %}
+                {{ formRender.renderButtons(restriction,{
+                    'stimVisible': {'values': [['restricted','restrictionDescriptionDiv']]},
+                    'icons': {'restrictionfree': tempPrefix~'free', 'restrictionrestricted': tempPrefix~'restricted'},
+                    'text': [content.restrictionDescription,fontNormal|merge({'visibility': restriction.vars.value is same as 'restricted'})],
+                    'addDiv': ['restriction']}) }}
+                {# data source access #}
+                <div class="mt-8" id="dataSourceAccess">
+                    {{ formRender.addHeading(translationPrefix~'dataSourceAccess.title') }}
+                    {{ formRender.addCheckboxGroup(content,dataSourceAccessTypes,{'addDiv': ['']}) }}
+                </div>
+                {# legitimization #}
+                {% set tempPrefix, pdfDiv = translationPrefix~'legitimization.', 'legitimiztationPDF' %}
+                <div class="mt-8" id="legitimization">
+                    {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
+                    <div class="MetaData-Widget">
+                        {% for type in legitimizationTypes %}
+                            {% set isNotNew, checkbox, text = type is not same as 'consentNew', content[type], type~'Text' %}
+                            <div style="{{ topMarginButtons }}" {{ stimulus_action('base','setVisibility','change',{'multi': [[type,isNotNew ? text~'Div' : (hasDocs ? pdfDiv : [])]]}) }}>
+                                {{ formRender.addCheckbox(checkbox) }}
+                                {% if isNotNew %}
+                                    {{ formRender.addTextfield(content[text],fontNormal|merge({'visibility': checkbox.vars.checked, 'attributes': {'style': 'margin-bottom: 1rem'}})) }}
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if hasDocs %}
+                        {{ formRender.addHint(tempPrefix~'pdf',{'id': pdfDiv, 'visible': content.consentNew.vars.checked}) }}
+                    {% endif %}
+                </div>
+                {# data source identification #}
+                {{ formRender.renderButtons(content.dataSourceIdentification,{'hint': [translationPrefix~'dataSourceIdentification.'], 'addDiv': ['dataSourceIdentification']}) }}
+                {# publication #}
+                {{ formRender.renderButtons(content.publication,{'addDiv': ['publication']}) }}
+                {# data source burdens risks and burdens risks contributors #}
+                {% for type in ['dataSourceBurdensRisks','dataSourceBurdensRisksContributors'] %}
+                    {% set widget, description = content[type], type~'Description' %}
+                    {{ formRender.renderButtons(widget,{
+                        'hint': [translationPrefix~type~'.'],
+                        'text': [content[description],fontNormal|merge({'visibility': widget.vars.value is same as '0'})],
+                        'stimVisible': {'values': [['0',description~'Div']]},
+                        'addDiv': [type]
+                    }) }}
+                {% endfor %}
+            </div>
+        </div> {# origin sources and all further questions #}
+        {# modal #}
+        {% if origin.vars.value is same as 'new' %}
+            {{ include('components/redirectModal.html.twig',modal|merge({'targetCont': dataSourceController, 'redirectTarget': 'originModal'})) }}
+        {% endif %}
+        {{ formRender.addSubmitButtons() }}
+    </div> {# entire form including stimulus controller #}
+{% endblock %}
+
+{% block preview %}
+    {{ formRender.addPreview([studyID,groupID,measureID]) }}
+{% endblock %}

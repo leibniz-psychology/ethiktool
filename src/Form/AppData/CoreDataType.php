@@ -28,7 +28,7 @@ class CoreDataType extends TypeAbstract
         // application process
         $this->addRadioGroup($builder,self::applicationProcessNode,self::applicationProcessTypes,$translationPrefix.self::applicationProcessNode.'.title');
         if (in_array($this->committeeType,self::reviewShortChoose)) { // participation documents are not reviewed, but applicants can choose to create for themselves
-            $this->addBinaryRadio($builder,self::shortDocsNode);
+            $this->addRadioGroup($builder,self::shortDocsNode,self::shortDocsTypes);
         }
         // project dates
         $this->addFormElement($builder, self::projectStart, 'date');
@@ -63,7 +63,7 @@ class CoreDataType extends TypeAbstract
         }
         if (in_array($this->committeeType,self::begunCommittees)) {
             $startPrefix = $translationPrefix.'project.start.';
-            $tempPrefix = $startPrefix.self::textHint.'.';
+            $tempPrefix = $startPrefix.'hints.'.self::textHint.'.';
             // project start begun
             $this->addCheckboxTextfield($builder,self::projectStartBegun,$startPrefix.'begun',$tempPrefix.'current');
             // retrospective
@@ -196,7 +196,7 @@ class CoreDataType extends TypeAbstract
         $isFull = $applicationProcessArray[self::chosen]===self::reviewProcessFull;
         $hasShortDocs = $isNeitherBegunRequested && array_key_exists(self::shortDocsNode,$applicationProcessArray);
         // project title participation
-        if ($isFull && $isNeitherBegunRequested || !$isFull && (!$hasShortDocs && $isNeitherBegunRequested || $hasShortDocs && $applicationProcessArray[self::shortDocsNode]===0)) { // participation documents may be created
+        if ($isFull && $isNeitherBegunRequested || !$isFull && (!$hasShortDocs && $isNeitherBegunRequested || $hasShortDocs && $applicationProcessArray[self::shortDocsNode]===self::shortDocsYes)) { // participation documents may be created
             $newData[self::projectTitleParticipation] = $this->getChosenArray($forms,self::projectTitleParticipation,self::projectTitleDifferent,[self::descriptionNode => self::projectTitleParticipation.self::descriptionCap]);
         }
         // application type

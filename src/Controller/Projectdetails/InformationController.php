@@ -23,7 +23,7 @@ class InformationController extends ControllerAbstract
         $isInformationII = $route===self::informationIINode;
         $appNode = $this->getXMLfromSession($session,setRecent: !$isInformationII);
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
-        if ($measureNode===null || $measureNode->{$route}->{self::pre}->getName()==='') { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened ($measure===null) or informationII was opened, but is not active (second check)
+        if ($this->checkInactivePage($measureNode,$route)) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened, informationII was opened, but is not active, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
         $informationNode = $measureNode->{$route}[0];

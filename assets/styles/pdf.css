@@ -88,6 +88,10 @@ li { /* needed for hints in complete form */
     color: #028702;
 }
 
+.noWrap {
+    white-space: nowrap;
+}
+
 .pdfHeadingCenter {
     display: flex;
     justify-content: center;
