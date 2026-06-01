@@ -54,7 +54,7 @@
         {% set closed, closedDiv = content.closed, 'closedTypes' %}
         <div class="mt-8" id="closed" {% if isTextInputVoluntary %} {{ stimulus_action(groupsController,'setVoluntaryHint','change') }} {% endif %}>
             {{ formRender.renderButtons(closed, {'stimVisible': {'values': [['0',closedDiv]]}, 'contTarget': ['closed1',groupsController,'closedNo'], 'hint': [translationPrefix~'closed.']}) }}
-            {{ formRender.addCheckboxGroup(content,closedTypes,{'other': ['closedOther'], 'addDiv': [closedDiv, 'width: fit-content; '~boolToDisplay(closed.vars.value is same as '0'),'mt-4']}) }}
+            {{ formRender.addCheckboxGroup(content,closedTypes,{'other': ['closedOther'], 'addDiv': [closedDiv, boolToDisplay(closed.vars.value is same as '0'),'mt-4 fitWidth']}) }}
             {% if isTextInputVoluntary %}
                 {{ formRender.addHint(textInputVoluntary,voluntaryHintParams) }}
             {% endif %}
@@ -85,7 +85,7 @@
                 <div class="MetaData-Label">{{ (totalPrefix~'title')|trans }}</div>
                 {{ formRender.addHint(totalPrefix~'textHint') }}
                 <div class="MetaData-Widget" style="width: 8rem">{{ form_widget(content.total) }}</div>
-                {{ formRender.addTextfield(content.furtherParticulars, styleHeight) }}
+                {{ formRender.addTextfield(content.furtherParticulars) }}
                 <div class="MetaData-Widget mt-8" style="margin-bottom: -1.25rem" id="sampleSizePlan">{{ (tempPrefix~'plan.title')|trans }}</div> {# id is same as text field id #}
                 {{ formRender.addTextfield(content.sampleSizePlan, styleHeight) }}
             </div>
@@ -97,7 +97,7 @@
         <div class="mt-8" id="recruitment" {% if hasFurther %} {{ stimulus_action('base','setCheckboxTextfield','change',{'checkboxes': [recruitmentTypes,'recruitmentFurtherDiv',hints]}) }} {% endif %}>
             {{ formRender.addHeading(recruitmentPrefix~'title') }}
             {{ formRender.addCheckboxGroup(content,recruitmentTypes,{
-                'addDiv': ['','width: fit-content'],
+                'addDiv': ['','','fitWidth'],
                 'other': recruitmentTypesOther}) }}
             {% if hasFurther %}
                 {{ formRender.addTextfield(recruitmentFurther,

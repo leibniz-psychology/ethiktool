@@ -35,13 +35,11 @@ class MeasuresController extends ControllerAbstract
             $locationOld = $measuresArrayOld[self::locationNode][self::chosen];
             $isLocationOnlineOld = $locationOld===self::locationOnline;
             $isLocationNotOnlineOld = $locationOld!=='' && !$isLocationOnlineOld;
-            $loanArrayOld = $measuresArrayOld[self::loanNode];
-            $isLoanOld = $loanArrayOld[self::chosen]==='0';
+            $isLoanOld = $measuresArrayOld[self::loanNode][self::chosen]==='0';
             $legalArray = $this->xmlToArray($measureNode)[self::legalNode];
-            $isConsent = $this->getAnyConsent((string) $measureNode->{self::consentNode}->{self::consentNode}->{self::chosen});
             if ($legalArray!=='') {
                 $apparatusInput = ($isLoanOld || $isLocationNotOnlineOld) && ($legalArray[self::apparatusNode][self::chosen] ?? '')!=='';
-                $insuranceWayInput = $isLocationNotOnlineOld && $isConsent && ($legalArray[self::insuranceWayNode][self::chosen] ?? '')!=='';
+                $insuranceWayInput = $isLocationNotOnlineOld && ($legalArray[self::insuranceWayNode][self::chosen] ?? '')!=='';
                 if ($apparatusInput || $insuranceWayInput) {
                     if ($isLoanOld && $apparatusInput) { // loan was answered with yes
                         $inputArray = $this->setInputArray();
@@ -77,9 +75,10 @@ class MeasuresController extends ControllerAbstract
         }
         // check if compensation page has input that may be deleted
         $textInputCompensation = '';
-        $isTerminateNothing = ($measureArrayOld[self::compensationNode][self::terminateNode][self::chosen] ?? '')===self::terminateNothing;
+        $terminateArray = $measureArrayOld[self::compensationNode][self::terminateNode] ?? [];
+        $isTerminateNothing = ($terminateArray[self::chosen] ?? '')===self::terminateNothing;
         $isDurationOld = $this->getDuration($measuresArrayOld[self::durationNode])>30;
-        if ($isDurationOld && $isTerminateNothing) {
+        if ($isDurationOld && $isTerminateNothing && ($terminateArray[self::descriptionNode] ?? '')!=='') {
             $inputArray = $this->setInputArray();
             $this->addInputPage('pages.projectdetails.',self::compensationNode,$inputArray);
             $textInputCompensation = $this->setInputHint($inputArray);
@@ -96,22 +95,18 @@ class MeasuresController extends ControllerAbstract
                 if ($this->getInformationString($measureArrayOld[self::informationNode])===self::pre) { // only update if information is pre
                     // update legal
                     $legalNode = $measureNodeNew->{self::legalNode};
-                    $loanArray = $data[self::loanNode];
-                    $isLoan = $loanArray[self::chosen]===0;
-                    $isApparatusOld = ($isLoanOld && $this->getTemplateChoice($loanArrayOld[self::loanReceipt][self::chosen]) || $isConsent && ($isLoanOld || $isLocationNotOnlineOld));
-                    $isApparatus = ($isLoan && $this->getTemplateChoice($this->getLoanReceipt($loanArray)) || $isConsent && ($isLoan || $isLocationNotOnline));
+                    $isApparatusOld = $isLoanOld || $isLocationNotOnlineOld;
+                    $isApparatus = ($data[self::loanNode][self::chosen]===0 || $isLocationNotOnline);
                     // remove nodes if necessary
                     if ($isApparatusOld && !$isApparatus) { // remove node
                         $this->removeElement(self::apparatusNode,$legalNode);
                     } elseif (!$isApparatusOld && $isApparatus) { // add node
                         $this->addChosenNode($legalNode,self::apparatusNode);
                     }
-                    if ($isConsent) {
-                        if ($isLocationNotOnlineOld && !$isLocationNotOnline) { // remove node
-                            $this->removeElement(self::insuranceWayNode,$legalNode);
-                        } elseif (!$isLocationNotOnlineOld && $isLocationNotOnline) { // add node
-                            $this->addChosenNode($legalNode,self::insuranceWayNode);
-                        }
+                    if ($isLocationNotOnlineOld && !$isLocationNotOnline) { // remove node
+                        $this->removeElement(self::insuranceWayNode,$legalNode);
+                    } elseif (!$isLocationNotOnlineOld && $isLocationNotOnline) { // add node
+                        $this->addChosenNode($legalNode,self::insuranceWayNode);
                     }
                 }
                 // update data privacy

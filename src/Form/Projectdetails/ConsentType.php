@@ -25,7 +25,8 @@ class ConsentType extends TypeAbstract
             }
         }
         if ($dummyParams['isClosedDependent']) {
-            $this->addFormElement($builder,self::voluntaryYesDescription,'textarea');
+            $tempPrefix = $translationPrefix.self::voluntaryNode.'.'.self::voluntaryEnsureNode.'.';
+            $this->addCheckboxGroup($builder,self::voluntaryEnsureTypes,$tempPrefix.'types.',$this->createPrefixArray(self::voluntaryEnsureTypesOther),array_fill_keys(self::voluntaryEnsureTypesOther,$tempPrefix.'placeholder'));
         }
         // terminate with disadvantages
         $tempPrefix = $translationPrefix.self::terminateConsNode.'.';
@@ -52,7 +53,10 @@ class ConsentType extends TypeAbstract
         // voluntary and consent
         $otherDescription = self::consentOtherDescription.'Participants';
         foreach ([self::voluntaryNode,self::consentNode] as $type) {
-            $this->setChosenArray($forms,$viewData,$type,array_merge([self::chosen2Node => $type.'Participants', self::descriptionNode => $type.self::descriptionCap],$type===self::voluntaryNode ? [self::voluntaryYesDescription => self::voluntaryYesDescription] : [self::consentOtherDescription => self::consentOtherDescription,$otherDescription => $otherDescription]));
+            $this->setChosenArray($forms,$viewData,$type,array_merge([self::chosen2Node => $type.'Participants', self::descriptionNode => $type.self::descriptionCap],$type===self::consentNode ? [self::consentOtherDescription => self::consentOtherDescription,$otherDescription => $otherDescription] : []));
+        }
+        if (array_key_exists(self::voluntaryEnsureAbsence,$forms)) {
+            $this->setSelectedCheckboxes($forms,$viewData[self::voluntaryNode][self::voluntaryEnsureNode] ?? '',$this->combinePrefixArray(self::voluntaryEnsureTypesOther));
         }
         // terminate cons
         $this->setChosenArray($forms,$viewData,self::terminateConsNode,[self::descriptionNode => self::terminateConsNode.self::descriptionCap]);
@@ -60,7 +64,7 @@ class ConsentType extends TypeAbstract
             $forms[self::terminateConsParticipationNode]->setData($this->getArrayValue($viewData,self::terminateConsParticipationNode));
         }
         // termination by participants
-        $this->setChosenArray($forms,$viewData,self::terminateParticipantsNode,[self::descriptionNode => $this->appendText(self::terminateParticipantsNode)]);
+        $this->setChosenArray($forms,$viewData,self::terminateParticipantsNode,$this->createAppendArray(self::terminateParticipantsNode));
         // terminate criteria
         if (array_key_exists(self::terminateCriteriaNode,$forms)) {
             $forms[self::terminateCriteriaNode]->setData($viewData[self::terminateCriteriaNode]);
@@ -83,8 +87,8 @@ class ConsentType extends TypeAbstract
             if (in_array(self::voluntaryConsentNo,$tempArray)) {
                 $tempArray[self::descriptionNode] = $forms[$type.self::descriptionCap]->getData();
             }
-            if ($type===self::voluntaryNode && array_key_exists(self::voluntaryYesDescription,$forms) && in_array('yes',[$tempArray[self::chosen],$this->getArrayValue($tempArray,self::chosen2Node)])) {
-                $tempArray[self::voluntaryYesDescription] = $forms[self::voluntaryYesDescription]->getData();
+            if ($type===self::voluntaryNode && array_key_exists(self::voluntaryEnsureAbsence,$forms) && in_array('yes',[$tempArray[self::chosen],$this->getArrayValue($tempArray,self::chosen2Node)])) {
+                $tempArray[self::voluntaryEnsureNode] = $this->getSelectedCheckboxes($forms,self::voluntaryEnsureTypes,$this->combinePrefixArray(self::voluntaryEnsureTypesOther));
             }
             $newData[$type] = $tempArray;
         }
@@ -95,7 +99,7 @@ class ConsentType extends TypeAbstract
         }
         // termination by participants
         if (array_key_exists(self::terminateParticipantsNode,$forms)) {
-            $newData[self::terminateParticipantsNode] = $this->getChosenArray($forms,self::terminateParticipantsNode,self::terminateParticipantsOther,[self::descriptionNode => $this->appendText(self::terminateParticipantsNode)]);
+            $newData[self::terminateParticipantsNode] = $this->getChosenArray($forms,self::terminateParticipantsNode,self::terminateParticipantsOther,$this->createAppendArray(self::terminateParticipantsNode));
         }
         // terminate criteria
         if (array_key_exists(self::terminateCriteriaNode,$forms)) {

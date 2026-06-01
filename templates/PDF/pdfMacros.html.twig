@@ -71,20 +71,20 @@
         addressee: translation key for the addressee to be added in the signature
         addName:   if true, a line for the name will be added
     #}
-    {% set style, textPreview, topMargin, width = 'border-top: 1px solid black;'~(savePDF ? ' white-space: nowrap;' : ''), not savePDF ? 'previewSmall', 'margin-top: 100px;', 'width: 30%;' %}
-    {% if addName %}
-        <div style="{{ style~topMargin~width }}">
-            <i class="{{ textPreview }}">{{ 'signature.name'|trans([],'pdf') }}</i>
+    {% set style, textPreview, hasAddressee, addresseeParam = 'border-top: 1px solid black; '~(savePDF ? 'white-space: nowrap; ' : ''), not savePDF ? 'previewSmall', addressee is not same as 'participants', {'addressee': addressee} %}
+    {% set firstCol, secondCol, tempPrefix = style~'width: 35%', style~' margin-left: '~(savePDF ? '200px; ' : '100px; ')~(hasAddressee ? 'width: '~(addressee is same as 'children' ? '40%' : '65%') : 'min-width: 30%; max-width: 50%'), 'signature.' %}
+    {% for firstColumn, secondColumn in (addName ? {'name': hasAddressee ? 'nameAddressee' : ''} : {})|merge({'location': 'signature'}) %}
+        <div style="margin-top: 100px; display: flex">
+            <div style="{{ firstCol }}">
+                <i class="{{ textPreview }}">{{ (tempPrefix~firstColumn)|trans([],'pdf') }}</i>
+            </div>
+            {% if secondColumn is not same as '' %}
+                <div style="{{ secondCol }}">
+                    <i class="{{ textPreview }}">{{ (tempPrefix~secondColumn)|trans(addresseeParam,'pdf') }}</i>
+                </div>
+            {% endif %}
         </div>
-    {% endif %}
-    <div style="{{ topMargin }} display: flex">
-        <div style="{{ style~width }}">
-            <i class="{{ textPreview }}">{{ 'signature.location'|trans([],'pdf') }}</i>
-        </div>
-        <div style="{{ style }} margin-left: {{ savePDF ? '200px' : '100px' }}; min-width: 30%; max-width: 50%">
-            <i class="{{ textPreview }}">{{ 'signature.signature'|trans({'addressee': addressee},'pdf') }}</i>
-        </div>
-    </div>
+    {% endfor %}
 {% endmacro %}
 
 {% macro addLine() %}
@@ -105,6 +105,6 @@
         singleDocsHint: translated hint
     #}
     {% if singleDocsHint is not same as '' %}
-        <div class="pdfOral" style="font-weight: bold">{{ singleDocsHint }}</div>
+        <div class="pdfOral bold">{{ singleDocsHint }}</div>
     {% endif %}
 {% endmacro %}

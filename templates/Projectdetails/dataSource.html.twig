@@ -95,8 +95,10 @@
                     {% endif %}
                 </div>
                 {# data source procedure #}
+                {% set tempPrefix = translationPrefix~'dataSourceProcedure.' %}
                 <div class="mt-8" id="dataSourceProcedure">
-                    {{ formRender.addHeading(translationPrefix~'dataSourceProcedure.title') }}
+                    {{ formRender.addHeading(tempPrefix~'title') }}
+                    <div class="MetaData-Label">{{ (tempPrefix~'hint')|trans|raw }}</div>
                     {{ formRender.addTextfield(content.dataSourceProcedure,heightParam) }}
                 </div>
                 {# restriction #}
@@ -118,17 +120,18 @@
                     <div class="MetaData-Widget">
                         {% for type in legitimizationTypes %}
                             {% set isNotNew, checkbox, text = type is not same as 'consentNew', content[type], type~'Text' %}
-                            <div style="{{ topMarginButtons }}" {{ stimulus_action('base','setVisibility','change',{'multi': [[type,isNotNew ? text~'Div' : (hasDocs ? pdfDiv : [])]]}) }}>
+                            <div class="topMarginButtons" {{ stimulus_action('base','setVisibility','change',{'multi': [[type,isNotNew ? text~'Div' : (hasDocs ? pdfDiv : [])]]}) }}>
                                 {{ formRender.addCheckbox(checkbox) }}
                                 {% if isNotNew %}
                                     {{ formRender.addTextfield(content[text],fontNormal|merge({'visibility': checkbox.vars.checked, 'attributes': {'style': 'margin-bottom: 1rem'}})) }}
+                                {% elseif hasDocs %}
+                                    <div id="{{ pdfDiv }}" class="mt-2 mb-3" style="{{ boolToDisplay(content.consentNew.vars.checked) }}">
+                                        {{ formRender.addHint(tempPrefix~'pdf') }}
+                                    </div>
                                 {% endif %}
                             </div>
                         {% endfor %}
                     </div>
-                    {% if hasDocs %}
-                        {{ formRender.addHint(tempPrefix~'pdf',{'id': pdfDiv, 'visible': content.consentNew.vars.checked}) }}
-                    {% endif %}
                 </div>
                 {# data source identification #}
                 {{ formRender.renderButtons(content.dataSourceIdentification,{'hint': [translationPrefix~'dataSourceIdentification.'], 'addDiv': ['dataSourceIdentification']}) }}

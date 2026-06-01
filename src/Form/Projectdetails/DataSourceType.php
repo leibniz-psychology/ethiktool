@@ -47,7 +47,7 @@ class DataSourceType extends TypeAbstract
             $this->addFormElement($builder,self::dataSetPDF,'checkbox',$translationPrefix.self::dataSetNode.'.pdf');
         }
         // data source procedure
-        $this->addFormElement($builder,self::dataSourceProcedureNode,'textarea',hint: $translationPrefix.self::dataSourceProcedureNode.'.'.self::textHint);
+        $this->addFormElement($builder,self::dataSourceProcedureNode,'textarea');
         // restriction
         $tempPrefix = $translationPrefix.self::restrictionNode.'.';
         $this->addRadioGroup($builder,self::restrictionNode,self::restrictionTypes,$tempPrefix.'title',self::restrictionNode.self::descriptionCap,$tempPrefix.'hints.'.self::textHint);
@@ -76,11 +76,8 @@ class DataSourceType extends TypeAbstract
     {
         $forms = iterator_to_array($forms);
         $tempArray = $viewData[self::originNode];
-        $origin = $tempArray[self::chosen];
-        $forms[self::originNode]->setData($origin);
-        if ($origin===self::originExisting) {
-            $this->setSelectedCheckboxes($forms,$tempArray[self::originSourcesNode],array_combine(self::originSourcesTypes,$this->createPrefixArray(self::originSourcesTypes)));
-        }
+        $forms[self::originNode]->setData($tempArray[self::chosen]);
+        $this->setSelectedCheckboxes($forms,$tempArray[self::originSourcesNode] ?? '',$this->combinePrefixArray(self::originSourcesTypes));
         if (array_key_exists(self::dataSourceVotesNode,$viewData)) {
             // votes
             $votesArray = $viewData[self::dataSourceVotesNode];
@@ -93,7 +90,7 @@ class DataSourceType extends TypeAbstract
                 // result
                 $tempArray = $votesArray[self::dataSourceResultNode];
                 $forms[self::dataSourceResultNode]->setData($tempArray[self::chosen]);
-                $this->setSelectedCheckboxes($forms,$tempArray[self::committeeResultPositiveNode] ?? '',[self::committeeResultPositiveOther => $this->appendText(self::committeeResultPositiveOther)]); // further question for positive vote
+                $this->setSelectedCheckboxes($forms,$tempArray[self::committeeResultPositiveNode] ?? '',$this->createPrefixArray(self::committeeResultPositiveOther)); // further question for positive vote
                 $forms[self::dataSourceResultNode.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode)); // description for negative or no vote
                 // checkbox if negative vote
                 $forms[self::committeeResultNegativeNode]->setData(($tempArray[self::committeeResultNegativeNode] ?? '')==='1');
@@ -147,7 +144,7 @@ class DataSourceType extends TypeAbstract
         $originSources = [];
         $hasFurtherQuestions = false; // gets true if further questions after the votes questions are asked
         if ($origin===self::originExisting) {
-            $originSources = $this->getSelectedCheckboxes($forms,self::originSourcesTypes,array_combine(self::originSourcesTypes,$this->createPrefixArray(self::originSourcesTypes)));
+            $originSources = $this->getSelectedCheckboxes($forms,self::originSourcesTypes,$this->combinePrefixArray(self::originSourcesTypes));
             $tempArray[self::originSourcesNode] = $originSources;
             $hasFurtherQuestions = true;
         }
@@ -170,7 +167,7 @@ class DataSourceType extends TypeAbstract
                 $tempVal = $forms[self::dataSourceResultNode]->getData();
                 $tempArray = [self::chosen => $tempVal];
                 if ($tempVal===self::dataSourceResultPositive) { // further question for positive vote
-                    $tempArray[self::committeeResultPositiveNode] = $this->getSelectedCheckboxes($forms,self::committeeResultPositiveTypes,[self::committeeResultPositiveOther => $this->appendText(self::committeeResultPositiveOther)]);
+                    $tempArray[self::committeeResultPositiveNode] = $this->getSelectedCheckboxes($forms,self::committeeResultPositiveTypes,$this->createPrefixArray(self::committeeResultPositiveOther));
                 } elseif (in_array($tempVal,[self::dataSourceResultNegative,self::dataSourceResultNoVote])) { // description for negative or no vote
                     $tempArray[self::descriptionNode] = $forms[self::dataSourceResultNode.self::descriptionCap]->getData();
                 }

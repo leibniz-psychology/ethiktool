@@ -4,7 +4,7 @@
 {% block content %}
     {% set translationPrefix, noCompensation, typesWoNo, compensationController, isTextInput, transferParam, isTransfer = 'projectdetails.pages.compensation.', 'noCompensation', types|slice(1), 'Projectdetails--compensation', textInput is not same as '', {'transfer': [transferInfo,addresseeType]}, transferInfo[0] is not same as '' %}
     {% set hasDescription, hasAwarding, markInputParam, markInputClassParam = content.moneyValue is defined, content.moneyawarding is defined, {'markInput': isTransfer}, isTransfer ? addClass('markInput',true) : {} %}
-    {% set selection, margins, widthStyle, terminatePrefix, addresseeTypeParam, hintParams = getAnySelected(content,types,noCompensation), 'margin-right: 0.2rem; margin-left: 0.2rem; ', 'width: fit-content;', translationPrefix~'terminate.textHint', {'addressee': addresseeType}, {'target': [compensationController,'textInput'], 'remove': true} %}
+    {% set selection, margins, terminatePrefix, addresseeTypeParam, hintParams = getAnySelected(content,types,noCompensation), 'margin-right: 0.2rem; margin-left: 0.2rem; ', translationPrefix~'terminate.textHint', {'addressee': addresseeType}, {'target': [compensationController,'textInput'], 'remove': true} %}
     {% set noSelected, anySelected, valueStyle, flexCenter, inputMargins = selection[0], selection[1], addStyle('width: 6rem; height: 1.75rem; '~margins), 'flex align-items-center', 'margin-left: -1.5rem; margin-right: -1.5rem' %}
     <div {{ stimulus_controller(compensationController,{
             'compensationTypes': typesWoNo
@@ -17,7 +17,7 @@
                 {% set name, amountDiv = widget.vars.name, compensation~'Amount' %} {# amountDiv only needed for money and houres #}
                 {{ form_widget(widget, {'id': name, 'attr': checkInput|merge(isCompensation and noSelected or (not isCompensation and anySelected) ? addDisableTarget() : {})}) }}
                 {% if compensation is not same as 'money' %}
-                    {{ form_label(widget,null,addLabelAttributes(checkLabel|merge(addStyle(widthStyle)))|merge({'id': name})) }}
+                    {{ form_label(widget,null,addLabelAttributes(checkLabel|merge(addStyle('width: fit-content')))|merge({'id': name})) }}
                     {% if isCompensation and hasDescription %}
                         <div id="{{ description~'Div' }}"  style="margin-top: -1rem">{{ formRender.addTextfield(content[description],markInputParam) }}</div>
                         {% if compensation is same as 'hours' %}
@@ -37,7 +37,7 @@
                     {% endif %}
                 {% else %}
                     {% set tempPrefix = typePrefix~'money' %}
-                    <label class="CheckBox-Label flex flex-wrap" for="{{ name }}" style="{{ widthStyle }}">
+                    <label class="CheckBox-Label flex flex-wrap fitWidth" for="{{ name }}">
                         {{ tempPrefix|trans }}
                         {% if hasDescription %}
                             {# value #}
@@ -112,7 +112,7 @@
                                         {% set value = vars.value %}
                                         {% set isLater, isExternal, typeValue = value is same as 'later', value is same as 'external', type~value %}
                                         {% set isLaterDeliver, typeValueParam = isLater or value is same as 'deliver', {'id': typeValue} %}
-                                        <div {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>
+                                        <div {% if loop.index>1 %} class="topMarginButtons" {% endif %}>
                                             {{ form_widget(option,typeValueParam|merge(addClass('RadioButton-Input',true))) }}
                                             {{ form_label(option,null,typeValueParam|merge(addLabelAttributes(addClass('RadioButton-Label minAutoGrid me-0')))|merge({'label_html': true})) }}
                                             {% if isLaterDeliver %}
@@ -153,15 +153,17 @@
                 </div>
             {% endif %}
             {# compensation voluntary #}
-            {% set voluntary, tempPrefix = content.compensationVoluntary, translationPrefix~'compensationVoluntary.' %}
-            {{ formRender.renderButtons(voluntary,{
-                'stim': ['base','setVisibility',{'values': [['0','compensationVoluntaryDescriptionDiv']]}],
-                'hint': [tempPrefix],
-                'text': [content.compensationVoluntaryDescription,fontNormal|merge({
-                    'visibility': voluntary.vars.value is same as '0',
-                    'hint': tempPrefix~'textHint',
-                    'textHintParams': {'isNotPre':  boolToString(information not in ['','pre'])} })],
-                'addDiv': ['compensationVoluntary']}) }}
+            {% set tempPrefix, typesWoNo = translationPrefix~'compensationVoluntary.', voluntaryTypes|slice(0,(voluntaryTypes|length)-1) %}
+            {% set iconPrefix, selection = tempPrefix~'icons.', getAnySelected(content,voluntaryTypes,'no') %}
+            <div class="mt-8" id="compensationVoluntary">
+                {{ formRender.addHeading(tempPrefix~'title',{'params': {'isNotPre': boolToString(information not in ['pre',''])}}) }}
+                <div class="MetaData-Widget mt-2" {{ stimulus_action('base','setMultiCheckbox','change',{'single': 'no', 'multiCheck': typesWoNo}) }}>
+                    {{ formRender.addCheckboxGroup(content,voluntaryTypes,{
+                        'other': ['compensationVoluntaryOther'],
+                        'icons': {'amount': iconPrefix~'amount', 'income': iconPrefix~'income'}}|
+                        merge(true in selection ? {'targets': selection[0] ? typesWoNo : ['no']} : {})) }}
+                </div>
+            </div>
             {# further description #}
             {% if content.furtherDescription is defined %}
                 <div class="mt-8" id="furtherDescriptionDiv">

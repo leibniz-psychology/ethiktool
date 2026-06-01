@@ -1,11 +1,11 @@
 {% import 'macros.html.twig' as formRender %}
 {% set isFilename, modalID, loadModalID = content['fileName']['titleValue'] is not empty, 'newFormModal', 'loadModal' %} {# isFilename: true if an application is open #}
-{% set buttonWidth, isNewForm = 'width: 16rem; justify-self: center', activeRoute is same as 'app_newForm' %}
+{% set buttonClasses, buttonWidth, isNewForm = 'NavBar mt-8 justifyCenter', 'width: 16rem', activeRoute is same as 'app_newForm' %}
 {# width must sum up to 100% with the two divs in threeColumns #}
-<div class="border rounded-lg shadow-sm sticky top-0 bg-mono-50 overflow-hidden" id="sidebar" style="height: fit-content; min-width: min-content; max-width: max-content; width: 20%" {{ stimulus_target('base','sidebar') }}>
+<div class="border rounded-lg shadow-sm sticky top-0 bg-mono-50 overflow-hidden fitHeight" id="sidebar" style="min-width: min-content; max-width: max-content; width: 20%" {{ stimulus_target('base','sidebar') }}>
     {# filename and project title #}
     {% for key, value in content %}
-        <div class="MetaData-Label gap-x-4 {% if not isFilename%} px-2 {% endif %}" style="display: flex">
+        <div class="MetaData-Label gap-x-4 d-flex {% if not isFilename%} px-2 {% endif %}">
             <div class="whitespace-nowrap">{{ value['title'] }}</div>
             {% set title = value['titleValue']  %}
             {% if key is same as 'projectTitle' and (title|length)>50 %}
@@ -15,7 +15,7 @@
         </div>
     {% endfor %}
     {# new form, load form, save #}
-    <div class="NavBar mt-8" style="{{ buttonWidth }}">
+    <div class="{{ buttonClasses }}" style="{{ buttonWidth }}">
         <a class="Button_primary_act {% if isNewForm %} a_disabled {% endif %}" {% if not isNewForm %} {% if isFilename %} data-bs-toggle="modal" data-bs-target="#{{ modalID }}" {% endif %} href="{{ path('app_newForm') }}" {% endif %} onclick="{{ addTracking('Button Sidebar','New Form') }}">{{ 'pages.newForm'|trans }}</a>
         <button class="Button_primary_act" type="button" {{ stimulus_target('base','load') }} {% if isNewForm %} disabled {% elseif isFilename %} data-bs-toggle="modal" data-bs-target="#{{ loadModalID }}" {% else %} {{ stimulus_action('base','setDummySubmit','click') }} {% endif %} onclick="{{ addTracking('Button Sidebar','Load Form') }}">{{ 'navBar.loadForm'|trans }}</button>
         {{ formRender.addSaveButton(not isFilename,true) }}
@@ -31,13 +31,13 @@
             {% if contributors.error ?? false %}
                 <span {% if not isContributors%} style="margin-top: 0.75rem;" {% endif %}>{{ include('images/exclamation.svg') }}</span>
             {% endif %}
-            <a class="mx-0 mt-2 dropdownNav flex {% if isNotContributors %}StudyNav-NavItem Button_navigation {% elseif isContributors %}StudyNav-NavItem_active{% elseif not isFilename %}NavBarMain{% endif %}"
+            <a class="mx-0 mt-2 dropdownNav flex fitWidth {% if isNotContributors %}StudyNav-NavItem Button_navigation {% elseif isContributors %}StudyNav-NavItem_active{% elseif not isFilename %}NavBarMain{% endif %}"
                nosubpage
                {% if isNotContributors %}
                    href="{{ path(label) }}"
                    {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_contributors'}) }}
                {% endif %}
-               style="width: fit-content; {% if not isFilename %} color: black; pointer-events: none;{% endif %} {% if isContributors %} margin-top: 0 !important;{% endif %}"
+               style="{% if not isFilename %} color: black; pointer-events: none;{% endif %} {% if isContributors %} margin-top: 0 !important;{% endif %}"
             >
                 {{ 'pages.contributors.contributors'|trans }}
             </a>
@@ -45,15 +45,15 @@
         {{ _self.createSideMenu(windows.Projectdetails,isFilename,activeRoute,routeParams,0,anyError,isActiveProjectdetails,true,false,isMultiple) }}
     </div>
     {# check document #}
-    <button class="Button_primary_go NavBar mt-8" style="{{ buttonWidth }}" {% if isFilename %} {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_checkDoc'}) }} {% else %}disabled {% endif %} onclick="{{ addTracking('Button Sidebar','Check Document') }}">{{ 'navBar.checkDoc'|trans }}</button>
+    <button class="Button_primary_go {{ buttonClasses }}" style="{{ buttonWidth }}" {% if isFilename %} {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_checkDoc'}) }} {% else %}disabled {% endif %} onclick="{{ addTracking('Button Sidebar','Check Document') }}">{{ 'navBar.checkDoc'|trans }}</button>
     {# single documents and complete form #}
-    <div class="NavBar mt-8" style="{{ buttonWidth }}">
+    <div class="{{ buttonClasses }}" style="{{ buttonWidth }}">
         <button type="button" class="Button_primary_act" name="documents" {% if isFilename %} {{ stimulus_action('base','saveUndoDocuments','click') }} {% else %} disabled {% endif %} onclick="{{ addTracking('Button Sidebar','Single Documents') }}">{{ formRender.addButtonIcon('navBar.documents','pdf') }}</button>
         <button type="submit" class="Button_primary_go" {% if not (isFilename and isComplete) %} disabled {% else %} {{ stimulus_action('base','setDummySubmit','click',{'url': 'app_completeForm'})}} {% endif %} onclick="{{ addTracking('Button Sidebar','Complete Form') }}">{{ formRender.addButtonIcon('navBar.completeForm','pdf') }}</button>
     </div>
     {# program information and quit #}
     {% set quitModalID = 'quitModal' %}
-    <div class="NavBar mt-8 mb-2" style="{{ buttonWidth }}">
+    <div class="{{ buttonClasses }} mb-2" style="{{ buttonWidth }}">
         <button type="button" class="Button_primary_go" id="quit" name="quit" {% if isFilename %}data-bs-toggle="modal" data-bs-target="#{{ quitModalID }}" {% else %} {{ stimulus_action('base','setDummySubmit','click')}} {% endif %} onclick="{{ addTracking('Button Sidebar','Quit') }}">{{ formRender.addButtonIcon('navBar.quit','quit') }}</button>
     </div>
 </div>
@@ -99,12 +99,12 @@
                 {% if route.error ?? false %}
                     <span class="{% if isCurrentActive and not isActiveLanding or not hasSubPages %} mt-0 {% elseif isCurrentActive and (isActiveLanding and isLevel0 or not isMultiple and isLevel1) %} mt-2 {% else %} mt-1 {% endif %}">{{ include('images/exclamation.svg') }}</span>
                 {% endif %}
-                <a class="flex link {% if isFilename %} StudyNav-NavItem {% if isSmallSpace %} py-0 {% endif %} {% if isCurrentActive %} StudyNav-NavItem_active border-bottom-0 my-1 {% else %} Button_navigation {% endif %} {% endif %}"
+                <a class="flex link fitWidth {% if isFilename %} StudyNav-NavItem {% if isSmallSpace %} py-0 {% endif %} {% if isCurrentActive %} StudyNav-NavItem_active border-bottom-0 my-1 {% else %} Button_navigation {% endif %} {% endif %}"
                    {% if isFilename and isRoute and (not isCurrentActive or isLanding) %}
                         href="{{ path(curRoute,routeIDs) }}"
                         {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': curRoute}|merge(hasSubPages ? {'page': isProjectdetails ? 'Projectdetails' : 'AppData'} : {})) }}
                    {% endif %}
-                    style="width: fit-content; {% if isProjectdetails and isLevel1 and isMultiple %} font-size: 0.75rem; {% endif %} {% if not isRoute or not isFilename %}color: black; pointer-events: none;{% endif %}"
+                    style="{% if isProjectdetails and isLevel1 and isMultiple %} font-size: 0.75rem; {% endif %} {% if not isRoute or not isFilename %}color: black; pointer-events: none;{% endif %}"
                    {% if not hasSubPages %}
                         nosubpage
                    {% endif %}

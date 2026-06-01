@@ -12,7 +12,7 @@
             {% for widget in infos %}
                 {% set isPosition, isProfessorship, curWidget = widget is same as 'position', widget is same as 'professorship', content[widget] %}
                 {% set isIcon = widget in ['name','institution','professorship']  %}
-                <div class="grid" style="justify-content: end; {% if isIcon %} grid-template-columns: auto min-content; {% else %} text-align: end;{% endif %}" {% if widget is same as 'institution' or widget is same as 'phone' %} {{ stimulus_target(contributorsController,widget~'Label') }} {% endif %}>
+                <div class="grid justify-content-end" style="{% if isIcon %} grid-template-columns: auto min-content; {% else %} text-align: end;{% endif %}" {% if widget is same as 'institution' or widget is same as 'phone' %} {{ stimulus_target(contributorsController,widget~'Label') }} {% endif %}>
                     {{ (infosPrefix~widget)|trans~':' }}
                     {% if isIcon %}
                         {{ formRender.addIcon((infosPrefix~widget~'Hint')|trans, isProfessorship ? content.position.vars.value in ['student','phd'] : true, isProfessorship ? [contributorsController,'professorshipIcon'] : []) }}
@@ -34,8 +34,7 @@
             {% endfor %}
         </div>
         {# tasks #}
-        {% set translationPrefix, span2 = 'contributors.tasks.', 'grid-column: span 2' %}
-        {% set hintPrefix = translationPrefix~'hints.' %}
+        {% set translationPrefix = 'contributors.tasks.' %}
         <div class="mt-4">
             <div class="MetaData-Label">{{ (translationPrefix~'title')|trans }}</div>
             <div class="MetaData-Label hint" {{ stimulus_target(contributorsController,'taskHint') }}></div> {# text is set in controller #}
@@ -43,12 +42,12 @@
                 <div {{ stimulus_action(contributorsController,'setTasks','change') }}>
                     {% for widget in tasks %}
                         {% set curWidget = content[widget] %}
-                        {% set params, addIcon = {'id': curWidget.vars.name, checkInput}, widget in tasksMandatory %}
-                        <div class="flex" {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}> {# no addCheckbox because of additional attributes #}
+                        {% set params = {'id': curWidget.vars.name, checkInput} %}
+                        <div class="flex {% if loop.index>1 %} topMarginButtons {% endif %}"> {# no addCheckbox because of additional attributes #}
                         {{ form_widget(curWidget,params|merge({'attr': checkInput|merge(widget is same as 'other' ? addTarget(contributorsController,'taskOther') : {})})) }}
                         {{ form_label(curWidget,null, params|merge(addLabelAttributes(checkLabel|merge(addStyle('vertical-align: unset'))))) }}
-                        {% if addIcon %}
-                            <div>{{ formRender.addIcon((hintPrefix~'mandatory')|trans~(widget is same as 'data' ? (hintPrefix~'responsibility')|trans)) }}</div>
+                        {% if widget in tasksMandatory %}
+                            <div>{{ formRender.addIcon((translationPrefix~'hints.mandatory')|trans({'type': widget})|raw) }}</div>
                         {% endif %}
                         </div>
                     {% endfor %}

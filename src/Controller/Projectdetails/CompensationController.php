@@ -71,6 +71,7 @@ class CompensationController extends ControllerAbstract
                 ['types' => self::compensationTypes,
                  'textInput' => $textInput,
                  'laterDate' => ['date' => $date],
-                 'otherHints' => [$this->translateString($tempPrefix),$this->translateString($tempPrefix.'Optional')]]),'projectdetails.compensation',true));
+                 'otherHints' => [$this->translateString($tempPrefix),$this->translateString($tempPrefix.'Optional')],
+                 'voluntaryTypes' => self::compensationVoluntaryTypes]),'projectdetails.compensation',true));
     }
 }

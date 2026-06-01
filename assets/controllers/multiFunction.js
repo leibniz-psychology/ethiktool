@@ -15,14 +15,40 @@ export function setElementVisibility(id,visible,display = 0) {
     id.style.display = visible ? (display===1 ? 'grid' : (display===2 ? 'flex' : 'block')) : 'none';
 }
 
+/** Opens a modal with three buttons 'save and continue', 'continue without saving' and 'undo'.
+ * @param modal modal to be shown
+ */
+export function saveUndoModal(modal) {
+    let id = modal.id;
+    modal = showModal(modal);
+    document.getElementById(id+'Button').addEventListener('click', () => { // may be added several times if modal is shown multiple times
+        modal.hide();
+    });
+    let middleButton = document.getElementById(id+'ButtonMiddle');
+    middleButton.addEventListener('click',() => { // may be added several times if modal is shown multiple times
+        modal.hide();
+    });
+    middleButton.nextElementSibling.addEventListener('click', clickUndo); // use callback to prevent adding the listener multiple times
+}
+
+/**
+ * Clicks the 'undo' button.
+ */
+function clickUndo() {
+    document.getElementsByName('undo')[0].click();
+}
+
 /** Opens a modal. If the passed argument is an event, it must have a parameter 'target' indicating the id of the modal.
- * @param element Either the target modal or an event
+ @param element Either the target modal or an event
+ * @returns {Modal} the modal
  */
 export function showModal(element) {
     if (element.target!==undefined) { // element is an event
         element = document.getElementById(element.params.target);
     }
-    (new Modal(element)).show();
+    let modal = new Modal(element);
+    modal.show();
+    return modal;
 }
 
 /** Counts the number of checked buttons.

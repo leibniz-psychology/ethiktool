@@ -18,13 +18,13 @@
             {{ render(controller('App\\Controller\\NavigationController::showNavigation', {'request': request})) }}
             {{ include('components/infoModal.html.twig',{'modalID': 'xmlLoad', 'targetName': 'xmlModal', 'prefix': 'multiple.loadMessage.failure.', 'params': {'type': 'xml'}}) }}
             {# content #}
-            <div class="{{ classes }} bg-mono-50" style="width: {{ isPreview ? '45%' : '80%' }}; height: fit-content" id="content" {{ stimulus_target('base','content') }}>
+            <div class="{{ classes }} bg-mono-50 fitHeight" style="width: {{ isPreview ? '45%' : '80%' }}" id="content" {{ stimulus_target('base','content') }}>
                 {% block groupMeasureTitle %}
                     {% if multipleStudyGroupMeasure ?? false %}
                         <div class="m-0">
                             {% for type, values in {'study': [studyID,studyName], 'group': [groupID,groupName], 'measureTimePoint': [measureID,measureName]} %}
                                 {% set name = values[1] %}
-                                <div class="flex {% if type is not same as 'study' %} mt-2 {% endif %}" style="width: fit-content">
+                                <div class="flex fitWidth {% if type is not same as 'study' %} mt-2 {% endif %}">
                                     {{ ('projectdetails.headings.'~type)|trans|capitalize~' '~values[0]~(name is not same as '' ? ' ('~name~')') }}
                                 </div>
                             {% endfor %}

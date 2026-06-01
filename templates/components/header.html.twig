@@ -29,7 +29,7 @@
     </div>
     <header style="{{ background}} height: 150px">
         <div class="HeaderBackground winWidth" style="height: 150px">
-            <div style="width: fit-content">
+            <div class="fitWidth">
                 <a href="/{{ curLocale }}" id="header" class="block mx-auto sm:w-full font-serif text-5xl text-white whitespace-nowrap" {% if committeeType is not same as '' and route is not same as 'app_quit' or route is same as 'app_newForm' %} {{ stimulus_action('base','setDummySubmit','click') }} {% endif %}>
                     <span class="font-semibold font-serif">{{ 'main.title'|trans }}</span>
                 </a>
@@ -38,7 +38,7 @@
     </header>
     <div style="{{ background }}">
         {% set isUpdate = update is not same as '' %}
-        <div class="{{ flexRowClasses }} mx-auto bg-white flex-wrap winWidth" style="{{ maxWidth }} min-height: 48px; max-height: max-content; justify-content: center">
+        <div class="{{ flexRowClasses }} mx-auto bg-white flex-wrap winWidth justify-content-center" style="{{ maxWidth }} min-height: 48px; max-height: max-content">
             <span class="m-1 {% if isUpdate %} borderHint {% endif %}" style="border-color: red !important; color: red; text-align: center; width: 100%">{{ isUpdate ? (('header.update.'~update)|trans)|nl2br }}</span>
         </div>
     </div>

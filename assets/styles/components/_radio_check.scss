@@ -24,9 +24,8 @@
 
 .CheckBox-Label,
 .RadioButton-Label {
-  @apply items-center mt-1.5 gap-1;
+  @apply items-center mt-1.5 gap-1 fitWidth;
   margin-right: 0.25rem;
-  width: fit-content;
 
   &::before {
     @apply relative self-start w-4 h-4 mr-1.5 bg-white border border-solid border-mono-700 mb-px;

@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import {setElementVisibility, setHint, showModal} from "../multiFunction";
+import {closeModal, saveUndoModal, setElementVisibility, setHint, showModal} from "../multiFunction";
 
 export default class extends Controller {
 
@@ -143,11 +143,7 @@ export default class extends Controller {
             if (modalID!=='' && (!isShortDocs || modalID==='shortShort')) {
                 let modal = document.getElementById(modalID);
                 if (modal!==null) { // if no information is given, modal may not exist
-                    showModal(document.getElementById(modalID));
-                    let button = document.getElementById(modalID+'Button');
-                    button.addEventListener('click', () => {
-                        button.nextElementSibling.click(); // close the modal
-                    });
+                    saveUndoModal(modal);
                 }
             }
         }

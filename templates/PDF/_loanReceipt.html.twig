@@ -4,7 +4,7 @@
 {% block pdfBody %}
     {% set prefix, style, textPreview = 'loanReceipt.', 'margin-top: 2em; page-break-inside: avoid', not savePDF ? 'previewSmall' %}
     {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
-    <div class="pdfHeading" style="font-weight: bold; font-size: {{ not savePDF ? 'medium' : 'large' }}; margin-left: 0; margin-bottom: 2em">
+    <div class="pdfHeading bold" style="font-size: {{ not savePDF ? 'medium' : 'large' }}; margin-left: 0; margin-bottom: 2em">
         {{ heading|raw }}
     </div>
     {# legal hints #}
@@ -23,7 +23,7 @@
     {# confirmation and table of devices #}
     <i class="{{ textPreview }}">{{ confirm|raw|nl2br }}</i>
     <table class="{{ 'tableHeight'~(not savePDF ? 'Preview') }}" style="margin-bottom: 2em; margin-top: 20px; width: 100%; border-spacing: 0; border-collapse: collapse">
-        <tr class="{{ textPreview }}" style="font-weight: bold">
+        <tr class="{{ textPreview }} bold">
             <td>{{ (prefix~'device')|trans }}</td>
             <td >{{ (prefix~'period')|trans }}</td>
         </tr>

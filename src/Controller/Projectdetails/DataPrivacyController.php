@@ -246,7 +246,7 @@ class DataPrivacyController extends ControllerAbstract
                  'personalKeepTypes' => self::personalKeepTypes,
                  'iconArrayPersonalKeep' => $iconArrayPersonalKeep,
                  'purposeResearchTypes' => array_combine(self::purposeResearchTypes,self::purposeResearchTypes),
-                 'purposeFurtherTypes' => array_combine(self::purposeFurtherTypes,$this->prefixArray(self::purposeFurtherTypes,self::purposeFurtherNode)),
+                 'purposeFurtherTypes' => $this->combinePrefixArray(self::purposeFurtherTypes,self::purposeFurtherNode),
                  'allPurposeTypes' => self::allPurposeTypes,
                  'iconArrayPurpose' => $iconTexts,
                  'iconArrayPurposeFurther' => $iconTextsFurther,

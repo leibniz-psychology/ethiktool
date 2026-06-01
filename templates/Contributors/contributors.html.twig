@@ -2,7 +2,7 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set contributorsController, hasSupervisor, numInfos, numTasks, autoRows, titlesPrefix, positionPrefix, hintsPrefix = 'Contributors--contributors', contributorsArray[1]['tasks']['supervision'] is defined, infos|length, tasks|length, 'grid-auto-rows: 2rem;', 'contributors.titles.', 'multiple.position.', 'contributors.tasks.hints.position.' %}
+    {% set contributorsController, hasSupervisor, numInfos, numTasks, autoRows, titlesPrefix, positionPrefix, hintsPrefix, classButtonHeight = 'Contributors--contributors', contributorsArray[1]['tasks']['supervision'] is defined, infos|length, tasks|length, 'grid-auto-rows: 2rem;', 'contributors.titles.', 'multiple.position.', 'contributors.tasks.hints.position.', 'Button_primary_act fitHeight' %}
     <div {{ stimulus_controller(contributorsController,{
             'committeeType': committeeParams['committeeType'],
             'contributors': contributorsArray|json_encode,
@@ -21,9 +21,9 @@
             <div class="grid align-items-center column-gap-2" style="grid-template-columns: repeat(2,min-content); {{ autoRows }}">
                 {% for index, contributor in contributorsArray %}
                     {% if not (index is same as 0 or index is same as 1 and hasSupervisor) %}
-                        <button type="button" class="Button_primary_act" style="grid-area: {{ loop.index+2 }} / 1; height: fit-content" id={{"remove"~(index) }} {{ stimulus_action(contributorsController,'removeContributor','click') }}>{{ include('images/delete.svg') }}</button>
+                        <button type="button" class="{{ classButtonHeight }}" style="grid-area: {{ loop.index+2 }} / 1" id={{"remove"~(index) }} {{ stimulus_action(contributorsController,'removeContributor','click') }}>{{ include('images/delete.svg') }}</button>
                     {% endif %}
-                    <button type="button" style="grid-area: {{ loop.index+2 }} / 2; height: fit-content" class="Button_primary_act" data-bs-id={{ "edit"~(index) }} data-bs-toggle="modal" data-bs-target="#formModal">{{ include('images/edit.svg') }}</button>
+                    <button type="button" style="grid-area: {{ loop.index+2 }} / 2" class="{{ classButtonHeight }}" data-bs-id={{ "edit"~(index) }} data-bs-toggle="modal" data-bs-target="#formModal">{{ include('images/edit.svg') }}</button>
                 {% endfor %}
             </div>
             {% set style = 'padding: 0.2rem; ' %}
@@ -42,13 +42,14 @@
                         {% set id, curInfo, isOther, isTask, curCol = task~index, curInfos[infos[loop.index0]] ?? '', task is same as 'other', task in curTasks|keys, loop.index %}
                         <div class="me-2" style="grid-area: {{ curRow }} / {{ curCol }}">{{ curInfo in positions|keys ? ('multiple.position.'~curInfo)|trans : curInfo }}</div>
                         <input id="{{ id }}" style="display: none" disabled>
-                        <label for="{{ id }}" {% if not isOther %} class="CheckBox-Label flex {% if isTask %} checkBoxChecked {% endif %}" disabled {% endif %} style="grid-area: {{ curRow }} / {{ curCol+numInfos }}; {% if not isOther %} justify-self: center{% endif %}">{{ isOther and isTask ? curTasks['other'] }}</label>
+                        <label for="{{ id }}" {% if not isOther %} class="CheckBox-Label flex {% if isTask %} checkBoxChecked {% endif %} {% if not isOther %} justifyCenter {% endif %}" disabled {% endif %} style="grid-area: {{ curRow }} / {{ curCol+numInfos }}">{{ isOther and isTask ? curTasks['other'] }}</label>
                     {% endfor %}
                 {% endfor %}
             </div>
         </div>
         <button type="button" class="Button_primary_act mt-2" style="margin-left: 0.3rem" data-bs-toggle="modal" data-bs-target="#formModal" data-bs-id="add">{{ include('images/add.svg') }}</button>
-        <div class="mt-4">{{ 'contributors.hint'|trans|raw }}</div>
+        {{ formRender.addSymbolHints(['add','edit','delete'],'contributors.symbols.',{'hasSupervisor': boolToString(hasSupervisor)},false) }}
+        <div class="mt-4">{{ 'contributors.hint'|trans(committeeParams)|raw }}</div>
         {{ formRender.addSubmitButtons() }}
         {% set prefix = 'contributors.buttons.' %}
         {{ include('components/formModal.html.twig',{modalTitle: '', modalBody: 'Contributors/addEditContributor.html.twig', leftButton: (prefix~'confirm')|trans, rightButton: (prefix~'cancel')|trans, footerError: (prefix~'error')|trans, targetCont: contributorsController, formTarget: 'modal', labelTarget: 'modalLabel', submitTarget: 'modalSubmit', footerTarget: 'modalFooter'}) }}

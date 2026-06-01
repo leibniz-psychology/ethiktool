@@ -327,6 +327,15 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
         }
     }
 
+    /** Creates an array with 'description' as key and $value suffixed by 'Text' as value.
+     * @param string $value value to be suffixed
+     * @return array key: 'description', value: $value suffixed by 'Text'
+     */
+    protected function createAppendArray(string $value = ''): array
+    {
+        return ['description' => $value.'Text'];
+    }
+
     /** Checks if a key exists in an array. If so, it returns the value, otherwise an empty string.
      * @param $array array array where the key is searched
      * @param $key string key to be searched

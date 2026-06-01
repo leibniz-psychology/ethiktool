@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import {getSelected, setElementVisibility, showModal} from "../multiFunction";
+import {getSelected, saveUndoModal, setElementVisibility, showModal} from "../multiFunction";
 
 export default class extends Controller {
 
@@ -12,15 +12,6 @@ export default class extends Controller {
     }
 
     connect() {
-        if (this.hasOriginModalTarget) {
-            this.originExistingTarget.addEventListener('click', () => {
-                showModal(this.originModalTarget);
-                let button = document.getElementById('originModalButton');
-                button.addEventListener('click', () => {
-                    button.nextElementSibling.click(); // close modal
-                })
-            });
-        }
         this.setDataSet();
     }
 
@@ -61,11 +52,13 @@ export default class extends Controller {
             this.researchTarget.checked && // research is selected
             (this.votesValue==='0' && this.resultNegativeTarget.checked && this.resultNegativeConfirmTarget.checked || // negative vote
              this.voteContributorsValue!=='' && this.getVoteContributors())); // no vote and vote contributors is confirmed or no
-        this.setFurther();
+        this.setFurther(false);
     }
 
-    /** Sets the visibility of the origin sources div and further div. */
-    setFurther() {
+    /** Sets the visibility of the origin sources div and further div.
+     * @param checkModal if true, the modal for changes from origin 'new' to 'existing' may be shown
+     * */
+    setFurther(checkModal = true) {
         let isExisting = this.originExistingTarget.checked;
         setElementVisibility(this.originSourcesTarget,isExisting);
         setElementVisibility(this.furtherTarget,
@@ -75,6 +68,9 @@ export default class extends Controller {
                   this.votesValue==='0' && (!this.resultNegativeTarget.checked || this.resultNegativeConfirmTarget.checked) || // no negative vote or confirmed
                   this.getVoteContributors() // no vote and vote contributors is confirmed or no
                   ));
+        if (checkModal && this.hasOriginModalTarget && isExisting) { // show modal if change from 'new' to 'existing'
+            saveUndoModal(this.originModalTarget);
+        }
     }
 
     // methods that are called from within this class

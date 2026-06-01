@@ -2,7 +2,7 @@
     {# Sets the start tag for a form. Input arguments:
        form: Form to be started
     #}
-    {{ form_start(form, {'attr': {'class': 'winWidth', 'novalidate': 'novalidate', 'style': 'display: grid; justify-self: center'}|merge(addTarget('base','form'))}) }}
+    {{ form_start(form, {'attr': {'class': 'winWidth grid', 'novalidate': 'novalidate', 'style': 'justify-self: center'}|merge(addTarget('base','form'))}) }}
 {% endmacro %}
 
 {% macro renderButtons(form, arguments = {}) %}
@@ -48,16 +48,16 @@
         {{ _self.addHint(hintKey~'headingHint',{'params': hint[1] ?? {}}) }}
     {% endif %}
     <div class="MetaData-Widget {% if isHint %} mt-2 {% endif %}">
-        <div style="width: fit-content"
+        <div class="fitWidth"
                 {% if stimVisible is not same as [] %} {{ stimulus_action('base','setVisibility','change',stimVisible) }} {% endif %}
                 {% if stim is not same as [] %} {{ stimulus_action(stim[0],stim[1],'change',stim[2] ?? {}) }} {% endif %}>
             {% for widget in form %}
                 {% set widgetName = formName~widget.vars.value %}
                 {% set isIcon = widgetName in iconKeys %}
-                <div class="grid" style="grid-template-columns: minmax(min-content,max-content) {% if isIcon %} min-content {% endif %}; {% if loop.index>1 %} {{ topMarginButtons }} {% endif %}">
+                <div class="grid {% if loop.index>1 %} topMarginButtons {% endif %}" style="grid-template-columns: minmax(min-content,max-content) {% if isIcon %} min-content {% endif %}">
                     {{ form_widget(widget,{'id': widgetName, 'attr': addClass('RadioButton-Input')|merge(widgetName is same as target ? addDisableTarget() : {})|merge(widgetName is same as contTarget ? addTarget(contTargetArray[1],contTargetArray[2]) : {})}) }}
-                    <label class="RadioButton-Label" style="display: inline-grid; grid-template-columns: min-content auto" for="{{ widgetName }}">
-                         <span style="width: fit-content">
+                    <label class="RadioButton-Label d-inline-grid" style="grid-template-columns: min-content auto" for="{{ widgetName }}">
+                         <span class="fitWidth">
                             {{ widget.vars.label|trans(labelParams) }}
                             {% if isIcon %}
                                 {{ _self.addIcon(iconArray[widgetName]|trans(labelParams)) }}
@@ -107,7 +107,7 @@
         {% set curWidget = form[widget] %}
         {% set id = curWidget.vars.name %}
         {% set isOther, isIcon = id in other, id in iconIDs %}
-        <div class="grid" style="grid-template-columns: repeat({{ isIcon ? 2 : 1 }},minmax(min-content,max-content)) max-content {% if loop.index>1 %}; {{ topMarginButtons }} {% endif %}" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[[id],[id~'Text']]], 'isGrid': true}) }} {% endif %}>
+        <div class="grid {% if loop.index>1 %} topMarginButtons {% endif %}" style="grid-template-columns: repeat({{ isIcon ? 2 : 1 }},minmax(min-content,max-content)) max-content" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[id,id~'Text']], 'isGrid': true}) }} {% endif %}>
             {{ _self.addCheckbox(curWidget, {
                 'labelParams': labelParams,
                 'disable': id in targets,
@@ -176,8 +176,8 @@
         <div class="borderLight {% if isTemplateClass %} mx-4 mt-3 {% endif %}" id="{{ name~'Count' }}" style="height: min-content; width: min-content; margin-right: 0.3rem; grid-column: {{ isTransfer ? 3 : 2 }}; {{ isVisible }}">
             <div>{{ 'multiple.charCount'|trans }}</div>
             {% set text = vars.value %}
-            <div style="justify-self: center" data-max-chars="{{ maxChars }}" {{ stimulus_target('base','charCount') }}>{{ text|trim|length-text|split('\n')|length+1 }}</div> {# color is set on load #}
-            <div style="justify-self: center">
+            <div class="justifyCenter" data-max-chars="{{ maxChars }}" {{ stimulus_target('base','charCount') }}>{{ text|trim|length-text|split('\n')|length+1 }}</div> {# color is set on load #}
+            <div class="justifyCenter">
                 {{ _self.addIcon('multiple.charCountHint'|trans) }}
             </div>
         </div>
@@ -198,7 +198,7 @@
     {% set target, vars, checkIcon = arguments.target ?? [], widget.vars, arguments.checkIcon ?? [] %}
     {% set widgetName = vars.name %}
     {{ form_widget(widget,({'id': widgetName}|merge({'attr': checkInput|merge((arguments.disable ?? false) ? addDisableTarget() : {})|merge(target is not same as [] ? addTarget(target[0],target[1]) : [])}))) }}
-    <label class="CheckBox-Label" style="display: inline-flex; flex-wrap: nowrap; {{ arguments.style ?? '' }}" for="{{ widgetName }}">
+    <label class="CheckBox-Label d-inline-flex" style="flex-wrap: nowrap; {{ arguments.style ?? '' }}" for="{{ widgetName }}">
         <span class="flex">
             {{ vars.label|trans(arguments.labelParams ?? {}) }}
             {% if checkIcon is not same as [] %}
@@ -293,7 +293,7 @@
         addressee: if provided (i.e., not an empty string), addressee for a sentence is added that the wording should be addressed to the addressee
     #}
     {% if transfer[0] is not same as '' %}
-        <span class="pdfInfo Label-Info" style="height: fit-content; white-space: initial; width: fit-content; margin-left: 0.3rem"><span style="font-weight: 400">{{ 'multiple.inputHint'|trans({'type': transfer[0]}|merge(transfer[1] is defined ? {'infoType': transfer[1]} : {}))~(addressee is not same as '' ? ' '~'multiple.wording'|trans({'addressee': ('projectdetails.addressee.thirdParties.'~addressee)|trans, 'isBold': 'false'})) }}</span></span>
+        <span class="pdfInfo Label-Info fitHeight fitWidth" style="white-space: initial; margin-left: 0.3rem"><span style="font-weight: 400">{{ 'multiple.inputHint'|trans({'type': transfer[0]}|merge(transfer[1] is defined ? {'infoType': transfer[1]} : {}))~(addressee is not same as '' ? ' '~'multiple.wording'|trans({'addressee': ('projectdetails.addressee.thirdParties.'~addressee)|trans, 'isBold': 'false'})) }}</span></span>
     {% endif %}
 {% endmacro %}
 
@@ -305,6 +305,23 @@
     <div class="flex mt-4 clickable bg-mono-200 mx-4" {{ stimulus_target('base','expandable') }}>
         <span class="dropdownCollapsed" style="height: 1.5rem"></span>
         {{ (text)|trans(params) }}
+    </div>
+{% endmacro %}
+
+{% macro addSymbolHints(symbols,translationPrefix,params = {},addClass = true) %}
+    {# Adds symbols with explanations. Input parameters:
+        symbols:           array with name of symbols to be added
+        translationPrefix: translation prefix for the title and the explanations
+        params:            translation parameters
+        addClass:          if true, the class 'MetaData-Label' will be added to the divs
+    #}
+    {% set class = addClass ? 'MetaData-Label' %}
+    <div class="{{ class }} mt-4">{{ (translationPrefix~'title')|trans(params)|raw|nl2br }}</div>
+    <div class="{{ class }} minAutoGrid gap-2">
+        {% for symbol in symbols %}
+            {{ include('images/'~symbol~'.svg') }}
+            {{ (translationPrefix~symbol)|trans(params) }}
+        {% endfor %}
     </div>
 {% endmacro %}
 
@@ -352,7 +369,7 @@
        visible: boolean whether the icon should be visible
        target:  array of two elements: name of stimulus controller and target name
     #}
-    <i class="Label-Info" style="{{ boolToDisplay(visible,1) }}; white-space: initial; width: fit-content; display: inline-grid; vertical-align: text-bottom" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: black; width: auto">{{ text|raw|nl2br }}</span></i>
+    <i class="Label-Info fitWidth d-inline-grid" style="{{ boolToDisplay(visible,1) }}; white-space: initial; vertical-align: text-bottom" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: black; width: auto">{{ text|raw|nl2br }}</span></i>
 {% endmacro %}
 
 {% macro addPreview(ids = {}, isComplete = false, firstPage = []) %}

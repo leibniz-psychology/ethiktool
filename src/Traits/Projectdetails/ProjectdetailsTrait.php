@@ -142,10 +142,16 @@ trait ProjectdetailsTrait
     protected const voluntaryNode = 'voluntary';
     protected const voluntaryConsentNo = 'no'; // must equal one value in $voluntaryTypes and one in $consentTypes
     protected const voluntaryTypes = ['projectdetails.pages.consent.voluntary.types.yes' => 'yes', 'projectdetails.pages.consent.voluntary.types.no' => 'no', 'projectdetails.pages.consent.voluntary.types.notApplicable' => 'notApplicable'];
-    protected const voluntaryYesDescription = 'voluntaryYesDescription';
+    protected const voluntaryEnsureNode = 'voluntaryEnsure';
+    protected const voluntaryEnsureTypes = ['relatable','absence','discuss','onetime','substitute','independent','voluntaryEnsureOther'];
+    protected const voluntaryEnsureTypesOther = ['substitute','voluntaryEnsureOther']; // values must equal the values in $voluntaryEnsureTypes
+    protected const voluntaryEnsureAbsence = 'absence'; // value must equal one value in $voluntaryEnsureTypes
+    protected const voluntaryEnsureOther = 'voluntaryEnsureOther'; // value must equal one value in $voluntaryEnsureTypes
+    protected const voluntaryEnsureDependent = ['absence','discuss']; // values must equal the values in $voluntaryTypes
+    protected const voluntaryEnsureClosed = ['substitute','independent']; // values must equal the values in $voluntaryEnsureTypes
     protected const voluntaryConsentNotApplicable = 'notApplicable'; // must equal one value in $voluntaryTypes and one in $consentTypes
+    protected const consentWritten = 'written'; // must equal one of the values in $consentTypes
     protected const consentOral = 'oral'; // must equal one of the values in $consentTypes
-    protected const consentTypesAny = ['written','digital','oral']; // must equal the values in $consentTypes; contains all types of consent where a consent gets created
     protected const consentTypesAll = ['written','digital','oral','other']; // must equal the values in $consentTypes; contains all types of consent where consent is given
     protected const consentOther = 'other'; // must equal one of the values in $consentTypes
     protected const consentTypes = ['projectdetails.pages.consent.consent.types.written' => 'written', 'projectdetails.pages.consent.consent.types.digital' => 'digital', 'projectdetails.pages.consent.consent.types.oral' => 'oral', 'projectdetails.pages.consent.consent.types.noConsent' => 'no', 'projectdetails.pages.consent.consent.types.notApplicable' => 'notApplicable', 'projectdetails.pages.consent.consent.types.other' => 'other'];
@@ -250,6 +256,10 @@ trait ProjectdetailsTrait
     protected const awardingOtherDescription = 'awardingOtherDescription'; // widget name of text field for awarding description of other compensation
     protected const compensationTextNode = 'furtherDescription';
     protected const compensationVoluntaryNode = 'compensationVoluntary';
+    protected const compensationVoluntaryTypes = ['amount','inequality','income','loss','compensationVoluntaryOther','no'];
+    protected const compensationVoluntaryLoss = 'loss'; // value must equal one value in $compensationVoluntaryTypes
+    protected const compensationVoluntaryOther = 'compensationVoluntaryOther'; // value must equal one value in $compensationVoluntaryTypes
+    protected const compensationVoluntaryNo = 'no'; // value must equal one value in $compensationVoluntaryTypes
     // texts
     protected const textsNode = 'texts';
     protected const introNode = 'intro';
@@ -265,7 +275,6 @@ trait ProjectdetailsTrait
     protected const conflictTextNode = 'conflictText';
     // legal
     protected const legalNode = 'legal';
-    protected const liabilityNode = 'liability';
     protected const apparatusNode = 'apparatus';
     protected const insuranceWayNode = 'insuranceWay';
     protected const legalTypes = ['liability','insurance','apparatus','insuranceWay']; // must equal the values of the preceding variables
@@ -465,16 +474,6 @@ trait ProjectdetailsTrait
             return in_array($preContent,self::preContentIncomplete) && $information[self::preComplete][self::chosen]=='0';
         }
         return false;
-    }
-
-    /** Adds a prefix to each element in the array.
-     * @param array $array array whose elements get prefixed
-     * @param string $prefix prefix to be added
-     * @return array $array with each element prefixed
-     */
-    protected function prefixArray(array $array, string $prefix): array
-    {
-        return substr_replace($array,$prefix,0,0);
     }
 
     // methods

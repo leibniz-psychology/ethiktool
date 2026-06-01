@@ -30,7 +30,7 @@ class DataSourceController extends ControllerAbstract
         if ($isLoadNew) {
             $tempPrefix = $projectdetailsPrefix.self::dataSourceNode.'.'.self::originNode.'.modal.';
             $buttonPrefix = $tempPrefix.'buttons.';
-            $modal = ['prefix' => $tempPrefix, 'modalWidth' => true, 'leftButton' => $buttonPrefix.'save', 'rightButton' => $buttonPrefix.'cancel', 'modalID' => 'originModal', 'link' => 'app_dataSource', 'params' => ['isMultiple' => $this->getStringFromBool($this->getMultiStudyGroupMeasure($appNode))], 'submitParams' => ['routeIDs' => $routeParams], 'routeParams' => $routeParams];
+            $modal = ['prefix' => $tempPrefix, 'modalWidth' => true, 'leftButton' => $buttonPrefix.'save', 'middleButton' => $buttonPrefix.'cancel', 'rightButton' => $buttonPrefix.'undo', 'middleCont' => false, 'modalID' => 'originModal', 'link' => 'app_dataSource', 'params' => ['isMultiple' => $this->getStringFromBool($this->getMultiStudyGroupMeasure($appNode))], 'submitParams' => ['routeIDs' => $routeParams], 'routeParams' => $routeParams];
         }
         $reviewProcess = $this->getCurrentReviewProcess($appNode);
         $hasDocs = !(str_contains($reviewProcess,self::reviewProcessShort) && in_array($this->getCommitteeType($session),self::reviewShortChoose) || str_contains($reviewProcess,'Requested'));
@@ -38,8 +38,19 @@ class DataSourceController extends ControllerAbstract
         $dataSource = $this->createFormAndHandleRequest(DataSourceType::class,$this->xmlToArray($dataSourceNode),$request,[self::dummyParams => ['isNotBegun' => !in_array($this->getCommitteeType($session),self::begunCommittees), 'hasDocs' => $hasDocs]]);
         if ($dataSource->isSubmitted()) {
             $submitDummy = $request->request->all()['data_source'][self::submitDummy];
-            if (str_contains($submitDummy,self::preview) && str_contains($submitDummy,'app_dataSource') && !str_contains($submitDummy,'#')) { // download xml file after origin has changed from 'new' to 'existing'
-                return $this->getDownloadResponse($session,getSecondLast: true);
+            if (str_contains($submitDummy,self::preview) && str_contains($submitDummy,'app_dataSource') && !str_contains($submitDummy,'#')) { // download xml file after origin has changed from 'new' to 'existing' or go to data source page of another time point
+                $isSame = true;
+                foreach (explode("\n",$submitDummy) as $type) {
+                    if (str_contains($type,'ID')) { // studyID, groupID, or measureID
+                        $split = explode(':',$type); // e.g., 'studyID:1'
+                        if ($routeParams[$split[0]]!==trim($split[1])) {
+                            $isSame = false;
+                        }
+                    }
+                }
+                if ($isSame) { // download xml file
+                    return $this->getDownloadResponse($session,getSecondLast: true);
+                }
             }
             $originNew = $this->getDataAndConvert($dataSource,$dataSourceNode)[self::originNode][self::chosen];
             [$appNodeNew,$measureNodeNew] = $this->getClonedMeasureTimePoint($appNode,$routeParams);

@@ -54,8 +54,7 @@ class BurdensRisksController extends ControllerAbstract
         $translationPrefix = 'projectdetails.pages.burdensRisks.';
         foreach ([self::burdensNode,self::risksNode] as $type) {
             $typeUC = ucfirst($type);
-            $types = array_diff($type===self::burdensNode ? self::burdensTypes : self::risksTypes,['no'.$typeUC,'other'.$typeUC]);
-            $iconArray[$type] = array_combine($types,$this->prefixArray($types,$translationPrefix.$type.'.hintsTypes.'));
+            $iconArray[$type] = $this->combinePrefixArray(array_diff($type===self::burdensNode ? self::burdensTypes : self::risksTypes,['no'.$typeUC,'other'.$typeUC]),$translationPrefix.$type.'.hintsTypes.');
         }
 
         $burdensRisks = $this->createFormAndHandleRequest(BurdensRisksType::class,$this->xmlToArray($burdensRisksNode),$request);

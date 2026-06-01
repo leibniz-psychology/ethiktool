@@ -98,7 +98,7 @@ class AppDataController extends ControllerAbstract
         $modals = [];
         $modalPrefix = self::coreDataNode.'.modal.';
         $tempPrefix = $modalPrefix.'buttons.';
-        $tempArray = ['prefix' => $modalPrefix, 'modalWidth' => true, 'link' => 'app_coreData', 'leftButton' => $tempPrefix.'save', 'rightButton' => $tempPrefix.'cancel'];
+        $tempArray = ['prefix' => $modalPrefix, 'modalWidth' => true, 'link' => 'app_coreData', 'leftButton' => $tempPrefix.'save', 'middleButton' => $tempPrefix.'cancel', 'rightButton' => $tempPrefix.'undo', 'middleCont' => false];
         $hasShortDocs = in_array($committeeType,self::reviewShortChoose);
         if (str_contains($reviewProcessOld,self::reviewProcessFull)) {
             $modals[] = array_merge($tempArray,['modalID' => 'fullShort', 'params' => array_merge($session->get(self::committeeParams),['type' => 'fullToShort', 'hasShortDocs' => $this->getStringFromBool($hasShortDocs && $hasTexts)])]); // fullDocs to shortDocs or fullDocs to shortNoDocs

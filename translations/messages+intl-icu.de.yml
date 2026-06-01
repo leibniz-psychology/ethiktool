@@ -374,7 +374,7 @@ main:
              Weiterhin wird hier die Abgrenzung zwischen Anträgen an den Ethikbeirat und Anträgen an die Ethikkommission der TU Dresden (für medizinische Forschungsvorhaben) erläutert.
     
              Ein Antrag an den Ethikbeirat soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann eine nachträgliche Begutachtung erfolgen. Das Vorgehen in solchen Fällen wird demnächst hier erläutert.}
-      UH1   {Antragsberechtigt sind Personen, die am Fachbereich 1 der Universität Hildesheim eigenständig wissenschaftlich tätig sind; das schließt Promovierende ausdrücklich ein. Studierende können ebenfalls einen Ethikantrag für ihre Abschlussarbeit oder andere studentische Forschungsprojekte einreichen, die Lehrpersonen bzw. Betreuenden müssen den Antrag vor der Einreichung gelesen und genehmigt haben.
+      UH1   {Antragsberechtigt sind Personen, die am Fachbereich 1 der Universität Hildesheim eigenständig wissenschaftlich tätig sind; das schließt Promovierende ausdrücklich ein. Externe Promovierende sind antragsberechtigt, wenn die Betreuung der Promotion am Fachbereich 1 der Universität Hildesheim erfolgt. Studierende können ebenfalls einen Ethikantrag für ihre Abschlussarbeit oder andere studentische Forschungsprojekte einreichen, die Lehrpersonen bzw. Betreuenden müssen den Antrag vor der Einreichung gelesen und genehmigt haben.
     
              Ein Antrag soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann die Ethikkommission eine nachträgliche Prüfung vornehmen.
     
@@ -427,12 +427,17 @@ landing:
           true  {Das Ethiktool kann Forschungsprojekte abbilden, die mehrere Studien, mehrere Teilnehmenden-Gruppen und/oder mehrere Erhebungszeitpunkte umfassen.</br></br> Diese Seite zeigt die Struktur Ihres Forschungsprojekts. Sie können hier weitere Studien, Gruppen und Zeitpunkte anlegen. Die Elemente werden automatisch durchnummeriert, sobald es mehr als eines gibt; es empfiehlt sich, außerdem jedem Element einen kurzen, aussagekräftigen Namen zu geben.}
           other {Hier können Sie nun Eingaben zu dieser Kombination aus Studie, Teilnehmenden-Gruppe und Erhebungszeitpunkt vornehmen.</br> Die Eingaben gliedern sich in folgende Punkte:}}
       end:
-        start: 'Hinweis: Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination duplizieren und nur die relevanten Einträge ändern. Die Symbole haben folgende Funktionen:'
+        title: 'Die Symbole haben folgende Funktionen:'
         rename: 'Name des Elements ändern'
         copy: 'Element duplizieren und am Ende des Astes einfügen'
         add: 'neues Element erstellen'
         delete: 'Element entfernen (inklusive aller Unterelemente)'
         edit: 'Details der Kombination Studie/Gruppe/Zeitpunkt bearbeiten'
+      hint: >-
+        Hinweis: Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination duplizieren und nur die relevanten Einträge ändern.
+        Eine weitere Studie müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.
+        Eine weitere Gruppe müssen Sie nur anlegen, wenn sich beispielsweise die Einschlusskriterien oder die Aufklärung für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) substanziell unterscheiden.
+        Der Begriff Erhebungszeitpunkt bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird (Screening).
     removeModal:
       title: >-
         {type, select,
@@ -455,7 +460,7 @@ coreData:
       same: 'identisch zum Projekttitel'
       different: 'unterscheidet sich vom Projekttitel'
       notApplicable: 'nicht zutreffend: Es werden keine Teilnahmedokumente erstellt.'
-    hint: 'z.B. weil nur vorhandene Daten analysiert werden oder weil es im Rahmen der eigenen Datenerhebung weder eine Vorab- noch eine nachträgliche Aufklärung gibt'
+    hint: 'z.B. weil vorhandene Daten nachgenutzt werden oder weil es im Rahmen der eigenen Datenerhebung weder eine Vorab- noch eine nachträgliche Aufklärung gibt'
   appType:
     title: 'Antragstyp'
     headingHint: 'Wenn der Antrag noch nicht von {committeeDat} begutachtet wurde, wählen Sie bitte „Neuer Antrag“. Wenn Sie bereits ein positives Ethikvotum erhalten haben, wählen Sie „Erweiterung/Änderung“. Wenn Sie im Rahmen der Begutachtung Nachfragen oder Auflagen adressieren müssen, wählen Sie „Wiedervorlage nach Antrags-Überarbeitung“. Wenn das positive Ethikvotum unter dem Vorbehalt stand, dass mit dem Entscheid über die Bewilligung der Fördermittel die Teilnahmedokumente nachgereicht werden müssen, wählen Sie „Wiedervorlage nach Mittelakquise“.'
@@ -484,6 +489,7 @@ coreData:
     buttons:
       save: 'Speichern und fortfahren'
       cancel: 'Fortfahren ohne zu speichern'
+      undo: 'Änderung rückgängig machen'
   applicationProcess:
     title: 'Art des Antragsverfahrens'
     headingHint: 'Der Umfang der notwendigen Angaben und einzureichenden Unterlagen unterscheidet sich je nach Charakter des Forschungsprojekts. Wenn Sie sicher sind, dass Ihr Projekt ethisch heikle Aspekte beinhaltet (z.B. besondere Belastungen/Risiken, fehlende Vorab-Aufklärung, Täuschung, Teilnehmende mit besonderem Schutzbedarf), wählen Sie bitte „Vollantrag“ aus. Wenn Ihr Projekt keine solchen Aspekte beinhaltet oder wenn Sie unsicher sind, wählen Sie bitte „Kurzantrag“ aus. Das Ethiktool weist Sie bei Bedarf darauf hin, dass aufgrund Ihrer Angaben ein Wechsel des Antragsverfahrens notwendig ist.'
@@ -574,7 +580,7 @@ coreData:
       confirm: 'Ich bestätige, dass die im Ethikantrag dargelegten Studien inhaltlich deckungsgleich zu den Studien im Drittmittelantrag sind.'
   qualification:
     title: 'Wird das Forschungsprojekt ausschließlich im Rahmen der eigenen Qualifikationsarbeit durchgeführt (Bachelor-/Masterarbeit/Promotion)?'
-    headingHint: 'Bitte antworten Sie nur dann mit „Ja“, wenn das Forschungsprojekt ohne Ihre Qualifikationsarbeit nicht durchgeführt werden würde. Wenn Sie für Ihre Qualifikationsarbeit Daten eines ohnehin durchgeführten Forschungsprojekts nutzen, ist die Frage mit „Nein“ zu beantworten.'
+    headingHint: 'Bitte antworten Sie nur dann mit „Ja“, wenn das Forschungsprojekt ohne <span style="font-weight: bold">Ihre eigene</span> Qualifikationsarbeit nicht durchgeführt werden würde. Wenn Sie für Ihre Qualifikationsarbeit Daten eines ohnehin durchgeführten Forschungsprojekts nutzen, ist die Frage mit „Nein“ zu beantworten. Wenn Sie in Ihrer Funktion als lehrende/betreuende Person einen Antrag für die Qualifikationsarbeit von Studierenden oder Promovierenden stellen, wählen Sie bitte ebenfalls „Nein“.'
   applicant:
     title: 'Verantwortlichkeit für die Antragstellung'
     applicant: 'Antragstellende Person'
@@ -676,8 +682,12 @@ contributors:
       position:
         noSelection: 'Bitte wählen Sie zuerst eine Position aus.'
         selection: "Bitte wählen Sie alle Funktionen dieser Person im Forschungsprojekt.</br> Mindestens eine Funktion muss gewählt werden."
-      mandatory: '<i>Diese Funktion muss bei jeder Erhebung von mindestens einer projektbeteiligten Person ausgefüllt werden.</i>'
-      responsibility: "\nBei mehr als einer datenverantwortlichen Person müssen die Zuständigkeiten geklärt werden."
+      mandatory: >- # other is data
+        Diese Funktion muss {type, select,
+                              leader     {im Forschungsprojekt von mindestens einer projektbeteiligten Person ausgefüllt werden.}
+                              experiment {bei jeder Erhebung neuer Daten von mindestens einer projektbeteiligten Person ausgefüllt werden.}
+                              contact    {bei jeder Erhebung neuer Daten von mindestens einer projektbeteiligten Person ausgefüllt werden.}
+                              other      {im Forschungsprojekt von mindestens einer projektbeteiligten Person ausgefüllt werden.</br> Bei mehr als einer datenverantwortlichen Person müssen die Zuständigkeiten geklärt werden.}}
     nodeTitle: 'aufgaben'
     leader: 'Projektleitung'
     research: 'wissenschaftliche Mitarbeit'
@@ -693,7 +703,18 @@ contributors:
     contact: 'Kontaktperson'
     data: 'Datenverantw.'
     other: 'Sonstiges'
-  hint: 'Mit dem Plus-Symbol können Sie weitere Projektbeteiligte hinzufügen. Mit dem Stift-Symbol können Sie die Daten und Funktionen einer bereits angelegten Person bearbeiten. Mit dem Mülleimer-Symbol können Sie die Daten einer bereits angelegten Person wieder löschen.</br></br>Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. Beide Funktionen können nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht.</br> Bitte nehmen Sie frühzeitig Kontakt zu den zuständigen Datenschutzstellen auf, wenn mehr als eine Person verantwortlich für die Verarbeitung der Daten (im Sinne der DS-GVO) ist und insbesondere wenn die Verantwortlichkeiten über verschiedene Institutionen verteilt sind. Bitte beachten Sie auch, dass die DS-GVO-konforme Aufklärung über die Verarbeitung personenbezogener Daten in diesem Fall nicht mit dem Ethiktool erstellt werden kann.</br></br>Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) mit ihren geplanten Funktionen im Projekt hinzugefügt werden. Eine nachträgliche Ergänzung von Projektbeteiligten nach Erhalt eines positiven Ethikvotums ist möglich; falls dies allerdings die ethische Einschätzung berührt (z.B. durch einen neuen Interessenkonflikt), ist eine Nachbegutachtung erforderlich.</br>'
+  symbols:
+    title: 'Die Symbole haben folgende Funktionen:'
+    add: 'projektbeteiligte Person hinzufügen'
+    edit: 'Angaben zu einer bereits angelegten Person bearbeiten'
+    delete: >-
+      Daten einer bereits angelegten Person wieder löschen. Die antragstellende Person (erste projektbeteiligte Person) {hasSupervisor, select,
+        true  {sowie der/die verantwortliche Betreuer/in (zweite projektbeteiligte Person) können}
+        other {kann}} nicht gelöscht werden.
+  hint: >-
+    Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. {committeeType, select,
+        EUB   {Beide Funktionen können bei universitären Projekten nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht. Bei Vorhaben, die ausschließlich im Rahmen der eigenen Qualifikationsarbeit durchgeführt werden, liegt die formelle Projektleitung bei der Erstbetreuung; die Datenverantwortung kann unterschiedlich geregelt sein, bitte halten Sie hierzu Rücksprache.}
+        other {Beide Funktionen können nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht. }}</br> Bitte nehmen Sie frühzeitig Kontakt zu den zuständigen Datenschutzstellen auf, wenn mehr als eine Person verantwortlich für die Verarbeitung der Daten (im Sinne der DS-GVO) ist und insbesondere wenn die Verantwortlichkeiten über verschiedene Institutionen verteilt sind. Bitte beachten Sie auch, dass die DS-GVO-konforme Aufklärung über die Verarbeitung personenbezogener Daten in diesem Fall nicht mit dem Ethiktool erstellt werden kann.</br></br>Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) mit ihren geplanten Funktionen im Projekt hinzugefügt werden. Eine nachträgliche Ergänzung von Projektbeteiligten nach Erhalt eines positiven Ethikvotums ist möglich; falls dies allerdings die ethische Einschätzung berührt (z.B. durch einen neuen Interessenkonflikt), ist eine Nachbegutachtung erforderlich.
   errors:
     name: 'Achtung: Name nicht vollständig'
     eMail: 'Achtung: keine gültige E-Mail-Adresse'
@@ -742,7 +763,7 @@ projectdetails:
           new: 'Mit „erhoben“ ist die Neu-Erfassung/-Erzeugung/-Generierung von Daten gemeint, nicht das Zusammentragen und die Nutzbarmachung von Daten aus anderen Quellen, z.B. Social Media.'
           existing: 'Das schließt auch Daten ein, die vor der eigenen Nutzung von ihrer Ursprungsform in eine andere Form überführt werden.'
         modal:
-          title: 'Nutzung vorhandener Daten'
+          title: 'Nachnutzung vorhandener Daten'
           content: >-
             Sie haben ausgewählt, dass ausschließlich vorliegende Daten genutzt werden. Aus diesem Grund sind die Eingaben auf den übrigen „Projektstruktur“-Seiten {isMultiple, select,
                 true  {für diese Kombination von Studie/Gruppe/Zeitpunkt}
@@ -750,6 +771,7 @@ projectdetails:
           buttons:
             save: 'Speichern und fortfahren'
             cancel: 'Fortfahren ohne zu speichern'
+            undo: 'Änderung rückgängig machen'
       originSources:
         title: 'Aus welchen Quellen werden Daten genutzt?'
         types:
@@ -804,8 +826,8 @@ projectdetails:
                   other {}}
         pdf: 'Ich möchte das damalige Aufklärungs- und Einwilligungsschreiben beifügen.'
       dataSourceProcedure:
-        title: 'Bitte beschreiben Sie das Vorgehen für die Nachnutzung bzw. Reanalyse der Daten'
-        textHint: 'Bitte beschreiben Sie für die verwendete(n) <span style="font-weight: bold">Datengrundlage(n)/Datenquelle(n)</span> das genutzte Datenmaterial und die daran angelegten Ein- und Ausschlusskriterien, enthaltene Personengruppen/Merkmale sowie den Zeitraum, in dem die verwendeten Daten gewonnen wurden bzw. entstanden sind. Erläutern Sie zudem die <span style="font-weight: bold">Datenverarbeitung</span> im Rahmen des Forschungsprozesses (ggf. Überführung der Originaldaten in andere Formen, Anonymisierung, Veröffentlichung) und schildern Sie die geplanten Analysen und Auswertungsmethoden. Sofern zutreffend, legen Sie bitte auch dar, inwiefern im Rahmen einer Veröffentlichung der Daten und/oder Ergebnisse Urheberrechtsaspekte beachtet werden.'
+        title: 'Bitte beschreiben Sie das Vorgehen für die Nachnutzung bzw. Reanalyse der Daten.'
+        hint: 'Bitte beschreiben Sie für die verwendete(n) <span style="font-weight: bold">Datengrundlage(n)/Datenquelle(n)</span> das genutzte Datenmaterial und die daran angelegten Ein- und Ausschlusskriterien, enthaltene Personengruppen/Merkmale sowie den Zeitraum, in dem die verwendeten Daten gewonnen wurden bzw. entstanden sind. Erläutern Sie zudem die <span style="font-weight: bold">Datenverarbeitung</span> im Rahmen des Forschungsprozesses (ggf. Überführung der Originaldaten in andere Formen, Anonymisierung, Veröffentlichung) und schildern Sie die geplanten Analysen und Auswertungsmethoden. Sofern zutreffend, legen Sie bitte auch dar, inwiefern im Rahmen einer Veröffentlichung der Daten und/oder Ergebnisse Urheberrechtsaspekte beachtet werden.'
       restriction:
         title: 'Unterliegen die Daten, die genutzt werden sollen, einer Zugangsbeschränkung?'
         types:
@@ -825,7 +847,7 @@ projectdetails:
         title: 'Wodurch ist die Nutzung der Daten für das Forschungsprojekt legitimiert?'
         headingHint: 'Die Legitimation muss sich auf sämtliche Schritte erstrecken, die Sie mit dem Datensatz vorhaben, also auch - sofern geplant - auf dessen Veröffentlichung.'
         types:
-          consentNew: 'Die Personen werden explizit über dieses Reanalyse-Projekt aufgeklärt und willigen in die Verwendung der Daten ein.'
+          consentNew: 'Die Personen werden explizit über dieses Nachnutzungs-/Reanalyse-Projekt aufgeklärt und willigen in die Verwendung ihrer Daten ein.'
           consentExisting: 'Bereits im Rahmen der Gewinnung der Daten/Materialien wurden die Personen über die mögliche Nachnutzung ihrer Daten für weitere (Forschungs-)Zwecke aufgeklärt und haben eingewilligt.'
           conditions: 'Die Geschäftsbedingungen des Anbieters decken den geplanten Abruf der Daten (ggf. inkl. Webscraping) und eine Verwendung der Daten für Forschungszwecke ab. Bei der Anmeldung/Registrierung haben die Nutzenden diese Geschäftsbedingungen aktiv bestätigt.'
           contract: 'Die Nutzung der Daten ist durch einen Vertrag mit dem Datenzentrum bzw. der datenhaltenden Struktur legitimiert.'
@@ -847,7 +869,7 @@ projectdetails:
           temporary: 'Vorübergehend: Die Daten sind zum Zeitpunkt des Datenzugangs (teilweise) personenbeziehbar (z.B. personenbezogene Forschungsdaten, personenbezogene Patient/innenakten, Namen und andere Angaben in User-Profilen, Posts im Wortlaut, Daten von Mobilfunkanbietern), werden aber für die Nachnutzung/Reanalyse vollständig anonymisiert.'
           no: 'Nein: Alle Daten sind zum Zeitpunkt des Datenzugangs anonym/anonymisiert und werden auch nur in anonymer/anonymisierter Form weiterverarbeitet (z.B. anonymisierte Forschungsdaten, anonymisierte Patient/innenakten, Ergebnisse aus Umfragen in Chatgruppen, anonyme Metadaten wie Anzahl Likes, Aktivitätsanzeige in Videoverlaufsanzeigen).'
       publication:
-        title: 'Wird als Ergebnis des Reanalyse-Projekts ein neu generierter Forschungsdatensatz veröffentlicht?'
+        title: 'Wird als Ergebnis des Nachnutzungs-/Reanalyse-Projekts ein neu generierter Forschungsdatensatz veröffentlicht?'
         types:
           less: 'Ja, mit weniger strenger Zugangsbeschränkung als die ursprünglichen Daten'
           more: 'Ja, mit (mindestens) derselben Zugangsbeschränkung wie die ursprünglichen Daten'
@@ -880,7 +902,7 @@ projectdetails:
           dependent: 'Personen in einem Abhängigkeitsverhältnis zu den Projektbeteiligten (z.B. Studierende in eigener Lehrveranstaltung, eigene Angestellte, Familie/Freundeskreis)'
           otherPeople: 'andere Personengruppen'
         healthyIcon: 'Wählen Sie diese Option, wenn Sie nicht gezielt Personen mit bestimmten Einschränkungen oder Besonderheiten rekrutieren.'
-        description: 'Genaue Beschreibung der Personengruppe(n). Sie können hier ggf. auch beschreiben, anhand welcher Angaben/Instrumente die Zugehörigkeit zur Zielgruppe (Ein-/Ausschlusskriterien) überprüft bzw. sichergestellt wird.'
+        description: 'Genaue Beschreibung der Personengruppe(n). Sie können hier ggf. auch beschreiben, anhand welcher Angaben/Instrumente die Zugehörigkeit zur Zielgruppe überprüft bzw. sichergestellt wird, oder zusätzliche Ein-/Ausschlusskriterien benennen, die nicht in der Studieninformation offengelegt werden.'
       closed:
         title: 'Findet die Erhebung in einer geschlossenen Gruppe statt?'
         headingHint: 'Hiermit sind Erhebungen in fest umgrenzten Gruppen oder Kontexten gemeint, z.B. Schulklassen oder Studierendengruppen.'
@@ -1035,28 +1057,41 @@ projectdetails:
         participants: 'Teilnehmende:'
       voluntary:
         title: >-
-          Erfolgt die {type, select,
-                        post  {Entscheidung zur Verwendung der Daten}
-                        other {Teilnahme-Entscheidung}} freiwillig?
+          Erfolgt die Entscheidung zur {type, select,
+                                          onlyPre    {Studienteilnahme}
+                                          onlyNotPre {Verwendung der Daten}
+                                          other      {Studienteilnahme bzw. Verwendung der Daten}} freiwillig?
         headingHint: 'Die Freiwilligkeit kann u.a. gefährdet sein durch Zeitdruck zwischen Information und Einwilligung, Versprechen besonderer Vorteile, Verschweigen der Freiwilligkeit im Rahmen der Aufklärung, Abhängigkeitsverhältnisse zwischen Teilnehmenden und Projektbeteiligten sowie Erwartungsdruck in geschlossenen Gruppen, insbesondere bei nicht-vertraulicher Einwilligung und Datenerhebung.'
         types:
           yes: 'Ja'
           no: 'Nein'
           notApplicable: 'nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen'
-        textHintYes: >-
-          {type, select,
-            post  {Bitte erläutern Sie, wie die freiwillige Entscheidung zur Verwendung der Daten gewährleistet wird. Im Fall der Erhebung in einer geschlossenen Gruppe erläutern Sie bspw., wie sichergestellt wird, dass einzelne Anwesende unauffällig (nicht) einwilligen können. Im Fall der Rekrutierung von Personen, die in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen, erläutern Sie, welche gesonderten Maßnahmen Sie zur Wahrung der Freiwilligkeit treffen (z.B. Entscheidung in Abwesenheit der Lehrenden bzw. Prüfenden; anonyme Entscheidung; explizite Zusicherung, dass die Entscheidung für oder gegen die Verwendung der Daten keinen Einfluss auf Studien-, Prüfungsleistungen oder weitere studienbezogene Aspekte wie Platzvergaben hat).}
-            other {Bitte erläutern Sie, wie die freiwillige Studienteilnahme gewährleistet wird. Im Fall der Erhebung in einer geschlossenen Gruppe erläutern Sie bspw., wie sichergestellt wird, dass einzelne Anwesende unauffällig einwilligen bzw. auf die Teilnahme verzichten können. Im Fall der Rekrutierung von Personen, die in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen, erläutern Sie, welche gesonderten Maßnahmen Sie zur Wahrung der Freiwilligkeit treffen (z.B. Durchführung der Studie in Abwesenheit der Lehrenden bzw. Prüfenden; anonyme Gestaltung der Erhebung; explizite Zusicherung, dass die Teilnahme oder deren Ablehnung keinen Einfluss auf Studien-, Prüfungsleistungen oder weitere studienbezogene Aspekte wie Platzvergaben hat).}}
+        voluntaryEnsure:
+          title: 'Wie wird die Freiwilligkeit gewährleistet?'
+          headingHint: 'Bitte erläutern Sie, wie die freiwillige Entscheidung für oder gegen die Studienteilnahme bzw. Verwendung der Daten trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis zu den Projektbeteiligten) gewährleistet wird. '
+          types:
+            relatable: 'Niemand kann nachvollziehen, wer tatsächlich teilgenommen hat.'
+            absence: 'Die Teilnahme erfolgt in Abwesenheit der Person, zu der das Abhängigkeitsverhältnis besteht.'
+            discuss: 'Die Freiwilligkeit wird gesondert besprochen; dabei wird ausdrücklich betont, dass trotz des Abhängigkeitsverhältnisses keine Vor- oder Nachteile mit der Entscheidung für oder gegen die Studie verbunden sind.'
+            onetime: 'Es wird nur einmal für die Studie geworben und höchstens einmal kurz erinnert.'
+            substitute: 'Für nicht-teilnehmende Gruppenmitglieder gibt es eine adäquate Ersatzbeschäftigung, und zwar:'
+            independent: 'Die Entscheidung eines Gruppenmitglieds für oder gegen die Studie ist nicht von den Entscheidungen anderer Gruppenmitglieder abhängig.'
+            voluntaryEnsureOther: 'Sonstige Maßnahmen'
+          placeholder: 'bitte spezifizieren'
+          hint: 'z.B. anonyme online-Befragung, unauffällige (Nicht-)Teilnahme vor Ort' # for relatable
         textHint: 'Bitte beschreiben und begründen Sie, inwiefern die Freiwilligkeit nicht garantiert ist.'
       consent:
-        title: >- # other is pre (first select) respectively post (third select). Participants is children or wards in second select.
+        title: >-
           Wie erfolgt die {type, select,
-                            post  {nachträgliche}
-                            other {}} Einwilligung {addressee, select,
-                                                      Participants {bzw. Zustimmung}
-                                                      other        {}} in die {type, select,
-                                                                                pre   {Studienteilnahme und die Datenverarbeitung}
-                                                                                other {Verwendung der Daten}}?
+                            onlyPre    {}
+                            onlyNotPre {nachträgliche}
+                            other      {(nachträgliche)}} Einwilligung {addressee, select,
+                                                                          children {bzw. Zustimmung}
+                                                                          wards    {bzw. Zustimmung}
+                                                                          other    {}} in die {type, select,
+                                                                                                onlyPre    {Studienteilnahme und Datenverarbeitung}
+                                                                                                onlyNotPre {Verwendung der Daten}
+                                                                                                other      {Studienteilnahme bzw. Verwendung der Daten}}?
         types: # Participants is children or wards
           written: 'schriftlich'
           digital: 'elektronisch'
@@ -1071,6 +1106,7 @@ projectdetails:
                                 Participants {Zustimmung}
                                 other        {Einwilligung}}
           otherDescription: 'bitte spezifizieren'
+        hint: 'auch für Mischformen, z.B. teils schriftlich, teils elektronisch'
         textHint: >-
           Bitte begründen Sie, warum keine Einwilligung {addressee, select,
                                                           children {bzw. Zustimmung}
@@ -1414,14 +1450,20 @@ projectdetails:
           Ist die Freiwilligkeit der {isNotPre, select,
                                         true  {Entscheidung zur Verwendung der Daten}
                                         other {Teilnahme}} durch Art oder Höhe der Aufwandsentschädigung gefährdet?
-        headingHint: 'Die Freiwilligkeit kann gefährdet sein, wenn die Aufwandsentschädigung im Vergleich zur Finanzkraft der Zielgruppe sehr hoch ausfällt (z.B. hohe finanzielle Aufwandsentschädigung, hoher Gewinn einer Verlosung) bzw. wenn eine Überkompensation des realen Aufwands erfolgt (z.B. vergebene Versuchspersonenstunden liegen deutlich oberhalb der Versuchsdauer). Die Freiwilligkeit ist fraglich, wenn es naheliegend erscheint, dass die Teilnehmenden substanzielle Anteile ihres Einkommens über Studienteilnahmen bestreiten. Einschränkungen können auch entstehen, wenn die Teilnahme sich über einen längeren Zeitraum erstreckt und der Rücktritt von der Teilnahme mit einem Komplettverlust der Aufwandsentschädigung verbunden ist.'
-        textHint: >-
-          Bitte erläutern Sie, inwiefern die Freiwilligkeit der {isNotPre, select,
-                                                                  true  {Entscheidung zur Verwendung der Daten}
-                                                                  other {Teilnahme}} durch Art oder Höhe der Aufwandsentschädigung gefährdet ist.
+        types:
+          amount: 'Ja, die Aufwandsentschädigung ist außergewöhnlich hoch.'
+          inequality: 'Ja, die Teilnehmenden werden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt.'
+          income: 'Ja, es liegt nahe, dass die Teilnehmenden große Teile ihres Einkommens über die Aufwandsentschädigung bestreiten.'
+          loss: 'Ja, der individuelle Abbruch ist auch nach mehr als 30 Minuten Teilnahme mit einem Komplettverlust der Aufwandsentschädigung verbunden.'
+          compensationVoluntaryOther: 'Ja, sonstige Einschränkung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung'
+          no: 'Nein'
+        icons:
+          amount: 'z.B. hohe finanzielle Aufwandsentschädigung oder hoher Gewinn im Vergleich zur Finanzkraft der Zielgruppe, Überkompensation des realen Zeitaufwands in Form von Versuchspersonenstunden'
+          income: 'z.B. bei Rekrutierung über dezidierte Portale'
+        placeholder: 'bitte spezifizieren'
       furtherDescription:
         title: 'Sonstige Erläuterungen zur Aufwandsentschädigung'
-        textHint: '(optional) z.B. Begründung für außergewöhnlich hohe Aufwandsentschädigung; Begründung, warum die Teilnehmenden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt werden'
+        textHint: '(optional) z.B. Begründung für außergewöhnlich hohe oder ungleiche Aufwandsentschädigung'
     texts:
       useTemplate: 'Vorlage nutzen'
       hint: 'Hier können Sie Eingaben für die Studieninformation vornehmen. Bitte wählen Sie dabei eine für die jeweilige Zielgruppe angemessene Beschreibungsebene. Bitte nutzen Sie ggf. aktuell gültige Empfehlungen bzw. Informationsvorlagen zu bestimmten Untersuchungsverfahren der einschlägigen Fachgesellschaften.'
@@ -1509,16 +1551,16 @@ projectdetails:
         title: 'Wir bitten Sie um Verständnis für diese erst nachträglich umfassende Aufklärung. Dies war nötig, weil ...'
         textHint: 'Begründen Sie die Notwendigkeit der Täuschung bzw. unvollständigen Aufklärung in verständlicher Form. Typische Begründungen sind z.B. „um das Verhalten während der Studie so alltagsnah wie möglich erfassen zu können“ oder „weil die Wirkung der Methode getrennt von der Wirkungserwartung untersucht werden sollte“. Weisen Sie - falls zutreffend - darauf hin, dass es sich dabei um ein übliches Vorgehen in solchen Studien handelt.'
     legal:
-      hint: 'Forschende sollten im Einzelfall prüfen und abwägen, ob einer oder mehrere der folgenden Aspekte hilfreich erscheinen. Die Textentwürfe können als Basisinformation für häufig auftretende Fälle genutzt werden; eine Prüfung und Abstimmung im Einzelfall kann dadurch nicht ersetzt werden. Die Verwendung der Vorlagen erfolgt daher auf eigene Verantwortung, sie ersetzt insbesondere keine Rechtsberatung. Die Ethikkommission übernimmt keine Verantwortung für die korrekte Anwendung auf den Einzelfall und übernimmt nicht die juristische Prüfung der Formulierungen.'
+      hint: 'Forschende sollten im Einzelfall prüfen und abwägen, ob einer oder mehrere der folgenden Aspekte hilfreich erscheinen. Die Textentwürfe können als Basisinformation für häufig auftretende Fälle genutzt werden; eine Prüfung und Abstimmung im Einzelfall kann dadurch nicht ersetzt werden. Die Verwendung der Vorlagen erfolgt auf eigene Verantwortung, sie ersetzt insbesondere keine Rechtsberatung. Die Ethikkommission übernimmt keine Verantwortung für die korrekte Anwendung der Vorlagen auf den Einzelfall und übernimmt nicht die juristische Prüfung der Formulierungen.'
       liability:
-        title: 'Soll die Einwilligung in die Studienteilnahme eine Haftungsklausel enthalten?'
-        headingHint: 'Eine mögliche Haftung lässt sich niemals vollständig ausschließen (z.B. bei Vorsatz oder grober Fahrlässigkeit), sie lässt sich jedoch in bestimmten Bereichen einschränken. Die Vorlage zur Haftungsbeschränkung dient als (Informations-)Vorlage für häufig auftretende Fälle; eine rechtliche Prüfung und Abstimmung im Einzelfall kann dadurch nicht ersetzt werden. Die Verwendung der Vorlage erfolgt daher auf eigene Verantwortung, sie ersetzt insbesondere keine Rechtsberatung. Die Ethikkommission übernimmt keine Verantwortung für die korrekte Anwendung auf den Einzelfall und übernimmt nicht die juristische Prüfung der Formulierungen. Forschende sollten im Einzelfall prüfen und abwägen, ob sie eine Formulierung zur Haftungsbeschränkung in die Studieninformation aufnehmen wollen.'
+        title: 'Soll die Studieninformation eine Haftungsklausel enthalten?'
+        headingHint: 'Eine mögliche Haftung lässt sich niemals vollständig ausschließen (z.B. bei Vorsatz oder grober Fahrlässigkeit), sie lässt sich jedoch in bestimmten Bereichen einschränken. Die Vorlage zur Haftungsbeschränkung dient als (Informations-)Vorlage für häufig auftretende Fälle. Forschende sollten im Einzelfall prüfen und abwägen, ob sie eine Formulierung zur Haftungsbeschränkung in die Studieninformation aufnehmen wollen.'
         template: 'Die Teilnahme erfolgt auf eigene Gefahr. Die Haftung der Projektbeteiligten wird auf Vorsatz und grobe Fahrlässigkeit beschränkt. Bei Pflichtverletzungen im unmittelbaren Zusammenhang mit der Versuchsdurchführung haften die Parteien, ihre gesetzlichen Vertretungspersonen und Erfüllungsgehilfen auch bei Fahrlässigkeit, wobei sich die Haftung in diesen Fällen auf den typischerweise vorhersehbaren Schaden beschränkt. Die Haftung für Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit richtet sich nach den gesetzlichen Bestimmungen.'
       apparatus:
         title: >-
           Soll die {isReceipt, select,
                       true  {Empfangsbestätigung für die Leihgeräte}
-                      other {Einwilligung in die Studienteilnahme}} einen Haftungshinweis zur Benutzung der Versuchsgeräte enthalten?
+                      other {Studieninformation}} eine Haftungsklausel zur Benutzung der Versuchsgeräte enthalten?
         headingHint: >-
           {isReceipt, select,
                     true  {In der Empfangsbestätigung für die Leihgeräte}
@@ -1526,11 +1568,11 @@ projectdetails:
         template: 'Die verwendeten Geräte werden regelmäßig und sorgfältig geprüft, um sie in einem verkehrssicheren Zustand zu halten. Die Benutzung im Rahmen der Studienteilnahme erfolgt auf eigene Gefahr.'
         loan: ' Die Leihgeräte samt Zubehör sind sorgsam zu behandeln, vor Verlust und Beschädigungen zu schützen und unaufgefordert zum vereinbarten Zeitpunkt zurückzugeben. Verluste oder Beschädigungen der Geräte oder des Zubehörs während der Ausleihe sind unverzüglich anzuzeigen. Eine Weitergabe der entliehenen Geräte oder des Zubehörs an Dritte ist untersagt. Bei Verlust oder Beschädigung ist der Forschungseinrichtung der verursachte Schaden zu ersetzen.'
       insuranceWay:
-        title: 'Soll die Einwilligung in die Studienteilnahme einen Hinweis zur Wege-/Unfallversicherung enthalten?'
+        title: 'Soll die Studieninformation einen Hinweis zur Wege-/Unfallversicherung enthalten?'
         headingHint: 'Es besteht keine Aufklärungspflicht über das Nicht-Vorliegen einer studienbezogenen Wege-/Unfallversicherung gegenüber Teilnehmenden. Man kann unterstellen, dass Personen vernünftigerweise nicht davon ausgehen, auf dem Weg vom und zum Ort der Studienteilnahme unfallversichert zu sein, da dies für andere private Wege (z.B. Weg zum Arzt, zum Sportverein) ebenfalls nicht zutrifft. Eine Information über die Rechtslage/Lebenswirklichkeit ist aber, wenn gewünscht, möglich. Es sollte im Einzelfall durch die Projektbeteiligten abgewogen werden, ob ein solcher Hinweis für die konkrete Studie bzw. Personengruppe sinnvoll erscheint. Sinnvoll kann eine Information beispielsweise dann sein, wenn Forschung in speziellen Settings (z.B. im Rahmen gemeinsamer Spaziergänge, Exkursionen) durchgeführt wird, also Wege im Rahmen der Forschung (über den Hin- und Rückweg hinaus) selbst Teil der Forschung sind. Nehmen Personen während einer Erhebung Schaden, spielen Haftungsfragen eine Rolle, zu denen in einer separaten Frage Angaben vorzunehmen sind.'
-        template: 'Ich bin darauf hingewiesen worden, dass {committeeLocation} im Rahmen der Studiendurchführung keine Unfallversicherung gewährt.'
+        template: 'Im Rahmen der Studiendurchführung gewährt {committeeLocation} keine Unfallversicherung.'
       insurance:
-        title: 'Soll die Einwilligung in die Studienteilnahme einen Hinweis zur Teilnehmendenversicherung enthalten?'
+        title: 'Soll die Studieninformation einen Hinweis zur Teilnehmendenversicherung enthalten?'
         headingHint: 'Abgesehen von etwaigen gesetzlichen Pflichten (z.B. aus dem Arzneimittelgesetz oder Medizinproduktegesetz) ist für eine humanwissenschaftliche Studie als solche eine Haftpflichtversicherung oder eine Teilnehmendenversicherung (Probandenversicherung) nicht obligatorisch. Es obliegt den Projektbeteiligten abzuwägen, ob eine solche Versicherung sinnvoll erscheint. Die Ethikkommission kann hierzu keine rechtliche Einschätzung bieten; bei Bedarf ist eine Rechtsberatung einzuholen.'
         template: 'Für die Studie ist keine gesonderte Studienversicherung (Teilnehmendenversicherung) vorgesehen.'
     dataPrivacy:
@@ -1727,7 +1769,7 @@ projectdetails:
                     children {Kinder bzw. Erziehungsberechtigten}
                     wards    {betreuten Personen bzw. gesetzlichen Vertretungspersonen}
                     other    {Teilnehmenden}} sollten darauf hingewiesen werden, dass der frei gewählte Code keinen Rückschluss auf die Person ermöglichen sollte.
-            contributors: 'z.B. fortlaufende Nummer, zufällig angelegt'
+            contributors: 'z.B. zufällig angelegt'
           pattern: # sub-question for internal pattern
             types:
               anonymous: 'Es liegen keine weiteren Dokumentationen vor, die den Code mit personenidentifizierenden Daten verknüpfen. Nur für Personen mit Kenntnis aller Angaben, die in den Code einfließen, ist eine Identifikation möglich.'
@@ -2041,7 +2083,7 @@ projectdetails:
                     children {Kinder bzw. Erziehungsberechtigten}
                     wards    {betreuten Personen bzw. gesetzlichen Vertretungspersonen}
                     other    {Teilnehmenden}} sollten darauf hingewiesen werden, dass der frei gewählte Code nicht personenbeziehbar sein sollte.
-            contributors: 'z.B. fortlaufende Nummer oder zufällig angelegt'
+            contributors: 'z.B. zufällig angelegt'
           pattern: # sub-question for codeInternal pattern
             types:
               anonymous: 'Es liegen keine weiteren Dokumentationen vor, die den Code mit personenidentifizierenden Daten verknüpfen. Nur für Personen mit Kenntnis des Codes ist eine Identifikation möglich.'
@@ -2127,7 +2169,7 @@ projectdetails:
                                                             other       {anonymen Forschungsdaten }}
         types:
           class0: ' öffentlich zugänglich gemacht.'
-          class1: ' Dritten unter Standardbedingungen, wie z.B. Bestätigung ausschließlich wissenschaftlicher Nutzung, zugänglich gemacht.'
+          class1: ' Dritten unter Standardbedingungen, wie z.B. Bestätigung ausschließlich wissenschaftlicher oder nichtkommerzieller Nutzung, zugänglich gemacht.'
           class2: ' Dritten über individualisierte Nutzungsverträge zugänglich gemacht.'
           class3: ' Dritten nur unter datenschutzrechtlich gebotenen Einschränkungen (z.B. online über einen entsprechend abgesicherten Kanal oder vor Ort in einem Forschungsdatenzentrum) im Rahmen eines individuellen Vertrags zugänglich gemacht.'
           own: ' nicht für andere zugänglich gemacht, aber für die eigene Nachnutzung verwendet.'
@@ -2282,10 +2324,10 @@ checkDoc:
   projectdetails:
     missingTypes: 'Arten von {type}'
     pages:
-      dataSource: # 'Antwort auf Frage nach [] fehlt.', wo nicht anders angegeben
+      dataSource: # 'Antwort auf Frage nach [] fehlt.' unless otherwise stated
         origin: 'Ursprung der Daten'
         originSources:
-          missing: 'Datenquellen'  #  [] fehlen.'
+          missing: 'Datenquellen'  #  '[] fehlen.'
           types: # 'Benennung der [] fehlt.'
             research: 'Daten, die zu Forschungszwecken erhoben wurden,'
             originSourcesOther: 'Daten, die zu anderen Zwecken erhoben wurden,'
@@ -2317,7 +2359,7 @@ checkDoc:
           begun: # 1:1
             start: 'Wenn das Forschungsprojekt, aus dem die Daten nachgenutzt werden sollen, nicht von einer Ethikkommission begutachtet wurde, aber damalige Projektbeteiligte auch am aktuellen Forschungsprojekt beteiligt sind, muss ausgewählt werden, dass das Projekt <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">bereits begonnen</a> hat. Beachten Sie auch die weiteren '
             end: 'Hinweise.'
-          supportCommittee: 'Sie haben angegeben, dass Sie Kontakt zu {committeeDat} aufgenommen haben. Das passt nicht dazu, dass keine <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">Beratung durch {committeeGen}</a> stattgefunden hat.'# 1:1
+          supportCommittee: 'Sie haben bestätigt, dass Sie Kontakt zu {committeeDat} aufgenommen haben. Das passt nicht dazu, dass keine <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">Beratung durch {committeeGen}</a> stattgefunden hat.'# 1:1
         dataSet: 'Gewinnung der ursprünglichen Forschungsdaten' # 'Beschreibung der [] fehlt.'
         dataSourceProcedure: 'Beschreibung des Vorgehens für die Nachnutzung bzw. Reanalyse' # '[] fehlt.'
         restriction:
@@ -2424,7 +2466,20 @@ checkDoc:
         voluntary:
           title: 'Freiwilligkeit'
           voluntaryParticipants: 'Freiwilligkeit für Teilnehmende'
-          voluntaryYesDescription: 'Erläuterung zur Gewährleistung der freiwilligen Studienteilnahme'
+          voluntaryEnsure:
+            missing: 'Maßnahmen zur Gewährleistung der Freiwilligkeit' # '[] fehlen.'
+            description:
+              substitute: 'Ersatzbeschäftigung' # 'Beschreibung der [] fehlt.'
+              voluntaryEnsureOther: 'sonstigen Maßnahmen' # 'Beschreibung der [] fehlt.'
+            further:
+              absenceDiscuss: >-
+                Sie haben ausgewählt, dass die Freiwilligkeit {type, select,
+                      absence {durch Abwesenheit der Person, zu der das Abhängigkeitsverhältnis besteht, sichergestellt wird.}
+                      other   {sichergestellt wird, indem das Abhängigkeitsverhältnis gesondert besprochen wird.}} Das ist nur möglich, wenn die <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#examinedPeople" data-base-route-i-ds-param="{routeIDs}">teilnehmenden Personen</a> in einem Abhängigkeitsverhältnis zu den Projektbeteiligten stehen.
+              substituteIndependent: >-
+                Sie haben ausgewählt, dass die Freiwilligkeit durch {type, select,
+                      substitute {eine adäquate Ersatzbeschäftigung für nicht-teilnehmende Gruppenmitglieder}
+                      other      {Unabhängigkeit der Entscheidung von Entscheidungen anderer Gruppenmitglieder}} sichergestellt wird. Das ist nur möglich, wenn die Erhebung in einer <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">geschlossenen Gruppe</a> stattfindet.
           voluntaryDescription: 'Begründung für fehlende Freiwilligkeit'
         consent:
           title: 'Art der Einwilligung'
@@ -2484,12 +2539,12 @@ checkDoc:
             Wenn es keine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt, müssen die erhobenen Daten bei vorzeitigem Abbruch entweder gelöscht werden oder die {addressee, select,
                 children {Erziehungsberechtigten}
                 wards    {gesetzlichen Vertretungspersonen}
-                other    {Teilnehmenden}} müssen über die Nutzung entscheiden können.
+                other    {Teilnehmenden}} müssen über die Verwendung entscheiden können.
           noInformation: >-
             Sie haben ausgewählt, dass es <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt. Das passt nicht dazu, dass die {addressee, select,
                   children {Erziehungsberechtigten}
                   wards    {gesetzlichen Vertretungspersonen}
-                  other    {Teilnehmenden}} bei vorzeitigem Abbruch über die Nutzung der Daten entscheiden können.
+                  other    {Teilnehmenden}} bei vorzeitigem Abbruch über die Verwendung der Daten entscheiden können.
         terminateCriteria: 'Abbruchkriterien'
       measures:
         procedure: 'Ablauf'
@@ -2601,7 +2656,7 @@ checkDoc:
           compensationOther:
             missing: 'Sonstige Aufwandsentschädigung'
         awarding:
-          type: # Zeilenbeginn für alle Fehlermeldungen ab 'missing', also für alle: "[]: Abwicklung der Vergabe fehlt."
+          type: # line start for all messages from 'missing', i.e,: '[]: Abwicklung der Vergabe fehlt.'
             money: 'Finanzielle Aufwandsentschädigung'
             hours: 'VP-Stunden'
             lottery: 'Verlosung'
@@ -2630,8 +2685,10 @@ checkDoc:
           nothing: 'Begründung für fehlende Aufwandsentschädigung bei Abbruch'
           terminateOther: 'Beschreibung der Aufwandsentschädigung bei Abbruch'
         compensationVoluntary:
-          missing: 'Gefährdung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung'
-          description: 'Erläuterung, inwiefern die Freiwilligkeit der Teilnahme durch Art oder Höhe der Aufwandsentschädigung gefährdet ist,' # [...] fehlt.
+          missing: 'Antwort auf Frage nach Gefährdung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung'
+          description: 'sonstigen Einschränkung der Freiwilligkeit durch Aufwandsentschädigung' # 'Beschreibung der [] fehlt.'
+          terminate: 'Sie haben ausgewählt, dass der individuelle Abbruch auch nach mehr als 30 Minuten mit einem Komplettverlust der Aufwandsentschädigung verbunden ist. Das ist nur möglich, wenn bei vorzeitigem Abbruch keine Aufwandsentschädigung erfolgt.'
+          loss: 'Sie haben ausgewählt, dass der individuelle Abbruch auch nach mehr als 30 Minuten mit einem Komplettverlust der Aufwandsentschädigung verbunden ist. Das ist nur möglich, wenn die <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#duration" data-base-route-i-ds-param="{routeIDs}">Gesamtdauer</a> der Erhebung länger als 30 Minuten ist.'
         presence: >- # other is hours
           {compensation, select,
             money {Wenn die finanzielle Aufwandsentschädigung sofort vor Ort ausgezahlt werden soll}
@@ -2661,7 +2718,7 @@ checkDoc:
                           apparatus    {des Hinweises zur Benutzung von Versuchsgeräten}
                           insuranceWay {des Hinweises zur Wege-/Unfallversicherung}
                           other        {des Hinweises zur Teilnehmendenversicherung}}
-      dataPrivacy: # Formulierung lautet jeweils "Antwort auf Frage nach [...] fehlt.", sofern nicht anders angegeben.
+      dataPrivacy: # 'Antwort auf Frage nach [] fehlt.' unless otherwise stated
         processing: 'Datenverarbeitung' # 'Beschreibung der [] fehlt.'
         create:
           missing: 'Art der Erstellung der Datenschutzerklärung'
@@ -2685,7 +2742,7 @@ checkDoc:
         dataPersonal: 'Personenbezug der Forschungsdaten'
         marking:
           title: 'Antwort auf Frage nach Kennzeichnung der Forschungsdaten' # '[] fehlt.'
-          description: >- # other is name. '[] fehlt.'
+          description: >- # '[] fehlt.', other is name.
             {type, select,
               external {Urheber bzw. Bezeichnung des Codes}
               other    {Begründung für Verwendung des Klarnamens}}
@@ -2737,8 +2794,8 @@ checkDoc:
         purposeFurther: 'Weitere Zwecke, für die personenbezogene Daten verarbeitet werden,' # '[] fehlen'.
         relatableSub: 'Zwecke der individuellen Zuordenbarkeit' # '[] fehlen.'
         purposeData: # {purpose} are the value of projectdetails.pages.dataPrivacy.purposeResearch.typesShort.*
-          missing: 'Personenbezogene Daten für {purpose}' # '[] fehlen.
-          description: 'sonstigen personenbezogenen Daten für {purpose}' # 'Beschreibung der [] fehlt.
+          missing: 'Personenbezogene Daten für {purpose}' # '[] fehlen.'
+          description: 'sonstigen personenbezogenen Daten für {purpose}' # 'Beschreibung der [] fehlt.'
           address: 'Wenn für {purpose} die Anschrift erhoben wird, muss auch der Name erhoben werden.' # 1:1
           iban: 'Wenn für {purpose} die IBAN erhoben wird, muss auch der Name erhoben werden.' # 1:1
         markingRemove:
@@ -2774,9 +2831,9 @@ checkDoc:
                                                                   accessExternal    {externen Dienstleistenden}
                                                                   other             {externe Software/Datendienste}} für {purpose} bereits bekannt sind,
         orderProcessingDescription:
-          orderProcessingStart: 'Dienstleistung der Auftragsverarbeitung' # 'Beschreibung der [] fehlt / fehlen (wenn mehrere).'
-          orderProcessingMiddle: 'Auftragsverarbeiter' # 'Beschreibung der [] fehlt / fehlen (wenn mehrere).'
-          orderProcessingEnd: 'Datenkategorien für die Auftragsverarbeitung' # 'Beschreibung der [] fehlt / fehlen (wenn mehrere).'
+          orderProcessingStart: 'Dienstleistung der Auftragsverarbeitung' # 'Beschreibung der [] fehlt / fehlen (if multiple).'
+          orderProcessingMiddle: 'Auftragsverarbeiter' # 'Beschreibung der [] fehlt / fehlen (if multiple).'
+          orderProcessingEnd: 'Datenkategorien für die Auftragsverarbeitung' # 'Beschreibung der [] fehlt / fehlen (if multiple).'
         codeCompensation:
           missing: 'Art des Codes für die Vergabe der Aufwandsentschädigung'
           description: 'Urheber bzw. Bezeichnung des Codes für die Vergabe der Aufwandsentschädigung' # '[] fehlt.'
@@ -2813,7 +2870,7 @@ checkDoc:
             codeMarking: 'Wenn zur Vergabe der <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> ein Code benötigt wird und es außerdem eine Kennzeichnung der Forschungsdaten gibt, die auch der Vergabe der Aufwandsentschädigung dient, muss die Kennzeichnung per Code erfolgen.'
       dataReuse:
         confirmIntro: 'Bestätigung der Informationen zur Nachnutzung' # '[] fehlt.'
-        dataReuse: 'Antwort auf Frage, ob die Forschungsdaten anderen zur Nachnutzung zur Verfügung gestellt werden,' # '[] fehlt.
+        dataReuse: 'Antwort auf Frage, ob die Forschungsdaten anderen zur Nachnutzung zur Verfügung gestellt werden,' # '[] fehlt.'
         dataReuseHow: # '[] fehlt.'
           lineTitle:
             dataReuseHow: 'Personenbezogene Forschungsdaten'
@@ -2891,7 +2948,7 @@ completeForm:
               other {Zum Zweck und für die Dauer der Prüfung des hier vorliegenden {isExRe, select,
                           true  {überarbeiteten bzw. erweiterten}
                           other {}} Antrags{isReUse, select,
-                                              true  {, welcher vorhandene Forschungsdaten nachnutzt,}
+                                              true  {, welcher die Nachnutzung vorhandener Forschungsdaten beinhaltet,}
                                               other {}} erhalten die beteiligten Personen Einblick in die Unterlagen und Schriftwechsel im Zusammenhang mit {numReferences, plural,
                                                        =1    {dem ursprünglichen Antrag mit dem}
                                                        other {den ursprünglichen Anträgen mit den}} Aktenzeichen {reference}.}}}
@@ -2902,7 +2959,7 @@ completeForm:
            other {Zum Zweck und für die Dauer der Prüfung des hier vorliegenden {isExRe, select,
                         true  {überarbeiteten bzw. erweiterten}
                         other {}} Antrags{isReUse, select,
-                                            true  {, welcher vorhandene Forschungsdaten nachnutzt,}
+                                            true  {, welcher die Nachnutzung vorhandener Forschungsdaten beinhaltet,}
                                             other {}} erhalten die Mitglieder {committeeGen} Einblick in die Unterlagen und Schriftwechsel im Zusammenhang mit {numReferences, plural,
                                                 =1    {dem ursprünglichen Antrag mit dem}
                                                 other {den ursprünglichen Anträgen mit den}} Aktenzeichen {reference}.}}}}

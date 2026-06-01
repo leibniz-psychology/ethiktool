@@ -2,19 +2,19 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set translationPrefix, informationParam, addresseeParamTextHint, consentValue = 'projectdetails.pages.consent.', {'type': information in ['pre',''] ? 'pre' : 'post'},{'textHintParams': {'addressee': addresseeType}}, content.consent.vars.value %}
-    {% set isVoluntaryYesDefined, inputDiv, inputDivConsent, isTextInput, isTextInputTexts, labelParams = content.voluntaryYesDescription is defined, 'inputDiv', 'inputDivConsent', textInput is not same as '', textInputTexts is not same as '', {'addressee': addresseeString, 'participant': participantsString} %}
+    {% set translationPrefix, informationParam, addresseeParamTextHint, ensureDiv = 'projectdetails.pages.consent.', {'type': information in ['pre',''] ? 'pre' : 'post'},{'textHintParams': {'addressee': addresseeType}}, 'voluntaryEnsure' %}
+    {% set isVoluntaryYesDefined, inputDiv, isTextInput, labelParams = content.absence is defined, 'inputDiv', textInput is not same as '', {'addressee': addresseeString, 'participant': participantsString} %}
     <div>
         {# voluntary and consent #}
         {% for type in ['voluntary','consent'] %}
             {% set isNotParticipants, visible, isConsent, anyYes, typePrefix, description = content[type~'Participants'] is defined, false, type is same as 'consent', false, translationPrefix~type~'.', type~'Description' %}
-            {% set isClosedDependent, addTextInput = not isConsent and isVoluntaryYesDefined, isConsent and isTextInput %} {# if the options change, the values containing numbers might have to be updated as well #}
+            {% set isClosedDependent = not isConsent and isVoluntaryYesDefined %} {# if the options change, the values containing numbers might have to be updated as well #}
             <div {% if isConsent %} class="mt-8" {% endif %} id="{{ type }}">
-                {{ formRender.addHeading(typePrefix~'title',{'params': informationParam|merge({'addressee': isNotParticipants ? 'Participants' : ''})}) }}
+                {{ formRender.addHeading(typePrefix~'title',{'params': headingParams}) }}
                 {% for addressee in ['']|merge(isNotParticipants ? ['Participants'] : []) %}
-                    {% set widget = content[type~addressee] %}
+                    {% set widget, otherDiv = content[type~addressee], 'consentOtherDiv'~addressee %}
                     {% set value, isAddresseePart = widget.vars.value, addressee is same as 'Participants'  %}
-                    {% set visible, anyYes, optionNo, optionOther = visible or value is same as 'no', anyYes or value is same as 'yes', type~'no', type~addressee~'other' %}
+                    {% set visible, anyYes, optionNo = visible or value is same as 'no', anyYes or value is same as 'yes', type~'no' %}
                     {% if not (isConsent or isAddresseePart) %}
                         {{ formRender.addHint(typePrefix~'headingHint') }} {# not in renderButtons in case the addressee is added between heading and buttons #}
                     {% endif %}
@@ -23,25 +23,29 @@
                     {% endif %}
                     {{ formRender.renderButtons(widget,noHeading|merge({
                         'labelParams': (not isAddresseePart ? labelParams : labelParamsParticipants)|merge({'curAddressee': addressee}),
-                        'stimVisible': {'multi': [[[optionNo]|merge(isNotParticipants ? [type~'Participantsno'] : []),description~'Div']]|merge(isConsent ? [[optionOther,'consent_otherDescription'~addressee]]|merge(isTextInputTexts ? [[optionNo,[],inputDivConsent]] : []) : (isClosedDependent ? [[['voluntaryyes']|merge(isNotParticipants ? ['voluntaryParticipantsyes'] : []),'voluntaryYesDescriptionDiv']]: []))|merge(addTextInput and not isAddresseePart ? [[[optionNo,type~'notApplicable',optionOther],inputDiv]] : []), 'setOr': true}})) }} {# last merge is only true if addressee is an empty string #}
+                        'stimVisible': {'multi': [[[optionNo]|merge(isNotParticipants ? [type~'Participantsno'] : []),description~'Div']]|merge(isConsent ? [[type~addressee~'other',otherDiv]]|merge(isTextInput ? [[optionNo,[],inputDiv]] : []) : (isClosedDependent ? [[['voluntaryyes']|merge(isNotParticipants ? ['voluntaryParticipantsyes'] : []),ensureDiv]]: [])), 'setOr': true, 'isGrid': true}})|
+                         merge(isConsent ? {'icons': {('consent'~addressee~'other'): typePrefix~'hint'}} : {})) }}
                     {% if isConsent %}
-                        <div class="MetaData-Widget" style="width: 20rem; margin-left: 2rem">{{ form_widget(content['otherDescription'~addressee],{'attr': addStyle(boolToDisplay(value is same as 'other'))}) }}</div>
-                        {% if not isAddresseePart and isTextInputTexts %}
-                            <div class="mt-4">{{ formRender.addHint(textInputTexts,{'id': inputDivConsent, 'visible': consentValue is not same as 'no', 'remove': true}) }}</div>
+                        <div id="{{ otherDiv }}" class="MetaData-Widget grid" style="{{ boolToDisplay(value is same as 'other',1) }}; width: 20rem; margin-left: 2rem; {% if not isAddresseePart %} grid-template-columns: auto min-content {% endif %}">
+                            {{ form_widget(content['otherDescription'~addressee]) }}
+                            {% if not isAddresseePart %}
+                                {{ formRender.addPDFhint(['consent'],addresseeType)}}
+                            {% endif %}
+                        </div>
+                        {% if not isAddresseePart and isTextInput %}
+                            <div class="mt-4">{{ formRender.addHint(textInput,{'id': inputDiv, 'visible': content.consent.vars.value is not same as 'no', 'remove': true}) }}</div>
                         {% endif %}
                     {% endif %}
                 {% endfor %}
-                {% if isClosedDependent %}
-                    {{ formRender.addTextfield(content.voluntaryYesDescription,fontNormal|merge({
-                        'visibility': anyYes,
-                        'hint': typePrefix~'textHintYes',
-                        'textHintParams': informationParam})) }}
-                {% endif %}
                 <div id="{{ type~'DescriptionDiv' }}" style="{{ boolToDisplay(visible) }}">
                     {{ formRender.addTextfield(content[description],addresseeParamTextHint|merge(fontNormal)|merge({'hint': typePrefix~'textHint'})) }}
                 </div>
-                {% if addTextInput %}
-                    <div class="mt-4">{{ formRender.addHint(textInput,{'id': inputDiv, 'visible': consentValue in ['no','notApplicable','other'], 'remove': true}) }}</div>
+                {% if isClosedDependent %}
+                    {% set tempPrefix = translationPrefix~'voluntary.voluntaryEnsure.' %}
+                    <div class="mt-8" id="{{ ensureDiv }}" style="{{ boolToDisplay(anyYes) }}">
+                        {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
+                        {{ formRender.addCheckboxGroup(content,ensureTypes,{'other': ensureTypesOther, 'icons': {'relatable': tempPrefix~'hint'}, 'addDiv': ['','','mt-2']}) }}
+                    </div>
                 {% endif %}
             </div>
         {% endfor %}

@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '2.10.0';
+    protected const toolVersion = '3.0.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -159,20 +159,43 @@ trait PageTrait
         return $bool ? 'true' : 'false';
     }
 
+    /** Creates and array whose keys are the values of $array and the values are the values of $array prefixed by either calling createPrefixArray() or prefixArray(). If prefixArray() is called, the keys of $array are used as keys.
+     * @param array $array array to be used
+     * @param string $prefixArray if not an empty string, prefixArray() is called, otherwise createPrefixArray()
+     * @param array $values if $prefixArray is not an empty string, the array to be used for calling prefixArray(). If empty, $array will be used
+     * @param string $valuePrefix if createPrefixArray() is called, valuePrefix argument
+     * @return array prefixed array
+     */
+    protected function combinePrefixArray(array $array, string $prefixArray = '', array $values = [], string $valuePrefix = ''): array
+    {
+        return array_combine($array,$prefixArray==='' ? $this->createPrefixArray($array,valuePrefix: $valuePrefix) : $this->prefixArray($values!==[] ? $values : $array,$prefixArray));
+    }
+
     /** Creates an array whose keys are the values of \$array prefixed by \$prefix. All keys and values are additionally prefixed with a string.
-     * @param array $array array to be use
+     * @param array|string $array $array array to be used
      * @param string $prefix string to be used as the prefix
      * @param string $valuePrefix if not an empty string, the values of the return array are the values prefixed by this string, otherwise suffixed by 'Text'
      * @return array array with the keys and values
      */
-    protected function createPrefixArray(array $array, string $prefix = '', string $valuePrefix = ''): array
+    protected function createPrefixArray(array|string $array, string $prefix = '', string $valuePrefix = ''): array
     {
         $returnArray = [];
+        $array = is_array($array) ? $array : [$array];
         foreach ($array as $value) {
             $prefixedValue = $prefix.$value;
             $returnArray[$prefixedValue] = $valuePrefix==='' ? $this->appendText($prefixedValue) : $valuePrefix.$value;
         }
         return $returnArray;
+    }
+
+    /** Adds a prefix to each element in the array.
+     * @param array $array array whose elements get prefixed
+     * @param string $prefix prefix to be added
+     * @return array $array with each element prefixed
+     */
+    protected function prefixArray(array $array, string $prefix): array
+    {
+        return substr_replace($array,$prefix,0,0);
     }
 
     /** Appends 'Text' at the end of the string.

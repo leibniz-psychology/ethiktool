@@ -9,6 +9,10 @@ li { /* needed for hints in complete form */
     list-style-position: inside;
 }
 
+.bold {
+    font-weight: bold;
+}
+
 .pdfBox {
     page-break-inside: avoid;
     margin-bottom: 2em;

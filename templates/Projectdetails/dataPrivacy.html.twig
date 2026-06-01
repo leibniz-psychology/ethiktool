@@ -193,13 +193,13 @@
                                 <div class="MetaData-Widget">
                                     {% for types in [[dataResearchTypes,dataResearchTextFields],[dataSpecialTypes,dataSpecialTextFields]]  %}
                                         {% if loop.index0 is same as 1 %}
-                                            <div class="MetaData-Label mt-4" style="display: inline-block"><span class="font-bold">{{ (tempPrefix~'title')|trans }}</span> <span style="display: inline-block">{{ formRender.addIcon((tempPrefix~'text')|trans) }}</span></div>
+                                            <div class="MetaData-Label mt-4 d-inline-block"><span class="font-bold">{{ (tempPrefix~'title')|trans }}</span> <span class="d-inline-block">{{ formRender.addIcon((tempPrefix~'text')|trans) }}</span></div>
                                         {% endif %}
                                         {% set textfields, iconKeys = types[1], dataResearchIcons|keys %}
                                         {% for checkbox in types[0] %}
                                             {% set textfield, isTextfield = checkbox~'Text', checkbox in textfields %}
                                             {% set widget, description = content[checkbox], content[textfield] ?? '' %}
-                                            <div class="grid" style="grid-template-columns: repeat(2,minmax(min-content,max-content)) max-content; {{ topMarginButtons }}" {% if isTextfield %} {{ stimulus_action('base','setVisibility','change',{'multi': [[[checkbox],[textfield]]], 'isGrid': true}) }} {% endif %}>
+                                            <div class="grid topMarginButtons" style="grid-template-columns: repeat(2,minmax(min-content,max-content)) max-content;" {% if isTextfield %} {{ stimulus_action('base','setVisibility','change',{'multi': [[[checkbox],[textfield]]], 'isGrid': true}) }} {% endif %}>
                                                 {{ formRender.addCheckbox(widget,checkbox in iconKeys ? {'checkIcon': [dataResearchIcons[checkbox]]} : {}) }}
                                             </div>
                                             {% if isTextfield %}
@@ -239,7 +239,7 @@
                                     {% for type in personalKeepTypes %}
                                         {% set widget, textfield = content[type], content[type~'Text'] %}
                                         {% set vars = widget.vars %}
-                                        <div class="grid" style="{{ topMarginButtons }} grid-template-columns: minmax(min-content,max-content) min-content" {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,[textfield.vars.name~'Div',type~'PersonalKeepConsentDiv']]]}) }}>
+                                        <div class="grid topMarginButtons" style="grid-template-columns: minmax(min-content,max-content) min-content" {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,[textfield.vars.name~'Div',type~'PersonalKeepConsentDiv']]]}) }}>
                                             {{ formRender.addCheckbox(widget,type is not same as 'reuse' ? {'checkIcon': [iconArrayPersonalKeep[type]]} : {}) }}
                                         </div>
                                         {{ formRender.addTextfield(textfield,transferParam|merge(addStyle('margin-bottom: 2rem',true))|merge({'visibility': vars.checked})) }}
@@ -310,7 +310,7 @@
                                         <div class="mt-8" id="{{ markingRemoveString~'Div' }}">
                                             {{ formRender.addHeading(markingRemovePrefix~'title',purposeParamHeading) }}
                                             <div class="MetaData-Label mb-4 hint">{{ markingRemoveHeadingHint }}</div>
-                                            <div class="MetaData-Label" style="display: flex">{{ (markingRemovePrefix~'start')|trans(purposeParamGen)~' ...' }}</div>
+                                            <div class="MetaData-Label d-flex">{{ (markingRemovePrefix~'start')|trans(purposeParamGen)~' ...' }}</div>
                                             <div>
                                                 <div {{ stimulus_action('base','setWidgetByValue','change',{'widgetValue': ['',description.vars.name,{(immediatelyValue): markingHintsImmediately, (laterValue): markingHintsLater}]})}}>
                                                     {{ formRender.renderButtons(markingRemove,noHeading|merge({

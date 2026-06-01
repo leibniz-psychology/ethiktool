@@ -59,8 +59,7 @@ class MeasuresType extends TypeAbstract
         }
         // measures and interventions
         foreach ([self::measuresNode,self::interventionsNode] as $type) {
-            $otherTypes = self::measuresInterventionsOther[$type];
-            $this->setSelectedCheckboxes($forms,$viewData[$type],array_combine($otherTypes,$this->createPrefixArray($otherTypes)));
+            $this->setSelectedCheckboxes($forms,$viewData[$type],$this->combinePrefixArray(self::measuresInterventionsOther[$type]));
             $tempVal = $type.self::descriptionCap;
             if (array_key_exists($tempVal,$forms)) {
                 $forms[$tempVal]->setData($this->getArrayValue($viewData,$tempVal)); // survey start is added in stimulus controller
@@ -75,7 +74,7 @@ class MeasuresType extends TypeAbstract
         if (array_key_exists(self::loanNode,$forms)) {
             $tempArray = $viewData[self::loanNode];
             $forms[self::loanNode]->setData($tempArray[self::chosen]);
-            $this->setChosenArray($forms,$tempArray,self::loanReceipt,[self::descriptionNode => $this->appendText(self::loanReceipt)]);
+            $this->setChosenArray($forms,$tempArray,self::loanReceipt,$this->createPrefixArray(self::loanReceipt));
         }
         // location
         $this->setChosenArray($forms,$viewData,self::locationNode,[self::descriptionNode => self::locationNode.self::descriptionCap]);
@@ -98,8 +97,7 @@ class MeasuresType extends TypeAbstract
             $newData[self::procedureNode] = $forms[self::procedureNode]->getData();
         }
         // measures
-        $otherTypes = self::measuresInterventionsOther[self::measuresNode];
-        $measures = $this->getSelectedCheckboxes($forms,self::measuresTypes,array_combine($otherTypes,$this->createPrefixArray($otherTypes)));
+        $measures = $this->getSelectedCheckboxes($forms,self::measuresTypes,$this->combinePrefixArray(self::measuresInterventionsOther[self::measuresNode]));
         $newData[self::measuresNode] = $measures;
         if (array_key_exists(self::measuresDescription,$forms)) {
             $newData[self::measuresDescription] = $measures!==[] ? $forms[self::measuresDescription]->getData() : '';
@@ -108,8 +106,7 @@ class MeasuresType extends TypeAbstract
             }
         }
         // interventions
-        $otherTypes = self::measuresInterventionsOther[self::interventionsNode];
-        $interventions = $this->getSelectedCheckboxes($forms,self::interventionsTypes,array_combine($otherTypes,$this->createPrefixArray($otherTypes)),exclusive: self::noIntervention);
+        $interventions = $this->getSelectedCheckboxes($forms,self::interventionsTypes,$this->combinePrefixArray(self::measuresInterventionsOther[self::interventionsNode]),exclusive: self::noIntervention);
         $newData[self::interventionsNode] = $interventions;
         if (array_key_exists(self::interventionsDescription,$forms)) {
             $numSelected = count($interventions);
@@ -132,7 +129,7 @@ class MeasuresType extends TypeAbstract
             $tempVal = $forms[self::loanNode]->getData();
             $tempArray = [self::chosen => $tempVal];
             if ($tempVal===0) {
-                $tempArray[self::loanReceipt] = $this->getChosenArray($forms,self::loanReceipt,self::templateText,[self::descriptionNode => $this->appendText(self::loanReceipt)]);
+                $tempArray[self::loanReceipt] = $this->getChosenArray($forms,self::loanReceipt,self::templateText,$this->createAppendArray(self::loanReceipt));
             }
             $newData[self::loanNode] = $tempArray;
         }

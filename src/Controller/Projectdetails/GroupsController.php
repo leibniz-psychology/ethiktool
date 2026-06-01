@@ -30,7 +30,7 @@ class GroupsController extends ControllerAbstract
         $isWards = $addresseeLoad!==self::addresseeParticipants;
         $consentArray = $measureArray[self::consentNode];
         $voluntaryArray = $consentArray[self::voluntaryNode];
-        $isClosedDependentLoad = array_key_exists(self::voluntaryYesDescription,$voluntaryArray);
+        $isClosedDependentLoad = array_key_exists(self::voluntaryEnsureNode,$voluntaryArray);
         $textInput = '';
         $addresseePrefix = 'projectdetails.addressee.';
         $thirdPartiesPrefix = $addresseePrefix.'thirdParties.';
@@ -53,7 +53,7 @@ class GroupsController extends ControllerAbstract
             $textInput = $this->setInputHint($inputArray);
         }
         $inputArray = $this->setInputArray();
-        if ($this->checkInput($voluntaryArray,[self::voluntaryYesDescription => ''])) {
+        if (($voluntaryArray[self::voluntaryEnsureNode] ?? '')!=='') {
             $this->addInputPage($translationPrefix,self::voluntaryNode,$inputArray);
         }
         $textInputVoluntary = $this->setInputHint($inputArray);
@@ -129,9 +129,9 @@ class GroupsController extends ControllerAbstract
             $examined = $data[self::examinedPeopleNode];
             $isClosedDependent = $examined!=='' && array_key_exists(self::dependentExaminedNode,$examined) || $data[self::closedNode][self::chosen]===0;
             if (!in_array('yes',[$voluntaryArray[self::chosen],$voluntaryArray[self::chosen2Node] ?? '']) || $isClosedDependentLoad && !$isClosedDependent) { // remove node -> if 'wards' group was deselected, $voluntaryArray may not contain 'yes' anymore
-                $this->removeElement(self::voluntaryYesDescription,$voluntaryNode);
+                $this->removeElement(self::voluntaryEnsureNode,$voluntaryNode);
             } elseif (!$isClosedDependentLoad && $isClosedDependent) { // add node
-                $voluntaryNode->addChild(self::voluntaryYesDescription);
+                $voluntaryNode->addChild(self::voluntaryEnsureNode);
             }
             $isNotLeave = !$this->getLeavePage($groups,$session,self::groupsNode);
             return $this->saveDocumentAndRedirect($request,$isNotLeave ? $appNode : $appNodeNew, $isNotLeave ? $appNodeNew : null);

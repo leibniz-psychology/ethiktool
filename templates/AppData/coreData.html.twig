@@ -64,8 +64,8 @@
         {% endif %}
         <div class="mt-8" id="projectDates">
             {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[hintsPrefix~'headingHint']]}) }}
-            {{ form_label(projectStart,(startPrefix~'title')|trans({'{committeeType}': committeeType})~':',addLabelAttributes(addClass('MetaData-Label'))) }}
-            <div class="MetaData-Widget" style="height: min-content; width: fit-content" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
+            {{ form_label(projectStart,(startPrefix~'title')|trans({'committeeType': committeeType})~':',addLabelAttributes(addClass('MetaData-Label'))) }}
+            <div class="MetaData-Widget fitWidth" style="height: min-content" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
                 {{ form_widget(projectStart,{'attr': {'lang': 'en'}|merge(addTarget(coreDataController,'projectStart'))}) }}
             </div>
             {# project start next #}
@@ -88,7 +88,7 @@
             {# project end #}
             {% set projectEnd, tempPrefix = content.projectEnd, tempPrefix~'end.' %}
             <div id="projectEnd">{{ form_label(projectEnd,(tempPrefix~'title')|trans(committeeParams)~':',addLabelAttributes(addClass('MetaData-Label mt-4'))) }}</div>
-            <div class="MetaData-Widget" style="width: fit-content">
+            <div class="MetaData-Widget fitWidth">
                 {{ form_widget(projectEnd) }}
             </div>
             {{ formRender.addHint(tempPrefix~'hint') }}
@@ -107,7 +107,7 @@
                     {% set vars = curWidget.vars %}
                     {% set isChecked, name = vars.checked, vars.name %}
                     {% set isFunding, textDiv = name is not same as noFunding, name~'Div' %}
-                    <div {% if isFunding %} {{ stimulus_action('base','setVisibility','change',{'multi': [[name,textDiv]]})|stimulus_action(coreDataController,'setConflict','change') }} {% endif %} {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>
+                    <div {% if isFunding %} {{ stimulus_action('base','setVisibility','change',{'multi': [[name,textDiv]]})|stimulus_action(coreDataController,'setConflict','change') }} {% endif %} {% if loop.index>1 %} class="topMarginButtons" {% endif %}>
                         {{ formRender.addCheckbox(curWidget, {'disable': not isFunding and anySelected or isFunding and noSelected, 'target': [coreDataController,name]}) }}
                     </div>
                     {% if isFunding %}
@@ -146,8 +146,8 @@
                 {% set isSupervisor = type is same as 'supervisor' %}
                 {% set suffix = isSupervisor ? 'supervisor' %}
                 {% set positionSuffix = 'position'~suffix %}
-                <div class="mt-4" style="width: fit-content" {% if isSupervisor %} id="supervisor" {{ stimulus_target(coreDataController,'supervisorDiv') }} {% endif %}>
-                    <div class="MetaData-Label" style="width: fit-content">
+                <div class="mt-4 fitWidth" {% if isSupervisor %} id="supervisor" {{ stimulus_target(coreDataController,'supervisorDiv') }} {% endif %}>
+                    <div class="MetaData-Label fitWidth">
                         {{ ('coreData.applicant.'~type)|trans }}:
                     </div>
                     <div class="MetaData-Widget MetaData-Widget_collection grid gap-x-4" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
@@ -206,7 +206,7 @@
                     {% set curWidget, isSupport = content[widget], widget is not same as noSupport %}
                     {% set vars = curWidget.vars %}
                     {% set name = vars.name %}
-                    <div class="mt-2" {% if isSupport %} {{ stimulus_action('base','setVisibility','change',{'multi': [[name,name~'TextDiv']]}) }} {% endif %} {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>
+                    <div class="mt-2 {% if loop.index>1 %} topMarginButtons {% endif %}" {% if isSupport %} {{ stimulus_action('base','setVisibility','change',{'multi': [[name,name~'TextDiv']]}) }} {% endif %}>
                         {{ formRender.addCheckbox(curWidget, {'disable': not isSupport and anySelected or isSupport and noSelected}) }}
                     </div>
                     {% if isSupport %}

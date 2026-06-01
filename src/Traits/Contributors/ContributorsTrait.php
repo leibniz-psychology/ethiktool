@@ -58,24 +58,26 @@ trait ContributorsTrait
             foreach ($this->addZeroIndex($this->xmlToArray($projectdetailsNode)[self::studyNode]) as $studyID => $study) {
                 foreach ($this->addZeroIndex($study[self::groupNode]) as $groupID => $group) {
                     foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureID => $measure) {
-                        $contributorProjectdetailsArray = $measure[self::contributorNode];
-                        $newIndices = [];
-                        foreach (self::tasksNodes as $task) {
-                            $indices = explode(',', $contributorProjectdetailsArray[$task]);
-                            if ($indices[0]!='') { // at least one contributor was selected for the current task
-                                foreach ($indices as $curIndex => $contributorIndex) {
-                                    if ($contributorIndex==$id && ($isRemoved || !array_key_exists($task, $tasks))) { // contributor or tasks was removed
-                                        unset($indices[$curIndex]);
-                                    } elseif ($isRemoved && $contributorIndex>$id) { // decrease index as a contributor with a smaller index was removed
-                                        --$indices[$curIndex];
-                                    } elseif ($supervisorAdded && $contributorIndex>0) { // increase index as a contributor was added before
-                                        ++$indices[$curIndex];
+                        $contributorProjectdetailsArray = $measure[self::contributorNode] ?? '';
+                        if ($contributorProjectdetailsArray!=='') {
+                            $newIndices = [];
+                            foreach (self::tasksNodes as $task) {
+                                $indices = explode(',', $contributorProjectdetailsArray[$task]);
+                                if ($indices[0]!='') { // at least one contributor was selected for the current task
+                                    foreach ($indices as $curIndex => $contributorIndex) {
+                                        if ($contributorIndex==$id && ($isRemoved || !array_key_exists($task, $tasks))) { // contributor or tasks was removed
+                                            unset($indices[$curIndex]);
+                                        } elseif ($isRemoved && $contributorIndex>$id) { // decrease index as a contributor with a smaller index was removed
+                                            --$indices[$curIndex];
+                                        } elseif ($supervisorAdded && $contributorIndex>0) { // increase index as a contributor was added before
+                                            ++$indices[$curIndex];
+                                        }
                                     }
                                 }
+                                $newIndices[$task] = implode(',', $indices);
                             }
-                            $newIndices[$task] = implode(',', $indices);
+                            $this->arrayToXml($newIndices, $projectdetailsNode->{self::studyNode}[$studyID]->{self::groupNode}[$groupID]->{self::measureTimePointNode}[$measureID]->{self::contributorNode});
                         }
-                        $this->arrayToXml($newIndices, $projectdetailsNode->{self::studyNode}[$studyID]->{self::groupNode}[$groupID]->{self::measureTimePointNode}[$measureID]->{self::contributorNode});
                     }
                 }
             }

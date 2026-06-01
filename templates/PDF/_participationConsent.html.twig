@@ -14,11 +14,11 @@
         <div class="{{ justify}}">{{ paragraph|raw|nl2br }}</div>
     {% endfor %}
     <div class="noPageBreak">
-        <div class="{{ justify}}" style="margin-bottom: 2em; font-weight: bold">{{ 'consent.confirm'|trans({'addressee': addressee, 'information': information, 'isPersonal': isPersonal}) }}</div>
+        <div class="{{ justify }} bold" style="margin-bottom: 2em">{{ 'consent.confirm'|trans({'addressee': addressee, 'information': information, 'isPersonal': isPersonal}) }}</div>
         {% if optionalConsent is not same as [] %}
             {% set classes = 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : '') %}
             <div class="{{ textPreview }}" style="page-break-inside: avoid">
-                <div style="margin-bottom: 1rem; font-weight: bold">{{ 'consent.optionalHeading'|trans }}</div>
+                <div class="bold" style="margin-bottom: 1rem">{{ 'consent.optionalHeading'|trans }}</div>
                 {% for text in optionalConsent %}
                     <table style="margin-bottom: 2em">
                         <tr><td class="{{ justify }}" colspan="5">{{ text }}</td></tr>
@@ -33,8 +33,8 @@
                 {% endfor %}
             </div>
         {% endif %}
-        {% if consentType in ['digital','oral'] %}
-            <div class="{{ justify}}">{{ ('consent.'~consentType)|trans }}</div>
+        {% if consentHint is not same as '' %}
+            <div class="{{ justify}}">{{ consentHint|raw }}</div>
         {% else %}
             <div style="page-break-inside: avoid">
                 {{ pdfMacros.addSignature(savePDF,addressee,true) }}

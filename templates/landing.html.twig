@@ -53,14 +53,8 @@
                 {% endfor %} {# study #}
                 {{ _self.addNew(content,'study',studyNames) }}
             </div>
-            {% set tempPrefix = overviewPrefix~'end.' %}
-            <div class="MetaData-Label mt-4">{{ (tempPrefix~'start')|trans|raw|nl2br }}</div>
-            <div class="MetaData-Label minAutoGrid gap-2">
-                {% for symbol in ['rename','copy','add','delete','edit'] %}
-                    {{ include('images/'~symbol~'.svg') }}
-                    {{ (tempPrefix~symbol)|trans }}
-                {% endfor %}
-            </div>
+            {{ formRender.addSymbolHints(['rename','copy','add','delete','edit'],overviewPrefix~'end.') }}
+            <div class="MetaData-Label mt-3">{{ (overviewPrefix~'hint')|trans|raw|nl2br }}</div>
             {# modal for removing #}
             {{ include('components/redirectModal.html.twig',{'modalID': 'removeModal', 'prefix': translationPrefix~'removeModal.', 'link': 'app_landing', 'stim': ['base','submitForm'], 'stimNo': ['base','unsetLandingRemove'], 'modalBodyTarget': ['landing','landingRemove']}) }}
         {% else %} {# sub-pages #}
@@ -120,18 +114,18 @@
             <div style="height: 75%; border-left: 1px dotted black; border-bottom: 1px dotted black"></div>
         </div>
     {% endif %}
-    {% set column, gridArea, fitHeight = isStudy ? 1 : (column+1), 'grid-area: 1 / 1;', ' height: fit-content;' %}
-    <div class="grid mt-3" id="{{ id~'_Outer' }}" style="grid-column: {{ column }} / span {{ 5-column+1 }}; width: fit-content; min-height: 2.5rem">
+    {% set column, gridArea, classAlignHeight = isStudy ? 1 : (column+1), 'grid-area: 1 / 1;', ' align-self-end fitHeight' %}
+    <div class="grid mt-3 fitWidth" id="{{ id~'_Outer' }}" style="grid-column: {{ column }} / span {{ 5-column+1 }}; min-height: 2.5rem">
         <button type="button" id="{{ id~'_button' }}" class="{{ classes }} buttonHover" style="{{ gridArea }} color: grey" {{ stimulus_action('landing','setNewEdit','click')|stimulus_action('base','unsetLandingCopy','click') }}>
             <span class="me-1" style='color: black'>+</span>
             {{ (buttonsPrefix~'new.'~type)|trans }}</button>
-        <div id="{{ id~'_Div' }}" class="{{ classes }} flex-wrap gap-2 " style="{{ gridArea~fitHeight }} display: none">
+        <div id="{{ id~'_Div' }}" class="{{ classes }} flex-wrap gap-2 fitHeight" style="{{ gridArea }} display: none">
             <div>
                 <div id="{{ id~'_name' }}" style="font-size: x-small; text-align: end">{{ (projectdetailsPrefix~'copyHint')|trans({'type': type}) }}</div>
                 <div {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setCreate','input',{'names': names, 'current': ''}) }}>{{ form_widget(content[id],{'id': id, 'attr': {'style': 'width: 10rem; height: 1.75rem'}}) }}</div>
             </div>
-            <button type="button" id="{{ id~'_create' }}" class="Button_primary_go align-self-end" style="{{ fitHeight }}" {{ stimulus_action('base','submitForm','click') }}>{{ (buttonsPrefix~'create')|trans }}</button>
-            <button type="button" id="{{ id~'_cancel' }}" class="Button_primary_act align-self-end" style="{{ fitHeight }}" {{ stimulus_action('landing','cancelNewEdit','click')|stimulus_action('base','unsetLandingCopy','click') }}>{{ (buttonsPrefix~'cancel')|trans }}</button>
+            <button type="button" id="{{ id~'_create' }}" class="Button_primary_go {{ classAlignHeight }}" {{ stimulus_action('base','submitForm','click') }}>{{ (buttonsPrefix~'create')|trans }}</button>
+            <button type="button" id="{{ id~'_cancel' }}" class="Button_primary_act {{ classAlignHeight }}"{{ stimulus_action('landing','cancelNewEdit','click')|stimulus_action('base','unsetLandingCopy','click') }}>{{ (buttonsPrefix~'cancel')|trans }}</button>
         </div>
     </div>
 {% endmacro %}
@@ -149,7 +143,7 @@
         <button type="button" id="{{ 'remove_'~id }}" class="{{ buttonAlign }}" {% if isOnly %} disabled {% endif %} data-bs-toggle="modal" data-bs-target="#removeModal" {{ stimulus_action('landing','setLandingRemove','click')|stimulus_action('base','setLandingRemove','click') }}>{{ include('images/delete.svg') }}</button>
         {% if type is same as 'measureTimePoint' %}
             {% set routeIDs = {'studyID': routeIDs[0]+1, 'groupID': routeIDs[1]+1, 'measureID': routeIDs[2]+1} %}
-            <a class="Button_primary_go align-self-end" href="{{ path('app_landing',routeIDs) }}" style="width: fit-content" {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': 'app_landing', 'page': 'Projectdetails'}) }}>{{ include('images/edit.svg') }}</a>
+            <a class="Button_primary_go align-self-end fitWidth" href="{{ path('app_landing',routeIDs) }}" {{ stimulus_action('base','setDummySubmit','click',{'route-i-ds': routeIDs, 'url': 'app_landing', 'page': 'Projectdetails'}) }}>{{ include('images/edit.svg') }}</a>
         {% else %}
             <div style="width: 2rem;"></div>
         {% endif %}
@@ -165,17 +159,17 @@
         names:       names of the elements of the current type
         currentName: current name of the element
     #}
-    {% set projectdetailsPrefix, editID, fitHeight = 'landing.projectdetails.', 'editText_'~id, 'height: fit-content;' %}
-    {% set buttonsPrefix, heightGrid = projectdetailsPrefix~'buttons.', fitHeight~' grid-area: 1 / 1;' %}
+    {% set projectdetailsPrefix, editID, classAlignHeight = 'landing.projectdetails.', 'editText_'~id, 'align-self-end fitHeight' %}
+    {% set buttonsPrefix = projectdetailsPrefix~'buttons.' %}
     <div class="grid" id="{{ 'edit_'~editID }}">
-        <button type="button" id="{{ editID~'_button' }}" class="buttonHover ms-2" style="{{ heightGrid }} width: fit-content" {{ stimulus_action('landing','setNewEdit','click') }}>{{ include('images/rename.svg') }}</button>
-        <div id="{{ editID~'_Div' }}" class="flex flex-wrap gap-2 align-self-end" style="{{ heightGrid }} display: none">
+        <button type="button" id="{{ editID~'_button' }}" class="buttonHover ms-2 fitHeight fitWidth" style="grid-area: 1 / 1" {{ stimulus_action('landing','setNewEdit','click') }}>{{ include('images/rename.svg') }}</button>
+        <div id="{{ editID~'_Div' }}" class="flex flex-wrap gap-2 {{ classAlignHeight }}" style="grid-area: 1 / 1; display: none">
             <div>
                 <div id="{{ editID~'_name' }}" style="font-size: x-small; text-align: end">{{ (projectdetailsPrefix~'editHint')|trans({'type': type, 'index': index+1}) }}</div>
                 <div {{ stimulus_action('landing','checkName','beforeinput')|stimulus_action('landing','setCreate','input',{'names': names, 'current': currentName}) }}>{{ form_widget(content[editID],{'id': editID, 'attr': {'style': 'width: 10rem; height: 1.75rem'}}) }}</div>
             </div>
-            <button type="button" id="{{ 'rename_'~id }}" class="Button_primary_go align-self-end" style="{{ fitHeight }}" {{ stimulus_action('base','submitForm','click') }}>{{ (buttonsPrefix~'edit')|trans }}</button>
-            <button type="button"  id="{{ editID~'_cancel' }}" class="Button_primary_act align-self-end" style="{{ fitHeight }}" {{ stimulus_action('landing','cancelNewEdit','click') }}>{{ (buttonsPrefix~'cancel')|trans }}</button>
+            <button type="button" id="{{ 'rename_'~id }}" class="Button_primary_go {{ classAlignHeight }}" {{ stimulus_action('base','submitForm','click') }}>{{ (buttonsPrefix~'edit')|trans }}</button>
+            <button type="button"  id="{{ editID~'_cancel' }}" class="Button_primary_act {{ classAlignHeight }}" {{ stimulus_action('landing','cancelNewEdit','click') }}>{{ (buttonsPrefix~'cancel')|trans }}</button>
         </div>
     </div>
 {% endmacro %}

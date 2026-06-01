@@ -3,40 +3,38 @@
 {% trans_default_domain 'pdf' %}
 {% block pdfBody %}
     {% set textPreview = not savePDF ? 'previewSmall' %}
-{#    <div>#}
-        {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
-        <div class="pdfHeadingCenter pdfHeadingMain pdfBorderMain {% if not savePDF %}previewXLarge{% endif %}">{{ completePostHeading|raw }}</div>
-        {% if isOral %}
-            <div class="pdfOral {{ textPreview }}">{{ oralHint|raw }}</div>
-        {% endif %}
-        {% set classes = 'textJustify '~textPreview %}
-        {% for paragraph in content %}
-            <div class="{{ classes }}">
-                {{ paragraph[0]|raw|nl2br }}
-                {{ paragraph[1]|raw|nl2br }}
-            </div>
-        {% endfor %}
-        {# contributors #}
-        {% for contributor in contributors %}
-            <div class="{{ classes }} noPageBreak">{{ (contributor~"\n")|raw|nl2br }}</div>
-        {% endfor %}
-        {# confirm #}
-        {% set tempPrefix, classes, addresseeParam = 'completePost.confirm.', 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : ''), {'addressee': addressee} %}
-        <div class="{{ textPreview }} noPageBreak" style="margin-top: 1.5em">
-            <table>
-                <tr><td colspan="2" style="font-weight: bold">{{ (tempPrefix~'title')|trans }}</td></tr>
-                {% for answer in ['yes','no'] %}
-                    <tr style="line-height: 1.5">
-                        <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5em; margin-right: 0.375em"></div></td>
-                        <td>{{ (tempPrefix~answer)|trans(addresseeParam) }}</td>
-                    </tr>
-                {% endfor %}
-            </table>
-            {% if isCompensation %}
-                <div class="{{ textPreview }}" style="margin-top: 1em">{{ (tempPrefix~'compensation')|trans }}</div>
-            {% endif %}
+    {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
+    <div class="pdfHeadingCenter pdfHeadingMain pdfBorderMain {% if not savePDF %}previewXLarge{% endif %}">{{ completePostHeading|raw }}</div>
+    {% if isOral %}
+        <div class="pdfOral {{ textPreview }}">{{ oralHint|raw }}</div>
+    {% endif %}
+    {% set classes = 'textJustify '~textPreview %}
+    {% for paragraph in content %}
+        <div class="{{ classes }}">
+            {{ paragraph[0]|raw|nl2br }}
+            {{ paragraph[1]|raw|nl2br }}
         </div>
-{#    </div>#}
+    {% endfor %}
+    {# contributors #}
+    {% for contributor in contributors %}
+        <div class="{{ classes }} noPageBreak">{{ (contributor~"\n")|raw|nl2br }}</div>
+    {% endfor %}
+    {# confirm #}
+    {% set tempPrefix, classes, addresseeParam = 'completePost.confirm.', 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : ''), {'addressee': addressee} %}
+    <div class="{{ textPreview }} noPageBreak" style="margin-top: 1.5em">
+        <table>
+            <tr><td class="bold" colspan="2">{{ (tempPrefix~'title')|trans }}</td></tr>
+            {% for answer in ['yes','no'] %}
+                <tr style="line-height: 1.5">
+                    <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5em; margin-right: 0.375em"></div></td>
+                    <td>{{ (tempPrefix~answer)|trans(addresseeParam) }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% if isCompensation %}
+            <div class="{{ textPreview }}" style="margin-top: 1em">{{ (tempPrefix~'compensation')|trans }}</div>
+        {% endif %}
+    </div>
     {% if not savePDF %}
         {{ pdfMacros.addLine() }}
     {% endif %}

@@ -24,6 +24,13 @@ export default class extends Controller {
         if (this.hasCriteriaHintTarget) {
             this.setCriteria();
         }
+        // prevent automatic selection of wards if arrows are pressed/clicked if no min age was entered before
+        this.minAgeTarget.addEventListener('change', () => {
+            if (['0','1'].includes(this.minAgeTarget.value) && !this.wardsTarget.checked) { // depending on if the up or down arrow was pressed/clicked, min age is either 1 or 0
+                this.minAgeTarget.value = 18;
+                this.setExamined();
+            }
+        });
     }
 
     // methods that are called from the template

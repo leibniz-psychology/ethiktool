@@ -53,7 +53,29 @@ class InformationController extends ControllerAbstract
                 $this->addInputPage($translationPrefix,self::consentNode,$inputArray,[self::addressee => $addresseeString]);
             }
             // legal
-            $textInputPre = $this->getLegalInput($inputArray,$measureArray);
+            $isInput = false;
+            $legalParams = array_fill_keys(self::legalTypes,'false'); // contains more keys than necessary
+            $legalParams['hints'] = -1;
+            $legalArray = $measureArray[self::legalNode];
+            if ($legalArray!=='') {
+                foreach (array_keys($legalArray) as $type) {
+                    if ($type!==self::apparatusNode) {
+                        ++$legalParams['hints'];
+                        $legalParams[$type] = 'true';
+                        if ($this->checkInput($legalArray[$type],[self::chosen => ''])) {
+                            $isInput = true;
+                        }
+                    }
+                }
+            }
+            if ($isInput) {
+                $this->addInputPage('pages.projectdetails.',self::legalNode,$inputArray,$legalParams);
+                if ($legalParams['hints']>1) {
+                    $lastIndex = count($inputArray[self::pageInputs])-1;
+                    $inputArray[self::pageInputs][$lastIndex] = $this->replaceString($inputArray[self::pageInputs][$lastIndex]);
+                }
+                $textInputPre = $this->setInputHint($inputArray);
+            }
             // texts
             $textsArray = $measureArray[self::textsNode];
             $conArray = $textsArray[self::conNode] ?? null; // can only be null if tempArray is an empty string
@@ -119,9 +141,7 @@ class InformationController extends ControllerAbstract
                         }
                     }
                     if ($isPre) { // no pre information and now pre information
-                        if (($this->getAnyConsent($measureArray[self::consentNode]) || $this->getTemplateChoice($this->getLoanReceipt($measureArray[self::measuresNode][self::loanNode])))) { // consent or loan receipt -> add legal nodes
-                            $this->addLegalNodes($legalNode,$this->xmlToArray($measureNode));
-                        }
+                        $this->addLegalNodes($legalNode,$this->xmlToArray($measureNode)); // add legal nodes
                         if ($consentArray[self::terminateConsNode][self::chosen]==='1') { // terminateCons is answered with 'no' -> add terminateConsParticipation node
                             $this->insertElementBefore(self::terminateConsParticipationNode,$consentNode->{self::terminateParticipantsNode});
                         }

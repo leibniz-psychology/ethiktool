@@ -345,7 +345,15 @@ trait ReviewProcessTrait
         'consent' => [
             'voluntary' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'voluntaryParticipants' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'voluntaryYesDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'relatable' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'absence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'discuss' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'onetime' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'substitute' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'substituteText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'independent' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'voluntaryEnsureOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'voluntaryEnsureOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'voluntaryDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'consent' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'consentParticipants' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -498,8 +506,13 @@ trait ReviewProcessTrait
             'voucherdeliverDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
             'voucherotherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
             'awardingOtherDescription' => ['shortDocs','shortService','fullBegun','fullDocs'],
-            'compensationVoluntary' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'compensationVoluntaryDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'amount' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'inequality' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'income' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'loss' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'compensationVoluntaryOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'compensationVoluntaryOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'no' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'furtherDescription' => ['fullBegun','fullRequested','fullDocs']
         ], // compensation
         // texts

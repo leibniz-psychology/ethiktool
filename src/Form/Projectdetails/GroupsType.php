@@ -34,7 +34,7 @@ class GroupsType extends TypeAbstract
         // sample size
         $tempPrefix = $translationPrefix.'sampleSize.';
         $this->addFormElement($builder,self::sampleSizeTotalNode,'spinner',options: $this->setMinMax(1,99999));
-        $this->addFormElement($builder,self::sampleSizeFurtherNode,'textarea',hint: $tempPrefix.'furtherParticulars');
+        $this->addFormElement($builder,self::sampleSizeFurtherNode,'text',hint: $tempPrefix.'furtherParticulars');
         $this->addFormElement($builder,self::sampleSizePlanNode,'textarea',hint: $tempPrefix.'plan.textHint');
         // recruitment
         $tempPrefix = $translationPrefix.'recruitment.types.';
@@ -55,14 +55,8 @@ class GroupsType extends TypeAbstract
         $forms[self::peopleDescription]->setData($this->getArrayValue($viewData,self::peopleDescription));
         // closed group
         $tempArray = $viewData[self::closedNode];
-        $chosen = $tempArray[self::chosen];
-        $forms[self::closedNode]->setData($chosen);
-        if ($chosen==='0') {
-            $types = $tempArray[self::closedTypesNode];
-            if ($types!=='') {
-                $this->setSelectedCheckboxes($forms,$types,[self::closedOther => self::closedOtherText]);
-            }
-        }
+        $forms[self::closedNode]->setData($tempArray[self::chosen]);
+        $this->setSelectedCheckboxes($forms,$tempArray[self::closedTypesNode] ?? '',[self::closedOther => self::closedOtherText]);
         // criteria
         if (array_key_exists(self::criteriaIncludeNode,$forms)) { // either both include and exclude or neither exist
             foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
@@ -86,7 +80,7 @@ class GroupsType extends TypeAbstract
             $forms[self::sampleSizePlanNode]->setData($tempArray[self::sampleSizePlanNode]);
         }
         // recruitment
-        $this->setSelectedCheckboxes($forms,$viewData[self::recruitment],array_combine(self::recruitmentTypesOther,$this->createPrefixArray(self::recruitmentTypesOther)));
+        $this->setSelectedCheckboxes($forms,$viewData[self::recruitment],$this->combinePrefixArray(self::recruitmentTypesOther));
         if (array_key_exists(self::recruitmentFurther,$forms)) {
             $forms[self::recruitmentFurther]->setData($viewData[self::recruitmentFurther]);
         }
@@ -137,7 +131,7 @@ class GroupsType extends TypeAbstract
                                               self::sampleSizePlanNode => $forms[self::sampleSizePlanNode]->getData()];
         }
         // recruitment
-        $newData[self::recruitment] = $this->getSelectedCheckboxes($forms,self::recruitmentTypes,array_combine(self::recruitmentTypesOther,$this->createPrefixArray(self::recruitmentTypesOther)));
+        $newData[self::recruitment] = $this->getSelectedCheckboxes($forms,self::recruitmentTypes,$this->combinePrefixArray(self::recruitmentTypesOther));
         if (array_key_exists(self::recruitmentFurther,$forms)) {
             $newData[self::recruitmentFurther] = $forms[self::recruitmentFurther]->getData();
         }

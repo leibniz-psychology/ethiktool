@@ -47,7 +47,7 @@
     #}
     {% for heading, paragraphs in content %}
         <div class="{{ textPreview }}" style="page-break-inside: avoid; line-height: 1.5"> {# avoid page break between heading and first (sub-)paragraph #}
-            <div style="font-weight: bold; margin-bottom: 0.5em">{{ heading|raw }}</div>
+            <div class="bold" style="margin-bottom: 0.5em">{{ heading|raw }}</div>
             {{ _self.addSubParagraph(paragraphs[0],textPreview,false) }}
         </div>
         {% for paragraph in paragraphs|slice(1) %}

@@ -72,7 +72,7 @@ class DataPrivacyType extends TypeAbstract
         $consentValues = array_values(self::personalKeepConsentTypes);
         // personal keep consent
         foreach (self::personalKeepTypes as $type) {
-            $this->addRadioGroup($builder,$type.self::personalKeepConsentNode,array_combine($consentKeys,$this->prefixArray($consentValues,$type)),$consentTitle,textName: $this->appendText($type),textHint: $hint,options: [self::labelParams => ['type' => $this->translateString($tempPrefix.'typesShort.'.$type)]]);
+            $this->addRadioGroup($builder,$type.self::personalKeepConsentNode,$this->combinePrefixArray($consentKeys,$type,$consentValues),$consentTitle,textName: $this->appendText($type),textHint: $hint,options: [self::labelParams => ['type' => $this->translateString($tempPrefix.'typesShort.'.$type)]]);
         }
         // purpose research
         $this->addCheckboxGroup($builder,self::purposeResearchTypes,$translationPrefix.self::purposeResearchNode.'.types.');
@@ -92,12 +92,12 @@ class DataPrivacyType extends TypeAbstract
                 // marking remove
                 if ($type!=='contactResult') {
                     $tempPrefix = $translationPrefix.self::markingRemoveNode.'.';
-                    $this->addRadioGroup($builder, $type.self::markingRemoveNode, array_combine(array_keys(self::markingRemoveTypes), $this->prefixArray(array_values(self::markingRemoveTypes), $type)), textareaName: $type.self::laterDescription, textareaHint: $tempPrefix.self::textHintPlural.'.'.self::laterDescription, textName: $type.self::markingRemoveNode.self::descriptionCap);
+                    $this->addRadioGroup($builder, $type.self::markingRemoveNode, $this->combinePrefixArray(array_keys(self::markingRemoveTypes),$type,array_values(self::markingRemoveTypes)), textareaName: $type.self::laterDescription, textareaHint: $tempPrefix.self::textHintPlural.'.'.self::laterDescription, textName: $type.self::markingRemoveNode.self::descriptionCap);
                     $this->addCheckboxGroup($builder, $this->prefixArray(self::markingRemoveMiddleTypes, $type), $tempPrefix.self::markingRemoveMiddleNode.'.types.', labelNames: self::markingRemoveMiddleTypes);
                 }
                 // personal remove
                 $tempPrefix = $translationPrefix.self::personalRemoveNode.'.textHints.';
-                $this->addRadioGroup($builder,$type.self::personalRemoveNode,array_combine(array_keys(self::personalRemoveTypes),$this->prefixArray(array_values(self::personalRemoveTypes),$type)),textareaName: $type.self::keepDescription,textareaHint: $tempPrefix.self::personalRemoveKeep,textName: $type.self::personalRemoveNode.self::descriptionCap,textHint: $tempPrefix.self::personalRemoveImmediately);
+                $this->addRadioGroup($builder,$type.self::personalRemoveNode,$this->combinePrefixArray(array_keys(self::personalRemoveTypes),$type,array_values(self::personalRemoveTypes)),textareaName: $type.self::keepDescription,textareaHint: $tempPrefix.self::personalRemoveKeep,textName: $type.self::personalRemoveNode.self::descriptionCap,textHint: $tempPrefix.self::personalRemoveImmediately);
             }
             // access
             $this->addCheckboxGroup($builder,$this->prefixArray(self::accessTypes,$type),$accessTypesPrefix,array_values($this->createPrefixArray(self::accessOthers,$type)),$accessPlaceholderArray,labelNames: self::accessTypes);
@@ -179,11 +179,11 @@ class DataPrivacyType extends TypeAbstract
                         // marking further
                         $forms[self::markingFurtherNode]->setData($this->getArrayValue($viewData, self::markingFurtherNode));
                         // list
-                        $this->setSelectedCheckboxes($forms, $viewData[self::listNode] ?? '', [self::listOther => $this->appendText(self::listOther)]);
+                        $this->setSelectedCheckboxes($forms, $viewData[self::listNode] ?? '', $this->createPrefixArray(self::listOther));
                         // data research
-                        $this->setSelectedCheckboxes($forms, $viewData[self::dataResearchNode] ?? '', array_combine(self::dataResearchTextFieldsAll, $this->createPrefixArray(self::dataResearchTextFieldsAll)));
+                        $this->setSelectedCheckboxes($forms, $viewData[self::dataResearchNode] ?? '', $this->combinePrefixArray(self::dataResearchTextFieldsAll));
                         // anonymization
-                        $this->setSelectedCheckboxes($forms, $viewData[self::anonymizationNode] ?? '', [self::anonymizationOther => $this->appendText(self::anonymizationOther)]);
+                        $this->setSelectedCheckboxes($forms, $viewData[self::anonymizationNode] ?? '', $this->createPrefixArray(self::anonymizationOther));
                         // storage
                         $this->setChosenArray($forms, $viewData, self::storageNode, [self::descriptionNode => self::storageNode.self::descriptionCap]);
                         if (array_key_exists(self::personalKeepNode, $viewData)) {
@@ -200,16 +200,10 @@ class DataPrivacyType extends TypeAbstract
                         // access if research data is personal
                         $this->setAccess($forms, $viewData[self::accessNode] ?? '', self::dataPersonalNode);
                         // purposeResearch
-                        $isPurpose = array_key_exists(self::purposeResearchNode, $viewData);
-                        if ($isPurpose) {
-                            $this->setSelectedCheckboxes($forms, $viewData[self::purposeResearchNode]);
-                        }
+                        $this->setSelectedCheckboxes($forms, $viewData[self::purposeResearchNode] ?? '');
                         // purpose further
-                        $isPurposeFurther = array_key_exists(self::purposeFurtherNode, $viewData);
-                        if ($isPurposeFurther) {
-                            $this->setSelectedCheckboxes($forms, $viewData[self::purposeFurtherNode]);
-                        }
-                        foreach ([self::purposeResearchNode => $isPurpose, self::purposeFurtherNode => $isPurposeFurther] as $purposeType => $hasPurpose) {
+                        $this->setSelectedCheckboxes($forms, $viewData[self::purposeFurtherNode] ?? '');
+                        foreach ([self::purposeResearchNode => array_key_exists(self::purposeResearchNode, $viewData), self::purposeFurtherNode => array_key_exists(self::purposeFurtherNode, $viewData)] as $purposeType => $hasPurpose) {
                             if ($hasPurpose) {
                                 $purposeArray = $viewData[$purposeType];
                                 $purposePrefix = $purposeType===self::purposeFurtherNode ? self::purposeFurtherNode : '';
@@ -220,7 +214,7 @@ class DataPrivacyType extends TypeAbstract
                                             // purpose data
                                             if ($purposeWoPrefix!==self::purposeTechnical) {
                                                 $other = $purposeWoPrefix.self::purposeDataOther;
-                                                $this->setSelectedCheckboxes($forms, $questions[self::purposeDataNode], [$other => $this->appendText($other)]);
+                                                $this->setSelectedCheckboxes($forms, $questions[self::purposeDataNode], $this->createPrefixArray($other));
                                             }
                                             // marking remove
                                             if (array_key_exists(self::markingRemoveNode, $questions)) {
@@ -229,9 +223,7 @@ class DataPrivacyType extends TypeAbstract
                                                 $forms[$markingRemove]->setData($tempArray[self::chosen]);
                                                 $this->setChosenArray($forms,$questions,self::markingRemoveNode,[self::descriptionNode => $markingRemove.self::descriptionCap,self::laterDescription => $purpose.self::laterDescription]);
                                                 // middle
-                                                if (array_key_exists(self::markingRemoveMiddleNode, $tempArray)) {
-                                                    $this->setSelectedCheckboxes($forms, $tempArray[self::markingRemoveMiddleNode]);
-                                                }
+                                                $this->setSelectedCheckboxes($forms, $tempArray[self::markingRemoveMiddleNode] ?? '');
                                             }
                                             // personal remove
                                             $personalRemove = $purposeWoPrefix.self::personalRemoveNode;
@@ -364,17 +356,17 @@ class DataPrivacyType extends TypeAbstract
                         }
                         // list
                         if ($isList) {
-                            $newData[self::listNode] = $this->getSelectedCheckboxes($forms, self::listTypes, [self::listOther => $this->appendText(self::listOther)]);
+                            $newData[self::listNode] = $this->getSelectedCheckboxes($forms, self::listTypes, $this->createPrefixArray(self::listOther));
                         }
                         if ($isDataResearch || $isLinked) {
                             // data research
-                            $newData[self::dataResearchNode] = $this->getSelectedCheckboxes($forms, self::dataResearchTypesAll, array_combine(self::dataResearchTextFieldsAll, $this->createPrefixArray(self::dataResearchTextFieldsAll)));
+                            $newData[self::dataResearchNode] = $this->getSelectedCheckboxes($forms, self::dataResearchTypesAll, $this->combinePrefixArray(self::dataResearchTextFieldsAll));
                         }
                         $isNoAnonymization = false;
                         $anonymization = [];
                         // anonymization
                         if ($isPersonal) {
-                            $anonymization = $this->getSelectedCheckboxes($forms, self::anonymizationTypes, [self::anonymizationOther => $this->appendText(self::anonymizationOther)], self::anonymizationNo);
+                            $anonymization = $this->getSelectedCheckboxes($forms, self::anonymizationTypes, $this->createPrefixArray(self::anonymizationOther), self::anonymizationNo);
                             $newData[self::anonymizationNode] = $anonymization;
                             $isNoAnonymization = array_key_exists(self::anonymizationNo, $anonymization);
                         }
@@ -430,7 +422,7 @@ class DataPrivacyType extends TypeAbstract
                                     // purpose data
                                     if (!$isTechnical) {
                                         $other = $purposeWoPrefix.self::purposeDataOther;
-                                        $purposeArray = [self::purposeDataNode => $this->getSelectedCheckboxes($forms, $this->prefixArray(self::purposeDataTypes, $purposeWoPrefix), [$other => $this->appendText($other)])];
+                                        $purposeArray = [self::purposeDataNode => $this->getSelectedCheckboxes($forms, $this->prefixArray(self::purposeDataTypes, $purposeWoPrefix), $this->createPrefixArray($other))];
                                     }
                                     $isNotOnlyTechnical = !($isTechnical && $isResearch);
                                     // marking remove

@@ -13,11 +13,11 @@
         }) }}>
             {# file name #}
             <div class="me-2" style="{{ labelStyle }}">{{ form_label(fileName) }}:</div>
-            <div class="minAutoGrid align-items-center m-0" {{ stimulus_action(newFormController,'setButton','input') }}>{{ form_widget(fileName,{'attr': addStyle(dropdownWidth)|merge(addTarget(newFormController,'fileName'))}) }}</div>
+            <div class="minAutoGrid align-items-center m-0" {{ stimulus_action(newFormController,'setButton','input') }}>{{ form_widget(fileName,{'attr': addClass('dropdownWidth')|merge(addTarget(newFormController,'fileName'))}) }}</div>
             <div class="MetaData-Label">{{ (hintPrefix~'filename')|trans }}</div>
             {# committee #}
             <div class="me-2" style="{{ labelStyle }} grid-column: 1">{{ form_label(committee) }}</div>
-            <div {{ stimulus_action(newFormController,'setButton','change') }} style="{{ dropdownWidth }}">{{ form_widget(committee,{'attr': addClass('Button_dropdown',false,'text-overflow: ellipsis')|merge(addTarget(newFormController,'committee'))}) }}</div>
+            <div class="dropdownWidth" {{ stimulus_action(newFormController,'setButton','change') }}>{{ form_widget(committee,{'attr': addClass('Button_dropdown',false,'text-overflow: ellipsis')|merge(addTarget(newFormController,'committee'))}) }}</div>
             <div class="MetaData-Label">{{ (hintPrefix~'committee')|trans }}</div>
             {# password #}
             {% if content.passwordInput is defined %}

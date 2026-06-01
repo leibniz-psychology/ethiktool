@@ -54,7 +54,8 @@ class CompensationType extends TypeAbstract
         $tempPrefix = $translationPrefix.self::terminateNode.'.';
         $this->addRadioGroup($builder,self::terminateNode,$this->translateArray($tempPrefix.'types.',array_merge(self::terminateTypes,[self::terminateNothing,self::terminateOther])),$tempPrefix.'title',self::terminateNode.self::descriptionCap);
         // compensation voluntary
-        $this->addBinaryRadio($builder,self::compensationVoluntaryNode,$translationPrefix.self::compensationVoluntaryNode.'.title',self::compensationVoluntaryNode.self::descriptionCap,options: [self::labelParams => ['isNotPre' => $this->getStringFromBool(!in_array($options[self::informationNode],['',self::pre]))]]);
+        $tempPrefix = $translationPrefix.self::compensationVoluntaryNode.'.';
+        $this->addCheckboxGroup($builder,self::compensationVoluntaryTypes,$tempPrefix.'types.',$this->appendText(self::compensationVoluntaryOther),$tempPrefix.'placeholder');
         // further description
         $this->addFormElement($builder,self::compensationTextNode,'textarea',hint: $translationPrefix.self::compensationTextNode.'.'.self::textHint);
         // dummy forms
@@ -108,7 +109,7 @@ class CompensationType extends TypeAbstract
             // terminate
             $this->setChosenArray($forms,$viewData,self::terminateNode,[self::descriptionNode => self::terminateNode.self::descriptionCap]);
             // compensation Voluntary
-            $this->setChosenArray($forms,$viewData,self::compensationVoluntaryNode,[self::descriptionNode => self::compensationVoluntaryNode.self::descriptionCap]);
+            $this->setSelectedCheckboxes($forms,$viewData[self::compensationVoluntaryNode],$this->createPrefixArray(self::compensationVoluntaryOther));
             // further description
             if (array_key_exists(self::compensationTextNode,$forms)) {
                 $forms[self::compensationTextNode]->setData($viewData[self::compensationTextNode]);
@@ -185,7 +186,7 @@ class CompensationType extends TypeAbstract
             }
             $newData[self::terminateNode] = $tempArray;
             // compensation voluntary
-            $newData[self::compensationVoluntaryNode] = $this->getChosenArray($forms,self::compensationVoluntaryNode,0,[self::descriptionNode => self::compensationVoluntaryNode.self::descriptionCap]);
+            $newData[self::compensationVoluntaryNode] = $this->getSelectedCheckboxes($forms,self::compensationVoluntaryTypes,$this->createPrefixArray(self::compensationVoluntaryOther));
             // further description
             if (array_key_exists(self::compensationTextNode,$forms)) {
                 $newData[self::compensationTextNode] = $forms[self::compensationTextNode]->getData();

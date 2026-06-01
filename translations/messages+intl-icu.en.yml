@@ -374,7 +374,7 @@ main:
              Furthermore, the dinstinction between proposals to the Ethics Board and proposals to the Ethics Committee of TU Dresden (for medical research) will be explained.
     
              The ethics proposal should be submitted <i>before</i> the start of a research project. Retrospective review is possible only in justified exceptional cases. Further instructions on how to proceed in such cases will follow.}
-      UH1   {Any person carrying out independent research at Faculty 1 of Hildesheim University is eligible to apply; this explicitly includes doctoral candidates. Students can also file an application for their final theses and other student research, the teaching staff or supervisor(s) have to check and approve the application before submission.
+      UH1   {Any person carrying out independent research at Faculty 1 of Hildesheim University is eligible to apply; this explicitly includes doctoral candidates. External doctoral candidates are eligible to apply if the thesis is supervised at Faculty 1 of Hildesheim University. Students can also file an application for their final theses and other student research, the teaching staff or supervisor(s) have to check and approve the application before submission.
     
              The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review.
     
@@ -427,12 +427,17 @@ landing:
           true  {The Ethiktool can describe research projects comprising several studies, several participant groups or several data collection time points.</br></br> This page shows the structure of your research project. Here you can add further studies, participant groups and time points. The elements are automatically numbered consecutively as soon as there is more than one; it is advisable to also assign a brief, expressive name to each element.}
           other {Please enter information for this combination of study, group and time point here.</br> The requested information is grouped into the following categories:}}
       end:
-        start: 'Note: It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then duplicate the filled combination and change only the relevant entries. The symbols have the following functions:'
+        title: 'The symbols have the following functions:'
         rename: 'rename the element'
         copy: 'duplicate the element and add it at the end of the respective branch'
         add: 'add a new element'
         delete: 'remove the element (including all sub-elements)'
         edit: 'edit details of the study/group/time point combination'
+        hint: >-
+          Note: It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then duplicate the filled combination and change only the relevant entries.
+          You only need to add further studies if your research project is divided into several (sub)studies that differ in terms of aims or methodology, e.g., when conducting a series of experiments.
+          You should add further groups if, for example, the inclusion criteria or the information for the groups (e.g., minors/adults, patients/controls) substantially differ.
+          The term time point refers to an instance of data collection that requires a new study information sheet and an additional consent form, such as a pre-test for a subsequent study, in which it is not yet possible to inform about further phases of the research project in detail or in which only some of the participants of the pre-test are invited to participate in the main study (screening). 
     removeModal:
       title: >-
         delete {type, select,
@@ -455,7 +460,7 @@ coreData:
       same: 'identical to project title'
       different: 'different from project title'
       notApplicable: 'not applicable: No participant documents are prepared.'
-    hint: 'e.g., because only available data are re-analysed, or because there is neither prior nor after-the-fact information for collecting new data'
+    hint: 'e.g., because available data are re-used, or because there is neither prior nor after-the-fact information for collecting new data'
   appType:
     title: 'Type of proposal'
     headingHint: 'If the proposal has not yet been reviewed by {committeeDat}, please choose “new proposal“. If you already received a positive ethics vote, choose “amendment“. If you need to address questions or change requests by the ethics committee, choose “resubmission after proposal revision“. If the positive ethics vote was conditional upon handing in the participant documents after the funding decision, choose “resubmission after funding acquisition“.'
@@ -484,6 +489,7 @@ coreData:
     buttons:
       save: 'Save and continue'
       cancel: 'Continue without saving'
+      undo: 'Undo change'
   applicationProcess:
     title: 'Review process'
     headingHint: 'The extent of required inputs and documents differs according to the nature of the research project. If you are sure that your project contains ethically critical aspects (e.g., particular burdens/risks, lack of prior information, deception, vulnerable participants), please choose “full proposal“. If your project does not contain such elements or if you are unsure, please choose “short proposal“. If applicable, the Ethiktool will warn you that a change of review process is needed as a consequence of your selections.'
@@ -507,7 +513,7 @@ coreData:
           UH1   {(Planned)}
           other {Planned}} project start
       hints:
-        headingHint: 'Beginning of data collection; if no new data are collected but available data re-analysed: Beginning of re-analysis'
+        headingHint: 'Beginning of data collection; if no new data are collected but available data re-used: Beginning of re-analysis'
         begun: >-
           {committeeType, select,
             EUB   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
@@ -552,7 +558,7 @@ coreData:
     removeHint: >-
       Due to the change you just made, no inputs on the “Project structure“ pages “Consent“{reviewProcess, select,
         shortBegun { and “Compensation“}
-        other      {, “Compensation“ and “Data reuse“}} are needed anymore regarding data handling in case of withdrawal from participation{reviewProcess, select,
+        other      {, “Compensation“ and “Data re-use“}} are needed anymore regarding data handling in case of withdrawal from participation{reviewProcess, select,
           shortBegun { and technical processing of the compensation}
           other      {, technical processing of the compensation and data sharing for re-use}}. The respective entries will be deleted as soon as you leave the current page.
     requestedConfirm:
@@ -574,7 +580,7 @@ coreData:
       confirm: 'I confirm that the studies laid out in the ethics proposal are congruent to those in the funding application in terms of content.'
   qualification:
     title: 'Is the research project exclusively carried out within the scope of your own qualification work (Bachelor/Master/PhD thesis)?'
-    headingHint: 'Please only answer “yes“ if the research project would not be carried out without your thesis. If the data to be used in your thesis belongs to a research project that would be conducted in any case, please answer “no“.'
+    headingHint: 'Please only answer “yes“ if the research project would not be carried out without <span style="font-weight: bold">your own</span> thesis. If the data to be used in your thesis belongs to a research project that would be conducted in any case, please answer “no“. If you submit a proposal for students or PhD candidates in your role as teacher/supervisor, please also answer “no“.'
   applicant:
     title: 'Responsibility for the proposal'
     applicant: 'Applicant'
@@ -600,7 +606,7 @@ coreData:
     choice: 'I need a vote referring to different ethics guidelines (<a href="https://www.konsortswd.de/ratswd/best-practice-forschungsethik/ethikleitlinien-kodices/" target="_blank">for an overview, see here</a>), namely:'
 
 votes:
-  hint: 'The following two questions refer to planned data collections and analyses within this ethics proposal. Ethics votes for the original collection of research data that shall be re-used or re-analysed here, are queried elsewhere.'
+  hint: 'The following two questions refer to planned data collections and analyses within this ethics proposal. Ethics votes for the original collection of research data that shall be re-used or re-analyzed here, are queried elsewhere.'
   otherVote:
     title: 'Has this research project been reviewed by another ethics committee before?'
     committee: 'By which ethics committee?'
@@ -676,8 +682,12 @@ contributors:
       position:
         noSelection: 'Please select a position first.'
         selection: 'Please select all roles of this person in the research project.</br> At least one role must be selected.'
-      mandatory: '<i>This role must be occupied by at least one project contributor for each data collection.</i>'
-      responsibility: "\nIn case more than one person is responsible for data processing, responsibilities must be settled."
+      mandatory: >- # other is data
+        This role must be occupied by at least one project contributor {type, select,
+                                                                          leader     {in the research project.}
+                                                                          experiment {for each new data collection.}
+                                                                          contact    {for each new data collection.}
+                                                                          other      {in the research project.</br> In case more than one person is responsible for data processing, responsibilities must be settled.}}
     nodeTitle: 'Tasks'
     leader: 'principal investigator/project lead'
     research: 'scientific contribution'
@@ -693,7 +703,18 @@ contributors:
       contact: 'contact'
       data: 'data responsib.'
       other: 'other'
-  hint: 'You can add further project contributors by using the plus symbol. Selecting the pencil allows you to edit the data and roles of an existing project contributor. The trash bin symbol allows you to delete the entire data of an existing project contributor.</br></br>Please note:</br>The functions “principal investigator/project lead“ and “responsibility for data processing“ are typically occupied by the same person. Neither function can be assigned to student contributors, as this concerns taking responsibility for the actions of all project contributors.</br>Please contact the responsible data protection authorities at an early stage if more than one person is responsible for processing the data (according to EU-GDPR), especially if responsibilities fall with different institutions. Please also note that a GDPR-compliant information text on processing personal data cannot be generated by the Ethiktool in this case.</br></br>If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space) with their planned role(s) in the project. Adding contributors after having received ethics approval is possible; if this, however, touches upon ethical issues (e.g., by creating a new conflict of interest), ethics re-review is necessary.</br>'
+  symbols:
+    title: 'The symbols have the following functions:'
+    add: 'Add a project contributor'
+    edit: 'Edit the data of an existing project contributor'
+    delete: >-
+      Delete all data of an existing project contributor. The applicant (first project contributor) {hasSupervisor, select,
+          true  {and the responsible supervisor (second project contributor)}
+          other {}} cannot be deleted.
+  hint: >-
+    Please note:</br>The functions “principal investigator/project lead“ and “responsibility for data processing“ are typically occupied by the same person. {committeeType, select,
+        EUB   {Neither function can be assigned to student contributors in university projects, as this concerns taking responsibility for the actions of all project contributors. In projects that are carried out exclusively within the scope of one's own qualification work, the project lead formally lies with the primary supervisor; the responsibility for data processing may be distributed differently, please confer for clarification.}
+        other {Neither function can be assigned to student contributors, as this concerns taking responsibility for the actions of all project contributors. }}</br>Please contact the responsible data protection authorities at an early stage if more than one person is responsible for processing the data (according to EU-GDPR), especially if responsibilities fall with different institutions. Please also note that a GDPR-compliant information text on processing personal data cannot be generated by the Ethiktool in this case.</br></br>If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space) with their planned role(s) in the project. Adding contributors after having received ethics approval is possible; if this, however, touches upon ethical issues (e.g., by creating a new conflict of interest), ethics re-review is necessary.
   errors:
     name: 'Warning: name incomplete'
     eMail: 'Warning: no valid e-mail address'
@@ -744,12 +765,13 @@ projectdetails:
         modal:
           title: 'Re-use of available data'
           content: >-
-            You selected that only available data are used. Therefore, the inputs on all other “Project structure“ pages {isMultiple, select,
-                true  {for this combination of study/group/time point}
-                other {}} are no longer needed. The respective entries will be deleted as soon as you leave the current page. Would you like to save the XML file all previous entries first?
+            You selected that only available data are used. Therefore, the inputs on all other “Project structure“ pages are no longer needed{isMultiple, select,
+                true  {for this study/group/time point combination}
+                other {}}. The respective entries will be deleted as soon as you leave the current page. Would you like to save the XML file with all previous entries first?
           buttons:
             save: 'Save and continue'
             cancel: 'Continue without saving'
+            undo: 'Undo change'
       originSources:
         title: 'From which sources are data retrieved?'
         types:
@@ -804,8 +826,8 @@ projectdetails:
                   other {}}
         pdf: 'I want to add the original information and consent form.'
       dataSourceProcedure:
-        title: 'Please describe the procedure for (re-)using/re-analyzing the data'
-        textHint: 'Please describe, for each of the <span style="font-weight: bold">data sources</span> to be used, the retrieved data material and the criteria for data inclusion and exclusion, the included groups of persons and their characteristics, as well as the period in which the data emerged or were collected. Moreover, please describe the <span style="font-weight: bold">data processing</span> within the research process (if applicable, converting the data from their original version into a different format, anonymization, publication) and describe the planned analyses as well as the underlying methods. If applicable, state how legal aspects such as intellectual property and copyright are considered in case of publishing data or results.'
+        title: 'Please describe the procedure for re-using/re-analyzing the data.'
+        hint: 'Please describe, for each of the <span style="font-weight: bold">data sources</span> to be used, the retrieved data material and the criteria for data inclusion and exclusion, the included groups of persons and their characteristics, as well as the period in which the data emerged or were collected. Moreover, please describe the <span style="font-weight: bold">data processing</span> within the research process (if applicable, converting the data from their original version into a different format, anonymization, publication) and describe the planned analyses as well as the underlying methods. If applicable, state how legal aspects such as intellectual property and copyright are considered in case of publishing data or results.'
       restriction:
         title: 'Do the data that shall be used underlie access restrictions?'
         types:
@@ -825,7 +847,7 @@ projectdetails:
         title: 'How is the use of the data for this research project legitimized?'
         headingHint: 'Legitimization must extend to all steps that are planned with the dataset, thus - if applicable - also its publication.'
         types:
-          consentNew: 'All individuals are explicitly informed about this re-analysis project and give consent to their data being used.'
+          consentNew: 'All individuals are explicitly informed about this re-use/re-analysis project and give consent to their data being used.'
           consentExisting: 'During the original data/material collection, all individuals were informed about the potential re-use of their data for further (research) purposes and gave their consent.'
           conditions: 'The terms and conditions of the provider cover the planned retrieval of the data (including webscraping) and their use for research purposes. All users actively confirmed these terms and conditions when registering with the provider.'
           contract: 'Use of the data is legitimized by a contract with the research data center or data-sharing infrastructure.'
@@ -847,7 +869,7 @@ projectdetails:
           temporary: 'Temporarily: The data can (partly) be related to individual persons at the time of retrieval (e.g., person-related research data, person-related medical records, names and other entries in user profiles, verbatim posts, data of mobile phone providers), but they are fully anonymized for re-use/re-analysis.'
           no: 'No: All data are anonymous/anonymized at the time of retrieval, and they remain in anonymous/anonymized form throughout data processing (e.g., anonymized research data, anonymized medical record, results of polls in chat groups, anonymous meta data such as number of likes, activity display in the course of a video).'
       publication:
-        title: 'Is a newly generated research dataset published as a result of the reanalysis project?'
+        title: 'Is a newly generated research dataset published as a result of the re-use/re-analysis project?'
         types:
           less: 'Yes, with more liberal access restrictions than the original data'
           more: 'Yes, with (at least) the same access restrictions as the original data'
@@ -880,7 +902,7 @@ projectdetails:
           dependent: 'individuals in a dependent relationship to project contributors (e.g., students of own university courses, own employees, family members/friends)'
           otherPeople: 'other groups'
         healthyIcon: 'Choose this option if you are not intending to recruit individuals with specific conditions or impairments.'
-        description: 'Exact description of the group(s). If applicable, you can also describe which information/instruments are used to check or ensure that individuals belong to the target group(s) (inclusion/exclusion criteria).'
+        description: 'Exact description of the group(s). If applicable, you can also describe which information/instruments are used to check or ensure that individuals belong to the target group(s), or mention further inclusion/exclusion criteria that are not disclosed in the study information sheet.'
       closed:
         title: 'Are the data collected in a closed group?'
         headingHint: 'This pertains do data collection in clearly delimited groups or contexts, such as school classes or student groups.'
@@ -1036,27 +1058,40 @@ projectdetails:
       voluntary:
         title: >-
           Is the decision about {type, select,
-                                  post  {data use}
-                                  other {participation}} voluntary?
+                                  onlyPre    {participation}
+                                  onlyNotPre {data use}
+                                  other      {participation respectively data use}} voluntary?
         headingHint: 'The voluntary nature of the decision can be compromised, for example, by time pressure between information and consent, promises of special benefits, non-disclosure of the voluntary nature of participation, dependent relationships between participants and project contributors as well as by implicit pressure in closed groups, especially in case of non-confidential consent and data collection.'
         types:
           yes: 'yes'
           no: 'no'
           notApplicable: 'not applicable: The {addressee} are not informed in advance or after-the-fact that {participant} are participating in a study.'
-        textHintYes: >-
-          {isNotPre, select,
-            post  {Please explain how the voluntary decision about data use is ensured. For example, in case of data collection in a closed group, explain how individual group members can unobtrusively agree or refrain. In case of recruitment of individuals in a dependent relationship to project contributors, explain which specific measures you are taking to maintain voluntariness (e.g., asking for the decision in the absence of teachers or examiners; anonymous decision; explicit confirmation that the decision for or against data use does not affect exam results or other study-related aspects such as placements).}
-            other {Please explain how voluntary participation in the study is ensured. For example, in case of data collection in a closed group, explain how individual group members can unobtrusively agree or refrain to participate. In case of recruitment of individuals in a dependent relationship to project contributors, explain which specific measures you are taking to maintain voluntariness (e.g., carrying out the study in the absence of teachers or examiners; anonymous data collection; explicit confirmation that participation or abstention does not affect exam results or other study-related aspects such as placements).}}
+        voluntaryEnsure:
+          title: 'How is voluntariness ensured?'
+          headingHint: 'Please explain how the voluntary decision for/against study participation or data use is ensured despite the special circumstances (closed group / dependent relationship to project contributors)'
+          types:
+            relatable: 'Nobody can retrace who actually participated.'
+            absence: 'Participation takes place in the absence of the person with whom the dependent relationship exists.'
+            discuss: 'Voluntariness is specifically discussed; this includes explicit confirmation that no (dis)advantages result from deciding for/against the study, despite the dependent relation.'
+            onetime: 'The study is advertised only once and with at most one brief reminder.'
+            substitute: 'Non-participating group members are offered an adequate alternative activity, namely:'
+            independent: 'The decision of each group member for/against the study is not affected by the decision of other group members.'
+            voluntaryEnsureOther: 'Other measures'
+          placeholder: 'please specify'
+          hint: 'z.B. anonymous online survey, individuals can unobtrusively agree or refrain on-site' # for relatable
         textHint: 'Please describe and justify how and why voluntariness is not guaranteed.'
       consent:
-        title: >- # other is pre (first select) respectively post (third select). Participants is children or wards in second select.
+        title: >-
           How is {type, select,
-                    post  {after-the-fact}
-                    other {}} consent {addressee, select,
-                                        Participants {or assent, respectively,}
-                                        other        {}} given for {type, select,
-                                                                      pre   {study participation and data processing}
-                                                                      other {data use}}?
+                    onlyPre    {}
+                    onlyNotPre {after-the-fact}
+                    other      {(after-the-fact)}} consent {addressee, select,
+                                                            children {or assent, respectively,}
+                                                            wards    {or assent, respectively,}
+                                                            other    {}} given for {type, select,
+                                                                                      onlyPre    {study participation and data processing}
+                                                                                      onlyNotPre {data use}
+                                                                                      other      {study participation respectively data use}}?
         types: # Participants is children or wards
           written: 'in writing'
           digital: 'electronically'
@@ -1071,6 +1106,7 @@ projectdetails:
                             Participants {assent}
                             other        {consent}}
           otherDescription: 'please specify'
+        hint: 'to be used also for mixed versions, e.g. partly in writing, parly electronically'
         textHint: >-
           Please explain why no consent {addressee, select,
                                           children {or assent, respectively,}
@@ -1292,7 +1328,7 @@ projectdetails:
           types:
             always: 'The {addressee} are informed of any (incidental) findings that occur. (notification mandatory)'
             consent: 'The {addressee} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)'
-          hint: 'Because you chose that notification is mandatory, the inclusion criteria automatically contain that participation requires consent to be informed.'
+          hint: 'Because you selected that notification is mandatory, the inclusion criteria automatically contain that participation requires consent to be informed.'
       feedback:
         title: 'Do participants receive feedback on their individual test results?'
         headingHint: 'Feedback on individual test results should be carefully considered - especially in case of personally relevant test content. Please consider that feedback may include negative or worrying results. Feedback should only be given if the project contributors are experienced in framing individual results. Please also note that feedback on individual test results is likely to require personal data linked to the collected research data. Alternatively, a general report can be provided (this is also likely to require personal data, but this does not have to be linked to the individual research data).'
@@ -1414,14 +1450,20 @@ projectdetails:
           Is the voluntary nature of {isNotPre, select,
                                         true  {the decision about data use}
                                         other {participation}} compromised by the type or amount of compensation?
-        headingHint: 'Voluntariness can be compromised if the compensation is high relative to the target group''s financial strength (e.g., high financial compensation, high prize value in a raffle) or if there is an over-compensation of the actual effort (e.g., participation hours well above the actual time investment). Voluntariness can be questionable if it seems likely that participants earn substantial parts of their income through study participation. Voluntariness can also be compromised if participation extends across a longer timespan and withdrawal from participation would involve a total loss of compensation.'
-        textHint: >-
-          Please explain how the voluntary nature of {isNotPre, select,
-                                                        true  {the decision about data use}
-                                                        other {participation}} is compromised by the type or amount of compensation.
+        types:
+          amount: 'Yes, the compensation is exceptionally high.'
+          inequality: 'Yes, participants are treated unequally with regard to compensation.'
+          income: 'Yes, it seems likely that participants earn substantial parts of their income through study participation.'
+          loss: 'Yes, individual withdrawal leads to complete loss of compensation even after more than 30 minutes of participation.'
+          compensationVoluntaryOther: 'Yes, other forms of compromising voluntariness by the type or amount of compensation'
+          no: 'No'
+        icons:
+          amount: 'e.g., high financial compensation or high prize value in a raffle compared to the financial capacity of the participants, over-compensation by participant hours well above the actual time investment'
+          income: 'e.g., when recruiting via dedicated services'
+        placeholder: 'please specify'
       furtherDescription:
         title: 'Other remarks regarding the compensation'
-        textHint: '(optional) e.g., justification for exceptionally high compensation; justification why participants are treated unequally with regard to compensation'
+        textHint: '(optional) e.g., justification for exceptionally high or unequal compensation'
     texts:
       useTemplate: 'use template'
       hint: 'Here you can enter details for the study information. Please select an appropriate level of description for the respective target group. If applicable, please use the latest version of recommendations or information templates for specific examination procedures from the relevant professional associations.'
@@ -1509,16 +1551,16 @@ projectdetails:
         title: 'We sincerely hope you will accept us withholding this information and providing full information only now. This was necessary because...'
         textHint: 'Explain the necessity of deception or incomplete information in an understandable manner. Typical justifications are “to be able to record behaviour during the study as close as possible to everyday life“ or “because we wanted to investigate the effect of the method separately from its expected effect“. If applicable, indicate that this is a common procedure in studies of this type.'
     legal:
-      hint: 'Researchers should consider and decide on a case-by-case basis whether information on one or more of the following aspects appear useful. The templates can be used as basic information for frequently occurring cases; they cannot replace an individual assessment and consultation. The use of the templates is therefore at the user''s own responsibility; in particular, they are no substitute for legal advice. The ethics committee takes no responsibility for the correct use of the templates in individual cases and does not perform a legal review of the wording.'
+      hint: 'Researchers should consider and decide on a case-by-case basis whether information on one or more of the following aspects appear useful. The templates can be used as basic information for frequently occurring cases; they cannot replace an individual assessment and consultation. The use of the templates is at the user''s own responsibility; in particular, they are no substitute for legal advice. The ethics committee takes no responsibility for the correct use of the templates in individual cases and does not perform a legal review of the wording.'
       liability:
-        title: 'Shall the consent to study participation contain a liability clause?'
-        headingHint: 'Liability can never be completely ruled out (e.g., in case of intent or severe negligence), but it can be limited in certain respects. The template for the liability limitation serves as a guide for frequently occurring cases; it cannot replace an individual assessment and consultation. The use of the template is therefore at the user''s own responsibility; in particular, it is no substitute for legal advice. The ethics committee takes no responsibility for the correct use of the template in individual cases and does not perform a legal review of the wording. Researchers should consider and decide on a case-by-case basis whether they want to include a clause on the limitation of liability in the participation information.'
+        title: 'Shall the study information sheet contain a liability clause?'
+        headingHint: 'Liability can never be completely ruled out (e.g., in case of intent or severe negligence), but it can be limited in certain respects. The template for the liability limitation serves as a guide for frequently occurring cases. Researchers should consider and decide on a case-by-case basis whether they want to include a clause on the limitation of liability in the participation information.'
         template: 'Participation is at one''s own risk. The liability of the project contributors is limited to intent and severe negligence. The parties, their legal representatives and vicarious agents shall also be liable for negligence in the event of breaches of duty in direct connection with the conduction of the study, whereby liability in such cases shall be limited to reasonably foreseeable damage. Liability for damages resulting from injury to life, limb or health shall be governed by the statutory provisions.'
       apparatus:
         title: >-
           Shall the {isReceipt, select,
                       true  {confirmation sheet for loaned device(s)}
-                      other {consent to participate in the study}} include a liability clause on the use of experimental devices?
+                      other {study information sheet}} include a liability clause on the use of experimental devices?
         headingHint: >-
           {isReceipt, select,
                     true  {In the confirmation sheet for the loaned devices}
@@ -1526,11 +1568,11 @@ projectdetails:
         template: 'The devices used are checked regularly and carefully to ensure that they are in appropriate condition for use. The usage of equipment during study participation is at one''s own risk.'
         loan: 'The loaned equipment and accessories must be handled with care, protected against loss and damage, and returned at the agreed time without further notice. Loss of or damage to the equipment or accessories during the loan period must be reported immediately. The loaned equipment or accessories must not be passed on to third parties. In the event of loss or damage, the research institution must be compensated for the damage caused.'
       insuranceWay:
-        title: 'Should the consent to participate in the study include a reference to route/accident insurance?'
+        title: 'Shall the study information sheet include a reference to route/accident insurance?'
         headingHint: 'There is no obligation to inform participants that there is no study-related route/accident insurance. It can be assumed that people do not reasonably expect to be insured against accidents on the way to and from the place of the study, as this also does not apply to other private trips (e.g., to the doctor, sports club). However, information on the legal situation can be given if deemed necessary. The project contributors should consider on a case-by-case basis whether such information appears useful for the specific study or participant group. Information can be useful, for example, if research is carried out in special settings (e.g., as part of joint walks, field trips); that is, if paths are themselves part of the research (beyond the outward and return journey). If participants are injured during a study, liability issues play a role and details of these are to be provided in a separate question.'
-        template: 'I have been informed that no accident insurance coverage is granted by {committeeLocation} within the scope of the study.'
+        template: 'No accident insurance coverage is granted by {committeeLocation} within the scope of the study.'
       insurance:
-        title: 'Shall the consent to participate in the study include a reference to participant insurance?'
+        title: 'Shall the study information sheet include a reference to participant insurance?'
         headingHint: 'Except for legal requirements (e.g., from the German Medicinal Products Act or Medical Device Law Implementation Act), liability insurance or participant insurance is not mandatory for research involving humans as such. The project contributors should consider on a case-by-case basis whether it may be advisable to obtain such insurance. The ethics committee cannot offer legal advice; the legal department should be contacted if needed.'
         template: 'No special study insurance (participant insurance) is provided.'
     dataPrivacy:
@@ -1727,7 +1769,7 @@ projectdetails:
                     children {children or legal guardians}
                     wards    {supervised individuals or legal guardians}
                     other    {participants}} should be warned that the freely chosen code should not allow for inference on their identity.
-            contributors: 'e.g., consecutive numbers, random choice'
+            contributors: 'e.g., random choice'
           pattern: # sub-question for internal pattern
             types:
               anonymous: 'There is no further documentation that relates the code with personally identifying information. Identification is possible only for persons with knowledge about all constituent parts of the code.'
@@ -1941,7 +1983,7 @@ projectdetails:
             middleCodeChange: 'by changing the codes in the research data'
             middleCodeRemove: 'by deleting the codes from the research data'
             middleName: 'by deleting the names from the research data'
-        immediatelyEnd: ' . '
+        immediatelyEnd: '. '
         laterEnd: >-
           Until this point, the research data are stored {isName, select,
                                                             true  {with individual names}
@@ -2041,7 +2083,7 @@ projectdetails:
                     children {children or legal guardians}
                     wards    {supervised individuals or legal guardians}
                     other    {participants}} should be warned that the freely chosen code should not allow for inference on their identity.
-            contributors: 'e.g., consecutive numbers, random choice'
+            contributors: 'e.g., random choice'
           pattern: # sub-question for codeInternal pattern
             types:
               anonymous: 'There is no further documentation that relates the code with personally identifying information. Identification is possible only for persons who know the code.'
@@ -2127,7 +2169,7 @@ projectdetails:
                                                           other       {anonymous research data}} are
         types:
           class0: ' made publicly available.'
-          class1: ' made available to third parties under certain usage conditions, such as confirming re-use for scientific purposes only.'
+          class1: ' made available to third parties under certain usage conditions, such as confirming re-use for scientific or non-commercial purposes only.'
           class2: ' made available to third parties under individualized usage contracts.'
           class3: ' made available to third parties under strict data-protection restrictions (e.g., online via a secure protocol or on-site in a research data center) following an individual contract.'
           own: ' not made available to others, but employed for own re-use.'
@@ -2197,7 +2239,7 @@ checkDoc:
           {hasBegun, select,
             true  {The chosen date for the project start is in the past. In this case, "The research project has already started“ must be selected as well.}
             other {The planned project start is in the past.}}
-        begunToPast: 'You chose that the project has already started. In this case, the chosen date for the project start must be in the past as well.'
+        begunToPast: 'You selected that the project has already started. In this case, the chosen date for the project start must be in the past as well.'
       begun: 'Description of current state of the project'
       retrospective: 'Justification for necessity of retrospective ethics review'
       end: 'The planned end of the research project is in the past.'
@@ -2207,8 +2249,8 @@ checkDoc:
           {type, select,
             fundingResearch {source of funding/sponsor}
             other           {third-party funding from industry}}: Selection whether funding is applied for or already granted
-        appType: 'You chose “resubmission after funding acquisition“ as the type of proposal. This is incompatible with the selection that third-party funding is being applied for.'
-        begun: 'You chose that third-party funding is being applied for. This is inconsistent with the choice that the research project has already started.'
+        appType: 'You selected “resubmission after funding acquisition“ as the type of proposal. This is incompatible with the selection that third-party funding is being applied for.'
+        begun: 'You selected that third-party funding is being applied for. This is inconsistent with the choice that the research project has already started.'
       qualification: 'Answer to question about qualification work'
       name: >-
         {type, select,
@@ -2282,7 +2324,7 @@ checkDoc:
   projectdetails:
     missingTypes: 'types of {type}'
     pages:
-      dataSource: # 'Answer to question about [] is missing.', wo nicht anders angegeben
+      dataSource: # 'Answer to question about [] is missing.' unless otherwise stated
         origin: 'data origin'
         originSources:
           missing: 'Data sources'  # '[] are missing.'
@@ -2336,7 +2378,7 @@ checkDoc:
             legitimizationOther: 'Description of other legitimization'
         dataSourceIdentification:
           missing: 're-identification of individual persons'
-          legitimization: 'You selected that individuals are explicitly informed about this re-analysis project and give consent to their data being used. This is only possible if the data can be related to individual persons at the time of retrieval.'
+          legitimization: 'You selected that individuals are explicitly informed about this re-analysis project and give consent to their data being used. This is possible only if the data can be related to individual persons at the time of retrieval.'
         publication:
           missing: 'publication of the newly generated dataset'
           restriction: 'You selected that the original dataset is freely accessible. This is incompatible with the selection that the newly generated dataset has more liberal access restrictions than the original dataset.'
@@ -2424,7 +2466,20 @@ checkDoc:
         voluntary:
           title: 'voluntariness'
           voluntaryParticipants: 'voluntariness for participants'
-          voluntaryYesDescription: 'Explanation on how voluntary participation is ensured'
+          voluntaryEnsure:
+            missing: 'Measures for ensuring voluntariness' # '[] are missing.'
+            description:
+              substitute: 'alternative activity' # 'Description of [] is missing.'
+              voluntaryEnsureOther: 'other measures' # 'Description of [] is missing.'
+            further:
+              absenceDiscuss: >-
+                You selected that voluntariness is ensured by {type, select,
+                      absence {absence of the person with whom the dependent relationship exists.}
+                      other   {specifically discussing the dependent relationship.}} This is possible only if the <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#examinedPeople" data-base-route-i-ds-param="{routeIDs}">participating individuals</a> are in a dependent relationship to project contributors.
+              substituteIndependent: >-
+                You selected that voluntariness is ensured by {type, select,
+                      substitute {an adequate alternative activity for non-participating group members}
+                      other      {independence of each group member's decision from all others' decisions}}. This is possible only if data collection takes place in a <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">closed group</a>.
           voluntaryDescription: 'Justification for missing voluntariness'
         consent:
           title: 'type of consent'
@@ -2484,12 +2539,12 @@ checkDoc:
             If no <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided, the collected data must either be deleted or the {addressee, select,
                 children {legal guardians}
                 wards    {legal guardians}
-                other    {participants}} must choose whether the collected data shall be used or not in case of individual withdrawal.
+                other    {participants}} must choose whether the collected data may be used or not in case of individual withdrawal.
           noInformation: >-
             You selected that <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is given. This is incompatible with the selection that the {addressee, select,
                   children {legal guardians}
                   wards    {legal guardians}
-                  other    {participants}} can choose whether the collected data shall be used or not in case of individual withdrawal.
+                  other    {participants}} can choose whether the collected data may be used or not in case of individual withdrawal.
         terminateCriteria: 'termination criteria'
       measures:
         procedure: 'procedure'
@@ -2628,10 +2683,12 @@ checkDoc:
         terminate:
           missing: 'compensation in case of withdrawal'
           nothing: 'justification for missing compensation in case of withdrawal'
-          terminateOther: 'description of compensation in case of withdrawal' # [...] is missing.
+          terminateOther: 'description of compensation in case of withdrawal' # '[] is missing.'
         compensationVoluntary:
-          missing: 'whether the voluntary nature of participation is compromised by the type or amount of compensation'
-          description: 'Explanation of how the voluntary nature of participation is compromised by the type or amount of compensation' # [...] is missing.
+          missing: 'Answer to question whether the voluntary nature of participation is compromised by the type or amount of compensation'
+          description: 'other forms of compromising voluntariness by compensation' # 'Description of [] is missing.'
+          terminate: 'You selected that individual withdrawal leads to complete loss of compensation even after more than 30 minutes of participation. This is possible only if no compensation is granted in case of withdrawal from participation.'
+          loss: 'You selected that individual withdrawal leads to complete loss of compensation even after more than 30 minutes of participation. This is possible only if the <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#duration" data-base-route-i-ds-param="{routeIDs}">duration</a> of data collection is longer than 30 minutes.'
         presence: >- # other is hours
           {compensation, select,
             money {If financial compensation shall be paid}
@@ -2661,7 +2718,7 @@ checkDoc:
                           apparatus    {note on the use of experimental devices}
                           insuranceWay {note on route/accident insurance}
                           other        {note on participant insurance}}
-      dataPrivacy: # Formulierung lautet jeweils "Answer to question about [...] missing.", sofern nicht anders angegeben
+      dataPrivacy: # 'Answer to question about [] missing.' unless otherwise stated
         processing: 'data processing' # 'Description of [] is missing.'
         create:
           missing: 'generating the data privacy statement'
@@ -2685,7 +2742,7 @@ checkDoc:
         dataPersonal: 'person-related character of the research data'
         marking:
           title: 'Answer to question about labelling the research data' # '[] is missing.'
-          description: >- # other is name. '[] is missing.'
+          description: >- # '[] is missing.', other is name.
             {type, select,
               external {External origin or descriptor of the code}
               other    {Justification for using participants'' names as labels}}
@@ -2729,7 +2786,7 @@ checkDoc:
         purposeResearch:
           missing: 'Further purposes of labelling the research data' # '[] are missing'.
           markingResearch: 'If labelling the research data only serves answering the research question, the label must not be person-related.' # 1:1
-          purpose: 'You chose that the code only serves labelling the datasets. This is incompatible with the selection of further purposes for which the labelling is used.' # 1:1
+          purpose: 'You selected that the code only serves labelling the datasets. This is incompatible with the selection of further purposes for which the labelling is used.' # 1:1
           markingPurpose: >- # 1:1; other is contact
             If labelling also served the purpose of {type, select,
                                                         relatable {individual traceability}
@@ -2774,9 +2831,9 @@ checkDoc:
                                                             accessExternal    {external service providers}
                                                             other             {external software/data services}} for {purpose} are already known
         orderProcessingDescription:
-          orderProcessingStart: 'service of the data processor' # 'Description of [] is / are (wenn mehrere) missing.'
-          orderProcessingMiddle: 'data processor' # 'Description of [] is / are (wenn mehrere) missing.'
-          orderProcessingEnd: 'data categories for the processing contract' # 'Description of [] is / are (wenn mehrere) missing.'
+          orderProcessingStart: 'service of the data processor' # 'Description of [] is / are (if multiple) missing.'
+          orderProcessingMiddle: 'data processor' # 'Description of [] is / are (if multiple) missing.'
+          orderProcessingEnd: 'data categories for the processing contract' # 'Description of [] is / are (if multiple) missing.'
         codeCompensation:
           missing: 'type of code for issuing the compensation'
           description: 'External origin or descriptor of code for issuing the compensation' # '[] is missing.'
@@ -2799,7 +2856,7 @@ checkDoc:
           measuresToVideo: 'If “recordings or pictures“ are selected as <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, audio/video recordings or photos must be selected in the list of person-related data for answering the research question.'
           videoToMeasures: 'If audio/video recordings or photos are selected in the list of person-related data for answering the research question, “recordings or pictures“ must be selected as <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>.'
           otherSources:
-            create: 'You chose that <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individually traceable data from other sources</a> are added. This is incompatible with the selection that, according to the responsible data protection authorities, the study includes only anonymous data.'
+            create: 'You selected that <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individually traceable data from other sources</a> are added. This is incompatible with the selection that, according to the responsible data protection authorities, the study includes only anonymous data.'
             marking: 'If <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individually traceable data from other sources</a> are added, an allocation list must be used, or the research data must be labelled with the name or with a code that was or is assigned outside of the project.'
           compensation:
             noCompensation: 'You selected that no <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation" data-base-route-i-ds-param="{routeIDs}">compensation</a> is granted for participation. This is incompatible with the selection that personal data are processed for the purpose of issuing the compensation.'
@@ -2813,7 +2870,7 @@ checkDoc:
             codeMarking: 'If a code is needed for retrieving the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must consist in a code.'
       dataReuse:
         confirmIntro: 'Confirmation of notice on data re-use' # '[] is missing.'
-        dataReuse: 'Answer to question whether research data are shared with others for re-use' # '[] is missing.
+        dataReuse: 'Answer to question whether research data are shared with others for re-use' # '[] is missing.'
         dataReuseHow: # '[] is missing.'
           lineTitle:
             dataReuseHow: 'Person-related research data'
@@ -2891,7 +2948,7 @@ completeForm:
               other {For the purpose and for the duration of the review of the current proposal {isExRe, select,
                           true  {revision or amendment}
                           other {}}{isReUse,select,
-                                      true  { which re-uses available research data}
+                                      true  { which includes re-use of available research data}
                                       other {}}, the involved persons are granted access to the documents and correspondence relating to the original {numReferences, plural,
                                                  =1    {proposal with the case number}
                                                  other {proposals with the case numbers}} {reference}.}}}
@@ -2902,7 +2959,7 @@ completeForm:
            other {For the purpose and for the duration of the review of the current proposal {isExRe, select,
                         true  {revision or amendment}
                         other {}}{isReUse,select,
-                                   true  { which re-uses available research data}
+                                   true  { which includes re-use of available research data}
                                    other {}}, the members of {committeeGen} are granted access to the documents and correspondence relating to the original {numReferences, plural,
                                           =1    {proposal with the case number}
                                           other {proposals with the case numbers}} {reference}.}}}}

@@ -4,7 +4,7 @@
 {% block body %}
     <div class="pb-5 grid">
         {{ include('components/header.html.twig',committeeParams|merge({'update': isUpdateTime})) }}
-        <div class="border rounded-lg shadow-sm bg-mono-50 winWidth" style="height: fit-content; justify-self: center; max-width: 1600px">
+        <div class="border rounded-lg shadow-sm bg-mono-50 winWidth fitHeight justifyCenter" style="max-width: 1600px">
             <div class="MetaData-Label mb-1">
                 {{ 'quit'|trans|raw|nl2br }}
             </div>

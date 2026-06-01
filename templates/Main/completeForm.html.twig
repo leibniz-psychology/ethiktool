@@ -23,7 +23,7 @@
             <div class="MetaData-Label">{{ biasTitle|raw }}</div>
             <div class="MetaData-Widget" {{ stimulus_action(completeFormController,'setBias','input') }}>
                 {% for bias in biasTypes %}
-                    <div {% if loop.index>1 %} style="{{ topMarginButtons }}" {% endif %}>{{ formRender.addCheckbox(content[bias], {'target': [completeFormController,bias]}) }}</div>
+                    <div {% if loop.index>1 %} class="topMarginButtons" {% endif %}>{{ formRender.addCheckbox(content[bias], {'target': [completeFormController,bias]}) }}</div>
                     {% set description = content[bias~'Description'] ?? '' %}
                     {% if description is not same as '' %}
                         {{ formRender.addTextfield(description,markInputParam|merge(addStyle('margin-bottom: 1.5rem',true))) }}
@@ -112,13 +112,13 @@
         form:     form to be rendered
         stimCont: stimulus controller
     #}
-    {% set id, fitWidth = form.vars.name, 'width: fit-content;' %}
+    {% set id = form.vars.name %}
     <div class="MetaData-Widget mb-4">
-        <div class="borderLight" style="{{ fitWidth }}">
+        <div class="borderLight fitWidth">
             {{ form_label(form,null,{'id': id}) }}
             <div class="MetaData-Widget flex">
-                <label class="Upload my-1" for="{{ id }}" style="{{ fitWidth }}">{{ 'completeForm.pdf.upload'|trans }}</label>
-                <div style="display: none">{{ form_widget(form,{'id': id, 'attr': addStyle(fitWidth)|merge({'accept': 'application/pdf'})|merge(addTarget(stimCont,'pdf'))}) }}</div>
+                <label class="Upload my-1 fitWidth" for="{{ id }}">{{ 'completeForm.pdf.upload'|trans }}</label>
+                <div style="display: none">{{ form_widget(form,{'id': id, 'attr': addClass('fitWidth')|merge({'accept': 'application/pdf'})|merge(addTarget(stimCont,'pdf'))}) }}</div>
                 <div class="mx-1 my-1" id="{{ id~'filename' }}" style="line-break: anywhere"></div>
             </div>
         </div>
