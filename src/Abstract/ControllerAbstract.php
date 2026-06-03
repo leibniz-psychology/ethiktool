@@ -333,11 +333,11 @@ abstract class ControllerAbstract extends AbstractController
                         $loadedVersion = $this->getToolVersion($xml);
                         $this->updateXML($request,$xml);
                         $xmlArray = $this->xmlToArray($xml);
-                        $isLoaded2 = str_starts_with($loadedVersion,'2');
-                        if (!$isLoaded2) {
+                        $isLoaded1 = str_starts_with($loadedVersion,'1');
+                        if ($isLoaded1) {
                             $session->set('updateProcess',true); // used in core data to check if first visit after update
                         }
-                        $session->set(self::reviewProcess,$isLoaded2 ? $this->getCurrentReviewProcess($xmlArray) : self::reviewFullDocs); // if loaded file is before version 2.0.0, set fullDocs to keep all inputs. Needs to be set before getErrors() is called
+                        $session->set(self::reviewProcess,!$isLoaded1 ? $this->getCurrentReviewProcess($xmlArray) : self::reviewFullDocs); // if loaded file is before version 2.0.0, set fullDocs to keep all inputs. Needs to be set before getErrors() is called
                         $this->setCommittee($session, $xmlArray[self::committee], $oldLanguage);
                         $session->set(self::fileName, str_replace('.xml', '', $loadInput->getClientOriginalName()));
                         $session->set(self::docName, [$xml->asXML()]);
@@ -1827,7 +1827,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $major<'3';
+        $isSmallerCurrent = $major<'3' || $patch<'1';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
@@ -1837,6 +1837,7 @@ abstract class ControllerAbstract extends AbstractController
         $isSmaller281 = $isMajor1 || $isMajor2 && $minor<'8'; // only productive minor version 8 is 2.8.1
         $isSmaller290 = $isMajor1 || $isMajor2 && $minor<'9';
         $isSmaller2100 = $isMajor1 || $isMajor2 && $minor<'10';
+        $isSmaller300 = $isMajor1 || $isMajor2;
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2201,24 +2202,26 @@ abstract class ControllerAbstract extends AbstractController
                             $dataSourceNode->{self::originNode}->{self::chosen} = self::originNew; // select 'new' to keep existing inputs
                         }
                         // updates for versions before 3.0.0
-                        $voluntaryNode = $consentNode->{self::voluntaryNode};
-                        if ($this->checkElement('voluntaryYesDescription',$voluntaryNode)) { // replace voluntaryYesDescription by voluntaryEnsure
-                            $voluntaryYesNode = $voluntaryNode->{'voluntaryYesDescription'};
-                            $this->insertElementBefore(self::voluntaryEnsureNode,$voluntaryYesNode);
-                            $tempVal = (string) $voluntaryYesNode;
-                            if ($tempVal!=='') {
-                                $voluntaryNode->{self::voluntaryEnsureNode}->addChild(self::voluntaryEnsureOther,$tempVal); // add description as 'other' answer
+                        if ($isSmaller300) {
+                            $voluntaryNode = $consentNode->{self::voluntaryNode};
+                            if ($this->checkElement('voluntaryYesDescription',$voluntaryNode)) { // replace voluntaryYesDescription by voluntaryEnsure
+                                $voluntaryYesNode = $voluntaryNode->{'voluntaryYesDescription'};
+                                $this->insertElementBefore(self::voluntaryEnsureNode,$voluntaryYesNode);
+                                $tempVal = (string) $voluntaryYesNode;
+                                if ($tempVal!=='') {
+                                    $voluntaryNode->{self::voluntaryEnsureNode}->addChild(self::voluntaryEnsureOther,$tempVal); // add description as 'other' answer
+                                }
+                                $this->removeElement('voluntaryYesDescription',$voluntaryNode);
                             }
-                            $this->removeElement('voluntaryYesDescription',$voluntaryNode);
-                        }
-                        if ($this->checkElement(self::compensationVoluntaryNode,$compensationNode)) { // replace yes/no question by multiple choice
-                            $compensationVoluntaryNode = $compensationNode->{self::compensationVoluntaryNode};
-                            $chosen = (string) $compensationVoluntaryNode->{self::chosen};
-                            $isVoluntary = $chosen==='0';
-                            $description = $isVoluntary ? ((string) $compensationVoluntaryNode->{self::descriptionNode}) : '';
-                            $this->removeAllChildNodes($compensationVoluntaryNode);
-                            if ($chosen!=='') {
-                                $compensationVoluntaryNode->addChild($isVoluntary ? self::compensationVoluntaryOther : self::compensationVoluntaryNo,$description); // 'no' stays 'no', 'yes' changes to 'yes, other'
+                            if ($this->checkElement(self::compensationVoluntaryNode,$compensationNode)) { // replace yes/no question by multiple choice
+                                $compensationVoluntaryNode = $compensationNode->{self::compensationVoluntaryNode};
+                                $chosen = (string) $compensationVoluntaryNode->{self::chosen};
+                                $isVoluntary = $chosen==='0';
+                                $description = $isVoluntary ? ((string) $compensationVoluntaryNode->{self::descriptionNode}) : '';
+                                $this->removeAllChildNodes($compensationVoluntaryNode);
+                                if ($chosen!=='') {
+                                    $compensationVoluntaryNode->addChild($isVoluntary ? self::compensationVoluntaryOther : self::compensationVoluntaryNo,$description); // 'no' stays 'no', 'yes' changes to 'yes, other'
+                                }
                             }
                         }
                     } // foreach measure time point
