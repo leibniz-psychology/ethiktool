@@ -34,7 +34,6 @@ class ApplicationController extends PDFAbstract
     private const boxSub = 'boxSub'; // key for $boxContent
     private const boxNumber = 'boxNumber'; // key for $boxContent
     private const inputPage = 'inputPage'; // key for $boxContent
-    private const fragment = 'fragment'; // key for $boxContent
     private string $documentHint = ''; // hint saying the wording is identical to participation information
     private const noBox = 'noBox'; // key indicating that the box is empty
     private string $noBoxTrans; // translation of box content indicating that no inputs were necessary

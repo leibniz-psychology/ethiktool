@@ -6,43 +6,8 @@
     <h2 class="MetaDataGroup-Title">{{ 'pages.newForm'|trans }}</h2>
 {% endblock %}
 {% block content %}
-    {% set newFormController, fileName, committee, modalID, labelStyle = 'Main--newForm', content.fileName, content.committee, 'passwordModal', 'text-align: end; white-space: nowrap; ' %}
-    <div class="MetaData-Widget" {% if wrongPassword %} {{ stimulus_action('base','showModal','load@window',{'target': modalID}) }} {% endif %}>
-        <div class="grid align-items-center px-2 gap-2" style="grid-template-columns: repeat(2,min-content) auto" {{ stimulus_controller(newFormController,{
-            'committeeBeta': committeeBeta
-        }) }}>
-            {# file name #}
-            <div class="me-2" style="{{ labelStyle }}">{{ form_label(fileName) }}:</div>
-            <div class="minAutoGrid align-items-center m-0" {{ stimulus_action(newFormController,'setButton','input') }}>{{ form_widget(fileName,{'attr': addClass('dropdownWidth')|merge(addTarget(newFormController,'fileName'))}) }}</div>
-            <div class="MetaData-Label">{{ (hintPrefix~'filename')|trans }}</div>
-            {# committee #}
-            <div class="me-2" style="{{ labelStyle }} grid-column: 1">{{ form_label(committee) }}</div>
-            <div class="dropdownWidth" {{ stimulus_action(newFormController,'setButton','change') }}>{{ form_widget(committee,{'attr': addClass('Button_dropdown',false,'text-overflow: ellipsis')|merge(addTarget(newFormController,'committee'))}) }}</div>
-            <div class="MetaData-Label">{{ (hintPrefix~'committee')|trans }}</div>
-            {# password #}
-            {% if content.passwordInput is defined %}
-                {% set password = content.passwordInput %}
-                <div class="me-2" style="{{ labelStyle }}">{{ form_label(password) }}</div>
-                <div {{ stimulus_action(newFormController,'setButton','input') }}>{{ form_widget(password,addTargetArray(newFormController,'password')) }}</div>
-                <div class="MetaData-Label">{{ (hintPrefix~'password')|trans }}</div>
-            {% endif %}
-            {# confirm buttons #}
-            <div id="confirmDiv" {{ stimulus_target(newFormController,'confirmDiv')|stimulus_action(newFormController,'setButton','input') }} style="grid-column: span 3">
-                {% for confirm, text in {'requirements': 'main.textRequirements','technicalHint': 'technicalHints.text'} %}
-                    {{ formRender.addExpandable('newForm.'~confirm~'.text') }}
-                    <div class="MetaData-Widget borderLight mx-4 mt-1" style="display: none">{{ (text)|trans(committeeParamsnewForm)|raw|nl2br }}</div>
-                    <div class="MetaData-Widget">{{ formRender.addCheckbox(content[confirm],{'target': [newFormController,confirm], 'labelParams': committeeParamsnewForm}) }}</div>
-                {% endfor %}
-                <div class="MetaData-Label mt-3 font-bold">{{ 'newForm.finalHint'|trans(committeeParamsnewForm)|raw }}</div>
-            </div>
-            <div class="grid mt-8 mb-2" style="grid-column: 2 / span 2; grid-template-columns: repeat(2,minmax(min-content,max-content))">
-                <button class="Button_primary_go me-2" type="submit" name="newFormSubmit" {{ stimulus_target(newFormController,'save') }}>{{ 'newForm.buttons.save'|trans }}</button>
-                <button class="Button_primary_go me-2" type="submit" name="backToMain">{{ 'newForm.buttons.cancel'|trans }}</button>
-            </div>
-            {# info modal #}
-            {% if wrongPassword %}
-                {{ include('components/infoModal.html.twig',{'modalID': modalID, 'prefix': 'newForm.password.modal.'}) }}
-            {% endif %}
-        </div> {# form including stimulus controller #}
-    </div>
+    {{ formRender.addCommitteeForms(content,committeeParamsnewForm,true,wrongPassword) }}
+    {% if wrongPassword %}
+        {{ include('components/infoModal.html.twig',{'modalID': 'passwordModal', 'prefix': 'newForm.password.modal.'}) }}
+    {% endif %}
 {% endblock %}

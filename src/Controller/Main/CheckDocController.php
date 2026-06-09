@@ -3,7 +3,7 @@
 namespace App\Controller\Main;
 
 use App\Abstract\ControllerAbstract;
-use App\Form\Main\DummyType;
+use App\Form\Main\CheckDocType;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +20,7 @@ class CheckDocController extends ControllerAbstract
             return $this->redirectToRoute('app_main');
         }
 
-        $checkDoc = $this->createFormAndHandleRequest(DummyType::class,[self::language => $request->getSession()->get(self::language)],$request);
+        $checkDoc = $this->createFormAndHandleRequest(CheckDocType::class,[self::language => $request->getSession()->get(self::language)],$request);
         if ($checkDoc->isSubmitted()) { // language was changed or a link was clicked
             return $this->saveDocumentAndRedirect($request,$appNode);
         }

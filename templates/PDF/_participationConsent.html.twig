@@ -21,7 +21,7 @@
                 <div class="bold" style="margin-bottom: 1rem">{{ 'consent.optionalHeading'|trans }}</div>
                 {% for text in optionalConsent %}
                     <table style="margin-bottom: 2em">
-                        <tr><td class="{{ justify }}" colspan="5">{{ text }}</td></tr>
+                        <tr><td class="{{ justify }}" colspan="5">{{ text|raw }}</td></tr>
                         <tr>
                             {% for answer in [yesTrans,noTrans] %}
                                 <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5em; margin-right: 0.375em"></div></td>

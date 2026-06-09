@@ -4,6 +4,7 @@ import {
     addInputListener,
     checkTextareaInput,
     getSelected,
+    mergeInput,
     sanitizeString,
     setElementVisibility,
     setHint,
@@ -12,13 +13,14 @@ import {
 
 export default class extends Controller {
 
-    static targets = ['loadModal','download','load','loadInput','sidebar','content','checkDoc','preview','form','submitDummy','hint','countableText','charCount','disableLoad','undo','language','xmlModal','pdfModal','expandable','quitModal','previewTab'];
+    static targets = ['fileName','committee','password','confirmDiv','requirements','technicalHint','save','committeeChange','loadModal','download','load','loadInput','sidebar','content','checkDoc','preview','form','submitDummy','hint','countableText','charCount','disableLoad','undo','language','xmlModal','pdfModal','expandable','quitModal','previewTab'];
 
     static values = {
         route: String,
         routeParams: Object,
         preview: Number, // position of preview scrollbar
-        previewTab: String // id of visible preview tab
+        previewTab: String, // id of visible preview tab
+        committeeBeta: Array // committees that are in beta state
     }
 
     connect() {
@@ -69,6 +71,29 @@ export default class extends Controller {
         if (this.hasLoadInputTarget) {
             this.addListener();
         }
+        if (this.hasCommitteeTarget) {
+            // file name if on page 'newForm'
+            if (this.hasFileNameTarget) {
+                this.fileNameTarget.addEventListener('beforeinput', function (event) {
+                    let regEx = /^[a-zA-Z0-9][a-zA-Z0-9\s.\-_]*$/; // starting with a letter or a number, then any number of letters, digits, '.-_' or whitespace
+                    let mergedInput = mergeInput(event);
+                    if (event.inputType.includes('insert') && (!regEx.test(mergedInput) || mergedInput.length>50)) {
+                        event.preventDefault();
+                    }
+                });
+            }
+            // selecting committee on page 'newForm' or 'main'
+            this.committeeTarget.addEventListener('change', async () => {
+                await this.setCommitteWidgets();
+            });
+            // checking the checkbox on page 'main'
+            if (this.hasCommitteeChangeTarget) {
+                this.committeeChangeTarget.addEventListener('change', async () => {
+                    await this.setCommitteWidgets();
+                });
+            }
+            this.setCommitteeButton();
+        }
     }
 
     // methods that are called from a template
@@ -101,7 +126,7 @@ export default class extends Controller {
     async setDummySubmit(event) {
         event.preventDefault(); // prevent redirecting
         this.removeHash();
-        let dummyVal = '';
+        let dummyVal;
         let target = this.checkElementTag(event.target); // if the target is a button, the content of it may be wrapped in a span
         let targetID = target.id;
         if (targetID.includes('quit') || targetID.includes('header')) {
@@ -250,6 +275,50 @@ export default class extends Controller {
 
     // methods that are called from a template and from within this class
 
+    /** Sets the widgets if a committee is selected or should be changed.
+     * @returns {Promise<void>}
+     */
+    async setCommitteWidgets() {
+        let form = document.getElementsByTagName('form')[0];
+        await fetch(form.action,{method: form.method, body: new FormData(form)}).then(async (response) => {
+            if (this.committeeTarget.value!=='') { // update div with requirements and technical hints
+                let html = document.createElement('div');
+                html.innerHTML = await response.text();
+                let expandables = document.getElementsByClassName('changeExpandable');
+                let classLists = [];
+                for (let element of expandables) {
+                    classLists.push(element.firstElementChild.classList);
+                }
+                this.confirmDivTarget.parentNode.replaceChild(html.querySelector('#confirmDiv'), this.confirmDivTarget);
+                for (let element=0;element<expandables.length;++element) {
+                    let curElement = expandables[element];
+                    let spanElement = curElement.firstElementChild;
+                    spanElement.setAttribute('class','');
+                    for (let curClass of classLists[element]) {
+                        spanElement.classList.add(curClass);
+                    }
+                    setElementVisibility(curElement.nextElementSibling,spanElement.classList.contains('dropdownExpanded')); // text that gets expanded
+                }
+                addExpandableListener(expandables);
+            }
+        });
+    }
+
+    /** Enables/disables the button for creating a new application of changing the committee. */
+    setCommitteeButton() {
+        let committee = this.committeeTarget.value;
+        let isCommitteeSelected = committee!=='';
+        let isBeta = this.committeeBetaValue.includes(committee)
+        if (this.hasPasswordTarget) {
+            let parent = this.passwordTarget.parentElement;
+            setElementVisibility(parent.previousElementSibling,isBeta,1);
+            setElementVisibility(this.passwordTarget,isBeta,1);
+            setElementVisibility(parent.nextElementSibling,isBeta,1);
+        }
+        setElementVisibility(this.confirmDivTarget,isCommitteeSelected);
+        this.saveTarget.disabled = this.hasFileNameTarget && this.fileNameTarget.value.trim()==='' || !isCommitteeSelected || isBeta && this.passwordTarget.value.trim()==='' || !this.requirementsTarget.checked || this.hasTechnicalHintTarget && !this.technicalHintTarget.checked;
+    }
+
     /** Sets all elements in array either (in)visible.
      * @param ids IDs of elements. Can either be a string or an array
      * @param visible true if the elements should be set visible, false otherwise
@@ -323,7 +392,7 @@ export default class extends Controller {
             let id = target.id;
             let dummyEnd = "\npage:Projectdetails";
             if (id.includes('new')) { // element on landing should be created
-                let dummyVal = '';
+                let dummyVal;
                 if (this.copyID!=='') { // element should be copied
                     dummyVal = 'copy:'+this.copyID.replace('copy_','').replace('_button','');
                     this.copyID = '';

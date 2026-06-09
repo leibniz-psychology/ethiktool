@@ -84,7 +84,7 @@ export default class extends Controller {
                 this.idValue = this.contributorsValue.length;
             }
             this.modalLabelTarget.textContent = this.titleValue[isAdd ? 0 : 1];
-            this.institutionLabelTarget.firstChild.textContent = this.institutionLabelValue[isApplicant || isSupervisor ? 0 : 1]+':';
+            this.institutionLabelTarget.firstChild.textContent = '*'+this.institutionLabelValue[isApplicant || isSupervisor ? 0 : 1]+':';
             this.setTasks();
             this.setSubmitButton();
         });
@@ -128,7 +128,8 @@ export default class extends Controller {
         let disabled = position==='';
         let isStudent = position===this.studentChoiceValue;
         this.isStudentApplicantValue = this.idValue===0 && isStudent;
-        this.phoneLabelTarget.textContent = this.phoneLabelValue[this.idValue===0 && !this.isStudentApplicantValue || this.idValue===1 && this.hasSupervisorValue ? 0 : 1]+':'; // needs to be set here because method is also invoked if position changed and phone for student is optional
+        let isPhoneMandatory = this.idValue===0 && !this.isStudentApplicantValue || this.idValue===1 && this.hasSupervisorValue;
+        this.phoneLabelTarget.textContent = (isPhoneMandatory ? '*' : '')+this.phoneLabelValue[isPhoneMandatory ? 0 : 1]+':'; // needs to be set here because method is also invoked if position changed and phone for student is optional
         for (let task of this.tasksNamesValue) {
             let widget = document.getElementById(task);
             let noStudentTask = isStudent && (task==='leader' || task==='data');

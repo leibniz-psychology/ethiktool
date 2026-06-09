@@ -2,7 +2,7 @@
 
 namespace App\Abstract;
 
-use App\Traits\ReviewProcessTrait;
+use App\Traits\PageTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -20,7 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /** Contains all methods that are used by several forms (*Type class). Therefore, it extends AbstractType. All form classes inherit this class. */
 abstract class TypeAbstract extends AbstractType implements DataMapperInterface
 {
-    use ReviewProcessTrait;
+    use PageTrait;
 
     public static TranslatorInterface $translator;
     protected const labelParams = 'label_translation_parameters'; // key in the $options array for translation parameters of the label
@@ -209,6 +209,31 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
         }
     }
 
+    /** Adds the dropdown for committee selection, the text field for entering the password, and the checkbox(es) for confirming.
+     * @param FormBuilderInterface $builder FormBuilder where the element is created
+     * @param bool $isNewForm if true, the widgets are created for the page 'newForm'
+     * @param string $committee current committee
+     * @return void
+     */
+    protected function addCommitteeForms(FormBuilderInterface $builder, bool $isNewForm = true, string $committee = ''): void
+    {
+        $committeTypes = array_flip(self::committeeTypes);
+        $committeTypes = array_diff_key($committeTypes,[$committee => '']);
+        foreach ($committeTypes as $type => $translation) {
+            $committeTypes[$type] = $this->translateString($translation).(in_array($type,self::committeeTypesBeta) ? ' (Beta)' : '');
+        }
+        $this->addFormElement($builder,self::committee,'choice','newForm.committee.title',options: ['choices' => array_flip($committeTypes)],hint: self::choiceTextHint);
+        if (self::committeeTypesBeta!==[]) {
+            $this->addFormElement($builder,self::passwordInput,'text','newForm.password.title');
+        }
+        foreach (array_merge([self::requirements],$isNewForm ? [self::technicalHint] : []) as $confirm) {
+            $this->addFormElement($builder,$confirm,'checkbox','newForm.'.$confirm.'.confirm');
+        }
+        if (!$isNewForm) {
+            $this->addFormElement($builder,self::committeeChange,'checkbox','main.committeeChange.title');
+        }
+    }
+
     /** Adds the submit dummy textarea and the load form.
      * @param FormBuilderInterface $builder FormBuilder where the element is created
      * @return void
@@ -231,7 +256,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
     protected function addFormElement(FormBuilderInterface $builder, string $name, string $class, string|bool $label = false, array $options = [], string $hint = ''): void
     {
         $page = self::getPage();
-        if (in_array(self::getReviewProcess(),self::formTypeQuestions[$page][$name] ?? []) || $name==='submitDummy' || in_array($page,['newForm','coreData','landing','contributor','completeForm','quit'])) {
+        if (in_array(self::getReviewProcess(),self::formTypeQuestions[$page][$name] ?? []) || $name==='submitDummy' || in_array($page,['newForm','coreData','landing','contributor','completeForm','quit','main'])) {
             $classType = null;
             $addOptions = array_merge(['label' => $label, 'required' => false, self::labelParams => $options[self::labelParams] ?? [], self::attrParams => $options[self::attrParams] ?? []], ['attr' => ['placeholder' => str_contains($class,'text') ? $hint : false, 'autocomplete' => 'off']]);
             switch ($class) {

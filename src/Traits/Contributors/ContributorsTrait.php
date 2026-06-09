@@ -118,7 +118,7 @@ trait ContributorsTrait
             $infosNode->addChild(self::phoneNode,$tempArray[self::phoneNode]);
         }
         $tasksNode = $node->addChild(self::taskNode);
-        foreach ($contributor[self::taskNode] as $task => $value) {
+        foreach (($contributor[self::taskNode] ?: []) as $task => $value) {
             $tasksNode->addChild($task, $task===self::otherTask ? htmlspecialchars($value) : '');
         }
     }

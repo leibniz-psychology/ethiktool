@@ -143,7 +143,7 @@ trait ProjectdetailsTrait
     protected const voluntaryConsentNo = 'no'; // must equal one value in $voluntaryTypes and one in $consentTypes
     protected const voluntaryTypes = ['projectdetails.pages.consent.voluntary.types.yes' => 'yes', 'projectdetails.pages.consent.voluntary.types.no' => 'no', 'projectdetails.pages.consent.voluntary.types.notApplicable' => 'notApplicable'];
     protected const voluntaryEnsureNode = 'voluntaryEnsure';
-    protected const voluntaryEnsureTypes = ['relatable','absence','discuss','onetime','substitute','independent','voluntaryEnsureOther'];
+    protected const voluntaryEnsureTypes = ['relatable','absence','discuss','onetime','independent','substitute','voluntaryEnsureOther'];
     protected const voluntaryEnsureTypesOther = ['substitute','voluntaryEnsureOther']; // values must equal the values in $voluntaryEnsureTypes
     protected const voluntaryEnsureAbsence = 'absence'; // value must equal one value in $voluntaryEnsureTypes
     protected const voluntaryEnsureOther = 'voluntaryEnsureOther'; // value must equal one value in $voluntaryEnsureTypes

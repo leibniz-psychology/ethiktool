@@ -2,7 +2,7 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set translationPrefix, hasProcessing, hasCreate = 'projectdetails.pages.dataPrivacy.', content.processing is defined, content.create is defined %}
+    {% set translationPrefix, hasProcessing, hasCreate, savePDFtrueParam = 'projectdetails.pages.dataPrivacy.', content.processing is defined, content.create is defined, {'savePDF': 'true'} %}
     {% if hasCreate %}
         {% set privacyController, dataPersonal, storage, addresseeParam, markingFurther, hasAddOwn = 'Projectdetails--privacy', content.dataPersonal, content.storage, {'addressee': addresseeType}, content.markingFurther, content.addOwn is defined %}
         {% set dataResearchPrefix, markingPrefix, markingRemovePrefix, markingFirstValue, markingFurtherValue, noResponsibilityHint, storageValue = translationPrefix~'dataResearch.', translationPrefix~'marking.', translationPrefix~'markingRemove.', content.marking.vars.value, markingFurther.vars.value, translationPrefix~'responsibility.hints.noHint', storage.vars.value %}
@@ -115,9 +115,11 @@
                             </div>
                         {% endif %}
                         {# data personal #}
+                        {% set tempPrefix = translationPrefix~'dataPersonal.' %}
                         {{ formRender.renderButtons(dataPersonal,{
-                            'hint': [translationPrefix~'dataPersonal.'],
+                            'hint': [tempPrefix],
                             'stim': [privacyController,'setDataResearch'],
+                            'icons': {'dataPersonalpersonalMaybe': tempPrefix~'hint'},
                             'contTarget': ['dataPersonalpersonal',privacyController,'dataPersonal'],
                             'addDiv': ['dataPersonal']}) }}
                         {% set externalNameArray, otherDiv, listDiv = ['external','name'], 'otherDiv', 'listDiv' %}
@@ -214,7 +216,7 @@
                             {% set isNo = anySelected[0] %}
                             <div class="mt-8" id="anonymization" {{ stimulus_target(privacyController,'anonymization') }}>
                                 {{ formRender.addHeading(tempPrefix~'title') }}
-                                <div class="MetaData-Label">{{ (tempPrefix~'start')|trans~'...' }}{{ formRender.addPDFhint(transferData,addresseeType) }}</div>
+                                <div class="MetaData-Label">{{ (tempPrefix~'start')|trans(savePDFtrueParam)~'...' }}{{ formRender.addPDFhint(transferData,addresseeType) }}</div>
                                 <div class="MetaData-Widget" {{ stimulus_action('base','setMultiCheckbox','change',{'single': 'anonymizationNo', 'multiCheck': anonymizationTypes|slice(0,(anonymizationTypes|length)-1)})|stimulus_action(privacyController,'setPersonalWidgets','change') }}>
                                     {{ formRender.addCheckboxGroup(content,anonymizationTypes,{'other': ['anonymizationOther'], 'icons': iconArrayAnonymization, 'contTargets': {'anonymizationNo': [privacyController,'anonymizationNo']}}|merge(transferOtherParam)|merge(isNo or anySelected[1] ? {'targets': isNo ? anonymizationTypesWoNo : ['anonymizationNo']} : {})) }}
                                 </div>
@@ -234,7 +236,7 @@
                             {% set typesPrefix = tempPrefix~'types.' %}
                             <div class="mt-8" id="{{ personalKeepDiv }}" style="{{ boolToDisplay(storageValue is same as 'keep') }}">
                                 {{ formRender.addHeading(tempPrefix~'title') }}
-                                <div class="MetaData-Label">{{ (tempPrefix~'start')|trans~' ...' }}</div>
+                                <div class="MetaData-Label">{{ (tempPrefix~'start')|trans(savePDFtrueParam)~' ...' }}</div>
                                 <div class="MetaData-Widget">
                                     {% for type in personalKeepTypes %}
                                         {% set widget, textfield = content[type], content[type~'Text'] %}
@@ -336,7 +338,7 @@
                                     {% set value = personalRemove.vars.value %}
                                     <div class="mt-8" id="{{ personalRemoveString }}">
                                         {{ formRender.addHeading(tempPrefix~'title',purposeParamHeadingGen|merge({'headingHint': [[tempPrefix~'headingHint',purposeParam]]})) }}
-                                        <div class="MetaData-Label mt-4">{{ (tempPrefix~'start')|trans({'purpose': ('dataPrivacy.processing.purposeTypes.'~purpose)|trans([],'pdf')})~' ...' }}</div> {# use pdf translation to avoid brackets for technical #}
+                                        <div class="MetaData-Label mt-4">{{ (tempPrefix~'start')|trans({'purpose': ('dataPrivacy.processing.purposeTypes.'~purpose)|trans(savePDFtrueParam,'pdf')})~' ...' }}</div> {# use pdf translation to avoid brackets for technical #}
                                         {{ formRender.renderButtons(personalRemove,noHeading|merge({
                                             'text': [content[purpose~'personalRemoveDescription'],transferParam|merge({'visibility': value is same as immediately, 'addNamely': 'false'})],
                                             'stimVisible': {'values': [[immediately,personalRemoveString~'DescriptionDiv'],[keep,descriptionString~'Div']]}

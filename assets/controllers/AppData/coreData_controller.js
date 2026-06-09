@@ -52,10 +52,10 @@ export default class extends Controller {
     setProjectStart(checkModal = true) {
         let isNext = this.projectStartNextTarget.checked;
         let isBegun = this.hasProjectStartBegunTarget && this.projectStartBegunTarget.checked;
-        setElementVisibility(this.projectStartTarget.parentElement,!isNext);
-        setElementVisibility(this.projectStartNextTarget.parentElement,!isBegun);
+        this.projectStartTarget.disabled = isNext;
+        this.projectStartNextTarget.disabled = isBegun;
         if (this.hasProjectStartBegunTarget) {
-            setElementVisibility(this.projectStartBegunTarget.parentElement,!isNext);
+            this.projectStartBegunTarget.disabled = isNext;
             setElementVisibility(this.projectStartBegunTextTarget,isBegun);
         }
         this.setReviewProcessWidgets(null,checkModal);

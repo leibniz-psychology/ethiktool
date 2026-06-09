@@ -26,11 +26,7 @@
         </div>
     {% endfor %}
     {# further paragraphs #}
-    {% for heading, content in privacyContent %}
-        {% set paragraph = paragraph+1 %}
-        {{ _self.addParagraphHeading(textPreview,paragraph,heading,savePDF) }}
-        <div class="{{ textPreview }}" style="{{ style }}">{{ content|raw|nl2br }}</div>
-    {% endfor %}
+    {{ _self.addParagraphs(privacyContent,textPreview,2,privacyAdditional) }}
     {% if not savePDF %}
         {{ pdfMacros.addLine() }}
     {% endif %}
@@ -44,4 +40,45 @@
         savePDF:     if true, the pdf will be saved on disk
     #}
     <div class="{{ textPreview }} bold" style="margin-top: 1em; {{ savePDF ? 'page-break-inside: avoid; height: 45px; margin-bottom: -20px' }}">{{ paragraph~') '~text }}</div> {# avoid page break between heading and first line #}
+{% endmacro %}
+
+{% macro addParagraphs(content,textPreview, paragraphNumber = 0, additional = []) %}
+    {# Adds the paragraphs. Input arguments:
+        content:         heading and content of the paragraph
+        textPreview:     classes of the div surrounding each paragraph
+        paragraphNumber: if not zero, the headings will be prefixed by a number
+        additional:      additional text that is added at the beginning or end of each paragraph. Length must equal the length of content
+    #}
+    {% set addNumber, hasAdditional, startParagraph = paragraphNumber>0, additional is not same as [], paragraphNumber %}
+    {% for heading, paragraphs in content %}
+        {% set curAdditional = additional[paragraphNumber-startParagraph] ?? ['',''] %}
+        <div class="{{ textPreview }}" style="page-break-inside: avoid; line-height: 1.5; margin-top: 1.5em"> {# avoid page break between heading and first (sub-)paragraph #}
+            <div style="font-weight: bold; margin-bottom: 0.5em">{{ (addNumber ? paragraphNumber~') ')~(heading|raw) }}</div>
+            {% if curAdditional[0] is not same as '' %}
+                <div style="margin-bottom: 1em">{{ curAdditional[0]|raw|nl2br }}</div>
+            {% endif %}
+            {{ _self.addSubParagraph(paragraphs[0],textPreview,false) }}
+        </div>
+        {% for paragraph in paragraphs|slice(1) %}
+            {{ _self.addSubParagraph(paragraph,textPreview) }}
+        {% endfor %}
+        {% if curAdditional[1] is not same as '' %}
+            <div class="{{ textPreview }}">{{ curAdditional[1]|raw|nl2br }}</div>
+        {% endif %}
+        {% set paragraphNumber = paragraphNumber+1 %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro addSubParagraph(paragraph,textPreview,pageBreak = true) %}
+    {# Adds a sub paragraph. Input arguments:
+        paragraph:   array of two elements: subheading and content
+        textPreview: classes of div surrounding the paragraph
+        pageBreak:   if true, page break inside the div will be avoided
+    #}
+    <div class="{{ textPreview }}" style="{% if pageBreak %}page-break-inside: avoid;{% endif %} margin-bottom: 1em">
+        {% if paragraph[0] is not same as '' %} {# subheading of sub-paragraph #}
+            <div style="margin-bottom: 0.25em">{{ paragraph[0]|raw|nl2br }}</div>
+        {% endif %}
+        <div style="text-align: justify; line-height: 1.5">{{ paragraph[1]|raw|nl2br }}</div>
+    </div>
 {% endmacro %}

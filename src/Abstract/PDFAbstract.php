@@ -18,6 +18,7 @@ class PDFAbstract extends ControllerAbstract
     protected static string $linkedPage; // page where the heading is linked to
     protected static bool $isPageLink; // type of page where the heading is linked to, e.g., application data
     protected static string $routeIDs = '';
+    protected const fragment = 'fragment'; // key for $boxContent and for placeholder in translations
 
     public function __construct(TranslatorInterface $translator, Pdf $pdf)
     {

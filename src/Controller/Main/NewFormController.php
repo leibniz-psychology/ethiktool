@@ -7,7 +7,6 @@ use App\Form\Main\NewFormType;
 use App\Traits\AppData\AppDataTrait;
 use App\Traits\Main\BetaCommitteeTrait;
 use App\Traits\Main\CompleteFormTrait;
-use App\Traits\Main\NewFormTrait;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use App\Traits\Contributors\ContributorsTrait;
 use DOMException;
@@ -20,7 +19,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class NewFormController extends ControllerAbstract
 {
-    use NewFormTrait;
     use BetaCommitteeTrait; // passwords for beta committees
     use AppDataTrait; // application data
     use ContributorsTrait; // contributors
@@ -51,15 +49,12 @@ class NewFormController extends ControllerAbstract
             $response = $request->request->all();
             $data = $response['new_form'];
             $submitDummy = $data[self::submitDummy];
-            $languageChanged = str_contains($submitDummy,self::language); // true if language has changed
             if (array_key_exists('newFormSubmit',$response)) { // "save" was clicked
                 try {
                     $this->removeTemp($session);
                     $data = $general->getData();
                     $committeeType = $data[self::committee];
-                    if (in_array($committeeType,self::committeeTypesBeta) && $data[self::passwordInput]!==self::betaPasswords[$committeeType]) {
-                        $session->set(self::wrongPassword,'');
-                        $this->setTemp($session,$data);
+                    if (!$this->checkPassword($session,$data)) {
                         return $this->redirectToRoute('app_newForm');
                     }
                     $this->setCommittee($session,$committeeType,$session->get(self::language));
@@ -135,7 +130,7 @@ class NewFormController extends ControllerAbstract
             } elseif (str_contains($submitDummy,self::quit)) { // "quit" was clicked
                 return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($request->getSession()));
             } else { // one of the language elements was clicked or the committee dropdown has changed -> all other buttons are disabled
-                $newLanguage = $languageChanged ? substr(trim(explode("\n",$submitDummy)[1] ?? ''), strlen(self::language.':')) : $language;
+                $newLanguage = str_contains($submitDummy,self::language) ? substr(trim(explode("\n",$submitDummy)[1] ?? ''), strlen(self::language.':')) : $language;
                 $session->set(self::language, $newLanguage);
                 $this->setTemp($session,$data);
                 return $this->redirectToRoute('app_newForm',['_locale' => $newLanguage]);
@@ -145,29 +140,5 @@ class NewFormController extends ControllerAbstract
             [self::wrongPassword => $wrongPassword,
              'committeeBeta' => self::committeeTypesBeta,
              self::committeeParams.self::newForm => $this->setCommittee($session,$committeeType,$language,false)])); // committee params only for the page, not for the header
-    }
-
-    /** Sets the temp variables for saving filename and committee.
-     * @param Session $session current session
-     * @param array $data array containing the data
-     * @return void
-     */
-    private function setTemp(Session $session, array $data): void
-    {
-        $session->set(self::fileNameTemp,$data[self::fileName]);
-        $session->set(self::committeeTemp,$data[self::committee]);
-        $session->set(self::requirementsTemp,array_key_exists(self::requirements,$data));
-        $session->set(self::technicalHintTemp,array_key_exists(self::technicalHint,$data));
-    }
-
-    /** Removes the temp variables for saving the inputs as well as tee committeeParams parameters.
-     * @param Session $session current session
-     * @return void
-     */
-    private function removeTemp(Session $session): void
-    {
-        foreach ([self::fileNameTemp,self::committeeTemp,self::requirementsTemp,self::technicalHintTemp,self::committeeParams] as $temp) {
-            $session->remove($temp);
-        }
     }
 }

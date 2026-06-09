@@ -5,9 +5,10 @@
     {% set isPreview, request, submitDummy, classes = pageTitle is not same as '', app.request, content.submitDummy, 'border rounded-lg shadow-sm' %}
     <div {{ stimulus_controller('base',
         {'route': request.get('_route'),
-            'routeParams': request.get('_route_params'),
-            'preview': preview ?? 0,
-            'previewTab': previewTab ?? ''}) }} class="pb-5 grid">
+         'routeParams': request.get('_route_params'),
+         'preview': preview ?? 0,
+         'previewTab': previewTab ?? '',
+         'committeeBeta': committeeBeta}) }} class="pb-5 grid">
         {{ include('components/header.html.twig',committeeParams|merge({'update': isUpdateTime})) }}
         {{ formRender.startForm(content) }} {# every controller needs to pass the data as 'content' #}
         <div style="display: none">{{ form_widget(submitDummy,addTargetArray('base','submitDummy')|merge({'id': submitDummy.vars.name})) }}</div> {#  id needed for dummy label #}

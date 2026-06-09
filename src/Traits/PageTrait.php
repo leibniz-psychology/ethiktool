@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '3.0.1';
+    protected const toolVersion = '3.1.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -27,6 +27,10 @@ trait PageTrait
     protected const committeeTypesBeta = ['JGU','DLR','TUD','UH1','UPB']; // committees that are currently in beta status. Values must equal the value of $committeeTypes
     
     // constant variables
+    protected const passwordInput = 'passwordInput';
+    protected const requirements = 'requirements';
+    protected const technicalHint = 'technicalHint';
+    protected const committeeChange = 'committeeChange';
     /** Node name for nodes which indicate the selection of a radio button. */
     protected const chosen = 'chosen'; // for nodes whose content indicates which answer was chosen, if any
     protected const nameNode = 'name';

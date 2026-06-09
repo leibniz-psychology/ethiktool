@@ -4,6 +4,7 @@ namespace App\Abstract;
 
 use App\Classes\CheckDocClass;
 use App\Traits\AppData\AppDataTrait;
+use App\Traits\Main\BetaCommitteeTrait;
 use App\Traits\Main\CompleteFormTrait;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use DateTime;
@@ -34,7 +35,7 @@ use ZipArchive;
 /** Contains all variables, functions and methods that are used in several controller classes. Therefore, it extends AbstractController. All controller classes inherit this class. */
 abstract class ControllerAbstract extends AbstractController
 {
-    use AppDataTrait, ProjectdetailsTrait, CompleteFormTrait;
+    use AppDataTrait, ProjectdetailsTrait, CompleteFormTrait, BetaCommitteeTrait;
 
     protected const pageTitle = 'pageTitle'; // variable name for the twig variable for the title of the page
     public const submitDummy = 'submitDummy'; // name of the form element that hold the route to redirect to; needed in TypeAbstract, therefore public
@@ -62,6 +63,13 @@ abstract class ControllerAbstract extends AbstractController
     protected const route = 'route';
     protected const routeIDs = 'routeIDs';
     protected const error = 'error';
+
+    protected const fileNameTemp = 'fileNameTemp';
+    protected const committeeTemp = 'committeeTemp';
+    protected const requirementsTemp = 'requirementsTemp';
+    protected const technicalHintTemp = 'technicalHintTemp';
+    protected const committeeChangeTemp = 'committeeChangeTemp';
+    protected const wrongPassword = 'wrongPassword'; // session variable indicating that a wrong password was entered
     protected const tempFolder = 'tmpFiles'; // name of folder where PDFs will be temporarily saved if the complete proposal is created. Must be equal to the name in knp_snappy.yaml
     protected const newForm = 'newForm'; // name of session variable indicating that a new proposal was created successfully
     protected const pdfLoad = 'pdfLoadFailure'; // name of session variable indicating that a custom pdf could not be added
@@ -172,7 +180,8 @@ abstract class ControllerAbstract extends AbstractController
         $returnArray = array_merge($committeeParams,
             [self::content => $form,
              'isUpdateTime' => $this->getUpdateTimeString(),
-             self::committeeParams => $committeeParams]);
+             self::committeeParams => $committeeParams,
+             'committeeBeta' => self::committeeTypesBeta]);
         if ($pageTitle!=='') {
             $returnArray[self::pageTitle] = $pageTitle;
             $returnArray[self::preview] = (int) ($session->get(self::preview) ?? 0);
@@ -212,6 +221,22 @@ abstract class ControllerAbstract extends AbstractController
         } catch (\Throwable) {
             return '';
         }
+    }
+
+    /** Checks whether the password entered for a beta committee is correct.
+     * @param Session $session current session
+     * @param array $data data that was submitted
+     * @return bool true if the password was correct, false otherwise
+     */
+    protected function checkPassword(Session $session, array $data): bool
+    {
+        $committeeType = $data[self::committee];
+        if (in_array($committeeType,self::committeeTypesBeta) && $data[self::passwordInput]!==self::betaPasswords[$committeeType]) {
+            $session->set(self::wrongPassword,'');
+            $this->setTemp($session,$data);
+            return false;
+        }
+        return true;
     }
 
     /** Gets the parameters for projectdetails pages.
@@ -266,8 +291,7 @@ abstract class ControllerAbstract extends AbstractController
             }
             $curRouteWoApp = substr($curRoute, 4); // current route without '_app'
             $nodeName = !str_contains($curRoute, self::informationNode) ? strtolower(preg_replace('/[A-Z]/', '_$0', $curRouteWoApp)) : ($curRouteWoApp===self::informationIIINode ? 'information_iii' : self::informationNode); // current route with camel case converted to snake case
-            $nodeName = !in_array($nodeName, ['main', 'check_doc']) ? $nodeName : 'dummy';
-            $formContent = $response[$nodeName] ?? $response['dummy'];
+            $formContent = $response[$nodeName];
             $submitDummy = $formContent[self::submitDummy];
             $hasPreview = str_starts_with($submitDummy, self::preview);
             if ($hasPreview) {
@@ -1166,6 +1190,41 @@ abstract class ControllerAbstract extends AbstractController
         return $tempArray;
     }
 
+    /** Sets the temp variables for saving filename and committee.
+     * @param Session $session current session
+     * @param array $data array containing the data
+     * @param bool $setCommitteeChange if true, it will first be checked whether the checkbox for changing the committee is checked
+     * @return void
+     */
+    protected function setTemp(Session $session, array $data, bool $setCommitteeChange = false): void
+    {
+        $setData = !$setCommitteeChange;
+        if ($setCommitteeChange) {
+            $setData = array_key_exists(self::committeeChange,$data);
+        }
+        if ($setData) {
+            $session->set(self::committeeChangeTemp,true);
+            $session->set(self::fileNameTemp,$data[self::fileName] ?? '');
+            $session->set(self::committeeTemp,$data[self::committee]);
+            $session->set(self::requirementsTemp,array_key_exists(self::requirements,$data));
+            $session->set(self::technicalHintTemp,array_key_exists(self::technicalHint,$data));
+        } else { // remove keys in case the checkbox on page 'main' was de-selected
+            $this->removeTemp($session,false);
+        }
+    }
+
+    /** Removes the temp variables for saving the inputs as well as tee committeeParams parameters.
+     * @param Session $session current session
+     * @param bool $removeCommittee if true, the committee parameters will also be removed
+     * @return void
+     */
+    protected function removeTemp(Session $session, bool $removeCommittee = true): void
+    {
+        foreach (array_merge([self::fileNameTemp,self::committeeTemp,self::requirementsTemp,self::technicalHintTemp,self::committeeChangeTemp],$removeCommittee ? [self::committeeParams] : []) as $temp) {
+            $session->remove($temp);
+        }
+    }
+
     /** Sets the 'errorMessage' key in the session and redirects to the main page.
      * @param Session $session current session
      * @return RedirectResponse Response redirecting to the main page
@@ -1747,7 +1806,7 @@ abstract class ControllerAbstract extends AbstractController
         foreach (self::tasksNodes as $task) {
             $indices = [];
             foreach ($contributorsArray as $index => $contributor) {
-                if (array_key_exists($task,$contributor[self::taskNode])) {
+                if (array_key_exists($task,$contributor[self::taskNode] ?: [])) {
                     $indices = array_merge($indices,[$index]);
                 }
             }
@@ -1826,8 +1885,9 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor1 = $major==='1';
         $isMajor2 = $major==='2';
         $isMinorSmaller3 = $minor<'3';
+        $isMajorSmaller3 = $major<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $major<'3' || $patch<'1';
+        $isSmallerCurrent = $isMajorSmaller3; // last change of nodes currently in 3.0.0
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
@@ -1837,7 +1897,6 @@ abstract class ControllerAbstract extends AbstractController
         $isSmaller281 = $isMajor1 || $isMajor2 && $minor<'8'; // only productive minor version 8 is 2.8.1
         $isSmaller290 = $isMajor1 || $isMajor2 && $minor<'9';
         $isSmaller2100 = $isMajor1 || $isMajor2 && $minor<'10';
-        $isSmaller300 = $isMajor1 || $isMajor2;
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2202,7 +2261,7 @@ abstract class ControllerAbstract extends AbstractController
                             $dataSourceNode->{self::originNode}->{self::chosen} = self::originNew; // select 'new' to keep existing inputs
                         }
                         // updates for versions before 3.0.0
-                        if ($isSmaller300) {
+                        if ($isMajorSmaller3) {
                             $voluntaryNode = $consentNode->{self::voluntaryNode};
                             if ($this->checkElement('voluntaryYesDescription',$voluntaryNode)) { // replace voluntaryYesDescription by voluntaryEnsure
                                 $voluntaryYesNode = $voluntaryNode->{'voluntaryYesDescription'};

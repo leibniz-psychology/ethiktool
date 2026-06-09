@@ -9,17 +9,29 @@
     <h2 class="MetaDataGroup-Title">{{ 'pages.main.pageTitle'|trans }}</h2>
 {% endblock %}
 {% block content %}
-    {% set isErrorOrXml, prefix, hasCommittee = error is not same as '', 'main.text', committeeParams.committeeType not in ['noCommittee',''] %} {# either the xml-file could not be loaded, was updated, or an error occurred during saveDocumentAndRedirect #}
+    {% set isErrorOrXml, prefix, hasCommittee, change = error is not same as '', 'main.text', committeeParams.committeeType not in ['noCommittee',''], 'changeDiv' %} {# either the xml-file could not be loaded, was updated, or an error occurred during saveDocumentAndRedirect #}
     <div class="MetaData-Label mb-2" {% if isErrorOrXml %} {{ stimulus_action('base','showModal','load@window',{'target': error}) }} {% endif %}>
         {{ (prefix~(hasCommittee ? '' : 'NoCommittee'))|trans(committeeParams|merge({'numCommitteesBeta': numCommitteesBeta}))|raw|nl2br }}
     </div>
     {% if hasCommittee %}
         <div class="mb-2" style="margin-top: -2rem">
             {{ formRender.addExpandable(prefix~'RequirementsTitle') }}
-            <div class="MetaData-Label mb-2" style="display: none">{{ (prefix~'Requirements')|trans(committeeParams)|raw|nl2br }}</div>
+            <div class="MetaData-Widget borderLight mx-4 mt-1 mb-2" style="display: none">{{ (prefix~'Requirements')|trans(committeeParams)|raw|nl2br }}</div>
+            <div class="MetaData-Label mt-4">{{ 'main.landing'|trans|raw }}</div>
         </div>
+        <div class="mt-4 mb-2 px-0 MetaData-Widget">
+            <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [['committeeChange',change]]}) }}>
+                {{ formRender.addCheckbox(content.committeeChange,{'checked': showCommittee, 'target': ['base','committeeChange']}) }}
+            </div>
+{#            {{ formRender.addExpandable('main.changeCommittee.title',{},collapseChange) }}#}
+            <div id="{{ change }}" style="{{ boolToDisplay(showCommittee) }}">{{ formRender.addCommitteeForms(content,committeeParamsChange,false,wrongPassword) }}</div>
+        </div>
+         {# info modal #}
+        {% if wrongPassword %}
+            {{ include('components/infoModal.html.twig',{'modalID': 'passwordModal', 'prefix': 'newForm.password.modal.'}) }}
+        {% endif %}
     {% endif %}
     {% if isErrorOrXml %}
-        {{ include('components/'~(not isMajor ? 'info' : 'redirect')~'Modal.html.twig',{'modalID': error, 'prefix': 'multiple.loadMessage.'~error~'.', 'params': params, 'link': 'app_coreData', 'hash': '#applicationProcess'}) }}
+        {{ include('components/'~(not (isMajor or isShort) ? 'info' : 'redirect')~'Modal.html.twig',{'modalID': error, 'prefix': 'multiple.loadMessage.'~error~'.', 'params': params, 'link': 'app_coreData', 'hash': isMajor ? '#applicationProcess' : '#shortDocs'}) }}
     {% endif %}
 {% endblock %}

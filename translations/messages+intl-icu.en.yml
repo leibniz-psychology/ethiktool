@@ -40,6 +40,10 @@ multiple:
     errorMessage: # info modal if an error occurred
       title: 'Error'
       text: 'An error occurred. You were redirected to the main page. Please give us feedback via <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a> about what you were doing right before this error occurred. We will fix it as soon as possible. </br> If further errors occur, please re-load your proposal (XML file).'
+    changeCommittee: # info modal if the committee was changed
+      title: 'Change ethics committee'
+      text: 'The ethics committee was changed successfully. Please check that all entries are still valid.'
+      content: 'The ethics committee was changed successfully. Please check that all entries are still valid.</br></br> The currently selected review process is “short proposal“. In the newly selected ethics committee, the participant documents are not part of the review process for short proposals. However, you can choose to create the participant documents for your own use. Please decide on this before making any further entries. Would you like to switch to the corresponding selection on the “Core data“ page?'
   confirm: 'OK'
   charCount: 'Number of characters:'
   charCountHint: 'The recommended maximum number of characters has been exceeded. It is possible to submit the proposal despite exceeding this number; nevertheless, please check whether you can shorten the description without compromising important information for the ethics review.'
@@ -234,8 +238,8 @@ newForm: # placed immediately after 'committee' to have the committee names all 
   hints:
     filename: 'This name is displayed in the navigation area. It is also suggested as file name.'
     committee: 'Please select the ethics committee you will submit the proposal to.'
-    password: 'The Ethiktool version for the chosen ethics committee is still in the beta stage. It can only be accessed by those who know the password. Please enter the password.'
-  requirements:
+    password: 'The Ethiktool version for the chosen ethics committee is still in the beta stage. It can only be accessed by those who know the password. Please enter the password.' # also used on main page
+  requirements: # also used on main page
     text: 'Requirements for submitting an application'
     confirm: 'I confirm that I fulfill the requirements for submitting an application to {committeeDat}.'
   technicalHint:
@@ -393,6 +397,11 @@ main:
   loadModal:
     title: 'Load proposal'
     content: 'A proposal is currently open. Any unsaved entries will be discarded. Would you still like to continue?'
+  landing: 'You may now <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="AppData">edit the ethics proposal</a>.'
+  committeeChange:
+    title: 'Change ethics committee'
+    committee: 'Please select the new ethics committee you will submit the proposal to.'
+    button: 'Change ethics committee'
 
 landing:
   appData:
@@ -433,11 +442,12 @@ landing:
         add: 'add a new element'
         delete: 'remove the element (including all sub-elements)'
         edit: 'edit details of the study/group/time point combination'
-        hint: >-
+        hint: |
           Note: It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then duplicate the filled combination and change only the relevant entries.
           You only need to add further studies if your research project is divided into several (sub)studies that differ in terms of aims or methodology, e.g., when conducting a series of experiments.
           You should add further groups if, for example, the inclusion criteria or the information for the groups (e.g., minors/adults, patients/controls) substantially differ.
           The term time point refers to an instance of data collection that requires a new study information sheet and an additional consent form, such as a pre-test for a subsequent study, in which it is not yet possible to inform about further phases of the research project in detail or in which only some of the participants of the pre-test are invited to participate in the main study (screening). 
+          If the information sheets are essentially identical (such as for between-subject designs with condition/group assignment after informed consent), it is usually not meaningful to create separate groups within the Ethiktool.
     removeModal:
       title: >-
         delete {type, select,
@@ -668,6 +678,7 @@ summary:
 
 # contributors
 contributors:
+  start: 'All inputs marked with * are mandatory.'
   titles:
     infos: 'Details on project contributors:'
     add: 'add person involved in the research project'
@@ -677,18 +688,17 @@ contributors:
     cancel: 'cancel'
     error: 'Warning: missing or <span class="errorStyle">incorrect</span> input'
   tasks:
-    title: 'Role(s) in the research project:'
+    title: '*Role(s) in the research project:'
     hints:
       position:
         noSelection: 'Please select a position first.'
-        selection: 'Please select all roles of this person in the research project.</br> At least one role must be selected.'
+        selection: 'Please select all roles of this person in the research project.'
       mandatory: >- # other is data
         This role must be occupied by at least one project contributor {type, select,
                                                                           leader     {in the research project.}
                                                                           experiment {for each new data collection.}
                                                                           contact    {for each new data collection.}
                                                                           other      {in the research project.</br> In case more than one person is responsible for data processing, responsibilities must be settled.}}
-    nodeTitle: 'Tasks'
     leader: 'principal investigator/project lead'
     research: 'scientific contribution'
     experiment: 'data collection'
@@ -1074,7 +1084,7 @@ projectdetails:
             absence: 'Participation takes place in the absence of the person with whom the dependent relationship exists.'
             discuss: 'Voluntariness is specifically discussed; this includes explicit confirmation that no (dis)advantages result from deciding for/against the study, despite the dependent relation.'
             onetime: 'The study is advertised only once and with at most one brief reminder.'
-            substitute: 'Non-participating group members are offered an adequate alternative activity, namely:'
+            substitute: 'Non-participating group members are offered an adequate alternative activity.'
             independent: 'The decision of each group member for/against the study is not affected by the decision of other group members.'
             voluntaryEnsureOther: 'Other measures'
           placeholder: 'please specify'
@@ -1335,12 +1345,12 @@ projectdetails:
         textHint: 'Please describe in detail which individual test results are communicated to the participants and, if applicable, how these are framed.'
     compensation:
       title: >-
-        For participating, the {information, select,
-                                  noPost {{addressee, select,
+        For participating, {information, select,
+                              noPost {the {addressee, select,
                                             children {children}
                                             wards    {supervised individuals}
                                             other    {participants}} receive}
-                                  other  {{addressee, select,
+                              other  {{addressee, select,
                                             children {your child receives}
                                             wards    {the individual under your supervision receives}
                                             other    {you receive}}}} ...
@@ -1531,8 +1541,8 @@ projectdetails:
         title: 'Information about incidental findings:'
         template: >-
           The study is for research purposes only. A medical or psychological assessment of the data is not performed. However, we might notice an unusual test result (incidental finding). In this case{consent, select,
-                                                                          true  {, if you agree, we will inform you and recommend that you seek further diagnostic assessment.}
-                                                                          other {, we will inform you and recommend that you seek further diagnostic assessment. Participation in this study is possible only if you agree to us informing you of any unusual test results.}} If a disease is detected during this diagnostic assessment, this could possibly result in disadvantages for {addressee, select,
+                                                true  {, if you agree, we will inform you and recommend that you seek further diagnostic assessment.}
+                                                other {, we will inform you and recommend that you seek further diagnostic assessment. Participation in this study is possible only if you agree to us informing you of any unusual test results.}} If a disease is detected during this diagnostic assessment, this could possibly result in disadvantages for {addressee, select,
                   children {your child}
                   wards {the individual under your supervision}
                   other {you}}, e.g., make it more difficult to contract private health insurance or life insurance. Please note: Even if we do not find any unusual results, this does not confirm a specific health condition; the examination is for research purposes only and does not constitute or replace a medical diagnosis.
@@ -1605,10 +1615,10 @@ projectdetails:
         text:
           start: 'The Ethiktool supports you in indicating all aspects of data processing related to your study.'
           end: |
-            The first step is to check whether personal data are processed. If that is the case, further aspects are queried to compose the annex on data processing.
+            The first step is to check whether <u>personal data</u> <i class="Label-Info" style="display: inline-flex; white-space: initial; width: fit-content"><span style="color: black">According to Article 4 (1) EU-GDPR, “'personal data' means any information relating to an identified or identifiable natural person ('data subject'); an identifiable natural person is one who can be identified, directly or indirectly, in particular by reference to an identifier such as a name, an identification number, location data, an online identifier or to one or more factors specific to the physical, physiological, genetic, mental, economic, cultural or social identity of that natural person“.
+             Thus, this also includes data that allow for identification in the context of a study, such as the age in case of data collection in a closed group (training group, school class, or the like) in which only single persons are of a certain age.</span></i> are processed. If that is the case, further aspects are queried to compose the annex on data processing.
             The explanations are not exhaustive and cannot replace a legal assessment of the individual case. In case of doubt, ask the responsible data protection authorities for consultation. If the Ethiktool cannot reflect the structure of your data processing, please also consult the responsible data protection authorities.
-            The assessment as to whether data processing in a study is “anonymous“ oder “person-related“ in based both on the research content (i.e., the research data themselves) and on organisational aspects (e.g., data for contacting participants, for issuing a compensation). Only the combined view of research-content data with organisation-related data can indicate whether <u>personal data</u> are processed. <i class="Label-Info" style="display: inline-flex; white-space: initial; width: fit-content"><span style="color: black">According to Article 4 (1) EU-GDPR, “'personal data' means any information relating to an identified or identifiable natural person ('data subject'); an identifiable natural person is one who can be identified, directly or indirectly, in particular by reference to an identifier such as a name, an identification number, location data, an online identifier or to one or more factors specific to the physical, physiological, genetic, mental, economic, cultural or social identity of that natural person“.
-             Thus, this also includes data that allow for identification in the context of a study, such as the age in case of data collection in a closed group (training group, school class, or the like) in which only single persons are of a certain age.</span></i>
+            The assessment as to whether data processing in a study is “anonymous“ oder “person-related“ in based both on the research content (i.e., the research data themselves) and on organisational aspects (e.g., data for contacting participants, for issuing a compensation). Only the combined view of research-content data with organisation-related data can indicate whether personal data are processed.
             The Ethiktool does not ask about technical and organizational measures (TOMs) because these are usually not part of the data privacy statement. Of course, you are obliged to take appropriate action, such as suitable measures to ensure that the data are protected against unauthorised access. Please consult the responsible data protection authorities; usually you will fill a record of processing activities according to Article 30 EU-GDPR, yet this does not undergo ethics review.
         confirm: 'I have taken note of the above information.'
       dataOnline:
@@ -1714,8 +1724,9 @@ projectdetails:
         headingHint: 'Please consider that the <u>research data themselves can be entirely or partially person-related</u>. This can be the case due to the type of data alone (e.g., audio/video recordings, brain images) or in relation with the study context (e.g., due to collecting the age of participants in a closed group in which only one participant is of a particular age).'
         types:
           personal: 'The research data themselves are (partially) person-related because this is indispensable for the purpose of the research (e.g., audio/video recordings, brain images).'
-          personalMaybe: 'The research data themselves are not directly person-related, but they can (partially) be related to individual persons with little additional knowledge (this is typically plausible only in case of data collection in a closed group with rare values or combinations of values).'
+          personalMaybe: 'The research data themselves are not directly person-related, but they can (partially) be related to individual persons with little additional knowledge.'
           personalNo: 'The research data themselves cannot be related to individual persons.'
+        hint: 'This is typically plausible only in case of data collection in a closed group with rare values or combinations of values.' # for personalMaybe
       marking:
         title: 'How are the research data labelled?'
         headingHint: 'For various reasons, participants in research projects are often assigned numbers/codes/pseudonyms or the research data are registered/stored under a person-related code. This can also refer to file names for individual datasets. The term “code“ refers to different types of pseudonyms/codes in a narrow sense as well as to using participants'' names for labelling the data. For assessing whether the research data could be related to individual persons, the type of labelling is a relevant aspect and is therefore queried in detail here. <u>If you use two types of labelling, you will be separately asked for the second one further down.</u>'
@@ -1759,9 +1770,9 @@ projectdetails:
                                                                       other    {participants}}.
             own: >-
               The code is freely chosen by the {addressee, select,
-                                      children {children or legal guardians} 
-                                      wards    {supervised individuals or legal guardians}
-                                      other    {participants}}.
+                                                  children {children or legal guardians} 
+                                                  wards    {supervised individuals or legal guardians}
+                                                  other    {participants}}.
             contributors: 'The code is assigned by the project contributors.'
           hints:
             own: >-
@@ -1814,7 +1825,6 @@ projectdetails:
           personalMaybeCode: 'Since the research data can (partially) be related to individual persons with little additional knowledge, and linked with the remaining research data through labelling, please list all research data you are collecting.'
           personal: 'Please list all research data that are person-related themselves.'
           personalMaybe: 'Please list all research data that can be related to individual persons with little additional knowledge.'
-          end: "</br>If certain data types belong both to health data and to another category (e.g., instrumental measurements on heart rate, survey data on the course of a disease), please indicate them in the selection above and once more in the implied special categories of personal data.</br>"
         types:
           demographic: 'Sociodemographic data'
           observation: 'Behaviour-observational data'
@@ -1842,14 +1852,17 @@ projectdetails:
           audio: 'Please describe in the study information what exactly is being recorded.'
           photo: 'Please describe in the study information what exactly is being recorded.'
           video: 'Please describe in the study information what exactly is being recorded.'
-          health: 'This is not about whether the person is identifiable on the basis of the data, but about - when already knowing who the person is - the data allow for sensitive inference on the individual''s health status.'
+          health: 'This is not about whether the person is identifiable on the basis of the data, but about - when already knowing who the person is - the data allow for sensitive inference on the individual''s health status.</br> If certain data types belong both to health data and to another category (e.g., instrumental measurements on heart rate, survey data on the course of a disease), please indicate them in the selection above and once more in the implied special categories of personal data.'
           dataResearchSpecialOther: 'Please name broad category/content of the data' # placeholder
           dataSpecial:
             title: 'This includes the following special categories of personal data:' # text before ethnic
             text: '*According to Article 9 (1) EU-GDPR, <b>special categories of personal data</b> include “data revealing racial or ethnic origin, political opinions, religious or philosophical beliefs, or trade union membership, and the processing of genetic data, biometric data for the purpose of uniquely identifying a natural person, data concerning health or data concerning a natural person''s sex life or sexual orientation“.'
       anonymization:
         title: 'How is personal identifiability removed from the research data / how are the research data anonymized?'
-        start: 'Research data are anonymized by '
+        start: >-
+          {savePDF, select,
+            true  {Research data are anonymized}
+            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#anonymization" data-base-route-i-ds-param="{routeIDs}">Research data are anonymized</a>}} by
         types:
           grouping: 'merging rare answers with other answers (building of categories/grouping)'
           convert: 'converting them into a different format'
@@ -1884,7 +1897,10 @@ projectdetails:
           reuse: 're-use in further research projects'
           teaching: 'practice in teaching'
           demonstration: 'exemplary demonstration'
-        start: 'The original data or other documents from which personal identifiability can be retrieved, are stored '
+        start: >-
+          {savePDF, select,
+            true  {The original data or other documents}
+            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#personalKeep" data-base-route-i-ds-param="{routeIDs}">The original data or other documents</a>}} from which personal identifiability can be retrieved, are stored
         end: '.'
         hints: # icons except textHint
           documentation: 'Please carefully weigh scientific quality assurance against data protection.'
@@ -2036,7 +2052,7 @@ projectdetails:
         title: 'Please describe the data processors and involved data types for the given purposes in more detail.'
         headingHint: 'If different data processors are involved for different purposes, this can be described by using the labels A)... and B)... in the text entries.'
         text:
-          orderProcessingStart: 'The '
+          orderProcessingStart: ' The '
           orderProcessingMiddle: " involves the following data processors:\n"
           orderProcessingEnd: "\nFor this service, the following data are processed: "
         hints: # icons
@@ -2385,8 +2401,8 @@ checkDoc:
         dataSourceBurdensRisks:
           missing: >- # other is dataSourceBurdensRisksContributors
             burdens or risks for {type, select,
-                                            dataSourceBurdensRisks {analyzed persons or groups}
-                                            other                  {project contributors}}
+                                  dataSourceBurdensRisks {analyzed persons or groups}
+                                  other                  {project contributors}}
           description: 'burdens/risks and precautionary measures or compensations' # 'Description of [] is missing.'
       groups:
         minAge: 'minimum age'
@@ -2445,7 +2461,7 @@ checkDoc:
                    wards    {, for the {participant, select,
                                        thirdParty {legal guardians,}
                                        other      {supervised individuals,}}}
-                   other    {}} no <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_{page}">prior information and no after-the-fact information</a> is provided, the question regardgin {type, select,
+                   other    {}} no <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_{page}">prior information and no after-the-fact information</a> is provided, the question regarding {type, select,
                        consent   {the type of {participant, select,
                                                 thirdParty {consent}
                                                 other      {assent}}}
@@ -2585,7 +2601,7 @@ checkDoc:
                                       other      {children,}}}
                 wards    {, for the {participant, select,
                                       thirdParty {legal guardians,}
-                                      other      {supervised individuals,}}
+                                      other      {supervised individuals,}}}
                 other    {}} <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#preAbort" data-base-route-i-ds-param="{routeIDs}">debriefing</a> is given by using a “cancel“ button, data collection must take place online.
         presence:
           missing: 'presence of project contributors'

@@ -291,7 +291,7 @@ export default class extends Controller {
     /** Sets the visibility of the verification question. */
     setVerification() {
         if (this.hasVerificationTarget) {
-            setElementVisibility(this.verificationTarget,this.createSeparateTarget.checked || this.getAddOwn() && this.addOwnYesTarget.checked);
+            setElementVisibility(this.verificationTarget,this.createSeparateTarget.checked || document.getElementById('createtool').checked && this.getAddOwn() && this.addOwnYesTarget.checked);
         }
     }
 

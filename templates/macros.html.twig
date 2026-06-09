@@ -185,19 +185,68 @@
     </div>
 {% endmacro %}
 
+{% macro addCommitteeForms(forms, committeeParams, isNewForm, wrongPassword = false) %}
+    {# Adds the dropdown for committee selection and the text field for the password. Input arguments:
+        forms:           widget that holds the elements
+        committeeParams: translation parameters
+        isNewForm:       if true, the elements are created on the page 'newForm'
+        wrongPassword:   if true, a modal will be added containing the information that the entered password was incorrect
+    #}
+    {% set fileName, committee, labelStyle, hintPrefix, buttonClasses, changePrefix = forms.fileName ?? '', forms.committee, 'text-align: end; white-space: nowrap; ', 'newForm.hints.', 'Button_primary_go me-2', 'main.committeeChange.' %}
+    <div class="MetaData-Widget grid align-items-center px-2 gap-2 {% if isNewForm %} mt-4 {% else %} borderLight mb-2 mx-4 mt-1 {% endif %}" style="grid-template-columns: repeat(2,min-content) auto" {% if wrongPassword %} {{ stimulus_action('base','showModal','load@window',{'target': 'passwordModal'}) }} {% endif %}>
+        {% if isNewForm %}
+            {# file name #}
+            <div class="me-2" style="{{ labelStyle }}">{{ form_label(fileName) }}:</div>
+            <div class="minAutoGrid align-items-center m-0" {{ stimulus_action('base','setCommitteeButton','input') }}>{{ form_widget(fileName,{'attr': addClass('dropdownWidth')|merge(addTarget('base','fileName'))}) }}</div>
+            <div class="MetaData-Label">{{ (hintPrefix~'filename')|trans }}</div>
+        {% endif %}
+        {# committee #}
+        <div class="me-2" style="{{ labelStyle }} grid-column: 1">{{ form_label(committee) }}</div>
+        <div {{ stimulus_action('base','setCommitteeButton','change') }}>{{ form_widget(committee,{'attr': addClass('Button_dropdown dropdownWidth',false,'text-overflow: ellipsis')|merge(addTarget('base','committee'))}) }}</div>
+        <div class="MetaData-Label">{{ ((isNewForm ? hintPrefix : changePrefix)~'committee')|trans }}</div>
+        {# password #}
+        {% if forms.passwordInput is defined %}
+            {% set password = forms.passwordInput %}
+            <div class="me-2" style="{{ labelStyle }}">{{ form_label(password) }}</div>
+            <div {{ stimulus_action('base','setCommitteeButton','input') }}>{{ form_widget(password,addTargetArray('base','password')) }}</div>
+            <div class="MetaData-Label">{{ (hintPrefix~'password')|trans }}</div>
+        {% endif %}
+        {# confirm buttons #}
+        <div id="confirmDiv" {{ stimulus_target('base','confirmDiv')|stimulus_action('base','setCommitteeButton','input') }} style="grid-column: span 3">
+            {% for confirm, text in {'requirements': 'main.textRequirements'}|merge(isNewForm ? {'technicalHint': 'technicalHints.text'} : {}) %}
+                {{ _self.addExpandable('newForm.'~confirm~'.text',{},true,'changeExpandable') }}
+                <div class="MetaData-Widget borderLight mx-4 mt-1" style="display: none">{{ (text)|trans(committeeParams)|raw|nl2br }}</div>
+                <div class="MetaData-Widget">{{ _self.addCheckbox(forms[confirm],{'target': ['base',confirm], 'labelParams': committeeParams}) }}</div>
+            {% endfor %}
+            <div class="MetaData-Label mt-3 font-bold">{{ 'newForm.finalHint'|trans(committeeParams)|raw }}</div>
+        </div>
+        <div class="grid mt-8 mb-2" style="grid-column: 2 / span 2; grid-template-columns: repeat(2,minmax(min-content,max-content))">
+            <button class="{{ buttonClasses }}" type="submit" name="{{ isNewForm ? 'newFormSubmit' : 'committeeChange' }}" {{ stimulus_target('base','save') }}>{{ (isNewForm ? 'newForm.buttons.save' : changePrefix~'button')|trans }}</button>
+            {% if isNewForm %}
+                <button class="{{ buttonClasses }}" type="submit" name="backToMain">{{ 'newForm.buttons.cancel'|trans }}</button>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
 {% macro addCheckbox(widget, arguments = {}) %}
     {# Adds a checkbox. Input arguments:
-        widget:  checkbox
-        Optional input arguments in the 'arguments' array:
-        disable: if true, the checkbox gets disabled
-        style:   if provided, style attributes for the label
-        target:  if provided, an array of two elements: stimulus controller and target name
-        checkIcon: if provided, an array containing the id of an icon and the parameters for the addIcon() call
+        widget:      checkbox
+        Optional     input arguments in the 'arguments' array:
+        disable:     if true, the checkbox gets disabled
+        style:       if provided, style attributes for the label
+        target:      if provided, an array of two elements: stimulus controller and target name
+        checkIcon:   if provided, an array containing the id of an icon and the parameters for the addIcon() call
         labelParams: if provided, parameters for the label translation
+        checked:     if true, the checkbox will be checked
     #}
     {% set target, vars, checkIcon = arguments.target ?? [], widget.vars, arguments.checkIcon ?? [] %}
     {% set widgetName = vars.name %}
-    {{ form_widget(widget,({'id': widgetName}|merge({'attr': checkInput|merge((arguments.disable ?? false) ? addDisableTarget() : {})|merge(target is not same as [] ? addTarget(target[0],target[1]) : [])}))) }}
+    {{ form_widget(widget,({'id': widgetName}|merge(
+        {'attr': checkInput|
+            merge((arguments.disable ?? false) ? addDisableTarget() : {})|
+            merge(target is not same as [] ? addTarget(target[0],target[1]) : [])|
+            merge((arguments.checked ?? false) ? {'checked': true} : {})}))) }}
     <label class="CheckBox-Label d-inline-flex" style="flex-wrap: nowrap; {{ arguments.style ?? '' }}" for="{{ widgetName }}">
         <span class="flex">
             {{ vars.label|trans(arguments.labelParams ?? {}) }}
@@ -297,13 +346,15 @@
     {% endif %}
 {% endmacro %}
 
-{% macro addExpandable(text,params = {}) %}
+{% macro addExpandable(text,params = {},collapsed = true, addClass = '') %}
     {# Adds an expandable element. The element that gets expanded must follow immediately this element. Input arguments:
-        text:   translation key for the text to be shown next to the expanded/collapsed symbol
-        params: if provided, parameters for the translation
+        text:      translation key for the text to be shown next to the expanded/collapsed symbol
+        params:    if provided, parameters for the translation
+        collapsed: if true, the collapsed caret will be added, otherwise the expanded caret
+        addClass:  if not empty, additional class that will be added to the surrounding div
     #}
-    <div class="flex mt-4 clickable bg-mono-200 mx-4" {{ stimulus_target('base','expandable') }}>
-        <span class="dropdownCollapsed" style="height: 1.5rem"></span>
+    <div class="flex mt-4 clickable bg-mono-200 mx-4 {{ addClass }}" {{ stimulus_target('base','expandable') }}>
+        <span class="{{ 'dropdown'~(collapsed ? 'Collapsed' : 'Expanded') }}" style="height: 1.5rem"></span>
         {{ (text)|trans(params) }}
     </div>
 {% endmacro %}

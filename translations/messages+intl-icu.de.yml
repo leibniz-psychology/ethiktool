@@ -38,8 +38,12 @@ multiple:
                 sizeExceed {}
                 other      {</br></br>Sollten weitere selbst formulierte PDF-Dateien erforderlich sein, müssen diese ebenfalls neu hinzugefügt werden. Die Fehlermeldung bezieht sich nur auf die oben genannte Datei.}}
     errorMessage: # info modal if an error occurred
-      title: 'Fehler'
-      text: 'Ein Fehler ist aufgetreten. Sie wurden daher auf die Hauptseite zurückgeleitet. Bitte teilen Sie uns über <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a> mit, welche Aktionen Sie ausgeführt haben, unmittelbar bevor der Fehler auftrat. Wir beheben den Fehler schnellstmöglich. </br> Sollten weiterhin Fehler auftreten, laden Sie bitte Ihren Antrag (XML-Datei) erneut.'
+        title: 'Fehler'
+        text: 'Ein Fehler ist aufgetreten. Sie wurden daher auf die Hauptseite zurückgeleitet. Bitte teilen Sie uns über <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a> mit, welche Aktionen Sie ausgeführt haben, unmittelbar bevor der Fehler auftrat. Wir beheben den Fehler schnellstmöglich. </br> Sollten weiterhin Fehler auftreten, laden Sie bitte Ihren Antrag (XML-Datei) erneut.'
+    changeCommittee: # info modal if the committee was changed
+      title: 'Wechsel der Ethikkommission'
+      text: 'Die Kommission wurde erfolgreich gewechselt. Bitte prüfen Sie, dass alle Angaben korrekt sind.'
+      content: 'Die Kommission wurde erfolgreich gewechselt. Bitte prüfen Sie, dass alle Angaben korrekt sind.</br></br> Aktuell ist als Antragsverfahren „Kurzantrag“ ausgewählt. Bei der Kommission, die Sie gewählt haben, erfolgt für Kurzanträge keine Begutachtung der Teilnahmedokumente. Sie können jedoch entscheiden, ob Sie die Teilnahmedokumente für Ihre eigene Verwendung erstellen möchten. Bitte treffen Sie diese Entscheidung, bevor Sie weitere Eingaben tätigen. Möchten Sie dafür auf die Seite „Stammdaten“ wechseln?' # if old review process was shortDocs and new committee does not review participation documents in short review process
   confirm: 'OK'
   charCount: 'Zeichenanzahl:'
   charCountHint: 'Die empfohlene Maximalanzahl an Zeichen wurde überschritten. Die Einreichung des Antrags ist auch bei Überschreitung möglich; bitte prüfen Sie dennoch, ob Sie (ohne Informationsverlust für die ethische Begutachtung) kürzen können.'
@@ -234,8 +238,8 @@ newForm: # placed immediately after 'committee' to have the committee names all 
   hints:
     filename: 'Dieser Name wird in der Navigation angezeigt. Er wird außerdem als Dateiname vorgeschlagen.'
     committee: 'Bitte wählen Sie hier die Ethikkommission aus, bei der Sie den Antrag einreichen werden.'
-    password: 'Die Ethiktool-Version für die gewählte Ethikkommission befindet sich noch im Beta-Stadium. Der Zugang ist nur mit Passwort möglich. Bitte geben Sie das Passwort ein.'
-  requirements:
+    password: 'Die Ethiktool-Version für die gewählte Ethikkommission befindet sich noch im Beta-Stadium. Der Zugang ist nur mit Passwort möglich. Bitte geben Sie das Passwort ein.' # also used on main page
+  requirements: # also used on main page
     text: 'Voraussetzungen für die Antragstellung'
     confirm: 'Ich bestätige, dass ich die Voraussetzungen für die Antragstellung bei {committeeDat} erfülle.'
   technicalHint:
@@ -393,6 +397,11 @@ main:
   loadModal:
     title: 'Antrag laden'
     content: 'Aktuell ist ein Antrag geöffnet. Nicht gespeicherte Eingaben werden verworfen. Möchten Sie dennoch fortfahren?'
+  landing: 'Sie können jetzt den <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="AppData">Ethikantrag bearbeiten</a>.'
+  committeeChange:
+    title: 'Ich möchte die Ethikkommission wechseln.'
+    committee: 'Bitte wählen Sie hier die neue Ethikkommission aus, bei der Sie den Antrag einreichen werden.'
+    button: 'Ethikkommission wechseln'
 
 landing:
   appData:
@@ -433,11 +442,12 @@ landing:
         add: 'neues Element erstellen'
         delete: 'Element entfernen (inklusive aller Unterelemente)'
         edit: 'Details der Kombination Studie/Gruppe/Zeitpunkt bearbeiten'
-      hint: >-
+      hint: |
         Hinweis: Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination duplizieren und nur die relevanten Einträge ändern.
         Eine weitere Studie müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.
         Eine weitere Gruppe müssen Sie nur anlegen, wenn sich beispielsweise die Einschlusskriterien oder die Aufklärung für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) substanziell unterscheiden.
         Der Begriff Erhebungszeitpunkt bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird (Screening).
+        Wenn die Aufklärungsdokumente in wesentlichen Punkten gleich sind (z.B. bei Between-Subject-Designs mit Bedingungs-/Gruppenzuordnung erst nach der Aufklärung), ist die Anlage separater Gruppe im Ethiktool i.d.R. nicht sinnvoll.
     removeModal:
       title: >-
         {type, select,
@@ -668,6 +678,7 @@ summary:
 
 # contributors
 contributors:
+  start: 'Alle mit * markierten Eingaben sind verpflichtend.'
   titles:
     infos: 'Angaben zu Projektbeteiligten:'
     add: 'Projektbeteiligte Person hinzufügen'
@@ -677,18 +688,17 @@ contributors:
     cancel: 'Abbrechen'
     error: 'Achtung: fehlende oder <span class="errorStyle">fehlerhafte</span> Eingaben'
   tasks:
-    title: 'Funktion(en) im Forschungsprojekt:'
+    title: '*Funktion(en) im Forschungsprojekt:'
     hints:
       position:
         noSelection: 'Bitte wählen Sie zuerst eine Position aus.'
-        selection: "Bitte wählen Sie alle Funktionen dieser Person im Forschungsprojekt.</br> Mindestens eine Funktion muss gewählt werden."
+        selection: 'Bitte wählen Sie alle Funktionen dieser Person im Forschungsprojekt.'
       mandatory: >- # other is data
         Diese Funktion muss {type, select,
                               leader     {im Forschungsprojekt von mindestens einer projektbeteiligten Person ausgefüllt werden.}
                               experiment {bei jeder Erhebung neuer Daten von mindestens einer projektbeteiligten Person ausgefüllt werden.}
                               contact    {bei jeder Erhebung neuer Daten von mindestens einer projektbeteiligten Person ausgefüllt werden.}
                               other      {im Forschungsprojekt von mindestens einer projektbeteiligten Person ausgefüllt werden.</br> Bei mehr als einer datenverantwortlichen Person müssen die Zuständigkeiten geklärt werden.}}
-    nodeTitle: 'aufgaben'
     leader: 'Projektleitung'
     research: 'wissenschaftliche Mitarbeit'
     experiment: 'Datenerhebung'
@@ -1074,7 +1084,7 @@ projectdetails:
             absence: 'Die Teilnahme erfolgt in Abwesenheit der Person, zu der das Abhängigkeitsverhältnis besteht.'
             discuss: 'Die Freiwilligkeit wird gesondert besprochen; dabei wird ausdrücklich betont, dass trotz des Abhängigkeitsverhältnisses keine Vor- oder Nachteile mit der Entscheidung für oder gegen die Studie verbunden sind.'
             onetime: 'Es wird nur einmal für die Studie geworben und höchstens einmal kurz erinnert.'
-            substitute: 'Für nicht-teilnehmende Gruppenmitglieder gibt es eine adäquate Ersatzbeschäftigung, und zwar:'
+            substitute: 'Für nicht-teilnehmende Gruppenmitglieder gibt es eine adäquate Ersatzbeschäftigung.'
             independent: 'Die Entscheidung eines Gruppenmitglieds für oder gegen die Studie ist nicht von den Entscheidungen anderer Gruppenmitglieder abhängig.'
             voluntaryEnsureOther: 'Sonstige Maßnahmen'
           placeholder: 'bitte spezifizieren'
@@ -1605,10 +1615,10 @@ projectdetails:
         text:
           start: 'Das Ethiktool unterstützt Sie darin, die Datenverarbeitung in der Studie abzubilden.'
           end: |
-            Zunächst muss festgestellt werden, ob personenbezogene Daten verarbeitet werden. Sollte dies der Fall sein, werden zur Zusammenstellung der Datenschutzerklärung („Anlage zur Datenverarbeitung“) weitere Aspekte abgefragt.
+            Zunächst muss festgestellt werden, ob <u>personenbezogene Daten</u> <i class="Label-Info" style="display: inline-flex; white-space: initial; width: fit-content"><span style="color: black">Personenbezogene Daten sind nach Art. 4 Abs. 1 DS-GVO „alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen; als identifizierbar wird eine natürliche Person angesehen, die direkt oder indirekt, insbesondere mittels Zuordnung zu einer Kennung wie einem Namen, zu einer Kennnummer, zu Standortdaten, zu einer Online-Kennung oder zu einem oder mehreren besonderen Merkmalen, die Ausdruck der physischen, physiologischen, genetischen, psychischen, wirtschaftlichen, kulturellen oder sozialen Identität dieser natürlichen Person sind, identifiziert werden kann“.
+            Hierzu zählen also auch Daten, die aus dem Kontext der Studie eine Identifikation ermöglichen, z.B. das Alter bei Erhebung einer geschlossenen Personengruppe (Trainingsgruppe, Schulklasse o.dgl.), in der nur einzelne Personen ein bestimmtes Alter aufweisen.</span></i> verarbeitet werden. Sollte dies der Fall sein, werden zur Zusammenstellung der Datenschutzerklärung („Anlage zur Datenverarbeitung“) weitere Aspekte abgefragt.
             Die Ausführungen sind nicht erschöpfend und ersetzen keine rechtliche Bewertung der Sachlage im Einzelfall. Lassen Sie sich ggf. von der für Sie zuständigen Datenschutzstelle beraten. Sollte sich die Struktur Ihrer Datenverarbeitung im Ethiktool nicht abbilden lassen, wenden Sie sich bitte ebenfalls an die für Sie zuständige Stelle.
-            Um einordnen zu können, ob die Datenverarbeitung in einer Studie als „anonym“ oder „personenbezogen“ gilt, sind sowohl die inhaltlichen Aspekte der Forschung (die reinen Forschungsdaten) als auch der organisatorische Rahmen (z.B. Kontaktdaten, Vergabe einer Aufwandsentschädigung) zu beachten. Nur in der Gesamtschau der inhaltlich verarbeiteten Daten in Kombination mit der organisatorischen Abwicklung der Studie lässt sich feststellen, ob <u>personenbezogene Daten</u> vorliegen. <i class="Label-Info" style="display: inline-flex; white-space: initial; width: fit-content"><span style="color: black">Personenbezogene Daten sind nach Art. 4 Abs. 1 DS-GVO „alle Informationen, die sich auf eine identifizierte oder identifizierbare natürliche Person beziehen; als identifizierbar wird eine natürliche Person angesehen, die direkt oder indirekt, insbesondere mittels Zuordnung zu einer Kennung wie einem Namen, zu einer Kennnummer, zu Standortdaten, zu einer Online-Kennung oder zu einem oder mehreren besonderen Merkmalen, die Ausdruck der physischen, physiologischen, genetischen, psychischen, wirtschaftlichen, kulturellen oder sozialen Identität dieser natürlichen Person sind, identifiziert werden kann“.
-            Hierzu zählen also auch Daten, die aus dem Kontext der Studie eine Identifikation ermöglichen, z.B. das Alter bei Erhebung einer geschlossenen Personengruppe (Trainingsgruppe, Schulklasse o.dgl.), in der nur einzelne Personen ein bestimmtes Alter aufweisen.</span></i>
+            Um einordnen zu können, ob die Datenverarbeitung in einer Studie als „anonym“ oder „personenbezogen“ gilt, sind sowohl die inhaltlichen Aspekte der Forschung (die reinen Forschungsdaten) als auch der organisatorische Rahmen (z.B. Kontaktdaten, Vergabe einer Aufwandsentschädigung) zu beachten. Nur in der Gesamtschau der inhaltlich verarbeiteten Daten in Kombination mit der organisatorischen Abwicklung der Studie lässt sich feststellen, ob personenbezogene Daten vorliegen.
             Das Ethiktool fragt nicht nach technisch-organisatorischen Maßnahmen (TOMs), da diese üblicherweise nicht in die Datenschutzerklärung aufgenommen werden. Selbstverständlich müssen Sie geeignete Maßnahmen ergreifen, etwa um sicherzustellen, dass die Daten vor unautorisiertem Zugriff geschützt sind. Lassen Sie sich auch hierzu von der zuständigen Datenschutzstelle beraten; im Regelfall werden Sie ein Verzeichnis für Verarbeitungstätigkeiten (VVT) gemäß Art. 30 DS-GVO anfertigen, das jedoch kein Gegenstand der Ethikbegutachtung ist.
         confirm: 'Die obigen Informationen habe ich zur Kenntnis genommen.'
       dataOnline:
@@ -1714,8 +1724,9 @@ projectdetails:
         headingHint: 'Bitte beachten Sie, dass die <u>Forschungsdaten selbst vollständig oder zum Teil personenbezogen</u> sein können. Dies kann durch Art der Daten allein (z.B. Ton-/Bildaufnahmen oder Hirnstrukturbilder) oder im Zusammenhang mit dem Kontext der Studie (z.B. durch das Alter bei Erhebung einer Schulklasse, in der nur ein Kind ein bestimmtes Alter aufweist) der Fall sein.'
         types:
           personal: 'Die Forschungsdaten selbst sind (teilweise) personenbezogen, weil dies für den Forschungszweck unabdingbar ist (z.B. Ton-/Bildaufnahmen, Hirnstrukturbilder).'
-          personalMaybe: 'Die Forschungsdaten selbst enthalten keinen direkten Personenbezug, sie sind aber (teilweise) mit wenig Zusatzwissen auf einzelne Personen rückführbar (dies ist typischerweise nur in geschlossenen Gruppen plausibel, in denen die erhobenen Merkmalsausprägungen bzw. deren Kombinationen selten vorkommen).'
+          personalMaybe: 'Die Forschungsdaten selbst enthalten keinen direkten Personenbezug, sie sind aber (teilweise) mit wenig Zusatzwissen auf einzelne Personen rückführbar.'
           personalNo: 'Aus den Forschungsdaten selbst lässt sich kein Personenbezug herstellen.'
+        hint: 'Dies ist typischerweise nur in geschlossenen Gruppen plausibel, in denen die erhobenen Merkmalsausprägungen bzw. deren Kombinationen selten vorkommen.' # for personalMaybe
       marking:
         title: 'Wie werden die Forschungsdaten gekennzeichnet?'
         headingHint: 'Häufig werden Teilnehmenden in Forschungsprojekten aus verschiedenen Gründen Nummern/Codes/Pseudonyme zugewiesen bzw. die Forschungsdaten unter einem Personencode oder (selten) Klarnamen registriert/gespeichert. Damit können auch Dateibezeichnungen für einzelne Datensätze gemeint sein. Mit Kennzeichnung sind hier sowohl verschiedene Arten der Codierung im engeren Sinn als auch die Kennzeichnung mit dem Klarnamen der Teilnehmenden gemeint. Für die Beurteilung, ob die Forschungsdaten personenbeziehbar sind, ist u.a. die Art der Kennzeichnung relevant; sie wird daher hier im Detail erfragt. <u>Wenn Sie zwei Kennzeichnungen verwenden, werden Sie weiter unten separat nach der zweiten Kennzeichnung gefragt.</u>'
@@ -1814,7 +1825,6 @@ projectdetails:
           personalMaybeCode: 'Da Ihre Forschungsdaten (teilweise) mit wenig Zusatzwissen auf einzelne Personen rückführbar sind und die übrigen Forschungsdaten über die Kennzeichnung damit verbunden sind, listen Sie bitte sämtliche Forschungsdaten auf, die Sie erheben.'
           personal: 'Listen Sie bitte alle Forschungsdaten auf, die selbst personenbezogen sind.'
           personalMaybe: 'Listen Sie bitte alle Forschungsdaten auf, die mit wenig Zusatzwissen auf einzelne Personen rückführbar sind.'
-          end: "</br>Wenn bestimmte Datenarten sowohl zu Gesundheitsdaten als auch in eine andere Kategorie gehören (z.B. apparative Messdaten zur Herzrate, Befragungsdaten zum Verlauf einer Krankheit), geben Sie diese bitte sowohl in der obigen Auswahl als auch in den darin enthaltenen besonderen Kategorien personenbezogener Daten an.</br>"
         types:
           demographic: 'Soziodemografische Daten'
           observation: 'Verhaltensbeobachtungsdaten'
@@ -1842,14 +1852,17 @@ projectdetails:
           audio: 'Bitte beschreiben Sie in der Studieninformation, was genau aufgezeichnet wird.'
           photo: 'Bitte beschreiben Sie in der Studieninformation, was genau aufgezeichnet wird.'
           video: 'Bitte beschreiben Sie in der Studieninformation, was genau aufgezeichnet wird.'
-          health: 'Hier geht es nicht darum, ob die Person anhand der Daten identifizierbar ist, sondern ob - wenn die Person bereits bekannt ist - aus den Daten sensible Schlussfolgerungen zum individuellen Gesundheitszustand gezogen werden können.'
+          health: 'Hier geht es nicht darum, ob die Person anhand der Daten identifizierbar ist, sondern ob - wenn die Person bereits bekannt ist - aus den Daten sensible Schlussfolgerungen zum individuellen Gesundheitszustand gezogen werden können.</br> Wenn bestimmte Datenarten sowohl zu Gesundheitsdaten als auch in eine andere Kategorie gehören (z.B. apparative Messdaten zur Herzrate, Befragungsdaten zum Verlauf einer Krankheit), geben Sie diese bitte sowohl in der obigen Auswahl als auch in den darin enthaltenen besonderen Kategorien personenbezogener Daten an.'
           dataResearchSpecialOther: 'Bitte benennen Sie die grobe Kategorie/Thematik der Daten' # placeholder
           dataSpecial:
             title: 'Darin enthalten sind folgende besondere Kategorien personenbezogener Daten:' # text before ethnic
             text: '*Gemäß Art. 9 Abs. 1 DS-GVO zählen zu der <b>besonderen Kategorie von personenbezogenen Daten</b> solche „Daten, aus denen die rassische und ethnische Herkunft, politische Meinungen, religiöse oder weltanschauliche Überzeugungen oder die Gewerkschaftszugehörigkeit hervorgehen, sowie die Verarbeitung von genetischen Daten, biometrischen Daten zur eindeutigen Identifizierung einer natürlichen Person, Gesundheitsdaten oder Daten zum Sexualleben oder der sexuellen Orientierung einer natürlichen Person“.'
       anonymization:
         title: 'Wie wird der Personenbezug aus den Forschungsdaten entfernt bzw. wie werden die Forschungsdaten anonymisiert?'
-        start: 'Die Forschungsdaten werden anonymisiert, indem '
+        start: >-
+          {savePDF, select,
+            true  {Die Forschungsdaten werden anonymisiert}
+            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#anonymization" data-base-route-i-ds-param="{routeIDs}">Die Forschungsdaten werden anonymisiert</a>}}, indem
         types:
           grouping: 'seltene Antworten mit anderen Antworten zusammengefasst werden (Kategorienbildung/Gruppierung)'
           convert: 'sie in eine andere Form überführt werden'
@@ -1884,7 +1897,10 @@ projectdetails:
           reuse: 'Nachnutzung für weitere Forschung'
           teaching: 'Nutzung im Rahmen der Lehre'
           demonstration: 'beispielhafte Demonstration'
-        start: 'Die Originaldaten und/oder sonstige Unterlagen, aus denen sich der Personenbezug wiederherstellen lässt, werden '
+        start: >-
+          {savePDF, select,
+            true  {Die Originaldaten und/oder sonstige Unterlagen}
+            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#personalKeep" data-base-route-i-ds-param="{routeIDs}">Die Originaldaten und/oder sonstige Unterlagen</a>}}, aus denen sich der Personenbezug wiederherstellen lässt, werden
         end: ' aufbewahrt.'
         hints: # icons except textHint
           documentation: 'Bitte wägen Sie ab, ob die wissenschaftliche Qualitätssicherung höher wiegt als der Datenschutz.'
@@ -2036,7 +2052,7 @@ projectdetails:
         title: 'Bitte beschreiben Sie die Auftragsverarbeitungen für die angegebenen Zwecke genauer.'
         headingHint: 'Werden verschiedene Auftragsverarbeiter für verschiedene Zwecke eingesetzt, kann dies mit A)... und B)... im Freitext beschrieben werden.'
         text:
-          orderProcessingStart: 'Für '
+          orderProcessingStart: ' Für '
           orderProcessingMiddle: " werden folgende Auftragsverarbeiter eingesetzt:\n"
           orderProcessingEnd: "\nDabei werden folgende Daten verarbeitet: "
         hints: # icons
