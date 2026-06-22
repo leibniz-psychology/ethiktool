@@ -11,7 +11,7 @@ class FormTypeExtension extends AbstractTypeExtension
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['information' => '', 'addresseeString' => '','participantsString' => '','addresseeType' => '', 'committeeParams' => [], 'committeeNom' => '', 'committeeGen' => '', 'committeeDat' => '', 'committeeAcc' => '', 'committeeType' => '', 'committeeLocation' => '', 'committeeLocationGen' => '', 'isCommitteeBeta' => false, 'toolVersion' => '', 'dummy' => []]);
+        $resolver->setDefaults(['information' => '', 'addresseeString' => '','participantsString' => '','addresseeType' => '', 'committeeParams' => [], 'committeeNom' => '', 'committeeGen' => '', 'committeeDat' => '', 'committeeAcc' => '', 'committeeType' => '', 'committeeLocation' => '', 'committeeLocationPure' => '', 'committeeLocationDat' => '', 'committeeLocationGen' => '', 'isCommitteeBeta' => false, 'toolVersion' => '', 'dummy' => []]);
         $resolver->setAllowedTypes('information','string');
         $resolver->setAllowedTypes('addresseeType', 'string');
         $resolver->setAllowedTypes('addresseeString', 'string');
@@ -23,6 +23,8 @@ class FormTypeExtension extends AbstractTypeExtension
         $resolver->setAllowedTypes('committeeAcc','string');
         $resolver->setAllowedTypes('committeeType','string');
         $resolver->setAllowedTypes('committeeLocation','string');
+        $resolver->setAllowedTypes('committeeLocationPure','string');
+        $resolver->setAllowedTypes('committeeLocationDat','string');
         $resolver->setAllowedTypes('committeeLocationGen','string');
         $resolver->setAllowedTypes('isCommitteeBeta','bool');
         $resolver->setAllowedTypes('toolVersion','string');

@@ -3,11 +3,10 @@
 
 {% block content %}
     {% set committeeType, appProcess = committeeParams['committeeType'], content.applicationProcess %}
-    {% set isEUB, style, projectLength, translationPrefix, coreDataController = committeeType is same as 'EUB', 'max-width: 60rem', {'maxLength': 200}, 'coreData.', 'AppData--coreData' %}
+    {% set style, projectLength, translationPrefix, coreDataController = 'max-width: 60rem', {'maxLength': 200}, 'coreData.', 'AppData--coreData' %}
     {% set conflictPrefix, conflictHint = translationPrefix~'conflict.', 'conflictHintDiv' %}
-    {% set conflictYesDescription = (conflictPrefix~'yes')|trans %}
+    {% set conflictYesDescription, projectTitle = (conflictPrefix~'yes')|trans, content.projectTitle %}
     <div {{ stimulus_controller(coreDataController, {
-            'committeeType': committeeType,
             'applicationProcess': appProcess.vars.value,
             'reviewProcess': reviewProcess,
             'reviewProcessLoad': reviewProcessLoad,
@@ -17,7 +16,6 @@
             'conflictHint': [conflictYesDescription,(conflictPrefix~'no')|trans],
             'conflictHintName': conflictHint}) }}>
         {# project title #}
-        {% set projectTitle = content.projectTitle %}
         <div id="projectTitle">
             {{ form_label(projectTitle,null,addLabelAttributes(addClass('MetaData-Title'))) }}
             <div class="MetaData-Widget">{{ form_widget(projectTitle,{'attr': projectLength|merge(textInput)}) }}</div>
@@ -40,7 +38,7 @@
                 {{ form_label(description,null,addLabelAttributes(addClass('MetaData-Label'))) }}
                 <div class="MetaData-Label">{{ (tempPrefix~'reference')|trans }}</div>
                 <div class="MetaData-Widget" style="width: 20rem">{{ form_widget(description,textInputAttr) }}</div>
-                {{ formRender.addHint(tempPrefix~'hint') }}
+                {{ formRender.addHint(tempPrefix~'hint',{'params': committeeParams}) }}
             </div>
         </div>
         {# application process #}
@@ -54,19 +52,14 @@
             {% endif %}
         </div>
         {# project start  #}
-        {% set projectStart, tempPrefix, anyRequested, fundingKeys = content.projectStart, translationPrefix~'project.', false, funding|keys %}
-        {% set startPrefix, begun, hasBegunInput = tempPrefix~'start.', content.projectStartBegun ?? '', textInputRequested is not same as '' %}
+        {% set projectStart, tempPrefix, fundingKeys = content.projectStart, translationPrefix~'project.', funding|keys %}
+        {% set startPrefix, begun = tempPrefix~'start.', content.projectStartBegun ?? '' %}
         {% set hintsPrefix = startPrefix~'hints.' %}
-        {% if hasBegunInput %}
-            {% for widget in fundingKeys %}
-                {% set anyRequested = anyRequested or content[widget].vars.checked and (content[widget~'FundingState'].vars.value ?? '') is same as 'requested' %}
-            {% endfor %}
-        {% endif %}
         <div class="mt-8" id="projectDates">
             {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[hintsPrefix~'headingHint']]}) }}
             {{ form_label(projectStart,(startPrefix~'title')|trans({'committeeType': committeeType})~':',addLabelAttributes(addClass('MetaData-Label'))) }}
             <div class="MetaData-Widget fitWidth" style="height: min-content" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
-                {{ form_widget(projectStart,{'attr': {'lang': 'en'}|merge(addTarget(coreDataController,'projectStart'))}) }}
+                {{ form_widget(projectStart,{'attr': addTarget(coreDataController,'projectStart')}) }}
             </div>
             {# project start next #}
             <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
@@ -124,7 +117,7 @@
                     {% endif %}
                 {% endfor %}
             </div>
-            {% if hasBegunInput %}
+            {% if textInputRequested is not same as '' %}
                 {{ formRender.addHint(textInputRequested,{'target': [coreDataController,'requestedInput'], 'remove': true, 'visible': begun.vars.checked and anyRequested}) }}
             {% endif %}
         </div>
@@ -136,49 +129,42 @@
         </div>
         {# qualification #}
         {% if content.qualification is defined %}
-        {{ formRender.renderButtons(content.qualification,{'hint': [translationPrefix~'qualification.'], 'stim': [coreDataController,'setApplicantSupervisor'], 'contTarget': ['qualification0',coreDataController,'qualificationYes'], 'addDiv': ['qualification']}) }}
+            {{ formRender.renderButtons(content.qualification,{'hint': [translationPrefix~'qualification.'], 'stim': [coreDataController,'setApplicant'], 'contTarget': ['qualification0',coreDataController,'qualificationYes'], 'addDiv': ['qualification']}) }}
         {% endif %}
-        {# information about the applying person and the supervisor #}
-        {% set tempPrefix, infoPrefix, hasSupervisor = translationPrefix~'applicant.', 'multiple.infos.', content.namesupervisor is defined %}
+        {# information about the applying person #}
+        {% set tempPrefix, infoPrefix = translationPrefix~'applicant.', 'multiple.infos.' %}
         <div class="mt-8" id="applicant">
-            {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'hint']]}) }}
-            {% for type in ['applicant']|merge(hasSupervisor ? ['supervisor'] : []) %}
-                {% set isSupervisor = type is same as 'supervisor' %}
-                {% set suffix = isSupervisor ? 'supervisor' %}
-                {% set positionSuffix = 'position'~suffix %}
-                <div class="mt-4 fitWidth" {% if isSupervisor %} id="supervisor" {{ stimulus_target(coreDataController,'supervisorDiv') }} {% endif %}>
-                    <div class="MetaData-Label fitWidth">
-                        {{ ('coreData.applicant.'~type)|trans }}:
-                    </div>
-                    <div class="MetaData-Widget MetaData-Widget_collection grid gap-x-4" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
-                        {% for info in applicantInfo %}
-                            {% set widget, isPosition, isInstitution, isProfessorship = content[info~suffix], info is same as 'position', info is same as 'institution', info is same as 'professorship' %}
-                            {% set vars, tempPrefix = widget.vars, infoPrefix~info %}
-                            {% set name = vars.name %}
-                            <div class="flex justify-content-end" id="{{ type~info }}">
-                                {% if info is same as 'phone' and not isSupervisor and hasSupervisor %}
-                                    <div id="phoneLabelOptional" class="align-self-center" style="text-align: end">{{ (infoPrefix~'phoneOptional')|trans~':' }}</div>
-                                {% endif %}
-                                {{ form_label(widget,(tempPrefix~(isInstitution ? 'Applicant'))|trans~':',addLabelAttributes(addClass('align-self-center')|merge({'id': name~'Label'}))|merge({'id': name})) }}
-                                {% if isInstitution or isProfessorship %}
-                                    <div {% if isProfessorship %} id="{{ positionSuffix~'Hint' }}" style="{{ boolToDisplay(content[positionSuffix].vars.value in ['student','phd']) }}" {% endif %}>
-                                        {{ formRender.addIcon((tempPrefix~'Hint')|trans) }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div {% if isPosition %} {{ stimulus_action(coreDataController,'setProfessorshipHint','change') }} {% endif %}>
-                                {{ form_widget(widget,{'id': name, 'attr': addStyle('width: 100%'~(isPosition ? '; text-overflow: ellipsis'))|merge(isPosition ? addClass('Button_dropdown')|merge(addTarget(coreDataController,type~'Position')) : {})}) }}
-                            </div>
-                            {% if isPosition %}
-                                <div id="{{ positionSuffix~'Other' }}" style="grid-column: 2; {{ boolToDisplay(vars.value is same as 'positionOther') }}">{{ form_widget(content[positionSuffix~'Text']) }}</div>
+            {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
+            <div class="mt-4 fitWidth">
+                <div class="MetaData-Widget MetaData-Widget_collection grid gap-x-4" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
+                    {% for info in applicantInfo %}
+                        {% set widget, isProfessorship = content[info], info is same as 'professorship' %}
+                        {% set vars, isInstitutionPosition, isInstitutionProfessorship = widget.vars, info in ['institution','position'], isProfessorship or info is same as 'institution' %}
+                        {% set name, value = vars.name, vars.value %}
+                        {% set isOther = value is same as (info~'Other')  %}
+                        <div class="flex justify-content-end" id="{{ info }}">
+                            {% if info is same as 'phone' and hasSupervisor %}
+                                <div class="align-self-center" style="text-align: end" {{ stimulus_target(coreDataController,'phoneLabelOptional') }}>{{ (infoPrefix~'phoneOptional')|trans~':' }}</div>
                             {% endif %}
-                        {% endfor %}
-                    </div>
+                            {{ form_label(widget,(infoPrefix~info)|trans~':',addLabelAttributes(addClass('align-self-center')|merge({'id': name~'Label'}))|merge({'id': name})) }}
+                            {% if info is same as 'department' or isInstitutionProfessorship %}
+                                <div {% if isInstitutionProfessorship %} {{ stimulus_target(coreDataController,info~'Hint')}} style="{{ boolToDisplay(isProfessorship ? content['position'].vars.value in ['student','phd'] : isOther) }}" {% endif %}>
+                                    {{ formRender.addIcon((infoPrefix~'hints.'~info)|trans(committeeParams)) }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div {% if isInstitutionPosition %} {{ stimulus_action(coreDataController,'setInstitutionPosition','change') }} {% endif %}>
+                            {{ form_widget(widget,{'id': name, 'attr': addStyle('width: 100%'~(isInstitutionPosition ? '; text-overflow: ellipsis'))|merge(isInstitutionPosition ? addClass('Button_dropdown')|merge(info is same as 'position' ? addTarget(coreDataController,'position') : {}) : {})}) }}
+                        </div>
+                        {% if isInstitutionPosition %}
+                            <div id="{{ info~'Other' }}" style="grid-column: 2; {{ boolToDisplay(isOther) }}">{{ form_widget(content[info~'Text']) }}</div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
-            {% endfor %}
+            </div>
         </div>
         {# conflict #}
-        {% set conflict, hasTextInput = content.conflict, textInputConflict is not same as '' %}
+        {% set conflict = content.conflict %}
         <div class="mt-8" id="conflict">
             {{ formRender.renderButtons(conflict,{
                 'hint': [conflictPrefix],
@@ -190,7 +176,7 @@
                     'resize': true})],
                 'stim': [coreDataController,'setConflict'],
                 'contTarget': ['conflict1',coreDataController,'conflictNo']}) }} {# correct hint is set in controller, but must not be empty here #}
-            {% if hasTextInput %}
+            {% if textInputConflict is not same as '' %}
                 {{ formRender.addHint(textInputConflict,{'target': [coreDataController,'conflictInput'], 'remove': true, 'visible': conflict.vars.value is same as '1'}) }}
             {% endif %}
         </div>
@@ -216,15 +202,15 @@
             </div>
         </div>
         {# guidelines #}
-        {% if isEUB %}
-            {% set guidelines, description = content.guidelines, content.guidelinesText %}
+        {% if committeeType is same as 'EUB' %}
+            {% set guidelines, description, tempPrefix = content.guidelines, content.guidelinesText, translationPrefix~'guidelines.' %}
             {% set vars = guidelines.vars %}
             {% set name = vars.name %}
             <div class="mt-8" id="guidelinesDiv">
-                {{ formRender.addHeading(translationPrefix~'guidelines.title') }}
+                {{ formRender.addHeading(tempPrefix~'title') }}
                 <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [[name,description.vars.name~'Div']]}) }}>
                     {{ form_widget(guidelines,{'id': name, 'attr': checkInput}) }}
-                    <label class="CheckBox-Label minAutoGrid" for="{{ name }}"><span>{{ (translationPrefix~'guidelines.choice')|trans|raw }}</span></label>
+                    <label class="CheckBox-Label minAutoGrid" for="{{ name }}"><span>{{ (tempPrefix~'choice')|trans|raw }}</span></label>
                     {{ formRender.addTextfield(description,{'visibility': vars.checked}) }}
                 </div>
             </div>

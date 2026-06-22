@@ -35,10 +35,15 @@ class CheckDocClass extends ControllerAbstract
     private array $paramsAddressee = []; // translation parameters for addressee
     private array $paramsParticipants = []; // translation parameters for participants, if applicable
     private array $appArray = []; // root node of the xml-document as an array
+    private bool $isMultiple = false; // gets true if more than one study/group/time point exists
+    private bool $isNotShortNoDocs = false; // gets true if review process is not shortNoDocs
     private array $appDataArray = []; // contains all data of the application data
     private array $coreDataArray = []; // contains the date of the core data page
     private array $committeeParam = []; // parameter for translations
     private string $committeeType = '';
+    private array $tasks = []; // possible tasks for the current committee
+    private array $tasksMandatory = []; // mandatory tasks for the current committee
+    private array $allContributors = []; // all contributors with infos and tasks
     private array $contributorTasks = []; // one sub-array for each task containing all contributor that have this task. Each sub-array: key: index of the contributor. value: either empty of description of 'other'
     private array $isMandatory = []; // for each mandatory task, indicates if at least one contributor has this task
     private bool $isDataCollection = false; // gets true if for any time point data are collected
@@ -83,20 +88,26 @@ class CheckDocClass extends ControllerAbstract
         $session = $request->getSession();
         // set variables
         $appNode = $checkDoc->getXMLfromSession($session,getRecent: true);
+        $checkDoc->isMultiple = $checkDoc->getMultiStudyGroupMeasure($appNode);
         $checkDoc->appArray = $checkDoc->xmlToArray($appNode); // may be set again in checkDocument(), but also needed in checkContributors()
         $checkDoc->reviewProcess = $checkDoc->getCurrentReviewProcess($checkDoc->appArray);
+        $checkDoc->isNotShortNoDocs = $checkDoc->reviewProcess!==self::reviewShortNoDocs;
         $checkDoc->committeeParam = $session->get(self::committeeParams);
         $checkDoc->committeeType = $checkDoc->committeeParam[self::committeeType];
         $checkDoc->appDataArray = $checkDoc->appArray[self::appDataNodeName];
         $checkDoc->coreDataArray = $checkDoc->appDataArray[self::coreDataNode];
-        $checkDoc->contributorTasks = array_fill_keys(self::tasksNodes,[]);
-        $checkDoc->isMandatory = array_fill_keys(self::tasksMandatory,false);
-        foreach ($checkDoc->getContributorsArray($checkDoc->appArray) as $index => $contributor) {
+        $tasks = $checkDoc->getTasks($request);
+        $checkDoc->tasks = $tasks[0];
+        $checkDoc->contributorTasks = array_fill_keys($checkDoc->tasks,[]);
+        $checkDoc->tasksMandatory = $tasks[1];
+        $checkDoc->isMandatory = array_fill_keys($checkDoc->tasksMandatory,false);
+        $checkDoc->allContributors = $checkDoc->getContributorsArray($checkDoc->appArray);
+        foreach ($checkDoc->allContributors as $index => $contributor) {
             $tasks = $contributor[self::taskNode] ?: [];
             if ($tasks!==[]) {
                 foreach ($contributor[self::taskNode] as $key => $value) { // key: node name, value: empty or description of 'other'
-                    if (in_array($key,self::tasksNodes)) { // exclude applicant and supervisor
-                        if (in_array($key, self::tasksMandatory)) {
+                    if (in_array($key,$checkDoc->tasks)) {
+                        if (in_array($key, $checkDoc->tasksMandatory)) {
                             $checkDoc->isMandatory[$key] = true; // may already be true
                         }
                         $checkDoc->contributorTasks[$key][$index] = $value;
@@ -351,7 +362,7 @@ class CheckDocClass extends ControllerAbstract
             }
             $this->setProjectdetailsTitle(subPage: self::studyNode);
             // error messages if a task of a contributor is not selected in any measure time point
-            if ($anyOriginNew && $this->getMultiStudyGroupMeasure($appNode) && in_array($this->reviewProcess,self::reviewDocs)) {
+            if ($anyOriginNew && $this->isMultiple && in_array($this->reviewProcess,self::reviewDocs)) {
                 $this->checkLabel = trim($this->checkLabel)."\n";
                 $contributor = $this->getContributorsArray($this->appArray);
                 $translationPage = self::projectdetailsPrefix.self::contributorNode.'.task';
@@ -530,32 +541,30 @@ class CheckDocClass extends ControllerAbstract
         if (array_key_exists(self::qualification,$this->coreDataArray)) {
             $this->checkMissingContent($this->coreDataArray,[self::qualification => $translationPrefix.self::qualification]);
         }
-        // applicant and supervisor
-        foreach (array_merge([self::applicant],array_key_exists(self::supervisor,$this->coreDataArray) ? [self::supervisor] : []) as $type) {
-            $applicant = $this->coreDataArray[$type];
-            $parameters = ['type' => $type];
-            $tempArray = $this->translateArray('multiple.infos.',array_diff(self::applicantContributorsInfosTypes,$type===self::applicant && $applicant[self::position]===self::positionsStudent ? [self::phoneNode] : []),true);
-            $tempArray[self::institutionInfo] = str_replace(self::institutionInfo,self::institutionInfo.'Applicant',$tempArray[self::institutionInfo]);
-            $this->checkMissingContent($applicant,$tempArray,lineTitle: 'coreData.applicant.'.$type, hash: $type);
-            $name = $applicant[self::nameNode];
-            if ($name!=='' && count(explode(' ',$name))===1) {
-                $this->addCheckLabelString($translationPrefix.self::nameNode,$type.self::nameNode,$parameters);
+        // applicant
+        $applicant = $this->coreDataArray[self::applicant];
+        $this->checkMissingContent($applicant,$this->translateArray('multiple.infos.',array_diff(self::applicantContributorsInfosTypes,$applicant[self::position]===self::positionsStudent ? [self::phoneNode] : []),true), hash: self::applicant);
+        $name = $applicant[self::nameNode];
+        if ($name!=='' && count(explode(' ',$name))===1) {
+            $this->addCheckLabelString($translationPrefix.self::nameNode,self::nameNode);
+        }
+        // validity of eMail
+        $tempVal = $applicant[self::eMailNode];
+        if ($tempVal!=='' && !filter_var($tempVal,FILTER_VALIDATE_EMAIL)) {
+            $this->addCheckLabelString($translationPrefix.self::eMailNode,self::eMailNode);
+        }
+        // description of 'other' institution and position
+        foreach (self::institutionPosition as $info) {
+            $other = $info===self::institutionInfo ? self::institutionOther : self::positionOther;
+            if ($applicant[$info]===$other) {
+                $this->errorMessage = $translationPrefix.$other;
+                $this->addCheckLabelString(self::missingSingle,$info,colorRed: false);
             }
-            // validity of eMail
-            $tempVal = $applicant[self::eMailNode];
-            if ($tempVal!=='' && !filter_var($tempVal,FILTER_VALIDATE_EMAIL)) {
-                $this->addCheckLabelString($translationPrefix.self::eMailNode,$type.self::eMailNode,$parameters);
-            }
-            // description of 'other' position
-            if ($applicant[self::position]===self::positionOther) {
-                $this->errorMessage = $translationPrefix.'positionOther';
-                $this->addCheckLabelString(self::missingSingle,$type.self::position,$parameters,false);
-            }
-            // validity of phone
-            $tempVal = $applicant[self::phoneNode];
-            if ($tempVal!=='' && preg_match("/^\+?([0-9][\s\/-]?)+[0-9]+$/",$tempVal)===0) {
-                $this->addCheckLabelString($translationPrefix.self::phoneNode,$type.self::phoneNode,$parameters);
-            }
+        }
+        // validity of phone
+        $tempVal = $applicant[self::phoneNode];
+        if ($tempVal!=='' && preg_match("/^\+?([0-9][\s\/-]?)+[0-9]+$/",$tempVal)===0) {
+            $this->addCheckLabelString($translationPrefix.self::phoneNode,self::phoneNode);
         }
         // conflict
         $tempArray = $this->coreDataArray[self::conflictNode];
@@ -643,20 +652,25 @@ class CheckDocClass extends ControllerAbstract
         $tasksPrefix = self::contributorsPrefix.'tasks.';
         // check individual contributors
         $position = $this->coreDataArray[self::applicant][self::position];
-        $isSupervisor = $this->checkSupervisor($this->committeeType,$position);
-        $translationParameters = ['isSupervisor' => $this->getStringFromBool($isSupervisor), 'isQualification' => $this->getStringFromBool($this->getQualification($this->coreDataArray)), self::position => $position];
+        $isEUB = $this->committeeType===self::committeeEUB;
+        $translationParameters = [self::position => $position, 'isEUB' => $this->getStringFromBool($isEUB)];
         foreach ($windowArray as $index => $contributor) {
             $infos = $contributor[self::infosNode];
             $tasks = $contributor[self::taskNode];
-            $parameter = array_merge($translationParameters,['index' => $index+1, 'name' => $infos[self::nameNode]]);
+            $numTasks = $tasks==='' ? 0 : count($tasks);
+            $parameter = array_merge($translationParameters,['index' => $index+1, 'name' => $infos[self::nameNode], 'numTasks' => $numTasks]);
             // infos
-            if (!($index===0 || $index===1 && $isSupervisor)) {
+            $hasPosition = $infos[self::position]!=='';
+            if ($index>0) {
                 $lineTitle = $this->translateString(self::contributorsPrefix.'lineTitle',$parameter);
                 $this->checkMissingContent($infos,$this->translateArray('multiple.infos.',self::infosMandatory,true),lineTitle: $lineTitle, addHash: false);
                 $tempPrefix = self::contributorsPrefix.self::infosNode.'.';
                 $tempVal = $infos[self::nameNode];
                 if ($tempVal!=='' && count(explode(' ',$tempVal))===1) {
                     $this->addCheckLabelString($lineTitle.': '.$this->translateString($tempPrefix.self::nameNode),colorRed: false);
+                }
+                if (!$hasPosition) {
+                    $this->addCheckLabelString($lineTitle.': '.$this->translateString($tempPrefix.self::position),colorRed: false);
                 }
                 $tempVal = $infos[self::eMailNode];
                 if ($tempVal!=='' && !filter_var($tempVal,FILTER_VALIDATE_EMAIL)) {
@@ -666,14 +680,16 @@ class CheckDocClass extends ControllerAbstract
                 if ($tempVal!=='' && !preg_match("/^\+?([0-9][\s\/-]?)+[0-9]+$/",$tempVal)) {
                     $this->addCheckLabelString($lineTitle.': '.$this->translateString($tempPrefix.'validPhone'),colorRed: false);
                 }
-                if ($infos[self::position]===self::positionOther) {
-                    $this->errorMessage = $this->translateString($tasksPrefix.'missingOther',$parameter);
-                    $this->addCheckLabelString(self::missingSingle,colorRed: false);
+                foreach (self::institutionPosition as $info) {
+                    $other = $info===self::institutionInfo ? self::institutionOther : self::positionOther;
+                    if ($infos[$info]===$other) {
+                        $this->errorMessage = $this->translateString($tasksPrefix.'missingOther',array_merge($parameter,['type' => $info]));
+                        $this->addCheckLabelString(self::missingSingle,colorRed: false);
+                    }
                 }
             }
             // tasks
-            $numTasks = $tasks==='' ? 0 : count($tasks);
-            if ($numTasks===0 || $numTasks===1 && ($index===0 || $index===1 && $isSupervisor)) { // contributor does not have any task
+            if ($hasPosition && $numTasks===0 || $this->checkSupervisor($this->committeeType,$position) && in_array($position,array_merge([self::positionsStudent],$isEUB ? [self::positionsPhd] : [])) && $index>0 && $numTasks===1 && ($this->coreDataArray[self::qualification] ?? '')!=='0' && array_key_exists(self::taskSupervision,$tasks)) { // contributor does not have any (further) task
                 $this->addCheckLabelString($tasksPrefix.'missing',parameters: $parameter);
             }
         }
@@ -1407,8 +1423,27 @@ class CheckDocClass extends ControllerAbstract
                 }
                 if ($create===self::createTool && $this->checkMissingChosen($tempArray,$translationPage.self::confirmIntroNode,null,$this->addDiv(self::confirmIntroNode),name: self::descriptionNode)==='1') { // intro was confirmed
                     $tempPrefix = $translationPage.self::responsibilityNode.'.';
+                    $qualification = $this->coreDataArray[self::qualification] ?? '';
                     $responsibility = $this->checkMissingChosen($pageArray, $tempPrefix.'missing', null, self::responsibilityNode, true, self::responsibilityNode);
-                    if ($responsibility==='private' && ($this->appDataArray[self::coreDataNode][self::qualification] ?? '')==='1') { // responsibility is private -> qualification must be answered with yes
+                    $taskData = explode(',',$this->measure[self::contributorNode][self::taskData] ?? '');
+                    if ($qualification==='0' && $this->coreDataArray[self::applicant][self::position]===self::positionsStudent && in_array($responsibility,[self::responsibilityOnlyOwn,self::responsibilityOtherOther,self::responsibilityMultiple]) && in_array('0',$taskData) && count($taskData)===1) { // student with qualification and only contributor with task data -> responsibility must be private
+                        $this->addCheckLabelString($tempPrefix.'private',parameters: $this->paramsAddressee);
+                    }
+                    if ($responsibility===self::responsibilityOnlyOwn) {
+                        $taskData = explode(',',$this->measure[self::contributorNode][self::taskData]);
+                        if ($taskData[0]!=='') { // at least one contributor has task data
+                            $anyNotOwn = false;
+                            foreach ($taskData as $contributor) {
+                                if (!in_array($this->allContributors[$contributor][self::infosNode][self::institutionInfo],['',self::institutionSame])) {
+                                    $anyNotOwn = true;
+                                }
+                            }
+                            if ($anyNotOwn) { // any contributor not from committee location -> responsibility must be solely committee location
+                                $this->addCheckLabelString($tempPrefix.self::responsibilityOnlyOwn,parameters: array_merge($this->paramsAddressee,['numData' => count($taskData)]));
+                            }
+                        }
+                    }
+                    if ($responsibility==='private' && $qualification==='1') { // responsibility is private -> qualification must be answered with yes
                         $this->addCheckLabelString($tempPrefix.self::qualification);
                     }
                     $transferOutside = $this->checkMissingChosen($pageArray, $translationPage.self::transferOutsideNode, null, self::transferOutsideNode, true, self::transferOutsideNode);
@@ -1869,18 +1904,18 @@ class CheckDocClass extends ControllerAbstract
     private function checkContributor(bool $setTitle = true): void
     {
         $pageArray = $this->measure[self::contributorNode];
-        if (in_array(false,$this->isOne) && $pageArray!=='') {
+        if (in_array(false,$this->isOne) && $pageArray!=='' && $this->isNotShortNoDocs) {
             $this->addProjectdetailsTitle(self::contributorNode,$setTitle);
             $translationPage = self::projectdetailsPrefix.self::contributorNode.'.';
-            foreach (self::tasksNodes as $task) {
-                $tempArray = explode(',',$pageArray[$task]); // array containing the indices of the contributor of the current task. key: continuous index (nodes had the name). value: index of contributor
-                $isTask = $tempArray[0]!=='';
-                if (in_array($task,self::tasksMandatory) && !$isTask) { // task is mandatory
+            foreach ($pageArray as $task => $contributors) {
+                $contributors = explode(',',$contributors); // array containing the indices of the contributor of the current task. key: continuous index (nodes had the name). value: index of contributor
+                $isTask = $contributors[0]!=='';
+                if (in_array($task,$this->tasksMandatory) && !$isTask) { // task is mandatory
                     $isTaskAvailable = $this->isMandatory[$task]; // true if task was not selected for at least one contributor on 'contributors' page
                     $this->addCheckLabelString($translationPage.'mandatory',$isTaskAvailable ? $task : '', ['task' => $this->translateString(self::tasksTypes[$task]), 'type' => !$isTaskAvailable ? 'missing' : 'other'],!$isTaskAvailable);
                 } elseif ($isTask) {
                     $tasksCopy = &$this->contributorTasks[$task]; // contributor of the current task. key: contributor index, value: empty or other description
-                    foreach ($tempArray as $index) {
+                    foreach ($contributors as $index) {
                         if (array_key_exists($index,$tasksCopy)) { // remove the current task from the current contributor if it is the first measure time point where the task is selected
                             unset($tasksCopy[$index]);
                         }
@@ -1909,7 +1944,7 @@ class CheckDocClass extends ControllerAbstract
             $this->addressee = $this->getAddressee($groupsArray);
             $this->isTwoAddressees = $this->addressee!==self::addresseeParticipants;
             // set parameters for translations -> contains all parameters that are needed somewhere, i.e., not all parameters are used in every translation
-            $this->paramsAddressee = array_merge($this->routeIDs, [self::addressee => $this->addressee, 'participant' => 'thirdParty', 'page' => self::informationNode, 'type' => self::voluntaryNode]);
+            $this->paramsAddressee = array_merge($this->committeeParam,$this->routeIDs, [self::addressee => $this->addressee, 'participant' => 'thirdParty', 'page' => self::informationNode, 'type' => self::voluntaryNode, 'isMultiple' => $this->getStringFromBool($this->isMultiple)]);
             $this->paramsParticipants = array_merge($this->routeIDs, [self::addressee => $this->addressee, 'participant' => 'participant', 'page' => self::informationIINode, 'type' => self::voluntaryNode]);
             // information
             $tempArray = $this->measure[self::informationNode];

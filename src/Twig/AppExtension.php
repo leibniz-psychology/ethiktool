@@ -19,6 +19,7 @@ class AppExtension extends AbstractExtension
                 new TwigFunction('addClass',$this->addClass(...)),
                 new TwigFunction('addStyle',$this->addStyle(...)),
                 new TwigFunction('getAnySelected',$this->getAnySelected(...)),
+                new TwigFunction('isArray',$this->isArray(...)),
                 new TwigFunction('addTracking',$this->addTracking(...)),];
     }
 
@@ -123,6 +124,15 @@ class AppExtension extends AbstractExtension
             }
         }
         return [$uniqueSelected,$anySelected,$numSelected];
+    }
+
+    /** Checks if an element is an array.
+     * @param array|string $element element to be checked
+     * @return bool true if element is an array, false otherwise
+     */
+    public function isArray(array|string $element): bool
+    {
+        return is_array($element);
     }
 
     /** Adds the 'onClick' event for tracking.

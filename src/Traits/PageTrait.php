@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '3.1.0';
+    protected const toolVersion = '3.2.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -53,8 +53,14 @@ trait PageTrait
     protected const positionsStudentPhd = ['student','phd']; // values must equal the values of the preceding variables
     protected const positionOther = 'positionOther'; // must equal one of the keys in $positions
     protected const positionsTypes = ['professorship' => 'multiple.position.professorship', 'scientific' => 'multiple.position.scientific', 'phd' => 'multiple.position.phd', 'student' => 'multiple.position.student', 'positionOther' => 'multiple.position.positionOther'];
-    protected const applicantContributorsInfosTypes = ['name', 'institution', 'professorship', 'eMail', 'position', 'phone'];
+    protected const applicantContributorsInfosTypes = ['name', 'institution', 'department', 'professorship', 'eMail', 'position', 'phone'];
     protected const institutionInfo = 'institution'; // must equal one value in $applicantContributorsInfosTypes
+    protected const department = 'department'; // must equal one value in $applicantContributorsInfosTypes
+    protected const institutionPosition = ['institution','position']; // values must equals the values in $applicantContributorsInfosTypes
+    protected const institutionTypes = ['institutionSame' => 'multiple.infos.institutionTypes.institutionSame', 'institutionOther' => 'multiple.infos.institutionTypes.institutionOther'];
+    protected const institutionSameOption = 'multiple.infos.institutionTypes.institutionSame'; // must equal one value in $institutionTypes
+    protected const institutionSame = 'institutionSame'; // must equal one key in $institutionTypes
+    protected const institutionOther = 'institutionOther'; // must equal one key in $institutionTypes
     // contributor
     protected const contributorNode = 'contributor';
     protected const infosNode = 'infos';

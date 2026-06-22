@@ -66,12 +66,11 @@ class MainController extends ControllerAbstract
                 $coreDataNode = $appNode->{self::appDataNodeName}->{self::coreDataNode};
                 // add/remove shortDocs node
                 $applicationProcessNode = $coreDataNode->{self::applicationProcessNode};
-                $isShort = ((string) $applicationProcessNode->{self::chosen})===self::reviewProcessShort;
                 $isShortChoose = in_array($committee,self::reviewShortChoose);
                 $hasShortDocs = $this->checkElement(self::shortDocsNode,$applicationProcessNode);
                 $reviewProcess = '';
                 $shortChange = false;
-                if ($isShort) { // review process is short
+                if (((string) $applicationProcessNode->{self::chosen})===self::reviewProcessShort) { // review process is short
                     if ($isShortChoose && !$hasShortDocs) { // old committee has no shortDocs, but new one has
                         $applicationProcessNode->addChild(self::shortDocsNode);
                         $reviewProcess = self::reviewShortService; // keep input for participation documents
@@ -88,33 +87,20 @@ class MainController extends ControllerAbstract
                 }
                 // remove student if new committee does not allow applicant to be student
                 $applicantNode = $coreDataNode->{self::applicant};
-                $position = (string) $applicantNode->{self::position};
                 $contributorsNode = $appNode->{self::contributorsNodeName};
-                $removeStudent = $position===self::positionsStudent && !in_array($committee,self::committeeStudent);
-                if ($removeStudent) { // remove position and all tasks except 'application'
+                $removeStudent = ((string) $applicantNode->{self::position})===self::positionsStudent && !in_array($committee,self::committeeStudent);
+                if ($removeStudent) { // remove position and all tasks
                     $applicantNode->{self::position} = '';
                     $contributorsApplicantNode = $contributorsNode->{self::contributorNode}[0];
                     $contributorsApplicantNode->{self::infosNode}->{self::position} = '';
                     $contributorsApplicant = $contributorsApplicantNode->{self::taskNode};
                     $this->removeAllChildNodes($contributorsApplicant);
-                    $contributorsApplicant->addChild(self::applicationNode);
                 }
-                // add/remove supervisor
-                $isSupervisor = $this->checkSupervisor($committee,$position);
-                $hasSupervisor = $this->checkElement(self::supervisor,$coreDataNode);
                 $contributorsArray = $this->addZeroIndex($this->xmlToArray($contributorsNode)[self::contributorNode]);
-                $addSupervisor = $isSupervisor && !$hasSupervisor;
-                if ($addSupervisor) {
-                    $this->insertElementBefore(self::supervisor,$coreDataNode->{self::conflictNode},self::applicantContributorsInfosTypes);
-                    $this->updateContributor($contributorsArray,[self::supervisor => array_combine(self::applicantContributorsInfosTypes,array_fill(0,count(self::applicantContributorsInfosTypes),''))],self::supervisor);
-                } elseif (!$isSupervisor && $hasSupervisor) {
-                    $this->removeElement(self::supervisor,$coreDataNode);
-                    unset($contributorsArray[1][self::taskNode][self::supervisorNode]); // only remove task, but keep the contributor
-                }
                 $session->set(self::contributorsSessionName,[0 => $contributorsArray]);
                 $this->addAllContributorsNodes($appNode,$contributorsArray);
-                if ($addSupervisor || $removeStudent) {
-                    $this->updateProjectdetailsContributor($request,$appNode,$addSupervisor ? '' : 0,[],false,$addSupervisor); // needs to be called after addAllContributorsNodes()
+                if ($removeStudent) {
+                    $this->updateProjectdetailsContributor($request,$appNode,0,[],false); // needs to be called after addAllContributorsNodes()
                 }
                 // add/remove qualification and guidelines node
                 $isEUB = $committee===self::committeeEUB;
@@ -142,15 +128,19 @@ class MainController extends ControllerAbstract
             return $this->saveDocumentAndRedirect($request,$appNode);
         }
         $isMajor = $sessionValue['isMajor'] ?? false;
-        $isShort = $sessionValue['isShort'] ?? false;
+        $isMajorOrShort = $isMajor || ($sessionValue['isShort'] ?? false);
         return $this->render('Main/main.html.twig',$this->setRenderParameters($request,$main,
             ['error' => $errorModal,
-             'isMajor' => $isMajor,
-             'isShort' => $isShort,
+             'isRedirectModal' => $isMajorOrShort || ($sessionValue['isInstUpdate'] ?? false),
              'committeeParamsChange' => $this->setCommittee($session,$session->get(self::committeeTemp) ?? 'testCommittee',$request->getLocale(),false),
              'showCommittee' => $hasChange,
              'wrongPassword' => $wrongPassword,
              'numCommitteesBeta' => (new \NumberFormatter($request->getLocale(),\NumberFormatter::SPELLOUT))->format(count(self::committeeTypesBeta)),
-             'params' => ['isMain' => $sessionValue['isMain'] ?? '', 'isMajor' => $this->getStringFromBool($isMajor), 'isShort' => $this->getStringFromBool($isShort)]]));
+             'redirectParams' => array_merge([
+                 'params' => ['isMain' => $sessionValue['isMain'] ?? '', 'isMajor' => $this->getStringFromBool($isMajor)],
+                 'modalID' => $errorModal,
+                 'prefix' => 'multiple.loadMessage.'.$errorModal.'.',
+                 'link' => $isMajorOrShort ? 'app_coreData' : 'app_contributors'],
+                 $isMajorOrShort ? ['hash' => $isMajor ? '#applicationProcess' : '#shortDocs'] : [])]));
     }
 }

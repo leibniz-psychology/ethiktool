@@ -24,9 +24,15 @@ class ContributorsController extends ControllerAbstract
         }
         $contributorsArray = $allContributorsArrays[count($allContributorsArrays)-1]; // most recent contributors array
         $appNode = $this->getXMLfromSession($session);
+        $committeeType = $this->getCommitteeType($session);
         $coreDataNode = $appNode->{self::appDataNodeName}->{self::coreDataNode};
+        $applicantNode = $coreDataNode->{self::applicant};
+        $positionOld = (string) $applicantNode->{self::position};
+        $isSupervisorOld = $this->checkSupervisor($committeeType,$positionOld);
+        $tasks = $this->getTasks($request);
+        $possibleTasks = $tasks[0];
 
-        $contributors = $this->createFormAndHandleRequest(ContributorsType::class,null,$request);
+        $contributors = $this->createFormAndHandleRequest(ContributorsType::class,null,$request,[self::dummyParams => [self::taskNode => $possibleTasks]]);
         if ($contributors->isSubmitted()) {
             $dataContributors = $request->request->all()['contributors'];
             $submitDummy = $dataContributors[self::submitDummy];
@@ -38,18 +44,16 @@ class ContributorsController extends ControllerAbstract
                 $isRemoved = str_contains($submitType,'remove');
                 $tasks = [];
                 if (!$isRemoved) { // contributor was added or edited
-                    $committeeType = $this->getCommitteeType($session);
-                    $positionOld = (string) $coreDataNode->{self::applicant}->{self::position};
-                    $isStudentOld = $this->checkSupervisor($committeeType,$positionOld);
-                    $isApplicant = $id==='0';
-                    $isApplicantOrSupervisor = $isApplicant || $isStudentOld && $id==='1';
                     $tempArray = [];
                     // infos
                     foreach (self::infosMandatory as $info) {
                         $tempArray[$info] = $dataContributors[$info];
                     }
-                    $position = $dataContributors[self::position] ?? self::positionsPhd; // if key does not exist, field is disabled which means that only possible position is phd
-                    $tempArray[self::position] = $position===self::positionOther ? $dataContributors[$this->appendText(self::positionOther)] : $position;
+                    foreach (self::institutionPosition as $info) {
+                        $other = $info===self::institutionInfo ? self::institutionOther : self::positionOther;
+                        $curInfo = $dataContributors[$info];
+                        $tempArray[$info] = $curInfo===$other ? $dataContributors[$this->appendText($other)] : $curInfo;
+                    }
                     $phone = $dataContributors[self::phoneNode];
                     if ($phone!=='') {
                         $tempArray[self::phoneNode] = $phone;
@@ -65,30 +69,22 @@ class ContributorsController extends ControllerAbstract
                     if (str_contains($submitType,'add')) { // new contributor -> str_contains because route will also be in this string
                         $contributorsArray = array_merge($contributorsArray, [count($contributorsArray) => $newData]);
                     } else { // contributor was edited
-                        if ($isApplicantOrSupervisor) { // applicant or supervisor
-                            $newData[self::taskNode] = array_merge([$isApplicant ? self::applicationNode : self::supervisorNode => ''],$newData[self::taskNode]); // add applicant as task
-                        }
                         $contributorsArray[$id] = $newData;
                     }
-                    // update applicant or supervisor in coreData
-                    if ($isApplicantOrSupervisor) {
+                    // update applicant in coreData
+                    if ($id==='0') {
                         $infos = &$contributorsArray[$id][self::infosNode];
                         if (!array_key_exists(self::phoneNode,$infos)) {
                             $infos[self::phoneNode] = '';
                         }
-                        $node = $coreDataNode->{$isApplicant ? self::applicant : self::supervisor};
                         foreach (self::applicantContributorsInfosTypes as $info) { // update infos in core data
-                            $node->{$info} = $infos[$info];
+                            $applicantNode->{$info} = $infos[$info];
                         }
-                        $isStudent = $this->checkSupervisor($committeeType,$position);
-                        if ($isApplicant) {
-                            if (!$isStudentOld && $isStudent) { // position was changed such that a supervisor is needed
-                                $this->insertElementBefore(self::supervisor,$coreDataNode->{self::projectStart},self::applicantContributorsInfosTypes);
-                                $this->addSupervisor($contributorsArray);
-                            } elseif ($isStudentOld && !$isStudent) { // position was changed such that no supervisor is needed anymore
-                                unset($contributorsArray[1][self::taskNode][self::supervisorNode]);
-                                $this->removeElement(self::supervisor,$coreDataNode);
-                            }
+                        $position = $dataContributors[self::position];
+                        if ($positionOld===self::positionsStudent && $position===self::positionsPhd && $committeeType===self::committeeEUB) { // position changed from student to phd -> remove position from other contributors that are supervisor
+                            $this->removeContributorIndices($appNode,$this->removePhd($contributorsArray));
+                        } elseif ($isSupervisorOld && !$this->checkSupervisor($committeeType,$position)) { // position changed such that no supervisor is needed anymore -> remove task 'supervision' from all contributors
+                            $this->removeContributorIndices($appNode,$this->removeSupervision($contributorsArray),false);
                         }
                     }
                 } else { // contributor was removed
@@ -102,21 +98,19 @@ class ContributorsController extends ControllerAbstract
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
         } // if ($contributors->isSubmitted())
-        [,,$positionsSupervisor,$positionsTranslated] = $this->setPositions($session);
-        $infosPrefix = 'multiple.infos.';
-        $institution = $infosPrefix.self::institutionInfo;
-        $phone = $infosPrefix.self::phoneNode;
+        [,,$positionsTranslated] = $this->setPositions($session);
+        $phone = 'multiple.infos.'.self::phoneNode;
+        $isQualification = $this->getQualification($this->xmlToArray($coreDataNode));
         return $this->render('Contributors/contributors.html.twig', $this->setRenderParameters($request,$contributors,
-            ['positionsSupervisor' => $positionsSupervisor,
-             'isQualification' => $this->getQualification($this->xmlToArray($coreDataNode)),
+            ['isQualification' => $isQualification,
              'infos' => self::applicantContributorsInfosTypes,
-             'tasks' => self::tasksNodes,
-             'tasksMandatory' => self::tasksMandatory,
-             'otherDescription' => self::otherDescription,
+             'tasks' => $possibleTasks,
+             'tasksMandatory' => $tasks[1],
+             'addSupervisionIcon' => !$isQualification && $isSupervisorOld,
              'contributorsArray' => $contributorsArray,
-             'institutionLabel' => [$this->translateString($institution.'Applicant'),$this->translateString($institution)],
              'phoneLabel' => [$this->translateString($phone), $this->translateString($phone.'Optional')],
              'committeeStudent' => self::committeeStudent,
+             'institutionTypes' => array_keys(self::institutionTypes),
              'positions' => $positionsTranslated],
             'contributors.contributors'));
     }

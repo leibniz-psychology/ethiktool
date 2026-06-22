@@ -5,55 +5,59 @@
 {% endblock %}
 
 {% block body %}
-    {% set contributorsController, positionOtherText, infosPrefix = 'Contributors--contributors', content.positionOtherText, 'multiple.infos.' %}
+    {% set contributorsController, infosPrefix, translationPrefix = 'Contributors--contributors', 'multiple.infos.', 'contributors.' %}
     <div>
-        <div class="MetaData-Label mb-3 font-bold">{{ 'contributors.start'|trans }}</div>
+        <div class="MetaData-Label mb-3 font-bold">{{ (translationPrefix~'start')|trans }}</div>
         {# infos #}
         <div class="MetaData-Widget MetaData-Widget_collection grid gap-x-4 align-items-center" style="grid-template-columns: repeat(2,minmax(min-content,max-content))">
             {% for widget in infos %}
-                {% set isPosition, isProfessorship, curWidget = widget is same as 'position', widget is same as 'professorship', content[widget] %}
-                {% set isIcon = widget in ['name','institution','professorship']  %}
-                <div class="grid justify-content-end" style="{% if isIcon %} grid-template-columns: auto min-content; {% else %} text-align: end;{% endif %}" {% if widget is same as 'institution' or widget is same as 'phone' %} {{ stimulus_target(contributorsController,widget~'Label') }} {% endif %}>
+                {% set isProfessorship = widget is same as 'professorship' %}
+                {% set isInstitutionPosition, isIcon = widget in ['institution','position'], widget in ['name','institution','department','professorship']  %}
+                <div class="grid justify-content-end" style="{% if isIcon %} grid-template-columns: auto min-content; {% else %} text-align: end;{% endif %}" {% if widget is same as 'phone' %} {{ stimulus_target(contributorsController,widget~'Label') }} {% endif %}>
                     {{ '*'~(infosPrefix~widget)|trans~':' }}
                     {% if isIcon %}
-                        {{ formRender.addIcon((infosPrefix~widget~'Hint')|trans, isProfessorship ? content.position.vars.value in ['student','phd'] : true, isProfessorship ? [contributorsController,'professorshipIcon'] : []) }}
+                        <div {% if isProfessorship %} style="{{ boolToDisplay(content.position.vars.value in ['student','phd'],1) }}" {% endif %} {% if isProfessorship or widget is same as 'institution' %} {{ stimulus_target(contributorsController,widget~'Icon') }} {% endif %}>
+                            {{ formRender.addIcon((infosPrefix~'hints.'~widget)|trans(committeeParams)) }}
+                        </div>
                     {% endif %}
                 </div>
-                <div data-action="input->{{ contributorsController }}#setSubmitButton {% if isPosition %}input->{{ contributorsController }}#setTasks{% endif %}">
-                    {{ form_widget(curWidget,{'id': widget, 'attr': (isPosition ? addTarget(contributorsController, widget) : {})|merge(isPosition ? addClass('Button_dropdown') : {})}) }}
+                <div data-action="input->{{ contributorsController }}#setSubmitButton {% if isInstitutionPosition %}input->{{ contributorsController }}#set{{ widget is same as 'position' ? 'Tasks' : 'Institution' }}{% endif %}">
+                    {{ form_widget(content[widget],{'id': widget, 'attr': (isInstitutionPosition ? addTarget(contributorsController, widget) : {})|merge(addStyle('width: 100%'))|merge(isInstitutionPosition ? addClass('Button_dropdown') : {})}) }}
                 </div>
                 {% set col2 = 'grid-column: 2;' %}
-                {% if isPosition %}
+                {% if isInstitutionPosition %}
                     <div style="{{ col2 }}" {{ stimulus_action(contributorsController,'setSubmitButton','input') }}>
-                        {{ form_widget(positionOtherText,addTargetArray(contributorsController,'positionOther')) }}
+                        {{ form_widget(content[widget~'OtherText'],addTargetArray(contributorsController,widget~'Other')) }}
                     </div>
                 {% elseif widget in ['name','phone','eMail'] %}
                     <div style="{{ col2 }} display: none" class="errorStyle" {{ stimulus_target(contributorsController,widget~'Error') }}>
-                        {{ ('contributors.errors.'~widget)|trans }}
+                        {{ (translationPrefix~'errors.'~widget)|trans }}
                     </div>
                 {% endif %}
             {% endfor %}
         </div>
         {# tasks #}
-        {% set translationPrefix = 'contributors.tasks.' %}
+        {% set tempPrefix = translationPrefix~'tasks.' %}
         <div class="mt-4">
-            <div class="MetaData-Label">{{ (translationPrefix~'title')|trans }}</div>
+            <div class="MetaData-Label">{{ (tempPrefix~'title')|trans }}</div>
             <div class="MetaData-Label hint" {{ stimulus_target(contributorsController,'taskHint') }}></div> {# text is set in controller #}
             <div class="MetaData-Widget">
                 <div {{ stimulus_action(contributorsController,'setTasks','change') }}>
                     {% for widget in tasks %}
-                        {% set curWidget = content[widget] %}
+                        {% set curWidget, isSupervision = content[widget], widget is same as 'supervision' %}
                         {% set params = {'id': curWidget.vars.name, checkInput} %}
                         <div class="flex {% if loop.index>1 %} topMarginButtons {% endif %}"> {# no addCheckbox because of additional attributes #}
-                        {{ form_widget(curWidget,params|merge({'attr': checkInput|merge(widget is same as 'other' ? addTarget(contributorsController,'taskOther') : {})})) }}
+                        {{ form_widget(curWidget,params|merge({'attr': checkInput|merge(widget in ['other','supervision'] ? addTarget(contributorsController,widget~'Task') : {})})) }}
                         {{ form_label(curWidget,null, params|merge(addLabelAttributes(checkLabel|merge(addStyle('vertical-align: unset'))))) }}
-                        {% if widget in tasksMandatory %}
-                            <div>{{ formRender.addIcon((translationPrefix~'hints.mandatory')|trans({'type': widget})|raw) }}</div>
+                        {% if widget in tasksMandatory and not isSupervision or addSupervisionIcon %}
+                            <div {% if isSupervision %} {{ stimulus_target(contributorsController,'supervisionIcon') }} {% endif %}>
+                                {{ formRender.addIcon((tempPrefix~'hints.mandatory')|trans({'type': widget})|raw) }}
+                            </div>
                         {% endif %}
                         </div>
                     {% endfor %}
                     <div class="MetaData-Widget mb-1" {{ stimulus_action(contributorsController,'setSubmitButton','input') }}>
-                        {{ form_widget(content[otherDescription],addTargetArray(contributorsController,'taskOtherDescription')) }}
+                        {{ form_widget(content.otherDescription,addTargetArray(contributorsController,'taskOtherDescription')) }}
                     </div>
                 </div>
             </div>

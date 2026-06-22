@@ -23,7 +23,6 @@
             <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [['committeeChange',change]]}) }}>
                 {{ formRender.addCheckbox(content.committeeChange,{'checked': showCommittee, 'target': ['base','committeeChange']}) }}
             </div>
-{#            {{ formRender.addExpandable('main.changeCommittee.title',{},collapseChange) }}#}
             <div id="{{ change }}" style="{{ boolToDisplay(showCommittee) }}">{{ formRender.addCommitteeForms(content,committeeParamsChange,false,wrongPassword) }}</div>
         </div>
          {# info modal #}
@@ -32,6 +31,6 @@
         {% endif %}
     {% endif %}
     {% if isErrorOrXml %}
-        {{ include('components/'~(not (isMajor or isShort) ? 'info' : 'redirect')~'Modal.html.twig',{'modalID': error, 'prefix': 'multiple.loadMessage.'~error~'.', 'params': params, 'link': 'app_coreData', 'hash': isMajor ? '#applicationProcess' : '#shortDocs'}) }}
+        {{ include('components/'~(not isRedirectModal ? 'info' : 'redirect')~'Modal.html.twig',redirectParams) }}
     {% endif %}
 {% endblock %}

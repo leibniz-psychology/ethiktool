@@ -71,9 +71,9 @@
         addressee: translation key for the addressee to be added in the signature
         addName:   if true, a line for the name will be added
     #}
-    {% set style, textPreview, hasAddressee, addresseeParam = 'border-top: 1px solid black; '~(savePDF ? 'white-space: nowrap; ' : ''), not savePDF ? 'previewSmall', addressee is not same as 'participants', {'addressee': addressee} %}
+    {% set style, textPreview, hasAddressee, addresseeParam = 'border-top: 1px solid black; '~(savePDF ? 'white-space: nowrap; '), not savePDF ? 'previewSmall', addressee is not same as 'participants', {'addressee': addressee} %}
     {% set firstCol, secondCol, tempPrefix = style~'width: 35%', style~' margin-left: '~(savePDF ? '200px; ' : '100px; ')~(hasAddressee ? 'width: '~(addressee is same as 'children' ? '40%' : '65%') : 'min-width: 30%; max-width: 50%'), 'signature.' %}
-    {% for firstColumn, secondColumn in (addName ? {'name': hasAddressee ? 'nameAddressee' : ''} : {})|merge({'location': 'signature'}) %}
+    {% for firstColumn, secondColumn in (addName ? {'name': hasAddressee ? 'nameAddressee'} : {})|merge({'location': 'signature'}) %}
         <div style="margin-top: 100px; display: flex">
             <div style="{{ firstCol }}">
                 <i class="{{ textPreview }}">{{ (tempPrefix~firstColumn)|trans([],'pdf') }}</i>

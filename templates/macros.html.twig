@@ -251,7 +251,7 @@
         <span class="flex">
             {{ vars.label|trans(arguments.labelParams ?? {}) }}
             {% if checkIcon is not same as [] %}
-                {{ _self.addIcon(checkIcon[0], checkIcon[1] ?? true, checkIcon[2] ?? [], checkIcon[3] ?? false) }}
+                {{ _self.addIcon(checkIcon[0], checkIcon[1] ?? []) }}
             {% endif %}
         </span>
     </label>
@@ -414,13 +414,12 @@
     <button type="button" class="Button_primary_act w-100" name="save" {% if disabled %} disabled {% else %} {{ stimulus_target('base','download','click') }} {% endif %} onclick="{{ addTracking('Button '~(isSidebar ? 'Sidebar' : 'Navigation'),'Save') }}">{{ _self.addButtonIcon('buttons.save','save') }}</button>
 {% endmacro %}
 
-{% macro addIcon(text, visible = true, target = []) %}
+{% macro addIcon(text, target = []) %}
     {# Adds an information icon. Input arguments:
        text:    text of the icon which can contain html
-       visible: boolean whether the icon should be visible
        target:  array of two elements: name of stimulus controller and target name
     #}
-    <i class="Label-Info fitWidth d-inline-grid" style="{{ boolToDisplay(visible,1) }}; white-space: initial; vertical-align: text-bottom" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: black; width: auto">{{ text|raw|nl2br }}</span></i>
+    <i class="Label-Info fitWidth d-inline-grid" style="white-space: initial; vertical-align: text-bottom" {% if target is not same as [] %} {{ stimulus_target(target[0],target[1]) }} {% endif %}><span style="color: black; width: auto">{{ text|raw|nl2br }}</span></i>
 {% endmacro %}
 
 {% macro addPreview(ids = {}, isComplete = false, firstPage = []) %}

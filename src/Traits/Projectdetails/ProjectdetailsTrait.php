@@ -127,6 +127,7 @@ trait ProjectdetailsTrait
     // widget names for no
     protected const preText = 'preText';
     protected const post = 'post';
+    protected const noPost = 'noPost';
     protected const prePostArray = ['pre','post'];
     protected const postType = 'postType';
     protected const postText = 'postText';
@@ -296,6 +297,8 @@ trait ProjectdetailsTrait
     protected const responsibilityNotOwn = ['onlyOther','multiple','private']; // values must equal the values in $responsibilityTypes
     protected const responsibilityPrivate = ['projectdetails.pages.dataPrivacy.responsibility.types.private' => 'private']; // must equal one element in $responsibilityTypes
     protected const responsibilityOnlyOwn = 'onlyOwn'; // must equal one value in $responsibilityTypes
+    protected const responsibilityOtherOther = 'onlyOther'; // must equal one value in $responsibilityTypes
+    protected const responsibilityMultiple = 'multiple'; // must equal one value in $responsibilityTypes
     protected const transferOutsideNode = 'transferOutside';
     protected const transferOutsideTypes = ['projectdetails.pages.dataPrivacy.transferOutside.types.yes' => 'yes', 'projectdetails.pages.dataPrivacy.transferOutside.types.no' => 'no', 'projectdetails.pages.dataPrivacy.transferOutside.types.notApplicable' => 'notApplicable'];
     protected const transferOutsideNo = 'no'; // must equal one value in $transferOutsideTypes

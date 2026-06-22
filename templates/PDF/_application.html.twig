@@ -13,20 +13,15 @@
     {# project title #}
     {{ _self.addBox(boxContent[1],boxNumber,savePDF) }}
     {% set boxNumber = boxNumber+1 %}
-    {# applicant and supervisor #}
+    {# applicant #}
     <div class="pdfBox">
-        {{ _self.addHeading(boxNumber,applicantInfos.applicant.name,savePDF) }}
+        {{ _self.addHeading(boxNumber,applicantInfos.name,savePDF) }}
         <div class="{{ innerClasses }}">
-            {% for type, infos in applicantInfos %}
-                {% if type is same as 'supervisor' %}
-                    <div style="margin-top: 2em"><u>{{ applicantInfos.supervisor.name }}:</u></div>
-                {% endif %}
-                {% for label, content in infos.infos %}
-                    <div style="display: flex">
-                        <div style="justify-content: flex-end; display: flex; min-width: {{ applicantWidth }}em">{{ label }}:</div>
-                        <div style="margin-left: 1em">{{ content|raw }}</div>
-                    </div>
-                {% endfor %}
+            {% for label, content in applicantInfos.infos %}
+                <div style="display: flex">
+                    <div style="justify-content: flex-end; display: flex; min-width: {{ applicantWidth }}em">{{ label }}:</div>
+                    <div style="margin-left: 1em">{{ content|raw }}</div>
+                </div>
             {% endfor %}
         </div>
     </div>
@@ -38,7 +33,7 @@
     <div class="pdfBox">
         {{ _self.addHeading(boxNumber,contributorsHeading,savePDF) }}
         <div class="{{ innerClasses }}">
-            <table {% if not savePDF %} style="font-size: 0.8em" {% endif %}>
+            <table {% if not savePDF %} style="font-size: 0.8em; margin-right: 1em" {% endif %}>
                 <tr>
                     <td style="padding-right: 1.5em; text-align: start">{{ 'multiple.infos.name'|trans([],'messages') }}</td>
                     {% for task in tasks %}
@@ -46,11 +41,10 @@
                     {% endfor %}
                 </tr>
                 {% for contributor in contributorsTasks %}
-                    {% set curTasks = contributor['tasks'] %}
                     {% if contributor['hasTasks'] %}  {# contributor has at least one task  #}
                         <tr>
                             <td>{{ contributor['name'] }}</td>
-                            {% for curTask, value in curTasks %}
+                            {% for curTask, value in contributor['tasks'] %}
                                 {% set isOther = curTask is same as 'other' %}
                                 <td {% if isOther %} style="word-break: break-word" {% endif %}>
                                     {% if not isOther %}
@@ -101,7 +95,7 @@
         savePDF:       if true, the pdf will be saved on disk
     #}
     {% set isParagraphTop, paragraph, content = boxContent['paragraphTop'] is defined, boxContent['paragraph'] ?? '', boxContent['content'] %}
-    {% set isNotApplicable, isParagraph, paragraphSub, boxSub = content is same as 'noBox'|trans, paragraph is not same as '', boxContent['paragraphSub'] ?? '', boxContent['boxSub'] ?? '' %}
+    {% set isNotApplicable, isParagraph, paragraphSub = content is same as 'noBox'|trans, paragraph is not same as '', boxContent['paragraphSub'] ?? '' %}
     {% set isAnyParagraph, paragraphStyle = isParagraphTop or isParagraph, 'margin-bottom: 1.25em; border-bottom: 1px solid black; border-top: 1px solid black; page-break-inside: avoid; page-break-after: avoid; ' %}
     {% if isAnyParagraph %}
         <div class="noPageBreak">

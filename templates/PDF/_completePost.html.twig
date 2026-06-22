@@ -20,7 +20,7 @@
         <div class="{{ classes }} noPageBreak">{{ (contributor~"\n")|raw|nl2br }}</div>
     {% endfor %}
     {# confirm #}
-    {% set tempPrefix, classes, addresseeParam = 'completePost.confirm.', 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : ''), {'addressee': addressee} %}
+    {% set tempPrefix, classes, addresseeParam = 'completePost.confirm.', 'radiobuttonPDF'~(not savePDF ? ' radioSmall'), {'addressee': addressee} %}
     <div class="{{ textPreview }} noPageBreak" style="margin-top: 1.5em">
         <table>
             <tr><td class="bold" colspan="2">{{ (tempPrefix~'title')|trans }}</td></tr>

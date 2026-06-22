@@ -13,13 +13,15 @@ multiple:
         The XML file of the ethics application was loaded successfully. {isMain, select,
                                         true  {}
                                         other {You were re-directed to the main page.}} You can now continue editing the application.
-      content: >- # for loaded versions smaller than 2.0.0
+      content: >- # for loaded versions smaller than 2.0.0 (isMajor is 'true') oder at least 2.0.0 and smaller than 3.2.0
         The XML file of the ethics application was loaded successfully. {isMain, select,
                                         true  {}
                                         other {You were re-directed to the main page.}} You can now continue editing the application.
         
         
-        You loaded an XML file that was created with an older version of the Ethiktool. In newer versions, choosing the type of review process is mandatory. Depending on the chosen review process, the Ethiktool requests different inputs. Please choose the type of review process before making any further entries. Would you like to switch to this choice on the “Core data“ page?
+        You loaded an XML file that was created with an older version of the Ethiktool. In newer versions, {isMajor, select,
+          true  {choosing the type of review process is mandatory. Depending on the chosen review process, the Ethiktool requests different inputs. Please choose the type of review process before making any further entries. Would you like to switch to this choice on the “Core data“ page?}
+          other {institution and department of the project contributors need to be entered separately. The existing inputs were transferred to the department field. Would you like to switch to the “Project contributors“ page to adapt the institution(s)?}}
     failure: # info modal if the extension is invalid
       title: 'Select file'
       text: >-
@@ -126,23 +128,30 @@ multiple:
       other {{namely}}}
   infos:
     name: 'First and last name'
-    institution: 'Institution/department'
-    institutionApplicant: 'Department'
+    institution: 'Institution'
+    department: 'Department'
     professorship: 'Research group/professorship'
     eMail: 'E-mail address'
     position: 'Position'
     phone: 'Work phone'
     phoneOptional: '(optional) Work phone'
-    nameHint: 'If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space).'
-    institutionHint: 'Please provide department or division. For external contributors, please supply the institution as well.'
-    professorshipHint: '<i>research group/professorship of the primary supervisor</i>'
+    hints:
+      name: 'If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space).'
+      institution: 'Please check if you are eligible to submit a proposal to {committeeDat} although you do not belong to {committeeLocationDat}.'
+      department: 'Please provide the full name, e.g., “Faculty of ...“'
+      professorship: '<i>research group/professorship of the primary supervisor</i>'
+    institutionTypes:
+      institutionSame: '{committeeLocationPure}'
+      institutionOther: 'other institution'
   position:
     professorship: 'chair'
     scientific: 'scientific staff'
     phd: 'graduate student (doctoral candidate)'
     student: 'undergraduate student (B.Sc./M.Sc. or similar)'
     positionOther: 'other position'
-    otherDefault: 'please enter position'
+  placeholder:
+    institution: 'please enter institution'
+    position: 'please enter position'
 
 dateFormat: >-
   Y-m-d{noTime, select,
@@ -207,6 +216,26 @@ committee:
       UH1   {Hildesheim University}
       UPB   {Paderborn University}
       other {the institution of the test ethics committee}}
+  committeeLocationPure: >-
+    {committee, select,
+      TUC   {Chemnitz University of Technology}
+      EUB   {Bielefeld University}
+      JGU   {Johannes Gutenberg University Mainz}
+      DLR   {German Aerospace Center}
+      TUD   {Dresden University of Technology}
+      UH1   {Hildesheim University}
+      UPB   {Paderborn University}
+      other {Institution of the test ethics committee}}
+  committeeLocationDat: >-
+    {committee, select,
+      TUC   {of Chemnitz University of Technology}
+      EUB   {of Bielefeld University}
+      JGU   {of Johannes Gutenberg University Mainz}
+      DLR   {of the German Aerospace Center}
+      TUD   {of Dresden University of Technology}
+      UH1   {of Hildesheim University}
+      UPB   {of Paderborn University}
+      other {of the institution of the test ethics committee}}
   committeeLocationGen: >-
     {committee, select,
       TUC   {of Chemnitz University of Technology}
@@ -435,6 +464,13 @@ landing:
         {isOverview, select,
           true  {The Ethiktool can describe research projects comprising several studies, several participant groups or several data collection time points.</br></br> This page shows the structure of your research project. Here you can add further studies, participant groups and time points. The elements are automatically numbered consecutively as soon as there is more than one; it is advisable to also assign a brief, expressive name to each element.}
           other {Please enter information for this combination of study, group and time point here.</br> The requested information is grouped into the following categories:}}
+      expandable:
+        title: 'Instructions on creating/changing the project structure'
+        text: |
+          It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then <span class="text-decoration-underline">duplicate</span> the filled combination and change only the relevant entries.
+          You only need to add further <span class="text-decoration-underline">studies</span> if your research project is divided into several (sub)studies that differ in terms of aims or methodology, e.g., when conducting a series of experiments.
+          You should add further <span class="text-decoration-underline">groups</span> if, for example, the inclusion criteria or the information for the groups (e.g., minors/adults, patients/controls) substantially differ. If the information sheets are essentially identical (such as for between-subject designs with condition/group assignment after informed consent), it is usually not meaningful to create separate groups within the Ethiktool.
+          The term <span class="text-decoration-underline">time point</span> refers to an instance of data collection that requires a new study information sheet and an additional consent form, such as a pre-test for a subsequent study, in which it is not yet possible to inform about further phases of the research project in detail or in which only some of the participants of the pre-test are invited to participate in the main study (screening).
       end:
         title: 'The symbols have the following functions:'
         rename: 'rename the element'
@@ -442,12 +478,6 @@ landing:
         add: 'add a new element'
         delete: 'remove the element (including all sub-elements)'
         edit: 'edit details of the study/group/time point combination'
-        hint: |
-          Note: It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then duplicate the filled combination and change only the relevant entries.
-          You only need to add further studies if your research project is divided into several (sub)studies that differ in terms of aims or methodology, e.g., when conducting a series of experiments.
-          You should add further groups if, for example, the inclusion criteria or the information for the groups (e.g., minors/adults, patients/controls) substantially differ.
-          The term time point refers to an instance of data collection that requires a new study information sheet and an additional consent form, such as a pre-test for a subsequent study, in which it is not yet possible to inform about further phases of the research project in detail or in which only some of the participants of the pre-test are invited to participate in the main study (screening). 
-          If the information sheets are essentially identical (such as for between-subject designs with condition/group assignment after informed consent), it is usually not meaningful to create separate groups within the Ethiktool.
     removeModal:
       title: >-
         delete {type, select,
@@ -480,7 +510,10 @@ coreData:
       resubmission: 'resubmission after proposal revision'
       resubmissionGranted: 'resubmission after funding acquisition'
     reference: 'Please enter case number:'
-    hint: 'Please only adapt the relevant aspects (e.g., changes to the research project, fulfillment of change requests; adding participant documents if applicable). Beyond these relevant changes, please avoid excessive editorial changes to the texts - this facilitates the comparison of the proposal versions and thereby expedites the review process.'
+    hint: >-
+      {committeeType, select,
+        EUB   {If you used the template from the website of the Ethics Review Board for the original proposal, please continue using this.}
+        other {}} Please only adapt the relevant aspects (e.g., changes to the research project, fulfillment of change requests; adding participant documents if applicable). Beyond these relevant changes, please avoid excessive editorial changes to the texts - this facilitates the comparison of the proposal versions and thereby expedites the review process.
   modal: # other in type selects is funding
     title: >-
       {type, select,
@@ -593,9 +626,7 @@ coreData:
     headingHint: 'Please only answer “yes“ if the research project would not be carried out without <span style="font-weight: bold">your own</span> thesis. If the data to be used in your thesis belongs to a research project that would be conducted in any case, please answer “no“. If you submit a proposal for students or PhD candidates in your role as teacher/supervisor, please also answer “no“.'
   applicant:
     title: 'Responsibility for the proposal'
-    applicant: 'Applicant'
-    supervisor: 'Responsible supervisor'
-    hint: 'These data are transferred to page “<a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“. Additional roles/tasks can be added there.'
+    headingHint: 'These data are transferred to page “<a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“. Additional roles/tasks can be added there.'
   conflict:
     title: 'Is there a conflict of interest for any of the project contributors due to personal interests or due to interests of third parties?'
     headingHint: 'There is a conflict of interest if the research process could be affected by your own interests or by interests of third parties or if the independence of scientific judgement could be compromised. Typical examples of potential conflicts of interests include the evaluation of an own product, sponsored research to evaluate other''s products, or research on societally delicate topics under the influence of lobbyism or of strong own opinions. Conflicts of interests can arise from multiple factors, such as family- or friendship-related, financial or social factors, or from economic or personal relationships to sponsors or collaborators. If there is a conflict of interest, the nature of the conflict and how it is handled must be explained. Please note that potential conflicts of interest must also be disclosed to the participants.'
@@ -694,16 +725,18 @@ contributors:
         noSelection: 'Please select a position first.'
         selection: 'Please select all roles of this person in the research project.'
       mandatory: >- # other is data
-        This role must be occupied by at least one project contributor {type, select,
-                                                                          leader     {in the research project.}
-                                                                          experiment {for each new data collection.}
-                                                                          contact    {for each new data collection.}
-                                                                          other      {in the research project.</br> In case more than one person is responsible for data processing, responsibilities must be settled.}}
+        {type, select,
+          leader      {This role must be occupied by at least one project contributor in the research project.}
+          experiment  {This role must be occupied by at least one project contributor for each new data collection.}
+          contact     {This role must be occupied by at least one project contributor for each new data collection.}
+          supervision {This role must not be the only role occupied by this project contributor.}
+          other       {This role must be occupied by at least one project contributor in the research project.</br> In case more than one person is responsible for data processing, responsibilities must be settled.}}
     leader: 'principal investigator/project lead'
     research: 'scientific contribution'
     experiment: 'data collection'
     contact: 'contact person for participants (in participant documents)'
     data: 'responsibility for data processing'
+    supervision: 'supervision'
     other: 'other role'
     otherDescription: 'please specify'
     tasksShort:
@@ -712,15 +745,14 @@ contributors:
       experiment: 'data collection'
       contact: 'contact'
       data: 'data responsib.'
+      supervision: 'supervision'
       other: 'other'
   symbols:
     title: 'The symbols have the following functions:'
     add: 'Add a project contributor'
     edit: 'Edit the data of an existing project contributor'
     delete: >-
-      Delete all data of an existing project contributor. The applicant (first project contributor) {hasSupervisor, select,
-          true  {and the responsible supervisor (second project contributor)}
-          other {}} cannot be deleted.
+      Delete all data of an existing project contributor. The applicant (first project contributor) cannot be deleted.
   hint: >-
     Please note:</br>The functions “principal investigator/project lead“ and “responsibility for data processing“ are typically occupied by the same person. {committeeType, select,
         EUB   {Neither function can be assigned to student contributors in university projects, as this concerns taking responsibility for the actions of all project contributors. In projects that are carried out exclusively within the scope of one's own qualification work, the project lead formally lies with the primary supervisor; the responsibility for data processing may be distributed differently, please confer for clarification.}
@@ -1862,7 +1894,7 @@ projectdetails:
         start: >-
           {savePDF, select,
             true  {Research data are anonymized}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#anonymization" data-base-route-i-ds-param="{routeIDs}">Research data are anonymized</a>}} by
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#anonymization" data-base-route-i-ds-param="{routeIDs}">Research data are anonymized</a>}} by
         types:
           grouping: 'merging rare answers with other answers (building of categories/grouping)'
           convert: 'converting them into a different format'
@@ -1900,7 +1932,7 @@ projectdetails:
         start: >-
           {savePDF, select,
             true  {The original data or other documents}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#personalKeep" data-base-route-i-ds-param="{routeIDs}">The original data or other documents</a>}} from which personal identifiability can be retrieved, are stored
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#personalKeep" data-base-route-i-ds-param="{routeIDs}">The original data or other documents</a>}} from which personal identifiability can be retrieved, are stored
         end: '.'
         hints: # icons except textHint
           documentation: 'Please carefully weigh scientific quality assurance against data protection.'
@@ -2268,22 +2300,11 @@ checkDoc:
         appType: 'You selected “resubmission after funding acquisition“ as the type of proposal. This is incompatible with the selection that third-party funding is being applied for.'
         begun: 'You selected that third-party funding is being applied for. This is inconsistent with the choice that the research project has already started.'
       qualification: 'Answer to question about qualification work'
-      name: >-
-        {type, select,
-          applicant {applicant:}
-          other     {responsible supervisor:}} Name is not complete.
-      positionOther: >-
-        {type, select,
-          applicant {applicant}
-          other     {responsible supervisor:}} Description of the other position
-      eMail: >-
-        {type, select,
-          applicant {applicant}
-          other     {responsible supervisor:}} E-mail address is not valid.
-      phone: >-
-        {type, select,
-          applicant {applicant}
-          other     {responsible supervisor:}} Phone number is not valid.
+      name: 'Name is incomplete.'
+      institutionOther: 'Specification of the institution'
+      positionOther: 'Specification of the other position'
+      eMail: 'E-mail address is not valid.'
+      phone: 'Phone number is not valid.'
       conflict:
         title: 'conflict of interest'
         description:
@@ -2320,22 +2341,21 @@ checkDoc:
     lineTitle: 'project contributor {index} ({name})'
     infos:
       name: 'Name is incomplete.'
+      position: 'Position is missing.'
       validEmail: 'E-mail address is not valid.'
       validPhone: 'Phone number is not valid.'
     tasks:
       missing: >-
         Project contributor {index} ({name}) does not occupy any specific role{index, select,
                                                                                 1     { apart from “application“}
-                                                                                2     {{isSupervisor, select,
-                                                                                          true  { apart from “supervision of the {isQualification, select,
-                                                                                                                                    true  {thesis}
-                                                                                                                                    other {{position, select,
-                                                                                                                                              student {student}
-                                                                                                                                              other   {thesis}}}}“}
-                                                                                          other {}}}
-                                                                                other {}}.
+                                                                                other {{numTasks, plural,
+                                                                                          =1    { apart from “supervision“}
+                                                                                          other {}}}}.
       missingMandatory: 'Role “{task}“ was not selected for any project contributor.'
-      missingOther: 'Project contributor {index} ({name}): Description of other position'
+      missingOther: >-
+        Project contributor {index} ({name}): Specification of {type, select, 
+                                                                institution {institution}
+                                                                other       {other position}}
       dataSource: 'If no <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves newly collected data, the function “{task}“ cannot be selected for any <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">project contributor.</a>'
   projectdetails:
     missingTypes: 'types of {type}'
@@ -2729,7 +2749,7 @@ checkDoc:
             insuranceWay {note on route/accident insurance}
             other        {note on participant insurance}}
         description: >- # other is insurance
-          Description of the {type, select,
+          Wording of the {type, select,
                           liability    {liability clause}
                           apparatus    {note on the use of experimental devices}
                           insuranceWay {note on route/accident insurance}
@@ -2739,7 +2759,7 @@ checkDoc:
         create:
           missing: 'generating the data privacy statement'
           informationToNotApplicable: 'If there is <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information<a>, the question about generating the data privacy statement must be answered with “not applicable“.'
-          notApplicableToInformation: 'You selected “not applicable“ for the question about generating the data privacy statement. This is possibly only if <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is provided.'
+          notApplicableToInformation: 'You selected “not applicable“ for the question about generating the data privacy statement. This is possibly only if <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">neither prior nor after-the-fact information</a> is provided.'
           support: >-
             If{isVerified, select,
                 true  { the data privacy statement has been checked and approved by the responsible data protection authorities}
@@ -2749,6 +2769,16 @@ checkDoc:
         confirmIntro: 'Confirmation of notice on data protection' # '[] is missing.'
         responsibility:
           missing: 'responsibility for processing personal data'
+          onlyOwn: >-
+            If <a class="linkInternal" href="{isMultiple, select,
+                  true  {contributor" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_contributor#data"}
+                  other {contributors" data-base-url-param="app_contributors"}} data-action="base#setDummySubmit">{numData, plural,
+                      =1    {the project contributor with data responsibility does not belong to {committeeLocationDat}}
+                      other {not all project contributors with data responsibility belong to {committeeLocationDat}}}</a>, the responsibility for the processing of personal data cannot lie only with {committeeLocation}.
+          private: >-
+            If the <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">applying person</a> is a student and is responsible for <a class="linkInternal" href="{isMultiple, select,
+                      true  {contributor" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_contributor#data"}
+                      other {contributors" data-base-url-param="app_contributors"}} data-action="base#setDummySubmit">data processing</a>, the responsibility for the processing of personal data must lie with that person privately.
           qualification: 'If one individual is privately responsible for the processing of personal data, the question about <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#qualification">qualification work</a> must be answered with “yes“.'
         transferOutside: 'transmission of personal data outside of the EEA'
         responsibilityTotransferOutside: 'If the question about responsibility for processing personal data is answered with “not applicable“, the question about transmission of personal data outside of the EEA must also be answered with “not applicable“.'
@@ -2892,8 +2922,8 @@ checkDoc:
             dataReuseHow: 'Person-related research data'
             dataReuseHowreuse: 'Anonymized research data'
           missing: 'Answer to question how and with whom the research data are shared for re-use,'
-          description: 'Description of data archive or repository for data sharing'
-          public: 'You selected that personal data are made publicly available. This is incompatible with the fact that no personal data are <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">shared outside of the EEA</a>.'
+          description: 'Specification of data archive or repository for data sharing'
+          public: 'You selected that personal data are made publicly available. This is incompatible with the fact that no personal data are <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">shared outside of the EEA</a>.'
         dataReuseSelf: 'Answer to question whether research data are employed for own re-use' # '[] is missing.'
       contributor:
         mandatory: >-
@@ -3066,11 +3096,11 @@ aboutUs:
   text: |
     These are the members of the Ethiktool team:
     Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/SFKS/alexandrabendixen.html.en" target="_blank">Alexandra Bendixen</a> (TU Chemnitz, project lead and contact for general question)
-    Dr. <a href="https://leibniz-psychology.org/profil-thomas-wegner" target="_blank">Thomas Wegner</a> (Leibniz Institute for Psychology (ZPID), main software developer and contact for technical questions)
+    Dr. <a class="linkExternal" href="https://leibniz-psychology.org/profil-thomas-wegner" target="_blank">Thomas Wegner</a> (Leibniz Institute for Psychology (ZPID), main software developer and contact for technical questions)
     Dr. <a href="https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=22797466" target="_blank">Eva-Maria Berens</a> (Bielefeld University)
     Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/wolfgang.html.en" target="_blank">Wolfgang Einhäuser-Treyer</a> (TU Chemnitz)
     <a href="https://www.tu-chemnitz.de/physik/SFKS/tinafrenzel.html.en" target="_blank">Tina Frenzel</a>, M.Sc. (TU Chemnitz)
-    Dr. <a href="https://leibniz-psychology.org/profil-katarina-blask" target="_blank">Katarina Blask</a> (Leibniz Institute for Psychology (ZPID))
+    Dr. <a class="linkExternal" href="https://leibniz-psychology.org/profil-katarina-blask" target="_blank">Katarina Blask</a> (Leibniz Institute for Psychology (ZPID))
     Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/inka/index.html.en" target="_blank">Inka Schmitz</a> (former member)
     
     Our mission is to facilitate the generation and evaluation of ethics proposals. Hence we provide the Ethiktool free of charge to all interested ethics committees. The Ethiktool development is based on our longstanding experience in ethics committee work and our experience with the predecessor software, which was developed under the leadership of Alexandra Bendixen and introduced at TU Chemnitz in 2021. The development of the current version has been financially supported by the Volkswagen Foundation since 2023, with their support set to continue until 2026.
@@ -3137,6 +3167,6 @@ termsOfUse:
 contactModal:
   title: 'Contact'
   text: |
-    We are looking forward to your feedback. For questions and suggestions on content, please refer to the Ethiktool contributors at Chemnitz University of Technology (<a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*). For technical questions, please refer to the Ethiktool contributors at Leibniz Institute for Psychology (ZPID) (<a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>).'
+    We are looking forward to your feedback. For questions and suggestions on content, please refer to the Ethiktool contributors at Chemnitz University of Technology (<a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*). For technical questions, please refer to the Ethiktool contributors at Leibniz Institute for Psychology (ZPID) (<a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>).
     
     *E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).

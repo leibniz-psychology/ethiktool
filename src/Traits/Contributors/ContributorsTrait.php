@@ -14,32 +14,18 @@ trait ContributorsTrait
     // node names
     protected const eMailNode = 'eMail';
     protected const phoneNode = 'phone';
-    protected const infosMandatory = ['name', 'institution', 'professorship', 'eMail']; // mandatory infos. Must equal values from $applicantContributorsInfosTypes and in the translation file (multiple->infos)
-    protected const applicationNode = 'application';
-    protected const supervisorNode = 'supervision';
-    protected const tasksNodes = ['leader', 'research', 'experiment', 'contact', 'data', 'other'];
-    protected const taskLeader = 'leader';
+    protected const infosMandatory = ['name', 'institution', 'department', 'professorship', 'eMail']; // mandatory infos. Must equal values from $applicantContributorsInfosTypes and in the translation file (multiple->infos)
+    protected const tasksNodes = ['leader', 'research', 'experiment', 'contact', 'data', 'supervision', 'other'];
+    protected const taskLeader = 'leader'; // must equal one value in $taskNodes
     protected const taskData = 'data'; // must equal one value in $taskNodes
+    protected const taskSupervision = 'supervision'; // must equal one value in $taskNodes
     // other variables
     protected const otherDescription = 'otherDescription';
     protected const otherTask = 'other'; // must be the same value as the key in "tasks"
-    protected const tasksTypes = ['leader' => 'contributors.tasks.leader', 'research' => 'contributors.tasks.research', 'experiment' => 'contributors.tasks.experiment', 'contact' => 'contributors.tasks.contact', 'data' => 'contributors.tasks.data', 'other' => 'contributors.tasks.other']; // must be the same keys as in $tasksNode
-    protected const tasksMandatory = ['leader','experiment','contact','data']; // mandatory tasks. Must equal the keys from $tasksTypes and in the translation file (contributors->tasks)
+    protected const tasksTypes = ['leader' => 'contributors.tasks.leader', 'research' => 'contributors.tasks.research', 'experiment' => 'contributors.tasks.experiment', 'contact' => 'contributors.tasks.contact', 'data' => 'contributors.tasks.data', 'supervision' => 'contributors.tasks.supervision', 'other' => 'contributors.tasks.other']; // must be the same keys as in $tasksNode
+    protected const tasksMandatory = ['leader','experiment','contact','data','supervision']; // mandatory tasks. Must equal the keys from $tasksTypes and in the translation file (contributors->tasks)
 
     // methods
-
-    /** Adds the supervisor as the second contributor.
-     * @param array $contributors array containing all contributors
-     * @param array $infos infos about the supervisor
-     * @return void
-     */
-    protected function addSupervisor(array &$contributors, array $infos = []): void
-    {
-        if ($infos===[]) {
-            $infos = array_fill_keys(self::applicantContributorsInfosTypes,'');
-        }
-        $contributors = array_merge([0 => $contributors[0]],[1 => [self::infosNode => $infos, self::taskNode => [self::supervisorNode => '']]],array_key_exists(1,$contributors) ? array_combine(range(2,count($contributors)),array_values(array_slice($contributors,1))) : []);
-    }
 
     /** Updates the contributor in projectdetails.
      * @param Request $request
@@ -47,10 +33,9 @@ trait ContributorsTrait
      * @param int|string $id id of contributor to be edited or removed; empty string if new contributor is added
      * @param array $tasks array containing the tasks of the removed or edited contributor
      * @param boolean $isRemoved true if a contributor or task was removed, false otherwise
-     * @param boolean $supervisorAdded true if the supervisor was added as the second contributor, false otherwise
      * @return void
      */
-    protected function updateProjectdetailsContributor(Request $request, SimpleXMLElement $appNode, int|string $id, array $tasks, bool $isRemoved, bool $supervisorAdded = false): void
+    protected function updateProjectdetailsContributor(Request $request, SimpleXMLElement $appNode, int|string $id, array $tasks, bool $isRemoved): void
     {
         $projectdetailsNode = $appNode->{self::projectdetailsNodeName};
         $isMulti = $this->getMultiStudyGroupMeasure($appNode);
@@ -69,8 +54,6 @@ trait ContributorsTrait
                                             unset($indices[$curIndex]);
                                         } elseif ($isRemoved && $contributorIndex>$id) { // decrease index as a contributor with a smaller index was removed
                                             --$indices[$curIndex];
-                                        } elseif ($supervisorAdded && $contributorIndex>0) { // increase index as a contributor was added before
-                                            ++$indices[$curIndex];
                                         }
                                     }
                                 }

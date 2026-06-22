@@ -366,7 +366,9 @@ abstract class ControllerAbstract extends AbstractController
                         $session->set(self::fileName, str_replace('.xml', '', $loadInput->getClientOriginalName()));
                         $session->set(self::docName, [$xml->asXML()]);
                         $session->set(self::contributorsSessionName, [0 => $this->getContributorsArray($xmlArray)]);
-                        $session->set(self::loadSuccess,['isMain' => $this->getStringFromBool($curRoute==='app_main'), 'isMajor' => str_starts_with($loadedVersion,'1')]);
+                        $loadedExploded = explode('.',$loadedVersion);
+                        $major = $loadedExploded[0];
+                        $session->set(self::loadSuccess,['isMain' => $this->getStringFromBool($curRoute==='app_main'), 'isMajor' => $major==='1', 'isInstUpdate' => $major==='2' || $major==='3' && $loadedExploded[1]<'2']); // isInstUpdate gets true for versions of at least 2.0.0 and smaller than 3.2.0
                         if ($this->getErrors($request,element: $xml)==='') { // if the file is invalid, an empty string is returned
                             $session->clear();
                             $session->set(self::xmlLoad,'');
@@ -929,23 +931,37 @@ abstract class ControllerAbstract extends AbstractController
         }
     }
 
-    /** Sets the positions for the applicant with and without qualification. Additionally, the positions for the supervisor are set and all positions are translated.
+    /** Sets the positions for the applicant with and without qualification. Additionally, all positions are translated.
      * @param Session $session current session
-     * @return array 0: positions without qualification, 1: positions with qualification, 2: positions for supervisor, 3: all positions translated
+     * @return array 0: positions without qualification, 1: positions with qualification, 2: all positions translated
      */
     protected function setPositions(Session $session): array
     {
         $isNotStudent = !in_array($this->getCommitteeType($session),self::committeeStudent);
-        $phdOption = [self::positionsPhd => ''];
         $studentOption = [self::positionsStudent => ''];
         $positionsTranslated = self::positionsTypes;
         foreach ($positionsTranslated as $position => $translation) {
             $positionsTranslated[$position] = $this->translateString($translation);
         }
         $positionsApplicant = array_diff_key(self::positionsTypes,$isNotStudent ? $studentOption : []);
-        $positionsQualification = array_intersect_key($positionsApplicant,array_merge($phdOption,!$isNotStudent ? $studentOption : []));
-        $positionsSupervisor = array_diff_key(self::positionsTypes,array_merge($studentOption,$this->xmlToArray($this->getXMLfromSession($session))[self::appDataNodeName][self::coreDataNode][self::applicant][self::position]===self::positionsPhd ? $phdOption : []));
-        return [$positionsApplicant,$positionsQualification,$positionsSupervisor,$positionsTranslated];
+        return [$positionsApplicant,array_intersect_key($positionsApplicant,array_merge([self::positionsPhd => ''],!$isNotStudent ? $studentOption : [])),$positionsTranslated];
+    }
+
+    /** Gets all tasks and the mandatory tasks that are possible for the current committee, i.e., with or without supervision.
+     * @param Request $request request
+     * @return array 0: possible tasks, 1: mandatory tasks
+     */
+    protected function getTasks(Request $request): array
+    {
+        $session = $request->getSession();
+        $committeeType = $this->getCommitteeType($session);
+        $hasSupervisor = in_array($committeeType,self::committeeSupervisor);
+        return [array_values($hasSupervisor
+                    ? self::tasksNodes
+                    : array_diff(self::tasksNodes,[self::taskSupervision])),
+                array_values($hasSupervisor && in_array($this->xmlToArray($this->getXMLfromSession($session,getRecent: true))[self::appDataNodeName][self::coreDataNode][self::applicant][self::position],array_merge([self::positionsStudent],$committeeType===self::committeeEUB ? [self::positionsPhd] : []))
+                    ? self::tasksMandatory
+                    : array_diff(self::tasksMandatory,[self::taskSupervision]))];
     }
 
     /** Checks if the qualification question was answered with yes.
@@ -1181,7 +1197,7 @@ abstract class ControllerAbstract extends AbstractController
     protected function setCommittee(Session $session, string $committeeType, string $locale, bool $setSession = true): array
     {
         $tempArray = ['committeeType' => $committeeType, self::toolVersionAttr => self::toolVersion, self::isCommitteeBeta => in_array($committeeType,self::committeeTypesBeta)];
-        foreach (['committeeNom','committeeGen','committeeDat','committeeAcc','committeeLocation','committeeLocationGen'] as $type) {
+        foreach (['committeeNom','committeeGen','committeeDat','committeeAcc','committeeLocation','committeeLocationPure','committeeLocationDat','committeeLocationGen'] as $type) {
             $tempArray[$type] = self::$translator->trans('committee.'.$type,['committee' => $committeeType],'messages',$locale);
         }
         if ($setSession) {
@@ -1310,24 +1326,9 @@ abstract class ControllerAbstract extends AbstractController
         $anyFull = $getReviewError && (($tempArray[0][0] || $tempArray[1][0])); // (gets) true if any information makes a full review process necessary
         $anyUnclear = false; // gets true if any information is 'unclear'
         if (!($getReviewError && $anyFull)) { // check projectdetails only if conflict and medicine are 'no'
-            $isMixed = false;
-            $isAny = [false,false]; // 0: new, 1: existing
-            foreach ($studyArray as $study) {
-                foreach ($this->addZeroIndex($study[self::groupNode]) as $group) {
-                    foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureTimePoint) {
-                        $origin = $measureTimePoint[self::dataSourceNode][self::originNode][self::chosen];
-                        if ($origin!=='') {
-                            $isAny[$origin===self::originNew ? 0 : 1] = true;
-                        }
-                        if (!in_array(false,$isAny)) {
-                            $isMixed = true;
-                            break(3);
-                        }
-                    }
-                }
-            }
             $tempPrefix = 'completeForm.briefReport.levelHeadings.';
-            $levelHeadings = $isMixed ? [self::originNew => $this->translateStringPDF($tempPrefix.self::originNew), self::originExisting => $this->translateStringPDF($tempPrefix.self::originExisting)] : [self::originNew => '', self::originExisting => '']; // information after level names whether new or existing data
+            $isMultipleParam = ['isMultiple' => $this->getStringFromBool($this->getMultiStudyGroupMeasure($appNode))];
+            $levelHeadings = [self::originNew => $this->translateStringPDF($tempPrefix.self::originNew,$isMultipleParam), self::originExisting => $this->translateStringPDF($tempPrefix.self::originExisting),$isMultipleParam] ; // information after level names whether new or existing data
             foreach ($studyArray as $studyID => $study) {
                 $heading = $multipleStudies ? [self::studyNode => $headingTrans[self::studyNode].($studyID + 1)] : [];
                 $groupArray = $this->addZeroIndex($study[self::groupNode]);
@@ -1426,7 +1427,7 @@ abstract class ControllerAbstract extends AbstractController
                             // pre content -> no need to set $allShort because checks for pre content are implicitly included in checks for information
                             $briefReport[$this->getBriefReportHeading(self::preContent)] = $this->getBriefReportAnswer(self::preContent, in_array(self::deceit, $preContent) // deceit was chosen
                                 ? self::answerYes
-                                : (array_intersect($allInformation, [self::post, 'noPost'])!==[] // no information is given
+                                : (array_intersect($allInformation, [self::post, self::noPost])!==[] // no information is given
                                     ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
                             // burdens and risks
                             $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
@@ -1585,7 +1586,7 @@ abstract class ControllerAbstract extends AbstractController
     {
         $pre = $information[self::pre];
         $post = $pre==='1' ? $information[self::post][self::chosen] : '';
-        return $pre==='0' ? self::pre : ($pre==='1' ? ($post==='0' ? self::post : ($post==='1' ? 'noPost' : 'noPre')) : '');
+        return $pre==='0' ? self::pre : ($pre==='1' ? ($post==='0' ? self::post : ($post==='1' ? self::noPost : 'noPre')) : '');
     }
 
     /** Checks whether data collection has already begun and participant documents would be reviewed.
@@ -1596,6 +1597,44 @@ abstract class ControllerAbstract extends AbstractController
     protected function getBegunDocs(string $reviewProcess, Session $session): bool
     {
         return $reviewProcess===self::reviewFullBegun || $reviewProcess===self::reviewShortBegun && !in_array($this->getCommitteeType($session),self::reviewShortChoose);
+    }
+
+    /** Removes the position 'phd' from all contributors except the first one if they have the task 'supervision'. If the position was removed, the tasks are also removed.
+     * @param array $contributorsArray contributors
+     * @return array Indices of all contributors where the tasks were removed
+     */
+    protected function removePhd(array &$contributorsArray): array
+    {
+        $indices = [];
+        for ($index = 1; $index<count($contributorsArray); ++$index) {
+            $contributor = $contributorsArray[$index];
+            $tasks = $contributor[self::taskNode];
+            if ($contributor[self::infosNode][self::position]===self::positionsPhd && $tasks!=='' && array_key_exists(self::taskSupervision,$tasks)) {
+                $contributor[self::infosNode][self::position] = '';
+                $contributor[self::taskNode] = [];
+                $contributorsArray[$index] = $contributor;
+                $indices[] = $index;
+            }
+        }
+        return $indices;
+    }
+
+    /** Removes the task 'supervision' from all contributors.
+     * @param array $contributorsArray
+     * @return array indices of all contributors where the task was removed
+     */
+    protected function removeSupervision(array &$contributorsArray): array
+    {
+        $indices = [];
+        for ($index = 1; $index<count($contributorsArray); ++$index) {
+            $tasks = $contributorsArray[$index][self::taskNode];
+            if ($tasks!=='' && array_key_exists(self::taskSupervision,$tasks)) {
+                unset($tasks[self::taskSupervision]);
+                $indices[] = $index;
+            }
+            $contributorsArray[$index][self::taskNode] = $tasks;
+        }
+        return $indices;
     }
 
     // functions involving xml
@@ -1887,9 +1926,8 @@ abstract class ControllerAbstract extends AbstractController
         $isMinorSmaller3 = $minor<'3';
         $isMajorSmaller3 = $major<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajorSmaller3; // last change of nodes currently in 3.0.0
+        $isSmallerCurrent = $isMajorSmaller3 || $minor<'2';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
-        $isSmaller230 = $isMajor1 || $isMajor2 && $minor<'3';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
         $isSmaller260 = $isMajor1 || $isMajor2 && $minor<'6';
@@ -1926,27 +1964,33 @@ abstract class ControllerAbstract extends AbstractController
                 if ($anyRequested) { // add requested confirm question
                     $this->insertElementBefore(self::requestedConfirm,$qualificationOrApplicantNode);
                 }
+                $projectStartNode = $coreDataNode->{self::projectStart};
+                $isBegun = $this->checkElement(self::descriptionNode,$projectStartNode);
+                if ($isBegun) { // data collection has already begun -> project start has to be entered, too, and justification for TUD is necessary
+                    $projectStartNode->{self::chosen} = '';
+                    if ($committeeType===self::committeeTUD) {
+                        $projectStartNode->addChild(self::projectStartRetrospective);
+                    }
+                }
             }
-            // updates for versions before 2.3.0
-            if ($isSmaller230 && $committeeType===self::committeeEUB && in_array((string) $coreDataNode->{self::applicant}->{self::position}, self::positionsStudentPhd) && !$this->checkElement(self::supervisor,$coreDataNode)) { // supervisor is obligatory for student/phd independent of qualification
-                $this->insertElementBefore(self::supervisor,$coreDataNode->{self::conflictNode},self::applicantContributorsInfosTypes);
-                $contributors = $this->getContributorsArray($this->xmlToArray($xml));
-                $this->updateContributor($contributors,[self::supervisor => []],self::supervisor);
-                $request->getSession()->set(self::contributorsSessionName,[0 => $contributors]); // (temporarily) set contributors in session because updateProjectdetailsContributor may need it
-                $this->updateProjectdetailsContributor($request,$xml,'',[],false,true); // update contributors in projectdetails
-                $this->addAllContributorsNodes($xml,$contributors); // update contributors in Contributors
-            }
-            // updates for versions before 2.4.0
-            $projectStartNode = $coreDataNode->{self::projectStart};
-            $isBegun = $this->checkElement(self::descriptionNode,$projectStartNode);
-            if ($isBegun) { // data collection has already begun -> project start has to be entered, too, and justification for TUD is necessary
-                $projectStartNode->{self::chosen} = '';
-                if ($committeeType===self::committeeTUD) {
-                    $projectStartNode->addChild(self::projectStartRetrospective);
+            // updates for versions before 3.2.0
+            $this->addDepartment($coreDataNode->{self::applicant});
+            $this->removeElement('supervisor',$coreDataNode); // remove supervisor
+            $contributorsNode = $xml->{self::contributorsNodeName};
+            foreach ($contributorsNode->{self::contributorNode} as $index => $contributor) {
+                $this->addDepartment($contributor->{self::infosNode});
+                if (in_array($index,['0',self::contributorNode])) { // if only one contributor, $index equals 'contributor'
+                    $this->removeElement('application',$contributor->{self::taskNode}); // remove task 'application'
                 }
             }
             $reviewProcess = $this->getCurrentReviewProcess($xml);
+            $hasSupervisor = in_array($committeeType,self::committeeSupervisor);
+            $contributorsArray = $this->addZeroIndex($this->xmlToArray($contributorsNode)[self::contributorNode]);
             $isShortNoDocs = $reviewProcess===self::reviewShortNoDocs;
+            $supervisorTasks = $contributorsArray[1][self::taskNode] ?? '';
+            $addSupervisor = (!$this->getMultiStudyGroupMeasure($xml) || $isShortNoDocs) && $supervisorTasks!=='' && array_key_exists(self::taskSupervision,$supervisorTasks);
+            $session = $request->getSession();
+            $session->set(self::contributorsSessionName,[0 => $contributorsArray]);
             foreach ($xml->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
                     foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
@@ -2283,10 +2327,53 @@ abstract class ControllerAbstract extends AbstractController
                                 }
                             }
                         }
+                        // updates for versions before 3.2.0
+                        $contributorNode = $measureTimePointNode->{self::contributorNode};
+                        if ($hasSupervisor && $this->checkElement(self::taskLeader,$contributorNode)) { // add 'supervision' node
+                            $this->insertElementBefore(self::taskSupervision,$contributorNode->{'other'});
+                            if ($addSupervisor) {
+                                $contributorNode->{self::taskSupervision} = '1';
+                            }
+                        }
                     } // foreach measure time point
                 } // foreach group
             } // foreach study
         } // if isSmallerCurrent
+    }
+
+    /** Adds a 'department' node to the infos about a contributor and moves the value of the 'institution' node to it.
+     * @param SimpleXMLElement $infosNode node with infos.
+     * @return void
+     */
+    private function addDepartment(SimpleXMLElement $infosNode): void
+    {
+        $this->insertElementBefore(self::department,$infosNode->{'professorship'});
+        $infosNode->{self::department} = (string) $infosNode->{self::institutionInfo};
+        $infosNode->{self::institutionInfo} = '';
+    }
+
+    /** Removes indices from the contributor tasks.
+     * @param SimpleXMLElement $appNode root node of the application
+     * @param array $indices indices to be removed
+     * @param bool $removeAll if true, indices are removed from all tasks, otherwise only from task 'supervision'
+     * @return void
+     */
+    protected function removeContributorIndices(SimpleXMLElement $appNode, array $indices, bool $removeAll = true): void
+    {
+        if ($indices!==[]) {
+            foreach ($appNode->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
+                foreach ($studyNode->{self::groupNode} as $groupNode) {
+                    foreach ($groupNode->{self::measureTimePointNode} as $measureNode) {
+                        $contributorNode = $measureNode->{self::contributorNode};
+                        if (count($contributorNode->children())>0) {
+                            foreach ($removeAll ? self::tasksNodes : [self::taskSupervision] as $task) {
+                                $contributorNode->{$task} = implode(',',array_diff(explode(',',(string) $contributorNode->{$task}),$indices));
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /** Gets the array containing all contributors.
@@ -2420,30 +2507,6 @@ abstract class ControllerAbstract extends AbstractController
             }
         }
         return $returnParams;
-    }
-
-    /** Updates the applicant and the supervisor.
-     * @param array $contributors array containing all contributors
-     * @param array $data array containing the submitted data
-     * @param string $type must equal 'applicant' or 'supervisor'
-     */
-    protected function updateContributor(array &$contributors, array $data, string $type): void
-    {
-        $dataType = $data[$type];
-        $tempArray = [];
-        foreach (self::applicantContributorsInfosTypes as $info) {
-            $tempArray[$info] = $dataType[$info] ?? '';
-        }
-        if ($type===self::applicant) {
-            $contributors[0][self::infosNode] = $tempArray;
-        } else { // supervisor
-            $tasks = $contributors[1][self::taskNode] ?? '';
-            if ($tasks!=='' && array_key_exists(self::supervisorNode,$tasks)) { // supervisor already exists
-                $contributors[1][self::infosNode] = $tempArray;
-            } else { // supervisor does not exist -> add as second contributor
-                $this->addSupervisor($contributors,$tempArray);
-            }
-        }
     }
 
     /** Sets the string for the first inclusion criterion.

@@ -13,13 +13,15 @@ multiple:
         Die XML-Datei des Ethikantrags wurde erfolgreich geladen. {isMain, select,
                                                           true  {}
                                                           other {Sie wurden auf die Hauptseite zurückgeleitet.}} Sie können den Antrag nun an den gewünschten Stellen weiter bearbeiten.
-      content: >- # for loaded versions smaller than 2.0.0
+      content: >- # for loaded versions smaller than 2.0.0 (isMajor is 'true') oder at least 2.0.0 and smaller than 3.2.0
         Die XML-Datei des Ethikantrags wurde erfolgreich geladen. {isMain, select,
                                                           true  {}
                                                           other {Sie wurden auf die Hauptseite zurückgeleitet.}} Sie können den Antrag nun an den gewünschten Stellen weiter bearbeiten.
         
         
-        Sie haben eine XML-Datei geladen, die mit einer älteren Version des Ethiktools erstellt wurde. In neueren Versionen müssen Sie die Art des Antragsverfahrens auswählen. Je nach gewähltem Antragsverfahren unterscheiden sich die Fragen, die Sie im Ethiktool beantworten müssen. Bitte wählen Sie die Art des Antragsverfahrens aus, bevor Sie weitere Eingaben tätigen. Möchten Sie dafür auf die Seite „Stammdaten“ wechseln?
+        Sie haben eine XML-Datei geladen, die mit einer älteren Version des Ethiktools erstellt wurde. In neueren Versionen müssen Sie {isMajor, select,
+          true  {die Art des Antragsverfahrens auswählen. Je nach gewähltem Antragsverfahren unterscheiden sich die Fragen, die Sie im Ethiktool beantworten müssen. Bitte wählen Sie die Art des Antragsverfahrens aus, bevor Sie weitere Eingaben tätigen. Möchten Sie dafür auf die Seite „Stammdaten“ wechseln?}
+          other {Institution und Fachbereich/Abteilung für die projektbeteiligten Personen getrennt angeben. Die bisherigen Eingaben wurden in die Felder für Fachbereich/Abteilung übernommen. Möchten Sie auf die Seite „Projektbeteiligte“ wechseln, um die Institution(en) anzupassen?}}
     failure: # info modal if the extension is invalid
       title: 'Datei auswählen'
       text: >-
@@ -126,23 +128,30 @@ multiple:
       other {{namely}}}
   infos:
     name: 'Vor- und Nachname'
-    institution: 'Institution/Fachbereich'
-    institutionApplicant: 'Fachbereich'
+    institution: 'Institution'
+    department: 'Fachbereich/Abteilung'
     professorship: 'Arbeitsgruppe/Professur'
     eMail: 'E-Mail-Adresse'
     position: 'Position'
     phone: 'berufliche Telefonnummer'
     phoneOptional: '(optional) berufliche Telefonnummer'
-    nameHint: 'Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) hinzugefügt werden.'
-    institutionHint: 'Bitte geben Sie die Fakultät bzw. den Fachbereich an, bei externen Projektbeteiligten zusätzlich auch die Institution.'
-    professorshipHint: '<i>Arbeitsgruppe/Professur der Erstbetreuung</i>'
+    hints:
+      name: 'Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) hinzugefügt werden.'
+      institution: 'Bitte prüfen Sie, ob Sie berechtigt sind, bei {committeeDat} einen Ethikantrag einzureichen, obwohl Sie nicht der {committeeLocationDat} angehören.'
+      department: 'Bitte schreiben Sie die volle Bezeichnung, z.B. „Fakultät für ...“'
+      professorship: '<i>Arbeitsgruppe/Professur der Erstbetreuung</i>'
+    institutionTypes:
+      institutionSame: '{committeeLocationPure}'
+      institutionOther: 'andere Institution'
   position:
     professorship: 'Professurinhaber/in'
     scientific: 'Wissenschaftliche/r Mitarbeiter/in'
     phd: 'Doktorand/in'
     student: 'Student/in (B.Sc./M.Sc. o. dgl.)'
     positionOther: 'sonstige Position'
-    otherDefault: 'Bitte Position eingeben'
+  placeholder:
+    institution: 'Bitte Institution eingeben'
+    position: 'Bitte Position eingeben'
 
 dateFormat: >-
   d.m.Y{noTime, select,
@@ -207,6 +216,26 @@ committee:
       UH1   {die Universität Hildesheim}
       UPB   {die Universität Paderborn}
       other {die Institution der Test-Ethikkommission}}
+  committeeLocationPure: >-
+    {committee, select,
+      TUC   {Technische Universität Chemnitz}
+      EUB   {Universität Bielefeld}
+      JGU   {Johannes Gutenberg-Universität Mainz}
+      DLR   {Deutsches Zentrum für Luft- und Raumfahrt}
+      TUD   {Technische Universität Dresden}
+      UH1   {Universität Hildesheim}
+      UPB   {Universität Paderborn}
+      other {Institution der Test-Ethikkommission}}
+  committeeLocationDat: >-
+    {committee, select,
+      TUC   {der Technischen Universität Chemnitz}
+      EUB   {der Universität Bielefeld}
+      JGU   {der Johannes Gutenberg-Universität Mainz}
+      DLR   {dem Deutschen Zentrum für Luft- und Raumfahrt}
+      TUD   {der Technischen Universität Dresden}
+      UH1   {der Universität Hildesheim}
+      UPB   {der Universität Paderborn}
+      other {der Institution der Test-Ethikkommission}}
   committeeLocationGen: >-
     {committee, select,
       TUC   {der Technischen Universität Chemnitz}
@@ -435,6 +464,13 @@ landing:
         {isOverview, select,
           true  {Das Ethiktool kann Forschungsprojekte abbilden, die mehrere Studien, mehrere Teilnehmenden-Gruppen und/oder mehrere Erhebungszeitpunkte umfassen.</br></br> Diese Seite zeigt die Struktur Ihres Forschungsprojekts. Sie können hier weitere Studien, Gruppen und Zeitpunkte anlegen. Die Elemente werden automatisch durchnummeriert, sobald es mehr als eines gibt; es empfiehlt sich, außerdem jedem Element einen kurzen, aussagekräftigen Namen zu geben.}
           other {Hier können Sie nun Eingaben zu dieser Kombination aus Studie, Teilnehmenden-Gruppe und Erhebungszeitpunkt vornehmen.</br> Die Eingaben gliedern sich in folgende Punkte:}}
+      expandable:
+        title: 'Hinweise zum Anlegen/Ändern der Projektstruktur'
+        text: |
+          Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination <span class="text-decoration-underline">duplizieren</span> und nur die relevanten Einträge ändern.
+          Eine weitere <span class="text-decoration-underline">Studie</span> müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.
+          Eine weitere <span class="text-decoration-underline">Gruppe</span> müssen Sie nur anlegen, wenn sich beispielsweise die Einschlusskriterien oder die Aufklärung für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) substanziell unterscheiden. Wenn die Aufklärungsdokumente in wesentlichen Punkten gleich sind (z.B. bei Between-Subject-Designs mit Bedingungs-/Gruppenzuordnung erst nach der Aufklärung), ist die Anlage separater Gruppen im Ethiktool i.d.R. nicht sinnvoll.
+          Der Begriff <span class="text-decoration-underline">Erhebungszeitpunkt</span> bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird (Screening).
       end:
         title: 'Die Symbole haben folgende Funktionen:'
         rename: 'Name des Elements ändern'
@@ -442,12 +478,6 @@ landing:
         add: 'neues Element erstellen'
         delete: 'Element entfernen (inklusive aller Unterelemente)'
         edit: 'Details der Kombination Studie/Gruppe/Zeitpunkt bearbeiten'
-      hint: |
-        Hinweis: Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination duplizieren und nur die relevanten Einträge ändern.
-        Eine weitere Studie müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.
-        Eine weitere Gruppe müssen Sie nur anlegen, wenn sich beispielsweise die Einschlusskriterien oder die Aufklärung für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) substanziell unterscheiden.
-        Der Begriff Erhebungszeitpunkt bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird (Screening).
-        Wenn die Aufklärungsdokumente in wesentlichen Punkten gleich sind (z.B. bei Between-Subject-Designs mit Bedingungs-/Gruppenzuordnung erst nach der Aufklärung), ist die Anlage separater Gruppe im Ethiktool i.d.R. nicht sinnvoll.
     removeModal:
       title: >-
         {type, select,
@@ -480,7 +510,10 @@ coreData:
       resubmission: 'Wiedervorlage nach Antrags-Überarbeitung'
       resubmissionGranted: 'Wiedervorlage nach Mittelakquise'
     reference: 'Bitte Aktenzeichen eingeben:'
-    hint: 'Bitte passen Sie nur die relevanten Punkte an (z.B. Änderungen am Forschungsprojekt, Auflagenerfüllung; Nachreichen der Teilnahmedokumente, falls nötig). Seien Sie bitte zurückhaltend mit darüber hinausgehenden, redaktionellen Änderungen an den Texten - Sie erleichtern damit den Vergleich der Antragsversionen und beschleunigen die Begutachtung.'
+    hint: >-
+      {committeeType, select,
+        EUB   {Wenn Sie für den ursprünglichen Antrag das Template auf der Webseite der Ethik-Kommission verwendet haben, nutzen Sie dieses bitte weiterhin.}
+        other {}} Bitte passen Sie nur die relevanten Punkte an (z.B. Änderungen am Forschungsprojekt, Auflagenerfüllung; Nachreichen der Teilnahmedokumente, falls nötig). Seien Sie bitte zurückhaltend mit darüber hinausgehenden, redaktionellen Änderungen an den Texten - Sie erleichtern damit den Vergleich der Antragsversionen und beschleunigen die Begutachtung.
   modal: # other in type selects is funding
     title: >-
       {type, select,
@@ -593,9 +626,7 @@ coreData:
     headingHint: 'Bitte antworten Sie nur dann mit „Ja“, wenn das Forschungsprojekt ohne <span style="font-weight: bold">Ihre eigene</span> Qualifikationsarbeit nicht durchgeführt werden würde. Wenn Sie für Ihre Qualifikationsarbeit Daten eines ohnehin durchgeführten Forschungsprojekts nutzen, ist die Frage mit „Nein“ zu beantworten. Wenn Sie in Ihrer Funktion als lehrende/betreuende Person einen Antrag für die Qualifikationsarbeit von Studierenden oder Promovierenden stellen, wählen Sie bitte ebenfalls „Nein“.'
   applicant:
     title: 'Verantwortlichkeit für die Antragstellung'
-    applicant: 'Antragstellende Person'
-    supervisor: 'Verantwortliche/r Betreuer/in'
-    hint: 'Diese Angaben werden auf die Seite „<a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Projektbeteiligte</a>“ übernommen. Dort können weitere Funktionen im Forschungsprojekt hinzugefügt werden.'
+    headingHint: 'Diese Angaben werden auf die Seite „<a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Projektbeteiligte</a>“ übernommen. Dort können weitere Funktionen im Forschungsprojekt hinzugefügt werden.'
   conflict:
     title: 'Besteht bei den Projektbeteiligten ein Interessenkonflikt aufgrund von persönlichen Interessen oder aufgrund von Interessen Dritter?'
     headingHint: 'Ein Interessenkonflikt besteht, wenn der Forschungsprozess von eigenen Interessen oder den Interessen Dritter beeinflusst werden könnte bzw. wenn die Unabhängigkeit des wissenschaftlichen Urteils gefährdet sein könnte. Typische Beispiele für mögliche Interessenkonflikte sind die Evaluation eines selbst entwickelten Produkts, der bezahlte Auftrag zur Evaluation eines fremden Produkts oder Forschung zu gesellschaftlich brisanten Themen unter Einfluss von Lobby-Aktivitäten oder von ausgeprägten eigenen Einstellungen. Interessenkonflikte können durch vielfältige Faktoren entstehen, z.B. durch familiäre, freundschaftliche, finanzielle oder soziale Verflechtungen und durch wirtschaftliche oder persönliche Verbindungen zu Auftraggeber/innen oder Kooperationspartner/innen. Sollte ein Interessenkonflikt vorliegen, ist dieser und der Umgang damit zu erläutern. Bitte beachten Sie, dass mögliche Interessenkonflikte auch den Teilnehmenden offengelegt werden müssen.'
@@ -694,16 +725,18 @@ contributors:
         noSelection: 'Bitte wählen Sie zuerst eine Position aus.'
         selection: 'Bitte wählen Sie alle Funktionen dieser Person im Forschungsprojekt.'
       mandatory: >- # other is data
-        Diese Funktion muss {type, select,
-                              leader     {im Forschungsprojekt von mindestens einer projektbeteiligten Person ausgefüllt werden.}
-                              experiment {bei jeder Erhebung neuer Daten von mindestens einer projektbeteiligten Person ausgefüllt werden.}
-                              contact    {bei jeder Erhebung neuer Daten von mindestens einer projektbeteiligten Person ausgefüllt werden.}
-                              other      {im Forschungsprojekt von mindestens einer projektbeteiligten Person ausgefüllt werden.</br> Bei mehr als einer datenverantwortlichen Person müssen die Zuständigkeiten geklärt werden.}}
+        {type, select,
+          leader      {Diese Funktion muss im Forschungsprojekt von mindestens einer projektbeteiligten Person ausgefüllt werden.}
+          experiment  {Diese Funktion muss bei jeder Erhebung neuer Daten von mindestens einer projektbeteiligten Person ausgefüllt werden.}
+          contact     {Diese Funktion muss bei jeder Erhebung neuer Daten von mindestens einer projektbeteiligten Person ausgefüllt werden.}
+          supervision {Diese Funktion darf nicht die einzige Funktion dieser projektbeteiligten Person sein.}
+          other       {Diese Funktion muss im Forschungsprojekt von mindestens einer projektbeteiligten Person ausgefüllt werden.</br> Bei mehr als einer datenverantwortlichen Person müssen die Zuständigkeiten geklärt werden.}}
     leader: 'Projektleitung'
     research: 'wissenschaftliche Mitarbeit'
     experiment: 'Datenerhebung'
     contact: 'Kontaktperson für Teilnehmende (in Teilnahmedokumenten)'
     data: 'Verantwortlichkeit für die Verarbeitung der Daten'
+    supervision: 'Betreuung'
     other: 'sonstige Funktion'
     otherDescription: 'bitte spezifizieren'
   tasksShort:
@@ -712,15 +745,14 @@ contributors:
     experiment: 'Datenerhebung'
     contact: 'Kontaktperson'
     data: 'Datenverantw.'
+    supervision: 'Betreuung'
     other: 'Sonstiges'
   symbols:
     title: 'Die Symbole haben folgende Funktionen:'
     add: 'projektbeteiligte Person hinzufügen'
     edit: 'Angaben zu einer bereits angelegten Person bearbeiten'
     delete: >-
-      Daten einer bereits angelegten Person wieder löschen. Die antragstellende Person (erste projektbeteiligte Person) {hasSupervisor, select,
-        true  {sowie der/die verantwortliche Betreuer/in (zweite projektbeteiligte Person) können}
-        other {kann}} nicht gelöscht werden.
+      Daten einer bereits angelegten Person wieder löschen. Die antragstellende Person (erste projektbeteiligte Person) kann nicht gelöscht werden.
   hint: >-
     Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. {committeeType, select,
         EUB   {Beide Funktionen können bei universitären Projekten nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht. Bei Vorhaben, die ausschließlich im Rahmen der eigenen Qualifikationsarbeit durchgeführt werden, liegt die formelle Projektleitung bei der Erstbetreuung; die Datenverantwortung kann unterschiedlich geregelt sein, bitte halten Sie hierzu Rücksprache.}
@@ -1862,7 +1894,7 @@ projectdetails:
         start: >-
           {savePDF, select,
             true  {Die Forschungsdaten werden anonymisiert}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#anonymization" data-base-route-i-ds-param="{routeIDs}">Die Forschungsdaten werden anonymisiert</a>}}, indem
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#anonymization" data-base-route-i-ds-param="{routeIDs}">Die Forschungsdaten werden anonymisiert</a>}}, indem
         types:
           grouping: 'seltene Antworten mit anderen Antworten zusammengefasst werden (Kategorienbildung/Gruppierung)'
           convert: 'sie in eine andere Form überführt werden'
@@ -1900,7 +1932,7 @@ projectdetails:
         start: >-
           {savePDF, select,
             true  {Die Originaldaten und/oder sonstige Unterlagen}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#personalKeep" data-base-route-i-ds-param="{routeIDs}">Die Originaldaten und/oder sonstige Unterlagen</a>}}, aus denen sich der Personenbezug wiederherstellen lässt, werden
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#personalKeep" data-base-route-i-ds-param="{routeIDs}">Die Originaldaten und/oder sonstige Unterlagen</a>}}, aus denen sich der Personenbezug wiederherstellen lässt, werden
         end: ' aufbewahrt.'
         hints: # icons except textHint
           documentation: 'Bitte wägen Sie ab, ob die wissenschaftliche Qualitätssicherung höher wiegt als der Datenschutz.'
@@ -2268,22 +2300,11 @@ checkDoc:
         appType: 'Sie haben als Antragstyp „Wiedervorlage nach Mittelakquise“ ausgewählt. Das passt nicht zu der Auswahl, dass noch Drittmittel beantragt werden.'
         begun: 'Sie haben ausgewählt, dass die Finanzierung durch Drittmittel noch beantragt wird. Das passt nicht dazu, dass das Forschungsprojekt bereits begonnen hat.'
       qualification: 'Antwort auf Frage nach Qualifikationsarbeit'
-      name: >-
-        {type, select,
-          applicant {Antragstellende Person:}
-          other     {Verantwortliche/r Betreuer/in:}} Name ist nicht vollständig.
-      positionOther: >-
-        {type, select,
-          applicant {Antragstellende Person}
-          other     {Verantwortliche/r Betreuer/in}}: Beschreibung der sonstigen Position
-      eMail: >-
-        {type, select,
-          applicant {Antragstellende Person}
-          other     {Verantwortliche/r Betreuer/in}}: E-Mail-Adresse ist ungültig.
-      phone: >-
-        {type, select,
-          applicant {Antragstellende Person}
-          other     {Verantwortliche/r Betreuer/in}}: Telefonnummer ist ungültig.
+      name: 'Name ist nicht vollständig.'
+      institutionOther: 'Benennung der Institution'
+      positionOther: 'Benennung der sonstigen Position'
+      eMail: 'E-Mail-Adresse ist ungültig.'
+      phone: 'Telefonnummer ist ungültig.'
       conflict:
         title: 'Interessenkonflikt'
         description:
@@ -2320,22 +2341,21 @@ checkDoc:
     lineTitle: 'Projektbeteiligte Person {index} ({name})'
     infos:
       name: 'Name ist nicht vollständig.'
+      position: 'Position fehlt.'
       validEmail: 'E-Mail-Adresse ist ungültig.'
       validPhone: 'Telefonnummer ist ungültig.'
     tasks:
       missing: >-
         Projektbeteiligte Person {index} ({name}) hat {index, select,
-                                                        1     {neben „Antragstellung“ keine weitere Funktion}
-                                                        2     {{isSupervisor, select,
-                                                                  true  {neben „Betreuung der {isQualification, select,
-                                                                                                true  {Qualifikationsarbeit}
-                                                                                                other {{position, select,
-                                                                                                          student {studentischen Arbeit}
-                                                                                                          other   {Promotion}}}}“ keine weitere Funktion}
-                                                                  other {keine Funktion}}}
-                                                        other {keine Funktion}} inne.
+                                                        1     {neben „Antragstellung“ keine weitere}
+                                                        other {{numTasks, plural,
+                                                                  =1    {neben „Betreuung“ keine weitere}
+                                                                  other {keine }}}} Funktion inne.
       missingMandatory: 'Funktion „{task}“ wurde bei keiner projektbeteiligten Person ausgewählt.'
-      missingOther: 'Projektbeteiligte Person {index} ({name}): Beschreibung der sonstigen Position'
+      missingOther: >-
+        Projektbeteiligte Person {index} ({name}): Benennung der {type, select,
+                                                                      institution {Institution}
+                                                                      other       {sonstigen Position}}
       dataSource: 'Wenn es keinen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit neu erhobenen Daten gibt, kann keine <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">projektbeteiligte Person</a> die Funktion „{task}“ ausfüllen.'
   projectdetails:
     missingTypes: 'Arten von {type}'
@@ -2729,7 +2749,7 @@ checkDoc:
             insuranceWay {Hinweis zur Wege-/Unfallversicherung}
             other        {Hinweis zur Teilnehmendenversicherung}}
         description: >- # other is insurance
-          Beschreibung {type, select,
+          Formulierung {type, select,
                           liability    {der Haftungsklausel}
                           apparatus    {des Hinweises zur Benutzung von Versuchsgeräten}
                           insuranceWay {des Hinweises zur Wege-/Unfallversicherung}
@@ -2739,7 +2759,7 @@ checkDoc:
         create:
           missing: 'Art der Erstellung der Datenschutzerklärung'
           informationToNotApplicable: 'Wenn es keine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung und keine nachträgliche Aufklärung<a> gibt, muss die Frage nach Art der Erstellung der Datenschutzerklärung mit „nicht zutreffend“ beantwortet werden.'
-          notApplicableToInformation: 'Sie haben bei der Frage nach Art der Erstellung der Datenschutzerklärung „nicht zutreffend“ ausgewählt. Das ist nur möglich, wenn es <a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt.'
+          notApplicableToInformation: 'Sie haben bei der Frage nach Art der Erstellung der Datenschutzerklärung „nicht zutreffend“ ausgewählt. Das ist nur möglich, wenn es <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt.'
           support: >-
             Wenn {isVerified, select,
                     true  {die Datenschutzerklärung durch die zuständige Datenschutzstelle geprüft und genehmigt worden ist}
@@ -2749,6 +2769,16 @@ checkDoc:
         confirmIntro: 'Bestätigung der Informationen zum Datenschutz' # '[] fehlt.'
         responsibility:
           missing: 'Verantwortung für die Verarbeitung der personenbezogenen Daten'
+          onlyOwn: >-
+            Wenn <a class="linkIntenral" href="{isMultiple, select,
+                  true  {contributor" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_contributor#data"}
+                  other {contributors" data-base-url-param="app_contributors"}} data-action="base#setDummySubmit">{numData, plural,
+                      =1    {die datenverantwortliche Person nicht {committeeLocationDat} angehört}
+                      other {nicht alle datenverantwortlichen Personen {committeeLocationDat} angehören}}</a>, kann {committeeLocation} nicht allein verantwortlich für die Verarbeitung personenbezogener Daten sein.
+          private: >-
+            Wenn die <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">antragstellende Person</a> Student/in und verantwortlich für die <a class="linkInternal" href="{isMultiple, select,
+                      true  {contributor" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_contributor#data"}
+                      other {contributors" data-base-url-param="app_contributors"}} data-action="base#setDummySubmit">Datenverarbeitung</a> ist, kann die Verantwortung für die Verarbeitung personenbezogener Daten nur privat bei dieser Person liegen.
           qualification: 'Wenn eine Person privat verantwortlich für die Verarbeitung personenbezogener Daten ist, muss die Frage nach <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#qualification">Qualifikationsarbeit</a> mit „Ja“ beantwortet werden.'
         transferOutside: 'Weitergabe der personenbezogenen Daten außerhalb des EWR'
         responsibilityTotransferOutside: 'Wenn bei der Frage nach Verantwortung für die Verarbeitung personenbezogener Daten „nicht zutreffend“ gewählt wurde, muss auch bei der Frage nach Weitergabe personenbezogener Daten an Dritte außerhalb des EWR „nicht zutreffend“ gewählt werden.'
@@ -2892,8 +2922,8 @@ checkDoc:
             dataReuseHow: 'Personenbezogene Forschungsdaten'
             dataReuseHowreuse: 'Anonymisierte Forschungsdaten'
           missing: 'Antwort auf Frage, wie bzw. wem die Forschungsdaten zur Nachnutzung zur Verfügung gestellt werden,'
-          description: 'Beschreibung des Datenarchivs bzw. der Plattform zur Datenbereitstellung'
-          public: 'Sie haben ausgewählt, dass personenbezogene Forschungsdaten öffentlich zugänglich gemacht werden. Das passt nicht dazu, dass keine personenbezogenen Daten <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">außerhalb des EWR weitergegeben</a> werden.'
+          description: 'Benennung des Datenarchivs bzw. der Plattform zur Datenbereitstellung'
+          public: 'Sie haben ausgewählt, dass personenbezogene Forschungsdaten öffentlich zugänglich gemacht werden. Das passt nicht dazu, dass keine personenbezogenen Daten <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">außerhalb des EWR weitergegeben</a> werden.'
         dataReuseSelf: 'Antwort auf Frage, ob die Forschungsdaten zur eigenen Nachnutzung/Reanalyse verwendet werden,' # '[] fehlt.'
       contributor:
         mandatory: >-

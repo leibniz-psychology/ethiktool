@@ -51,7 +51,7 @@ class ApplicationController extends PDFAbstract
             $reviewProcess = $session->get(self::reviewProcess);
             $this->isReviewFull = str_contains($reviewProcess,self::reviewProcessFull);
             $hasDocs = in_array($reviewProcess,self::reviewDocs);
-            $appNode = $this->getXMLfromSession($session, getRecent: true); // if supervisor was added while on core data page, indices of contributors have changed
+            $appNode = $this->getXMLfromSession($session, getRecent: true);
             $this->noBoxTrans = $this->translateStringPDF(self::noBox);
 
             // projectdetails information
@@ -61,7 +61,6 @@ class ApplicationController extends PDFAbstract
             /*
              * $allAddressees: all possible addressees with a value true if the addressee occurs, false otherwise. Only addressees where either pre or post information for the third parties (or participants if no third parties) happens are considered.
              * $isAnyWards: true if any wards is selected
-             * $isAnyTranslated: true if any translated participant documents are added for pre (0) or post (1) information
              * $isAnySupplement: true if for any measures (0), interventions (1), or other sources (2) supplementary materials or translated documents for pre (3) or post (4) or the participation documents of the original data set (5) are added.
              * $isAnyOriginMissing: true if any origin question is not yet answered
              * $isAnyOriginNew: true if any data source origin is "new"
@@ -78,7 +77,7 @@ class ApplicationController extends PDFAbstract
              * $isAnyCompensation: true if any compensation is given if information is pre or not yet chosen (0) of if nor pre information is given (1)
              * $isAnyCompensationVoluntary: true if any compensationVoluntary question was answered with yes, false otherwise.
             */
-            [$allAddressees, $isAnyWards, $isAnyTranslated, $isAnySupplement, $isAnyOriginMissing, $isAnyDataSourceFurther, $isAnyDataSet, $isAnyOriginNew, $isAnyOriginExisting, $isAnyDataSourceVotes, $isAnyOtherSources, $isAnyBurdensRisks, $isAnyBurdensNo, $isAnyBurdensEveryday, $anyVoluntary, $anyConsent, $isAnyCompensation, $isAnyCompensationVoluntary] = [[self::addresseeParticipants => false, self::addresseeChildren => false, self::addresseeWards => false], false, [self::informationNode => false, self::post => false], array_fill_keys($supplementTypes,false), false, false, false, false, false, false, false, [self::burdensNode => false, self::risksNode => false, self::burdensRisksContributorsNode => false], false, false, false, [false, false], [false, false], false];
+            [$allAddressees, $isAnyWards, $isAnySupplement, $isAnyOriginMissing, $isAnyDataSourceFurther, $isAnyDataSet, $isAnyOriginNew, $isAnyOriginExisting, $isAnyDataSourceVotes, $isAnyOtherSources, $isAnyBurdensRisks, $isAnyBurdensNo, $isAnyBurdensEveryday, $anyVoluntary, $anyConsent, $isAnyCompensation, $isAnyCompensationVoluntary] = [[self::addresseeParticipants => false, self::addresseeChildren => false, self::addresseeWards => false], false, array_fill_keys($supplementTypes,false), false, false, false, false, false, false, false, [self::burdensNode => false, self::risksNode => false, self::burdensRisksContributorsNode => false], false, false, false, [false, false], [false, false], false];
             /* The following values are true if either for third parties or participants at least one of the information questions was answered in the respective way:
              * $isAnyPre: yes
              * $isAnyDocInformation: true if any information may be created, i.e., if for by third parties either pre or post information is yes
@@ -104,7 +103,8 @@ class ApplicationController extends PDFAbstract
             $compensationPost = self::compensationNode.self::post;
             $originNew = self::originNode.self::originNew;
             $originMissing = self::originNode.'Missing';
-            $allTrue = [self::dataSourceNode => false, self::dataSetNode => false, self::addresseeParticipants => false, $preTrans => false, $preInformation => false, $postTrans => false, self::measuresNode.'PDF' => false, self::interventionsNode.'PDF' => false, self::otherSourcesNode.'PDF' => false, self::addresseeChildren => false, self::addresseeWards => false, self::originNode => false, $originNew => false, $originMissing => false, self::dataSourceVotesNode => false, self::pre => false, $preNo => false, $preNotYet => false, $completePost => false, self::preAbort => false, self::preAbortOther => false, self::preAbortNo => false, self::post => false, $postNo => false, self::otherSourcesNode => false, self::burdensNode => false, $burdensNo => false, self::burdensEveryday => false, self::risksNode => false, self::burdensRisksContributorsNode => false, self::voluntaryNode => false, self::consent => false, $consentNo => false, self::compensationNode => false, $compensationPost => false, self::compensationVoluntaryNode => false]; // Each entry gets true if the respective value in one of the preceding variables gets true
+            $dataSetSupplement = self::dataSetNode.'Supplement';
+            $allTrue = [self::dataSourceNode => false, self::dataSetNode => false, $dataSetSupplement => false, self::legitimizationNode => false, self::addresseeParticipants => false, $preTrans => false, $preInformation => false, $postTrans => false, self::measuresNode.'PDF' => false, self::interventionsNode.'PDF' => false, self::otherSourcesNode.'PDF' => false, self::addresseeChildren => false, self::addresseeWards => false, self::originNode => false, $originNew => false, $originMissing => false, self::dataSourceVotesNode => false, self::pre => false, $preNo => false, $preNotYet => false, $completePost => false, self::preAbort => false, self::preAbortOther => false, self::preAbortNo => false, self::post => false, $postNo => false, self::otherSourcesNode => false, self::burdensNode => false, $burdensNo => false, self::burdensEveryday => false, self::risksNode => false, self::burdensRisksContributorsNode => false, self::voluntaryNode => false, self::consent => false, $consentNo => false, self::compensationNode => false, $compensationPost => false, self::compensationVoluntaryNode => false]; // Each entry gets true if the respective value in one of the preceding variables gets true
             foreach ($studyArray as $study) {
                 foreach ($this->addZeroIndex($study[self::groupNode]) as $group) {
                     foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureTimePoint) {
@@ -123,12 +123,12 @@ class ApplicationController extends PDFAbstract
                         if (array_key_exists(self::dataSetNode,$tempArray)) {
                             [$isAnyDataSet,$allTrue[self::dataSetNode]] = [true, true];
                             if (array_key_exists(self::dataSetPDF,$tempArray)) {
-                                $isAnySupplement[self::dataSetNode] = true;
+                                [$isAnySupplement[self::dataSetNode], $allTrue[$dataSetSupplement]] = [true, true];
                             }
                         }
                         $legitimizationArray = $tempArray[self::legitimizationNode] ?? '';
                         if ($legitimizationArray!=='' && array_key_exists(self::legitimizationConsentNew,$legitimizationArray)) {
-                            $isAnySupplement[self::legitimizationNode] = true;
+                            [$isAnySupplement[self::legitimizationNode], $allTrue[self::legitimizationNode]] = [true, true];
                         }
                         if ($origin===self::originExisting) {
                             [$isAnyOriginExisting, $allTrue[self::originNode]] = [true, true];
@@ -150,8 +150,7 @@ class ApplicationController extends PDFAbstract
                                 if ($isPre) {
                                     [$isAnyDocInformation, $allTrue[$preInformation]] = [true, true];
                                     if ($isTranslation) {
-                                        [$isAnyTranslated[self::informationNode], $allTrue[$preTrans]] = [true, true];
-                                        $isAnySupplement[self::informationNode] = true;
+                                        [$isAnySupplement[self::informationNode], $allTrue[$preTrans]] = [true, true];
                                     }
                                 }
                                 if ($isPre && in_array($tempArray[self::preContent], self::preContentIncomplete) || $isPreParticipants && in_array($tempArrayParticipants[self::preContent] ?? '', self::preContentIncomplete)) {
@@ -173,8 +172,7 @@ class ApplicationController extends PDFAbstract
                             if ($isNotPre || $chosenParticipants==='1') {
                                 [$isAnyNotPre, $allTrue[$preNo]] = [true, true];
                                 if ($isTranslation) { // if true, post information must be given for third parties
-                                    [$isAnyTranslated[self::post], $allTrue[$postTrans]] = [true, true];
-                                    $isAnySupplement[self::post] = true;
+                                    [$isAnySupplement[self::post], $allTrue[$postTrans]] = [true, true];
                                 }
                             }
                             if ($chosen==='' || $tempArrayParticipants!=='' && $chosenParticipants==='') {
@@ -190,9 +188,7 @@ class ApplicationController extends PDFAbstract
                             }
                             // addressee
                             $curAddressee = $this->getAddressee($measureTimePoint[self::groupsNode]);
-//                            if ($anyPre || $isPost || ($tempArrayParticipants[self::post][self::chosen] ?? '')==='0') {
-                                [$allAddressees[$curAddressee], $allTrue[$curAddressee]] = [true, true];
-//                            }
+                            [$allAddressees[$curAddressee], $allTrue[$curAddressee]] = [true, true];
                             if ($curAddressee!==self::addresseeParticipants) {
                                 $isAnyWards = true;
                             }
@@ -278,34 +274,34 @@ class ApplicationController extends PDFAbstract
             // application type with review process and eventually guidelines
             $applicationType = $pageArray[self::applicationType][self::chosen];
             $isExtendedResubmission = in_array($applicationType, self::appExtendedResubmission);
-            $tempVal = $applicationType!=='' ? $this->translateStringPDF($pagePrefix.self::applicationType.'.'.$applicationType).' - ' : '';
+            $applicationPrefix = $pagePrefix.self::applicationType;
+            $tempVal = $applicationType!=='' ? $this->translateStringPDF($applicationPrefix.'.'.$applicationType).' - ' : '';
             $applicationProcess = $pageArray[self::applicationProcessNode][self::chosen];
             $tempVal .= $applicationProcess!=='' ? $this->translateString($pagePrefix.self::applicationProcessNode.'.types.'.$applicationProcess) : '';
-            $this->addBox($pagePrefix.self::applicationType,$tempVal,$pageArray[self::guidelinesNode][self::descriptionNode] ?? '',paragraph: self::applicationType,fragment: self::applicationType);
+            $this->addBox($applicationPrefix,$tempVal,$pageArray[self::guidelinesNode][self::descriptionNode] ?? '',paragraph: self::applicationType,fragment: self::applicationType);
             // project title
             $this->addBox($pagePrefix.self::projectTitle, $pageArray[self::projectTitle].(($pageArray[self::projectTitleParticipation][self::chosen] ?? '')===self::projectTitleDifferent ? "\n\n".$this->translateStringPDF($pagePrefix.self::projectTitle) : ''),fragment: self::projectTitle);
-            // applicant and supervisor
-            $applicantSupervisor = [];
-            $translationPrefix = $pagePrefix.self::applicant.'.';
+            // applicant
             $applicantWidth = 0; // width of the divs containing the labels
             $tempVal = ($pageArray[self::qualification] ?? '')==='0';
-            $isSupervisor = array_key_exists(self::supervisor, $pageArray);
-            foreach (array_merge([self::applicant], $isSupervisor ? [self::supervisor] : []) as $type) {
-                $tempArray = $pageArray[$type];
-                $isApplicant = $type===self::applicant;
-                $infos = [];
-                foreach (self::applicantContributorsInfosTypes as $info) {
-                    $key = $this->translateString('multiple.infos.'.$info.($info===self::institutionInfo ? 'Applicant' : ''));
-                    $applicantWidth = max($applicantWidth, ceil(mb_strwidth($key) / 1.5));
-                    $curInfo = $tempArray[$info];
-                    $infos[$key] = array_key_exists($curInfo, self::positionsTypes) ? $this->translateString(self::positionsTypes[$curInfo]).($isApplicant && $tempVal && in_array($curInfo, [self::positionsStudent, self::positionsPhd]) ? $this->translateStringPDF($pagePrefix.self::qualification) : '') : $curInfo;
+            $tempArray = $pageArray[self::applicant];
+            $isStudent = $tempArray[self::position]===self::positionsStudent;
+            $multipleInfosPrefix = 'multiple.infos.';
+            $infos = [];
+            foreach (self::applicantContributorsInfosTypes as $info) {
+                $key = $this->translateString($multipleInfosPrefix.$info);
+                $applicantWidth = max($applicantWidth, ceil(mb_strwidth($key) / 1.5));
+                $curInfo = $tempArray[$info];
+                if (in_array($info,self::institutionPosition)) {
+                    $isInstitution = $info===self::institutionInfo;
+                    $types = $isInstitution ? self::institutionTypes : self::positionsTypes;
+                    $curInfo = array_key_exists($curInfo,$types) ? $this->translateString($types[$curInfo],$committeeParam).(!$isInstitution ? ($tempVal && in_array($curInfo, [self::positionsStudent, self::positionsPhd]) ? $this->translateStringPDF($pagePrefix.self::qualification) : '') : '') : $curInfo;
                 }
-                $name = $this->translateString($translationPrefix.$type);
-                if ($isApplicant) {
-                    $name = $this->addHeadingLink($name,fragment: self::applicant);
+                if ($info!==self::phoneNode || !($isStudent && $curInfo==='')) { // phone for student is optional
+                    $infos[$key] = $curInfo;
                 }
-                $applicantSupervisor[$type] = [self::nameNode => $name, self::infosNode => $infos];
             }
+            $applicantInfos = [self::nameNode => $this->addHeadingLink($this->translateString('boxHeadings.'.self::coreDataNode.'.'.self::applicant),fragment: self::applicant), self::infosNode => $infos];
             // project dates
             $tempPrefix = $pagePrefix.'projectDates.';
             $projectStart = $pageArray[self::projectStart];
@@ -399,12 +395,13 @@ class ApplicationController extends PDFAbstract
             self::$linkedPage = self::contributorsSessionName;
             $contributorsInfos = '';
             $nameTasks = [];
-            $contributorsHeading = $this->addHeadingLink('boxHeadings.contributorsTasks');
-            $firstInfoIndex = $isSupervisor ? 1 : 0;
             $positionKeys = array_keys(self::positionsTypes);
             foreach ($this->getContributors($session) as $index => $contributor) {
-                if ($index>$firstInfoIndex) { // applicant and supervisor infos are already in the previous box
+                if ($index>0) { // applicant and supervisor infos are already in the previous box
                     $curInfos = $contributor[self::infosNode];
+                    if ($curInfos[self::institutionInfo]===self::institutionSame) {
+                        $curInfos[self::institutionInfo] = $this->translateString($multipleInfosPrefix.'institutionTypes.'.self::institutionSame,$committeeParam);
+                    }
                     $curPosition = $curInfos[self::position];
                     if (in_array($curPosition, $positionKeys)) {
                         $curInfos[self::position] = $this->translateString('multiple.position.'.$curPosition);
@@ -948,12 +945,12 @@ class ApplicationController extends PDFAbstract
             $renderParameters = array_merge($committeeParam,
                 ['heading' => $this->translateStringPDF('heading', $committeeParam),
                     'singleDocsHint' => $this->getSingleDocsHint($request,'application'),
-                    'applicantInfos' => $applicantSupervisor,
+                    'applicantInfos' => $applicantInfos,
                     'applicantWidth' => $applicantWidth,
                     'contributorsInfos' => $contributorsInfos,
                     'contributorsTasks' => $nameTasks,
-                    'contributorsHeading' => $contributorsHeading,
-                    'tasks' => array_keys(self::tasksTypes),
+                    'contributorsHeading' => $this->addHeadingLink('boxHeadings.contributorsTasks'),
+                    'tasks' => array_diff(self::tasksNodes,!in_array($committeeParam[self::committeeType],self::committeeSupervisor) ? [self::taskSupervision] : []),
                     'levelNames' => $names,
                     'levelHeading' => $levelHeading,
                     'boxContent' => $this->content,

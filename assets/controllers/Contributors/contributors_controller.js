@@ -3,19 +3,18 @@ import {sanitizeString, setElementVisibility} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['nameError','professorshipIcon','eMailError','position','positionOther','institutionLabel','phoneLabel','phoneError','taskOther','taskOtherDescription','taskHint','modal','modalLabel','modalSubmit','modalFooter']
+    static targets = ['nameError','institutionIcon','professorshipIcon','eMailError','institution','institutionOther','position','positionOther','phoneLabel','phoneError','supervisionTask','supervisionIcon','otherTask','taskOtherDescription','taskHint','modal','modalLabel','modalSubmit','modalFooter']
 
     static values = {
         committeeType: String,
         contributors: Array, // all contributors
         title: Array,
+        institutions: Array,
         positions: Object,
         committeeStudent: Array, // committees where student is allowed position
-        hasSupervisor: Boolean, // true if second contributor exists and has task 'supervision'
         isQualification: Boolean, // true if qualification question was answered with yes
         noChoice: String,
         infosNames: Array,
-        institutionLabel: Array, // 0: applicant/supervisor, 1: remaining contributors
         phoneLabel: Array, // 0: mandatory, 1: optional
         tasksNames: Array,
         tasksHints: Array // 0: no position selected, 1: position selected
@@ -25,8 +24,10 @@ export default class extends Controller {
         this.modalType = ''; // add, edit, or remove -> used for setting the value of the modal submit button which is used for identifying the type in the php-controller
         this.studentChoiceValue = 'student'; // value of the option-tag
         this.phdChoiceValue = 'phd'; // value of the option-tag
+        this.institutionPosition = ['institution','position'];
         this.positionOtherValue = 'positionOther'; // value of the option-tag
-        this.isStudentApplicantValue = this.contributorsValue[0]['infos']['position']===this.studentChoiceValue; // true if position of applicant is student
+        this.applicantPosition = this.contributorsValue[0]['infos']['position'];
+        this.isStudentApplicantValue = this.applicantPosition===this.studentChoiceValue; // true if position of applicant is student
         // fill the modal inputs if a contributor gets edited
         this.modalTarget.addEventListener('show.bs.modal', event => {
             let id = event.relatedTarget.getAttribute('data-bs-id');
@@ -34,7 +35,6 @@ export default class extends Controller {
             this.setSubmitDummy();
             this.idValue = parseInt(id.substring(4)); // id of the contributor that is edited
             let isApplicant = this.idValue===0;
-            let isSupervisor = this.idValue===1 && this.hasSupervisorValue;
             let isAdd = id==='add';
             let noChoice = {'': this.noChoiceValue};
             let allowedPositions = Object.assign({},noChoice,this.positionsValue);
@@ -43,11 +43,8 @@ export default class extends Controller {
                 allowedPositions[this.phdChoiceValue] = this.positionsValue[this.phdChoiceValue];
                 allowedPositions[this.studentChoiceValue] = this.positionsValue[this.studentChoiceValue];
             } else {
-                if (isSupervisor || isApplicant && !this.committeeStudentValue.includes(this.committeeTypeValue)) { // applicant and supervisor must not be student
+                if (isApplicant && !this.committeeStudentValue.includes(this.committeeTypeValue)) { // applicant must not be student
                     delete allowedPositions[this.studentChoiceValue];
-                }
-                if (isSupervisor && this.contributorsValue[0]['infos']['position']===this.phdChoiceValue) { // if applicant is PhD, supervisor must not be PhD
-                    delete allowedPositions[this.phdChoiceValue];
                 }
             }
             // remove all positions and recreate them
@@ -64,27 +61,35 @@ export default class extends Controller {
             if (!isAdd) {
                 let contributor = this.contributorsValue[this.idValue];
                 let infos = contributor['infos'];
-                let positionOtherTextName = this.positionOtherTarget.id;
                 let positionsKeys = Object.keys(this.positionsValue);
                 for (let curInfo of this.infosNamesValue) {
                     let curValue = infos[curInfo];
-                    if (curInfo==='position' && curValue!=='' && (curValue===positionOtherTextName || !positionsKeys.includes(curValue))) { // 'other position'
-                        this.positionTarget.value = this.positionOtherValue;
-                        this.positionOtherTarget.value = curValue;
+                    let isInstitution = curInfo==='institution';
+                    if (this.institutionPosition.includes(curInfo) && curValue!=='' && !((isInstitution ? this.institutionsValue : positionsKeys).includes(curValue))) { // 'other' institution or position
+                        if (isInstitution) {
+                            this.institutionTarget.value = 'institutionOther';
+                            this.institutionOtherTarget.value = curValue;
+                        } else {
+                            this.positionTarget.value = this.positionOtherValue;
+                            this.positionOtherTarget.value = curValue;
+                        }
                     } else if (curValue!==undefined) { // phone may be optional
                         document.getElementById(curInfo).value = curValue;
                     }
                 }
+                this.setInstitution();
                 let tasks = contributor['tasks'];
                 for (let task of this.tasksNamesValue) {
                     document.getElementById(task).checked = tasks[task]!==undefined;
                 }
-                this.taskOtherDescriptionTarget.value = this.taskOtherTarget.checked ? tasks['other'] : '';
+                this.taskOtherDescriptionTarget.value = this.otherTaskTarget.checked ? tasks['other'] : '';
             } else {
                 this.idValue = this.contributorsValue.length;
             }
+            if (this.hasSupervisionIconTarget) {
+                setElementVisibility(this.supervisionIconTarget,this.idValue>0);
+            }
             this.modalLabelTarget.textContent = this.titleValue[isAdd ? 0 : 1];
-            this.institutionLabelTarget.firstChild.textContent = '*'+this.institutionLabelValue[isApplicant || isSupervisor ? 0 : 1]+':';
             this.setTasks();
             this.setSubmitButton();
         });
@@ -93,7 +98,7 @@ export default class extends Controller {
         });
         // sanitize inputs in modal
         for (let info of this.infosNamesValue) {
-            (info!=='position' ? document.getElementById(info) : this.positionOtherTarget).addEventListener('input', event => {
+            (!this.institutionPosition.includes(info) ? document.getElementById(info) : (info==='institution' ? this.institutionOtherTarget : this.positionOtherTarget)).addEventListener('input', event => {
                 let target = event.target;
                 target.value = sanitizeString(target.value);
             });
@@ -101,7 +106,8 @@ export default class extends Controller {
         this.taskOtherDescriptionTarget.addEventListener('input', event => {
             let target = event.target;
             target.value = sanitizeString(target.value);
-        })
+        });
+        this.setInstitution();
     }
 
     // methods that are called from the template
@@ -122,26 +128,37 @@ export default class extends Controller {
 
     // methods that are called from the template and from within this class
 
+    /** Sets the visibility of the institution other text field and the icon. */
+    setInstitution() {
+        setElementVisibility(this.institutionOtherTarget,this.institutionTarget.value==='institutionOther');
+        setElementVisibility(this.institutionIconTarget,this.idValue===0 && this.institutionTarget.value==='institutionOther');
+        this.setSubmitButton();
+    }
+
     /** Enables or disables the tasks and sets the visibility of the 'other' text fields. Additionally, sets the label for the phone text field. */
     setTasks() {
         let position = this.positionTarget.value;
         let disabled = position==='';
         let isStudent = position===this.studentChoiceValue;
-        this.isStudentApplicantValue = this.idValue===0 && isStudent;
-        let isPhoneMandatory = this.idValue===0 && !this.isStudentApplicantValue || this.idValue===1 && this.hasSupervisorValue;
-        this.phoneLabelTarget.textContent = (isPhoneMandatory ? '*' : '')+this.phoneLabelValue[isPhoneMandatory ? 0 : 1]+':'; // needs to be set here because method is also invoked if position changed and phone for student is optional
+        let isPhd = position===this.phdChoiceValue;
+        let isApplicantPhdEUB = this.applicantPosition===this.phdChoiceValue && this.committeeTypeValue==='EUB';
+        let isSupervisorNeeded = this.applicantPosition===this.studentChoiceValue || isApplicantPhdEUB;
+        let isApplicant = this.idValue===0;
+        this.isStudentApplicantValue = isApplicant && isStudent;
+        let noStudentTasks = ['leader','data','supervision'];
         for (let task of this.tasksNamesValue) {
             let widget = document.getElementById(task);
-            let noStudentTask = isStudent && (task==='leader' || task==='data');
-            widget.disabled = noStudentTask || disabled;
-            widget.checked = noStudentTask || disabled ? false : widget.checked;
+            let noAvailableTask = isStudent && noStudentTasks.includes(task) && !(this.isQualificationValue && task==='data') || task==='supervision' && (isApplicant || !isSupervisorNeeded || isApplicantPhdEUB && isPhd);
+            widget.disabled = noAvailableTask || disabled;
+            widget.checked = noAvailableTask || disabled ? false : widget.checked;
         }
-        this.taskOtherDescriptionTarget.disabled = disabled;
-        setElementVisibility(this.taskOtherDescriptionTarget,this.taskOtherTarget.checked,1)
+        let isPhoneMandatory = this.idValue===0 && !this.isStudentApplicantValue || this.getSupervisionTask();
+        this.phoneLabelTarget.textContent = (isPhoneMandatory ? '*' : '')+this.phoneLabelValue[isPhoneMandatory ? 0 : 1]+':'; // needs to be set here because method is also invoked if position changed and phone for student is optional
+        setElementVisibility(this.taskOtherDescriptionTarget,this.otherTaskTarget.checked,1)
         this.taskHintTarget.innerHTML = this.tasksHintsValue[disabled ? 0 : 1];
         this.taskHintTarget.style.fontStyle = disabled ? 'italic' : 'normal';
         this.taskHintTarget.style.fontWeight = disabled ? 'normal' : 'bold';
-        setElementVisibility(this.professorshipIconTarget,isStudent || position==='phd',1);
+        setElementVisibility(this.professorshipIconTarget,isStudent || isPhd,1);
         setElementVisibility(this.positionOtherTarget,position===this.positionOtherValue,1);
         this.setSubmitButton();
     }
@@ -150,15 +167,15 @@ export default class extends Controller {
     setSubmitButton() {
         let disabled = false;
         let isApplicant = this.idValue===0;
-        let isSecondContributor = this.idValue===1
         for (let info of this.infosNamesValue) {
             let tempVal = false;
             let value = document.getElementById(info).value.trim();
+            let hasValue = value!=='';
             let isPhone = info==='phone';
-            disabled |= (isPhone && (this.idValue>1 || isApplicant && this.isStudentApplicantValue || isSecondContributor && !this.hasSupervisorValue)) ? false : value===''; // phone may only be mandatory for first or second contributor
+            disabled |= (isPhone && (isApplicant && this.isStudentApplicantValue || !this.getSupervisionTask())) ? false : !hasValue; // phone is mandatory for first contributor if not student and for contributors with task 'supervision'
             if (info==='name') {
                 tempVal = value.split(' ').length===1;
-                setElementVisibility(this.nameErrorTarget,value!=='' && tempVal,1);
+                setElementVisibility(this.nameErrorTarget,hasValue && tempVal,1);
             } else if (info==='eMail') {
                 // local: start with letter, then any number of any character except §ß`"()\€[]. domain: start with letter, then any number of letters and digits, then a dot, than only letters, but at least two
                 tempVal = !this.getInputValidityEmpty(value,/^[a-zA-Z]+[a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]*@[a-zA-Z]+[a-zA-Z0-9-.]*[.][a-zA-Z]{2,}$/) || value.includes('.@') || value.includes(',');
@@ -166,23 +183,30 @@ export default class extends Controller {
             } else if (isPhone) {
                 tempVal = !this.getInputValidityEmpty(value,/^\+?([0-9][\s\/-]?)+[0-9]+$/); // optionally starting with a '+', then at least two numbers. After each number (except the last), optionally a separator space, '/', or '-'
                 setElementVisibility(this.phoneErrorTarget,tempVal,1);
-            } else if (info==='position' && value===this.positionOtherValue) {
-                tempVal = this.positionOtherTarget.value.trim()==='';
+            } else if (this.institutionPosition.includes(info) && value===(info+'Other')) {
+                tempVal = (info==='institution' ? this.institutionOtherTarget : this.positionOtherTarget).value.trim()==='';
             }
             disabled |= tempVal;
         }
-        let curTask = 0;
-        let hasTask = false;
-        while (!hasTask && curTask<this.tasksNamesValue.length) {
-            hasTask = document.getElementById(this.tasksNamesValue[curTask]).checked;
-            ++curTask;
+        let numTasks = 0;
+        for (let curTask of this.tasksNamesValue) {
+            numTasks += document.getElementById(curTask).checked ? 1 : 0;
         }
-        disabled = disabled || !(hasTask && (!this.taskOtherTarget.checked || this.taskOtherDescriptionTarget.value.trim()!==''));
+        disabled = disabled || numTasks===0 || // no task selected
+            this.otherTaskTarget.checked && this.taskOtherDescriptionTarget.value.trim()==='' || // 'other' task description is missing
+            numTasks===1 && !this.isQualificationValue && this.getSupervisionTask(); // only 'supervision' is selected
         this.modalSubmitTarget.disabled = disabled;
         setElementVisibility(this.modalFooterTarget,disabled);
     }
 
     // methods that are called from within this class
+
+    /** Returns whether the task 'supervision' is checked.
+     * @returns true if the task is checked, false otherwise
+     */
+    getSupervisionTask() {
+        return this.hasSupervisionTaskTarget && this.supervisionTaskTarget.checked;
+    }
 
     /** Returns if a string is either empty or matches a regular expression.
      * @param input string to be tested

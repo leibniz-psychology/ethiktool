@@ -51,6 +51,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     appType: 'Type of proposal'
     appTypeSub: 'The vote shall refer to an ethics assessment according to the following guidelines:'
     projectTitle: 'Title of the research project'
+    applicant: 'Applicant'
     projectDates: 'Planned duration of the project'
     funding: 'Funding source(s)'
     conflict: 'Is there a conflict of interest for any of the project contributors due to personal interests or due to interests of third parties?'
@@ -332,9 +333,10 @@ contributors:
   tasks:
     leader: 'PI/project lead'
     research: 'scientific contribution'
-    experiment: 'data collection'
+    experiment: 'data coll.'
     contact: 'contact person'
-    data: 'data responsibility'
+    data: 'data resp.'
+    supervision: 'super-</br>vision'
     other: 'other role'
 
 projectdetails:
@@ -426,14 +428,14 @@ projectdetails:
                                                                       other      {}} The data privacy statement can be found on the following page(s) (if applicable, including the consent form).}
         anonymous     {According to the {savePDF, select,
                                           true {judgment of the responsible data protection authorities}
-                                          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">judgment of the responsible data protection authorities</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
+                                          other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">judgment of the responsible data protection authorities</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
         separateLater {According to the {savePDF, select,
                                             true {selections made in the Ethiktool}
-                                            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the data processing aspects will be sorted out in detail at a later point in time. Therefore, the Ethiktool did not generate a data privacy statement{levelNamesString}.}
+                                            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the data processing aspects will be sorted out in detail at a later point in time. Therefore, the Ethiktool did not generate a data privacy statement{levelNamesString}.}
         other         {{personal, select,
                           anonymous {According to the {savePDF, select,
                                                         true  {selections made in the Ethiktool}
-                                                        other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
+                                                        other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param="{routeIDs}">selections made in the Ethiktool</a>}}, the study includes only anonymous data. Therefore, a data privacy statement {levelNamesString} is not necessary.}
                           other     {Due to the following characteristics of data processing (according to the selections made in the Ethiktool), the data privacy statement {levelNamesString} cannot be generated with the Ethiktool:
                             {createOther} {addOwn, select,
                                             true  {Therefore, the data privacy statement was generated separately (i.e., outside of the Ethiktool). {verification, select,
@@ -694,19 +696,19 @@ participation:
     informationMissing: >-
       entries on {savePDF, select,
                     true  {information}
-                    other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">information</a>}} are missing
+                    other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">information</a>}} are missing
     information: >- # also used for {informationSentence} in the following 'funding' and 'projectStart' keys
       the {addressee, select,
             children {legal guardians}
             wards    {legal guardians}
             other    {participants}} are not {savePDF, select,
                                                 true  {informed in advance}
-                                                other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">informed in advance</a>}} that {addressee, select,
+                                                other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">informed in advance</a>}} that {addressee, select,
                                                                                     children {their children}
                                                                                     wards    {the individuals under their supervision}
                                                                                     other    {they}} are participating in a study (see field 21 of the application form), nor are they {savePDF, select,
                         true  {informed after-the-fact}
-                        other {<a href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preNo" data-base-route-i-ds-param="{routeIDs}">informed after-the-fact</a>}} that {addressee, select,
+                        other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preNo" data-base-route-i-ds-param="{routeIDs}">informed after-the-fact</a>}} that {addressee, select,
             children {their children}
             wards    {the supervised individuals}
             other    {they}} participated in a study (see field 25 of the application form)
@@ -734,10 +736,10 @@ participation:
       {origin, select,
         existing { ethics review is requested for {savePDF, select,
                                       true  {re-using available data}
-                                      other {<a href="dataSource" data-action="base#setDummySubmit" data-base-url-param="app_dataSource#origin" data-base-route-i-ds-param="{routeIDs}">re-using available data</a>}}.}
+                                      other {<a class="linkInternal" href="dataSource" data-action="base#setDummySubmit" data-base-url-param="app_dataSource#origin" data-base-route-i-ds-param="{routeIDs}">re-using available data</a>}}.}
         other    { entries on the {savePDF, select,
                                       true  {origin of the data}
-                                      other {<a href="dataSource" data-action="base#setDummySubmit" data-base-url-param="app_dataSource#origin" data-base-route-i-ds-param="{routeIDs}">origin of the data</a>}} are missing.}}
+                                      other {<a class="linkInternal" href="dataSource" data-action="base#setDummySubmit" data-base-url-param="app_dataSource#origin" data-base-route-i-ds-param="{routeIDs}">origin of the data</a>}} are missing.}}
     end: >-
       . For the same reason, no data privacy statement was generated. {isInformation, select,
               true  {The following information, which otherwise would have been transferred to the participant documents, needs to be taken into account for review:}
@@ -748,17 +750,36 @@ participation:
       post  {Study information sheet}
       other {Study information sheet}}
   intro:
-    leader:
-      title: '<b>Project lead:</b>'
-      text: 'The overall responsibility for this study lies with '
     contributors:
-      title: 'The following persons are also involved in the study: {contributors}.'
+      leader: >-
+        The {savePDF, select,
+              true  {overall responsibility}
+              other {<a class="linkInternal" href="{isMultiple, select,
+                                 true  {contributor" data-action="base#setDummySubmit" data-base-url-param="app_contributor#leader" data-base-route-i-ds-param="{routeIDs}">}
+                                 other {contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">}}overall responsibility</a>}} for this study lies with the following persons:
+      qualification: >-
+        This study is carried out within the scope of a {savePDF, select,
+              true  {qualification work by {applicant} and is supervised by {contributors}.}
+              other {<a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#qualification">qualification work</a> by {applicant} and is {isMultiple, select,
+                  true  {<a class="linkInternal" href="contributor" data-action="base#setDummySubmit" data-base-url-param="app_contributor#supervision" data-base-route-i-ds-param="{routeIDs}">}
+                  other {<a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">}}supervised</a> by {contributors}.}}
+      further: >-
+        The {savePDF, select,
+              true  {following persons}
+              other {<a class="linkInternal" href="{isMultiple, select,
+                                 true  {contributor" data-action="base#setDummySubmit" data-base-url-param="app_contributor" data-base-route-i-ds-param="{routeIDs}">}
+                                 other {contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">}}following persons</a>}} are also involved in the study:
       tasks:
+        leader: 'project lead'
         research: 'scientific contribution'
         experiment: 'data collection'
         data: 'data responsibility'
+        supervision: 'supervision'
     funding:
-      title: 'The study is funded by {funding}.'
+      title: >-
+        The study is {savePDF, select,
+                        true  {funded}
+                        other {<a class="linkInternal" href=coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#funding">funded</a>}} by {funding}.
       types: # used in {funding} above
         fundingBudget: 'university/in-house budget'
         fundingResearch: 'third-party funding from a public or private research foundation'
@@ -767,7 +788,7 @@ participation:
   location: >-
     {savePDF, select,
       true  {}
-      other {<a href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">}}The study {information, select,
+      other {<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">}}The study {information, select,
           post  {took place}
           other {takes place}}{savePDF, select,
                                 true  {}
@@ -1032,7 +1053,7 @@ participation:
                                                                         children {your child's name. }
                                                                         wards    {the name of the individual under your supervision. }
                                                                         other    {your name. }}}}}
-                                                  other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#markingDiv{isSecond, select,
+                                                  other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#markingDiv{isSecond, select,
                                                                    true  {Second}
                                                                    other {}}" data-base-route-i-ds-param="{routeIDs}">{type, select,
                                                             consecutive {a consecutive number</a>. This number is only used for labelling datasets; it does not enable the identification of individual persons.}
@@ -1081,41 +1102,41 @@ participation:
         anonymous: >-
           {savePDF, select,
             true  {Part of the research data could, however, allow for direct identification.}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">Part of the research data could, however, allow for direct identification.</a>}} Due to being linked with each other, all collected research data are thus person-related.
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">Part of the research data could, however, allow for direct identification.</a>}} Due to being linked with each other, all collected research data are thus person-related.
         codePersonal: >-
           {codePersonal} {savePDF, select,
                             true  {Moreover, part of the research data could allow for direct identification.}
-                            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">Moreover, part of the research data could allow for direct identification.</a>}}
+                            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">Moreover, part of the research data could allow for direct identification.</a>}}
       personalMaybe:
         anonymous: >-
           {savePDF, select,
             true  {However, although the research data themselves are not directly person-related, it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">However, although the research data themselves are not directly person-related, it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.</a>}} Due to being linked with each other, all collected research data are thus person-related.
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">However, although the research data themselves are not directly person-related, it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.</a>}} Due to being linked with each other, all collected research data are thus person-related.
         codePersonal: >-
           {codePersonal} {savePDF, select,
                             true  {Moreover, though the research data themselves are not directly person-related, it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.}
-                            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">Moreover, though the research data themselves are not directly person-related, it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.</a>}}
+                            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">Moreover, though the research data themselves are not directly person-related, it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.</a>}}
         no: >-
           {savePDF, select,
             true  {The research data themselves are not directly person-related, but it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">The research data themselves are not directly person-related, but it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.</a>}}
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">The research data themselves are not directly person-related, but it cannot be entirely ruled out that the combination of parts of the research data with additional knowledge might allow for identifying individual persons.</a>}}
       personalNo:
         consecutive: >-
           {savePDF, select,
             true  {For the project contributors, the research data are anonymous.}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For the project contributors, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For the project contributors, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.
         external: >-
           {savePDF, select,
             true  {For use within this study, the research data are anonymous.}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For use within this study, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For use within this study, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
         internal: >-
           {savePDF, select,
             true  {For the project contributors, the research data are anonymous.}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For the project contributors, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For the project contributors, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
         no: >-
           {savePDF, select,
             true  {}
-            other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">}}{isPurposeFurther, select,
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">}}{isPurposeFurther, select,
                         true  {For use within this study, the research data are anonymous.}
                         other {In that process, {addressee, select,
                                                   children {your child and}
@@ -1144,7 +1165,7 @@ participation:
                           true  {{type, select,
                                     external {a code assigned outside of the project, namely }
                                     other    {an internal code in the project.}}}
-                          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#codeCompensation" data-base-route-i-ds-param="{routeIDs}">{type, select,
+                          other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#codeCompensation" data-base-route-i-ds-param="{routeIDs}">{type, select,
                                                                       external {a code assigned outside of the project</a>, namely }
                                                                       other    {an internal code in the project.</a> }}}}
       external:
@@ -1321,52 +1342,52 @@ dataPrivacy:
       dataPersonal: >-
         {savePDF, select,
           true  { answering the research question}
-          other { <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">answering the research question</a>}}
+          other { <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">answering the research question</a>}}
       compensation: >-
         {savePDF, select,
           true  { issuing the compensation}
-          other { <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">issuing the compensation</a>}}
+          other { <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">issuing the compensation</a>}}
       relatable: >-
         {savePDF, select,
           true  { individual traceability}
-          other { <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">individual traceability</a>}}
+          other { <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">individual traceability</a>}}
       contact: >-
         {savePDF, select,
           true  { contacting for data collection}
-          other { <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">contacting for data collection</a>}}
+          other { <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">contacting for data collection</a>}}
       contactResult: >-
         {savePDF, select,
           true  { contacting for result transmission}
-          other { <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">contacting for result transmission</a>}}
+          other { <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">contacting for result transmission</a>}}
       technical: >-
         {savePDF, select,
           true  { technical support/quality assurance}
-          other { <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">technical support/quality assurance</a>}}
+          other { <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{fragment}" data-base-route-i-ds-param="{routeIDs}">technical support/quality assurance</a>}}
     purposeTypesGen:
       compensation: >-
         {savePDF, select,
           true  {issuing the compensation}
-          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#compensationmarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">issuing the compensation</a>}}
+          other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#compensationmarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">issuing the compensation</a>}}
       relatable: >-
         {savePDF, select,
           true  {individual traceability}
-          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#relatablemarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">individual traceability</a>}}
+          other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#relatablemarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">individual traceability</a>}}
       contact: >-
         {savePDF, select,
           true  {contacting for data collection}
-          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#contactmarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">contacting for data collection</a>}}
+          other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#contactmarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">contacting for data collection</a>}}
       contactResult: >-
         {savePDF, select,
           true  {contacting for result transmission}
-          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#contactResultmarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">contacting for result transmission</a>}}
+          other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#contactResultmarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">contacting for result transmission</a>}}
       technical: >-
         {savePDF, select,
           true  {technical support/quality assurance}
-          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#technicalmarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">technical support/quality assurance</a>}}
+          other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#technicalmarkingRemoveDiv" data-base-route-i-ds-param="{routeIDs}">technical support/quality assurance</a>}}
     list: >-
       {savePDF, select,
         true  { The allocation list contains the following data: }
-        other { <a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#list" data-base-route-i-ds-param="{routeIDs}">The allocation list contains the following data:</a> }}
+        other { <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#list" data-base-route-i-ds-param="{routeIDs}">The allocation list contains the following data:</a> }}
     end:
       start: 'These personal data are collected for the purposes of the processing described herein and used within the study {committeeLocationGen} specified above. '
       startNoUse: 'These personal data are collected exclusively for the purposes of the processing described herein and only used within the study {committeeLocationGen} specified above.'
@@ -1388,13 +1409,13 @@ dataPrivacy:
       known: >-
         We employ {savePDF, select,
                     true  {external data processors}
-                    other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#orderProcessingDescription" data-base-route-i-ds-param="{routeIDs}">external data processors</a>}} that process personal data for {purpose} on our behalf. With these data processors, we have made contracts according to article 28 EU-GDPR to ensure data protection.
+                    other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#orderProcessingDescription" data-base-route-i-ds-param="{routeIDs}">external data processors</a>}} that process personal data for {purpose} on our behalf. With these data processors, we have made contracts according to article 28 EU-GDPR to ensure data protection.
       unknown: >-
         {isKnown, select,
           true  {Beyond that, access}
           other {Access}} to personal data for {purpose} is granted to {savePDF, select,
                            true  {external data processors}
-                           other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#orderProcessingDescription" data-base-route-i-ds-param="{routeIDs}">external data processors</a>}}. This will {isKnown, select,
+                           other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#orderProcessingDescription" data-base-route-i-ds-param="{routeIDs}">external data processors</a>}}. This will {isKnown, select,
                                           true  {also}
                                           other {}} be based on a contract according to article 28 EU-GDPR. These data processors are obliged to treat personal data confidentially and process them only according to our instructions.
     # added empty lines to have same line numbers in all translation files
@@ -1402,17 +1423,17 @@ dataPrivacy:
     transferOutside: >-
       We generally do not transmit personal data to third parties {savePDF, select,
               true  {outside of the European Economic Area (EEA)}
-              other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">outside of the European Economic Area (EEA)</a>}}.
+              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">outside of the European Economic Area (EEA)</a>}}.
   anonymization:
     title: 'Data anonymization and storage/deletion'
     dataResearchNo: >-
       {savePDF, select,
         true  {The research data are not anonymized}
-        other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#anonymization" data-base-route-i-ds-param="{routeIDs}">The research data are not anonymized</a>}}.
+        other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#anonymization" data-base-route-i-ds-param="{routeIDs}">The research data are not anonymized</a>}}.
   storage: >-
     {savePDF, select,
       true  {The original data}
-      other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#storage" data-base-route-i-ds-param="{routeIDs}">The original data</a>}} are deleted immediately after applying the anonymization technique, thus in all probability
+      other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#storage" data-base-route-i-ds-param="{routeIDs}">The original data</a>}} are deleted immediately after applying the anonymization technique, thus in all probability
   personalKeep: # wie in messages, aber bei "start" ohne Satzende
     types:
       documentation: 'for quality assurance/documentation'
@@ -1433,52 +1454,52 @@ dataPrivacy:
       class0: >-
         made {savePDF, select,
                 true  {publicly available}
-                other {<a href="dataReuse" data-action="base#setDummySubmit" data-base-url-param="app_dataReuse#dataReuseHowDiv" data-base-route-i-ds-param="{routeIDs}">publicly available</a>}}.
+                other {<a class="linkInternal" href="dataReuse" data-action="base#setDummySubmit" data-base-url-param="app_dataReuse#dataReuseHowDiv" data-base-route-i-ds-param="{routeIDs}">publicly available</a>}}.
       class1: >-
         made available to others under {savePDF, select,
                                           true  {certain usage conditions}
-                                          other {<a href="dataReuse" data-action="base#setDummySubmit" data-base-url-param="app_dataReuse#dataReuseHowDiv" data-base-route-i-ds-param="{routeIDs}">certain usage conditions</a>}}.
+                                          other {<a class="linkInternal" href="dataReuse" data-action="base#setDummySubmit" data-base-url-param="app_dataReuse#dataReuseHowDiv" data-base-route-i-ds-param="{routeIDs}">certain usage conditions</a>}}.
       class2: >-
         made available to others under {savePDF, select,
                                           true  {individualized usage contracts}
-                                          other {<a href="dataReuse" data-action="base#setDummySubmit" data-base-url-param="app_dataReuse#dataReuseHowDiv" data-base-route-i-ds-param="{routeIDs}">individualized usage contracts</a>}}.
+                                          other {<a class="linkInternal" href="dataReuse" data-action="base#setDummySubmit" data-base-url-param="app_dataReuse#dataReuseHowDiv" data-base-route-i-ds-param="{routeIDs}">individualized usage contracts</a>}}.
       class3: >-
         made available to others under strict data-protection restrictions following an {savePDF, select,
                                           true  {individual contract}
-                                          other {<a href="dataReuse" data-action="base#setDummySubmit" data-base-url-param="app_dataReuse#dataReuseHowDiv" data-base-route-i-ds-param="{routeIDs}">individual contract</a>}}.
+                                          other {<a class="linkInternal" href="dataReuse" data-action="base#setDummySubmit" data-base-url-param="app_dataReuse#dataReuseHowDiv" data-base-route-i-ds-param="{routeIDs}">individual contract</a>}}.
     end: >-
       {optional, select,
         true  {, {savePDF, select,
                     true  {if you agreed to that}
-                    other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#reusePersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">if you agreed to that</a>}}{isTeaching, select,
+                    other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#reusePersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">if you agreed to that</a>}}{isTeaching, select,
                                         true  {,}
                                         other {}}}
         other {}}
     demonstration: >-
       An exception to this is the {savePDF, select,
                                     true  {presentation of research data}
-                                    other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#demonstration" data-base-route-i-ds-param="{routeIDs}">presentation of research data</a>}} by which {addressee, select,
+                                    other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#demonstration" data-base-route-i-ds-param="{routeIDs}">presentation of research data</a>}} by which {addressee, select,
             children {your child may be recognized}
             wards    {the individual under your supervision may be recognized}
             other    {you may be recognized}} in exemplary demonstrations{optional, select,
                                                                                       true  {, {savePDF, select,
                                       true  {if you agreed to that}
-                                      other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#demonstrationPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">if you agreed to that</a>}}}
+                                      other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#demonstrationPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">if you agreed to that</a>}}}
                                                                                       other {}}.
     teaching: >-
       {isReuse, select,
         true  { and }
         other {}} shared with students in the {savePDF, select,
                                                 true  {context of teaching}
-                                                other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#teaching" data-base-route-i-ds-param="{routeIDs}">context of teaching</a>}}{optional, select,
+                                                other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#teaching" data-base-route-i-ds-param="{routeIDs}">context of teaching</a>}}{optional, select,
                                                                               true  {, {savePDF, select,
                                                   true  {if you agreed to that}
-                                                  other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#teachingPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">if you agreed to that</a>}}}
+                                                  other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#teachingPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">if you agreed to that</a>}}}
                                                                               other {}}
     dataReuseHow: >-
       The research data as {savePDF, select,
                               true  {originally}
-                              other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{hash}" data-base-route-i-ds-param="{routeIDs}">originally</a>}} collected are
+                              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{hash}" data-base-route-i-ds-param="{routeIDs}">originally</a>}} collected are
   revocation:
     title: 'Withdrawal after consent'
     text: |
@@ -1596,7 +1617,7 @@ consent:
                                                             wards    {legal guardians}
                                                             other    {participants}} {levelNamesString} because {savePDF, select,
                   true  {no consent}
-                  other {<a href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">no consent</a>}} is given (see field 28 of the application form). This is justified as follows: {description}
+                  other {<a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">no consent</a>}} is given (see field 28 of the application form). This is justified as follows: {description}
   title: >-
     {information, select,
       post  {After-the-fact declaration of consent to data processing}
@@ -1666,11 +1687,11 @@ consent:
   finding: >-
     If the investigation points towards an unusual test result ({savePDF, select,
           true  {incidental finding}
-          other {<a href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">incidental finding</a>}}), informing me about this would allow me to possibly seek further diagnostic assessment. I was informed that knowing about a disease could lead to difficulties in contracting insurance for resulting adversities. I agree to being told about an unusual test result (incidental finding).
+          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">incidental finding</a>}}), informing me about this would allow me to possibly seek further diagnostic assessment. I was informed that knowing about a disease could lead to difficulties in contracting insurance for resulting adversities. I agree to being told about an unusual test result (incidental finding).
   personalKeepConsent: >-
     I agree to the storage and use of personal research data {savePDF, select,
           true  {}
-          other {<a href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{type}PersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">}}{type, select,
+          other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{type}PersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">}}{type, select,
                                                         documentation {for quality assurance/documentation}
                                                         reuse         {for re-use in further research projects}
                                                         teaching      {for practice in teaching}
@@ -1906,8 +1927,14 @@ completeForm:
                     other {}}}
           other {}}
     levelHeadings:
-      new: ' (new data collection)'
-      existing: ' (re-use of available data)'
+      new: >-
+        {isMultiple, select,
+          true  { (new data collection)}
+          other {New data collection}}
+      existing: >-
+        {isMultiple, select,
+          true  { (re-use of available data)}
+          other {Re-use of available data}}
     headings:
       information: 'Information'
       voluntary: 'Voluntariness'

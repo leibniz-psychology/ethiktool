@@ -16,24 +16,24 @@ class ContributorController extends ControllerAbstract
     #[Route(self::routePrefix.self::contributorNode,self::contributorNode)]
     public function showContributor(Request $request): Response
     {
-        $tasks = array_fill_keys(self::tasksNodes,[]);
+        $allTasks = $this->getTasks($request);
+        $tasks = array_fill_keys($allTasks[0],[]);
         $session = $request->getSession();
         if (!$session->has(self::docName) || !$this->getMultiStudyGroupMeasure($this->getXMLfromSession($session))) {
             return $this->redirectToRoute('app_main');
         }
         foreach ($this->getContributors($session) as $index => $contributor) {
             foreach ($contributor[self::taskNode] as $curTask => $value) {
-                if ($curTask!==self::applicationNode && $curTask!==self::supervisorNode) {
-                    $name = $contributor[self::infosNode][self::nameNode];
-                    $name = $name==='' ? $this->translateString('projectdetails.pages.contributor.noName') : $name;
-                    $tasks[$curTask][$curTask.$index] = $name.($curTask===self::otherTask ? (' ('.$value.')') : '');
-                }
+                $name = $contributor[self::infosNode][self::nameNode];
+                $name = $name==='' ? $this->translateString('projectdetails.pages.contributor.noName') : $name;
+                $tasks[$curTask][$curTask.$index] = $name.($curTask===self::otherTask ? (' ('.$value.')') : '');
             }
         }
 
+
         return $this->createFormAndHandleSubmit(ContributorType::class,$request,[self::contributorNode],
             [self::taskNode => $tasks,
-             'tasksMandatory' => self::tasksMandatory],
+             'tasksMandatory' => $allTasks[1]],
             [self::dummyParams => [self::taskNode => $tasks]]);
     }
 }

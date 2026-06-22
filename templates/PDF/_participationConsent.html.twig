@@ -16,7 +16,7 @@
     <div class="noPageBreak">
         <div class="{{ justify }} bold" style="margin-bottom: 2em">{{ 'consent.confirm'|trans({'addressee': addressee, 'information': information, 'isPersonal': isPersonal}) }}</div>
         {% if optionalConsent is not same as [] %}
-            {% set classes = 'radiobuttonPDF'~(not savePDF ? ' radioSmall' : '') %}
+            {% set classes = 'radiobuttonPDF'~(not savePDF ? ' radioSmall') %}
             <div class="{{ textPreview }}" style="page-break-inside: avoid">
                 <div class="bold" style="margin-bottom: 1rem">{{ 'consent.optionalHeading'|trans }}</div>
                 {% for text in optionalConsent %}

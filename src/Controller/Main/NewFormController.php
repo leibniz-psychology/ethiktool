@@ -104,7 +104,7 @@ class NewFormController extends ControllerAbstract
                     $appDataNode->addChild(self::summary)->addChild(self::descriptionNode);
 
                     // contributors
-                    $this->addContributor($xml->addChild(self::contributorsNodeName),[self::infosNode => array_fill_keys(self::applicantContributorsInfosTypes,''), self::taskNode => [self::applicationNode => '']]);
+                    $this->addContributor($xml->addChild(self::contributorsNodeName),[self::infosNode => array_fill_keys(self::applicantContributorsInfosTypes,''), self::taskNode => []]);
 
                     // project details
                     $this->addMeasurement($xml->addChild(self::projectdetailsNodeName),self::studyNode,'');

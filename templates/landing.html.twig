@@ -4,19 +4,24 @@
 {% block title %}
     {{ tabName }}
 {% endblock %}
+{% block pageTitle %}
+    <h2 class="MetaDataGroup-Title">{{ pageHeading }}</h2>
+{% endblock %}
 {% block content %}
     {% set isProjectdetailsLanding, translationPrefix = page is same as 'projectdetails' and not isPageOverview, 'landing.'~page~'.' %}
     {% set overviewPrefix, widthMinHeight = translationPrefix~'overview.', 'min-height: 3rem; width: 2rem;' %}
+    {% set expandablePrefix = overviewPrefix~'expandable.' %}
     <div {{ stimulus_controller('landing',{
         'names': nameTrans,
         'copyNames': copyTrans,
         'remove': removeTrans
     }) }}>
-        <div class="MetaData-Title">{{ pageHeading }}</div>
         <div class="MetaData-Label mb-2">{{ (overviewPrefix~'start')|trans({'isOverview': boolToString(isProjectdetailsLanding)})|raw }}</div>
         {% if isProjectdetailsLanding %}
-            {% set isOneStudy, studyNames, heightBorder, heightShort = (allStudies|length) is same as 1, allNames['name'], 'height: 75%; border-left: 1px solid black; border-bottom: 1px solid black', 'height: 25%' %}
-            <div class="MetaData-Widget grid px-2" style="grid-template-columns: repeat(4,min-content) repeat(2,minmax(min-content,max-content)) auto">
+            {{ formRender.addExpandable(expandablePrefix~'title') }}
+            <div class="MetaData-Label borderLight mt-1 mx-4" style="display: none">{{ (expandablePrefix~'text')|trans|raw|nl2br }}</div>
+            {% set isOneStudy, studyNames, heightBorder, heightShort = allStudies|length is same as 1, allNames['name'], 'height: 75%; border-left: 1px solid black; border-bottom: 1px solid black', 'height: 25%' %}
+            <div class="MetaData-Widget grid" style="grid-template-columns: repeat(4,min-content) repeat(2,minmax(min-content,max-content)) auto">
                 {% for studyIndex, study in allStudies %}
                     {% set groups, groupsWithNames = study['group'], allNames[studyIndex] %}
                     {% set studyName, groupNames, isOneGroup = studyNames[studyIndex], groupsWithNames['name'], groups|length is same as 1 %}
@@ -25,7 +30,7 @@
                     {{ _self.addCopy('study',studyIndex,isOneStudy) }}
                     {% for groupIndex, group in groups %}
                         {% set isLastGroup, id, measures = loop.last, studyIndex~'_'~groupIndex, group['measureTimePoint'] %}
-                        {% set groupName, leftBorderGroup, isOneMeasure, measureNames = groupNames[groupIndex], '1px '~(isLastGroup? 'dotted' : 'solid')~' black', (measures|length) is same as 1, groupsWithNames[groupIndex] %}
+                        {% set groupName, leftBorderGroup, isOneMeasure, measureNames = groupNames[groupIndex], '1px '~(isLastGroup? 'dotted' : 'solid')~' black', measures|length is same as 1, groupsWithNames[groupIndex] %}
                         <div style="grid-column: 2; {{ widthMinHeight }}">
                             <div style="{{ heightBorder }}"></div>
                             <div style="{{ heightShort }}; border-left: {{ leftBorderGroup }}"></div>
@@ -54,7 +59,7 @@
                 {{ _self.addNew(content,'study',studyNames) }}
             </div>
             {{ formRender.addSymbolHints(['rename','copy','add','delete','edit'],overviewPrefix~'end.') }}
-            <div class="MetaData-Label mt-3">{{ (overviewPrefix~'hint')|trans|raw|nl2br }}</div>
+{#            <div class="MetaData-Label mt-3">{{ (overviewPrefix~'hint')|trans|raw|nl2br }}</div>#}
             {# modal for removing #}
             {{ include('components/redirectModal.html.twig',{'modalID': 'removeModal', 'prefix': translationPrefix~'removeModal.', 'link': 'app_landing', 'stim': ['base','submitForm'], 'stimNo': ['base','unsetLandingRemove'], 'modalBodyTarget': ['landing','landingRemove']}) }}
         {% else %} {# sub-pages #}

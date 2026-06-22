@@ -2,25 +2,24 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set contributorsController, hasSupervisor, numInfos, numTasks, autoRows, titlesPrefix, positionPrefix, hintsPrefix, classButtonHeight = 'Contributors--contributors', contributorsArray[1]['tasks']['supervision'] is defined, infos|length, tasks|length, 'grid-auto-rows: 2rem;', 'contributors.titles.', 'multiple.position.', 'contributors.tasks.hints.position.', 'Button_primary_act fitHeight' %}
+    {% set contributorsController, numInfos, numTasks, autoRows, titlesPrefix, hintsPrefix, classButtonHeight = 'Contributors--contributors', infos|length, tasks|length, 'grid-auto-rows: 2rem;', 'contributors.titles.', 'contributors.tasks.hints.position.', 'Button_primary_act fitHeight' %}
     <div {{ stimulus_controller(contributorsController,{
             'committeeType': committeeParams['committeeType'],
             'contributors': contributorsArray|json_encode,
             'title': [(titlesPrefix~'add')|trans,(titlesPrefix~'edit')|trans]|json_encode,
+            'institutions': institutionTypes,
             'positions': positions|json_encode,
             'committeeStudent': committeeStudent,
-            'hasSupervisor': hasSupervisor,
             'isQualification': isQualification,
             'noChoice': 'multiple.choiceTextHint'|trans,
             'infos-names': infos|json_encode,
-            'institution-label': institutionLabel|json_encode,
             'phone-label': phoneLabel|json_encode,
             'tasks-names': tasks|json_encode,
             'tasks-hints': [(hintsPrefix~'noSelection')|trans, (hintsPrefix~'selection')|trans]}) }} class="MetaData-Widget">
         <div class="minAutoGrid borderLight" style="padding: 0">
             <div class="grid align-items-center column-gap-2" style="grid-template-columns: repeat(2,min-content); {{ autoRows }}">
                 {% for index, contributor in contributorsArray %}
-                    {% if not (index is same as 0 or index is same as 1 and hasSupervisor) %}
+                    {% if index>0 %}
                         <button type="button" class="{{ classButtonHeight }}" style="grid-area: {{ loop.index+2 }} / 1" id={{"remove"~(index) }} {{ stimulus_action(contributorsController,'removeContributor','click') }}>{{ include('images/delete.svg') }}</button>
                     {% endif %}
                     <button type="button" style="grid-area: {{ loop.index+2 }} / 2" class="{{ classButtonHeight }}" data-bs-id={{ "edit"~(index) }} data-bs-toggle="modal" data-bs-target="#formModal">{{ include('images/edit.svg') }}</button>
@@ -30,25 +29,32 @@
             {% set borderStyle = style~'border-top: none; border-bottom: none;' %}
             <div class="grid ms-2 pb-2" style="grid-template-columns: repeat({{ numInfos+numTasks }},auto); {{ autoRows }} min-width: unset; overflow-x: auto; white-space: nowrap">
                 <div class="borderLight" style="grid-column: span {{ numInfos }}; {{ borderStyle }} margin-right: -0.05rem">{{ (titlesPrefix~'infos')|trans }}</div>
-                <div style="grid-column: span {{ numTasks }}; {{ borderStyle }}">{{ 'contributors.tasks.title'|trans }}</div>
-                {% for task in tasks %}
-                    {% set borderStyle = style~'border-right: none;' %}
-                    <div class="borderLight" style="grid-area: 2 / {{ loop.index }}; {{ borderStyle }}">{{ ('multiple.infos.'~infos[loop.index0])|trans }}</div>
-                    <div class="borderLight" style="grid-area: 2 / {{ loop.index+6 }}; {{ borderStyle }}">{{ ('contributors.tasksShort.'~task)|trans }}</div>
+                <div style="grid-column: span {{ numTasks }}; {{ borderStyle }}">{{ 'contributors.tasks.title'|trans|slice(1) }}</div>
+                {% set borderStyle = style~'border-right: none;' %}
+                {% for info in infos %}
+                    <div class="borderLight" style="grid-area: 2 / {{ loop.index }}; {{ borderStyle }}">{{ ('multiple.infos.'~info)|trans }}</div>
+                    {% if loop.index0<numTasks %}
+                        <div class="borderLight" style="grid-area: 2 / {{ loop.index+numInfos }}; {{ borderStyle }}">{{ ('contributors.tasksShort.'~tasks[loop.index0])|trans }}</div>
+                    {% endif %}
                 {% endfor %}
                 {% for contributor in contributorsArray %}
                     {% set index, curInfos, curTasks, curRow = loop.index0, contributor['infos'], contributor['tasks'], loop.index+2 %}
-                    {% for task in tasks %}
-                        {% set id, curInfo, isOther, isTask, curCol = task~index, curInfos[infos[loop.index0]] ?? '', task is same as 'other', task in curTasks|keys, loop.index %}
-                        <div class="me-2" style="grid-area: {{ curRow }} / {{ curCol }}">{{ curInfo in positions|keys ? ('multiple.position.'~curInfo)|trans : curInfo }}</div>
-                        <input id="{{ id }}" style="display: none" disabled>
-                        <label for="{{ id }}" {% if not isOther %} class="CheckBox-Label flex {% if isTask %} checkBoxChecked {% endif %} {% if not isOther %} justifyCenter {% endif %}" disabled {% endif %} style="grid-area: {{ curRow }} / {{ curCol+numInfos }}">{{ isOther and isTask ? curTasks['other'] }}</label>
+                    {% set curTasksKeys = curTasks|keys %}
+                    {% for info in infos %}
+                        {% set curInfo, addTask = curInfos[info] ?? '', loop.index0<numTasks %}
+                        {% set task, curCol = addTask ? tasks[loop.index0], loop.index %}
+                        {% set id, isInstitutionType, isOther, isTask = task~index, curInfo in institutionTypes, task is same as 'other', task in curTasksKeys %}
+                        <div class="me-2" style="grid-area: {{ curRow }} / {{ curCol }}">{{ curInfo in positions|keys or isInstitutionType ? ('multiple.'~(isInstitutionType ? 'infos.institutionTypes.' : 'position.')~curInfo)|trans(committeeParams) : curInfo }}</div>
+                        {% if addTask %}
+                            <input id="{{ id }}" style="display: none" {% if not isOther %} disabled {% endif %}>
+                            <label for="{{ id }}" class="{% if not isOther %} CheckBox-Label flex justifyCenter {% if isTask %} checkBoxChecked {% endif %} {% else %} align-self-center {% endif %}" style="grid-area: {{ curRow }} / {{ curCol+numInfos }}">{{ isOther and isTask ? curTasks['other'] }}</label>
+                        {% endif %}
                     {% endfor %}
                 {% endfor %}
             </div>
         </div>
         <button type="button" class="Button_primary_act mt-2" style="margin-left: 0.3rem" data-bs-toggle="modal" data-bs-target="#formModal" data-bs-id="add">{{ include('images/add.svg') }}</button>
-        {{ formRender.addSymbolHints(['add','edit','delete'],'contributors.symbols.',{'hasSupervisor': boolToString(hasSupervisor)},false) }}
+        {{ formRender.addSymbolHints(['add','edit','delete'],'contributors.symbols.',{},false) }}
         <div class="mt-4">{{ 'contributors.hint'|trans(committeeParams)|raw }}</div>
         {{ formRender.addSubmitButtons() }}
         {% set prefix = 'contributors.buttons.' %}

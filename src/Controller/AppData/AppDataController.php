@@ -119,7 +119,7 @@ class AppDataController extends ControllerAbstract
             $requestedConfirmArray[] = $this->translateString(self::coreDataNode.'.'.self::funding.'.'.self::requestedConfirm.'.headingHint',array_merge($committeeParams,['isFull' => $bool]));
         }
 
-        $coreData = $this->createFormAndHandleRequest(CoreDataType::class,$coreDataArray,$request,[self::dummyParams => [self::applicant => $positions[$this->getQualification($coreDataArray) ? 1 : 0], self::supervisor => $positions[2]]]);
+        $coreData = $this->createFormAndHandleRequest(CoreDataType::class,$coreDataArray,$request,[self::dummyParams => [self::applicant => $positions[$this->getQualification($coreDataArray) ? 1 : 0]]]);
         if ($coreData->isSubmitted()) { // a button was clicked or the language was changed
             $data = $this->getDataAndConvert($coreData,$coreDataNode);
             $submitDummy = $request->request->all()['core_data'][self::submitDummy];
@@ -128,7 +128,6 @@ class AppDataController extends ControllerAbstract
             }
             $appNodeNew = $this->cloneNode($appNode);
             $positionLoad = $this->xmlToArray($this->getXMLfromSession($session,true)->{self::appDataNodeName}->{self::coreDataNode})[self::applicant][self::position];
-            $isStudentPhd = $this->checkSupervisor($committeeType,$positionLoad); // position on page loading
             // set number or reference for extended or resubmission type
             $appType = $data[self::applicationType];
             $type = $appType[self::chosen];
@@ -140,35 +139,29 @@ class AppDataController extends ControllerAbstract
                 $instVoteArray[self::instVoteText] = $instVoteArray[self::instVoteText] ?? '';
                 $this->arrayToXml($instVoteArray,$instVoteNode);
             }
-            // update applicant and supervisor in contributors
-            $contributorsArray = $this->getContributors($session);
-            $this->updateContributor($contributorsArray,$data,self::applicant);
+            // update applicant in contributors
+            $contributorsArray = $this->getContributors($session,true);
+            $dataApplicant = $data[self::applicant];
+            $tempArray = [];
+            foreach (self::applicantContributorsInfosTypes as $info) {
+                $tempArray[$info] = $dataApplicant[$info] ?? '';
+            }
+            $contributorsArray[0][self::infosNode] = $tempArray;
             $position = $data[self::applicant][self::position];
-            $isStudentPhdNew = $this->checkSupervisor($committeeType,$position); // position on submission
-            if ($isStudentPhdNew) {
-                if ($position===self::positionsStudent) {
-                    $contributorsArray[0][self::taskNode] = array_diff_key($contributorsArray[0][self::taskNode], [self::taskLeader => '', self::taskData => '']); // remove leader and data from tasks
-                }
-                if ($isStudentPhd) {
-                    $supervisorTasks = $contributorsArray[1][self::taskNode];
-                    if ($supervisorTasks!=='' && !array_key_exists(self::supervisorNode,$supervisorTasks)) { // supervisor existed on page load, but was task was removed and needs to be added again
-                        $contributorsArray[1][self::taskNode] = array_merge([self::supervisorNode => ''],$supervisorTasks);
-                    }
-                }
-                $this->updateContributor($contributorsArray,$data,self::supervisor);
-            } else {
-                if (count($contributorsArray)>count($this->getContributors($session,true))) { // supervisor was added after entering the page, but position (and qualification) do no longer lead to supervisor-> remove supervisor
-                    unset($contributorsArray[1]);
-                    $contributorsArray = array_values($contributorsArray); // re-indexing
-                } elseif ($isStudentPhd) { // supervisor was existent on page load, but due to changes no supervisor is needed anymore -> remove supervision as task
-                    unset($contributorsArray[1][self::taskNode][self::supervisorNode]);
-                }
+            $isSupervisorNew = $this->checkSupervisor($committeeType,$position);
+            if ($isSupervisorNew && $position===self::positionsStudent) {
+                $contributorsArray[0][self::taskNode] = array_diff_key($contributorsArray[0][self::taskNode], [self::taskLeader => '', self::taskData => '']); // remove leader and data from tasks
+            }
+            if ($position===self::positionsPhd && $positionLoad===self::positionsStudent && $isEUB) { // position changed from student to phd -> remove position from other contributors that are supervisor
+                $this->removeContributorIndices($appNode,$this->removePhd($contributorsArray));
+                $contributorsChanged = true;
+            } elseif ($this->checkSupervisor($committeeType,$positionLoad) && !$isSupervisorNew) { // position changed such that no supervisor is needed anymore -> remove task 'supervision' from all contributors
+                $this->removeContributorIndices($appNode,$this->removeSupervision($contributorsArray),false);
+                $contributorsChanged = true;
             }
             $this->addAllContributorsNodes($appNodeNew,$contributorsArray);
             $session->set(self::contributorsSessionName,array_merge($session->get(self::contributorsSessionName),[$contributorsArray])); // needs to be set before calling updateProjectdetailsContributor
-            if (!$isStudentPhd && $isStudentPhdNew) { // supervisor was added or removed
-                $this->updateProjectdetailsContributor($request,$appNodeNew,'',[],false,true);
-            }
+            $this->updateProjectdetailsContributor($request,$appNodeNew,'',[],false);
             $reviewProcessNew = $this->getCurrentReviewProcess($appNodeNew);
             $session->set(self::reviewProcess,$reviewProcessNew);
             $isConflict = $data[self::conflictNode][self::chosen]===0;
@@ -206,6 +199,7 @@ class AppDataController extends ControllerAbstract
              'positions' => $positions,
              'funding' => self::fundingTypes,
              'requestedConfirmArray' => $requestedConfirmArray,
+             'hasSupervisor' => in_array($committeeType,self::committeeSupervisor),
              'support' => array_diff_key(self::supportTypes,!$isEUB ? [self::supportCenter => ''] : []),
              'applicantInfo' => self::applicantContributorsInfosTypes,
              'textInputConflict' => $textInput,

@@ -1,13 +1,12 @@
 import { Controller } from "@hotwired/stimulus";
-import {closeModal, saveUndoModal, setElementVisibility, setHint, showModal} from "../multiFunction";
+import {saveUndoModal, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['projectTitleParticipation','applicationFull','shortDocs','shortDocsYes','qualificationYes','applicantPosition','supervisorPosition','supervisorDiv','projectStart','projectStartNext','projectStartBegun','projectStartBegunText','fundingQuali','fundingBudget','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','fundingOther','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
+    static targets = ['projectTitleParticipation','applicationFull','shortDocs','shortDocsYes','qualificationYes','institutionHint','professorshipHint','phoneLabelOptional','position','projectStart','projectStartNext','projectStartBegun','projectStartBegunText','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
 
     static values = {
-        committeeType: String,
-        positions: Array, // 0: positions without qualification, 1: positions with qualification, 2: positions for supervisor (not used), 3: all positions translated
+        positions: Array, // 0: positions without qualification, 1: positions with qualification, 3: all positions translated
         noChoice: String,
         conflictHint: Array, // 0: description for yes, 1: description for no
         conflictHintName: String, // id of the hint div
@@ -19,28 +18,31 @@ export default class extends Controller {
 
     connect() {
         this.studentValue = 'student';
-        this.phdValue = 'phd';
         this.positionOtherValue = 'positionOther';
         this.conflictYesTarget = document.getElementById(this.conflictNoTarget.id.replace('1','0')); // renderButtons allows only one target; therefore, get the other by using the id
         this.applicationProcessLoadValue = this.reviewProcessLoadValue.includes('full') ? 'full' : 'short';
-        this.setApplicantSupervisor();
+        this.setApplicant();
         this.setProjectStart(false);
         this.setConflict();
     }
 
     // methods that are called from the template
 
-    /** Sets the hint for the professorship as well as the visibility of the text field for the 'other' position.
+    /** Sets the visibility of the text field for the 'other' institution or position and eventually the hint for the professorship and for the institution.
      * @param event widget that invoked the method
      */
-    setProfessorshipHint(event) {
+    setInstitutionPosition(event) {
         let target = event.target;
         let id = target.id;
         let value = target.value;
-        setElementVisibility(id+'Hint',[this.studentValue,this.phdValue].includes(value));
-        setElementVisibility(id+'Other',value===this.positionOtherValue);
-        if (!id.includes('supervisor')) {
-            this.setApplicantSupervisor();
+        let other = id+'Other';
+        let isOther = value===other;
+        setElementVisibility(other,isOther);
+        if (id==='position') {
+            setElementVisibility(this.professorshipHintTarget,[this.studentValue,'phd'].includes(value));
+            this.setApplicant();
+        } else if (id==='institution') {
+            setElementVisibility(this.institutionHintTarget,isOther);
         }
     }
 
@@ -61,25 +63,31 @@ export default class extends Controller {
         this.setReviewProcessWidgets(null,checkModal);
     }
 
-    /** Sets the visibility of the supervisor div as well as the positions for the applicant and supervisor and the phone label for the applicant. */
-    setApplicantSupervisor() {
-        if (this.hasSupervisorDivTarget) {
-            let isQualification = this.hasQualificationYesTarget && this.qualificationYesTarget.checked;
-            let positionApplicant = this.applicantPositionTarget.value;
-            let isSupervisor = positionApplicant===this.studentValue ||  this.committeeTypeValue==='EUB' && positionApplicant===this.phdValue;
-            setElementVisibility(this.supervisorDivTarget,isSupervisor);
-            this.setPositions(this.applicantPositionTarget,this.positionsValue[isQualification ? 1 : 0],positionApplicant);
-            if (isSupervisor) {
-                let positions = this.positionsValue[0];
-                delete positions[this.studentValue];
-                if (positionApplicant===this.phdValue) {
-                    delete positions[this.phdValue];
-                }
-                this.setPositions(this.supervisorPositionTarget,positions,this.supervisorPositionTarget.value);
+    /** Sets the positions and the phone label for the applicant. */
+    setApplicant() {
+        if (this.hasPhoneLabelOptionalTarget) {
+            let positionApplicant = this.positionTarget.value;
+            // remove all positions and recreate them
+            while (this.positionTarget.hasChildNodes()) {
+                this.positionTarget.firstChild.remove();
+            }
+            let positions = Object.keys(this.positionsValue[this.hasQualificationYesTarget && this.qualificationYesTarget.checked ? 1 : 0]);
+            let positionsTranslated = this.positionsValue[2];
+            for (let choice of [''].concat(positions)) {
+                let newChoice = document.createElement('option');
+                this.positionTarget.append(newChoice);
+                newChoice.value = choice;
+                newChoice.textContent = choice!=='' ? positionsTranslated[choice] : this.noChoiceValue;
+            }
+            if (positions.includes(positionApplicant)) { // keep selection if still allowed
+                this.positionTarget.value = positionApplicant;
+            }
+            if (!positions.includes(this.positionOtherValue)) { // if position of applicant was 'other' and then qualification was answered with yes, hide the text field
+                setElementVisibility(this.positionOtherValue,false);
             }
             let isStudent = positionApplicant===this.studentValue; // position may have changed
             setElementVisibility('phoneLabel',!isStudent);
-            setElementVisibility('phoneLabelOptional',isStudent);
+            setElementVisibility(this.phoneLabelOptionalTarget,isStudent);
         }
     }
 
@@ -159,32 +167,5 @@ export default class extends Controller {
     /** Sets the visibility of the conflict description div. */
     setConflictDescription() {
         setElementVisibility('conflictDescriptionDiv',this.conflictYesTarget.checked || this.conflictNoTarget.checked && (this.fundingResearchTarget.checked || this.fundingExternalTarget.checked) && this.applicationFullTarget.checked)
-    }
-
-    // methods that are called from within this class
-
-    /** Removes all positions from the target and recreates them.
-     * @param target element whose positions are recreated
-     * @param positions positions that are newly added
-     * @param oldPosition position that currently selected
-     */
-    setPositions(target,positions,oldPosition) {
-        while (target.hasChildNodes()) {
-            target.firstChild.remove();
-        }
-        positions = Object.keys(positions);
-        let positionsTranslated = this.positionsValue[3];
-        for (let choice of [''].concat(positions)) {
-            let newChoice = document.createElement('option');
-            target.append(newChoice);
-            newChoice.value = choice;
-            newChoice.textContent = choice!=='' ? positionsTranslated[choice] : this.noChoiceValue;
-        }
-        if (positions.includes(oldPosition)) { // keep selection if still allowed
-            target.value = oldPosition;
-        }
-        if (!positions.includes(this.positionOtherValue)) { // if position of applicant was 'other' and then qualification was answered with yes, hide the text field
-            setElementVisibility(this.positionOtherValue,false);
-        }
     }
 }

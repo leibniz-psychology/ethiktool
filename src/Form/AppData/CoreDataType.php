@@ -49,16 +49,15 @@ class CoreDataType extends TypeAbstract
         }
         $this->addFormElement($builder,self::requestedConfirm,'checkbox',$fundingPrefix.self::requestedConfirm.'.confirm');
         // applicant info
-        $tempPrefix = 'multiple.position.';
         $dummyParams = $options[self::dummyParams];
-        foreach (array_merge([''],in_array($this->committeeType,self::committeeSupervisor) ? [self::supervisor] : []) as $applicant) {
-            foreach (self::applicantContributorsInfosTypes as $info) {
-                if ($info!==self::position) {
-                    $this->addFormElement($builder, $info.$applicant, 'text');
-                } else {
-                    $this->addFormElement($builder, self::position.$applicant, 'choice',options: ['choices' => array_flip($dummyParams[$applicant===self::supervisor ? self::supervisor : self::applicant])],hint: self::choiceTextHint);
-                    $this->addFormElement($builder, $this->appendText(self::position.$applicant), 'text',hint: $tempPrefix.'otherDefault');
-                }
+        $committeeParams = $options[self::committeeParams];
+        foreach (self::applicantContributorsInfosTypes as $info) {
+            if (!in_array($info,self::institutionPosition)) {
+                $this->addFormElement($builder, $info, 'text');
+            } else {
+                $isInstitution = $info===self::institutionInfo;
+                $this->addFormElement($builder, $info, 'choice',options: array_merge(['choices' => array_flip($isInstitution ? self::institutionTypes : $dummyParams[self::applicant])],$isInstitution ? [self::choiceParams => [self::institutionSameOption => $committeeParams]] : []),hint: self::choiceTextHint);
+                $this->addFormElement($builder, $this->appendText($info), 'text',hint: 'multiple.placeholder.'.$info);
             }
         }
         if (in_array($this->committeeType,self::begunCommittees)) {
@@ -137,18 +136,17 @@ class CoreDataType extends TypeAbstract
             $forms[self::qualification]->setData($viewData[self::qualification]);
         }
         // applicant infos
-        foreach (array_merge([self::applicant],array_key_exists(self::supervisor,$viewData) ? [self::supervisor] : []) as $type) {
-            $tempArray = $viewData[$type];
-            $suffix = $type===self::supervisor ? self::supervisor : '';
-            foreach (self::applicantContributorsInfosTypes as $info) {
-                $forms[$info.$suffix]->setData($tempArray[$info]);
-            }
-            // position
-            $tempVal = $tempArray[self::position];
+        $tempArray = $viewData[self::applicant];
+        foreach (self::applicantContributorsInfosTypes as $info) {
+            $forms[$info]->setData($tempArray[$info]);
+        }
+        // institution and position
+        foreach (self::institutionPosition as $info) {
+            $tempVal = $tempArray[$info];
             if ($tempVal!=='') {
-                $tempBool = array_key_exists($tempVal,self::positionsTypes);
-                $forms[self::position.$suffix]->setData($tempBool ? $tempVal : self::positionOther);
-                $forms[$this->appendText(self::position.$suffix)]->setData($tempBool ? '' : $tempVal);
+                $tempBool = array_key_exists($tempVal,$info===self::institutionInfo ? self::institutionTypes:  self::positionsTypes);
+                $forms[$info]->setData($tempBool ? $tempVal : $info.'Other');
+                $forms[$this->appendText($info)]->setData($tempBool ? '' : $tempVal);
             }
         }
         // conflict
@@ -226,23 +224,22 @@ class CoreDataType extends TypeAbstract
         }
         $isQualification = $isQualification && $qualification===0; // true if question exists and was answered with yes
         // applicant info
-        foreach (array_merge([self::applicant],$this->checkSupervisor($this->committeeType,$forms[self::position]->getData()) ? [self::supervisor] : []) as $type) {
-            $tempArray = [];
-            $suffix = $type===self::supervisor ? self::supervisor : '';
-            foreach (self::applicantContributorsInfosTypes as $info) {
-                $tempArray[$info] = $forms[$info.$suffix]->getData();
-            }
-            // position
-            $position = $forms[self::position.$suffix]->getData();
-            if ($type===self::applicant && $isQualification && !in_array($position,self::positionsStudentPhd)) { // reset position if qualification question has changed to yes
-                $position = '';
-            } elseif ($position===self::positionOther) {
-                $otherPosition = $forms[$this->appendText(self::position.$suffix)]->getData();
-                $position = $otherPosition ?: self::positionOther;
-            }
-            $tempArray[self::position] = $position;
-            $newData[$type] = $tempArray;
+        $tempArray = [];
+        foreach (self::applicantContributorsInfosTypes as $info) {
+            $tempArray[$info] = $forms[$info]->getData();
         }
+        // institution and position
+        foreach (self::institutionPosition as $info) {
+            $tempVal = $forms[$info]->getData();
+            $other = $info.'Other';
+            if ($info===self::position && $isQualification && !in_array($forms[self::position]->getData(),self::positionsStudentPhd)) { // reset position if qualification question has changed to yes
+                $tempVal = '';
+            } elseif ($tempVal===$other) {
+                $tempVal = $forms[$this->appendText($info)]->getData() ?: $other;
+            }
+            $tempArray[$info] = $tempVal;
+        }
+        $newData[self::applicant] = $tempArray;
         // conflict
         $chosen = $forms[self::conflictNode]->getData();
         $tempArray = [self::chosen => $chosen];

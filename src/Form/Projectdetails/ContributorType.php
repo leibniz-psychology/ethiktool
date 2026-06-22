@@ -12,9 +12,13 @@ class ContributorType extends TypeAbstract
 {
     use ContributorsTrait;
 
+    private array $tasks;
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        foreach ($options[self::dummyParams][self::taskNode] as $task) {
+        $tasks = $options[self::dummyParams][self::taskNode];
+        $this->tasks = array_keys($tasks);
+        foreach ($tasks as $task) {
             foreach ($task as $key => $value) {
                 $this->addFormElement($builder,$key,'checkbox',$value);
             }
@@ -26,7 +30,7 @@ class ContributorType extends TypeAbstract
     public function mapDataToForms(mixed $viewData, Traversable $forms): void
     {
         $forms = iterator_to_array($forms);
-        foreach (self::tasksNodes as $tasksNode) {
+        foreach ($this->tasks as $tasksNode) {
             $tasks = $viewData[$tasksNode];
             if ($tasks!=='') {
                 foreach (explode(',',$tasks) as $contributor) {
@@ -47,7 +51,7 @@ class ContributorType extends TypeAbstract
             }
 
         }
-        foreach (self::tasksNodes as $task) {
+        foreach ($this->tasks as $task) {
             $contributor = $viewData[$task];
             if ($contributor!=='') {
                 $viewData[$task] = substr($contributor,1); // remove first comma
