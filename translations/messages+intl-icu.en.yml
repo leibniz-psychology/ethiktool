@@ -228,14 +228,14 @@ committee:
       other {Institution of the test ethics committee}}
   committeeLocationDat: >-
     {committee, select,
-      TUC   {of Chemnitz University of Technology}
-      EUB   {of Bielefeld University}
-      JGU   {of Johannes Gutenberg University Mainz}
-      DLR   {of the German Aerospace Center}
-      TUD   {of Dresden University of Technology}
-      UH1   {of Hildesheim University}
-      UPB   {of Paderborn University}
-      other {of the institution of the test ethics committee}}
+      TUC   {Chemnitz University of Technology}
+      EUB   {Bielefeld University}
+      JGU   {Johannes Gutenberg University Mainz}
+      DLR   {the German Aerospace Center}
+      TUD   {Dresden University of Technology}
+      UH1   {Hildesheim University}
+      UPB   {Paderborn University}
+      other {the institution of the test ethics committee}}
   committeeLocationGen: >-
     {committee, select,
       TUC   {of Chemnitz University of Technology}
@@ -462,15 +462,22 @@ landing:
       title: 'Project structure' # part of tab name
       start: >-
         {isOverview, select,
-          true  {The Ethiktool can describe research projects comprising several studies, several participant groups or several data collection time points.</br></br> This page shows the structure of your research project. Here you can add further studies, participant groups and time points. The elements are automatically numbered consecutively as soon as there is more than one; it is advisable to also assign a brief, expressive name to each element.}
+          true  {The Ethiktool can describe research projects comprising several studies, several participant groups or several data collection time points. You can change the structure of your research project on this page.</br></br> <div class="borderHint m-0">Further <span class="text-decoration-underline">studies</span>, <span class="text-decoration-underline">groups</span> or <span class="text-decoration-underline">time points</span> are necessary only if there are relevant differences in the form inputs.</br> For each new combination of study/group/time point, separate participant documents are created. Information that is identical across combinations, is collapsed in the proposal form.</div>}
           other {Please enter information for this combination of study, group and time point here.</br> The requested information is grouped into the following categories:}}
-      expandable:
-        title: 'Instructions on creating/changing the project structure'
-        text: |
-          It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then <span class="text-decoration-underline">duplicate</span> the filled combination and change only the relevant entries.
-          You only need to add further <span class="text-decoration-underline">studies</span> if your research project is divided into several (sub)studies that differ in terms of aims or methodology, e.g., when conducting a series of experiments.
-          You should add further <span class="text-decoration-underline">groups</span> if, for example, the inclusion criteria or the information for the groups (e.g., minors/adults, patients/controls) substantially differ. If the information sheets are essentially identical (such as for between-subject designs with condition/group assignment after informed consent), it is usually not meaningful to create separate groups within the Ethiktool.
-          The term <span class="text-decoration-underline">time point</span> refers to an instance of data collection that requires a new study information sheet and an additional consent form, such as a pre-test for a subsequent study, in which it is not yet possible to inform about further phases of the research project in detail or in which only some of the participants of the pre-test are invited to participate in the main study (screening).
+      expandables:
+        info:
+          title: 'Information on the necessity of separate studies/groups/time points'
+          text: >-
+            <li>You only need to add further <span class="text-decoration-underline">studies</span> if your research project is divided into several (sub)studies that differ in terms of aims or methodology, e.g., when conducting a series of experiments.</li>
+            <li>You should add further <span class="text-decoration-underline">groups</span> if, for example, the study information sheet or the form inputs for the groups (e.g., minors/adults, patients/controls) substantially differ. If the information sheets are essentially identical or can easily be joined into a common information sheet (such as for between-subject designs with group assignment after informed consent, or in case of single additional inclusion criteria or tests for a sub-group), it is usually not meaningful to create separate groups within the Ethiktool. Details regarding group assignment or recruiting strategies can usually be given within one group.</li>
+            <li>The term <span class="text-decoration-underline">time point</span> refers to an instance of data collection that requires a new study information sheet and an additional consent form, such as a pre-test for a subsequent study, in which it is not yet possible to inform about further phases of the research project in detail or in which only some of the participants of the pre-test are invited to participate in the main study (screening). If prior information for the first time point already contains information about further data collection time points, it is usually not meaningful to create separate time points in the Ethiktool.</li>
+        hint:
+          title: 'Hints for creating/editing the project structure'
+          text: >-
+            <li>It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then <span class="text-decoration-underline">duplicate</span> the filled combination and change only the relevant entries.</li>
+            <li>The elements are automatically numbered consecutively as soon as there is more than one; it is advisable to also assign a brief, expressive name to each element.</li>
+            <li>Please change free-text entries across combinations only if it is necessary in terms of content. Rewording without implications for content should be avoided; spelling corrections should be implemented in all studies/groups/time points alike to ensure that the Ethiktool is able to classify the texts as identical. Information that is identical across combinations, is collapsed in the proposal form.</li>
+            <li>As soon as the project contains more than one combination of study/group/time point, a text field will appear asking you to explicate major differences. This information shall provide a quick overview to the ethics committee. Please remember to adapt the description if you change the project structure more than once.</li>
       end:
         title: 'The symbols have the following functions:'
         rename: 'rename the element'
@@ -478,6 +485,9 @@ landing:
         add: 'add a new element'
         delete: 'remove the element (including all sub-elements)'
         edit: 'edit details of the study/group/time point combination'
+    structureDescription:
+      title: 'Please describe briefly how the studies/groups/time points differ.'
+      textHint: 'The purpose of this description is to guide the ethics committee through the information that follows. Please focus on essential differences; details can be seen in the proposal form. For example, explain crucial differences in your procedures or in the type of prior information.'
     removeModal:
       title: >-
         delete {type, select,
@@ -509,11 +519,21 @@ coreData:
       extended: 'amendment of an already approved proposal'
       resubmission: 'resubmission after proposal revision'
       resubmissionGranted: 'resubmission after funding acquisition'
-    reference: 'Please enter case number:'
+    reference: 'Original case number:'
     hint: >-
       {committeeType, select,
-        EUB   {If you used the template from the website of the Ethics Review Board for the original proposal, please continue using this.}
+        EUB   {{isSame, select,
+                  true  {If you used the template from the website of the Ethics Review Board for the original proposal, please continue using this.</br>}
+                  other {}}}
         other {}} Please only adapt the relevant aspects (e.g., changes to the research project, fulfillment of change requests; adding participant documents if applicable). Beyond these relevant changes, please avoid excessive editorial changes to the texts - this facilitates the comparison of the proposal versions and thereby expedites the review process.
+  appTypeExtended:
+    title: 'What is the scope of the amendment?'
+    types:
+      extendedSame: 'The amendment refers to the original project.'
+      extendedDifferent: 'The amendment refers to a new, but very similar project.'
+    hints:
+      extendedSame: 'The changes will be reviewed under the case number of the original proposal.'
+      extendedDifferent: 'The changes will be reviewed under a new case number, but with a simplified review process based on the similarity.'
   modal: # other in type selects is funding
     title: >-
       {type, select,
@@ -574,6 +594,7 @@ coreData:
             TUD   {Justification}
             other {Authorisation}}
           for retrospective review is needed.
+      begunConfirm: 'I hereby confirm that I consulted {committeeDat} and was reassured that I am allowed to submit the research project for ethics review although it already started.'
     next: 'as soon as possible (after approval by the ethics committee)'
     end:
       title: >-
@@ -1049,7 +1070,7 @@ projectdetails:
         title: 'Are the {addressee} informed in advance that {participant} are participating in a study?'
         content:
           title: 'To what extent are the {addressee} informed about the aims, content and methods before the start of the study?'
-          headingHint: 'This refers to key information about the study. This includes a clear presentation of the research objectives, data collection procedures, and participant''s tasks for the respective target group(s). Not disclosing the hypothesis does not count as incomplete information. If the given information is both incomplete and includes deliberate deception, please choose deception.'
+          headingHint: 'This refers to key information about the study. This includes a clear presentation of the research objectives, data collection procedures, and participant''s tasks for the respective target group(s). Not disclosing the hypothesis does not count as incomplete information. Not disclosing the specific condition assignment likewise does not count as incomplete information, provided that the existence of more than one condition is mentioned and there is no personal relevance for individuals to know their condition after participation. If the given information is both incomplete and includes deliberate deception, please choose deception.'
           type:
             complete: 'The {addressee} are fully informed.'
             partial: 'At least one core piece of information is not mentioned, that is, the {addressee} are informed incompletely.'
@@ -1505,7 +1526,7 @@ projectdetails:
         placeholder: 'please specify'
       furtherDescription:
         title: 'Other remarks regarding the compensation'
-        textHint: '(optional) e.g., justification for exceptionally high or unequal compensation'
+        textHint: '(optional) e.g., justification for exceptionally high or unequal compensation; description of partial compensation in case of withdrawal, if not proportional to the invested fraction of time; information on compensation in foreign currency and its value in the country of data collection'
     texts:
       useTemplate: 'use template'
       hint: 'Here you can enter details for the study information. Please select an appropriate level of description for the respective target group. If applicable, please use the latest version of recommendations or information templates for specific examination procedures from the relevant professional associations.'
@@ -1572,9 +1593,9 @@ projectdetails:
       findingText:
         title: 'Information about incidental findings:'
         template: >-
-          The study is for research purposes only. A medical or psychological assessment of the data is not performed. However, we might notice an unusual test result (incidental finding). In this case{consent, select,
-                                                true  {, if you agree, we will inform you and recommend that you seek further diagnostic assessment.}
-                                                other {, we will inform you and recommend that you seek further diagnostic assessment. Participation in this study is possible only if you agree to us informing you of any unusual test results.}} If a disease is detected during this diagnostic assessment, this could possibly result in disadvantages for {addressee, select,
+          The study is for research purposes only. A medical or psychological assessment of the data is not performed. However, we might notice an unusual test result (incidental finding). In this case, {consent, select,
+                                                  true  {if you agree, we will inform you and recommend that you seek further diagnostic assessment.}
+                                                  other {we will inform you and recommend that you seek further diagnostic assessment.}} If a disease is detected during this diagnostic assessment, this could possibly result in disadvantages for {addressee, select,
                   children {your child}
                   wards {the individual under your supervision}
                   other {you}}, e.g., make it more difficult to contract private health insurance or life insurance. Please note: Even if we do not find any unusual results, this does not confirm a specific health condition; the examination is for research purposes only and does not constitute or replace a medical diagnosis.
@@ -2223,7 +2244,7 @@ projectdetails:
           own: ' not made available to others, but employed for own re-use.'
         descriptionStart: ' This is done by using '
         hints: # icons except keys textHint and hint
-          textHint: 'Please name a data archive, research data center or repository for data sharing (e.g., OSF, Zenodo, PsychArchives/the RDC at ZPID).'
+          textHint: 'Please name a data archive, research data center or repository for data sharing or other means of data exchange (e.g., by using “OSF“, “Zenodo“, “PsychArchives/the RDC at ZPID“, “own infrastructure“, “encrypted e-mail communication“).'
           class0: 'broadest class of data access (“Zugriffsklasse 0“ according to the “Open Science“ committee of the DGPs)'
           class1: 'standardized access restrictions (“Zugriffsklasse 1“ according to the “Open Science“ committee of the DGPs)'
           class2: 'individualized access restrictions (“Zugriffsklasse 2“ according to the “Open Science“ committee of the DGPs)'
@@ -2275,7 +2296,8 @@ checkDoc:
     title: '<a class="linkInternal" href="appData/{page}">{title}</a>'
     coreData:
       projectTitleParticipation: 'project title for participant documents'
-      reference: 'case number'
+      appTypeExtended: 'Description of scope of the amendment' # '[] is missing.'
+      reference: 'original case number'
       applicationProcess:
         missing: 'type of review process' # 'Answer to question about [] is missing.'
         shortDocs:
@@ -2289,6 +2311,7 @@ checkDoc:
             other {The planned project start is in the past.}}
         begunToPast: 'You selected that the project has already started. In this case, the chosen date for the project start must be in the past as well.'
       begun: 'Description of current state of the project'
+      begunConfirm: 'Confirmation of having consulted {committeeDat}'
       retrospective: 'Justification for necessity of retrospective ethics review'
       end: 'The planned end of the research project is in the past.'
       endBeforeStart: 'Project end is before project start.'
@@ -2360,6 +2383,7 @@ checkDoc:
   projectdetails:
     missingTypes: 'types of {type}'
     pages:
+      landing: 'Description of the project structure' # '[] is missing.'
       dataSource: # 'Answer to question about [] is missing.' unless otherwise stated
         origin: 'data origin'
         originSources:
@@ -2916,7 +2940,12 @@ checkDoc:
             codeMarking: 'If a code is needed for retrieving the <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">compensation</a>, and if there is a label that serves issuing the compensation, the labelling must consist in a code.'
       dataReuse:
         confirmIntro: 'Confirmation of notice on data re-use' # '[] is missing.'
-        dataReuse: 'Answer to question whether research data are shared with others for re-use' # '[] is missing.'
+        dataReuse:
+          missing: 'Answer to question whether research data are shared with others for re-use' # '[] is missing.'
+          dataPersonal: >-
+            You selected that the <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">research data</a> {type, select,
+                  personal {are (partially) person-related}
+                  other    {can be related to individual persons with little additional knowledge}}. This is incompatible with the selection that anonymous data shall be shared with others for re-use.
         dataReuseHow: # '[] is missing.'
           lineTitle:
             dataReuseHow: 'Person-related research data'
@@ -3132,6 +3161,8 @@ technicalHints:
     To start the application process, begin with “Proposal data“ and click through the form step by step via the “next page“ button. Alternatively, you can also jump directly to specific sections (e.g., Project structure) in the navigation bar on the left.
 
     On the right-hand side, you will see a preview of the application document and the participant documents. You can click on the questions or headings to jump directly to the related sections in the Ethiktool. In the area above the preview, you are informed about missing or incorrect input.
+
+    If your browser's built-in spell checker is enabled, it will also work within the Ethiktool. In case of deactivated spell checker, please ensure by other means that your entries are free of language errors.
 
     Please save your entries regularly. The files are stored locally on your computer in XML format. You can pause the process at any time, reload your saved entries as an XML file later and continue editing them.
 

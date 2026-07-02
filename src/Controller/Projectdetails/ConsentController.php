@@ -30,9 +30,8 @@ class ConsentController extends ControllerAbstract
         $examined = $groupsArray[self::examinedPeopleNode];
         $addressee = $this->getAddresseeFromRequest($request);
         $hasInformationII = $addressee!==self::addresseeParticipants;
-        $emptyPre = ['',self::pre];
-        $isPreEmpty = in_array($information,$emptyPre);
-        $isPreEmptyParticipants = in_array($hasInformationII ? $this->getInformationString($measureArray[self::informationIINode]) : '',$emptyPre);
+        $isPreEmpty = in_array($information,self::emptyPre);
+        $isPreEmptyParticipants = in_array($hasInformationII ? $this->getInformationString($measureArray[self::informationIINode]) : '',self::emptyPre);
         // check if inputs on texts are made that may be deleted
         $measureArrayLoad = $this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams));
         $introArrayLoad = $measureArrayLoad[self::textsNode][self::introNode] ?? [];

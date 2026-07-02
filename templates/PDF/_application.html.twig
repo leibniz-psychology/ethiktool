@@ -71,6 +71,11 @@
                 <div class="boxInner {% if not savePDF %} previewSmall {% endif %}">
                     {% if box['content'] is not same as '' %}
                         {{ _self.addLevelNames(levelNames) }}
+                        {% if structureDescription is not same as '' %}
+                            <div style="margin-top: 1em">
+                                {{ ('projectdetails.overview.structureDescription'|trans~structureDescription)|nl2br }}
+                            </div>
+                        {% endif %}
                     {% else %} {# each level only exists once #}
                         {{ levelNames }}
                     {% endif %}

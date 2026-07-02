@@ -1,10 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
 import {addInputListener, mergeInput, setElementVisibility} from "./multiFunction";
-import getComputedStyle from "@popperjs/core/lib/dom-utils/getComputedStyle";
 
 export default class extends Controller {
 
-    static targets = ['edit','name','copy','submitName','submitCopy','landingRemove']
+    static targets = ['edit','name','copy','submitName','submitCopy','landingRemove','structureDescription']
 
     static values = {
         names: Object, // translated names of 'study', 'group' and 'measure time point'
@@ -23,6 +22,9 @@ export default class extends Controller {
         }
         for (let input of document.getElementsByTagName('input')) {
             addInputListener(input);
+        }
+        if (this.hasStructureDescriptionTarget) { // element was added or removed -> focus description of project structure
+            this.structureDescriptionTarget.focus();
         }
     }
 

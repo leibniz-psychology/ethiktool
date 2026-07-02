@@ -10,7 +10,7 @@
 {% block content %}
     {% set isProjectdetailsLanding, translationPrefix = page is same as 'projectdetails' and not isPageOverview, 'landing.'~page~'.' %}
     {% set overviewPrefix, widthMinHeight = translationPrefix~'overview.', 'min-height: 3rem; width: 2rem;' %}
-    {% set expandablePrefix = overviewPrefix~'expandable.' %}
+    {% set expandablePrefix = overviewPrefix~'expandables.' %}
     <div {{ stimulus_controller('landing',{
         'names': nameTrans,
         'copyNames': copyTrans,
@@ -18,8 +18,11 @@
     }) }}>
         <div class="MetaData-Label mb-2">{{ (overviewPrefix~'start')|trans({'isOverview': boolToString(isProjectdetailsLanding)})|raw }}</div>
         {% if isProjectdetailsLanding %}
-            {{ formRender.addExpandable(expandablePrefix~'title') }}
-            <div class="MetaData-Label borderLight mt-1 mx-4" style="display: none">{{ (expandablePrefix~'text')|trans|raw|nl2br }}</div>
+            {% for expandable in ['info','hint'] %}
+                {% set tempPrefix = expandablePrefix~expandable~'.' %}
+                {{ formRender.addExpandable(tempPrefix~'title') }}
+                <div class="MetaData-Label borderLight mt-1 mx-4" style="display: none">{{ (tempPrefix~'text')|trans|raw|nl2br }}</div>
+            {% endfor %}
             {% set isOneStudy, studyNames, heightBorder, heightShort = allStudies|length is same as 1, allNames['name'], 'height: 75%; border-left: 1px solid black; border-bottom: 1px solid black', 'height: 25%' %}
             <div class="MetaData-Widget grid" style="grid-template-columns: repeat(4,min-content) repeat(2,minmax(min-content,max-content)) auto">
                 {% for studyIndex, study in allStudies %}
@@ -59,7 +62,15 @@
                 {{ _self.addNew(content,'study',studyNames) }}
             </div>
             {{ formRender.addSymbolHints(['rename','copy','add','delete','edit'],overviewPrefix~'end.') }}
-{#            <div class="MetaData-Label mt-3">{{ (overviewPrefix~'hint')|trans|raw|nl2br }}</div>#}
+            {# description of project structure #}
+            {% if content.structureDescription is defined %}
+                {% set tempPrefix = translationPrefix~'structureDescription.' %}
+                <div class="mt-8">
+                    {{ formRender.addHeading(tempPrefix~'title') }}
+                    <div class="MetaData-Label" style="margin-bottom: -1.5rem"><span class="hint">{{ (tempPrefix~'textHint')|trans }}</span></div>
+                    {{ formRender.addTextfield(content.structureDescription,focusDescription ? {'contTarget': ['landing','structureDescription']} : {}) }}
+                </div>
+            {% endif %}
             {# modal for removing #}
             {{ include('components/redirectModal.html.twig',{'modalID': 'removeModal', 'prefix': translationPrefix~'removeModal.', 'link': 'app_landing', 'stim': ['base','submitForm'], 'stimNo': ['base','unsetLandingRemove'], 'modalBodyTarget': ['landing','landingRemove']}) }}
         {% else %} {# sub-pages #}

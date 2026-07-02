@@ -156,7 +156,6 @@ export function setHint(element, text = null) {
                 element.append(clickableElement,remainingElement);
             }
             let lastSpace = checkHTMLvalidity(text,text.substring(0,visibleLength).lastIndexOf(' '));
-            // let lastSpace = checkHTMLvalidity(text,text.substring(0,Math.ceil(parsedLength*0.66)).lastIndexOf(' '));
             innerHTML = text.substring(0,lastSpace);
             remainingElement.innerHTML = ' '+text.substring(lastSpace).replaceAll('<br></br>','<br>').trim(); // will throw an error in the console if text contains invalid html
         } else {

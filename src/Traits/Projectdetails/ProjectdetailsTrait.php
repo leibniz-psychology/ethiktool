@@ -108,6 +108,7 @@ trait ProjectdetailsTrait
     protected const informationIINode = 'informationII';
     protected const informationTypes = ['projectdetails.pages.information.type.written' => 'written', 'projectdetails.pages.information.type.writtenOral' => 'writtenOral', 'projectdetails.pages.information.type.oral' => 'oral'];
     protected const pre = 'pre'; // pre information
+    protected const emptyPre = ['','pre'];
     // widget names for yes
     protected const preType = 'preType'; // type of pre information
     protected const informationOral = 'oral';

@@ -14,11 +14,17 @@ class LandingType extends TypeAbstract
         $dummyParams = $options[self::dummyParams];
         if ($dummyParams[self::isProjectdetails] && !$dummyParams[self::isMeasure]) {
             $placeholderArray = $this->getPlaceholder($this->translateString('multiple.optional')); // placeholder
-            foreach ($dummyParams['allStudies'] as $studyIndex => $study) {
+            $allStudies = $dummyParams['allStudies'];
+            $isMultiple = count($allStudies)>1;
+            foreach ($allStudies as $studyIndex => $study) {
                 $this->addFormElement($builder,self::editName.'_'.$studyIndex,'text',options: $placeholderArray); // edit name
-                foreach ($study[self::groupNode] as $groupIndex => $group) {
+                $groups = $study[self::groupNode];
+                $isMultiple = $isMultiple || count($groups)>1;
+                foreach ($groups as $groupIndex => $group) {
                     $this->addFormElement($builder,self::editName.'_'.$studyIndex.'_'.$groupIndex,'text',options: $placeholderArray); // edit name
-                    foreach ($group[self::measureTimePointNode] as $measureIndex => $measure) {
+                    $measures = $group[self::measureTimePointNode];
+                    $isMultiple = $isMultiple || count($measures)>1;
+                    foreach ($measures as $measureIndex => $measure) {
                         $this->addFormElement($builder,self::editName.'_'.$studyIndex.'_'.$groupIndex.'_'.$measureIndex,'text',options: $placeholderArray); // edit name
                     }
                     $this->addFormElement($builder,self::newElement.'_'.$studyIndex.'_'.$groupIndex,'text',options: $placeholderArray);
@@ -26,8 +32,10 @@ class LandingType extends TypeAbstract
                 $this->addFormElement($builder,self::newElement.'_'.$studyIndex,'text',options: $placeholderArray); // new group in current study
             }
             $this->addFormElement($builder,self::newElement.'_','text',options: $placeholderArray); // new study
+            if ($isMultiple) { // description of project structure
+                $this->addFormElement($builder,self::structureDescription,'textarea');
+            }
         }
-
         $this->addDummyForms($builder);
     }
 

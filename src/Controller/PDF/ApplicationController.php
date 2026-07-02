@@ -57,7 +57,8 @@ class ApplicationController extends PDFAbstract
             // projectdetails information
             $supplementTypes = [self::measuresNode,self::interventionsNode,self::otherSourcesNode,self::informationNode,self::post,self::dataSetNode,self::legitimizationNode];
             $projectdetailsNode = $appNode->{self::projectdetailsNodeName};
-            $studyArray = $this->addZeroIndex($this->xmlToArray($projectdetailsNode)[self::studyNode]);
+            $projectdetailsArray = $this->xmlToArray($projectdetailsNode);
+            $studyArray = $this->addZeroIndex($projectdetailsArray[self::studyNode]);
             /*
              * $allAddressees: all possible addressees with a value true if the addressee occurs, false otherwise. Only addressees where either pre or post information for the third parties (or participants if no third parties) happens are considered.
              * $isAnyWards: true if any wards is selected
@@ -74,10 +75,8 @@ class ApplicationController extends PDFAbstract
              * $isAnyBurdensEveryday: true if any burdens everyday question was answered with yes
              * $anyVoluntary: true is any no-description needs to be given
              * anyConsent: array with two elements regarding the consent question: 0: consent question was answered with 'no', 1: true if any assent question was answered with 'no', otherwise false in both cases.
-             * $isAnyCompensation: true if any compensation is given if information is pre or not yet chosen (0) of if nor pre information is given (1)
-             * $isAnyCompensationVoluntary: true if any compensationVoluntary question was answered with yes, false otherwise.
             */
-            [$allAddressees, $isAnyWards, $isAnySupplement, $isAnyOriginMissing, $isAnyDataSourceFurther, $isAnyDataSet, $isAnyOriginNew, $isAnyOriginExisting, $isAnyDataSourceVotes, $isAnyOtherSources, $isAnyBurdensRisks, $isAnyBurdensNo, $isAnyBurdensEveryday, $anyVoluntary, $anyConsent, $isAnyCompensation, $isAnyCompensationVoluntary] = [[self::addresseeParticipants => false, self::addresseeChildren => false, self::addresseeWards => false], false, array_fill_keys($supplementTypes,false), false, false, false, false, false, false, false, [self::burdensNode => false, self::risksNode => false, self::burdensRisksContributorsNode => false], false, false, false, [false, false], [false, false], false];
+            [$allAddressees, $isAnyWards, $isAnySupplement, $isAnyOriginMissing, $isAnyDataSourceFurther, $isAnyDataSet, $isAnyOriginNew, $isAnyOriginExisting, $isAnyDataSourceVotes, $isAnyOtherSources, $isAnyBurdensRisks, $isAnyBurdensNo, $isAnyBurdensEveryday, $anyVoluntary, $anyConsent] = [[self::addresseeParticipants => false, self::addresseeChildren => false, self::addresseeWards => false], false, array_fill_keys($supplementTypes,false), false, false, false, false, false, false, false, [self::burdensNode => false, self::risksNode => false, self::burdensRisksContributorsNode => false], false, false, false, [false, false]];
             /* The following values are true if either for third parties or participants at least one of the information questions was answered in the respective way:
              * $isAnyPre: yes
              * $isAnyDocInformation: true if any information may be created, i.e., if for by third parties either pre or post information is yes
@@ -100,11 +99,10 @@ class ApplicationController extends PDFAbstract
             $postNo = self::post.'No';
             $burdensNo = self::burdensNode.'No';
             $consentNo = self::consentNode.'No';
-            $compensationPost = self::compensationNode.self::post;
             $originNew = self::originNode.self::originNew;
             $originMissing = self::originNode.'Missing';
             $dataSetSupplement = self::dataSetNode.'Supplement';
-            $allTrue = [self::dataSourceNode => false, self::dataSetNode => false, $dataSetSupplement => false, self::legitimizationNode => false, self::addresseeParticipants => false, $preTrans => false, $preInformation => false, $postTrans => false, self::measuresNode.'PDF' => false, self::interventionsNode.'PDF' => false, self::otherSourcesNode.'PDF' => false, self::addresseeChildren => false, self::addresseeWards => false, self::originNode => false, $originNew => false, $originMissing => false, self::dataSourceVotesNode => false, self::pre => false, $preNo => false, $preNotYet => false, $completePost => false, self::preAbort => false, self::preAbortOther => false, self::preAbortNo => false, self::post => false, $postNo => false, self::otherSourcesNode => false, self::burdensNode => false, $burdensNo => false, self::burdensEveryday => false, self::risksNode => false, self::burdensRisksContributorsNode => false, self::voluntaryNode => false, self::consent => false, $consentNo => false, self::compensationNode => false, $compensationPost => false, self::compensationVoluntaryNode => false]; // Each entry gets true if the respective value in one of the preceding variables gets true
+            $allTrue = [self::dataSourceNode => false, self::dataSetNode => false, $dataSetSupplement => false, self::legitimizationNode => false, self::addresseeParticipants => false, $preTrans => false, $preInformation => false, $postTrans => false, self::measuresNode.'PDF' => false, self::interventionsNode.'PDF' => false, self::otherSourcesNode.'PDF' => false, self::addresseeChildren => false, self::addresseeWards => false, self::originNode => false, $originNew => false, $originMissing => false, self::dataSourceVotesNode => false, self::pre => false, $preNo => false, $preNotYet => false, $completePost => false, self::preAbort => false, self::preAbortOther => false, self::preAbortNo => false, self::post => false, $postNo => false, self::otherSourcesNode => false, self::burdensNode => false, $burdensNo => false, self::burdensEveryday => false, self::risksNode => false, self::burdensRisksContributorsNode => false, self::voluntaryNode => false, self::consent => false, $consentNo => false]; // Each entry gets true if the respective value in one of the preceding variables gets true
             foreach ($studyArray as $study) {
                 foreach ($this->addZeroIndex($study[self::groupNode]) as $group) {
                     foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureTimePoint) {
@@ -236,19 +234,6 @@ class ApplicationController extends PDFAbstract
                             if (($consentArray[self::chosen2Node] ?? '')==='no') {
                                 [$anyConsent[1], $allTrue[$consentNo]] = [true, true];
                             }
-                            // compensation (voluntary)
-                            $compensationArray = $measureTimePoint[self::compensationNode];
-                            $tempArray = $compensationArray[self::compensationTypeNode];
-                            if ($tempArray!=='' && !array_key_exists(self::compensationNo, $tempArray)) {
-                                if ($isNotPre) {
-                                    [$isAnyCompensation[1], $allTrue[$compensationPost]] = [true, true];
-                                } else {
-                                    [$isAnyCompensation[0], $allTrue[self::compensationNode]] = [true, true];
-                                }
-                                if ($compensationArray[self::compensationVoluntaryNode]!=='') {
-                                    [$isAnyCompensationVoluntary, $allTrue[self::compensationVoluntaryNode]] = [true, true];
-                                }
-                            }
                         }
                         if (!in_array(false, $allTrue)) {
                             break(3);
@@ -271,13 +256,16 @@ class ApplicationController extends PDFAbstract
             $pagePrefix = self::coreDataNode.'.';
             $appDataArray = $this->xmlToArray($appNode->{self::appDataNodeName});
             $pageArray = $appDataArray[self::coreDataNode];
-            // application type with review process and eventually guidelines
-            $applicationType = $pageArray[self::applicationType][self::chosen];
+            // application type with review process and eventually extended sub-question and guidelines
+            $tempArray = $pageArray[self::applicationType];
+            $applicationType = $tempArray[self::chosen];
             $isExtendedResubmission = in_array($applicationType, self::appExtendedResubmission);
             $applicationPrefix = $pagePrefix.self::applicationType;
             $tempVal = $applicationType!=='' ? $this->translateStringPDF($applicationPrefix.'.'.$applicationType).' - ' : '';
             $applicationProcess = $pageArray[self::applicationProcessNode][self::chosen];
             $tempVal .= $applicationProcess!=='' ? $this->translateString($pagePrefix.self::applicationProcessNode.'.types.'.$applicationProcess) : '';
+            $extendedDescription = $tempArray[self::appTypeExtended] ?? '';
+            $tempVal .= $extendedDescription!=='' ? "\n\n".$this->translateStringPDF($pagePrefix.self::appTypeExtended,['type' => $extendedDescription]) : '';
             $this->addBox($applicationPrefix,$tempVal,$pageArray[self::guidelinesNode][self::descriptionNode] ?? '',paragraph: self::applicationType,fragment: self::applicationType);
             // project title
             $this->addBox($pagePrefix.self::projectTitle, $pageArray[self::projectTitle].(($pageArray[self::projectTitleParticipation][self::chosen] ?? '')===self::projectTitleDifferent ? "\n\n".$this->translateStringPDF($pagePrefix.self::projectTitle) : ''),fragment: self::projectTitle);
@@ -310,7 +298,9 @@ class ApplicationController extends PDFAbstract
             if ($start!=='') {
                 $content .= $start==='0' ? $this->translateStringPDF($tempPrefix.'next') : $this->convertDate($start);
             }
-            $content .= ' '.$this->translateStringPDF($tempPrefix.'end').$this->convertDate($pageArray[self::projectEnd]).(array_key_exists(self::descriptionNode,$projectStart) ? $this->translateStringPDF($tempPrefix.'startedDescription').$projectStart[self::descriptionNode].(array_key_exists(self::projectStartRetrospective,$projectStart) ? $this->translateStringPDF($tempPrefix.self::projectStartRetrospective).$projectStart[self::projectStartRetrospective] : '') : '');
+            $hasConfirm = array_key_exists(self::projectStartBegunConfirm,$projectStart);
+            $hasDescription = array_key_exists(self::descriptionNode,$projectStart);
+            $content .= ' <span style="margin-left: 30px"></span>'.$this->translateStringPDF($tempPrefix.'end').$this->convertDate($pageArray[self::projectEnd]).($hasConfirm || $hasDescription ? $this->translateStringPDF($tempPrefix.'begun',array_merge($committeeParam,['isConfirm' => $this->getStringFromBool(($projectStart[self::projectStartBegunConfirm] ?? '')==='1')])) : '').($hasDescription ? $this->translateStringPDF($tempPrefix.'startedDescription').$projectStart[self::descriptionNode].(array_key_exists(self::projectStartRetrospective,$projectStart) ? $this->translateStringPDF($tempPrefix.self::projectStartRetrospective).$projectStart[self::projectStartRetrospective] : '') : '');
             $this->addBox($pagePrefix.'projectDates', $content, fragment: 'projectDates');
             // funding
             $tempArray = $pageArray[self::funding];
@@ -512,13 +502,14 @@ class ApplicationController extends PDFAbstract
                             $minAge = $groupsArray[self::minAge] ?? '';
                             $maxAge = $groupsArray[self::maxAge] ?? '';
                             $examinedArray = $groupsArray[self::examinedPeopleNode] ?? [];
-                            $isSmaller14 = $minAge!=='' && $minAge<14;
+                            $isMinAge = $minAge!=='';
+                            $isSmaller14 = $isMinAge && $minAge<14;
                             if ($isSmaller14) {
                                 unset($examinedArray[self::wardsExaminedNode]); // if min age is below 14, wards is selected automatically
                             }
                             $tempArray = $this->getSelectedCheckboxes($examinedArray, $examinedPrefix.'types.', false);
                             $numSelected = count($tempArray);
-                            $this->addBoxContent(self::examinedPeopleNode, implode(', ', $tempArray).$this->translateStringPDF($examinedPrefix.'title', ['number' => $numSelected, 'limits' => $maxAge==='-1' ? 'noUpperLimit' : ($minAge===$maxAge || array_diff([''],[$minAge,$maxAge])===[] ? 'sameLimit' : 'other'), self::minAge => $minAge ?: ($maxAge ?: -2), self::maxAge => $maxAge ?: -2, 'isWardsOnly' => $this->getStringFromBool($isSmaller14 && $numSelected===0), 'isWardsAge' => $this->getStringFromBool($isSmaller14)]), $groupsArray[self::peopleDescription] ?? '', paragraph: self::examinedPeopleNode, fragment: $this->addDiv(self::examinedPeopleNode), paragraphTop: true);
+                            $this->addBoxContent(self::examinedPeopleNode, $numSelected>0 || $isSmaller14 ? implode(', ', $tempArray).$this->translateStringPDF($examinedPrefix.'title', ['number' => $numSelected, 'limits' => $maxAge==='-1' ? 'noUpperLimit' : ($minAge===$maxAge || array_diff([''],[$minAge,$maxAge])===[] ? 'sameLimit' : 'other'), self::minAge => $isMinAge ? $minAge : ($maxAge ?: -2), self::maxAge => $maxAge ?: -2, 'isWardsAge' => $this->getStringFromBool($isSmaller14)]) : '', $groupsArray[self::peopleDescription] ?? '', paragraph: self::examinedPeopleNode, fragment: $this->addDiv(self::examinedPeopleNode), paragraphTop: true);
                             // closed (groups)
                             $tempArray = $groupsArray[self::closedNode] ?? [];
                             $this->addBoxContent(self::closedNode,$this->translateBinaryAnswer($tempArray[self::chosen] ?? '',addHyphenYes: true).$this->getSelectedCheckboxes($tempArray[self::closedTypesNode] ?? '',$groupsPrefix.self::closedNode.'.'));
@@ -707,12 +698,20 @@ class ApplicationController extends PDFAbstract
                             $tempArray = $burdensRisksArray[self::feedbackNode] ?? [];
                             $this->addBoxContent(self::feedbackNode, $this->translateBinaryAnswer($tempArray[self::chosen] ?? ''), $tempArray[self::descriptionNode] ?? '');
 
-                            // voluntariness threatened by amount or type of compensation (compensation)
+                            // compensation (compensation)
+                            $information = $hasDocs ? $this->getInformationString($informationArray) : '';
                             self::$linkedPage = self::compensationNode;
                             $pageArray = $measureTimePoint[self::compensationNode] ?? '';
                             $pageArray = $pageArray==='' ? [] : $pageArray;
-                            $tempPrefix = $projecdetailsPrefix.self::compensationVoluntaryNode.'.';
-                            $this->addBoxContent(self::compensationVoluntaryNode, array_key_exists(self::terminateNode, $pageArray) ? $this->getSelectedCheckboxes($pageArray[self::compensationVoluntaryNode],$tempPrefix.'types.',implodeLines: true) : self::dummyBox, $pageArray[self::compensationTextNode] ?? '');
+                            $compensationPrefix = $projecdetailsPrefix.self::compensationNode.'.';
+                            $tempArray = $pageArray[self::compensationTypeNode] ?? '';
+                            $isSelected = $tempArray!=='';
+                            $isCompensationSelected = $isSelected && !array_key_exists(self::compensationNo,$tempArray);
+                            $tempPrefix = $compensationPrefix.self::compensationVoluntaryNode.'.';
+                            $compensationFurther = $pageArray[self::compensationTextNode] ?? '';
+                            $this->addBoxContent(self::compensationNode,
+                                $isSelected ? $this->translateStringPDF($compensationPrefix.($isCompensationSelected ? self::compensationNode : self::compensationNo),array_merge($addresseeParam,['hasDocs' => $this->getStringFromBool($hasDocs && $information!==self::noPost)])) : '',
+                                $isCompensationSelected ? $this->translateStringPDF($tempPrefix.'title',['isPreInformation' => $this->getStringFromBool(in_array($information,self::emptyPre))])."\n".$this->getSelectedCheckboxes($pageArray[self::compensationVoluntaryNode],$tempPrefix.'types.',implodeLines: true).($compensationFurther!=='' ? "\n".$this->translateStringPDF($compensationPrefix.'further').$compensationFurther : '') : '');
 
                             // data privacy
                             self::$linkedPage = self::privacyNode;
@@ -731,7 +730,7 @@ class ApplicationController extends PDFAbstract
                             $tempPrefix = $projecdetailsPrefix.self::dataReuseNode.'.';
                             $content = '';
                             if (array_diff([$dataReuse, $dataReuseHow, $dataReuseSelf], [''])!==[]) { // any reuse question is answered
-                                if ($hasDocs && in_array($this->getInformationString($informationArray), [self::pre, self::post])) { // refer to participation document if any reuse
+                                if ($hasDocs && in_array($information, [self::pre, self::post])) { // refer to participation document if any reuse
                                     $content = $this->translateStringPDF((in_array(true, [$isDataReuse, $dataReuseHowArray!==[], $isDataReuseSelf]) ? $tempPrefix.'yes' : $this->translateBinaryAnswer('1')));
                                 } else {
                                     $content = $this->translateStringPDF($tempPrefix.($isDataReuse ? self::dataReuseNode : ($isDataReuseSelf ? self::dataReuseSelfNode : 'no')), ['selection' => $dataReuse, 'reuseType' => !$isDataReuseSelf ? (array_key_exists(self::dataReuseHowNode, $pageArray) ? $dataReuseHow : 'other') : 'own', self::descriptionNode => $dataReuseHowArray[self::descriptionNode] ?? '']);
@@ -841,15 +840,12 @@ class ApplicationController extends PDFAbstract
                 self::risksNode => $this->getStringFromBool($isAnyBurdensRisks[self::risksNode]),
                 'informationTypes' => $isPreNotYet && !$isAnyNotPre ? 'onlyPre' : (!$isPreNotYet ? 'onlyNotPre' : 'prePost'),
                 'anyPreNo' => $this->getStringFromBool($isAnyNotPre),
-                'isPreCompensation' => $this->getStringFromBool($isAnyCompensation[0]),
-                'anyPreNoCompensation' => $this->getStringFromBool($isAnyCompensation[1]),
                 'anyAbortOther' => $this->getStringFromBool($isAnyPreAbortOtherNo[0]),
                 'anyAbortNo' => $this->getStringFromBool($isAnyPreAbortOtherNo[1]),
                 'isVoluntaryNo' => $this->getStringFromBool($anyVoluntary),
                 'isAssent' => $this->getStringFromBool($isAnyWards),
                 'anyConsentNo' => $this->getStringFromBool($anyConsent[0]),
                 'anyAssentNo' => $this->getStringFromBool($anyConsent[1]),
-                'isCompensationVoluntary' => $this->getStringFromBool($isAnyCompensationVoluntary),
                 'isOrigin' => $this->getStringFromBool(!$isAnyOriginMissing),
                 'anyOriginExisting' => $this->getStringFromBool($isAnyOriginExisting)]); // all parameters for all translations of headings and subContent headings
             // box with names of levels
@@ -859,7 +855,7 @@ class ApplicationController extends PDFAbstract
             $this->addBox($projecdetailsPrefix.'overview', $isMultiple, parameters: $parameters, boxSub: !$isAnyOriginNew, boxNumber: !$isAnyOriginNew ? ($this->isReviewFull ? 46 : 20) : 0);
             self::$isPageLink = !$isMultiple;
             $informationContent = [self::burdensNode,self::risksNode,self::processingNode]; // keys for which content is added once if any information
-            $additionalContent = array_merge($supplementTypes,$informationContent,[self::compensationVoluntaryNode,self::examinedPeopleNode]); // keys for which content is added once
+            $additionalContent = array_merge($supplementTypes,$informationContent,[self::examinedPeopleNode]); // keys for which content is added once
             // setting the content for the boxes
             $studyTrans = $this->levelTrans[self::studyNode];
             $groupTrans = $this->levelTrans[self::groupNode];
@@ -926,12 +922,12 @@ class ApplicationController extends PDFAbstract
                 }
                 $sub = trim($curContent[self::sub]);
                 if (in_array($title,$additionalContent)) {
-                    $isCompensation = $title===self::compensationVoluntaryNode;
-                    if (($isAnySupplement[$title] ?? false) || $isAnyInformation && in_array($title,$informationContent) && (!in_array($title,[self::burdensNode,self::risksNode]) || $title===self::burdensNode && $isAnyBurdensEveryday || $title===self::risksNode && $isAnyBurdensRisks[self::risksNode]) || $title===self::examinedPeopleNode && ($this->isReviewFull || $hasCriteria) || $isCompensation || $title===self::processingNode) {
-                        $tempVal = $this->translateStringPDF($projecdetailsPrefix.'pdf.'.$title,$informationHintParam);
-                        $isMain = $isCompensation || $sub==='';
-                        $content = $isMain ? $main : $sub;
-                        $content = ($isCompensation ? $tempVal.(in_array(true,$isAnyCompensation) ? "\n\n".$this->translateStringPDF($projecdetailsPrefix.self::compensationVoluntaryNode.'.title',$parameters)."\n".$content : '') : '').(!$isCompensation ? $content : '').(!$isCompensation ? "\n\n".$tempVal : '');
+//                    $isCompensation = $title===self::compensationVoluntaryNode;
+                    if (($isAnySupplement[$title] ?? false) || $isAnyInformation && in_array($title,$informationContent) && (!in_array($title,[self::burdensNode,self::risksNode]) || $title===self::burdensNode && $isAnyBurdensEveryday || $title===self::risksNode && $isAnyBurdensRisks[self::risksNode]) || $title===self::examinedPeopleNode && ($isAnyInformation || $isAnyNoPost) && ($this->isReviewFull || $hasCriteria) || $title===self::processingNode) {
+//                        $tempVal = $this->translateStringPDF($projecdetailsPrefix.'pdf.'.$title,$informationHintParam);
+                        $isMain = $sub==='';
+                        $content = ($isMain ? $main : $sub).($content!=='' ? "\n\n".$this->translateStringPDF($projecdetailsPrefix.'pdf.'.$title,$informationHintParam) : '');
+//                        $content = ($isCompensation ? $tempVal.(in_array(true,$isAnyCompensation) ? "\n\n".$this->translateStringPDF($projecdetailsPrefix.self::compensationVoluntaryNode.'.title',$parameters)."\n".$content : '') : '').(!$isCompensation ? $content : '').(!$isCompensation && $content!=='' ? "\n\n".$tempVal : '');
                         if ($isMain) {
                             $main = $content;
                         } else {
@@ -953,6 +949,7 @@ class ApplicationController extends PDFAbstract
                     'tasks' => array_diff(self::tasksNodes,!in_array($committeeParam[self::committeeType],self::committeeSupervisor) ? [self::taskSupervision] : []),
                     'levelNames' => $names,
                     'levelHeading' => $levelHeading,
+                    'structureDescription' => $projectdetailsArray[self::structureDescription] ?? '',
                     'boxContent' => $this->content,
                     'savePDF' => self::$savePDF,
                     'isNotParticipation' => true]);

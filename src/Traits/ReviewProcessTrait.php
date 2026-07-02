@@ -1051,9 +1051,10 @@ trait ReviewProcessTrait
         }
         $reviewProcess = '';
         if ($appType!=='') {
+            $projectStartArray = $coreDataArray[self::projectStart];
             $reviewProcess = $isRequested
                 ? $appType.'Requested'
-                : (array_key_exists(self::descriptionNode,$coreDataArray[self::projectStart])
+                : (array_key_exists(self::projectStartBegunConfirm,$projectStartArray) || array_key_exists(self::descriptionNode,$projectStartArray)
                     ? $appType.'Begun'
                     : ($appType===self::reviewProcessFull
                         ? self::reviewFullDocs

@@ -183,6 +183,9 @@ class CheckDocClass extends ControllerAbstract
                                 $type = $hasMeasureID ? self::measureTimePointNode : ($hasGroupID ? self::groupNode : ($hasStudyID ? self::studyNode : ''));
                                 $studies = $checkDoc->addZeroIndex($checkDoc->appArray[self::projectdetailsNodeName][self::studyNode]);
                                 $studyIDcheck = ($landingArray[self::studyID] ?? 1)-1;
+                                if (!$hasStudyID) { // project structure
+                                    $checkDoc->checkLanding();
+                                }
                                 foreach (($hasStudyID ? [$studyIDcheck => $studies[$studyIDcheck]] : $studies) as $studyID => $study) {
                                     $groups = $checkDoc->addZeroIndex($study[self::groupNode]);
                                     $groupIDcheck = ($landingArray[self::groupID] ?? 1)-1;
@@ -325,6 +328,7 @@ class CheckDocClass extends ControllerAbstract
             $allInformationChosen = true; // gets false if any pre or post information question is not yet answered
             $anyOriginNew = false; // gets true if any origin is answered with 'new'
             $allOriginChosen = true; // gets false if any origin question is not yet answered
+            $this->checkLanding();
             foreach ($windowArray as $studyID => $study) {
                 $this->studyGroupMeasureName[self::studyNode] = $study[self::nameNode]; // is set again in setProjectdetailsVariables, but needed for setStudyGroup
                 foreach ($this->setStudyGroup(self::studyNode,$studyID,$study) as $groupID => $group) {
@@ -460,6 +464,9 @@ class CheckDocClass extends ControllerAbstract
         // application type
         $appTypeArray = $this->coreDataArray[self::applicationType];
         if (in_array($this->checkMissingChosen($appTypeArray,'coreData.appType.title',null,self::applicationType),self::appExtendedResubmission)) {
+            if (array_key_exists(self::appTypeExtended,$appTypeArray)) {
+                $this->checkMissingChosen($appTypeArray,$translationPrefix.self::appTypeExtended,null,'extendedDiv',name: self::appTypeExtended);
+            }
             $this->checkMissingContent($appTypeArray,[self::descriptionNode => $translationPrefix.'reference'],hash: 'exReDiv');
         }
         // application process
@@ -475,7 +482,9 @@ class CheckDocClass extends ControllerAbstract
         $this->checkMissingContent($tempArray,[self::chosen => $tempPrefix.'start.title'],parameter: $this->committeeParam,hash: 'projectDates');
         $this->checkMissingContent($this->coreDataArray,[self::projectEnd => $tempPrefix.'end.title'],parameter: $this->committeeParam);
         $start = $tempArray[self::chosen];
-        $isBegun = array_key_exists(self::descriptionNode,$tempArray);
+        $hasConfirm = array_key_exists(self::projectStartBegunConfirm,$tempArray);
+        $hasDescription = array_key_exists(self::descriptionNode,$tempArray);
+        $isBegun = $hasConfirm || $hasDescription;
         $today = $this->getCurrentDate();
         $validStart = false; // gets true if a date is selected
         if (!in_array($start,['','0'])) { // if 'next' is selected, $start is '0'
@@ -491,7 +500,12 @@ class CheckDocClass extends ControllerAbstract
             }
         }
         if ($isBegun) {
-            $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPrefix.'begun'],hash: $this->addDiv(self::projectStartBegun,true));
+            if ($hasConfirm) {
+                $this->checkMissingContent($tempArray,[self::projectStartBegunConfirm => $translationPrefix.'begunConfirm'],parameter: $this->committeeParam);
+            }
+            if ($hasDescription) {
+                $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPrefix.'begun'],hash: $this->addDiv(self::projectStartBegun,true));
+            }
             if (array_key_exists(self::projectStartRetrospective,$tempArray)) {
                 $this->checkMissingContent($tempArray,[self::projectStartRetrospective => $translationPrefix.self::projectStartRetrospective],hash: $this->addDiv(self::projectStartRetrospective));
             }
@@ -703,6 +717,21 @@ class CheckDocClass extends ControllerAbstract
             } elseif ($value && $isAllOriginNoCollection && $isTaskDataCollection) { // task that must not be selected is selected
                 $this->addCheckLabelString($tasksPrefix.self::dataSourceNode,parameters: $taskParam);
             }
+        }
+    }
+
+    /** Checks for errors on the landing page.
+     * @param bool $setTitle if true, the page title will be added above the errors
+     * @return void
+     */
+    private function checkLanding(bool $setTitle = true): void
+    {
+        $projectdetailsArray = $this->appArray[self::projectdetailsNodeName];
+        if (array_key_exists(self::structureDescription,$projectdetailsArray)) {
+            $this->addProjectdetailsTitle(setTitle: $setTitle,subPage: self::landing);
+            $this->linkedPage = self::landing;
+            $this->checkMissingContent($projectdetailsArray,[self::structureDescription => self::projectdetailsPrefix.self::landing],hash: self::structureDescription);
+            $this->setProjectdetailsTitle($setTitle);
         }
     }
 
@@ -1887,7 +1916,12 @@ class CheckDocClass extends ControllerAbstract
                 }
                 // data reuse
                 if (array_key_exists(self::dataReuseNode, $pageArray)) {
-                    $this->checkMissingContent($pageArray, [self::dataReuseNode => $translationPage.self::dataReuseNode], lineTitle: $lineTitleReuse);
+                    $tempPrefix = $translationPage.self::dataReuseNode.'.';
+                    $this->checkMissingContent($pageArray, [self::dataReuseNode => $tempPrefix.'missing'], lineTitle: $lineTitleReuse);
+                    $dataPersonal = $privacyArray[self::dataPersonalNode] ?? '';
+                    if ($pageArray[self::dataReuseNode]==='anonymous' && in_array($dataPersonal,self::dataPersonal)) { // research data are/may be personal -> reuse must not be with anonymous data
+                        $this->addCheckLabelString($tempPrefix.self::dataPersonalNode,parameters: array_merge($this->routeIDs,['type' => $dataPersonal]));
+                    }
                 }
                 if (array_key_exists(self::dataReuseSelfNode, $pageArray)) { // data reuse self
                     $this->checkMissingContent($pageArray, [self::dataReuseSelfNode => $translationPage.self::dataReuseSelfNode], lineTitle: $lineTitleReuse);
@@ -2195,11 +2229,10 @@ class CheckDocClass extends ControllerAbstract
                 $isFunding = $fundingStatesSelected;
             }
         }
-        $isNotBegun = !array_key_exists(self::descriptionNode,$projectStartArray);
         $hasBegun = in_array($this->committeeType,self::begunCommittees);
         return $this->coreDataArray[self::applicationProcessNode][self::chosen]==='' || // no application process chosen
                 !$isFunding || // funding (state) is missing
-                !$anyRequested && $hasBegun && $projectStartArray[self::chosen]==='' && $isNotBegun // neither project start nor that data collection has already started is chosen -> check only if no funding is requested
+                !$anyRequested && $hasBegun && $projectStartArray[self::chosen]==='' && (!(array_key_exists(self::projectStartBegunConfirm,$projectStartArray) || array_key_exists(self::descriptionNode,$projectStartArray))) // neither project start nor that data collection has already started is chosen -> check only if no funding is requested
                 ? $this->translateString('checkDoc.reviewMissing',['hasBegun' => $this->getStringFromBool($hasBegun)])."\n\n" : '';
     }
 

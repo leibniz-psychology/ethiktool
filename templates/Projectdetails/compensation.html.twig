@@ -26,7 +26,7 @@
                                     {# amount #}
                                     {{ formRender.renderButtons(content.hoursAmount,noHeading|merge({'contTarget': ['hoursAmountflat',compensationController,'hoursAmountFlat']})) }}
                                     {# value #}
-                                    <div class="{{ flexCenter }} align-self-end" style="margin-left: -6rem;" {{ stimulus_target(compensationController,'hoursValueDiv') }}>
+                                    <div class="{{ flexCenter }} align-self-end" style="margin-left: -1.5rem" {{ stimulus_target(compensationController,'hoursValueDiv') }}>
                                         {{ form_widget(content.hoursValue,{'attr': addTarget(compensationController,'hoursValue')|merge(valueStyle)}) }}
                                         <div style="{{ margins }}" {{ stimulus_target(compensationController,'hoursEndDefault') }}>{{ (typePrefix~'hoursEndDefault')|trans }}</div>
                                         <div style="{{ margins }}" {{ stimulus_target(compensationController,'hoursEndSpecific') }}>{{ (typePrefix~'hoursEndSpecific')|trans }}</div>

@@ -60,7 +60,8 @@ class MainController extends ControllerAbstract
                     return $this->redirectToRoute('app_main');
                 }
                 $this->removeTemp($session,false);
-                $isEUBold = $this->getCommitteeType($session)===self::committeeEUB;
+                $oldCommittee = $this->getCommitteeType($session);
+                $isEUBold = $oldCommittee===self::committeeEUB;
                 $appNode->{self::committee} = $committee;
                 $this->setCommittee($session,$committee,$request->getLocale());
                 $coreDataNode = $appNode->{self::appDataNodeName}->{self::coreDataNode};
@@ -88,13 +89,26 @@ class MainController extends ControllerAbstract
                 // remove student if new committee does not allow applicant to be student
                 $applicantNode = $coreDataNode->{self::applicant};
                 $contributorsNode = $appNode->{self::contributorsNodeName};
+                $contributorsApplicantNode = $contributorsNode->{self::contributorNode}[0];
+                $contributorsInfosNode = $contributorsApplicantNode->{self::infosNode};
                 $removeStudent = ((string) $applicantNode->{self::position})===self::positionsStudent && !in_array($committee,self::committeeStudent);
                 if ($removeStudent) { // remove position and all tasks
                     $applicantNode->{self::position} = '';
-                    $contributorsApplicantNode = $contributorsNode->{self::contributorNode}[0];
-                    $contributorsApplicantNode->{self::infosNode}->{self::position} = '';
+                    $contributorsInfosNode->{self::position} = '';
                     $contributorsApplicant = $contributorsApplicantNode->{self::taskNode};
                     $this->removeAllChildNodes($contributorsApplicant);
+                }
+                // remove institution for applicant and change institution for other contributors if value is 'institutionSame'
+                $applicantNode->{self::institutionInfo} = '';
+                $contributorsInfosNode->{self::institutionInfo} = '';
+                $children = $contributorsNode->children();
+                if (count($children)>1) { // further contributors exist
+                    for ($index=1; $index<count($children); ++$index) {
+                        $infosNode = $children[$index]->{self::infosNode};
+                        if (((string) $infosNode->{self::institutionInfo})===self::institutionSame) {
+                            $infosNode->{self::institutionInfo} = $this->translateString('committee.committeeLocationPure',[self::committee => $oldCommittee]);
+                        }
+                    }
                 }
                 $contributorsArray = $this->addZeroIndex($this->xmlToArray($contributorsNode)[self::contributorNode]);
                 $session->set(self::contributorsSessionName,[0 => $contributorsArray]);

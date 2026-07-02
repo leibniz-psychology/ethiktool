@@ -206,8 +206,8 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     findingSub: 'How are incidental findings handled?'
     feedback: 'Do participants receive feedback on their individual test results?'
     feedbackSub: 'Description of type and framing of feedback:'
-    compensationVoluntary: 'Compensation'
-    compensationVoluntarySub: 'Other remarks regarding the compensation:'
+    compensation: 'Compensation'
+    compensationSub: 'Additional details regarding the compensation:'
     processing: 'Description of data processing'
     dataReuse: 'Will the research data be re-used?'
     dataReuseBoxSub: >-
@@ -291,12 +291,22 @@ coreData:
     extended: 'amendment of an already approved proposal'
     resubmission: 'resubmission after proposal revision'
     resubmissionGranted: 'resubmission after funding acquisition'
+  appTypeExtended: >-
+    The amendment refers to {type, select,
+                              extendedSame {the original project}
+                              other        {a new, but very similar project}}.
   qualification: ' (The research project is exclusively carried out within the scope of an own qualification work (Bachelor/Master/PhD thesis)'
   projectDates:
     start: 'From: '
     end: 'To: '
     next: 'as soon as possible '
-    startedDescription: "\n\nThe research project has already started. Description of current state of the project:\n"
+    begun: >-
+      
+      
+      The research project has already started. {isConfirm, select,
+            true  {The applicant confirm that {committeeNom} allowed them to submit the research project for ethics review although it already started.}
+            other {}}
+    startedDescription: "\n\nDescription of current state of the project:\n"
     retrospective: "\n\nJustification for necessity of retrospective ethics review:\n"
   funding: "\n\nIt was confirmed that the studies laid out in the ethics proposal are congruent to those in the funding application in terms of content."
   conflict: 'The conflict of interest is disclosed to the participants in the study information sheet.'
@@ -353,6 +363,7 @@ projectdetails:
       one time point {isMeasureTimePointName, select,
                         true  {({measureTimePointName})}
                         other {}}{origin}
+    structureDescription: "Description of project structure:\n"
     origin:
       new: 'New data collection'
       existing: 'Re-use of available data'
@@ -368,7 +379,6 @@ projectdetails:
     risks: 'For the participants, the risks are described in the field “Disadvantages/risks“ of the study information sheet.'
     information: 'The translated participant documents are available after the participant documents created by the Ethiktool.'
     post: 'The translated participant documents are available after the participant documents created by the Ethiktool.'
-    compensationVoluntary: 'Information about compensation can be found {informationHint}.'
     processing: >-
       {anyDocs, select,
         true  {Detailed information about data processing can be found in the annex on data processing as part of the study information sheet}
@@ -451,7 +461,7 @@ projectdetails:
     examined:
       title: >-
         {number, plural,
-          =0    {{isWardsOnly, select,
+          =0    {{isWardsAge, select,
                    true  {Individuals}
                    other {}}}
           =1    {}
@@ -594,22 +604,29 @@ projectdetails:
                         wards    {legal guardians}
                         other    {participants}} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)}
         other   {}}
-  compensationVoluntary:
-    title: >-
-      Is the voluntary nature of {isPreCompensation, select,
-                                    true  {participation}
-                                    other {}} {anyPreNoCompensation, select,
-                                                true  {{isPreCompensation, select,
-                                                          true  {or the decision about data use, respectively,}
-                                                          other {the decision about data use}}}
-                                                other {}} compromised by the type or amount of compensation?
-    types:
-      amount: 'Yes, the compensation is exceptionally high.'
-      inequality: 'Yes, participants are treated unequally with regard to compensation.'
-      income: 'Yes, it seems likely that participants earn substantial parts of their income through study participation.'
-      loss: 'Yes, individual withdrawal leads to complete loss of compensation even after more than 30 minutes of participation.'
-      compensationVoluntaryOther: 'Yes, other forms of compromising voluntariness by the type or amount of compensation: {description}'
-      no: 'No'
+  compensation:
+    compensation: >-
+      Information about compensation can be found {hasDocs, select,
+                                                    true  {in the study information sheet}
+                                                    other {on the page “participant documents“}}.
+    noCompensation: >-
+      The {addressee, select,
+                                children {children}
+                                wards    {supervised individuals}
+                                other    {participants}} receive no compensation for participating.
+    compensationVoluntary:
+      title: >-
+        Is the voluntary nature of {isPreInformation, select,
+                                      true  {participation}
+                                      other {the decision about data use}} compromised by the type or amount of compensation?
+      types:
+        amount: 'Yes, the compensation is exceptionally high.'
+        inequality: 'Yes, participants are treated unequally with regard to compensation.'
+        income: 'Yes, it seems likely that participants earn substantial parts of their income through study participation.'
+        loss: 'Yes, individual withdrawal leads to complete loss of compensation even after more than 30 minutes of participation.'
+        compensationVoluntaryOther: 'Yes, other forms of compromising voluntariness by the type or amount of compensation: {description}'
+        no: 'No'
+    further: "Other remarks regarding the compensation:\n"
   dataReuse:
     yes: 'Yes (see section “Data protection and data usage“ in the study information sheet)'
     dataReuse: >- # other selection is personal. other reuseType is used if dataReuse is not asked.
@@ -1128,11 +1145,11 @@ participation:
         external: >-
           {savePDF, select,
             true  {For use within this study, the research data are anonymous.}
-            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For use within this study, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For use within this study, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.
         internal: >-
           {savePDF, select,
             true  {For the project contributors, the research data are anonymous.}
-            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For the project contributors, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.'
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">For the project contributors, the research data are anonymous.</a>}} The sample size and the available response options or methods imply that the research data cannot be mapped to an individual person at any time.
         no: >-
           {savePDF, select,
             true  {}
@@ -1698,6 +1715,33 @@ consent:
                                                         other         {for exemplary demonstration}}{savePDF, select,
           true  {}
           other {</a>}}.
+  obligatoryConsent:
+    start: ' This consent explicitly includes '
+    types:
+      personal:
+        start: 'the storage and use of personal research data for '
+        types:
+          documentation: >-
+            {savePDF, select,
+              true  {quality assurance/documentation}
+              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#documentationPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">quality assurance/documentation</a>}}
+          reuse: >-
+            {savePDF, select,
+              true  {re-use in further research projects}
+              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#reusePersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">re-use in further research projects</a>}}
+          teaching: >-
+            {savePDF, select,
+              true  {practice in teaching}
+              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#teachingPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">practice in teaching</a>}}
+          demonstration: >-
+            {savePDF, select,
+              true  {exemplary demonstration}
+              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#demonstrationPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">exemplary demonstration</a>}}
+      finding: >-
+        being informed about unusual test results {savePDF, select,
+          true  {incidental findings}
+          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">incidental findings</a>}}
+    lastSplit: ' as well as '
   digital: 'Note: Consent is given by clicking on a corresponding button.'
   oral: 'Note: Consent is documented by a project contributor.'
   other: 'Note: Consent is given in the following way: '

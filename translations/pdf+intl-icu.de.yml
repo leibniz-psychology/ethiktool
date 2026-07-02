@@ -206,8 +206,8 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     findingSub: 'Wie wird mit aufgetretenen (Zufalls-)Befunden umgegangen?'
     feedback: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
     feedbackSub: 'Beschreibung von Art und Rahmung der Rückmeldungen:'
-    compensationVoluntary: 'Aufwandsentschädigung'
-    compensationVoluntarySub: 'Sonstige Erläuterungen zur Aufwandsentschädigung:'
+    compensation: 'Aufwandsentschädigung'
+    compensationSub: 'Ergänzende Angaben zur Aufwandsentschädigung:'
     processing: 'Beschreibung der Datenverarbeitung'
     dataReuse: 'Werden die Forschungsdaten nachgenutzt?'
     dataReuseBoxSub: >-
@@ -291,12 +291,22 @@ coreData:
     extended: 'Erweiterungsantrag'
     resubmission: 'Wiedervorlage nach Antrags-Überarbeitung'
     resubmissionGranted: 'Wiedervorlage nach Mittelakquise'
+  appTypeExtended: >-
+    Die Erweiterung/Änderung bezieht sich auf {type, select,
+                                                extendedSame {das ursprüngliche Vorhaben}
+                                                other        {ein neues, sehr ähnliches Vorhaben}}.
   qualification: ' (Das Forschungsprojekt wird ausschließlich im Rahmen der eigenen Qualifikationsarbeit (Bachelor-/Masterarbeit/Promotion) durchgeführt.)'
   projectDates:
     start: 'Von: '
     end: 'Bis: '
     next: 'nächstmöglicher Zeitpunkt '
-    startedDescription: "\n\nDas Forschungsprojekt hat bereits begonnen. Beschreibung des Projektstands:\n"
+    begun: >-
+      
+      
+      Das Forschungsprojekt hat bereits begonnen. {isConfirm, select,
+            true  {Die Antragstellenden bestätigen, dass ihnen {committeeNom} erlaubt hat, das bereit begonnene Forschungsprojekt zur Begutachtung einzureichen.}
+            other {}}
+    startedDescription: "\n\nBeschreibung des Projektstands:\n"
     retrospective: "\n\nBegründung, warum der Ethikantrag nachträglich gestellt wird:\n"
   funding: "\n\nEs wurde bestätigt, dass der Inhalt der im Ethikantrag beschriebenen Studien deckungsgleich zu den Studien im Drittmittelantrag ist."
   conflict: 'Für die Teilnehmenden wird der Interessenkonflikt in der Studieninformation offengelegt.'
@@ -353,6 +363,7 @@ projectdetails:
       ein Zeitpunkt {isMeasureTimePointName, select,
                       true  {({measureTimePointName})}
                       other {}}{origin}
+    structureDescription: "Erläuterung der Projektstruktur:\n"
     origin:
       new: 'Eigene Datenerhebung'
       existing: 'Nachnutzung vorhandener Daten'
@@ -368,7 +379,6 @@ projectdetails:
     risks: 'Für die Teilnehmenden werden die Risiken im Feld „Nachteile/Risiken“ der Studieninformation beschrieben.'
     information: 'Die übersetzten Teilnahmedokumente befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
     post: 'Die übersetzten Teilnahmedokumente befinden sich nach den vom Ethiktool erzeugten Teilnahmedokumenten.'
-    compensationVoluntary: 'Informationen zur Aufwandsentschädigung finden sich {informationHint}.'
     processing: >-
       {anyDocs, select,
         true  {Genaue Informationen zur Datenverarbeitung finden sich in der Anlage zur Datenverarbeitung als Teil der Studieninformation}
@@ -451,7 +461,7 @@ projectdetails:
     examined:
       title: >-
         {number, plural,
-          =0    {{isWardsOnly, select,
+          =0    {{isWardsAge, select,
                    true  {Personen}
                    other {}}}
           =1    {}
@@ -594,22 +604,29 @@ projectdetails:
                         wards    {gesetzlichen Vertretungspersonen}
                         other    {Teilnehmenden}} können in der Einwilligung auswählen, ob sie über aufgetretene (Zufalls-)Befunde informiert werden möchten. (Mitteilung optional)}
         other   {}}
-  compensationVoluntary:
-    title: >-
-      Ist die Freiwilligkeit der {isPreCompensation, select,
-                                    true  {Teilnahme}
-                                    other {}} {anyPreNoCompensation, select,
-                                                true  {{isPreCompensation, select,
-                                                          true  {bzw. der}
-                                                          other {}} Entscheidung zur Verwendung der Daten}
-                                                other {}} durch Art oder Höhe der Aufwandsentschädigung gefährdet?
-    types:
-      amount: 'Ja, die Aufwandsentschädigung ist außergewöhnlich hoch.'
-      inequality: 'Ja, die Teilnehmenden werden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt.'
-      income: 'Ja, es liegt nahe, dass die Teilnehmenden große Teile ihres Einkommens über die Aufwandsentschädigung bestreiten.'
-      loss: 'Ja, der individuelle Abbruch ist auch nach mehr als 30 Minuten Teilnahme mit einem Komplettverlust der Aufwandsentschädigung verbunden.'
-      compensationVoluntaryOther: 'Ja, sonstige Einschränkung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung: {description}'
-      no: 'Nein'
+  compensation:
+    compensation: >-
+      Informationen zur Aufwandsentschädigung finden sich {hasDocs, select,
+                                                            true  {in der Studieninformation}
+                                                            other {auf der Seite „Teilnahmedokumente“}}.
+    noCompensation: >-
+      Die {addressee, select,
+            children {Kinder}
+            wards    {betreuten Personen}
+            other    {Teilnehmenden}} erhalten für die Teilnahme keine Aufwandsentschädigung.
+    compensationVoluntary:
+      title: >-
+        Ist die Freiwilligkeit der {isPreInformation, select,
+                                      true  {Teilnahme}
+                                      other {Entscheidung zur Verwendung der Daten}} durch Art oder Höhe der Aufwandsentschädigung gefährdet?
+      types:
+        amount: 'Ja, die Aufwandsentschädigung ist außergewöhnlich hoch.'
+        inequality: 'Ja, die Teilnehmenden werden in Bezug auf die gewährte Aufwandsentschädigung ungleich behandelt.'
+        income: 'Ja, es liegt nahe, dass die Teilnehmenden große Teile ihres Einkommens über die Aufwandsentschädigung bestreiten.'
+        loss: 'Ja, der individuelle Abbruch ist auch nach mehr als 30 Minuten Teilnahme mit einem Komplettverlust der Aufwandsentschädigung verbunden.'
+        compensationVoluntaryOther: 'Ja, sonstige Einschränkung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung: {description}'
+        no: 'Nein'
+    further: "Sonstige Erläuterungen zur Aufwandsentschädigung:\n"
   dataReuse:
     yes: 'Ja (siehe Abschnitt „Datenschutz und Datennutzung“ der Studieninformation)'
     dataReuse: >- # other selection is personal. other reuseType is used if dataReuse is not asked.
@@ -1132,7 +1149,7 @@ participation:
         internal: >-
           {savePDF, select,
             true  {Für die Projektbeteiligten sind die Forschungsdaten anonym.}
-            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">Für die Projektbeteiligten sind die Forschungsdaten anonym.</a>}} Durch die Anzahl der Teilnehmenden in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.'
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">Für die Projektbeteiligten sind die Forschungsdaten anonym.</a>}} Durch die Anzahl der Teilnehmenden in Kombination mit dem gewählten methodischen Vorgehen lassen sich die Forschungsdaten zu keinem Zeitpunkt einer konkreten Person zuordnen.
         no: >-
           {savePDF, select,
             true  {}
@@ -1698,6 +1715,33 @@ consent:
                                                         other         {zur beispielhaften Demonstration}}{savePDF, select,
           true  {}
           other {</a>}} einverstanden.
+  obligatoryConsent:
+    start: ' Die Einwilligung erstreckt sich ausdrücklich auch auf '
+    types:
+      personal:
+        start: 'die Aufbewahrung und Verwendung der personenbezogenen Forschungsdaten zur '
+        types:
+          documentation: >-
+            {savePDF, select,
+              true  {Qualitätssicherung/Dokumentation}
+              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#documentationPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">Qualitätssicherung/Dokumentation</a>}}
+          reuse: >-
+            {savePDF, select,
+              true  {Nachnutzung für weitere Forschung}
+              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#reusePersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">Nachnutzung für weitere Forschung</a>}}
+          teaching: >-
+            {savePDF, select,
+              true  {Nutzung im Rahmen der Lehre}
+              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#teachingPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">Nutzung im Rahmen der Lehre</a>}}
+          demonstration: >-
+            {savePDF, select,
+              true  {beispielhaften Demonstration}
+              other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#demonstrationPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">beispielhaften Demonstration</a>}}
+      finding: >-
+        das Informiertwerden über ggf. auftretende Auffälligkeiten ({savePDF, select,
+          true  {Zufallsbefunde)}
+          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">Zufallsbefunde</a>)}}
+    lastSplit: ' sowie '
   digital: 'Hinweis: Die Einwilligung erfolgt über das Anklicken eines entsprechenden Buttons.'
   oral: 'Hinweis: Die Einwilligung wird von einer projektbeteiligten Person dokumentiert.'
   other: 'Hinweis: Die Einwilligung erfolgt auf folgende Art: '

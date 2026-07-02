@@ -289,7 +289,7 @@ class ParticipationController extends PDFAbstract
                                     $hoursValue = str_replace($isGerman ? '.' : ',', $isGerman ? ',' : '.', $hoursValue);
                                 }
                                 $tempPrefix = $compensationPrefixPDF.'types.'.$type.'.';
-                                $tempParams = array_merge($hasDescriptionParam, ['type' => $type, self::descriptionNode => $value, self::moneyHourAdditionalNode => $description[self::moneyHourAdditionalNode] ?? '', 'hoursValue' => $hoursValue, 'amount' => $hoursValue!='' ? (int)($hoursValue) : 0]);
+                                $tempParams = array_merge($hasDescriptionParam, ['type' => $type, self::descriptionNode => $value, self::moneyHourAdditionalNode => $description[self::moneyHourAdditionalNode] ?? '', 'hoursValue' => $hoursValue, 'amount' => $hoursValue!='' && ($hoursValue<=1 || $hoursValue>=2) ? $hoursValue : 0]);
                                 $content .= ($index===($numCompensation - 1) ? $lastOr : ',').' '.$this->translateStringPDF($tempPrefix.'start', $tempParams);
                                 if ($hasDescription) {
                                     $content .= $this->translateStringPDF($compensationPrefixPDF.'details', $tempParams).(!$isMoneyCompensation ? ($isHoursCompensation ? ' ' : '').$this->addMarkInput($value, self::$markInput) : '').$this->translateStringPDF($tempPrefix.'end');
@@ -473,13 +473,19 @@ class ParticipationController extends PDFAbstract
                             $this->linkedSubHeadings = [];
                             $findingArray = $measureTimePoint[self::burdensRisksNode][self::findingNode];
                             $findingConsent = '';
+                            $findingConsentObligatory = '';
                             $participationConsentPrefix = self::consentNode.'.';
+                            $obligatoryPrefix = $participationConsentPrefix.'obligatoryConsent.';
+                            $obligatoryTypesPrefix = $obligatoryPrefix.'types.';
                             if ($textsArray!=='' && array_key_exists(self::findingTextNode, $textsArray) && $findingArray[self::chosen]==='0') {
                                 $tempArray = $textsArray[self::findingTextNode];
                                 $this->addParagraph(self::findingNode, $tempArray[self::findingTemplate]==='1' ? $this->translateString($textsPrefix.self::findingTextNode.'.template', [self::consentNode => $this->getStringFromBool($findingArray[self::informingNode]===self::informingConsent), self::addressee => $addressee]) : $this->addMarkInput($tempArray[self::descriptionNode], self::$markInput));
                                 // finding consent
-                                if ($findingArray[self::informingNode]===self::informingConsent) {
+                                $tempVal = $findingArray[self::informingNode];
+                                if ($tempVal===self::informingConsent) {
                                     $findingConsent = $this->translateStringPDF($participationConsentPrefix.self::findingNode,$translationSaveParam);
+                                } elseif ($tempVal===self::informingAlways) {
+                                    $findingConsentObligatory = $this->translateStringPDF($obligatoryTypesPrefix.self::findingNode,$translationSaveParam);
                                 }
                             }
 
@@ -839,6 +845,7 @@ class ParticipationController extends PDFAbstract
                             // consent -> one array containing all the information needed for the consent because it may be a separate document
                             $consentHeading = '';
                             $optionalConsent = []; // consent for finding or personalKeep if informing/keep is optional
+                            $obligatoryConsent = []; // consent for finding or personalKeep if informing/keep is obligatory
                             $dataSpecialParam = ['isDataSpecial' => $this->getStringFromBool($isDataSpecial)];
                             $consentHint = ''; // hint if consent is not given by signing
                             if ($isConsent) { // consent is given
@@ -943,6 +950,8 @@ class ParticipationController extends PDFAbstract
                                         // personal keep consent
                                         if ($isConsent && $personalKeepConsentArray!==[]) {
                                             $tempVal = $participationConsentPrefix.self::personalKeepConsentNode;
+                                            $obligatoryPersonalPrefix = $obligatoryTypesPrefix.'personal.';
+                                            $tempArray = [];
                                             foreach ($personalKeepConsentArray as $type => $description) {
                                                 if ($description==='optional') {
                                                     if ($type===self::personalKeepReuse) {
@@ -953,7 +962,12 @@ class ParticipationController extends PDFAbstract
                                                         $isTeachingConsent = true;
                                                     }
                                                     $optionalConsent[] = $this->translateStringPDF($tempVal,array_merge($translationSaveParam,['type' => $type]));
+                                                } elseif ($description==='obligatory') {
+                                                    $tempArray[] = $this->translateStringPDF($obligatoryPersonalPrefix.'types.'.$type,$translationSaveParam);
                                                 }
+                                            }
+                                            if ($tempArray!==[]) {
+                                                $obligatoryConsent[] = $this->translateStringPDF($obligatoryPersonalPrefix.'start').$this->replaceDummyString($tempArray);
                                             }
                                         }
                                         // access if research data is personal -> if research data is not personal, but marking is personal, access is asked
@@ -1129,6 +1143,8 @@ class ParticipationController extends PDFAbstract
                                 self::committeeParams => $committeeParam]);
                             if ($findingConsent!=='') { // finding consent is optional -> after the optional privacy consents
                                 $optionalConsent[] = $findingConsent;
+                            } elseif ($findingConsentObligatory!=='') { // finding consent is obligatory -> after the obligatory privacy consents
+                                $obligatoryConsent[] = $findingConsentObligatory;
                             }
                             self::$linkedPage = self::informationNode;
                             $participationHeading = $this->addHeadingLink($participationPrefix.'title', $informationParam);
@@ -1156,6 +1172,7 @@ class ParticipationController extends PDFAbstract
                                     'yesTrans' => $this->translateString('buttons.yes'), // for optional consent
                                     'noTrans' => $this->translateString('buttons.no'), // for optional consent
                                     'optionalConsent' => $optionalConsent,
+                                    'obligatoryConsent' => $obligatoryConsent!==[] ? $this->translateStringPDF($obligatoryPrefix.'start').$this->replaceDummyString($obligatoryConsent,replace: $obligatoryPrefix.'lastSplit').'.' : '',
                                     'oralHint' => $tempVal,
                                     self::isPersonal => $this->getStringFromBool($isPersonal || $isMarkingOtherPersonal),
                                     'privacyParameters' => $privacyParameters]);

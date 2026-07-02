@@ -341,7 +341,12 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->arrayToXml($contributor,$contributorsNode->addChild(self::contributorNode));
                             }
                             $projectdetailsNode = $xml->{self::projectdetailsNodeName};
+                            $hasStructureDescription = $this->checkElement(self::structureDescription,$projectdetailsNode);
+                            $structureDescription = $hasStructureDescription ? ((string) $projectdetailsNode->{self::structureDescription}) : '';
                             $this->removeAllChildNodes($projectdetailsNode);
+                            if ($hasStructureDescription) {
+                                $projectdetailsNode->addChild(self::structureDescription,$structureDescription);
+                            }
                             foreach ($this->addZeroIndex($xmlArray[self::projectdetailsNodeName][self::studyNode]) as $study) {
                                 $studyNode = $projectdetailsNode->addChild(self::studyNode);
                                 $studyNode->addChild(self::nameNode,$study[self::nameNode]);
@@ -1328,7 +1333,7 @@ abstract class ControllerAbstract extends AbstractController
         if (!($getReviewError && $anyFull)) { // check projectdetails only if conflict and medicine are 'no'
             $tempPrefix = 'completeForm.briefReport.levelHeadings.';
             $isMultipleParam = ['isMultiple' => $this->getStringFromBool($this->getMultiStudyGroupMeasure($appNode))];
-            $levelHeadings = [self::originNew => $this->translateStringPDF($tempPrefix.self::originNew,$isMultipleParam), self::originExisting => $this->translateStringPDF($tempPrefix.self::originExisting),$isMultipleParam] ; // information after level names whether new or existing data
+            $levelHeadings = [self::originNew => $this->translateStringPDF($tempPrefix.self::originNew,$isMultipleParam), self::originExisting => $this->translateStringPDF($tempPrefix.self::originExisting,$isMultipleParam)] ; // information after level names whether new or existing data
             foreach ($studyArray as $studyID => $study) {
                 $heading = $multipleStudies ? [self::studyNode => $headingTrans[self::studyNode].($studyID + 1)] : [];
                 $groupArray = $this->addZeroIndex($study[self::groupNode]);
@@ -1361,7 +1366,7 @@ abstract class ControllerAbstract extends AbstractController
                             $preContentChosen = $informationArray[self::preContent] ?? '';
                             $allShort = $allShort && $preContentChosen===self::complete;
                             $preContent = [$preContentChosen, $isInformationII ? ($informationIIArray[self::preContent] ?? '') : ''];
-                            $isNotPre = array_diff($allInformation, ['',self::pre])!==[];
+                            $isNotPre = array_diff($allInformation, self::emptyPre)!==[];
                             $parameters['isNotPre'] = $this->getStringFromBool($isNotPre);
                             $isIncomplete = array_intersect($preContent, self::preContentIncomplete)!==[];
                             $parameters['isIncomplete'] = $this->getStringFromBool($isIncomplete);
@@ -1584,7 +1589,7 @@ abstract class ControllerAbstract extends AbstractController
      */
     protected function getInformationString(array $information): string
     {
-        $pre = $information[self::pre];
+        $pre = $information[self::pre] ?? '';
         $post = $pre==='1' ? $information[self::post][self::chosen] : '';
         return $pre==='0' ? self::pre : ($pre==='1' ? ($post==='0' ? self::post : ($post==='1' ? self::noPost : 'noPre')) : '');
     }
@@ -1926,7 +1931,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMinorSmaller3 = $minor<'3';
         $isMajorSmaller3 = $major<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajorSmaller3 || $minor<'2';
+        $isSmallerCurrent = $isMajorSmaller3 || $minor<'3';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
@@ -1935,11 +1940,14 @@ abstract class ControllerAbstract extends AbstractController
         $isSmaller281 = $isMajor1 || $isMajor2 && $minor<'8'; // only productive minor version 8 is 2.8.1
         $isSmaller290 = $isMajor1 || $isMajor2 && $minor<'9';
         $isSmaller2100 = $isMajor1 || $isMajor2 && $minor<'10';
+        $isSmaller320 = $isMajorSmaller3 || $minor<'2';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
         $committeeType = (string)$xml->{self::committee};
         $qualificationOrApplicantNode = $coreDataNode->{$this->checkElement(self::qualification,$coreDataNode) ? self::qualification : self::applicant};
+        $appTypeNode = $coreDataNode->{self::applicationType};
+        $appType = (string) $appTypeNode->{self::chosen};
         if ($isMajor1) { // updates for versions before 2.0.0
             $this->setToolVersion($xml); // update attribute
             $conflictNode = $coreDataNode->{self::conflictNode};
@@ -1948,13 +1956,13 @@ abstract class ControllerAbstract extends AbstractController
                 $conflictDescription = (string)$conflictNode->{'participantDescription'};
                 $this->removeElement('participantDescription', $conflictNode);
             }
-            $appTypeNode = $coreDataNode->{self::applicationType};
-            if (((string)$appTypeNode->{self::chosen})===self::appNew && in_array($committeeType, [self::committeeTUC, 'testCommittee'])) { // TUC or test committee -> remove old application type
+            if ($appType===self::appNew && in_array($committeeType, [self::committeeTUC, 'testCommittee'])) { // TUC or test committee -> remove old application type
                 $this->removeElement(self::descriptionNode, $appTypeNode); // remove node containing the application type
             }
             $this->insertElementBefore(self::applicationProcessNode, $qualificationOrApplicantNode, [self::chosen]);
         }
         if ($isSmallerCurrent) {
+            $projectStartNode = $coreDataNode->{self::projectStart};
             if ($isMajor1 || $isMajor2 && $minor<'4') { // updates for versions before 2.4.0
                 $fundingArray = $this->xmlToArray($coreDataNode->{self::funding});
                 $anyRequested = false;
@@ -1964,7 +1972,6 @@ abstract class ControllerAbstract extends AbstractController
                 if ($anyRequested) { // add requested confirm question
                     $this->insertElementBefore(self::requestedConfirm,$qualificationOrApplicantNode);
                 }
-                $projectStartNode = $coreDataNode->{self::projectStart};
                 $isBegun = $this->checkElement(self::descriptionNode,$projectStartNode);
                 if ($isBegun) { // data collection has already begun -> project start has to be entered, too, and justification for TUD is necessary
                     $projectStartNode->{self::chosen} = '';
@@ -1974,13 +1981,15 @@ abstract class ControllerAbstract extends AbstractController
                 }
             }
             // updates for versions before 3.2.0
-            $this->addDepartment($coreDataNode->{self::applicant});
-            $this->removeElement('supervisor',$coreDataNode); // remove supervisor
             $contributorsNode = $xml->{self::contributorsNodeName};
-            foreach ($contributorsNode->{self::contributorNode} as $index => $contributor) {
-                $this->addDepartment($contributor->{self::infosNode});
-                if (in_array($index,['0',self::contributorNode])) { // if only one contributor, $index equals 'contributor'
-                    $this->removeElement('application',$contributor->{self::taskNode}); // remove task 'application'
+            if ($isSmaller320) {
+                $this->addDepartment($coreDataNode->{self::applicant});
+                $this->removeElement('supervisor',$coreDataNode); // remove supervisor
+                foreach ($contributorsNode->{self::contributorNode} as $index => $contributor) {
+                    $this->addDepartment($contributor->{self::infosNode});
+                    if (in_array($index,['0',self::contributorNode])) { // if only one contributor, $index equals 'contributor'
+                        $this->removeElement('application',$contributor->{self::taskNode}); // remove task 'application'
+                    }
                 }
             }
             $reviewProcess = $this->getCurrentReviewProcess($xml);
@@ -1988,10 +1997,24 @@ abstract class ControllerAbstract extends AbstractController
             $contributorsArray = $this->addZeroIndex($this->xmlToArray($contributorsNode)[self::contributorNode]);
             $isShortNoDocs = $reviewProcess===self::reviewShortNoDocs;
             $supervisorTasks = $contributorsArray[1][self::taskNode] ?? '';
-            $addSupervisor = (!$this->getMultiStudyGroupMeasure($xml) || $isShortNoDocs) && $supervisorTasks!=='' && array_key_exists(self::taskSupervision,$supervisorTasks);
+            $isMultiple = $this->getMultiStudyGroupMeasure($xml);
+            $addSupervisor = (!$isMultiple || $isShortNoDocs) && $supervisorTasks!=='' && array_key_exists(self::taskSupervision,$supervisorTasks);
             $session = $request->getSession();
             $session->set(self::contributorsSessionName,[0 => $contributorsArray]);
-            foreach ($xml->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
+            $projectdetailsNode = $xml->{self::projectdetailsNodeName};
+            $allStudyNodes = $projectdetailsNode->{self::studyNode};
+            // updates for versions before 3.3.0
+            if ($isMultiple) { // multiple combinations -> description of project structure is needed
+                $this->insertElementBefore('structureDescription',$allStudyNodes[0]);
+            }
+            if ($appType==='extended') { // application type is extended -> add question whether amendment is for original proposal
+                $this->insertElementBefore(self::appTypeExtended,$appTypeNode->{self::descriptionNode});
+            }
+            if ($this->checkElement(self::descriptionNode,$projectStartNode) && in_array($committeeType,self::begunConfirmCommittees)) { // research project has already started -> add confirm node and set it checked to keep the description
+                $this->insertElementBefore(self::projectStartBegunConfirm,$projectStartNode->{self::descriptionNode});
+                $projectStartNode->{self::projectStartBegunConfirm} = '1';
+            }
+            foreach ($allStudyNodes as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
                     foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
                         $groupsNode = $measureTimePointNode->{self::groupsNode};
@@ -2328,11 +2351,13 @@ abstract class ControllerAbstract extends AbstractController
                             }
                         }
                         // updates for versions before 3.2.0
-                        $contributorNode = $measureTimePointNode->{self::contributorNode};
-                        if ($hasSupervisor && $this->checkElement(self::taskLeader,$contributorNode)) { // add 'supervision' node
-                            $this->insertElementBefore(self::taskSupervision,$contributorNode->{'other'});
-                            if ($addSupervisor) {
-                                $contributorNode->{self::taskSupervision} = '1';
+                        if ($isSmaller320) {
+                            $contributorNode = $measureTimePointNode->{self::contributorNode};
+                            if ($hasSupervisor && $this->checkElement(self::taskLeader,$contributorNode)) { // add 'supervision' node
+                                $this->insertElementBefore(self::taskSupervision,$contributorNode->{'other'});
+                                if ($addSupervisor) {
+                                    $contributorNode->{self::taskSupervision} = '1';
+                                }
                             }
                         }
                     } // foreach measure time point

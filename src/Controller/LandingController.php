@@ -33,7 +33,8 @@ class LandingController extends ControllerAbstract
         $isPageOverview = $isProjectdetails && $hasStudyID; // true if overview of one measure time point
         $isProjectdetailsOverview = $isProjectdetails && !$hasStudyID;
         $IDs = [null,null,null];
-        $allStudies = $this->addZeroIndex($this->xmlToArray($projectdetailsNode)[self::studyNode]); // $projectdetailsNode converted to array, but every sub-element has a numerical index (and a key 'name' which is not used) and the measure time point level has an array which contains the name (not used) and arrays with information about the pages
+        $projectdetailsArray = $this->xmlToArray($projectdetailsNode);
+        $allStudies = $this->addZeroIndex($projectdetailsArray[self::studyNode]); // $projectdetailsNode converted to array, but every sub-element has a numerical index (and a key 'name' which is not used) and the measure time point level has an array which contains the name (not used) and arrays with information about the pages
         $projectdetailsPrefix = self::landing.'.projectdetails.';
         $nameTrans = []; // name of elements where the given name may be appended
         $newTrans = []; // label for button for creating a new element
@@ -63,7 +64,8 @@ class LandingController extends ControllerAbstract
             }
         }
         $tempVal = $pageHeading.($isPageOverview ? '' : $this->translateString('pages.'.lcfirst($title).'.title'));
-        if ($isPageOverview && !$this->getMultiStudyGroupMeasure($appNode)) { // overview of one measure time point
+        $isNotMultiple = !$this->getMultiStudyGroupMeasure($appNode);
+        if ($isPageOverview && $isNotMultiple) { // overview of one measure time point
             $studyDetailsTrans = $this->translateString('projectdetails.sidebar');
             $pageHeading = $studyDetailsTrans;
             $tabName = $tabNameStart.$studyDetailsTrans;
@@ -105,8 +107,12 @@ class LandingController extends ControllerAbstract
                 return $this->setErrorAndRedirect($session);
             }
         }
+        $focusDescription = $session->has(self::structureDescription);
+        if ($focusDescription) {
+            $session->remove(self::structureDescription);
+        }
 
-        $landing = $this->createFormAndHandleRequest(LandingType::class,[self::language => $session->get(self::language)],$request,
+        $landing = $this->createFormAndHandleRequest(LandingType::class,[self::language => $session->get(self::language), self::structureDescription => $projectdetailsArray[self::structureDescription] ?? ''],$request,
             [self::dummyParams => [self::isProjectdetails => $isProjectdetails, self::isMeasure => array_key_exists(self::measureID,$landingArray),'allStudies' => $allStudies]]);
         if ($landing->isSubmitted()) { // language has changed or a link was clicked
             $data = $landing->getData();
@@ -115,10 +121,14 @@ class LandingController extends ControllerAbstract
                 $isNew = str_contains($submitDummy,'new') && !str_contains($submitDummy,'app_newForm');
                 $isCopy = str_contains($submitDummy,self::copy);
                 $isNewCopy = $isNew || $isCopy;
+                $isEdit = str_contains($submitDummy,self::edit);
                 $isRemove = str_contains($submitDummy, self::remove);
-                $isEditRemove = $isRemove || str_contains($submitDummy, self::edit);
+                $isEditRemove = $isEdit || $isRemove;
                 $name = ''; // name of new element
                 if ($isNewCopy || $isEditRemove) {
+                    if ($isNewCopy && $isNotMultiple || $isRemove) { // set focus only if second element is created of an element is removed
+                        $session->set(self::structureDescription,'');
+                    }
                     // logic: $submitDummy has the form 'key:value\n\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\n' (substr call). The split the string by "\n" such that the first element contains "remove:..." (first explode). Then split again by the colon such that the second element contains the indices (second explode). Then split again by the underscore to get the individual indices (third explode). Same for 'edit'.
                     $indicesString = explode(':', explode("\n", substr($submitDummy, strpos($submitDummy, $isNewCopy ? ($isNew ? self::newElement : self::copy) : ($isRemove ? self::remove : self::edit))))[0])[1];
                     $indices = explode('_', $indicesString);
@@ -204,6 +214,15 @@ class LandingController extends ControllerAbstract
                         }
                     }
                 }
+                $hasStructureDescription = $this->checkElement(self::structureDescription,$projectdetailsNode);
+                if ($this->getMultiStudyGroupMeasure($appNode)) {
+                    if (!$hasStructureDescription) { // add structure description node
+                        $this->insertElementBefore(self::structureDescription,$projectdetailsNode->{self::studyNode}[0]);
+                    }
+                    $projectdetailsNode->{self::structureDescription} = $data[self::structureDescription] ?? '';
+                } elseif ($hasStructureDescription) { // remove structure description node
+                    $this->removeElement(self::structureDescription,$projectdetailsNode);
+                }
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
         }
@@ -220,6 +239,7 @@ class LandingController extends ControllerAbstract
              'removeTrans' => $removeTrans,
              'allNames' => $names,
              'isPageOverview' => $isPageOverview,
+             'focusDescription' => $focusDescription,
              self::pageErrors => $this->getErrors($request,$title)],self::landing));
     }
 }

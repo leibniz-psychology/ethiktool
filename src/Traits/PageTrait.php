@@ -13,7 +13,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '3.2.0';
+    protected const toolVersion = '3.3.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -40,6 +40,7 @@ trait PageTrait
     protected const language = 'language'; // value needs to be the same as in ControllerAbstract
     protected const choiceTextHint = 'multiple.choiceTextHint'; // dropdowns and above disabled text fields
     protected const dummyParams = 'dummy'; // dummy key for parameter that is passed to the options array of the Form Builder
+    protected const structureDescription = 'structureDescription';
     // node names
     protected const studyNode = 'study';
     protected const groupNode = 'group';

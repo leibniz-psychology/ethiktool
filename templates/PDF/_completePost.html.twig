@@ -20,21 +20,23 @@
         <div class="{{ classes }} noPageBreak">{{ (contributor~"\n")|raw|nl2br }}</div>
     {% endfor %}
     {# confirm #}
-    {% set tempPrefix, classes, addresseeParam = 'completePost.confirm.', 'radiobuttonPDF'~(not savePDF ? ' radioSmall'), {'addressee': addressee} %}
-    <div class="{{ textPreview }} noPageBreak" style="margin-top: 1.5em">
-        <table>
-            <tr><td class="bold" colspan="2">{{ (tempPrefix~'title')|trans }}</td></tr>
-            {% for answer in ['yes','no'] %}
-                <tr style="line-height: 1.5">
-                    <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5em; margin-right: 0.375em"></div></td>
-                    <td>{{ (tempPrefix~answer)|trans(addresseeParam) }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-        {% if isCompensation %}
-            <div class="{{ textPreview }}" style="margin-top: 1em">{{ (tempPrefix~'compensation')|trans }}</div>
-        {% endif %}
-    </div>
+    {% if consentType is not same as 'no' %}
+        {% set tempPrefix, classes, addresseeParam = 'completePost.confirm.', 'radiobuttonPDF'~(not savePDF ? ' radioSmall'), {'addressee': addressee} %}
+        <div class="{{ textPreview }} noPageBreak" style="margin-top: 1.5em">
+            <table>
+                <tr><td class="bold" colspan="2">{{ (tempPrefix~'title')|trans }}</td></tr>
+                {% for answer in ['yes','no'] %}
+                    <tr style="line-height: 1.5">
+                        <td style="width: 1px"><div class="{{ classes }}" style="margin-left: 0.5em; margin-right: 0.375em"></div></td>
+                        <td>{{ (tempPrefix~answer)|trans(addresseeParam) }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {% if isCompensation %}
+                <div class="{{ textPreview }}" style="margin-top: 1em">{{ (tempPrefix~'compensation')|trans }}</div>
+            {% endif %}
+        </div>
+    {% endif %}
     {% if not savePDF %}
         {{ pdfMacros.addLine() }}
     {% endif %}

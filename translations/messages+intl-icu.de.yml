@@ -137,7 +137,7 @@ multiple:
     phoneOptional: '(optional) berufliche Telefonnummer'
     hints:
       name: 'Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) hinzugefügt werden.'
-      institution: 'Bitte prüfen Sie, ob Sie berechtigt sind, bei {committeeDat} einen Ethikantrag einzureichen, obwohl Sie nicht der {committeeLocationDat} angehören.'
+      institution: 'Bitte prüfen Sie, ob Sie berechtigt sind, bei {committeeDat} einen Ethikantrag einzureichen, obwohl Sie nicht {committeeLocationDat} angehören.'
       department: 'Bitte schreiben Sie die volle Bezeichnung, z.B. „Fakultät für ...“'
       professorship: '<i>Arbeitsgruppe/Professur der Erstbetreuung</i>'
     institutionTypes:
@@ -462,15 +462,22 @@ landing:
       title: 'Projektstruktur' # part of tab name
       start: >-
         {isOverview, select,
-          true  {Das Ethiktool kann Forschungsprojekte abbilden, die mehrere Studien, mehrere Teilnehmenden-Gruppen und/oder mehrere Erhebungszeitpunkte umfassen.</br></br> Diese Seite zeigt die Struktur Ihres Forschungsprojekts. Sie können hier weitere Studien, Gruppen und Zeitpunkte anlegen. Die Elemente werden automatisch durchnummeriert, sobald es mehr als eines gibt; es empfiehlt sich, außerdem jedem Element einen kurzen, aussagekräftigen Namen zu geben.}
+          true  {Das Ethiktool kann Forschungsprojekte abbilden, die mehrere Studien, mehrere Teilnehmenden-Gruppen und/oder mehrere Erhebungszeitpunkte umfassen. Sie können die Struktur Ihres Forschungsprojekts auf dieser Seite ändern.</br></br> <div class="borderHint m-0">Weitere <span class="text-decoration-underline">Studien</span>, <span class="text-decoration-underline">Gruppen</span> oder <span class="text-decoration-underline">Zeitpunkte</span> müssen Sie nur dann anlegen, wenn relevante Unterschiede in den Formulareingaben vorliegen.</br> Für jede neue Kombination aus Studie/Gruppe/Zeitpunkt werden separate Teilnahmedokumente generiert. Im Antragsformular werden deckungsgleiche Informationen gebündelt dargestellt.</div>}
           other {Hier können Sie nun Eingaben zu dieser Kombination aus Studie, Teilnehmenden-Gruppe und Erhebungszeitpunkt vornehmen.</br> Die Eingaben gliedern sich in folgende Punkte:}}
-      expandable:
-        title: 'Hinweise zum Anlegen/Ändern der Projektstruktur'
-        text: |
-          Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination <span class="text-decoration-underline">duplizieren</span> und nur die relevanten Einträge ändern.
-          Eine weitere <span class="text-decoration-underline">Studie</span> müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.
-          Eine weitere <span class="text-decoration-underline">Gruppe</span> müssen Sie nur anlegen, wenn sich beispielsweise die Einschlusskriterien oder die Aufklärung für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) substanziell unterscheiden. Wenn die Aufklärungsdokumente in wesentlichen Punkten gleich sind (z.B. bei Between-Subject-Designs mit Bedingungs-/Gruppenzuordnung erst nach der Aufklärung), ist die Anlage separater Gruppen im Ethiktool i.d.R. nicht sinnvoll.
-          Der Begriff <span class="text-decoration-underline">Erhebungszeitpunkt</span> bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird (Screening).
+      expandables:
+        info:
+          title: 'Informationen zur Notwendigkeit separater Studien/Gruppen/Zeitpunkte'
+          text: >-
+            <li>Eine weitere <span class="text-decoration-underline">Studie</span> müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.</li>
+            <li>Eine weitere <span class="text-decoration-underline">Gruppe</span> müssen Sie nur anlegen, wenn sich beispielsweise die Aufklärung oder die Formulareingaben (insbes. Fragen ohne Mehrfachauswahl) für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) substanziell unterscheiden. Wenn die Aufklärungsdokumente in wesentlichen Punkten gleich sind bzw. sich im Rahmen einer gemeinsamen Aufklärung darstellen lassen (z.B. bei Between-Subject-Designs mit Gruppenzuordnung erst nach der Aufklärung, im Fall einzelner zusätzlicher Einschlusskriterien oder Tests für eine Teilgruppe), ist die Anlage separater Gruppen im Ethiktool i.d.R. nicht sinnvoll. Details zu Gruppenzuordnungen, Rekrutierungsstrategien u.a. lassen sich meist im Rahmen einer Gruppe darstellen.</li>
+            <li>Der Begriff <span class="text-decoration-underline">Zeitpunkt</span> bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird (Screening). Wenn im Rahmen der Vorab-Aufklärung für den ersten Zeitpunkt bereits über die weiteren Erhebungszeitpunkte aufgeklärt wird, ist die Anlage separater Zeitpunkte im Ethiktool i.d.R. nicht sinnvoll.</li>
+        hint:
+          title: 'Praktische Hinweise zum Anlegen/Ändern der Projektstruktur'
+          text: >-
+            <li>Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination <span class="text-decoration-underline">duplizieren</span> und nur die relevanten Einträge ändern.</li>
+            <li>Die Elemente werden automatisch durchnummeriert, sobald es mehr als eines gibt; es empfiehlt sich, außerdem jedem Element einen kurzen, aussagekräftigen Namen zu geben.</li>
+            <li>Bitte ändern Sie Freitexteingaben zwischen Kombinationen nur dann, wenn es inhaltlich notwendig ist. Umformulierungen ohne inhaltliche Relevanz sollten vermieden werden; orthographische Korrekturen sollten in allen Studien/Gruppen/Zeitpunkten parallel vorgenommen werden, damit das Ethiktool die Texte weiterhin als identisch erkennt. Im Antragsformular werden deckungsgleiche Informationen gebündelt dargestellt.</li>
+            <li>Sobald Ihr Projekt mehr als eine Kombination aus Studie/Gruppe/Zeitpunkt umfasst, erscheint ein Freitextfeld, in dem Sie die wesentlichen Unterschiede darlegen sollen. Diese Information dient der Orientierung für die Ethikkommission. Denken Sie bitte daran, die Erläuterung anzupassen, falls Sie die Projektstruktur nochmals ändern.</li>
       end:
         title: 'Die Symbole haben folgende Funktionen:'
         rename: 'Name des Elements ändern'
@@ -478,6 +485,9 @@ landing:
         add: 'neues Element erstellen'
         delete: 'Element entfernen (inklusive aller Unterelemente)'
         edit: 'Details der Kombination Studie/Gruppe/Zeitpunkt bearbeiten'
+    structureDescription:
+      title: 'Beschreiben Sie kurz, worin sich die Studien/Gruppen/Zeitpunkte unterscheiden.'
+      textHint: 'Diese Beschreibung dient der Einordnung aller nachfolgenden Informationen für die Ethikkommission. Bitte konzentrieren Sie sich auf wesentliche Unterschiede; die Details können dem Antragsformular entnommen werden. Erläutern Sie beispielsweise zentrale Abweichungen im Vorgehen oder in der Aufklärung.'
     removeModal:
       title: >-
         {type, select,
@@ -509,11 +519,21 @@ coreData:
       extended: 'Erweiterung/Änderung eines bereits bewilligten Antrags'
       resubmission: 'Wiedervorlage nach Antrags-Überarbeitung'
       resubmissionGranted: 'Wiedervorlage nach Mittelakquise'
-    reference: 'Bitte Aktenzeichen eingeben:'
+    reference: 'Ursprüngliches Aktenzeichen:'
     hint: >-
       {committeeType, select,
-        EUB   {Wenn Sie für den ursprünglichen Antrag das Template auf der Webseite der Ethik-Kommission verwendet haben, nutzen Sie dieses bitte weiterhin.}
+        EUB   {{isDifferent, select,
+                  true  {}
+                  other {Wenn Sie für den ursprünglichen Antrag das Template auf der Webseite der Ethik-Kommission verwendet haben, nutzen Sie dieses bitte weiterhin.</br>}}}
         other {}} Bitte passen Sie nur die relevanten Punkte an (z.B. Änderungen am Forschungsprojekt, Auflagenerfüllung; Nachreichen der Teilnahmedokumente, falls nötig). Seien Sie bitte zurückhaltend mit darüber hinausgehenden, redaktionellen Änderungen an den Texten - Sie erleichtern damit den Vergleich der Antragsversionen und beschleunigen die Begutachtung.
+  appTypeExtended:
+    title: 'Worauf bezieht sich die Erweiterung/Änderung?'
+    types:
+      extendedSame: 'Die Erweiterung/Änderung bezieht sich auf das ursprüngliche Vorhaben.'
+      extendedDifferent: 'Die Erweiterung/Änderung bezieht sich auf ein neues, sehr ähnliches Vorhaben'
+    hints:
+      extendedSame: 'Die Änderungen werden unter dem Aktenzeichen des ursprünglich eingereichten Antrags begutachtet.'
+      extendedDifferent: 'Die Änderungen werden unter einem neuen Aktenzeichen begutachtet, aufgrund der Ähnlichkeit jedoch in einem erleichterten Verfahren.'
   modal: # other in type selects is funding
     title: >-
       {type, select,
@@ -574,6 +594,7 @@ coreData:
             TUD   {Begründung für die nachträgliche}
             other {Genehmigung zur nachträglichen}}
           Begutachtung ist notwendig.
+      begunConfirm: 'Hiermit bestätige ich, dass ich Kontakt zu {committeeDat} aufgenommen habe und dass mir zugesichert wurde, dass ich das bereits begonnene Forschungsprojekt zur Begutachtung einreichen darf.'
     next: 'nächstmöglicher Zeitpunkt (nach Vorliegen eines positiven Ethikvotums)'
     end:
       title: >-
@@ -1049,7 +1070,7 @@ projectdetails:
         title: 'Werden die {addressee} vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen?'
         content:
           title: 'Inwieweit werden die {addressee} vor Beginn der Teilnahme über die Ziele, Inhalte und Methoden der Studie informiert?'
-          headingHint: 'Gemeint sind zentrale Informationen über die Studie. Dazu gehört eine für die jeweilige(n) Zielgruppe(n) verständliche Darlegung der Forschungsziele, Verfahren zur Datenerhebung und Aufgaben der Teilnehmenden. Das Nicht-Offenlegen der Hypothese(n) zählt nicht als unvollständige Aufklärung. Wenn sowohl Informationen vorenthalten werden als auch eine explizite Täuschung vorliegt, wählen Sie bitte Täuschung aus.'
+          headingHint: 'Gemeint sind zentrale Informationen über die Studie. Dazu gehört eine für die jeweilige(n) Zielgruppe(n) verständliche Darlegung der Forschungsziele, Verfahren zur Datenerhebung und Aufgaben der Teilnehmenden. Das Nicht-Offenlegen der Hypothese(n) zählt nicht als unvollständige Aufklärung. Auch das Vorenthaltung der konkreten Bedingungszuordnung zählt nicht als unvollständige Aufklärung, wenn erwähnt wird, dass es mehrere Bedingungen gibt, und es für die Teilnehmenden keine persönliche Relevanz hat, ihre Bedingungszuordnung nachträglich zu erfahren. Wenn sowohl Informationen vorenthalten werden als auch eine explizite Täuschung vorliegt, wählen Sie bitte Täuschung aus.'
           type:
             complete: 'Die {addressee} werden vollständig aufgeklärt.'
             partial: 'Mindestens eine Information wird nicht erwähnt, d.h. die {addressee} werden unvollständig aufgeklärt.'
@@ -1505,7 +1526,7 @@ projectdetails:
         placeholder: 'bitte spezifizieren'
       furtherDescription:
         title: 'Sonstige Erläuterungen zur Aufwandsentschädigung'
-        textHint: '(optional) z.B. Begründung für außergewöhnlich hohe oder ungleiche Aufwandsentschädigung'
+        textHint: '(optional) z.B. Begründung für außergewöhnlich hohe oder ungleiche Aufwandsentschädigung; Erläuterung anteiliger Aufwandsentschädigung bei Abbruch, die sich nicht proportional nach dem Zeitanteil richtet; Angaben zur Entschädigung in Fremdwährung und deren Kaufkraft im Land der Datenerhebung'
     texts:
       useTemplate: 'Vorlage nutzen'
       hint: 'Hier können Sie Eingaben für die Studieninformation vornehmen. Bitte wählen Sie dabei eine für die jeweilige Zielgruppe angemessene Beschreibungsebene. Bitte nutzen Sie ggf. aktuell gültige Empfehlungen bzw. Informationsvorlagen zu bestimmten Untersuchungsverfahren der einschlägigen Fachgesellschaften.'
@@ -1574,7 +1595,7 @@ projectdetails:
         template: >-
           Die Studie dient ausschließlich Forschungszwecken. Eine medizinische oder psychologische Beurteilung der Daten erfolgt nicht. Es könnte uns jedoch ein ungewöhnliches Untersuchungsergebnis (Zufallsbefund) auffallen. In diesem Fall werden wir Sie{consent, select,
                                                                           true  {, sofern Sie einverstanden sind, darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen.}
-                                                                          other { darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen. Nur wenn Sie damit einverstanden sind, dass wir Sie ggf. über eine Auffälligkeit informieren, ist eine Teilnahme an dieser Studie möglich.}} Sofern bei dieser diagnostischen Abklärung eine Erkrankung festgestellt werden sollte, könnten {addressee, select,
+                                                                          other { darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen.}} Sofern bei dieser diagnostischen Abklärung eine Erkrankung festgestellt werden sollte, könnten {addressee, select,
                   children {Ihrem Kind}
                   wards {der von Ihnen betreuten Person}
                   other {Ihnen}} daraus unter Umständen Nachteile entstehen, z.B. der Abschluss einer privaten Krankenversicherung oder einer Lebensversicherung erschwert werden. Bitte beachten Sie: Auch wenn von uns kein ungewöhnliches Untersuchungsergebnis wahrgenommen wird, ist dies keine Bestätigung eines bestimmten Gesundheitsbildes/-zustands; die Untersuchung dient allein Forschungszwecken und stellt bzw. ersetzt keine ärztliche Diagnose.
@@ -2223,7 +2244,7 @@ projectdetails:
           own: ' nicht für andere zugänglich gemacht, aber für die eigene Nachnutzung verwendet.'
         descriptionStart: ' Dies erfolgt unter Nutzung '
         hints: # icons except keys textHint and hint
-          textHint: 'Bitte Datenarchiv, Forschungsdatenzentrum bzw. andere datenhaltende Infrastruktur benennen (z.B. OSF, Zenodo, PsychArchives/FDZ am ZPID).'
+          textHint: 'Bitte Datenarchiv, Forschungsdatenzentrum oder andere datenhaltende Infrastruktur bzw. Art der Datenübertragung benennen (z.B. unter Nutzung „von OSF“, „von Zenodo“, „von PsychArchives/FDZ am ZPID“, „professureigener Infrastruktur“, „verschlüsselter E-Mail-Kommunikation“).'
           class0: 'Zugriffsklasse 0 gemäß DGPs-Kommission Open Science'
           class1: 'Zugriffsklasse 1 gemäß DGPs-Kommission Open Science'
           class2: 'Zugriffsklasse 2 gemäß DGPs-Kommission Open Science'
@@ -2275,7 +2296,8 @@ checkDoc:
     title: '<a class="linkInternal" href="appData/{page}">{title}</a>'
     coreData:
       projectTitleParticipation: 'Projekttitel für Teilnahmedokumente'
-      reference: 'Aktenzeichen'
+      appTypeExtended: 'Angabe, worauf sich die Erweiterung/Änderung bezieht,' # '[] fehlt.'
+      reference: 'Ursprüngliches Aktenzeichen'
       applicationProcess:
         missing: 'Art des Antragsverfahrens' # 'Antwort auf Frage nach [] fehlt.'
         shortDocs:
@@ -2289,6 +2311,7 @@ checkDoc:
             other {Geplanter Projektbeginn liegt in der Vergangenheit.}}
         begunToPast: 'Sie haben ausgewählt, dass das Forschungsprojekt bereits begonnen hat. In diesem Fall muss auch das gewählte Datum für den Projektbeginn in der Vergangenheit liegen.'
       begun: 'Beschreibung des Projektstands'
+      begunConfirm: 'Bestätigung der Kontaktaufnahme zu {committeeDat}'
       retrospective: 'Begründung, warum der Ethikantrag nachträglich gestellt wird,'
       end: 'Geplantes Projektende liegt in der Vergangenheit.'
       endBeforeStart: 'Projektende liegt vor Projektstart.'
@@ -2360,6 +2383,7 @@ checkDoc:
   projectdetails:
     missingTypes: 'Arten von {type}'
     pages:
+      landing: 'Erläuterung der Projektstruktur' # '[] fehlt.'
       dataSource: # 'Antwort auf Frage nach [] fehlt.' unless otherwise stated
         origin: 'Ursprung der Daten'
         originSources:
@@ -2916,7 +2940,12 @@ checkDoc:
             codeMarking: 'Wenn zur Vergabe der <a class="linkInternal" href="compensation" data-action="base#setDummySubmit" data-base-url-param="app_compensation#awarding" data-base-route-i-ds-param="{routeIDs}">Aufwandsentschädigung</a> ein Code benötigt wird und es außerdem eine Kennzeichnung der Forschungsdaten gibt, die auch der Vergabe der Aufwandsentschädigung dient, muss die Kennzeichnung per Code erfolgen.'
       dataReuse:
         confirmIntro: 'Bestätigung der Informationen zur Nachnutzung' # '[] fehlt.'
-        dataReuse: 'Antwort auf Frage, ob die Forschungsdaten anderen zur Nachnutzung zur Verfügung gestellt werden,' # '[] fehlt.'
+        dataReuse:
+          missing: 'Antwort auf Frage, ob die Forschungsdaten anderen zur Nachnutzung zur Verfügung gestellt werden,' # '[] fehlt.'
+          dataPersonal: >-
+            Sie haben ausgewählt, dass die <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">Forschungsdaten</a> {type, select,
+                  personal {(teilweise) personenbezogen sind}
+                  other    {mit wenig Zusatzwissen auf einzelne Personen rückführbar sind}}. Das passt nicht dazu, dass anonyme Forschungsdaten zur Nachnutzung zur Verfügung gestellt werden sollen.
         dataReuseHow: # '[] fehlt.'
           lineTitle:
             dataReuseHow: 'Personenbezogene Forschungsdaten'
@@ -3132,6 +3161,8 @@ technicalHints:
     Zum Ausfüllen der Antragsinhalte beginnen Sie am besten mit „Antragsdaten“ und klicken sich dann jeweils über „Nächste Seite“ Schritt für Schritt durch das Formular. Alternativ können Sie in der linksseitigen Navigationsleiste auch direkt zu bestimmten Bereichen (z.B. Projektstruktur) springen.
 
     Auf der rechten Seite sehen Sie eine Vorschau des Antragsdokuments und der Teilnahmedokumente. Sie können die Fragen bzw. Überschriften dort anwählen und darüber ebenfalls zu bestimmten Bereichen im Ethiktool springen. Oberhalb der Vorschau werden Sie auf fehlende oder fehlerhafte Eingaben hingewiesen.
+    
+    Wenn Sie in Ihrem Browser die Rechtschreibprüfung eingeschaltet haben, wird diese auch im Ethiktool angezeigt. Bei deaktivierter Rechtschreibprüfung sorgen Sie bitte auf andere Weise für sprachlich korrekte Eingaben.
 
     Bitte speichern Sie Ihre Eingaben regelmäßig. Die Dateien werden lokal bei Ihnen im XML-Format gespeichert. Sie können das Ausfüllen jederzeit unterbrechen und Ihre gespeicherten Angaben als XML-Datei später wieder laden und weiter bearbeiten.
 

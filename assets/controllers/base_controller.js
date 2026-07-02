@@ -600,7 +600,7 @@ export default class extends Controller {
                         value = isGreaterThanMax ? max : min;
                     }
                     value = !isNaN(value) ? value : ''
-                    inputField.value = value;
+                    inputField.value = value!=='' ? Math.floor(value) : ''; // prevent decimals
                     if (value!==this.spinnerVal) {
                         this.spinnerVal = '';
                         await this.submitForm(event);

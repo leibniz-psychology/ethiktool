@@ -3,9 +3,12 @@ import {saveUndoModal, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['projectTitleParticipation','applicationFull','shortDocs','shortDocsYes','qualificationYes','institutionHint','professorshipHint','phoneLabelOptional','position','projectStart','projectStartNext','projectStartBegun','projectStartBegunText','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
+    static targets = ['projectTitleParticipation','applicationFull','exDiv','exReDiv','exReHint','shortDocs','shortDocsYes','qualificationYes','institutionHint','professorshipHint','phoneLabelOptional','position','projectStart','projectStartNext','projectStartBegun','projectStartBegunDiv','projectStartBegunConfirm','projectStartBegunText','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
 
     static values = {
+        appType: String,
+        extended: String,
+        exReHint: Array, // 0: hint if extended and same proposal, 1: hint if extended and other proposal or resubmission
         positions: Array, // 0: positions without qualification, 1: positions with qualification, 3: all positions translated
         noChoice: String,
         conflictHint: Array, // 0: description for yes, 1: description for no
@@ -21,12 +24,29 @@ export default class extends Controller {
         this.positionOtherValue = 'positionOther';
         this.conflictYesTarget = document.getElementById(this.conflictNoTarget.id.replace('1','0')); // renderButtons allows only one target; therefore, get the other by using the id
         this.applicationProcessLoadValue = this.reviewProcessLoadValue.includes('full') ? 'full' : 'short';
+        this.setApplicationType();
         this.setApplicant();
         this.setProjectStart(false);
         this.setConflict();
     }
 
     // methods that are called from the template
+
+    /** Sets this.appTypeValue.
+     * @param event widget that invoked the method
+     */
+    setAppType(event) {
+        this.appTypeValue = event.target.value;
+        this.setApplicationType();
+    }
+
+    /** Sets this.extendedValue.
+     * @param event widget that invoked the method
+     */
+    setExtended(event) {
+        this.extendedValue = event.target.value;
+        this.setApplicationType();
+    }
 
     /** Sets the visibility of the text field for the 'other' institution or position and eventually the hint for the professorship and for the institution.
      * @param event widget that invoked the method
@@ -48,6 +68,14 @@ export default class extends Controller {
 
     // methods that are called from the template or from within this class
 
+    /** Sets the visibility of the application type elements. */
+    setApplicationType() {
+        let isExtended = this.appTypeValue==='extended';
+        setElementVisibility(this.exDivTarget,isExtended);
+        setElementVisibility(this.exReDivTarget,['extended','resubmission','resubmissionGranted'].includes(this.appTypeValue));
+        setHint(this.exReHintTarget,this.exReHintValue[isExtended && ['','extendedDifferent'].includes(this.extendedValue) ? 1 : 0]);
+    }
+
     /** Sets the visibility of the project start widgets.
      * @param checkModal if true, a modal may be displayed if the review process has changed
      * */
@@ -58,7 +86,8 @@ export default class extends Controller {
         this.projectStartNextTarget.disabled = isBegun;
         if (this.hasProjectStartBegunTarget) {
             this.projectStartBegunTarget.disabled = isNext;
-            setElementVisibility(this.projectStartBegunTextTarget,isBegun);
+            setElementVisibility(this.projectStartBegunDivTarget,isBegun);
+            setElementVisibility(this.projectStartBegunTextTarget,isBegun && (!this.hasProjectStartBegunConfirmTarget || this.projectStartBegunConfirmTarget.checked));
         }
         this.setReviewProcessWidgets(null,checkModal);
     }

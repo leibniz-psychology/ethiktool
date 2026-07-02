@@ -14,6 +14,7 @@ export default class extends Controller {
     }
 
     connect() {
+        this.allowMinChange = this.minAgeTarget!==''; // true if a valid key (a number) is pressed inside the min age field or the field is not empty
         this.setExamined();
         if (this.hasVoluntaryHintTarget) {
             this.setVoluntaryHint();
@@ -25,11 +26,18 @@ export default class extends Controller {
             this.setCriteria();
         }
         // prevent automatic selection of wards if arrows are pressed/clicked if no min age was entered before
-        this.minAgeTarget.addEventListener('change', () => {
-            if (['0','1'].includes(this.minAgeTarget.value) && !this.wardsTarget.checked) { // depending on if the up or down arrow was pressed/clicked, min age is either 1 or 0
+        this.minAgeTarget.addEventListener('keydown', (event) => { // allow number inputs by key press
+            if (!this.allowMinChange) {
+                let value = event.key;
+                this.allowMinChange = value>='0' && value<='9';
+            }
+        })
+        this.minAgeTarget.addEventListener('change', () => { // set min age if empty and arrow was clicked
+            if (!this.allowMinChange && ['0','1'].includes(this.minAgeTarget.value) && !this.wardsTarget.checked) { // depending on if the up or down arrow was pressed/clicked, min age is either 1 or 0
                 this.minAgeTarget.value = 18;
                 this.setExamined();
             }
+            this.allowMinChange = this.minAgeTarget.value!=='';
         });
     }
 
@@ -78,8 +86,8 @@ export default class extends Controller {
         if (isMinAge && isMaxAge && parseInt(minAge)>parseInt(maxAge)) {
             maxAge = minAge;
         }
-        this.minAgeTarget.value = minAge;
-        this.maxAgeTarget.value = maxAge;
+        this.minAgeTarget.value = isMinAge ? Math.floor(minAge) : ''; // prevent decimals
+        this.maxAgeTarget.value = isMaxAge ? Math.floor(maxAge) : ''; // prevent decimals
         isWards = isWards || isUnder14;
         this.wardsTarget.checked = isWards;
         // enable/disable widgets
@@ -95,7 +103,7 @@ export default class extends Controller {
         this.wardsTarget.disabled = isHealthy && healthyWards;
         // description text field
         let [, numSelected] = getSelected(this.examinedValue);
-        setElementVisibility(this.examinedDescriptionTarget,minAge<18 || numSelected>1 || numSelected===1 && !isHealthy);
+        setElementVisibility(this.examinedDescriptionTarget,isMinAge && minAge<18 || numSelected>1 || numSelected===1 && !isHealthy);
         setElementVisibility(this.wardsHintTarget,isWards); // hint between age and examined
         // wards icon
         if (this.hasRemoveHintTarget) {

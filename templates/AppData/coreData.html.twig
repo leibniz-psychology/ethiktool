@@ -2,11 +2,14 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set committeeType, appProcess = committeeParams['committeeType'], content.applicationProcess %}
+    {% set appType, extended, committeeType, appProcess = content.appType, content.appTypeExtended, committeeParams['committeeType'], content.applicationProcess %}
     {% set style, projectLength, translationPrefix, coreDataController = 'max-width: 60rem', {'maxLength': 200}, 'coreData.', 'AppData--coreData' %}
-    {% set conflictPrefix, conflictHint = translationPrefix~'conflict.', 'conflictHintDiv' %}
-    {% set conflictYesDescription, projectTitle = (conflictPrefix~'yes')|trans, content.projectTitle %}
+    {% set appTypePrefix, conflictPrefix, conflictHint = translationPrefix~'appType.', translationPrefix~'conflict.', 'conflictHintDiv' %}
+    {% set appTypeHint, conflictYesDescription, projectTitle = appTypePrefix~'hint', (conflictPrefix~'yes')|trans, content.projectTitle %}
     <div {{ stimulus_controller(coreDataController, {
+            'appType': appType.vars.value,
+            'extended': extended.vars.value,
+            'exReHint': [(appTypeHint)|trans(committeeParams|merge({'isDifferent': 'false'})), (appTypeHint)|trans(committeeParams|merge({'isDifferent': 'true'}))],
             'applicationProcess': appProcess.vars.value,
             'reviewProcess': reviewProcess,
             'reviewProcessLoad': reviewProcessLoad,
@@ -30,15 +33,18 @@
                 'stimVisible': {'values': [['different', description.vars.name~'Div']]}}) }}
         </div>
         {# application type #}
-        {% set appType, description = content.appType, content.description %}
-        {% set tempPrefix, exRe, exReDiv = translationPrefix~'appType.', ['extended','resubmission','resubmissionGranted'], 'exReDiv' %}
-        <div class="mt-8" id="appType">
-            {{ formRender.renderButtons(appType,{'hint': [tempPrefix,committeeParams], 'stimVisible': {'values': [[exRe,exReDiv]]}}) }}
-            <div class="mt-2" id="{{ exReDiv }}" style="{{ boolToDisplay(appType.vars.value in exRe) }}">
+        {% set description = content.description %}
+        <div class="mt-8" id="appType" {{ stimulus_action(coreDataController,'setApplicationType') }}>
+            {{ formRender.renderButtons(appType,{'hint': [appTypePrefix,committeeParams], 'stim': [coreDataController,'setAppType']}) }}
+            <div class="mt-4" {{ stimulus_target(coreDataController,'exDiv') }}>
+                <div class="MetaData-Label" id="extendedDiv">{{ (translationPrefix~'appTypeExtended.title')|trans }}</div>
+                {{ formRender.renderButtons(extended,noHeading|merge({'stim': [coreDataController,'setExtended']})) }}
+            </div>
+            <div class="mt-4" id="exReDiv" {{ stimulus_target(coreDataController,'exReDiv')}}>
                 {{ form_label(description,null,addLabelAttributes(addClass('MetaData-Label'))) }}
-                <div class="MetaData-Label">{{ (tempPrefix~'reference')|trans }}</div>
-                <div class="MetaData-Widget" style="width: 20rem">{{ form_widget(description,textInputAttr) }}</div>
-                {{ formRender.addHint(tempPrefix~'hint',{'params': committeeParams}) }}
+                <div class="MetaData-Label">{{ (appTypePrefix~'reference')|trans }}</div>
+                <div class="MetaData-Widget" style="width: 20rem" >{{ form_widget(description,textInputAttr) }}</div>
+                {{ formRender.addHint(appTypeHint,{'target': [coreDataController,'exReHint']}) }} {# text is set in controller, but must not be empty here #}
             </div>
         </div>
         {# application process #}
@@ -51,10 +57,10 @@
                 </div>
             {% endif %}
         </div>
-        {# project start  #}
+        {# project start #}
         {% set projectStart, tempPrefix, fundingKeys = content.projectStart, translationPrefix~'project.', funding|keys %}
         {% set startPrefix, begun = tempPrefix~'start.', content.projectStartBegun ?? '' %}
-        {% set hintsPrefix = startPrefix~'hints.' %}
+        {% set hintsPrefix, labelParams = startPrefix~'hints.', {'labelParams': committeeParams} %}
         <div class="mt-8" id="projectDates">
             {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[hintsPrefix~'headingHint']]}) }}
             {{ form_label(projectStart,(startPrefix~'title')|trans({'committeeType': committeeType})~':',addLabelAttributes(addClass('MetaData-Label'))) }}
@@ -66,15 +72,20 @@
                 {{ formRender.addCheckbox(content.projectStartNext, {'target': [coreDataController,'projectStartNext']}) }}
             </div>
             {% if content.projectStartBegun is defined %}
-                {# data collection has already been started #}
+                {# research project has already started #}
                 <div class="MetaData-Widget" {{ stimulus_action(coreDataController,'setProjectStart','change') }}>
-                    {{ formRender.addCheckbox(begun,{'target': [coreDataController,'projectStartBegun'], 'labelParams': committeeParams}) }}
-                    <div {{ stimulus_target(coreDataController,'projectStartBegunText') }}>
+                    {{ formRender.addCheckbox(begun,labelParams|merge({'target': [coreDataController,'projectStartBegun']})) }}
+                    <div {{ stimulus_target(coreDataController,'projectStartBegunDiv') }}>
                         {{ formRender.addHint(hintsPrefix~'begun',{'params': committeeParams}) }}
-                        {{ formRender.addTextfield(content.projectStartBegunText,fontNormal) }}
-                        {% if content.retrospective is defined %}
-                            {{ formRender.addTextfield(content.retrospective,fontNormal) }}
+                        {% if content.projectStartBegunConfirm is defined %}
+                            {{ formRender.addCheckbox(content.projectStartBegunConfirm,labelParams|merge({'target': [coreDataController,'projectStartBegunConfirm'], 'style': 'margin-top: 1rem'})) }}
                         {% endif %}
+                        <div {{ stimulus_target(coreDataController,'projectStartBegunText') }}>
+                            {{ formRender.addTextfield(content.projectStartBegunText,fontNormal) }}
+                            {% if content.retrospective is defined %}
+                                {{ formRender.addTextfield(content.retrospective,fontNormal) }}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             {% endif %}

@@ -24,12 +24,16 @@ trait AppDataTrait
     protected const funding = 'funding';
     protected const projectStartNext = 'projectStartNext';
     protected const projectStartBegun = 'projectStartBegun';
+    protected const projectStartBegunConfirm = 'projectStartBegunConfirm';
     protected const projectStartRetrospective = 'retrospective';
-    protected const begunCommittees = ['EUB','DLR','TUD','UH1']; // committees where review after start of data collection is possible
-    protected const retrospectiveCommittees = ['TUD','UH1']; // committees where justification is needed why data collection has already started
+    protected const begunCommittees = ['EUB','DLR','TUD','UH1']; // committees where review after start of the research project is possible
+    protected const begunConfirmCommittees = ['EUB','DLR']; // committees where contact to the committee for already started projects is required
+    protected const retrospectiveCommittees = ['TUD','UH1']; // committees where justification is needed why the research project has already started
     protected const appNew = 'new';
     protected const applicationTypes = ['coreData.appType.type.new' => 'new', 'coreData.appType.type.extended' => 'extended', 'coreData.appType.type.resubmission' => 'resubmission', 'coreData.appType.type.resubmissionGranted' => 'resubmissionGranted']; // values must equal the values of the preceding variables
     protected const appExtendedResubmission = ['extended','resubmission','resubmissionGranted']; // values must equal the values of $appExtended and $appResubmission
+    protected const appTypeExtended = 'appTypeExtended';
+    protected const appTypeExReTypes = ['coreData.appTypeExtended.types.extendedSame' => 'extendedSame', 'coreData.appTypeExtended.types.extendedDifferent' => 'extendedDifferent'];
     protected const applicationProcessNode = 'applicationProcess';
     protected const applicationProcessTypes = ['coreData.applicationProcess.types.short' => 'short', 'coreData.applicationProcess.types.full' => 'full']; // values must equal the value of $reviewProcessShort and $reviewProcessFull in PageTrait
     protected const shortDocsNode = 'shortDocs';

@@ -25,6 +25,7 @@ class CoreDataType extends TypeAbstract
         $this->addRadioGroup($builder,self::projectTitleParticipation,self::projectTitleTypes,$translationPrefix.self::projectTitleParticipation.'.title',self::projectTitleParticipation.self::descriptionCap);
         // application type
         $this->addRadioGroup($builder,self::applicationType,self::applicationTypes,$translationPrefix.'appType.title',textName: self::descriptionNode);
+        $this->addRadioGroup($builder,self::appTypeExtended,self::appTypeExReTypes,$translationPrefix.self::appTypeExtended.'.title');
         // application process
         $this->addRadioGroup($builder,self::applicationProcessNode,self::applicationProcessTypes,$translationPrefix.self::applicationProcessNode.'.title');
         if (in_array($this->committeeType,self::reviewShortChoose)) { // participation documents are not reviewed, but applicants can choose to create for themselves
@@ -65,6 +66,10 @@ class CoreDataType extends TypeAbstract
             $tempPrefix = $startPrefix.'hints.'.self::textHint.'.';
             // project start begun
             $this->addCheckboxTextfield($builder,self::projectStartBegun,$startPrefix.'begun',$tempPrefix.'current');
+            // begun confirm
+            if (in_array($this->committeeType,self::begunConfirmCommittees)) {
+                $this->addFormElement($builder,self::projectStartBegunConfirm,'checkbox',$startPrefix.'begunConfirm');
+            }
             // retrospective
             if (in_array($this->committeeType,self::retrospectiveCommittees)) {
                 $this->addFormElement($builder,self::projectStartRetrospective,'textarea',hint: $tempPrefix.self::projectStartRetrospective);
@@ -98,7 +103,7 @@ class CoreDataType extends TypeAbstract
         // project title participation
         $this->setChosenArray($forms,$viewData,self::projectTitleParticipation,[self::descriptionNode => self::projectTitleParticipation.self::descriptionCap]);
         // application type
-        $this->setChosenArray($forms,$viewData,self::applicationType,[self::descriptionNode],false);
+        $this->setChosenArray($forms,$viewData,self::applicationType,[self::appTypeExtended,self::descriptionNode],false);
         // application process
         $this->setChosenArray($forms,$viewData,self::applicationProcessNode,[self::shortDocsNode],false);
         // project dates
@@ -109,14 +114,16 @@ class CoreDataType extends TypeAbstract
             $forms[self::projectStartNext]->setData($isNext);
             $forms[self::projectStart]->setData(!$isNext && $tempVal!=='' ? new DateTime($tempVal, $this->getTimezone()) : null);
             if (array_key_exists(self::projectStartBegun,$forms)) {
-                $forms[self::projectStartBegun]->setData(array_key_exists(self::descriptionNode,$tempArray));
+                $forms[self::projectStartBegun]->setData(array_key_exists(self::projectStartBegunConfirm,$tempArray) || array_key_exists(self::descriptionNode,$tempArray));
+                if (array_key_exists(self::projectStartBegunConfirm,$forms)) { // confirm contact to committee
+                    $forms[self::projectStartBegunConfirm]->setData($this->getArrayValue($tempArray,self::projectStartBegunConfirm)==='1');
+                }
                 $forms[$this->appendText(self::projectStartBegun)]->setData($this->getArrayValue($tempArray,self::descriptionNode));
                 if (array_key_exists(self::projectStartRetrospective,$forms)) { // justification why data collection has already been started
                     $forms[self::projectStartRetrospective]->setData($this->getArrayValue($tempArray,self::projectStartRetrospective));
                 }
             }
-            $tempVal = $viewData[self::projectEnd];
-            $forms[self::projectEnd]->setData($tempVal!=='' ? new DateTime($viewData[self::projectEnd]) : null);
+            $forms[self::projectEnd]->setData($viewData[self::projectEnd]!=='' ? new DateTime($viewData[self::projectEnd]) : null);
         } catch (Exception) {
             // do not set dates if exception occurs
         }
@@ -173,7 +180,7 @@ class CoreDataType extends TypeAbstract
         // project title
         $newData = [self::projectTitle => $forms[self::projectTitle]->getData()];
         // get application process, project start and funding to determine review process
-        $isBegun = $this->getFormData($forms,self::projectStartBegun,false); // true if data collection has already begun
+        $isBegun = $this->getFormData($forms,self::projectStartBegun,false); // true if research project has already started
         $isRequested = false;
         $fundingArray = [];
         foreach (self::fundingTypes as $key => $value) {
@@ -198,15 +205,30 @@ class CoreDataType extends TypeAbstract
             $newData[self::projectTitleParticipation] = $this->getChosenArray($forms,self::projectTitleParticipation,self::projectTitleDifferent,[self::descriptionNode => self::projectTitleParticipation.self::descriptionCap]);
         }
         // application type
-        $newData[self::applicationType] = $this->getChosenArray($forms,self::applicationType,self::appExtendedResubmission,[self::descriptionNode],false);
+        $tempVal = $forms[self::applicationType]->getData();
+        $tempArray = [self::chosen => $tempVal];
+        if (in_array($tempVal,self::appExtendedResubmission)) {
+            if ($tempVal==='extended') {
+                $tempArray[self::appTypeExtended] = $forms[self::appTypeExtended]->getData();
+            }
+            $tempArray[self::descriptionNode] = $forms[self::descriptionNode]->getData();
+        }
+        $newData[self::applicationType] = $tempArray;
         // application process
         $newData[self::applicationProcessNode] = $applicationProcessArray;
         // project dates
         $tempArray = [self::chosen => !$forms[self::projectStartNext]->getData() ? $this->getDate($forms[self::projectStart]->getData()) : '0'];
         if ($isBegun) {
-            $tempArray[self::descriptionNode] = $forms[$this->appendText(self::projectStartBegun)]->getData();
-            if (array_key_exists(self::projectStartRetrospective,$forms)) { // justification why data collection has already been started
-                $tempArray[self::projectStartRetrospective] = $forms[self::projectStartRetrospective]->getData();
+            $isConfirm = true;
+            if (array_key_exists(self::projectStartBegunConfirm,$forms)) { // confirm contact to committe
+                $isConfirm = $forms[self::projectStartBegunConfirm]->getData();
+                $tempArray[self::projectStartBegunConfirm] = $isConfirm;
+            }
+            if ($isConfirm) {
+                $tempArray[self::descriptionNode] = $forms[$this->appendText(self::projectStartBegun)]->getData();
+                if (array_key_exists(self::projectStartRetrospective,$forms)) { // justification why data collection has already been started
+                    $tempArray[self::projectStartRetrospective] = $forms[self::projectStartRetrospective]->getData();
+                }
             }
         }
         $newData[self::projectStart] = $tempArray;
