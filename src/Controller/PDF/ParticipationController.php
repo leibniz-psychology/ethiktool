@@ -346,7 +346,7 @@ class ParticipationController extends PDFAbstract
                                     $curInfos = $contributors[$index][self::infosNode];
                                     $contributorsLeader[] = $this->addContributorInfo($curInfos); // in complete post information without institution
                                     $tempVal = $curInfos[self::institutionInfo];
-                                    $leaderArray[$tempVal!==self::institutionSame ? $this->addMarkInput($tempVal,self::$markInput) : $tempVal][$this->addMarkInput($curInfos[self::department],self::$markInput)][] = $this->addMarkInput($curInfos[self::nameNode],self::$markInput);
+                                    $leaderArray[$tempVal!==self::institutionSame ? $this->addMarkInput($this->replaceMultipleWhitespace($tempVal),self::$markInput) : $tempVal][$this->addMarkInput($this->replaceMultipleWhitespace($curInfos[self::department]),self::$markInput)][] = $this->addMarkInput($curInfos[self::nameNode],self::$markInput);
                                 }
                             }
                             $numContributors = count($contributors);
@@ -870,7 +870,7 @@ class ParticipationController extends PDFAbstract
                             if ($isToolPersonal) { // personal data are collected and the document should be created automatically
                                 $translationSaveParam = array_merge($translationParams,$savePDFstringParam);
                                 self::$linkedPage = $contributorsLink;
-                                $contactHeading = $this->addHeadingLink($privacyPrefix.'contact.data',);
+                                $contactHeading = $this->addHeadingLink($privacyPrefix.'contact.data');
                                 $tempPrefix = $privacyPrefix.'basis.';
                                 self::$isPageLink = false;
                                 $this->addParagraph($tempPrefix.'title',$this->translateStringPDF($tempPrefix.'text',$dataSpecialParam),isPrivacy: true); // basis
@@ -1233,7 +1233,7 @@ class ParticipationController extends PDFAbstract
                                     $customInformationII[] = $this->translateStringPDF($customIntermediateConsent,['type' => self::informationIINode]);
                                 }
                                 $tempVal = '';
-                                if (array_key_exists(self::createNode,$privacyArray)) {
+                                if (array_key_exists(self::createNode,$privacyArray ?: [])) {
                                     $create = $privacyArray[self::createNode][self::chosen];
                                     $hasAddOwn = array_key_exists(self::addOwnNode,$privacyArray);
                                     if ($create===self::createTool && !in_array($personal,['anonymous','noTool']) || $personal==='noTool' && (!$hasAddOwn && (in_array($privacyArray[self::dataPersonalNode] ?? '',self::dataPersonal)) || $hasAddOwn && $privacyArray[self::addOwnNode]==='0')) { // personal data are collected
@@ -1358,7 +1358,7 @@ class ParticipationController extends PDFAbstract
     private function addContributorInfo(array $infos): string
     {
         $returnString = [];
-        foreach (array_merge([self::nameNode,self::eMailNode],array_key_exists(self::phoneNode,$infos) ? [self::phoneNode] : []) as $info) {
+        foreach (array_merge([self::nameNode,self::eMailNode],($infos[self::phoneNode] ?? '')!=='' ? [self::phoneNode] : []) as $info) {
             $returnString[] = $infos[$info];
         }
         return $this->addMarkInput(implode(', ',$returnString),self::$markInput);

@@ -250,14 +250,18 @@ committee:
 newForm: # placed immediately after 'committee' to have the committee names all in one place
   committee:
     title: 'Ethikkommission:'
+    headings:
+      use: 'Ethiktool in Nutzung'
+      beta: 'Ethiktool im Beta-Stadium'
+      test: 'Testversion des Ethiktools'
     types:
-      TUC: 'Ethikkommission der Technischen Universität Chemnitz'
-      EUB: 'Ethik-Kommission der Universität Bielefeld'
-      JGU: 'Ethikkommission des Psychologischen Instituts der JGU Mainz'
-      DLR: 'Geschäftsstelle Forschungsethik des DLR'
-      TUD: 'Ethikbeirat der Technischen Universität Dresden'
-      UH1: 'Ethikkommission des Fachbereichs 1 der Universität Hildesheim'
-      UPB: 'Ethik-Kommission der Universität Paderborn'
+      TUC: 'Chemnitz: Ethikkommission der Technischen Universität Chemnitz'
+      EUB: 'Bielefeld: Ethik-Kommission der Universität Bielefeld'
+      JGU: 'Mainz: Ethikkommission des Psychologischen Instituts der JGU Mainz'
+      DLR: 'Köln: Geschäftsstelle Forschungsethik des DLR'
+      TUD: 'Dresden: Ethikbeirat der Technischen Universität Dresden'
+      UH1: 'Hildesheim: Ethikkommission des Fachbereichs 1 der Universität Hildesheim'
+      UPB: 'Paderborn: Ethik-Kommission der Universität Paderborn'
       testCommittee: 'Test-Ethikkommission'
   password:
     title: 'Passwort:'
@@ -462,19 +466,19 @@ landing:
       title: 'Projektstruktur' # part of tab name
       start: >-
         {isOverview, select,
-          true  {Das Ethiktool kann Forschungsprojekte abbilden, die mehrere Studien, mehrere Teilnehmenden-Gruppen und/oder mehrere Erhebungszeitpunkte umfassen. Sie können die Struktur Ihres Forschungsprojekts auf dieser Seite ändern.</br></br> <div class="borderHint m-0">Weitere <span class="text-decoration-underline">Studien</span>, <span class="text-decoration-underline">Gruppen</span> oder <span class="text-decoration-underline">Zeitpunkte</span> müssen Sie nur dann anlegen, wenn relevante Unterschiede in den Formulareingaben vorliegen.</br> Für jede neue Kombination aus Studie/Gruppe/Zeitpunkt werden separate Teilnahmedokumente generiert. Im Antragsformular werden deckungsgleiche Informationen gebündelt dargestellt.</div>}
+          true  {Das Ethiktool kann Forschungsprojekte abbilden, die mehrere Studien, mehrere Teilnehmenden-Gruppen und/oder mehrere Erhebungszeitpunkte umfassen. Sie können die Struktur Ihres Forschungsprojekts auf dieser Seite ändern.</br></br> <div class="borderHint m-0">Weitere <span class="font-bold">Studien</span>, <span class="font-bold">Gruppen</span> oder <span class="font-bold">Zeitpunkte</span> müssen Sie nur dann anlegen, wenn relevante Unterschiede in den Formulareingaben vorliegen.</br> Für jede neue Kombination aus Studie/Gruppe/Zeitpunkt werden separate Teilnahmedokumente generiert. Im Antragsformular werden deckungsgleiche Informationen gebündelt dargestellt.</div>}
           other {Hier können Sie nun Eingaben zu dieser Kombination aus Studie, Teilnehmenden-Gruppe und Erhebungszeitpunkt vornehmen.</br> Die Eingaben gliedern sich in folgende Punkte:}}
       expandables:
         info:
           title: 'Informationen zur Notwendigkeit separater Studien/Gruppen/Zeitpunkte'
           text: >-
-            <li>Eine weitere <span class="text-decoration-underline">Studie</span> müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.</li>
-            <li>Eine weitere <span class="text-decoration-underline">Gruppe</span> müssen Sie nur anlegen, wenn sich beispielsweise die Aufklärung oder die Formulareingaben (insbes. Fragen ohne Mehrfachauswahl) für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) substanziell unterscheiden. Wenn die Aufklärungsdokumente in wesentlichen Punkten gleich sind bzw. sich im Rahmen einer gemeinsamen Aufklärung darstellen lassen (z.B. bei Between-Subject-Designs mit Gruppenzuordnung erst nach der Aufklärung, im Fall einzelner zusätzlicher Einschlusskriterien oder Tests für eine Teilgruppe), ist die Anlage separater Gruppen im Ethiktool i.d.R. nicht sinnvoll. Details zu Gruppenzuordnungen, Rekrutierungsstrategien u.a. lassen sich meist im Rahmen einer Gruppe darstellen.</li>
-            <li>Der Begriff <span class="text-decoration-underline">Zeitpunkt</span> bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird (Screening). Wenn im Rahmen der Vorab-Aufklärung für den ersten Zeitpunkt bereits über die weiteren Erhebungszeitpunkte aufgeklärt wird, ist die Anlage separater Zeitpunkte im Ethiktool i.d.R. nicht sinnvoll.</li>
+            <li>Eine weitere <span class="font-bold">Studie</span> müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.</li>
+            <li>Eine weitere <span class="font-bold">Gruppe</span> müssen Sie nur anlegen, wenn sich beispielsweise die Aufklärung oder die Formulareingaben (insbes. Fragen ohne Mehrfachauswahl) für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) substanziell unterscheiden. Wenn die Aufklärungsdokumente in wesentlichen Punkten gleich sind bzw. sich im Rahmen einer gemeinsamen Aufklärung darstellen lassen (z.B. bei Between-Subject-Designs mit Gruppenzuordnung erst nach der Aufklärung, im Fall einzelner zusätzlicher Einschlusskriterien oder Tests für eine Teilgruppe), ist die Anlage separater Gruppen im Ethiktool i.d.R. nicht sinnvoll. Details zu Gruppenzuordnungen, Rekrutierungsstrategien u.a. lassen sich meist im Rahmen einer Gruppe darstellen.</li>
+            <li>Der Begriff <span class="font-bold">Zeitpunkt</span> bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird (Screening). Wenn im Rahmen der Vorab-Aufklärung für den ersten Zeitpunkt bereits über die weiteren Erhebungszeitpunkte aufgeklärt wird, ist die Anlage separater Zeitpunkte im Ethiktool i.d.R. nicht sinnvoll.</li>
         hint:
           title: 'Praktische Hinweise zum Anlegen/Ändern der Projektstruktur'
           text: >-
-            <li>Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination <span class="text-decoration-underline">duplizieren</span> und nur die relevanten Einträge ändern.</li>
+            <li>Füllen Sie am besten erst eine Kombination aus Studie/Gruppe/Zeitpunkt vollständig aus und legen danach bei Bedarf weitere Kombinationen an. Sie können dann die ausgefüllte Kombination <span class="font-bold">duplizieren</span> und nur die relevanten Einträge ändern.</li>
             <li>Die Elemente werden automatisch durchnummeriert, sobald es mehr als eines gibt; es empfiehlt sich, außerdem jedem Element einen kurzen, aussagekräftigen Namen zu geben.</li>
             <li>Bitte ändern Sie Freitexteingaben zwischen Kombinationen nur dann, wenn es inhaltlich notwendig ist. Umformulierungen ohne inhaltliche Relevanz sollten vermieden werden; orthographische Korrekturen sollten in allen Studien/Gruppen/Zeitpunkten parallel vorgenommen werden, damit das Ethiktool die Texte weiterhin als identisch erkennt. Im Antragsformular werden deckungsgleiche Informationen gebündelt dargestellt.</li>
             <li>Sobald Ihr Projekt mehr als eine Kombination aus Studie/Gruppe/Zeitpunkt umfasst, erscheint ein Freitextfeld, in dem Sie die wesentlichen Unterschiede darlegen sollen. Diese Information dient der Orientierung für die Ethikkommission. Denken Sie bitte daran, die Erläuterung anzupassen, falls Sie die Projektstruktur nochmals ändern.</li>
@@ -520,17 +524,13 @@ coreData:
       resubmission: 'Wiedervorlage nach Antrags-Überarbeitung'
       resubmissionGranted: 'Wiedervorlage nach Mittelakquise'
     reference: 'Ursprüngliches Aktenzeichen:'
-    hint: >-
-      {committeeType, select,
-        EUB   {{isDifferent, select,
-                  true  {}
-                  other {Wenn Sie für den ursprünglichen Antrag das Template auf der Webseite der Ethik-Kommission verwendet haben, nutzen Sie dieses bitte weiterhin.</br>}}}
-        other {}} Bitte passen Sie nur die relevanten Punkte an (z.B. Änderungen am Forschungsprojekt, Auflagenerfüllung; Nachreichen der Teilnahmedokumente, falls nötig). Seien Sie bitte zurückhaltend mit darüber hinausgehenden, redaktionellen Änderungen an den Texten - Sie erleichtern damit den Vergleich der Antragsversionen und beschleunigen die Begutachtung.
+    hint: 'Bitte passen Sie nur die relevanten Punkte an (z.B. Änderungen am Forschungsprojekt, Auflagenerfüllung; Nachreichen der Teilnahmedokumente, falls nötig). Seien Sie bitte zurückhaltend mit darüber hinausgehenden, redaktionellen Änderungen an den Texten - Sie erleichtern damit den Vergleich der Antragsversionen und beschleunigen die Begutachtung.'
+    hintTemplate: 'Wenn Sie für den ursprünglichen Antrag das Template auf der Webseite der Ethik-Kommission verwendet haben, nutzen Sie dieses bitte weiterhin.'
   appTypeExtended:
     title: 'Worauf bezieht sich die Erweiterung/Änderung?'
     types:
       extendedSame: 'Die Erweiterung/Änderung bezieht sich auf das ursprüngliche Vorhaben.'
-      extendedDifferent: 'Die Erweiterung/Änderung bezieht sich auf ein neues, sehr ähnliches Vorhaben'
+      extendedDifferent: 'Die Erweiterung/Änderung bezieht sich auf ein neues, sehr ähnliches Vorhaben.'
     hints:
       extendedSame: 'Die Änderungen werden unter dem Aktenzeichen des ursprünglich eingereichten Antrags begutachtet.'
       extendedDifferent: 'Die Änderungen werden unter einem neuen Aktenzeichen begutachtet, aufgrund der Ähnlichkeit jedoch in einem erleichterten Verfahren.'
@@ -1108,7 +1108,11 @@ projectdetails:
       pdf: 'Die Studieninformation für die {participant} erfordert eine an die Zielgruppe angepasste Darstellung und kann daher nicht automatisch aus dem Ethiktool heraus erstellt werden. Bitte bereiten Sie eine selbst formulierte PDF-Datei vor, die sich direkt an die {participant} richtet und folgende Abschnitte enthält: Informationen zur Studienteilnahme, Zustimmung, ggf. Anlage zur Verarbeitung personenbezogener Daten. Zur Orientierung können Ihnen die automatisch erstellten Dokumente für die {addressee} dienen. Bei der Erstellung des Gesamt-Ethikantrags werden Sie gebeten, diese PDF-Datei beizufügen.'
       attendance: 'Sind die {addressee} bei der Erhebung anwesend?'
       documentTranslation:
-        title: 'Wird der Wortlaut der Teilnahmedokumente in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?'
+        title: >-
+          Wird der Wortlaut der Teilnahmedokumente {addressee, select,
+                                                      children {für die Erziehungsberechtigen}
+                                                      wards    {für die gesetzlichen Vertretungspersonen}
+                                                      other    {}} in leichte bzw. einfache Sprache und/oder in eine Fremdsprache übersetzt?
         textHint: 'In welche Sprache(n)?'
         pdf:
           title: 'Ich möchte die übersetzte Version der Teilnahmedokumente für die Begutachtung beifügen.'
@@ -2747,7 +2751,8 @@ checkDoc:
         compensationVoluntary:
           missing: 'Antwort auf Frage nach Gefährdung der Freiwilligkeit durch Art oder Höhe der Aufwandsentschädigung'
           description: 'sonstigen Einschränkung der Freiwilligkeit durch Aufwandsentschädigung' # 'Beschreibung der [] fehlt.'
-          terminate: 'Sie haben ausgewählt, dass der individuelle Abbruch auch nach mehr als 30 Minuten mit einem Komplettverlust der Aufwandsentschädigung verbunden ist. Das ist nur möglich, wenn bei vorzeitigem Abbruch keine Aufwandsentschädigung erfolgt.'
+          lossToTerminate: 'Sie haben ausgewählt, dass der individuelle Abbruch auch nach mehr als 30 Minuten mit einem Komplettverlust der Aufwandsentschädigung verbunden ist. Das ist nur möglich, wenn bei vorzeitigem Abbruch keine Aufwandsentschädigung erfolgt.'
+          terminateToLoss: 'Wenn bei einer <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#duration" data-base-route-i-ds-param="{routeIDs}">Gesamtdauer</a> der Erhebung von mehr als 30 Minuten bei vorzeitigem Abbruch keine Aufwandsentschädigung erfolgt, muss dies auch als Gefährdung der Freiwilligkeit ausgewählt werden.'
           loss: 'Sie haben ausgewählt, dass der individuelle Abbruch auch nach mehr als 30 Minuten mit einem Komplettverlust der Aufwandsentschädigung verbunden ist. Das ist nur möglich, wenn die <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#duration" data-base-route-i-ds-param="{routeIDs}">Gesamtdauer</a> der Erhebung länger als 30 Minuten ist.'
         presence: >- # other is hours
           {compensation, select,

@@ -58,6 +58,19 @@ class PDFAbstract extends ControllerAbstract
         }
     }
 
+    /** Replaces multiples whitespaces by a single space.
+     * @param string $inputString string where multiple whitespaces get removed
+     * @return string $inputString with one space between each word
+     */
+    protected function replaceMultipleWhitespace (string $inputString): string
+    {
+        $explodedClean = [];
+        foreach (explode("\n",$inputString) as $string) {
+            $explodedClean[] = preg_replace('/\h+/u',' ',trim($string)); // replace all horizontal whitespaces by single space
+        }
+        return implode("\n",$explodedClean);
+    }
+
     // methods
 
     /** Creates a pdf in the temporary folder with the session ID added to the filename.

@@ -150,7 +150,7 @@ class AppDataController extends ControllerAbstract
             $position = $data[self::applicant][self::position];
             $isSupervisorNew = $this->checkSupervisor($committeeType,$position);
             if ($isSupervisorNew && $position===self::positionsStudent) {
-                $contributorsArray[0][self::taskNode] = array_diff_key($contributorsArray[0][self::taskNode], [self::taskLeader => '', self::taskData => '']); // remove leader and data from tasks
+                $contributorsArray[0][self::taskNode] = array_diff_key($contributorsArray[0][self::taskNode] ?: [], [self::taskLeader => '', self::taskData => '']); // remove leader and data from tasks
             }
             if ($position===self::positionsPhd && $positionLoad===self::positionsStudent && $isEUB) { // position changed from student to phd -> remove position from other contributors that are supervisor
                 $this->removeContributorIndices($appNode,$this->removePhd($contributorsArray));

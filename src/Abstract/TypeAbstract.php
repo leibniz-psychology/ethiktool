@@ -218,13 +218,16 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      */
     protected function addCommitteeForms(FormBuilderInterface $builder, bool $isNewForm = true, string $committee = ''): void
     {
-        $committeTypes = array_flip(self::committeeTypes);
-        $committeTypes = array_diff_key($committeTypes,[$committee => '']);
-        foreach ($committeTypes as $type => $translation) {
-            $committeTypes[$type] = $this->translateString($translation).(in_array($type,self::committeeTypesBeta) ? ' (Beta)' : '');
+        $committeePrefix = 'newForm.committee.';
+        $tempPrefix = $committeePrefix.'headings.';
+        $committeeTypes = [];
+        foreach (array_diff(self::committeeTypes,[$committee]) as $key => $value) {
+            $committeeTypes[$this->translateString($key)] = $value;
         }
-        $this->addFormElement($builder,self::committee,'choice','newForm.committee.title',options: ['choices' => array_flip($committeTypes)],hint: self::choiceTextHint);
-        if (self::committeeTypesBeta!==[]) {
+        ksort($committeeTypes); // sort alphabetically by translated labels
+        $committeeTypesBeta = array_intersect($committeeTypes,self::committeeTypesBeta);
+        $this->addFormElement($builder,self::committee,'choice',$committeePrefix.'title',options: ['choices' => array_merge([$tempPrefix.'use' => array_diff($committeeTypes,self::committeeTypesBeta,['testCommittee'])], [$tempPrefix.'beta' => $committeeTypesBeta], $committee!=='testCommittee' ? [$tempPrefix.'test' => ['newForm.committee.types.testCommittee' => 'testCommittee']] : [])],hint: self::choiceTextHint);
+        if ($committeeTypesBeta!==[]) {
             $this->addFormElement($builder,self::passwordInput,'text','newForm.password.title');
         }
         foreach (array_merge([self::requirements],$isNewForm ? [self::technicalHint] : []) as $confirm) {

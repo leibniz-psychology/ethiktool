@@ -546,7 +546,7 @@ class ApplicationController extends PDFAbstract
                             $informationPrefix = $projecdetailsPrefix.self::informationNode.'.';
                             $preTranslation = $informationPrefix.'type';
                             $tempVal = $informationArray[self::documentTranslationNode][self::descriptionNode] ?? '';
-                            $documentTranslation = $tempVal!=='' ? "\n".$this->translateStringPDF($informationPrefix.self::documentTranslationNode, [self::descriptionNode => $tempVal]) : '';
+                            $documentTranslation = $tempVal!=='' ? "\n".$this->translateStringPDF($informationPrefix.self::documentTranslationNode, array_merge($addresseeParam,[self::descriptionNode => $tempVal])) : '';
                             $pre = $informationArray[self::pre] ?? '';
                             $preParticipants = $isNotParticipants ? ($informationIIArray[self::pre] ?? '') : '';
                             // is pre information
@@ -777,6 +777,9 @@ class ApplicationController extends PDFAbstract
                                 $tempPrefix = $translationPrefix.self::voteContributorsNode.'.';
                                 $subContent = $this->translateStringPDF($tempPrefix.'title').$this->translateBinaryAnswer($tempArray[self::chosen]).($tempVal!=='' ? $this->translateStringPDF($tempPrefix.self::descriptionNode).$tempVal : '');
                             }
+                            if (in_array('1',[$votesArray[self::dataSourceResultNode][self::committeeResultNegativeNode] ?? '',$votesArray[self::voteContributorsNode][self::voteContributorsConfirm] ?? ''])) {
+                                $subContent .= "\n".$this->translateStringPDF($translationPrefix.'confirm',$committeeParam);
+                            }
                             $this->addBoxContent(self::dataSourceVotesNode, $content, $subContent);
 
                             // data set (data source)
@@ -995,11 +998,11 @@ class ApplicationController extends PDFAbstract
      */
     private function addBoxContent(string $key, string $content, string $subContent = '', string $subHeading = '', string $paragraph = '', string $fragment = '', bool $paragraphSub = false, bool $paragraphTop = false, bool $boxSub = false, int $boxNumber = 0): void
     {
-        $content = preg_replace('/ +/',' ',$content); // remove multiple whitespaces between words
+        $content = $this->replaceMultipleWhitespace($content); // remove multiple whitespaces between words
         $this->boxContent[$key][self::main][$this->hasBoxes ? $content : self::dummyBox][$this->studyID][$this->groupID][] = $this->measureID;
         if ($this->hasBoxes) {
             if ($subContent!=='') {
-                $this->boxContent[$key][self::sub][$subContent][$this->studyID][$this->groupID][] = $this->measureID;
+                $this->boxContent[$key][self::sub][$this->replaceMultipleWhitespace($subContent)][$this->studyID][$this->groupID][] = $this->measureID;
             }
             $this->boxContent[$key][self::inputPage] = self::$linkedPage;
             $this->boxContent[$key][self::fragment] = $fragment==='' ? $key : $fragment;

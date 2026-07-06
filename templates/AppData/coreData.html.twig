@@ -4,12 +4,11 @@
 {% block content %}
     {% set appType, extended, committeeType, appProcess = content.appType, content.appTypeExtended, committeeParams['committeeType'], content.applicationProcess %}
     {% set style, projectLength, translationPrefix, coreDataController = 'max-width: 60rem', {'maxLength': 200}, 'coreData.', 'AppData--coreData' %}
-    {% set appTypePrefix, conflictPrefix, conflictHint = translationPrefix~'appType.', translationPrefix~'conflict.', 'conflictHintDiv' %}
-    {% set appTypeHint, conflictYesDescription, projectTitle = appTypePrefix~'hint', (conflictPrefix~'yes')|trans, content.projectTitle %}
+    {% set isEUB, appTypePrefix, conflictPrefix, conflictHint = committeeType is same as 'EUB', translationPrefix~'appType.', translationPrefix~'conflict.', 'conflictHintDiv' %}
+    {% set conflictYesDescription, projectTitle, extendedPrefix = (conflictPrefix~'yes')|trans, content.projectTitle, translationPrefix~'appTypeExtended.' %}
     <div {{ stimulus_controller(coreDataController, {
             'appType': appType.vars.value,
             'extended': extended.vars.value,
-            'exReHint': [(appTypeHint)|trans(committeeParams|merge({'isDifferent': 'false'})), (appTypeHint)|trans(committeeParams|merge({'isDifferent': 'true'}))],
             'applicationProcess': appProcess.vars.value,
             'reviewProcess': reviewProcess,
             'reviewProcessLoad': reviewProcessLoad,
@@ -33,18 +32,20 @@
                 'stimVisible': {'values': [['different', description.vars.name~'Div']]}}) }}
         </div>
         {# application type #}
-        {% set description = content.description %}
+        {% set tempPrefix = extendedPrefix~'hints.' %}
         <div class="mt-8" id="appType" {{ stimulus_action(coreDataController,'setApplicationType') }}>
             {{ formRender.renderButtons(appType,{'hint': [appTypePrefix,committeeParams], 'stim': [coreDataController,'setAppType']}) }}
             <div class="mt-4" {{ stimulus_target(coreDataController,'exDiv') }}>
-                <div class="MetaData-Label" id="extendedDiv">{{ (translationPrefix~'appTypeExtended.title')|trans }}</div>
-                {{ formRender.renderButtons(extended,noHeading|merge({'stim': [coreDataController,'setExtended']})) }}
+                <div class="MetaData-Label" id="extendedDiv">{{ (extendedPrefix~'title')|trans }}</div>
+                {{ formRender.renderButtons(extended,noHeading|merge({'stim': [coreDataController,'setExtended'], 'icons': {'appTypeExtendedextendedSame': tempPrefix~'extendedSame', 'appTypeExtendedextendedDifferent': tempPrefix~'extendedDifferent'}})) }}
             </div>
-            <div class="mt-4" id="exReDiv" {{ stimulus_target(coreDataController,'exReDiv')}}>
-                {{ form_label(description,null,addLabelAttributes(addClass('MetaData-Label'))) }}
-                <div class="MetaData-Label">{{ (appTypePrefix~'reference')|trans }}</div>
-                <div class="MetaData-Widget" style="width: 20rem" >{{ form_widget(description,textInputAttr) }}</div>
-                {{ formRender.addHint(appTypeHint,{'target': [coreDataController,'exReHint']}) }} {# text is set in controller, but must not be empty here #}
+            <div  id="exReDiv" {{ stimulus_target(coreDataController,'exReDiv')}}>
+                {% if isEUB %}
+                    <div class="MetaData-Label font-bold mt-4" {{ stimulus_target(coreDataController,'hintTemplate') }}>{{ (appTypePrefix~'hintTemplate')|trans }}</div>
+                {% endif %}
+                <div class="MetaData-Label {% if isEUB %} mt-4 {% endif %}">{{ (appTypePrefix~'reference')|trans }}</div>
+                <div class="MetaData-Widget" style="width: 20rem" >{{ form_widget(content.description,textInputAttr) }}</div>
+                {{ formRender.addHint( appTypePrefix~'hint') }}
             </div>
         </div>
         {# application process #}
@@ -213,7 +214,7 @@
             </div>
         </div>
         {# guidelines #}
-        {% if committeeType is same as 'EUB' %}
+        {% if isEUB %}
             {% set guidelines, description, tempPrefix = content.guidelines, content.guidelinesText, translationPrefix~'guidelines.' %}
             {% set vars = guidelines.vars %}
             {% set name = vars.name %}

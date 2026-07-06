@@ -3,12 +3,11 @@ import {saveUndoModal, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['projectTitleParticipation','applicationFull','exDiv','exReDiv','exReHint','shortDocs','shortDocsYes','qualificationYes','institutionHint','professorshipHint','phoneLabelOptional','position','projectStart','projectStartNext','projectStartBegun','projectStartBegunDiv','projectStartBegunConfirm','projectStartBegunText','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
+    static targets = ['projectTitleParticipation','applicationFull','exDiv','exReDiv', 'hintTemplate','shortDocs','shortDocsYes','qualificationYes','institutionHint','professorshipHint','phoneLabelOptional','position','projectStart','projectStartNext','projectStartBegun','projectStartBegunDiv','projectStartBegunConfirm','projectStartBegunText','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
 
     static values = {
         appType: String,
         extended: String,
-        exReHint: Array, // 0: hint if extended and same proposal, 1: hint if extended and other proposal or resubmission
         positions: Array, // 0: positions without qualification, 1: positions with qualification, 3: all positions translated
         noChoice: String,
         conflictHint: Array, // 0: description for yes, 1: description for no
@@ -73,7 +72,9 @@ export default class extends Controller {
         let isExtended = this.appTypeValue==='extended';
         setElementVisibility(this.exDivTarget,isExtended);
         setElementVisibility(this.exReDivTarget,['extended','resubmission','resubmissionGranted'].includes(this.appTypeValue));
-        setHint(this.exReHintTarget,this.exReHintValue[isExtended && ['','extendedDifferent'].includes(this.extendedValue) ? 1 : 0]);
+        if (this.hasHintTemplateTarget) {
+            setElementVisibility(this.hintTemplateTarget,isExtended && this.extendedValue==='extendedSame');
+        }
     }
 
     /** Sets the visibility of the project start widgets.

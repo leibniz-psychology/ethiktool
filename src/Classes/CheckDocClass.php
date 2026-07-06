@@ -1324,12 +1324,16 @@ class CheckDocClass extends ControllerAbstract
                 }
                 // compensation voluntary
                 $tempPrefix = $translationPage.self::compensationVoluntaryNode.'.';
-                if ($this->checkMissingChildrenOther($pageArray,self::compensationVoluntaryNode,$tempPrefix.'missing',[self::compensationVoluntaryOther => $tempPrefix.self::descriptionNode],['isOther' => false]) && array_key_exists(self::compensationVoluntaryLoss,$pageArray[self::compensationVoluntaryNode])) {
-                    if ($this->getDuration($this->measure[self::measuresNode][self::durationNode])<=30) { // complete loss of compensation after more than 30 minutes -> total duration must be greater than 30 minutes
-                        $this->addCheckLabelString($tempPrefix.self::compensationVoluntaryLoss,parameters: $this->routeIDs);
-                    }
-                    if (!in_array($chosen,['',self::terminateNothing])) { // complete loss of compensation after more than 30 minutes -> also complete loss if terminated
-                        $this->addCheckLabelString($tempPrefix.self::terminateNode);
+                if ($this->checkMissingChildrenOther($pageArray,self::compensationVoluntaryNode,$tempPrefix.'missing',[self::compensationVoluntaryOther => $tempPrefix.self::descriptionNode],['isOther' => false])) {
+                    $isLonger30 = $this->getDuration($this->measure[self::measuresNode][self::durationNode])>30;
+                    if (array_key_exists(self::compensationVoluntaryLoss,$pageArray[self::compensationVoluntaryNode])) {
+                        if (!$isLonger30) { // complete loss of compensation after more than 30 minutes -> total duration must be greater than 30 minutes
+                            $this->addCheckLabelString($tempPrefix.self::compensationVoluntaryLoss,parameters: $this->routeIDs);
+                        } elseif (!in_array($chosen,['',self::terminateNothing])) { // complete loss of compensation after more than 30 minutes -> also complete loss if terminated
+                            $this->addCheckLabelString($tempPrefix.'lossToTerminate');
+                        }
+                    } elseif ($isLonger30 && $chosen===self::terminateNothing) { // complete loss if terminate and total duration longer than 30 minutes -> voluntary nature must be compromised by complete loss
+                        $this->addCheckLabelString($tempPrefix.'terminateToLoss',parameters: $this->routeIDs);
                     }
                 }
             } // if any compensation except 'no compensation'

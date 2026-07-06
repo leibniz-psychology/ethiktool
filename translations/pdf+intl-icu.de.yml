@@ -308,7 +308,7 @@ coreData:
             other {}}
     startedDescription: "\n\nBeschreibung des Projektstands:\n"
     retrospective: "\n\nBegründung, warum der Ethikantrag nachträglich gestellt wird:\n"
-  funding: "\n\nEs wurde bestätigt, dass der Inhalt der im Ethikantrag beschriebenen Studien deckungsgleich zu den Studien im Drittmittelantrag ist."
+  funding: "\n\nDie Antragstellenden bestätigen, dass der Inhalt der im Ethikantrag beschriebenen Studien deckungsgleich zu den Studien im Drittmittelantrag ist."
   conflict: 'Für die Teilnehmenden wird der Interessenkonflikt in der Studieninformation offengelegt.'
   support:
     noSupport: 'keine Beratung'
@@ -516,7 +516,11 @@ projectdetails:
                     writtenOral {schriftlich mit mündlicher Erläuterung}
                     oral        {mündlich}
                     other       {{description}}}
-    documentTranslation: 'Der Wortlaut der Teilnahmedokumente wird in leichte bzw. einfache Sprache und/oder eine Fremdsprache übersetzt, und zwar: {description}.'
+    documentTranslation: >-
+      Der Wortlaut der Teilnahmedokumente {addressee, select,
+                                            children {für die Erziehungsberechtigten}
+                                            wards    {für die gesetzlichen Vertretungspersonen}
+                                            other    {}} wird in leichte bzw. einfache Sprache und/oder eine Fremdsprache übersetzt, und zwar: {description}.
     preContent: >-
       {chosen, select,
         complete {Die {addressee} werden vollständig aufgeklärt.}
@@ -651,6 +655,7 @@ projectdetails:
       widespread: 'Daten, die Personen selbst im Wissen über deren Sichtbarkeit für andere verbreitet haben: {description}'
       documents: 'Vorliegende Berichte/Dokumente über konkrete Personen oder Gruppen: {description}'
     committeeResult: 'Ergebnis der damaligen Ethikbegutachtung: '
+    confirm: 'Die Antragstellenden bestätigen, dass ihnen {committeeNom} erlaubt hat, das Reanalyse-Vorhaben trotz der ungewöhnlichen Umstände zur Begutachtung einzureichen.'
     resultPositive:
       question: 'Das damalige Votum umfasste nicht die Fragestellung, die hier betrachtet werden soll.'
       access: 'Der Zugang zu den Daten wird nur bei Vorlage eines Ethikvotums gewährt.'

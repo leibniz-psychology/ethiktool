@@ -250,14 +250,18 @@ committee:
 newForm: # placed immediately after 'committee' to have the committee names all in one place
   committee:
     title: 'Ethics committee:'
+    headings:
+      use: 'Ethiktool in use'
+      beta: 'Ethiktool in beta stage'
+      test: 'Test version of the Ethiktool'
     types:
-      TUC: 'Ethics Committee of Chemnitz University of Technology'
-      EUB: 'Bielefeld University Ethics Review Board'
-      JGU: 'Ethics Committee of the Department of Psychology of JGU Mainz'
-      DLR: 'Research Ethics Office of the German Aerospace Center'
-      TUD: 'Ethics Board of Dresden University of Technology'
-      UH1: 'Ethics Review Board of Faculty 1 of Hildesheim University'
-      UPB: 'Ethics Committee of Paderborn University'
+      TUC: 'Chemnitz: Ethics Committee of Chemnitz University of Technology'
+      EUB: 'Bielefeld: Bielefeld University Ethics Review Board'
+      JGU: 'Mainz: Ethics Committee of the Department of Psychology of JGU Mainz'
+      DLR: 'Cologne: Research Ethics Office of the German Aerospace Center'
+      TUD: 'Dresden: Ethics Board of Dresden University of Technology'
+      UH1: 'Hildesheim: Ethics Review Board of Faculty 1 of Hildesheim University'
+      UPB: 'Paderborn: Ethics Committee of Paderborn University'
       testCommittee: 'Test ethics committee'
   password:
     title: 'Password:'
@@ -462,19 +466,19 @@ landing:
       title: 'Project structure' # part of tab name
       start: >-
         {isOverview, select,
-          true  {The Ethiktool can describe research projects comprising several studies, several participant groups or several data collection time points. You can change the structure of your research project on this page.</br></br> <div class="borderHint m-0">Further <span class="text-decoration-underline">studies</span>, <span class="text-decoration-underline">groups</span> or <span class="text-decoration-underline">time points</span> are necessary only if there are relevant differences in the form inputs.</br> For each new combination of study/group/time point, separate participant documents are created. Information that is identical across combinations, is collapsed in the proposal form.</div>}
+          true  {The Ethiktool can describe research projects comprising several studies, several participant groups or several data collection time points. You can change the structure of your research project on this page.</br></br> <div class="borderHint m-0">Further <span class="font-bold">studies</span>, <span class="font-bold">groups</span> or <span class="font-bold">time points</span> are necessary only if there are relevant differences in the form inputs.</br> For each new combination of study/group/time point, separate participant documents are created. Information that is identical across combinations, is collapsed in the proposal form.</div>}
           other {Please enter information for this combination of study, group and time point here.</br> The requested information is grouped into the following categories:}}
       expandables:
         info:
           title: 'Information on the necessity of separate studies/groups/time points'
           text: >-
-            <li>You only need to add further <span class="text-decoration-underline">studies</span> if your research project is divided into several (sub)studies that differ in terms of aims or methodology, e.g., when conducting a series of experiments.</li>
-            <li>You should add further <span class="text-decoration-underline">groups</span> if, for example, the study information sheet or the form inputs for the groups (e.g., minors/adults, patients/controls) substantially differ. If the information sheets are essentially identical or can easily be joined into a common information sheet (such as for between-subject designs with group assignment after informed consent, or in case of single additional inclusion criteria or tests for a sub-group), it is usually not meaningful to create separate groups within the Ethiktool. Details regarding group assignment or recruiting strategies can usually be given within one group.</li>
-            <li>The term <span class="text-decoration-underline">time point</span> refers to an instance of data collection that requires a new study information sheet and an additional consent form, such as a pre-test for a subsequent study, in which it is not yet possible to inform about further phases of the research project in detail or in which only some of the participants of the pre-test are invited to participate in the main study (screening). If prior information for the first time point already contains information about further data collection time points, it is usually not meaningful to create separate time points in the Ethiktool.</li>
+            <li>You only need to add further <span class="font-bold">studies</span> if your research project is divided into several (sub)studies that differ in terms of aims or methodology, e.g., when conducting a series of experiments.</li>
+            <li>You should add further <span class="font-bold">groups</span> if, for example, the study information sheet or the form inputs for the groups (e.g., minors/adults, patients/controls) substantially differ. If the information sheets are essentially identical or can easily be joined into a common information sheet (such as for between-subject designs with group assignment after informed consent, or in case of single additional inclusion criteria or tests for a sub-group), it is usually not meaningful to create separate groups within the Ethiktool. Details regarding group assignment or recruiting strategies can usually be given within one group.</li>
+            <li>The term <span class="font-bold">time point</span> refers to an instance of data collection that requires a new study information sheet and an additional consent form, such as a pre-test for a subsequent study, in which it is not yet possible to inform about further phases of the research project in detail or in which only some of the participants of the pre-test are invited to participate in the main study (screening). If prior information for the first time point already contains information about further data collection time points, it is usually not meaningful to create separate time points in the Ethiktool.</li>
         hint:
           title: 'Hints for creating/editing the project structure'
           text: >-
-            <li>It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then <span class="text-decoration-underline">duplicate</span> the filled combination and change only the relevant entries.</li>
+            <li>It is best to begin by filling all details of one study/group/time point combination and (if needed) add further combinations thereafter. You can then <span class="font-bold">duplicate</span> the filled combination and change only the relevant entries.</li>
             <li>The elements are automatically numbered consecutively as soon as there is more than one; it is advisable to also assign a brief, expressive name to each element.</li>
             <li>Please change free-text entries across combinations only if it is necessary in terms of content. Rewording without implications for content should be avoided; spelling corrections should be implemented in all studies/groups/time points alike to ensure that the Ethiktool is able to classify the texts as identical. Information that is identical across combinations, is collapsed in the proposal form.</li>
             <li>As soon as the project contains more than one combination of study/group/time point, a text field will appear asking you to explicate major differences. This information shall provide a quick overview to the ethics committee. Please remember to adapt the description if you change the project structure more than once.</li>
@@ -520,12 +524,8 @@ coreData:
       resubmission: 'resubmission after proposal revision'
       resubmissionGranted: 'resubmission after funding acquisition'
     reference: 'Original case number:'
-    hint: >-
-      {committeeType, select,
-        EUB   {{isSame, select,
-                  true  {If you used the template from the website of the Ethics Review Board for the original proposal, please continue using this.</br>}
-                  other {}}}
-        other {}} Please only adapt the relevant aspects (e.g., changes to the research project, fulfillment of change requests; adding participant documents if applicable). Beyond these relevant changes, please avoid excessive editorial changes to the texts - this facilitates the comparison of the proposal versions and thereby expedites the review process.
+    hint: 'Please only adapt the relevant aspects (e.g., changes to the research project, fulfillment of change requests; adding participant documents if applicable). Beyond these relevant changes, please avoid excessive editorial changes to the texts - this facilitates the comparison of the proposal versions and thereby expedites the review process.'
+    hintTemplate: 'If you used the template from the website of the Ethics Review Board for the original proposal, please continue using this.'
   appTypeExtended:
     title: 'What is the scope of the amendment?'
     types:
@@ -1108,7 +1108,11 @@ projectdetails:
       pdf: 'The wording of the study information sheet for the {participant} needs to be adapted to the target group and can therefore not be generated automatically by the Ethiktool. Please prepare a self-formulated PDF file that directly addresses the {participant} and contains the following parts: information on study participation, assent form, annex on processing personal data (if applicable). The automatically generated documents for the {addressee} can serve as a guide. When completing the ethics proposal, you will be asked to add the study information sheet for {participant} as a PDF file.'
       attendance: 'Are the {addressee} present during data collection?'
       documentTranslation:
-        title: 'Is the wording of the participant documents translated into easy or simple language and/or into a foreign language?'
+        title: >-
+          Is the wording of the participant documents {addressee, select,
+                                                        children {for the legal guardians}
+                                                        wards    {for the legal guardians}
+                                                        other    {}} translated into easy or simple language and/or into a foreign language?
         textHint: 'Into which language(s)?'
         pdf:
           title: 'I want to add the translated version of the participant documents.'
@@ -2747,7 +2751,8 @@ checkDoc:
         compensationVoluntary:
           missing: 'Answer to question whether the voluntary nature of participation is compromised by the type or amount of compensation'
           description: 'other forms of compromising voluntariness by compensation' # 'Description of [] is missing.'
-          terminate: 'You selected that individual withdrawal leads to complete loss of compensation even after more than 30 minutes of participation. This is possible only if no compensation is granted in case of withdrawal from participation.'
+          lossToTerminate: 'You selected that individual withdrawal leads to complete loss of compensation even after more than 30 minutes of participation. This is possible only if no compensation is granted in case of withdrawal from participation.'
+          terminateToLoss: 'If no compensation is granted in case of individual withdrawal for a data collection that is <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#duration" data-base-route-i-ds-param="{routeIDs}">longer than 30 minutes</a>, this must also be selected as compromising the voluntary nature of participation.'
           loss: 'You selected that individual withdrawal leads to complete loss of compensation even after more than 30 minutes of participation. This is possible only if the <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#duration" data-base-route-i-ds-param="{routeIDs}">duration</a> of data collection is longer than 30 minutes.'
         presence: >- # other is hours
           {compensation, select,

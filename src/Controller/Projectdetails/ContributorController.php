@@ -23,7 +23,7 @@ class ContributorController extends ControllerAbstract
             return $this->redirectToRoute('app_main');
         }
         foreach ($this->getContributors($session) as $index => $contributor) {
-            foreach ($contributor[self::taskNode] as $curTask => $value) {
+            foreach ($contributor[self::taskNode] ?: [] as $curTask => $value) {
                 $name = $contributor[self::infosNode][self::nameNode];
                 $name = $name==='' ? $this->translateString('projectdetails.pages.contributor.noName') : $name;
                 $tasks[$curTask][$curTask.$index] = $name.($curTask===self::otherTask ? (' ('.$value.')') : '');

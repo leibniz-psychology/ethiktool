@@ -34,7 +34,7 @@ class InformationType extends TypeAbstract
         $reviewProcess = $dummyParams[self::reviewProcess];
         if ($isInformation && str_contains($reviewProcess,self::reviewProcessFull)) {
             $tempPrefix = $pagePrefix.self::documentTranslationNode.'.';
-            $this->addBinaryRadio($builder,self::documentTranslationNode,$tempPrefix.'title',textName: self::documentTranslationNode.self::descriptionCap,textHint: $tempPrefix.self::textHint);
+            $this->addBinaryRadio($builder,self::documentTranslationNode,$tempPrefix.'title',textName: self::documentTranslationNode.self::descriptionCap,textHint: $tempPrefix.self::textHint,options: [self::labelParams => [self::addressee => $options[self::addresseeType]]]);
             if ($reviewProcess===self::reviewFullDocs) {
                 $this->addFormElement($builder,self::documentTranslationPDF,'checkbox',$tempPrefix.'pdf.title');
             }

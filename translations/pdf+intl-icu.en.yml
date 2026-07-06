@@ -304,11 +304,11 @@ coreData:
       
       
       The research project has already started. {isConfirm, select,
-            true  {The applicant confirm that {committeeNom} allowed them to submit the research project for ethics review although it already started.}
+            true  {The applicants confirm that {committeeNom} allowed them to submit the research project for ethics review although it already started.}
             other {}}
     startedDescription: "\n\nDescription of current state of the project:\n"
     retrospective: "\n\nJustification for necessity of retrospective ethics review:\n"
-  funding: "\n\nIt was confirmed that the studies laid out in the ethics proposal are congruent to those in the funding application in terms of content."
+  funding: "\n\nThe applicants confirm that the studies laid out in the ethics proposal are congruent to those in the funding application in terms of content."
   conflict: 'The conflict of interest is disclosed to the participants in the study information sheet.'
   support:
     noSupport: 'no consulting/advice'
@@ -516,7 +516,11 @@ projectdetails:
                     writtenOral {in writing with oral explanation}
                     oral        {orally}
                     other       {{description}}}
-    documentTranslation: 'The wording of the participant documents is translated into easy or simple language and/or into a foreign language, namely: {description}.'
+    documentTranslation: >-
+      The wording of the participant documents {addressee, select,
+                                                  children {for the legal guardians}
+                                                  wards    {for the legal guardians}
+                                                  other    {}} is translated into easy or simple language and/or into a foreign language, namely: {description}.'
     preContent: >-
       {chosen, select,
         complete {The {addressee} are fully informed.}
@@ -651,6 +655,7 @@ projectdetails:
       widespread: 'Data that persons disseminated themselves, being aware of their visibility for others: {description}'
       documents: 'Available reports/documents concerning specific persons or groups: {description}'
     committeeResult: 'Result of ethics review at the time: {description}'
+    confirm: 'The applicants confirm that {committeeNom} allowed them to submit the re-analysis project for ethics review despite the special circumstances.'
     resultPositive:
       question: 'The previous ethics vote did not comprise the research question that shall be addressed here.'
       access: 'Data access is only granted upon presenting an ethics vote.'

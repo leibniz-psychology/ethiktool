@@ -13,13 +13,11 @@ class CoreDataType extends TypeAbstract
 {
     use AppDataTrait;
 
-    private string $committeeType;
-
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationPrefix = 'coreData.';
-        $this->committeeType = $options[self::committeeType];
-        $isEUB = $this->committeeType===self::committeeEUB;
+        $committeeType = $options[self::committeeType];
+        $isEUB = $committeeType===self::committeeEUB;
         // project title
         $this->addFormElement($builder, self::projectTitle, 'textarea', $translationPrefix.'projectTitle');
         $this->addRadioGroup($builder,self::projectTitleParticipation,self::projectTitleTypes,$translationPrefix.self::projectTitleParticipation.'.title',self::projectTitleParticipation.self::descriptionCap);
@@ -28,7 +26,7 @@ class CoreDataType extends TypeAbstract
         $this->addRadioGroup($builder,self::appTypeExtended,self::appTypeExReTypes,$translationPrefix.self::appTypeExtended.'.title');
         // application process
         $this->addRadioGroup($builder,self::applicationProcessNode,self::applicationProcessTypes,$translationPrefix.self::applicationProcessNode.'.title');
-        if (in_array($this->committeeType,self::reviewShortChoose)) { // participation documents are not reviewed, but applicants can choose to create for themselves
+        if (in_array($committeeType,self::reviewShortChoose)) { // participation documents are not reviewed, but applicants can choose to create for themselves
             $this->addRadioGroup($builder,self::shortDocsNode,self::shortDocsTypes);
         }
         // project dates
@@ -61,17 +59,17 @@ class CoreDataType extends TypeAbstract
                 $this->addFormElement($builder, $this->appendText($info), 'text',hint: 'multiple.placeholder.'.$info);
             }
         }
-        if (in_array($this->committeeType,self::begunCommittees)) {
+        if (in_array($committeeType,self::begunCommittees)) {
             $startPrefix = $translationPrefix.'project.start.';
             $tempPrefix = $startPrefix.'hints.'.self::textHint.'.';
             // project start begun
             $this->addCheckboxTextfield($builder,self::projectStartBegun,$startPrefix.'begun',$tempPrefix.'current');
             // begun confirm
-            if (in_array($this->committeeType,self::begunConfirmCommittees)) {
+            if (in_array($committeeType,self::begunConfirmCommittees)) {
                 $this->addFormElement($builder,self::projectStartBegunConfirm,'checkbox',$startPrefix.'begunConfirm');
             }
             // retrospective
-            if (in_array($this->committeeType,self::retrospectiveCommittees)) {
+            if (in_array($committeeType,self::retrospectiveCommittees)) {
                 $this->addFormElement($builder,self::projectStartRetrospective,'textarea',hint: $tempPrefix.self::projectStartRetrospective);
             }
         }

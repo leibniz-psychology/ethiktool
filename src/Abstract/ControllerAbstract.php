@@ -2302,16 +2302,18 @@ abstract class ControllerAbstract extends AbstractController
                             }
                         }
                         // updates for versions before 2.8.1
+                        $consent = (string) $consentNode->{self::consent}->{self::chosen};
                         if ($isSmaller281) {
                             $introNode = $measureTimePointNode->{self::textsNode}->{self::introNode};
-                            if (((string) $consentNode->{self::consent}->{self::chosen})===self::voluntaryConsentNo && ((string) $introNode->{self::introTemplate})==='1') { // no consent and template for intro should be used -> add description node
+                            if ($consent===self::voluntaryConsentNo && ((string) $introNode->{self::introTemplate})==='1') { // no consent and template for intro should be used -> add description node
                                 $introNode->addChild(self::descriptionNode);
                             }
                         }
                         // updates for versions before 2.9.0
+                        $pre = (string) $informationNode->{self::pre};
+                        $isPre = $pre==='0';
                         if ($isSmaller290) {
-                            $pre = (string) $informationNode->{self::pre};
-                            if (in_array($reviewProcess,self::reviewQuestions[self::informationNode][self::documentTranslationNode]) && ($pre==='0' || $pre==='1' && ((string) $informationNode->{self::post}->{self::chosen})==='0') && !$this->checkElement(self::documentTranslationNode,$informationNode)) { // add document translation again if information is oral
+                            if (in_array($reviewProcess,self::reviewQuestions[self::informationNode][self::documentTranslationNode]) && ($isPre|| $pre==='1' && ((string) $informationNode->{self::post}->{self::chosen})==='0') && !$this->checkElement(self::documentTranslationNode,$informationNode)) { // add document translation again if information is oral
                                 $this->addChosenNode($informationNode,self::documentTranslationNode);
                             }
                         }
@@ -2348,6 +2350,9 @@ abstract class ControllerAbstract extends AbstractController
                                 if ($chosen!=='') {
                                     $compensationVoluntaryNode->addChild($isVoluntary ? self::compensationVoluntaryOther : self::compensationVoluntaryNo,$description); // 'no' stays 'no', 'yes' changes to 'yes, other'
                                 }
+                            }
+                            if ($consent===self::consentOther && in_array($reviewProcess,self::reviewDocs) && $isPre) { // consent is created also for 'other' consent -> add legal nodes
+                                $this->addLegalNodes($measureTimePointNode->{self::legalNode},$this->xmlToArray($measureTimePointNode));
                             }
                         }
                         // updates for versions before 3.2.0
