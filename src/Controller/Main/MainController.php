@@ -41,12 +41,13 @@ class MainController extends ControllerAbstract
         }
         $committeeTemp = $session->get(self::committeeTemp) ?? '';
         $hasChange = $session->get(self::committeeChangeTemp) ?? false;
+        $currentCommittee = $this->getCommitteeType($session);
 
         $main = $this->createFormAndHandleRequest(MainType::class,
             [self::committee => $committeeTemp,
              self::requirements => $session->get(self::requirementsTemp) ?? false,
              self::committeeChange => $hasChange],$request,
-            [self::dummyParams => ['isFilename' => $session->has(self::fileName), self::committee => $this->getCommitteeType($session)]]);
+            [self::dummyParams => ['isFilename' => $session->has(self::fileName), self::committee => $currentCommittee]]);
         if ($main->isSubmitted()) {
             $appNode = $this->getXMLfromSession($session);
             $response = $request->request->all();
@@ -64,7 +65,8 @@ class MainController extends ControllerAbstract
                 $isEUBold = $oldCommittee===self::committeeEUB;
                 $appNode->{self::committee} = $committee;
                 $this->setCommittee($session,$committee,$request->getLocale());
-                $coreDataNode = $appNode->{self::appDataNodeName}->{self::coreDataNode};
+                $appDataNode = $appNode->{self::appDataNodeName};
+                $coreDataNode = $appDataNode->{self::coreDataNode};
                 // add/remove shortDocs node
                 $applicationProcessNode = $coreDataNode->{self::applicationProcessNode};
                 $isShortChoose = in_array($committee,self::reviewShortChoose);
@@ -125,13 +127,33 @@ class MainController extends ControllerAbstract
                     $this->removeElement(self::qualification,$coreDataNode);
                     $this->removeElement(self::guidelinesNode,$coreDataNode);
                 }
+                // add/remove medicine nodes
+                $hasMedicineOld = !in_array($oldCommittee,self::committeeNoMedicine);
+                $hasMedicine = !in_array($committee,self::committeeNoMedicine);
+                $medicineNode = $appDataNode->{self::medicine};
+                if (!$hasMedicineOld && $hasMedicine) {
+                    foreach ([self::medicine,self::physicianNode] as $type) {
+                        $this->addChosenNode($medicineNode,$type);
+                    }
+                } elseif ($hasMedicineOld && !$hasMedicine) {
+                    $this->removeAllChildNodes($medicineNode);
+                }
                 // update nodes by review process
                 $reviewProcess = $reviewProcess==='' ? $this->getCurrentReviewProcess($appNode) : $reviewProcess;
                 $session->set(self::reviewProcess,$reviewProcess);
+                $isBICC = $committee===self::committeeBICC;
+                $isBICCold = $oldCommittee===self::committeeBICC;
                 foreach ($appNode->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
                     foreach ($studyNode->{self::groupNode} as $groupNode) {
                         foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
                             $this->updateNodesByReviewProcess($request,$measureTimePointNode,$reviewProcess);
+                            $compensationNode = $measureTimePointNode->{self::compensationNode};
+                            if (!$isBICCold && $isBICC) { // select 'no compensation'
+                                $this->removeAllChildNodes($compensationNode);
+                                $compensationNode->addChild(self::compensationTypeNode)->addChild(self::compensationNo);
+                            } elseif ($isBICCold && !$isBICC && !$this->checkElement(self::terminateNode,$compensationNode)) { // deselect 'no compensation' in case it was selected
+                                $this->removeAllChildNodes($compensationNode->{self::compensationTypeNode});
+                            }
                         }
                     }
                 }
@@ -149,6 +171,8 @@ class MainController extends ControllerAbstract
              'committeeParamsChange' => $this->setCommittee($session,$session->get(self::committeeTemp) ?? 'testCommittee',$request->getLocale(),false),
              'showCommittee' => $hasChange,
              'wrongPassword' => $wrongPassword,
+             'committeeTypes' => $this->getCommitteeArray($currentCommittee),
+             'selected' => $committeeTemp,
              'numCommitteesBeta' => (new \NumberFormatter($request->getLocale(),\NumberFormatter::SPELLOUT))->format(count(self::committeeTypesBeta)),
              'redirectParams' => array_merge([
                  'params' => ['isMain' => $sessionValue['isMain'] ?? '', 'isMajor' => $this->getStringFromBool($isMajor)],

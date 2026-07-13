@@ -17,7 +17,7 @@
         <div class="{{ justify }} bold" style="margin-bottom: 2em">{{ ('consent.confirm'|trans({'addressee': addressee, 'information': information, 'isPersonal': isPersonal})~obligatoryConsent)|raw }}</div>
         {% if optionalConsent is not same as [] %}
             {% set classes = 'radiobuttonPDF'~(not savePDF ? ' radioSmall') %}
-            <div class="{{ textPreview }}" style="page-break-inside: avoid">
+            <div class="{{ textPreview }}" style="break-inside: avoid">
                 <div class="bold" style="margin-bottom: 1rem">{{ 'consent.optionalHeading'|trans }}</div>
                 {% for text in optionalConsent %}
                     <table style="margin-bottom: 2em">
@@ -36,7 +36,7 @@
         {% if consentHint is not same as '' %}
             <div class="{{ justify}}">{{ consentHint|raw }}</div>
         {% else %}
-            <div style="page-break-inside: avoid">
+            <div style="break-inside: avoid">
                 {{ pdfMacros.addSignature(savePDF,addressee,true) }}
             </div>
         {% endif %}

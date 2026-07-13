@@ -59,6 +59,9 @@ class CoreDataType extends TypeAbstract
                 $this->addFormElement($builder, $this->appendText($info), 'text',hint: 'multiple.placeholder.'.$info);
             }
         }
+        if ($dummyParams[self::studentConfirm]) { // confirmation that students are not allowed to submit a proposal
+            $this->addFormElement($builder,self::studentConfirm,'checkbox',$translationPrefix.self::applicant.'.'.self::studentConfirm.'.confirm');
+        }
         if (in_array($committeeType,self::begunCommittees)) {
             $startPrefix = $translationPrefix.'project.start.';
             $tempPrefix = $startPrefix.'hints.'.self::textHint.'.';
@@ -144,6 +147,10 @@ class CoreDataType extends TypeAbstract
         $tempArray = $viewData[self::applicant];
         foreach (self::applicantContributorsInfosTypes as $info) {
             $forms[$info]->setData($tempArray[$info]);
+        }
+        // student confirm
+        if (array_key_exists(self::studentConfirm,$forms)) {
+            $forms[self::studentConfirm]->setData($this->getArrayValue($viewData,self::studentConfirm)==='1');
         }
         // institution and position
         foreach (self::institutionPosition as $info) {
@@ -260,6 +267,10 @@ class CoreDataType extends TypeAbstract
             $tempArray[$info] = $tempVal;
         }
         $newData[self::applicant] = $tempArray;
+        // student confirm
+        if (array_key_exists(self::studentConfirm,$forms) && $tempArray[self::position]===self::positionsStudent) {
+            $newData[self::studentConfirm] = $forms[self::studentConfirm]->getData();
+        }
         // conflict
         $chosen = $forms[self::conflictNode]->getData();
         $tempArray = [self::chosen => $chosen];

@@ -62,6 +62,13 @@
                 <div style="{{ inputMargins }}">{{ formRender.addHint(textInput,hintParams) }}</div>
             {% endif %}
         </div>
+        {# hint if usually no compensation is given #}
+        {% set hint = (translationPrefix~'hint')|trans(committeeParams) %}
+        {% if hint is not same as '' %}
+            <div class="borderHint" {{ stimulus_target(compensationController,'compensationHint') }}>
+                {{ hint }}
+            </div>
+        {% endif %}
         {# money further #}
         {% if hasDescription %}
             {% set moneyFurther, tempPrefix = content.moneyFurther, translationPrefix~'money.' %}

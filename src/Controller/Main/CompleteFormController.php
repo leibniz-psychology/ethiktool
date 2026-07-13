@@ -18,7 +18,9 @@ class CompleteFormController extends ControllerAbstract
     {
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session);
-        if (!($appNode && $this->getErrors($request,returnCheck: true))) { // page was opened before a proposal was created/loaded or with missing/erroneous inputs
+        $appDataNode = $appNode->{self::appDataNodeName} ?? '';
+        $coreDataArray = $appDataNode!=='' ? $this->xmlToArray($appDataNode->{self::coreDataNode}) : [];
+        if (!($appNode && $this->getErrors($request,returnCheck: true) && $this->getStudentAllowed($this->getCommitteeType($session),$coreDataArray,false))) { // page was opened before a proposal was created/loaded or with missing/erroneous inputs
             return $this->redirectToRoute('app_main');
         }
         $pdfFilename = '';
@@ -27,8 +29,6 @@ class CompleteFormController extends ControllerAbstract
             $session->remove(self::pdfLoad);
         }
         $completeFormNode = $appNode->{self::completeFormNodeName};
-        $appDataNode = $appNode->{self::appDataNodeName};
-        $coreDataArray = $this->xmlToArray($appDataNode->{self::coreDataNode});
         $parameters = $session->get(self::committeeParams);
         // check if any documents besides the form are created
         $anyDoc = 'false'; // translation parameters need to be strings and strval() converts booleans to '0' or '1'

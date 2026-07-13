@@ -60,14 +60,15 @@ class NavigationController extends ControllerAbstract
             $activeRoute .= $routeParams['page'].(array_key_exists(self::studyID,$routeParams) ? 'Sub' : '');
         }
         $activeIndex = array_search($activeRoute,self::routeOrder);
+        $coreDataNode = $hasDoc ? $appNode->{self::appDataNodeName}->{self::coreDataNode} : '';
         return $this->render('_navigationSidebar.html.twig',
             ['content' => [self::fileName => ['title' => $this->translateString('multiple.filename').':', 'titleValue' => $hasDoc ? $session->get(self::fileName) : ''],
-                           self::projectTitle => ['title' => $this->translateString('coreData.projectTitle').':', 'titleValue' => $hasDoc ? ((string) $appNode->{self::appDataNodeName}->{self::coreDataNode}->{self::projectTitle}) : '']],
+                           self::projectTitle => ['title' => $this->translateString('coreData.projectTitle').':', 'titleValue' => $hasDoc ? ((string) $coreDataNode->{self::projectTitle}) : '']],
              'windows' => $windows,
              'activeRoute' => $activeRoute,
              'routeParams' => $activeLevels,
              'isMultiple' => $hasDoc && $this->getMultiStudyGroupMeasure($appNode),
-             'isComplete' => $hasDoc && $this->getErrors($request,returnCheck: true),
+             'isComplete' => $hasDoc && $this->getErrors($request,returnCheck: true) && $this->getStudentAllowed($this->getCommitteeType($session),$this->xmlToArray($coreDataNode),false),
              'anyError' => $this->checkAnyError($windows),
              'isActiveProjectdetails' => in_array($routeParams['page'] ?? '',['',self::projectdetailsNodeName]) && $activeIndex>-1 && $activeIndex>array_search('app_landing',self::routeOrder)]);
     }

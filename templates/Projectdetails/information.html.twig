@@ -2,8 +2,8 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set pre, translationPrefix, informationController = content.pre, 'projectdetails.pages.information.', 'Projectdetails--information' %}
-    {% set preValue, isFull, isInformationIIhint, preAbortPrefix = pre.vars.value, isInformation and 'full' in reviewProcess, not isInformation and reviewProcess is not same as 'fullRequested', translationPrefix~'preAbort.textHints.' %}
+    {% set pre, translationPrefix, informationController, isNotRequested = content.pre, 'projectdetails.pages.information.', 'Projectdetails--information', reviewProcess is not same as 'fullRequested' %}
+    {% set preValue, isFull, isInformationIIhint, preAbortPrefix, routeIDs = pre.vars.value, isInformation and 'full' in reviewProcess, not isInformation and isNotRequested, translationPrefix~'preAbort.textHints.', isInformation and isNotRequested ? routeIDsParam['routeIDs'] %}
     {% set choiceTextHintTrans, informationHintName, addresseeStringParam, preAbortHints = choiceTextHint|trans, 'informationIIIhint', {'addressee': isInformation ? addresseeString : participantsString}, {'abortOther': (preAbortPrefix~'abortOther')|trans, 'abortNo': (preAbortPrefix~'abortNo')|trans} %}
     <div {{ stimulus_controller(informationController,{
             'pre': preValue,
@@ -23,7 +23,7 @@
         </div>
         <div id="{{ preYes }}" class="mt-8" style="{{ boolToDisplay(preValue is same as '0') }}" {{ stimulus_target(informationController,'preContent') }}>
             {% if content.preType is defined %}
-                {{ _self.addType(true,content.preType,isInformationIIhint,addresseeType,'preType',[informationController]) }}
+                {{ _self.addType(true,content.preType,isInformationIIhint,addresseeType,'preType',[informationController],routeIDs) }}
             {% endif %}
             {# pre content #}
             {% set preContent = content.preContent %}
@@ -70,7 +70,7 @@
                     merge(textInputPost is not same as '' ? [postHint] : [])]]},
                 'removeHint': [[textInputPost],postHint,isPostNo]}|
                 merge(isInformation ? {'contTarget': ['post0',informationController,'postYes']} : {})) }}
-            {{ _self.addType(isPreNo and postValue is same as '0',content.postType,isInformationIIhint,addresseeType,postType,[informationController]) }}
+            {{ _self.addType(isPreNo and postValue is same as '0',content.postType,isInformationIIhint,addresseeType,postType,[informationController],routeIDs) }}
         </div>
         {# attendance #}
         {% if content.attendance is defined %}
@@ -103,17 +103,21 @@
     {{ formRender.addPreview([studyID,groupID,measureID]) }}
 {% endblock %}
 
-{% macro addType(visible, form, addPDF, addresseeType, id, target)  %}
+{% macro addType(visible, form, addPDF, addresseeType, id, target, routeIDs = '')  %}
     {# Adds a grid with a label asking for the type of information. Next it a group of radio buttons with the types are rendered. If pdf is not null, a button for selecting a pdf file is rendered, together with a div displaying the filename and an icon. Input arguments:
       visible:       true if the div should be visible, false otherwise
       form:          form with the types
-      pdf:           if true, a hint is added that, when completing the application, a pdf must be uploaded
+      addPDF:        if true, a hint is added that, when completing the application, a pdf must be uploaded
       addresseeType: addressee
       id:            id of the surrounding div
-      target:        if provided, an array of two elements: stimulus controller and target name. If only one element is provided, it will be added to the renderButtons() call.
+      target:        an array of two elements: stimulus controller and target name. If only one element is provided, it will be added to the renderButtons() call.
+      routeIDs:      if not an empty string and addresseeType does not equal 'participants', route IDs for a hint that will be placed above the question
     #}
     {% set name, stimCont, translationPrefix = form.vars.name, target[0], 'projectdetails.pages.information.' %}
     <div id="{{ id }}" style="{{ boolToDisplay(visible) }}" {% if target[1] is defined %} {{ stimulus_target(stimCont,target[1]) }} {% endif %}>
+        {% if routeIDs is not same as ''  and addresseeType is not same as 'participants' %}
+            <div class="MetaData-Label borderHint" style="margin-top: 2rem">{{ (translationPrefix~'hint')|trans({'addressee': addresseeType, 'routeIDs': routeIDs})|raw }}</div>
+        {% endif %}
         <div class="MetaData-Label mt-4">{{ form_label(form,null,labelDummy) }}</div>
         {{ formRender.renderButtons(form, noHeading|
             merge({'icons': {(name~'written'): translationPrefix~'type.hintWritten'}})|

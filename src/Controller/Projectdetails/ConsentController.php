@@ -68,6 +68,8 @@ class ConsentController extends ControllerAbstract
                 ['textInput' => $textInput,
                         'ensureTypes' => self::voluntaryEnsureTypes,
                         'ensureTypesOther' => self::voluntaryEnsureTypesOther,
+                        'terminateCriteriaTypes' => self::terminateCriteriaTypes,
+                        'terminateCriteriaOtherTypes' => self::terminateCriteriaOtherTypes,
                         'headingParams' => [self::addressee => $addressee, 'type' => $isPreEmpty && (!$hasInformationII || $isPreEmptyParticipants) ? 'onlyPre' : (!$isPreEmpty && (!$hasInformationII || !$isPreEmptyParticipants) ? 'onlyNotPre' : 'both')]],
                 $addressee!==self::addresseeParticipants ? ['labelParamsParticipants' => [self::addressee => $this->getAddresseeString($addressee,false), self::participant => $this->getAddresseeString($addressee,false,true,true)]] : []),'projectdetails.consent',true));
     }

@@ -103,24 +103,27 @@ class AppExtension extends AbstractExtension
         return $addAttributes ? ['attributes' => $styleArray] : $styleArray;
     }
 
-    /** Checks if either the checkbox with the name 'unique' or any of the other checkboxes in keys is selected.
+    /** Checks if either any checkbox with the name 'unique' or any of the other checkboxes in keys is selected.
      * @param FormView $forms form array
      * @param array $keys keys to be checked
-     * @param string $unique key whose selection means that no other key in $keys can be selected
-     * @return array 0: true if 'unique' key is selected, 1: true if any of the other keys is selected, otherwise false in both cases, 2: number of selected checkboxes excluding the $unique one
+     * @param string|array $unique keys whose selections means that no other key in $keys can be selected
+     * @return array 0: true if any 'unique' key is selected, 1: true if any of the other keys is selected, otherwise false in both cases, 2: number of selected checkboxes excluding the $unique one
      */
-    public function getAnySelected(FormView $forms, array $keys, string $unique = ''): array
+    public function getAnySelected(FormView $forms, array $keys, string|array $unique = ''): array
     {
         $anySelected = false;
         $uniqueSelected = false;
         $numSelected = 0;
+        if (!is_array($unique)) {
+            $unique = [$unique];
+        }
         foreach ($keys as $key) {
             $isChecked = $forms[$key]->vars['checked'];
-            if ($key!==$unique) {
+            if (!in_array($key,$unique)) {
                 $anySelected = $anySelected || $isChecked;
                 $numSelected += $isChecked ? 1 : 0;
             } else {
-                $uniqueSelected = $isChecked;
+                $uniqueSelected = $uniqueSelected || $isChecked;
             }
         }
         return [$uniqueSelected,$anySelected,$numSelected];

@@ -139,9 +139,16 @@ class DataPrivacyController extends ControllerAbstract
             }
             // measures
             $pageArray = $measureTimePoint[self::measuresNode];
-            $tempArray = $pageArray[self::measuresNode];
-            if ($tempArray!=='' && array_key_exists(self::measuresVideo, $tempArray)) { // video
-                $sureString .= $this->translateString($translationPrefix.self::measuresVideo, $routeParam)."\n";
+            $measuresFurther = $pageArray[self::measuresFurtherNode] ?? '';
+            if ($measuresFurther!=='') {
+                $isMeasuresVideo = false;
+                $videoCap = array_map('ucfirst',self::measuresPhotoVideoAudio);
+                foreach (array_keys(self::measuresDocumentationTypes) as $documentation) {
+                    $isMeasuresVideo = $isMeasuresVideo || array_intersect_key($this->createPrefixArray($videoCap,$documentation.self::measuresDocumentation),($measuresFurther[$documentation] ?? '') ?: [])!==[];
+                }
+                if ($isMeasuresVideo) { // documentation by photo/video/audio
+                    $sureString .=$this->translateString($translationPrefix.self::measuresVideo,$routeParam)."\n";
+                }
             }
             if (($pageArray[self::otherSourcesNode][self::chosen] ?? '')==='0') { // other sources
                 $sureString .= $this->translateString($translationPrefix.self::otherSourcesNode, $routeParam)."\n";

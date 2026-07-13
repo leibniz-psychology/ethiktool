@@ -76,7 +76,7 @@ export default class extends Controller {
                 ++index;
             }
             document.getElementById(id.replace('button','name')).textContent = 'Name '+this.namesValue[isStudy ? 'study' : (idSplitLength===3 ? 'group' : 'measureTimePoint')]+index; // hint above text field
-            this.changeGridColumn(document.getElementById(id.replace('button','Outer'))); // div surrounding hint and div with
+            this.changeGridColumn(document.getElementById(id.replace('button','Outer'))); // div surrounding hint and div with text field
         } else {
             let title = document.getElementById(id.replace('button','Text')); // name of the element
             setElementVisibility(title,false);

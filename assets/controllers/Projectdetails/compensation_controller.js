@@ -3,7 +3,7 @@ import {setElementVisibility, getSelected, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['moneyMiddle','moneyEndSpecific','moneyValue','moneyAmountReal','hoursAmountFlat','hoursValueDiv','hoursValue','hoursEndDefault','hoursEndSpecific','moneyFurther','compensationDiv','textInput'];
+    static targets = ['moneyMiddle','moneyEndSpecific','moneyValue','moneyAmountReal','hoursAmountFlat','hoursValueDiv','hoursValue','hoursEndDefault','hoursEndSpecific','moneyFurther','compensationHint','compensationDiv','textInput'];
 
     static values = {
         compensationTypes: Array, // without 'no compensation'
@@ -21,7 +21,11 @@ export default class extends Controller {
 
     /** Sets the compensation widgets. */
     setCompensation() {
-        setElementVisibility(this.compensationDivTarget,getSelected(this.compensationTypesValue)[0]);
+        let anyCompensation = getSelected(this.compensationTypesValue)[0];
+        if (this.hasCompensationHintTarget) {
+            setElementVisibility(this.compensationHintTarget,anyCompensation);
+        }
+        setElementVisibility(this.compensationDivTarget,anyCompensation);
         let hasAwarding = document.getElementById('moneyawardingDiv')!==null;
         if (this.hasMoneyFurtherTarget || hasAwarding) {
             for (let type of this.compensationTypesValue) {

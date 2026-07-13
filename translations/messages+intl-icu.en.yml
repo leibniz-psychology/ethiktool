@@ -175,6 +175,10 @@ committee:
       TUD   {the Ethics Board of Dresden University of Technology}
       UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
       UPB   {the Ethics Committee of Paderborn University}
+      PHHD  {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+      SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+      BICC  {the bicc Ethics Committee}
+      PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
       other {the test ethics committee}}
   committeeGen: >-
     {committee, select,
@@ -185,6 +189,10 @@ committee:
     TUD   {the Ethics Board of Dresden University of Technology}
     UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
     UPB   {the Ethics Committee of Paderborn University}
+    PHHD  {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+    SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+    BICC  {the bicc Ethics Committee}
+    PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
     other {the test ethics committee}}
   committeeDat: >-
     {committee, select,
@@ -195,6 +203,10 @@ committee:
       TUD   {the Ethics Board of Dresden University of Technology}
       UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
       UPB   {the Ethics Committee of Paderborn University}
+      PHHD  {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+      SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+      BICC  {the bicc Ethics Committee}
+      PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
       other {the test ethics committee}}
   committeeAcc: >-
     {committee, select,
@@ -205,6 +217,10 @@ committee:
       TUD   {the Ethics Board of Dresden University of Technology}
       UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
       UPB   {the Ethics Committee of Paderborn University}
+      PHHD  {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+      SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+      BICC  {the bicc Ethics Committee}
+      PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
       other {the test ethics committee}}
   committeeLocation: >-
     {committee, select,
@@ -215,6 +231,10 @@ committee:
       TUD   {Dresden University of Technology}
       UH1   {Hildesheim University}
       UPB   {Paderborn University}
+      PHHD  {Heidelberg University of Education}
+      SRH   {SRH Campus Heidelberg}
+      BICC  {Bonn International Centre for Conflict Studies}
+      PHT   {University College of Teacher Education Tyrol}
       other {the institution of the test ethics committee}}
   committeeLocationPure: >-
     {committee, select,
@@ -225,6 +245,10 @@ committee:
       TUD   {Dresden University of Technology}
       UH1   {Hildesheim University}
       UPB   {Paderborn University}
+      PHHD  {Heidelberg University of Education}
+      SRH   {SRH Campus Heidelberg}
+      BICC  {Bonn International Centre for Conflict Studies}
+      PHT   {University College of Teacher Education Tyrol}
       other {Institution of the test ethics committee}}
   committeeLocationDat: >-
     {committee, select,
@@ -235,6 +259,10 @@ committee:
       TUD   {Dresden University of Technology}
       UH1   {Hildesheim University}
       UPB   {Paderborn University}
+      PHHD  {Heidelberg University of Education}
+      SRH   {SRH Campus Heidelberg}
+      BICC  {Bonn International Centre for Conflict Studies}
+      PHT   {University College of Teacher Education Tyrol}
       other {the institution of the test ethics committee}}
   committeeLocationGen: >-
     {committee, select,
@@ -245,6 +273,10 @@ committee:
       TUD   {of Dresden University of Technology}
       UH1   {of Hildesheim University}
       UPB   {of Paderborn University}
+      PHHD  {of Heidelberg University of Education}
+      SRH   {of SRH Campus Heidelberg}
+      BICC  {of Bonn International Centre for Conflict Studies}
+      PHT   {of University College of Teacher Education Tyrol}
       other {of the institution of the test ethics committee}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
@@ -258,10 +290,15 @@ newForm: # placed immediately after 'committee' to have the committee names all 
       TUC: 'Chemnitz: Ethics Committee of Chemnitz University of Technology'
       EUB: 'Bielefeld: Bielefeld University Ethics Review Board'
       JGU: 'Mainz: Ethics Committee of the Department of Psychology of JGU Mainz'
-      DLR: 'Cologne: Research Ethics Office of the German Aerospace Center'
+      DLR: 'Köln: Research Ethics Office of the German Aerospace Center'
       TUD: 'Dresden: Ethics Board of Dresden University of Technology'
       UH1: 'Hildesheim: Ethics Review Board of Faculty 1 of Hildesheim University'
       UPB: 'Paderborn: Ethics Committee of Paderborn University'
+      PHHDSRH: 'Heidelberg: Joint Ethics Committee of Heidelberg University of Education and SRH University'
+      PHHD: 'Heidelberg University of Education'
+      SRH: 'SRH University of Applied Sciences Heidelberg'
+      BICC: 'Bonn: bicc Ethics Committee'
+      PHT: 'Innsbruck: Ethics Committee of University College of Teacher Education Tyrol'
       testCommittee: 'Test ethics committee'
   password:
     title: 'Password:'
@@ -382,7 +419,7 @@ main:
               EUB   {Please note that documents for informing participants who are capable of giving consent (or else the documents for the legal guardians) are generated automatically using the Ethiktool and you do <b>not</b> need to prepare the information in advance based on the template on the website of the Ethics Review Board. The information (part 1 of the template) and consent form (part 2) are automatically generated based on the details provided in the tool. If desired, the data privacy statement (part 3) can also be generated automatically on a case-by-case basis. You will receive a PDF document for further use.</br></br>}
               other {}} Please note that creating the application involved confirmation that the <a class="linkInternal" href data-bs-toggle="modal" data-bs-target="#technicalHints">technical information</a> has been noted and that the following <b>requirements for the application</b> are fulfilled:</br></br>
   textRequirementsTitle: 'Requirements for the application'
-  textRequirements: | # other in select is test committee. For readability of the translation files newlines instead of br-tags are used.
+  textRequirements: | # other in select is test committee. For readability of the translation files newlines instead of br-tags are used. TODO: translate first part of PHHD/SRH
     {committeeType, select,
       TUC   {Any person carrying out independent research at Chemnitz University of Technology is eligible to apply; this explicitly includes doctoral candidates. The responsibility for the ethics application in case of undergraduate theses and other student research projects lies with the teaching staff or supervisors.
 
@@ -423,6 +460,26 @@ main:
             The ethics proposal must be submitted before the start of any study involving human participants. Retrospective ethics approvals are not possible.
     
             The Ethics Committee of Paderborn University does not fulfil the functions of a public ethics committee under the North Rhine-Westphalia Health Professions Act and does not review research with medical or pharmacological questions. Such research projects must be submitted to a medical ethics committee.}
+      PHHD  {Die Kommission wird auf Antrag eines Mitglieds oder Angehörigen der Pädagogischen Hochschule oder der SRH University tätig. Ein Votum der Ethikkommission für ein Forschungsvorhaben kann nur beantragt werden, wenn dieses für Dritte (z. B. Fördermittelgeber, Verlage) erforderlich ist. In allen anderen Fällen kann ein Rat der Ethikkommission eingeholt werden. Der Antrag an die Ethikkommission ist mindestens einen Monat vor Beantragung des Forschungsvorhabens zu stellen.
+            Studierende sind in ethischen Fragen zu wissenschaftlichen Arbeiten nicht selbst antragsberechtigt und können nur in Ausnahmefällen einen Rat über eine Betreuerin oder einen Betreuer einholen. 
+            Die Antragsbearbeitung erfolgt unter der Voraussetzung, dass der Antrag bisher bei keiner anderen Ethikkommission zur Begutachtung eingereicht wurde.
+    
+            The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible.
+    
+            Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. Research projects involving physicians as project contributors usually have to be evaluated by a medical ethics committee.}
+      SRH   {Die Kommission wird auf Antrag eines Mitglieds oder Angehörigen der Pädagogischen Hochschule oder der SRH University tätig. Ein Votum der Ethikkommission für ein Forschungsvorhaben kann nur beantragt werden, wenn dieses für Dritte (z. B. Fördermittelgeber, Verlage) erforderlich ist. In allen anderen Fällen kann ein Rat der Ethikkommission eingeholt werden. Der Antrag an die Ethikkommission ist mindestens einen Monat vor Beantragung des Forschungsvorhabens zu stellen.
+            Studierende sind in ethischen Fragen zu wissenschaftlichen Arbeiten nicht selbst antragsberechtigt und können nur in Ausnahmefällen einen Rat über eine Betreuerin oder einen Betreuer einholen.
+            Die Antragsbearbeitung erfolgt unter der Voraussetzung, dass der Antrag bisher bei keiner anderen Ethikkommission zur Begutachtung eingereicht wurde.
+            
+            The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible.
+    
+            Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. Research projects involving physicians as project contributors usually have to be evaluated by a medical ethics committee.}
+      BICC  {Eligible applicants include staff members of the BICC – Bonn International Centre for Conflict Studies. Students may also submit an ethics application for their thesis or other student research projects if these are carried out as part of research projects at the BICC; supervisors must have read and approved the application prior to submission.
+    
+             The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Committee may carry out a retrospective review. Further information in case of a retrospective review must be obtained from the ethics committee via <a href="ethics@bicc.de">ethics@bicc.de</a>.}
+      PHT   {Any person carrying out research at PH Hochschule Tirol is eligible to apply. The responsibility for the ethics application in case of undergraduate theses and other student research projects lies with the teaching staff or supervisors.
+    
+            The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review.}
       other {You are creating a test ethics application that is <b>not designed to be submitted to an ethics review board</b>. Therefore, no eligibility requirements need to be fulfilled at this point.}}
   newFormModal:
     title: 'jump to new proposal'
@@ -627,7 +684,7 @@ coreData:
           other      {, technical processing of the compensation and data sharing for re-use}}. The respective entries will be deleted as soon as you leave the current page.
     requestedConfirm:
       title: 'Confirmation of congruence'
-      headingHint: >- # other in committeeType is those without participant documents for short proposals and with no special requirements (currently EUB, UH1, test ethics committee)
+      headingHint: >- # other in committeeType is those without participant documents for short proposals and with no special requirements
         Funding institutions usually require an ethics vote for the exact content of the funding proposal. Therefore, the studies laid out in the ethics proposal must be congruent to those in the funding proposal in terms of content. For consistency from the funder's perspective, the title of the ethics proposal and the funding proposal should be identical. 
         Please do not combine third-party-funding-dependent and -independent studies within one ethics proposal. The ethics committee acts on the assumption that the studies laid out in the ethics proposal will only be conducted if third-party funding is granted.
         {committeeType, select,
@@ -648,6 +705,9 @@ coreData:
   applicant:
     title: 'Responsibility for the proposal'
     headingHint: 'These data are transferred to page “<a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">Project contributors</a>“. Additional roles/tasks can be added there.'
+  studentConfirm:
+    text: 'Please note that students are not eligible to submit ethics proposals to {committeeLocationDat}. Students are, however, welcome to use the Ethiktool for self-assessment of ethical aspects of their planned research.'
+    confirm: 'I am aware of the fact that I am making my entries for self-assessment only and that I am not eligible to submit an ethics application.'
   conflict:
     title: 'Is there a conflict of interest for any of the project contributors due to personal interests or due to interests of third parties?'
     headingHint: 'There is a conflict of interest if the research process could be affected by your own interests or by interests of third parties or if the independence of scientific judgement could be compromised. Typical examples of potential conflicts of interests include the evaluation of an own product, sponsored research to evaluate other''s products, or research on societally delicate topics under the influence of lobbyism or of strong own opinions. Conflicts of interests can arise from multiple factors, such as family- or friendship-related, financial or social factors, or from economic or personal relationships to sponsors or collaborators. If there is a conflict of interest, the nature of the conflict and how it is handled must be explained. Please note that potential conflicts of interest must also be disclosed to the participants.'
@@ -704,7 +764,7 @@ votes:
 medicine:
   medicine:
     heading: 'In the long run, could the project head towards medical, pharmaceutical or other research that would have to be assessed in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG), or other legal requirements?'
-    textHint: >- # other is TUC, DLR, UH1, UPB and test committee
+    textHint: >-
       Research projects with a legal requirement for review by a medical ethics committee must be submitted to an ethics committee with medical constitution, irrespective of the applicants' affiliations.
       {committeeType, select,
         EUB   {Further information on the jurisdiction and additional documents to be submitted can be found <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">here</a>.}
@@ -1056,6 +1116,10 @@ projectdetails:
           missing: 'Please choose at least one way of recruitment.'
           description: 'Please describe the ways of recruitment in detail, e.g., which specific recruiting service is used, where social media calls are placed.'
     information:
+      hint: >-
+        The Ethiktool only creates the participant documents for the <span class="font-bold">legal guardians</span>. All free-text entries that are marked with a PDF symbol are transferred to these documents. The participant documents for the {addressee, select,
+            children {children}
+            other    {supervised individuals}}, depending on their <a class="linkInternal" href="informationII" data-action="base#setDummySubmit" data-base-url-param="app_informationII" data-base-route-i-ds-param={routeIDs}>information</a>, need to be formulated by the applicants and added as as PDF file when completing the ethics proposal.
       type:
         title: >-
           How is the {type, select,
@@ -1210,8 +1274,20 @@ projectdetails:
           terminateParticipantsOther: 'other'
         textHint: 'Please describe the procedure, for example if you want to use the data collected up to that point via a “cancel“ button and automatically delete all data when the browser window is closed.'
       terminateCriteria:
-        title: 'Which circumstances lead to an early termination of data collection by the project contributors?'
-        textHint: 'This usually refers to termination of data collection in an individual participant (e.g., in case of apparent burden); if such termination by the project contributors is not possible, please explain this. The handling of individual participants'' or their legal guardians'' request to withdraw from participation is queried elsewhere and does not need to be reiterated here. If criteria for discontinuation of the entire study are defined, please state these here as well.'
+        title: 'Under which circumstances is data collection terminated early by the project contributors?'
+        headingHint: 'This usually refers to termination of data collection in an individual participant (e.g., in case of apparent burden); if such termination by the project contributors is not possible, please explain this. The handling of individual participants'' or their legal guardians'' request to withdraw from participation is queried elsewhere and does not need to be reiterated here. If criteria for discontinuation of the entire study are defined, please state these here as well.'
+        types:
+          malaise: 'in case of obvious discomfort or other indication of participant strain or burden'
+          regulation: 'in case a participant violates safety measures that were communicated in advance'
+          time: 'in case the planned duration of data collection is considerable exceeded in an individual'
+          attention: 'in case a participant gives wrong answers on several attention-check items'
+          criteria: 'in case it becomes obvious during data collection that an inclusion criterion is not fulfilled or that an exclusion criterion applies'
+          malfunction: 'in case of technical malfunction of the used equipment'
+          terminateCriteriaOther: 'under other circumstances'
+          presence: 'termination by the project contributors is not possible because they are not or only temporarily present during data collection'
+          unnecessary: 'termination by the project contributors is not deemed necessary'
+        placeholder: 'please specify'
+        otherHint: 'termination by the participants is queried elsewhere and must not be mentioned here'
     measures:
       procedure:
         title: 'Procedure'
@@ -1235,36 +1311,115 @@ projectdetails:
                 other    {stimuli, intervention procedure, TMS protocols}}), please indicate this here. You should use this option if it helps to convey a clearer picture of your {type, select,
                     measures {data collection methods}
                     other    {intervention measures}}.
+        placeholder:
+          content: 'please specify the content'
+          noContent: 'please specify'
+        typesMain:
+          measuresInstrumental: 'instrumental measures' # from here: measures
+          measuresBody: 'collection of body material'
+          measuresHeart: 'cardiac activity'
+          measuresBrain: 'brain activity'
+          stimuli: 'presentation of stimuli' # from here: interventions
+          tasks: 'task demands'
+          intervention: 'intervention'
+          invasive: 'invasive interventions'
+        icons:
+          measuresObservation: 'through technical tools or by project contributors, e.g., participating/non-participating, open or covert, lab/field observation)' # from here: measures
+          measuresInterview: 'with different amounts of structuring, e.g., narrative, biographic, problem-focussed, clinical-diagnostic interview)'
+          measuresQuestionnaire: 'standardized form with mainly closed questions and few (if any) open questions'
+          measuresDecision: 'measured via button press, mouse click, touchpad, or similar'
+          measuresEyetracking: 'gaze measurement/pupillometry'
+          measuresPulse: 'e.g., smartwatch'
+          noIntervention: 'e.g., during an observation' # from here: interventions
+          everyday: 'e.g., in road traffic, in interpersonal interaction'
+          visual: 'photos, video'
+          mental: 'e.g., respond to stimuli, mental arithmetics'
+          physical: 'e.g., climbing stairs, jogging'
+          feedback: 'this refers to made-up or true feedback as part of the study, <b>not</b> to feedback about individual results after participation'
+          stimulation: 'e.g., TMS, tDCS, tACS'
+          medical: 'e.g, food, vitamin products, alcohol, contrast agents'
         measures:
           types:
-            measuresObservation: 'observations of participant behaviour by a project contributor'
-            measuresVideo: 'recordings or pictures (audio/video/photo)'
-            measuresSurvey: 'surveys (e.g., interviews, questionnaires)'
-            measuresInstrumental: 'instrumental measurements (e.g., response times, eye tracking, motion tracking, EEG, ECG, pulse sensor, breathing, (f)MRI, body dimensions)'
-            otherMeasures: 'other data collection method(s)'
-          description: 'please specify'
-          headingHint: 'Please enter all data collection methods applied to collect data from participants for the purpose of the study. Remember to include methods for verifying <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param={routeIDs}>inclusion and exclusion criteria</a>, if applicable.'
+            measuresObservation: 'observation of participants'
+            measuresInterview: 'individual interview'
+            measuresInterviewGroups: 'group interview'
+            measuresQuestionnaire: 'survey/questionnaire'
+            measuresDecision: 'responses/decisions'
+            measuresRT: 'response/decision times'
+            measuresEyetracking: 'eye tracking'
+            measuresMotion: 'motion tracking'
+            measuresEKG: 'ECG'
+            measuresPulse: 'pulse sensor'
+            measuresBreathe: 'breath'
+            measuresEEG: 'EEG'
+            measuresMEG: 'MEG'
+            measuresMRT: '(f)MRI'
+            measuresBrainOther: 'other brain-activity measure'
+            measuresInstrumentalOther: 'other instrumental measures'
+            measuresBlood: 'blood'
+            measuresSaliva: 'saliva'
+            measuresHair: 'hair sample'
+            measuresSkin: 'skin abrasion'
+            measuresBodyOther: 'other material'
+            measuresOther: 'other data collection method(s)'
+          documentation:
+            title: 'How is the information documented?'
+            hint: 'this refers only to the original data collection'
+            types:
+              documentationNotes: 'free notes'
+              documentationReport: 'pre-structured protocol'
+              documentationPhoto: 'photos'
+              documentationVideo: 'video recordings'
+              documentationAudio: 'audio recordings'
+              documentationOther: 'other type of documentation'
+            placeholder: 'please specify'
+          surveyConduct:
+            title: 'How is the questionnaire administered?'
+            types:
+              written: 'in writing'
+              oral: 'orally'
+              mixed: 'mixed'
+            icons:
+              written: 'filled by the participants themselves on paper or in digital form'
+              oral: 'filled by project contributors, e.g., via telephone or personally'
+          screening:
+            title: 'Is a normed screening questionnaire with standardized values applied that addresses indicators of mental or physical illness?'
+            hint: 'e.g., Patient Health Questionnaire (PHQ), Symptom Checklist (SCL), Brief Symptom Inventory (BSI), Beck Depression Inventory-2 (BDI-II), GAD-7, Refugee Health Screener (RHS)'
+          gene: 'Is the collected material used for genetic analyses?'
+          headingHint: 'Please enter all data collection methods applied to collect data from participants for the purpose of the study. Remember to include methods for verifying <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param={routeIDs}>inclusion and exclusion criteria</a>, if applicable. </br>This does not refer to later conversion of data into a different format (e.g., transcription of an audio recording); such processes can be described on the “<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param={routeIDs}>data privacy</a>“ page. If collected data are supplemented by available person-related data from other sources, this must be described in the “data from other sources“ section.'
           textHints:
             noSelection: 'Please select at least one data collection method.'
             description: 'Please describe the respective data collection method(s) in more detail.'
             survey: ' In case of a questionnaire, please briefly describe its content and give an example question and the total number of questions.'
         interventions:
           types:
-            noIntervention: 'no specific intervention/measure, only incidental data (e.g., during an observation)'
-            interventionsSurvey: 'questions are being asked'
+            noIntervention: 'no specific intervention/measure, only incidental data'
+            interventionsQuestionnaire: 'questions are being asked'
+            everyday: 'deliberate induction of everyday situations'
+            vr: 'virtual reality'
+            textmaterial: 'text material, vignettes'
+            visual: 'visual stimuli'
+            auditive: 'auditory stimuli'
+            tactile: 'tactile stimuli'
+            olfactory: 'olfactory stimuli'
+            gustatory: 'gustatory stimuli'
+            stimuliOther: 'other stimuli'
+            stress: 'stress induction'
+            mental: 'mental/cognitive'
+            physical: 'physical'
+            creative: 'creative'
+            tasksOther: 'other task demands'
             feedback: 'feedback to participants'
-            everyday: 'deliberate induction of everyday situations (e.g., in road traffic, in interpersonal interaction)'
-            stimulus: 'presentation of stimuli (e.g., image or text material, vignettes)'
-            tasks: 'task demands'
-            stimulation: 'electric/magnetic stimulation (e.g., TMS, tDCS, tACS)'
-            psychological: 'psychological intervention (e.g., stress induction, therapy and training methods)'
-            physical: 'physical strain'
-            therapy: '(therapeutic) physical treatment measures'
-            medical: 'administration of substances (e.g., medication, food, vitamin products)'
-            invasive: 'invasive interventions'
-            other: 'other measure(s)'
-            tasksHint: 'simple (e.g., button press) or complex (e.g., drawing) tasks required from participants for the purpose of the study'
-          description: 'please specify'
+            educational: 'educational intervention'
+            psychological: 'psychological intervention'
+            psychotherapy: 'psychotherapeutic intervention'
+            sport: 'bodily/sports intervention'
+            therapy: 'physical treatment measures'
+            stimulation: 'electric/magnetic stimulation'
+            interventionOther: 'other intervention'
+            medical: 'administration of substances'
+            invasiveExtract: 'collection of body material'
+            interventionsOther: 'other measure(s)'
           headingHint: 'Please enter all measures/interventions specifically applied to participants for the purpose of the study. The term “measures“ is deliberately used in a very broad sense, ranging from asking a question all the way up to long-term interventions. Many measures are associated with the need to check inclusion and exclusion criteria (e.g., to ensure the safety of participants). Such criteria should be listed under “<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param="{routeIDs}">Inclusion and exclusion criteria</a>“. If inclusion and exclusion criteria are recorded or documented beyond the self-report as part of the consent, please describe their measurement under data collection methods.'
           textHints:
             description: 'Please describe the selected measures in more detail.'
@@ -1429,6 +1584,10 @@ projectdetails:
           lottery: 'Please specify the type or value of the prize and the individual chances of winning.'
           voucher: 'Please specify the type and value of the voucher.'
           compensationOther: 'Please specify the type of compensation.'
+      hint: >-
+        {committeeType, select,
+          BICC  {Please note that research projects at {committeeLocationDat} usually don't involve a compensation. If in doubt, please consult {committeeDat} to clarify whether a compensation is adequate in your case.}
+          other {}}
       amount:
         real: 'actual duration'
         flat: 'fixed amount'
@@ -1704,7 +1863,7 @@ projectdetails:
           closed: '<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">Data collection in closed group</a>: Even if the processing of personal data is not intended, the possibility of identifying single persons might be difficult to exclude in view of the type and amount of collected data. For example, when asking many sociodemographic questions in a closed group, rare values or combinations of values can make individuals identifiable.'
           recruitmentDatabase: '<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#recruitment" data-base-route-i-ds-param="{routeIDs}">Recruiting via database(s)</a>: Possibly, personal data stored in the database are being used and thus also processed for the current study.'
           recruitmentExternal: '<a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#recruitment" data-base-route-i-ds-param="{routeIDs}">Recruiting via external recruiting service(s)</a>: Possibly, personal data stored by the recruiting service are being used and thus also processed for the current study.'
-          measuresVideo: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">Data collection method</a>: recordings or pictures (audio/video/photo)'
+          measuresVideo: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measures" data-base-route-i-ds-param="{routeIDs}">Data collection methods</a>: Documentation by taking photos/video recordings/audio recordings'
           otherSources: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">Data from other sources</a>: Adding of individually traceable data'
           loan: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#loan" data-base-route-i-ds-param="{routeIDs}">Handing out devices to participants</a>: Possibly, personal data are processed to confirm having received the device.'
           online: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">Online data collection</a>: Possibly, personal data (in particular IP addresses) are processed for technical quality assurance.'
@@ -2074,7 +2233,7 @@ projectdetails:
           keep: 'Please justify briefly why this is necessary:'
       access:
         title: 'Who has access to the personal data for <u>{purpose}</u>?'
-        headingHint: "Please consider all persons/institutions/services with access to personal data at any point in time throughout the research project. This includes, for example, collecting and processing data by survey companies for the research project (e.g., IP addresses, contact data) as well as the transmission of collected data to project contributors or services (e.g., for transcription or data analysis). It also includes collecting or processing data by means of external tools such as socisurvey, mpath, transcription software or the use of file transfer services for transmitting personal data, as the data are at least briefly stored on servers of these tools.</br> Bear in mind that this is about access to personal data, not to anonymous or anonymized data. If, for example, research data can be related to individual persons only via an allocation list, only persons with access to that list must be indicated here. For the other project contributors, the data are not person-related unless they can identify individual persons by other means.</br> Please also bear in mind that access to personal data must be restricted to persons inside of the EEA. If data access is possible from outside of the EEA, the corresponding question must be answered with yes.)"
+        headingHint: "Please consider all persons/institutions/services with access to personal data at any point in time throughout the research project. This includes, for example, collecting and processing data by survey companies for the research project (e.g., IP addresses, contact data) as well as the transmission of collected data to project contributors or services (e.g., for transcription or data analysis). It also includes collecting or processing data by means of external tools such as socisurvey, mpath, transcription software or the use of file transfer services for transmitting personal data, as the data are at least briefly stored on servers of these tools.</br> Bear in mind that this is about access to personal data, not to anonymous or anonymized data. If, for example, research data can be related to individual persons only via an allocation list, only persons with access to that list must be indicated here. For the other project contributors, the data are not person-related unless they can identify individual persons by other means.</br> Please also bear in mind that access to personal data must be restricted to persons inside of the EEA. If data access is possible from outside of the EEA, the corresponding question must be answered with yes."
         types:
           contributors: 'All project contributors {committeeLocationGen}'
           contributorsPart: 'Individual project contributors {committeeLocationGen}'
@@ -2263,9 +2422,10 @@ projectdetails:
 checkDoc:
   error: 'Error'
   noError: |
-    The technical check has not revealed any missing or incorrect entries. However, please check your entries carefully, as not all discrepancies can be detected automatically.
-    
-    You can now generate the documents for submission to {committeeAcc} by selecting “<a class="linkInternal" href="completeForm">complete proposal</a>“.
+    The technical check has not revealed any missing or incorrect entries. However, please check your entries carefully, as not all discrepancies can be detected automatically.{isAllowed, select,
+      true  {
+             You can now generate the documents for submission to {committeeAcc} by selecting “<a class="linkInternal" href="completeForm">complete proposal</a>“.}
+      other {}}
   reviewMissing: >-
     <span style="font-weight: bold"><span class="errorStyle">Please note</span>: At least one choice regarding <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">the type of review process</a>{hasBegun, select,
               true  {, the beginning of <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">data collection</a>}
@@ -2332,6 +2492,7 @@ checkDoc:
       positionOther: 'Specification of the other position'
       eMail: 'E-mail address is not valid.'
       phone: 'Phone number is not valid.'
+      studentConfirm: 'Confirmation of Ethiktool use for self-assessment'
       conflict:
         title: 'conflict of interest'
         description:
@@ -2609,30 +2770,68 @@ checkDoc:
                   children {legal guardians}
                   wards    {legal guardians}
                   other    {participants}} can choose whether the collected data may be used or not in case of individual withdrawal.
-        terminateCriteria: 'termination criteria'
+        terminateCriteria:
+          missing: 'termination criteria'
+          description: # ('Specification of [] is missing.')
+            malaise: 'discomfort/strain indicators'
+            regulation: 'safety measures'
+            terminateCriteriaOther: 'other termination conditions'
       measures:
         procedure: 'procedure'
-        measures:
+        measures: # ('[] is missing.', wo nicht anders angegeben)
           missing: 'data collection methods'
           otherTypes:
-            measuresVideo: 'recordings or pictures'
-            measuresSurvey: 'surveys'
-            measuresInstrumental: 'instrumental measurements'
-            otherMeasures: 'other data collection method(s)'
+            measuresObservation: 'specification of observation content'
+            measuresInterview: 'specification of individual interview topics'
+            measuresInterviewGroups: 'specification of group interview topics'
+            measuresQuestionnaire: 'specification of questionnaire content'
+            measuresBrainOther: 'specification of other brain-activity measure'
+            measuresInstrumentalOther: 'specification of other instrumental measures'
+            measuresBodyOther: 'specification of other body material'
+            measuresOther: 'other data collection method(s)'
+          documentation:
+            missing: >- # '[] are missing'.
+              ways of documenting the {type, select,
+                                measuresObservation {observation of participants}
+                                measuresInterview   {individual interviews}
+                                other               {group interviews}}
+            description: >- # 'Specification of [] is missing.'
+              other forms of documentation for {type, select,
+                                                measuresObservation {observation of participants}
+                                                measuresInterview   {individual interviews}
+                                                other               {group interviews}}
+          surveyConduct: 'type of administering the questionnaire'
+          screening: 'screening questionnaire' # 'Answer to question about [] is missing.'
+          gene: 'using collected material for genetic analyses' # 'Answer to question about [] is missing.'
+          description: 'data collection methods' # 'Description of [] is missing.'
         interventions:
           missing: 'interventions/measures'
-          otherTypes:
-            feedback: 'feedback to participants'
-            everyday: 'deliberate induction of everyday situations'
-            stimulus: 'stimuli'
-            tasks: 'task demands'
-            stimulation: 'electric/magnetic stimulation'
-            psychological: 'psychological interventions'
-            physical: 'physical strain'
-            therapy: 'physical treatment measures'
-            medical: 'administered substances'
-            invasive: 'invasive interventions'
-            other: 'other measure(s)'
+          otherTypes: # ('[] is missing.')
+            everyday: 'specification of deliberate induction of everyday situations'
+            vr: 'specification of virtual reality'
+            textmaterial: 'specification of text material'
+            visual: 'specification of visual stimuli'
+            auditive: 'specification of auditory stimuli'
+            tactile: 'specification of tactile stimuli'
+            olfactory: 'specification of olfactory stimuli'
+            gustatory: 'specification of gustatory stimuli'
+            stimuliOther: 'specification of other stimuli'
+            stress: 'specification of stress induction'
+            mental: 'specification of mental/cognitive tasks'
+            physical: 'specification of physical tasks'
+            creative: 'specification of creative tasks'
+            tasksOther: 'specification of other task demands'
+            feedback: 'specification of feedback to participants'
+            educational: 'specification of educational intervention'
+            psychological: 'specification of psychological intervention'
+            psychotherapy: 'specification of psychotherapeutic intervention'
+            sport: 'specification of bodily/sports intervention'
+            therapy: 'specification of physical treatment'
+            stimulation: 'specification of electric/magnetic stimulation'
+            interventionOther: 'specification of other intervention'
+            medical: 'specification of administered substances'
+            interventionsOther: 'specification of other measure(s)'
+          description: 'interventions'
         otherSources: 'data from other sources'
         loan:
           title: 'loan devices'
@@ -2655,6 +2854,7 @@ checkDoc:
           missing: 'presence of project contributors'
           description: 'temporary presence of project contributors' # 'Description of [] is missing.'
           consent: 'If <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">oral consent</a> is given, project contributors must be present during data collection.'
+          terminateCriteria: 'You selected that <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#terminateCriteria" data-base-route-i-ds-param="{routeIDs}">termination of data collection</a> by project contributors is not possible because they are not or only temporarily present during data collection. This is incompatible with the selection that project contributors are present during the entire data collection.'
           preAbort: >-
             If{addressee, select,
                 children {, for the {participant, select,
@@ -2695,7 +2895,6 @@ checkDoc:
         feedback:
           title: 'feedback on individual test results'
           description: 'individual test results'
-          feedbackInterventions: 'If participants receive feedback on their individual test results, the corresponding option must be selected in the <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventionsType" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a> section as well.'
       compensation:
         missing: 'information on the type of compensation'
         information: >-
@@ -2927,9 +3126,30 @@ checkDoc:
             ipTechnical: 'If IP addresses are registered for technical support purposes only, “IP address“ must not be selected in the list of person-related data for answering the research question.'
             linkedMarking: 'If IP addresses can be linked with the research data, the research data must be labelled with an allocation list, and “IP address“ must be chosen amongst the personal data contained in the allocation list.'
           closed: 'Identifying individual persons from the structure of the code is plausible only with <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#closed" data-base-route-i-ds-param="{routeIDs}">data collection in a closed group</a>.'
-          video: 'If “recordings or pictures“ are selected as <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, the question on person-related character of the research data must be answered by selecting that the research data themselves are person-related.'
-          measuresToVideo: 'If “recordings or pictures“ are selected as <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, audio/video recordings or photos must be selected in the list of person-related data for answering the research question.'
-          videoToMeasures: 'If audio/video recordings or photos are selected in the list of person-related data for answering the research question, “recordings or pictures“ must be selected as <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measuresType" data-base-route-i-ds-param="{routeIDs}">data collection method</a>.'
+          measuresToPersonal: >-
+            If you use {measure, select,
+                          photo {photos}
+                          video {video recordings}
+                          other {audio recording}} for documenting the <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_measures#measures{type, select,
+                      measuresObservation {Observation">observation of participants}
+                      measuresInterview   {Interview">individual interviews}
+                      other               {InterviewGroups">group interviews}}</a>, the question on person-related character of the research data must be answered by selecting that the research data themselves are person-related.
+          measuresToDataResearch: >-
+            If you use {measure, select,
+                          photo {photos}
+                          video {video recordings}
+                          other {audio recording}} for documenting the <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_measures#measures{type, select,
+                      measuresObservation {Observation">observation of participants}
+                      measuresInterview   {Interview">individual interviews}
+                      other               {InterviewGroups">group interviews}}</a>, {measure, select,
+                                                                                      photo {photos}
+                                                                                      video {video recordings}
+                                                                                      other {audio recording}} must be selected in the list of person-related data for answering the research question.
+          dataResearchToMeasures: >-
+            If {measure, select,
+                  photo {photos}
+                  video {video recordings}
+                  other {audio recording}} are selected in the list of person-related data for answering the research question, a compatible selection must be made for the <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measures" data-base-route-i-ds-param="{routeIDs}">data collection methods</a>.
           otherSources:
             create: 'You selected that <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individually traceable data from other sources</a> are added. This is incompatible with the selection that, according to the responsible data protection authorities, the study includes only anonymous data.'
             marking: 'If <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">individually traceable data from other sources</a> are added, an allocation list must be used, or the research data must be labelled with the name or with a code that was or is assigned outside of the project.'
@@ -2985,7 +3205,7 @@ completeForm:
                                                                                                       true  {and the participant documents (information and consents forms)}
                                                                                                       other {}} carefully. All information in these documents is complete and accurate and corresponds to the planned procedure in the research project applied for.
       {position, select,
-        student {As student applicant, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information related to a student thesis may be considered an attempt to cheat or scientific misconduct.) The responsible supervisor must be informed about the proposal submission and about any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.}
+        student {As student applicant, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information related to a student thesis may be considered an attempt to cheat or scientific misconduct.) The responsible supervisor must be involved in the proposal submission and any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence with {committeeDat}). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.}
         phd     {As doctoral candidate, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information in connection with a doctoral thesis may be regarded as scientific misconduct.) The responsible supervisor must be informed about the proposal submission and about any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.}
         other   {}}
       I further confirm that I am aware of all legal regulations applicable to the research project (including regulations on data protection) in their current versions and that I have respected them to the best of my knowledge in planning the research project and in compiling this application.
@@ -3002,6 +3222,10 @@ completeForm:
                           TUD   {current composition of {committeeGen}}
                           UH1   {<a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">current composition of {committeeGen}</a>}
                           UPB   {<a href="https://www.uni-paderborn.de/en/university/ethics-committee" target="_blank">current composition of {committeeGen}</a>}
+                          PHHD  {<a href="" target="_blank">current composition of {committeeGen}</a>}
+                          SRH   {<a href="https://www.srh-university.de/de/forschung/ethikkommission/" target="_blank">current composition of {committeeGen}</a>}
+                          BICC  {<a href="https://biccde.sharepoint.com/sites/biccjanus/SitePages/Ethics-Committee.aspx" target="_blank">current composition of {committeeGen}</a> (internal link)}
+                          PHT   {current composition of {committeeGen}}
                           other {current composition of {committeeGen}}} and inform us of any possible conflicts of interest below:
     types:
       noBias: 'No member of the ethics committee has a conflict of interest.'
@@ -3018,6 +3242,10 @@ completeForm:
         TUD   {. These regulations will be accessible here after the official resolution on the Board's establishment}
         UH1   {, available at <a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/</a>}
         UPB   {, available at <a href="https://www.uni-paderborn.de/en/university/ethics-committee/regelungen-interne-links" target="_blank">https://www.uni-paderborn.de/en/university/ethics-committee/regelungen-interne-links</a>}
+        PHHD  {, available <a href="https://www.ph-heidelberg.de/fileadmin/user_upload/download-center/Alle-Dokumente_Verwaltung_extern_oeffentlich/02_2026_Geschaeftsordnung_der_gemeinsamen_Ethikkommission_PH_Heidelberg_und_SRH.pdf" target="_blank">here</a>}
+        SRH   {, available at <a href="https://www.srh-university.de/en/research/ethics-committee/" target="_blank">https://www.srh-university.de/en/research/ethics-committee/</a>}
+        BICC  {, available at <a href="" target="_blank"></a>}
+        PHT   {. These regulations will be accessible here after the official resolution on the Board's establishment}
         other {}}.
       {committeeType, select,
         EUB   {}
@@ -3077,7 +3305,7 @@ completeForm:
           Instructions {isTool, select,
                          true  {}
                          other {for the applicants}} on how to proceed
-        text: >-
+        text: >- # TODO: translate PHHD/SRH
           {isTool, select,
             true  {
                   <li>A ZIP file “{fileName}_completeApplication_{curDate}.zip“ is generated, which contains all documents (complete proposal, single documents, XML file).</li>
@@ -3087,14 +3315,18 @@ completeForm:
                   <li>Do <b>not</b> modify the PDF file of the complete proposal nor the XML file with any other software.</li>}
             other {<li>Please check all contents of the complete proposal carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>}}
           <li>The ethics review is based exclusively on the PDF file of the complete proposal.</li>
-          <li>If all entries are correct, please send the PDF file of the complete proposal with the corresponding XML file to {committeeAcc} at {committeeType, select,
+          <li>If all entries are correct, please send the PDF file of the complete proposal with the corresponding XML file {committeeType, select,
           TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
-          EUB   {ethikkommission@uni-bielefeld.de}
-          JGU   {ethikkommission-psychologie@uni-mainz.de}
-          DLR   {ethik@dlr.de}
-          TUD   {the yet-to-be-determined e-mail address of {committeeGen}}
-          UH1   {ethikfb1@uni-hildesheim.de}
-          UPB   {ethik-kommission@zv.uni-paderborn.de}
+          EUB   {to {committeeAcc} at ethikkommission@uni-bielefeld.de}
+          JGU   {to {committeeAcc} at ethikkommission-psychologie@uni-mainz.de}
+          DLR   {to {committeeAcc} at ethik@dlr.de}
+          TUD   {to {committeeAcc} at the yet-to-be-determined e-mail address of {committeeGen}}
+          UH1   {to {committeeAcc} at ethikfb1@uni-hildesheim.de}
+          UPB   {to {committeeAcc} at ethik-kommission@zv.uni-paderborn.de}
+          PHHD  {über Ihr Dekanat an die Vorsitzende bzw. den Vorsitzenden der Ethikkommission unter ethikkommission@vw.ph-heidelberg.de or ethikkommission.HSHD@srh.de (please check the <a href="" target="_blank">website of the ethics committee</a> for the current e-mail address to be used). Die bzw. der Vorsitzende prüft die Antragsberechtigung und versendet dann ggf. die Unterlagen an alle Kommissionsmitglieder.}
+          SRH   {über Ihr Dekanat an die Vorsitzende bzw. den Vorsitzenden der Ethikkommission unter ethikkommission@vw.ph-heidelberg.de or ethikkommission.HSHD@srh.de (please check the <a href="https://www.srh-university.de/en/research/ethics-committee" target="_blank">website of the ethics committee</a> for the current e-mail address to be used). Die bzw. der Vorsitzende prüft die Antragsberechtigung und versendet dann ggf. die Unterlagen an alle Kommissionsmitglieder.}
+          BICC  {to {committeeAcc} at ethics@bicc.de}
+          PHT   {to {committeeAcc} at ethikkommission@ph-tirol.ac.at}
           other {the e-mail address of {committeeGen}}}.</li>
 
 quitModal:

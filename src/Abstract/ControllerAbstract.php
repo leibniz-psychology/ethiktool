@@ -496,7 +496,12 @@ abstract class ControllerAbstract extends AbstractController
                                 $isLastPage = $nextRoute===''; // true if current route is last active page on current measure time point
                             }
                             $isLastPageNext = $isNext && $isLastPage;
-                            if ($isLastPageNext && $hasNotMultiple) { // last active page and only one measure time point
+                            if ($nextRoute==='app_medicine') {
+                                if (!$this->checkElement(self::medicine,$appNode->{self::appDataNodeName}->{self::medicine})) { // medicine is not active
+                                    $nextRoute = $isNext ? 'app_summary' : 'app_votes';
+                                }
+                            }
+                            elseif ($isLastPageNext && $hasNotMultiple) { // last active page and only one measure time point
                                 $nextRoute = 'app_checkDoc';
                                 $routeParams = ['_locale' => $routeParams['_locale']]; // remove route IDs and further parameters
                             } elseif ($isNext && $isContributors) { // contributors
@@ -652,16 +657,17 @@ abstract class ControllerAbstract extends AbstractController
      */
     protected function setSubMenu(string $page, ?Request $request = null, ?int $studyID = null, ?int $groupID = null, ?int $measureID = null, bool $cutName = true, bool $isOverview = false): array
     {
+        $session = $request->getSession();
+        $appNode = $this->getXMLfromSession($session,getRecent: true);
         if ($page===self::appDataNodeName) {
             $tempVal = 'pages.appData.';
             $tempArray = [];
+            $appDataArray = $this->xmlToArray($appNode->{self::appDataNodeName});
             foreach ([self::coreDataNode,self::voteNode,self::medicine,self::summary] as $page) {
-                $tempArray[] = [self::label => $this->translateString($tempVal.$page),self::route => 'app_'.$page,self::error => CheckDocClass::getDocumentCheck($request,$page)];
+                $tempArray[] = [self::label => $this->translateString($tempVal.$page),self::route => $appDataArray[$page]!=='' ? 'app_'.$page : '',self::error => CheckDocClass::getDocumentCheck($request,$page)];
             }
             $returnArray = [self::label => $this->translateString($tempVal.'title'),self::route => 'app_landing',self::subPages => $tempArray, self::error => CheckDocClass::getDocumentCheck($request,self::appDataNodeName)];
         } else {
-            $session = $request->getSession();
-            $appNode = $this->getXMLfromSession($session,getRecent: true);
             if ($isOverview) { // overview of one combination in the sidebar
                 if ($this->getMultiStudyGroupMeasure($appNode)) {
                     $headingTrans = $this->getProjectdetailsHeadings();
@@ -744,6 +750,18 @@ abstract class ControllerAbstract extends AbstractController
                  self::error => CheckDocClass::getDocumentCheck($request,self::projectdetailsNodeName,routeIDs: $curRouteIDs)];
         }
         return $returnArray;
+    }
+
+    /** Checks if the position of the applicant is student and if so, if students are allowed to submit an application.
+     * @param string $committeeType current committee type
+     * @param array $coreDataArray array containing the information about the core data page
+     * @param bool $returnArray if true, a bool is returned, otherwise an array with key 'isAllowed' and the bool as a string as value
+     * @return bool|array if $returnArray is true, an array. if $returnArray is false: true if students are allowed to submit an application, false otherwise.
+     */
+    protected function getStudentAllowed(string $committeeType, array $coreDataArray, bool $returnArray = true): bool|array
+    {
+        $returnVal = !(in_array($committeeType,self::committeeNoStudent) && $coreDataArray[self::applicant][self::position]===self::positionsStudent);
+        return $returnArray ? ['isAllowed' => $this->getStringFromBool($returnVal)] : $returnVal;
     }
 
     /** Checks if any compensation is awarded by a certain type.
@@ -1319,16 +1337,19 @@ abstract class ControllerAbstract extends AbstractController
         $allShort = $tempVal==='1'; // gets false if any question is either not yet answered or answered such that a full proposal is required
         $conflictMedicine = [$this->getBriefReportHeading(self::conflictNode) => $this->getBriefReportAnswer(self::conflictNode,$tempVal==='0' ? self::answerYes : self::answerNo,$parameters,$getReviewError)];
         $isMedicinePhysician = false;
-        foreach ([self::medicine,self::physicianNode] as $type) {
-            $tempVal = $medicineArray[$type][self::chosen];
-            $allShort = $allShort && $tempVal==='1';
-            $tempVal = $tempVal==='0';
-            $isMedicinePhysician = $isMedicinePhysician || $tempVal;
-            $parameters['is'.ucfirst($type)] = $this->getStringFromBool($tempVal);
+        $hasMedicine = $medicineArray!=='';
+        if ($hasMedicine) {
+            foreach ([self::medicine,self::physicianNode] as $type) {
+                $tempVal = $medicineArray[$type][self::chosen];
+                $allShort = $allShort && $tempVal==='1';
+                $tempVal = $tempVal==='0';
+                $isMedicinePhysician = $isMedicinePhysician || $tempVal;
+                $parameters['is'.ucfirst($type)] = $this->getStringFromBool($tempVal);
+            }
+            $conflictMedicine[$this->getBriefReportHeading(self::medicine)] = $this->getBriefReportAnswer(self::medicine,$isMedicinePhysician ? self::answerYes : self::answerNo,$parameters,$getReviewError);
         }
-        $conflictMedicine[$this->getBriefReportHeading(self::medicine)] = $this->getBriefReportAnswer(self::medicine,$isMedicinePhysician ? self::answerYes : self::answerNo,$parameters,$getReviewError);
         $tempArray = array_values($conflictMedicine);
-        $anyFull = $getReviewError && (($tempArray[0][0] || $tempArray[1][0])); // (gets) true if any information makes a full review process necessary
+        $anyFull = $getReviewError && (($tempArray[0][0] || $hasMedicine && $tempArray[1][0])); // (gets) true if any information makes a full review process necessary
         $anyUnclear = false; // gets true if any information is 'unclear'
         if (!($getReviewError && $anyFull)) { // check projectdetails only if conflict and medicine are 'no'
             $tempPrefix = 'completeForm.briefReport.levelHeadings.';
@@ -1478,10 +1499,6 @@ abstract class ControllerAbstract extends AbstractController
                                     $briefReport[$this->getBriefReportHeading(self::privacyNode)] = $this->getBriefReportAnswer(self::privacyNode, $answer, $parameters, $getReviewError);
                                 }
                             }
-                            // other sources
-                            $tempVal = $measuresArray[self::otherSourcesNode][self::chosen];
-                            $allShort = $allShort && $tempVal==='1';
-                            $briefReport[$this->getBriefReportHeading(self::otherSourcesNode)] = $this->getBriefReportAnswer(self::otherSourcesNode, $tempVal==='0' ? self::answerYes : self::answerNo, $parameters, $getReviewError);
                         } else {
                             $dataSourceArray = $measureTimePoint[self::dataSourceNode];
                             $tempArray = $dataSourceArray[self::originNode];
@@ -1640,6 +1657,44 @@ abstract class ControllerAbstract extends AbstractController
             $contributorsArray[$index][self::taskNode] = $tasks;
         }
         return $indices;
+    }
+
+    /** Creates the sorted array of translated committees
+     * @param string $committee current committee
+     * @return array array with sorted and translated committee
+     */
+    protected function getCommitteeArray(string $committee = ''): array
+    {
+        $returnArray = [];
+        foreach (self::committeeTypes as $heading => $committees) {
+            $length = count($committees);
+            if ($length>1 || $length===1 && !in_array($committee,$committees)) {
+                $returnArray[$this->translateString($heading)] = $this->getTranslatedArray($committees,$committee);
+            }
+        }
+        return $returnArray;
+    }
+
+    /** Translates all elements in the array.
+     * @param array $array keys: translation keys, values: either translation keys or array
+     * @param string $exclude if not an empty string, value of an element that should not be added to the translated array
+     * @return array translated array
+     */
+    protected function getTranslatedArray(array $array, string $exclude = ''): array
+    {
+        $returnArray = [];
+        foreach ($array as $key => $value) {
+            $keyTrans = $this->translateString($key);
+            if (is_array($value)) {
+                if ($value!==[]) {
+                    $returnArray[$keyTrans] = $this->getTranslatedArray($value,$exclude);
+                }
+            } elseif ($value!==$exclude) {
+                $returnArray[$keyTrans] = $value;
+            }
+        }
+        ksort($returnArray); // sort alphbetically by translated keys
+        return $returnArray;
     }
 
     // functions involving xml
@@ -1931,7 +1986,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMinorSmaller3 = $minor<'3';
         $isMajorSmaller3 = $major<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajorSmaller3 || $minor<'3';
+        $isSmallerCurrent = $isMajorSmaller3 || $minor<'4';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
@@ -1941,6 +1996,7 @@ abstract class ControllerAbstract extends AbstractController
         $isSmaller290 = $isMajor1 || $isMajor2 && $minor<'9';
         $isSmaller2100 = $isMajor1 || $isMajor2 && $minor<'10';
         $isSmaller320 = $isMajorSmaller3 || $minor<'2';
+        $isSmaller330 = $isMajorSmaller3 || $minor<'3';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2004,15 +2060,17 @@ abstract class ControllerAbstract extends AbstractController
             $projectdetailsNode = $xml->{self::projectdetailsNodeName};
             $allStudyNodes = $projectdetailsNode->{self::studyNode};
             // updates for versions before 3.3.0
-            if ($isMultiple) { // multiple combinations -> description of project structure is needed
-                $this->insertElementBefore('structureDescription',$allStudyNodes[0]);
-            }
-            if ($appType==='extended') { // application type is extended -> add question whether amendment is for original proposal
-                $this->insertElementBefore(self::appTypeExtended,$appTypeNode->{self::descriptionNode});
-            }
-            if ($this->checkElement(self::descriptionNode,$projectStartNode) && in_array($committeeType,self::begunConfirmCommittees)) { // research project has already started -> add confirm node and set it checked to keep the description
-                $this->insertElementBefore(self::projectStartBegunConfirm,$projectStartNode->{self::descriptionNode});
-                $projectStartNode->{self::projectStartBegunConfirm} = '1';
+            if ($isSmaller330) {
+                if ($isMultiple) { // multiple combinations -> description of project structure is needed
+                    $this->insertElementBefore('structureDescription',$allStudyNodes[0]);
+                }
+                if ($appType==='extended') { // application type is extended -> add question whether amendment is for original proposal
+                    $this->insertElementBefore(self::appTypeExtended,$appTypeNode->{self::descriptionNode});
+                }
+                if ($this->checkElement(self::descriptionNode,$projectStartNode) && in_array($committeeType,self::begunConfirmCommittees)) { // research project has already started -> add confirm node and set it checked to keep the description
+                    $this->insertElementBefore(self::projectStartBegunConfirm,$projectStartNode->{self::descriptionNode});
+                    $projectStartNode->{self::projectStartBegunConfirm} = '1';
+                }
             }
             foreach ($allStudyNodes as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
@@ -2363,6 +2421,64 @@ abstract class ControllerAbstract extends AbstractController
                                 if ($addSupervisor) {
                                     $contributorNode->{self::taskSupervision} = '1';
                                 }
+                            }
+                        }
+                        // updates for versions before 3.4.0
+                        foreach ([self::measuresNode,self::interventionsNode] as $type) {
+                            $types = self::measuresInterventionsTypes[$type];
+                            $typeNode = $measuresNode->{$type};
+                            $remove = [];
+                            $isMeasure = $type===self::measuresNode;
+                            $descriptions = [];
+                            foreach ($typeNode->children() as $child) {
+                                $name = $child->getName();
+                                if (!in_array($name,$types)) { // remove node with no equivalent
+                                    $remove[] = $name;
+                                    $description = (string) $child;
+                                    if ($description!=='') {
+                                        $descriptions[] = $description;
+                                    }
+                                }
+                            }
+                            foreach ($remove as $nodeName) {
+                                $this->removeElement($nodeName,$typeNode);
+                            }
+                            if ($descriptions!==[]) { // add all descriptions from removed options as 'other' description
+                                $typeNode->addChild($isMeasure ? 'measuresOther' : 'interventionsOther',implode('; ',$descriptions));
+                            }
+                        }
+                        $measures = $measuresNode->{self::measuresNode};
+                        $tempArray = [];
+                        foreach ([self::measuresObservation => [self::measuresObservation], self::measuresQuestionnaire => [self::surveyConductNode,self::screeningNode]] as $measure => $further) {
+                            if ($this->checkElement($measure,$measures)) {
+                                $tempArray = array_merge($tempArray,$further);
+                            }
+                        }
+                        if ($tempArray!==[]) { // add 'measuresFurther' node
+                            $this->insertElementBefore(self::measuresFurtherNode,$measuresNode->{$this->checkElement(self::measuresDescription,$measuresNode) ? self::measuresDescription : self::interventionsNode},$tempArray);
+                        }
+                        $interventionsNode = $measuresNode->{self::interventionsNode};
+                        foreach (['tasks' => ['physical'], 'intervention' => ['stimulation','psychological','therapy'], 'invasive' => ['medical']] as $subCategory => $interventions) { // move interventions in sub-categories
+                            $tempArray = [];
+                            foreach ($interventions as $intervention) {
+                                if ($this->checkElement($intervention,$interventionsNode)) {
+                                    $tempArray[$intervention] = (string) $interventionsNode->{$intervention};
+                                    $this->removeElement($intervention,$interventionsNode);
+                                }
+                            }
+                            if ($tempArray!==[]) {
+                                $subNode = $interventionsNode->addChild($subCategory);
+                                foreach ($tempArray as $key => $value) {
+                                    $subNode->addChild($key,$value);
+                                }
+                            }
+                        }
+                        $terminateCriteriaNode = $consentNode->{self::terminateCriteriaNode} ?? '';
+                        if ($terminateCriteriaNode!=='' && count($terminateCriteriaNode->children())===0) { // replace text field by multi-selection
+                            $terminateCriteria = (string) $terminateCriteriaNode;
+                            $consentNode->{self::terminateCriteriaNode} = '';
+                            if ($terminateCriteria!=='') { // set entered text as 'other'
+                                $terminateCriteriaNode->addChild(self::terminateCriteriaOther,$terminateCriteria);
                             }
                         }
                     } // foreach measure time point

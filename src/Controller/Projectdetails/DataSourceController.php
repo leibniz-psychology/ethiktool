@@ -34,8 +34,9 @@ class DataSourceController extends ControllerAbstract
         }
         $reviewProcess = $this->getCurrentReviewProcess($appNode);
         $hasDocs = !(str_contains($reviewProcess,self::reviewProcessShort) && in_array($this->getCommitteeType($session),self::reviewShortChoose) || str_contains($reviewProcess,'Requested'));
+        $committeeType = $this->getCommitteeType($session);
 
-        $dataSource = $this->createFormAndHandleRequest(DataSourceType::class,$this->xmlToArray($dataSourceNode),$request,[self::dummyParams => ['isNotBegun' => !in_array($this->getCommitteeType($session),self::begunCommittees), 'hasDocs' => $hasDocs]]);
+        $dataSource = $this->createFormAndHandleRequest(DataSourceType::class,$this->xmlToArray($dataSourceNode),$request,[self::dummyParams => ['isNotBegun' => !in_array($committeeType,self::begunCommittees), 'hasDocs' => $hasDocs]]);
         if ($dataSource->isSubmitted()) {
             $submitDummy = $request->request->all()['data_source'][self::submitDummy];
             if (str_contains($submitDummy,self::preview) && str_contains($submitDummy,'app_dataSource') && !str_contains($submitDummy,'#')) { // download xml file after origin has changed from 'new' to 'existing' or go to data source page of another time point
@@ -88,7 +89,11 @@ class DataSourceController extends ControllerAbstract
                 $this->addChosenNode($burdensRisksNode,self::burdensRisksContributorsNode);
                 $this->addChildNodesChosen($burdensRisksNode,[self::findingNode,self::feedbackNode]);
                 // compensation
-                $measureNodeNew->{self::compensationNode}->addChild(self::compensationTypeNode);
+                $compensationNode = $measureNodeNew->{self::compensationNode};
+                $compensationNode->addChild(self::compensationTypeNode);
+                if ($committeeType===self::committeeBICC) {
+                    $compensationNode->{self::compensationTypeNode}->addChild(self::compensationNo);
+                }
                 // data privacy
                 $privacyNode = $measureNodeNew->{self::privacyNode};
                 $privacyNode->addChild(self::processingNode);

@@ -46,13 +46,14 @@ class PDFAbstract extends ControllerAbstract
     /** Creates the string indicating that the downloaded files are not the final ones.
      * @param Request $request
      * @param string $type must equal 'application' oder 'participation'
+     * @param array $allowedParam array with key 'isAllowed' and as bool as a string as value
      * @param bool $hasReviewDocs true if participant documents are created and reviewed, false otherwise. May only be provided if $type equals 'participation'
      * @return string string indicating that the downloaded files are not the final ones if the single documents should be created, an empty string otherwise
      */
-    protected function getSingleDocsHint(Request $request,string $type, bool $hasReviewDocs = true): string
+    protected function getSingleDocsHint(Request $request,string $type, array $allowedParam, bool $hasReviewDocs = true): string
     {
         try {
-            return self::$savePDF && !self::$isCompleteForm ? $this->translateStringPDF('singleDocuments.'.$type,['isSingleDocs' => 'true', 'isComplete' => $this->getStringFromBool(CheckDocClass::getDocumentCheck($request,returnCheck: true)), 'hasReviewDocs' => $this->getStringFromBool($hasReviewDocs)]) : '';
+            return self::$savePDF && !self::$isCompleteForm ? $this->translateStringPDF('singleDocuments.'.$type,array_merge($allowedParam,['isSingleDocs' => 'true', 'isComplete' => $this->getStringFromBool(CheckDocClass::getDocumentCheck($request,returnCheck: true)), 'hasReviewDocs' => $this->getStringFromBool($hasReviewDocs)])) : '';
         } catch (\Throwable) {
             return '';
         }

@@ -26,9 +26,10 @@ trait AppDataTrait
     protected const projectStartBegun = 'projectStartBegun';
     protected const projectStartBegunConfirm = 'projectStartBegunConfirm';
     protected const projectStartRetrospective = 'retrospective';
-    protected const begunCommittees = ['EUB','DLR','TUD','UH1']; // committees where review after start of the research project is possible
-    protected const begunConfirmCommittees = ['EUB','DLR']; // committees where contact to the committee for already started projects is required
-    protected const retrospectiveCommittees = ['TUD','UH1']; // committees where justification is needed why the research project has already started
+    protected const begunCommittees = ['EUB','DLR','TUD','UH1','BICC','PHT']; // committees where review after start of the research project is possible
+    protected const begunConfirmCommittees = ['EUB','DLR','BICC']; // committees where contact to the committee for already started projects is required
+    protected const retrospectiveCommittees = ['TUD','UH1','PHT']; // committees where justification is needed why the research project has already started
+    protected const begunIncompleteCommittees = ['EUB','BICC']; // committees where review after start is possible, but project must not have been completed
     protected const appNew = 'new';
     protected const applicationTypes = ['coreData.appType.type.new' => 'new', 'coreData.appType.type.extended' => 'extended', 'coreData.appType.type.resubmission' => 'resubmission', 'coreData.appType.type.resubmissionGranted' => 'resubmissionGranted']; // values must equal the values of the preceding variables
     protected const appExtendedResubmission = ['extended','resubmission','resubmissionGranted']; // values must equal the values of $appExtended and $appResubmission
@@ -41,14 +42,16 @@ trait AppDataTrait
     protected const shortDocsYes = 'yes'; // must equal one value in $shortDocsTypes
     protected const shortDocsNotApplicable = 'notApplicable'; // must equal one value in $shortDocsTypes
     protected const supervisor = 'supervisor';
-    protected const committeeStudent = ['EUB','JGU','DLR','UH1']; // committees where position can be 'student'
-    protected const committeeSupervisor = ['EUB','JGU','UH1']; // committees where a supervisor must be added if the position is student. Value must equal the values of $committeeStudent
+    protected const committeeStudent = ['EUB','JGU','DLR','UH1','PHHD','SRH','BICC']; // committees where position can be 'student'
+    protected const committeeSupervisor = ['EUB','JGU','UH1','PHHD','SRH','BICC']; // committees where a supervisor must be added if the position is student. Value must equal the values of $committeeStudent
+    protected const committeeNoStudent = ['PHHD','SRH']; // committees where the position can be student, but students cannot submit an application, i.e., 'complete form' is always disabled
     protected const fundingQuali = 'fundingQuali'; // must equal one of the keys in $fundingChoices
     protected const fundingResearchExternal = ['fundingResearch','fundingExternal']; // must equal two keys in $fundingChoices
     protected const fundingTypes = ['fundingQuali' => 'coreData.funding.fundingQuali', 'fundingBudget' => 'coreData.funding.fundingBudget', 'fundingResearch' => 'coreData.funding.fundingResearch', 'fundingExternal' => 'coreData.funding.fundingExternal', 'fundingOther' => 'coreData.funding.fundingOther'];
     protected const fundingStateNode = 'fundingState';
     protected const fundingRequested = 'requested';
     protected const requestedConfirm = 'requestedConfirm';
+    protected const studentConfirm = 'studentConfirm';
     protected const conflictNode = 'conflict';
     protected const supportNode = 'support';
     protected const noSupport = 'noSupport'; // must equal one of the keys in $supportChoices

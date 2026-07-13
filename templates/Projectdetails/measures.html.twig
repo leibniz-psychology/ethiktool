@@ -2,57 +2,51 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set translationPrefix, measuresController, location, hasProcedure = 'projectdetails.pages.measures.', 'Projectdetails--measures', content.location ?? '', content.procedure is defined %}
-    {% set measuresInterventionsPrefix, locationPrefix, locationValue = translationPrefix~'measuresInterventions.', translationPrefix~'location.', location.vars.value ?? '' %}
-    {% set measuresHintPrefix, isInformation = measuresInterventionsPrefix~'measures.textHints.', information in ['pre','post',''] %}
-    {% set measuresSentence, multipleParam, transferParam = (measuresHintPrefix~'description')|trans, {'multiple': boolToString(multipleStudyGroupMeasure)}, {'transfer': [transferInfo,addresseeType]} %}
+    {% set translationPrefix, measuresController, location = 'projectdetails.pages.measures.', 'Projectdetails--measures', content.location ?? '' %}
+    {% set measuresInterventionsPrefix, interventionsTypes, locationPrefix, locationValue = translationPrefix~'measuresInterventions.', measuresInterventionsTypes['interventions'], translationPrefix~'location.', location.vars.value ?? '' %}
+    {% set measuresHintPrefix, hintsPrefix, isInformation = measuresInterventionsPrefix~'measures.textHints.', measuresInterventionsPrefix~'hints.', information in ['pre','post',''] %}
+    {% set measuresSentence, anyIntervention, multipleParam, transferParam = (measuresHintPrefix~'description')|trans, getAnySelected(content,interventionsTypes,'noIntervention'), {'multiple': boolToString(multipleStudyGroupMeasure)}, {'transfer': [transferInfo,addresseeType]} %}
     <div {{ stimulus_controller(measuresController,{
-            'measuresTypes': measuresTypes,
-            'measuresDescription': [(measuresHintPrefix~'noSelection')|trans,measuresSentence,measuresSentence~(measuresHintPrefix~'survey')|trans],
+            'measuresTypes': measuresInterventionsTypes['measures'],
+            'measuresBodyTypes': measuresBodyTypes,
+            'measuresDescription': [(measuresHintPrefix~'noSelection')|trans,measuresSentence,measuresSentence~(measuresHintPrefix~'interventionsQuestionnaire')|trans],
             'interventionsTypes': interventionsTypes|slice(1),
             'location': locationValue,
             'locationInput': textInputs|slice(1)
     }) }}>
         {# procedure #}
-        {% if hasProcedure %}
+        {% if content.procedure is defined %}
             <div id="procedure">
                 {{ formRender.addCountableTextfield(content.procedure,maxCharsProcedure,{'hint': [[(translationPrefix~'procedure.'~headingHint)|trans(multipleParam)~(isInformation ? ' '~('multiple.wording')|trans({'addressee': addresseeString, 'isBold': 'true'}))]]}|merge(isInformation ? {'transfer': [isInformation ? transferInfo : [''],'']} : {})) }}
             </div>
         {% endif %}
         {# measures and interventions #}
-        {% set noIntervention, hintsPrefix = 'noIntervention', measuresInterventionsPrefix~'hints.' %}
         {% for type in ['measures','interventions'] %}
-            {% set isInterventions = type is same as 'interventions' %}
-            {% set curTypes = isInterventions ? interventionsTypes : measuresTypes %}
-            {% set params, typePrefix ,selection = {'type': type}, measuresInterventionsPrefix~type~'.', getAnySelected(content,curTypes,isInterventions ? noIntervention) %}
-            {% set isNoIntervention, surveyOption, description, typesWoFirst = selection[0], type~'Survey', type~'Description', curTypes|slice(1) %}
-            <div {% if hasProcedure or isInterventions %} class="mt-8" {% endif %} id="{{ type~'Type' }}" {{ stimulus_action(measuresController,'setMeasuresInterventions','change') }}>
+            {% set typePrefix, isInterventions, description, params, pdf = measuresInterventionsPrefix~type~'.', type is same as 'interventions', type~'Description', {'type': type}, content[type~'PDF'] ?? '' %}
+            <div class="mt-8" id="{{ type }}">
                 {{ formRender.addHeading(measuresInterventionsPrefix~'title',{'params': params, 'headingHint': [[typePrefix~'headingHint',routeIDsParam]]}) }}
-                <div class="MetaData-Widget mt-2" {% if isInterventions %} {{ stimulus_action('base','setMultiCheckbox','change',{'single': noIntervention, 'multiCheck': typesWoFirst}) }} {% endif %}>
-                    {{ formRender.addCheckboxGroup(content,curTypes,{
-                        'contTargets': {(surveyOption): [measuresController,surveyOption]}|
-                            merge(isInterventions ? {noIntervention: [measuresController,noIntervention]} : {}),
-                        'other': measuresInterventionsOther[type]}|
-                        merge(isInterventions ? {'icons': {'tasks': typePrefix~'types.tasksHint'}}|
-                                                 merge(isNoIntervention or selection[1] ? {'targets': isNoIntervention ? typesWoFirst : [noIntervention]} : {}): {})) }}
+                <div class="MetaData-Widget" {{ stimulus_action(measuresController,'setMeasuresInterventions','change',params) }}>
+                    {{ _self.addMeasuresInterventions(content,measuresInterventionsTypesAll[type],measuresInterventionsOther[type],measuresInterventionsIcons[type],documentationTypes,measuresController,isInterventions and anyIntervention[0], isInterventions and anyIntervention[1]) }}
                 </div>
                 {{ formRender.addHint(hintsPrefix~'selection',{'target': [measuresController,type~'BurdensRisks'], 'params': params|merge(routeIDsParam)}) }}
-                {% if content[description] is defined %}
-                    <div {{ stimulus_target(measuresController,description~'Div') }}>
-                        {{ formRender.addTextfield(content[description], fontNormal|merge(addStyle('height: '~textHeight,true))|merge(
-                            {'hint': typePrefix~'textHints.description'}|
-                            merge(not isInterventions ? {'contTarget': [measuresController,description], 'resize': true} : {}))) }}
-                    </div> {# hint text may be set in controller, but must not be empty here #}
-                    <div {% if isInterventions %} {{ stimulus_target(measuresController,'interventionsPDF') }} {% endif %}>
-                        <div class="mt-4">
-                            {{ formRender.addHint(hintsPrefix~'pdf',{'params': params}) }}
-                        </div>
-                        <div class="MetaData-Widget">
-                            {{ formRender.addCheckbox(content[type~'PDF'], {'labelParams': {'type': type}}) }}
-                        </div>
-                    </div>
-                {% endif %}
             </div>
+            {% if content[description] is defined %}
+                <div {{ stimulus_target(measuresController,description~'Div') }}>
+                    {{ formRender.addTextfield(content[description], fontNormal|merge(addStyle('height: '~textHeight,true))|merge(
+                        {'hint': typePrefix~'textHints.description'}|
+                        merge(not isInterventions ? {'contTarget': [measuresController,description], 'resize': true} : {}))) }}
+                </div>  {# hint text may be set in controller, but must not be empty here #}
+            {% endif %}
+            {% if pdf is not same as '' %}
+                <div {% if isInterventions %} {{ stimulus_target(measuresController,'interventionsPDF') }} {% endif %}>
+                    <div class="mt-4">
+                        {{ formRender.addHint(hintsPrefix~'pdf',{'params': params}) }}
+                    </div>
+                    <div class="MetaData-Widget">
+                        {{ formRender.addCheckbox(content[type~'PDF'], {'labelParams': {'type': type}}) }}
+                    </div>
+                </div>
+            {% endif %}
         {% endfor %}
         {# other sources #}
         {% set otherSources, tempPrefix, otherSourcesDiv = content.otherSources, translationPrefix~'otherSources.', 'otherSourcesDiv' %}
@@ -144,6 +138,77 @@
         {{ formRender.addSubmitButtons() }}
     </div> {# entire form including stimulus controller #}
 {% endblock %}
+
+{% macro addMeasuresInterventions(content, measuresInterventions, otherTypes, iconTypes, documentationTypes, stimCont, noInterventionSelected, isAnyIntervention) %}
+    {# Adds the measures and interventions widgets. Inputs arguments:
+        content:                form elements
+        measuresInterventions:  array with (sub-)options
+        otherTypes:             array with IDs of elements for which a text field is added
+        iconTypes:              array with IDs of elements for which an icon is added
+        documentationTypes:     array with IDs of elements for which a question about documentation is added
+        stimCont:               stimulus controller
+        noInterventionSelected: true if intervention widgets are created and 'no intervention' is selected
+        isAnyIntervention:      true if intervention widgets are created and any intervention except 'no intervention' is selected
+    #}
+    {% set translationPrefix = 'projectdetails.pages.measures.measuresInterventions.' %}
+    {% set measuresPrefix = translationPrefix~'measures.' %}
+    {% set documentationPrefix = measuresPrefix~'documentation.' %}
+    {% for key, value in measuresInterventions %}
+        {% if value is iterable %} {# sub-heading #}
+            {% set isMeasuresBody = key is same as 'measuresBody' %}
+            <div class="topMarginButtons ms-1">
+                <div class="text-decoration-underline">{{ (translationPrefix~'typesMain.'~key)|trans }}</div>
+                <div class="ms-3" {% if isMeasuresBody %} {{ stimulus_action('base','setVisibility','change',{'multi': [[value,'gene']], 'setOr': true}) }} {% endif %}>
+                    {{ _self.addMeasuresInterventions(content,value,otherTypes,iconTypes,documentationTypes,stimCont,noInterventionSelected,isAnyIntervention) }}
+                {# gene #}
+                {% if isMeasuresBody %}
+                    <div class="MetaData-Widget my-4" id="{{ 'gene' }}" style="{{ boolToDisplay(getAnySelected(content,value)[1]) }}">
+                        <div>{{ (measuresPrefix~'gene')|trans }}</div>
+                        {{ formRender.renderButtons(content.gene,noHeading) }}
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        {% else %} {# selectable option #}
+            {% set widget, isOther, isNoIntervention = content[value], value in otherTypes, value is same as 'noIntervention' %}
+            {% set isCheckedStyle, isMeasuresQuestionnaire, surveyDiv = boolToDisplay(widget.vars.checked,1), value is same as 'measuresQuestionnaire', 'measuresSruveyDiv' %}
+            <div class="grid topMarginButtons" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[value, [value~'Text']|merge(isMeasuresQuestionnaire ? [surveyDiv] : [])]], 'isGrid': true}) }} {% endif %}>
+                {{ formRender.addCheckbox(widget,
+                    (value in iconTypes ? {'checkIcon': [(translationPrefix~'icons.'~value)|trans]} : {})|
+                    merge({'disable': isNoIntervention and isAnyIntervention or not isNoIntervention and noInterventionSelected})|
+                    merge(value in ['noIntervention','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','interventionsQuestionnaire','invasiveExtract'] ? {'target': [stimCont,value in ['measuresQuestionnaire','measuresInterview','measuresInterviewGroups'] ? 'measuresQuestionnaire' : value]} : {})) }}
+                {% if isOther %}
+                    {% set other = content[value~'Text'] %}
+                    <div class="MetaData-Widget mb-1 grid" id="{{ other.vars.name }}" style="{{ isCheckedStyle }}">
+                        {{ form_widget(other) }}
+                        {# documentation #}
+                        {% if value in documentationTypes|keys %}
+                            <div class="my-4" id="{{ value~'Div' }}">
+                                <div class="mb-2">{{ (documentationPrefix~'title')|trans }}{{ formRender.addIcon((documentationPrefix~'hint')|trans) }}</div>
+                                {{ formRender.addCheckboxGroup(content,documentationTypes[value],{'other': [value~'documentationOther']}) }}
+                            </div>
+                        {% endif %}
+                        {# survey conduct and screening #}
+                        {% if isMeasuresQuestionnaire %}
+                            {% set surveyPrefix, screeningPrefix = measuresPrefix~'surveyConduct.', measuresPrefix~'screening.' %}
+                            {% set tempPrefix = surveyPrefix~'icons.' %}
+                            <div class="my-4" id="{{ surveyDiv }}" style="{{ isCheckedStyle }}">
+                                <div class="mb-4" id="surveyConduct">
+                                    <div>{{ (surveyPrefix~'title')|trans }}</div>
+                                    {{ formRender.renderButtons(content.surveyConduct,noHeading|merge({'icons': {'surveyConductwritten': tempPrefix~'written', 'surveyConductoral': tempPrefix~'oral'}})) }}
+                                </div>
+                                <div id="screening">
+                                    <div>{{ (screeningPrefix~'title')|trans }}{{ formRender.addIcon((screeningPrefix~'hint')|trans) }}</div>
+                                    {{ formRender.renderButtons(content.screening,noHeading) }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
 
 {% block preview %}
     {{ formRender.addPreview([studyID,groupID,measureID]) }}

@@ -15,14 +15,25 @@ class MeasuresType extends TypeAbstract
     {
         $translationPrefix = 'projectdetails.pages.measures.';
         // procedure
-        $tempPrefix = $translationPrefix.self::procedureNode.'.';
-        $this->addFormElement($builder,self::procedureNode,'textarea',$tempPrefix.'title');
+        $this->addFormElement($builder,self::procedureNode,'textarea',$translationPrefix.self::procedureNode.'.title');
         $measuresInterventionsPrefix = $translationPrefix.'measuresInterventions.';
+        $placeholderPrefix = $measuresInterventionsPrefix.'placeholder.';
+        $documentationPrefix = $measuresInterventionsPrefix.self::measuresNode.'.'.self::measuresDocumentation.'.';
         // measures and interventions
         foreach ([self::measuresNode,self::interventionsNode] as $type) {
             $tempPrefix = $measuresInterventionsPrefix.$type.'.';
             $otherTypes = self::measuresInterventionsOther[$type];
-            $this->addCheckboxGroup($builder, $type===self::measuresNode ? self::measuresTypes : self::interventionsTypes,$tempPrefix.'types.',$this->createPrefixArray($otherTypes),array_fill_keys($otherTypes,$tempPrefix.self::descriptionNode),textareaName: $type.self::descriptionCap);
+            $otherPlaceholder = array_fill_keys($otherTypes,$placeholderPrefix.'noContent');
+            if ($type===self::measuresNode) {
+                $otherPlaceholder = array_replace($otherPlaceholder,array_fill_keys(self::interviewQuestionnaire,$placeholderPrefix.'content'));
+                foreach (self::measuresDocumentationTypes as $measure => $selectables) { // documentation
+                    $this->addCheckboxGroup($builder,$selectables,$documentationPrefix.'types.',$this->appendText($measure.'documentationOther'),$documentationPrefix.'placeholder',labelNames: str_replace($measure,'',$selectables));
+                }
+                $this->addRadioGroup($builder,self::surveyConductNode,self::surveyConductTypes,$tempPrefix.self::surveyConductNode.'.title'); // conduct of survey
+                $this->addBinaryRadio($builder,self::screeningNode,$tempPrefix.self::screeningNode); // screening
+                $this->addBinaryRadio($builder,self::geneNode,$tempPrefix.self::geneNode); // gene
+            }
+            $this->addCheckboxGroup($builder,self::measuresInterventionsTypes[$type],$tempPrefix.'types.',$this->createPrefixArray($otherTypes),$otherPlaceholder,textareaName: $type.self::descriptionCap); // all selectable options
             $this->addFormElement($builder,$type.'PDF','checkbox',$measuresInterventionsPrefix.'pdf',[self::labelParams => ['type' => $type]]);
         }
         // other sources
@@ -59,12 +70,24 @@ class MeasuresType extends TypeAbstract
         }
         // measures and interventions
         foreach ([self::measuresNode,self::interventionsNode] as $type) {
-            $this->setSelectedCheckboxes($forms,$viewData[$type],$this->combinePrefixArray(self::measuresInterventionsOther[$type]));
+            $this->setMeasuresInterventions($forms,$viewData[$type]);
             $tempVal = $type.self::descriptionCap;
             if (array_key_exists($tempVal,$forms)) {
-                $forms[$tempVal]->setData($this->getArrayValue($viewData,$tempVal)); // survey start is added in stimulus controller
+                $forms[$tempVal]->setData($this->getArrayValue($viewData,$tempVal));
                 $tempVal = $type.'PDF';
                 $forms[$tempVal]->setData(array_key_exists($tempVal,$viewData));
+            }
+        }
+        if (array_key_exists(self::measuresFurtherNode,$viewData)) {
+            $measuresFurther = $viewData[self::measuresFurtherNode];
+            foreach (array_keys(self::measuresDocumentationTypes) as $documentation) { // documentation
+                if (array_key_exists($documentation,$measuresFurther)) {
+                    $other = $documentation.self::documentationOther;
+                    $this->setSelectedCheckboxes($forms,$measuresFurther[$documentation],[$other => $this->appendText($other)]);
+                }
+            }
+            foreach ([self::surveyConductNode,self::screeningNode,self::geneNode] as $type) { // survey conduct, screening, and gene
+                $forms[$type]->setData($this->getArrayValue($measuresFurther,$type));
             }
         }
         // other sources
@@ -97,21 +120,38 @@ class MeasuresType extends TypeAbstract
             $newData[self::procedureNode] = $forms[self::procedureNode]->getData();
         }
         // measures
-        $measures = $this->getSelectedCheckboxes($forms,self::measuresTypes,$this->combinePrefixArray(self::measuresInterventionsOther[self::measuresNode]));
+        $measures = $this->getMeasuresInterventions($forms,self::measuresInterventionsTypesAll[self::measuresNode],self::measuresInterventionsOther[self::measuresNode]);
         $newData[self::measuresNode] = $measures;
+        $tempArray = [];
+        foreach (self::measuresDocumentationTypes as $documentation => $options) { // documentation
+            if (array_key_exists($documentation,$measures)) {
+                $other = $documentation.self::documentationOther;
+                $tempArray[$documentation] = $this->getSelectedCheckboxes($forms,$options,[$other => $this->appendText($other)]);
+            }
+        }
+        if (array_key_exists(self::measuresQuestionnaire,$measures)) { // survey conduct and screening
+            $tempArray[self::surveyConductNode] = $forms[self::surveyConductNode]->getData();
+            $tempArray[self::screeningNode] = $forms[self::screeningNode]->getData();
+        }
+        if (count(array_diff_key(self::measuresBodyTypes,$measures['measuresBody'] ?? []))<count(self::measuresBodyTypes)) { // gene
+            $tempArray[self::geneNode] = $forms[self::geneNode]->getData();
+        }
+        if ($tempArray!==[]) {
+            $newData[self::measuresFurtherNode] = $tempArray;
+        }
         if (array_key_exists(self::measuresDescription,$forms)) {
-            $newData[self::measuresDescription] = $measures!==[] ? $forms[self::measuresDescription]->getData() : '';
+            $newData[self::measuresDescription] = $measures!==[] ? $forms[self::measuresDescription]->getData() : ''; // description
             if ($forms[self::measuresPDF]->getData()) {
                 $newData[self::measuresPDF] = '';
             }
         }
         // interventions
-        $interventions = $this->getSelectedCheckboxes($forms,self::interventionsTypes,$this->combinePrefixArray(self::measuresInterventionsOther[self::interventionsNode]),exclusive: self::noIntervention);
+        $interventions = $this->getMeasuresInterventions($forms,self::measuresInterventionsTypesAll[self::interventionsNode],self::measuresInterventionsOther[self::interventionsNode]);
         $newData[self::interventionsNode] = $interventions;
         if (array_key_exists(self::interventionsDescription,$forms)) {
-            $numSelected = count($interventions);
+            $numSelected = count($interventions); // not necessarily the real number of selected elements because sub-categories may be selected
             $tempVal = $numSelected>0 && !array_key_exists(self::noIntervention,$interventions);
-            if ($tempVal && !($numSelected===1 && array_key_exists('interventionsSurvey',$interventions))) {
+            if ($tempVal && ($numSelected-count(array_intersect_key(['survey' => '', 'invasiveExtract' => ''],$interventions)))>0) {
                 $newData[self::interventionsDescription] = $forms[self::interventionsDescription]->getData();
             }
             if ($tempVal && $forms[self::interventionsPDF]->getData()) {
@@ -154,5 +194,51 @@ class MeasuresType extends TypeAbstract
         }
         $newData[self::durationNode] = $tempArray;
         $viewData = $newData;
+    }
+
+    /** Sets the selections for measures or interventions
+     * @param array $forms form array where the data is set
+     * @param array|string $selections selected options
+     * @return void
+     */
+    private function setMeasuresInterventions(array $forms, array|string $selections): void
+    {
+        if (is_array($selections)) {
+            foreach ($selections as $key => $value) {
+                if (is_array($value)) {
+                    $this->setMeasuresInterventions($forms,$value);
+                } else { // selectable option
+                    $forms[$key]->setData(true);
+                    $other = $this->appendText($key);
+                    if (array_key_exists($other,$forms)) {
+                        $forms[$other]->setData($value);
+                    }
+                }
+            }
+        }
+    }
+
+    /** Gets the selections for measures or interventions.
+     * @param array $forms form array containing the data
+     * @param array $elements elements to be checked for selection
+     * @param array $others elements where a description must be provided
+     * @return array selected elements
+     */
+    private function getMeasuresInterventions(array $forms, array $elements, array $others): array
+    {
+        $returnArray = [];
+        foreach ($elements as $key => $value) {
+            if (is_array($value)) {
+                $tempArray = $this->getMeasuresInterventions($forms,$value,$others);
+                if ($tempArray!==[]) {
+                    $returnArray[$key] = $tempArray;
+                }
+            } else { // selectable option
+                if ($forms[$value]->getData()) {
+                    $returnArray[$value] = in_array($value,$others) ? $forms[$this->appendText($value)]->getData() : '';
+                }
+            }
+        }
+        return $returnArray;
     }
 }

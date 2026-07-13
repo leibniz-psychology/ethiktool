@@ -2,7 +2,10 @@
 # In case of committeeType, 'other' is the default that is shown if the test committee is chosen.
 # Where possible, translations from the messages-files are used. If equivalent/similar wordings are used here, the keys are the same as in the messages-files.
 heading: >-
-  Antrag an {committeeAcc}
+  {isAllowed, select,
+    true  {Antrag an {committeeAcc}}
+    other {Ethikformular zur studentischen Selbstüberprüfung}}
+headingSub: 'Dieses Ethikformular ist nur zur studentischen Selbstüberprüfung vorgesehen. Die Einreichung als Ethikantrag bei {committeeLocationDat} ist nicht zulässig.'
 
 header: |
   Erstellt mit Ethiktool Version {toolVersion}
@@ -173,7 +176,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     terminateConsSub: 'Begründung und ggf. Beschreibung der Nachteile im Falle eines vorzeitigen Abbruchs:'
     terminateCriteria: 'Unter welchen Umständen wird die Datenerhebung durch die Projektbeteiligten vorzeitig abgebrochen?'
     measures: 'Mittels welcher Erhebungsmethode(n) werden Daten von den Teilnehmenden erfasst?'
-    measuresSub: 'Beschreibung der Erhebungsmethoden:'
+    measuresSub: 'Genauere Beschreibung der Erhebungsmethoden:'
     interventions: 'Welchen gezielten Maßnahmen werden die Teilnehmenden im Rahmen der Studiendurchführung ausgesetzt?'
     interventionsSub: 'Beschreibung der Maßnahmen:'
     otherSources: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
@@ -263,16 +266,22 @@ addresseePrefix: >-
 singleDocuments:
   application: >-
     {isSingleDocs, select,
-      true  {Es handelt sich hierbei um ein Zwischenergebnis und nicht um ein vollständiges Antragsdokument. {isComplete, select,
-                   true  {Für die Einreichung bei der Ethikkommission verwenden Sie bitte die Gesamtantrags-Datei.}
-                   other {Die Angaben im Ethiktool sind noch unvollständig oder enthalten Fehler.}}}
-      other {Dieses Dokument ist nicht zur Einreichung bei der Ethikkommission vorgesehen. Bitte verwenden Sie für die Einreichung die Gesamtantrags-Datei.}}
+      true  {Es handelt sich hierbei um ein Zwischenergebnis und nicht um ein vollständiges {isComplete, select,
+                   true  {{isAllowed, select,
+                            true  {Antragsdokument. Für die Einreichung bei der Ethikkommission verwenden Sie bitte die Gesamtantrags-Datei.}
+                            other {Ethikformular zur studentischen Selbstüberprüfung.}}}
+                   other {Antragsdokument. Die Angaben im Ethiktool sind noch unvollständig oder enthalten Fehler.}}}
+      other {Dieses Dokument ist nicht zur Einreichung bei der Ethikkommission{isAllowed, select,
+                  true  { vorgesehen. Bitte verwenden Sie für die Einreichung die Gesamtantrags-Datei.}
+                  other {, sondern nur zur studentischen Selbstüberprüfung vorgesehen.}}}}
 
   participation: >-
     Es handelt sich hierbei um ein Zwischenergebnis und nicht um vollständige Teilnahmedokumente. {isComplete, select,
-      true  {Für die Einreichung bei der Ethikkommission verwenden Sie bitte die Gesamtantrags-Datei. {hasReviewDocs, select,
+      true  {{isAllowed, select,
+                true  {Für die Einreichung bei der Ethikkommission verwenden Sie bitte die Gesamtantrags-Datei. {hasReviewDocs, select,
                                                                                                         true  {Dort sind die Teilnahmedokumente vollständig eingebettet.}
                                                                                                         other {}}}
+                other {}}}
       other {Die Angaben im Ethiktool sind noch unvollständig oder enthalten Fehler.}}
 
 # application
@@ -559,27 +568,47 @@ projectdetails:
                                          other        {Zustimmung}}.}
        notApplicable {nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
        other         {auf folgende Art: {otherDescription}}}
+    terminateCriteria:
+      malaise: 'bei offensichtlichem Unwohlsein oder sonstigen Belastungsanzeichen der Teilnehmenden: {description}'
+      regulation: 'bei Nicht-Einhaltung von vorab kommunizierten Sicherheitsbestimmungen seitens der Teilnehmenden: {description}'
+      time: 'bei erheblicher Überschreitung der veranschlagten Zeitdauer der Erhebung'
+      attention: 'bei falscher Beantwortung mehrerer Items zur Aufmerksamkeitskontrolle'
+      criteria: 'wenn sich während der Erhebung herausstellt, dss ein Einschlusskriterium nicht erfüllt ist oder ein Ausschlusskriterium zutrifft'
+      malfunction: 'bei technischer Fehlfunktion der verwendeten Geräte'
+      terminateCriteriaOther: 'unter folgenden Bedingungen: {description}'
+      presence: 'Abbruch seitens der Projektbeteiligten ist nicht möglich, da diese während der Erhebung nicht oder nur zeitweise anwesend sind'
+      unnecessary: 'Abbruch seitens der Projektbeteiligten wird als nicht nötig erachtet'
   measures:
-    measuresTypes:
-      measuresObservation: 'Beobachtung des Verhaltens der Teilnehmenden durch eine projektbeteiligte Person'
-      measuresVideo: 'Ton- und/oder Bildaufnahmen: {description}'
-      measuresSurvey: 'Befragungen: {description}'
-      measuresInstrumental: 'apparative Messungen: {description}'
-      otherMeasures: 'sonstige Erhebungsmethode(n): {description}'
-    interventionsTypes:
-      noIntervention: 'keine gezielten Maßnahmen, nur anfallende Daten'
-      interventionsSurvey: 'Es werden Fragen gestellt (siehe Erhebungsmethoden)'
-      feedback: 'Rückmeldung an Teilnehmende: {description}'
-      everyday: 'gezielte Herbeiführung von Alltagssituationen: {description}'
-      stimulus: 'Präsentation von Stimuli: {description}'
-      tasks: 'Aufgabenanforderung: {description}'
-      stimulation: 'elektrische/magnetische Stimulation: {description}'
-      psychological: 'psychologische Intervention: {description}'
-      physical: 'körperliche Belastung: {description}'
-      therapy: '(therapeutische) körperliche Behandlungsmaßnahmen: {description}'
-      medical: 'Verabreichung von Substanzen: {description}'
-      invasive: 'invasive Eingriffe: {description}'
-      other: 'sonstige Maßnahme(n): {description}'
+    measures:
+      measuresFurther:
+        measuresObservation: "\n- Dokumentation der Beobachtung der Teilnehmenden: {description}"
+        measuresInterview: "\n- Dokumentation der Einzelinterviews: {description}"
+        measuresInterviewGroups: "\n- Dokumentation der Gruppeninterviews: {description}"
+        surveyConduct: >-
+          
+          - Durchführung des Fragebogens: {description, select,
+                                                  written {schriftlich}
+                                                  oral    {mündlich}
+                                                  mixed   {schriftlich/mündlich gemischt}
+                                                  other   {}}
+        screening: "\n- Kommt ein normierter Screening-Fragebogen zum Einsatz? {description}"
+        gene: "\nWerden die entnommenen Körpermaterialien zur Analyse von Gendaten genutzt? {description}"
+      documentation:
+        documentationNotes: 'freie Notizen'
+        documentationReport: 'vorstrukturiertes Protokoll'
+        documentationPhoto: 'Fotos'
+        documentationVideo: 'Videoaufnahmen'
+        documentationAudio: 'Tonaufnahmen'
+        documentationOther: 'in folgender Form: {description}'
+    interventions:
+      interventionsQuestionnaire: ' (siehe Erhebungsmethoden: {dummy})'
+      invasiveExtract: ' (siehe Erhebungsmethoden, Entnahme von Körpermaterialien)'
+    description: >-
+      {type, select,
+        measures {
+                  - Beschreibung der Erhebungsmethoden:
+                                                       }
+        other    {}}{description}
   burdensRisks:
     burdens:
       noBurdens: 'keine Belastungen'
@@ -1252,6 +1281,10 @@ participation:
 # data privacy
 dataPrivacy:
   title: 'Anlage zur Datenverarbeitung'
+  hint: >-
+    {committeeType, select,
+      PHT   {Die Prüfung dieses Antrags durch die Ethikkommission erfolgt ausschließlich auf Grundlage ethischer Gesichtspunkte gemäß der geltenden Geschäftsordnung. Eine datenschutzrechtliche Prüfung (insbesondere im Hinblick auf die Einhaltung der DSGVO und des DSG) ist <span style="font-weight: bold">nicht</span> Gegenstand des Verfahrens und wird durch das Votum der Ethikkommission nicht ersetzt. Die datenschutzrechtliche Konformität des Vorhabens liegt in der alleinigen Verantwortung der Antragstellenden und ist eigenständig sicherzustellen.}
+      other {}}
   intro: >-
     Informationen zur Verarbeitung personenbezogener Daten im Rahmen {numStudies, plural,
                                                                        =1    {der Studie „{projectTitle}“}
@@ -1290,6 +1323,22 @@ dataPrivacy:
                  Warburger Str. 100
                  33098 Paderborn
                  Web: https://www.uni-paderborn.de}
+          PHHD  {Pädagogische Hochschule Heidelberg
+                 Keplerstr. 87
+                 69120 Heidelberg,
+                 Web: https://www.ph-heidelberg.de}
+          SRH   {SRH University of Applied Sciences Heidelberg
+                 Ludwig Guttmann-Straße 6
+                 69123 Heidelberg
+                 Web: https://www.srh-university.de}
+          BICC  {BICC – Bonn International Centre for Conflict Studies gGmbH
+                 Pfarrer-Byns-Str. 1
+                 53121 Bonn
+                 Web: https://www.bicc.de}
+          PHT   {Pädagogische Hochschule Tirol
+                 Pastorstraße 7
+                 A-6010 Innsbruck
+                 Web: https://ph-tirol.ac.at/}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1301,26 +1350,63 @@ dataPrivacy:
       phone: 'Telefonnummer: '
     data: 'Verantwortliche Projektbeteiligte:'
     representative:
-      title: 'Datenschutzbeauftragte:'
+      title: 'Datenschutzbeauftragte/r:'
       text: >-
-        Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-
         {committeeType, select,
-          TUC   {Tel.: 0371 531-12030
+          TUC   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+                  
+                  
+                 Tel.: 0371 531-12030
                  E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
-          EUB   {Tel.: 0521 106-5225
+          EUB   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+
+
+                 Tel.: 0521 106-5225
                  E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
-          JGU   {Tel.: 06131 39-20065
+          JGU   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+
+
+                 Tel.: 06131 39-20065
                  E-Mail: datenschutz@uni-mainz.de
                  Web: https://www.uni-mainz.de/datenschutz/}
-          DLR   {Tel.: 02203 601-0
+          DLR   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+
+
+                 Tel.: 02203 601-0
                  E-Mail: datenschutz@dlr.de}
-          TUD   {Tel.: 0351 463-32839
+          TUD   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+
+
+                 Tel.: 0351 463-32839
                  E-Mail: informationssicherheit@tu-dresden.de}
-          UH1   {Tel.: 05121-883-10922
+          UH1   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+
+
+                 Tel.: 05121-883-10922
                  E-Mail: datenschutz@uni-hildesheim.de}
-          UPB   {Tel.: 05251 / 60–4444
+          UPB   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+
+
+                 Tel.: 05251 / 60–4444
                  E-Mail: datenschutz@uni-paderborn.de}
+          PHHD  {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+
+
+                 Tel.: 06221 / 477-134
+                 E-Mail: penshorn@ph-heidelberg.de}
+          SRH   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+
+
+                 Tel.: 06221 / 6799840
+                 E-Mail: aleksandra.sreckovic@srh.de}
+          BICC  {Althammer & Kill GmbH & Co. KG
+                 Roscherstraße 7
+                 30161 Hannover
+                 Tel.: 0211 / 93674890
+                 E-Mail: kontakt-dsb@althammer-kill.de}
+          PHT   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+        
+                 E-Mail: datenschutz@ph-tirol.ac.at}
           other {Tel.: 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1552,6 +1638,7 @@ dataPrivacy:
 
 
       Zudem haben Sie das Recht, eine Beschwerde bei der datenschutzrechtlichen Aufsichtsbehörde einzureichen (Art. 77 DS-GVO). Im Fall {committeeLocationGen} ist zuständig:
+      
 
       {committeeType, select,
         TUC   {Sächsische Datenschutz- und Transparenzbeauftragte
@@ -1589,6 +1676,30 @@ dataPrivacy:
                40213 Düsseldorf
                Tel.: +49 (0)211/384 24-0
                E-Mail: poststelle@ldi.nrw.de}
+        PHHD  {ZENDAS
+               Zentrale Datenschutzstelle der baden-württembergischen Universitäten
+               Universität Stuttgart
+               Breitscheidstr. 2
+               70174 Stuttgart
+               Tel.: 0711/685-0
+               E-Mail: poststelle@uni-stuttgart.de}
+        SRH   {ZENDAS
+               Zentrale Datenschutzstelle der baden-württembergischen Universitäten
+               Universität Stuttgart
+               Breitscheidstr. 2
+               70174 Stuttgart
+               Tel.: +49 (0)711/685-0
+               E-Mail: poststelle@uni-stuttgart.de}
+        BICC  {Landesbeauftragte*r für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
+               Kavalleriestraße 2-4
+               40213 Düsseldorf
+               Telefon: +49 (0)211/384 24-0
+               E-Mail: poststelle@ldi.nrw.de}
+        PHT   {Österreichische Datenschutzbehörde
+               Barichgasse 40-42
+               A-1030 Wien
+               Tel.: +43 1 52 152-0
+               E-Mail: dsb@dsb.gv.at}
         other {}}
       
       
@@ -1909,12 +2020,6 @@ completeForm:
                     yes   { (siehe Feld 41)}
                     other {}}}
           other {}}
-      otherSources: >-
-        {isFull, select,
-          true  {{answer, select,
-                    yes   { (siehe Feld 33)}
-                    other {}}}
-          other {}}
       conflict: >-
         {isFull, select,
           true  {{answer, select,
@@ -1995,7 +2100,6 @@ completeForm:
       risks: 'Risiken'
       finding: '(Zufalls-)Befunde'
       dataPrivacy: 'Personenbezogene Daten'
-      otherSources: 'Daten anderer Stellen'
       dataSourceVotes: 'Forschungsethische Standards'
       legitimization: 'Aufklärung/Einwilligung'
       restriction: 'Zugangsbeschränkung/Datenverbreitung'
@@ -2013,7 +2117,6 @@ completeForm:
     risks: 'Die Studie beinhaltet Gefährdungen oder Risiken für einzelne Personen.'
     finding: 'In der Studie werden u.U. klinisch relevante (Zufalls-)Befunde aufgedeckt.'
     dataPrivacy: 'In der Studie findet eine relevante Verarbeitung personenbezogener Daten statt.'
-    otherSources: 'Es werden individuell zuordenbare Daten anderer Stellen hinzugezogen.'
     dataSourceVotes: 'Die nachgenutzten Forschungsdaten wurden ursprünglich unter Einhaltung forschungsethischer Standards gewonnen.'
     legitimization: 'Die Personen, deren Daten analysiert werden, haben eingewilligt bzw. es war ihnen zumindest bewusst, dass ihre Daten zu Forschungszwecken nachgenutzt werden können.'
     restriction: 'Durch die Nachnutzung/Reanalyse werden ursprünglich zugangsbeschränkte Daten einem größeren Personenkreis zugänglich als vorher.'
@@ -2041,3 +2144,7 @@ logo:
   TUD: 'Logo der Technischen Universität Dresden'
   UH1: 'Logo der Universität Hildesheim'
   UPB: 'Logo der Universität Paderborn'
+  PHHD: 'Logo der Pädagogischen Hochschule Heidelberg'
+  SRH: 'Logo der SRH University'
+  BICC: 'Logo des Bonn International Centre for Conflict Studies'
+  PHT: 'Logo der Pädagogischen Hochschule Tirol'

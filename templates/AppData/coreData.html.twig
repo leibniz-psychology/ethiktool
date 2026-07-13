@@ -155,7 +155,7 @@
                         {% set name, value = vars.name, vars.value %}
                         {% set isOther = value is same as (info~'Other')  %}
                         <div class="flex justify-content-end" id="{{ info }}">
-                            {% if info is same as 'phone' and hasSupervisor %}
+                            {% if info is same as 'phone' and hasStudent %}
                                 <div class="align-self-center" style="text-align: end" {{ stimulus_target(coreDataController,'phoneLabelOptional') }}>{{ (infoPrefix~'phoneOptional')|trans~':' }}</div>
                             {% endif %}
                             {{ form_label(widget,(infoPrefix~info)|trans~':',addLabelAttributes(addClass('align-self-center')|merge({'id': name~'Label'}))|merge({'id': name})) }}
@@ -175,6 +175,13 @@
                 </div>
             </div>
         </div>
+        {# student confirm #}
+        {% if content.studentConfirm is defined %}
+            <div id="studentConfirmDiv" class="mt-4" style="{{ boolToDisplay(content.position.vars.value is same as 'student') }}" {{ stimulus_target(coreDataController,'studentConfirm') }}>
+                <div class="borderHint">{{ (tempPrefix~'studentConfirm.text')|trans(committeeParams) }}</div>
+                <div class="MetaData-Widget">{{ formRender.addCheckbox(content.studentConfirm) }}</div>
+            </div>
+        {% endif %}
         {# conflict #}
         {% set conflict = content.conflict %}
         <div class="mt-8" id="conflict">

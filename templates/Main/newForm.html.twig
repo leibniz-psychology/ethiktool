@@ -6,7 +6,7 @@
     <h2 class="MetaDataGroup-Title">{{ 'pages.newForm'|trans }}</h2>
 {% endblock %}
 {% block content %}
-    {{ formRender.addCommitteeForms(content,committeeParamsnewForm,true,wrongPassword) }}
+    {{ formRender.addCommitteeForms(content,committeeParamsnewForm,true,wrongPassword,committeeTypes,selected) }}
     {% if wrongPassword %}
         {{ include('components/infoModal.html.twig',{'modalID': 'passwordModal', 'prefix': 'newForm.password.modal.'}) }}
     {% endif %}

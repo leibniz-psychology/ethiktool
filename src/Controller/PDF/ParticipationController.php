@@ -32,15 +32,16 @@ class ParticipationController extends PDFAbstract
         $isBegun = $this->getBegunDocs($reviewProcess,$session);
         $isRequested = in_array($reviewProcess,[self::reviewShortRequested,self::reviewFullRequested]);
         self::$markInput = !self::$savePDF || self::$isCompleteForm && $markInput;
-        $singleDocsHint = $this->getSingleDocsHint($request,'participation',$isDocs && !$isShortService);
-        $markedSuffix = self::$markInput ? 'Marked' : ''; // suffix for pdf
         $committeeParam = $session->get(self::committeeParams);
-        $isShort = str_contains($reviewProcess,self::reviewProcessShort);
-        $isShortChoose = $isShort && in_array($committeeParam[self::committeeType],self::reviewShortChoose); // true if review process is any short and creation of participation documents can be chosen for short review processes
-        $isFullParam = ['isFull' => $this->getStringFromBool(!$isShort)];
-        $savePDFParam = ['savePDF' => self::$savePDF, 'isComplete' => self::$isCompleteForm];
+        $committeeType = $committeeParam[self::committeeType];
         $appNode = $this->getXMLfromSession($session,getRecent: true);
         $coreDataArray = $this->xmlToArray($appNode->{self::appDataNodeName})[self::coreDataNode];
+        $singleDocsHint = $this->getSingleDocsHint($request,'participation',$this->getStudentAllowed($committeeType,$coreDataArray),$isDocs && !$isShortService);
+        $markedSuffix = self::$markInput ? 'Marked' : ''; // suffix for pdf
+        $isShort = str_contains($reviewProcess,self::reviewProcessShort);
+        $isShortChoose = $isShort && in_array($committeeType,self::reviewShortChoose); // true if review process is any short and creation of participation documents can be chosen for short review processes
+        $isFullParam = ['isFull' => $this->getStringFromBool(!$isShort)];
+        $savePDFParam = ['savePDF' => self::$savePDF, 'isComplete' => self::$isCompleteForm];
         $contributors = $this->getContributors($session);
         $isMultiple = $this->getMultiStudyGroupMeasure($appNode); // true if multiple studies, groups, or measure time points exist
         $studyArray = $this->addZeroIndex($this->xmlToArray($appNode->{self::projectdetailsNodeName})[self::studyNode]);
@@ -79,7 +80,6 @@ class ParticipationController extends PDFAbstract
         $savePDFstringParam = ['savePDF' => $this->getStringFromBool(self::$savePDF)];
         $savePDFtrueParam = ['savePDF' => 'true']; // needed for access in data privacy
         $isMultipleParam = ['isMultiple' => $this->getStringFromBool($isMultiple)];
-        $committeeType = $this->getCommitteeType($session);
         foreach ($allIDs as $studyID => $groupIDs) {
             $study = $studyArray[$studyID];
             $studyIDincreased = $studyID+1;
@@ -1266,7 +1266,7 @@ class ParticipationController extends PDFAbstract
                                 if (!$isMissingInformation) {
                                     if ($isToolPersonal) {
                                         self::$linkedPage = self::privacyNode;
-                                        $curHtml .= $this->renderView('PDF/_dataPrivacy.html.twig', $parameters);
+                                        $curHtml .= $this->renderView('PDF/_dataPrivacy.html.twig', array_merge($parameters,['hint' => self::$markInput || !self::$isCompleteForm ? $this->translateStringPDF($privacyPrefix.'hint',$committeeParam) : '']));
                                     } elseif ($personal==='anonymous' && !(self::$isCompleteForm && !self::$markInput) || $isSeparateLater) {
                                         $curHtml .= $this->renderView(self::intermediateDocument, array_merge($parameters, [self::content => $this->translateStringPDF($customPrefix.self::privacyNode, $translationParams)]));
                                     }

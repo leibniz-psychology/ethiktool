@@ -119,7 +119,7 @@ class AppDataController extends ControllerAbstract
             $requestedConfirmArray[] = $this->translateString(self::coreDataNode.'.'.self::funding.'.'.self::requestedConfirm.'.headingHint',array_merge($committeeParams,['isFull' => $bool]));
         }
 
-        $coreData = $this->createFormAndHandleRequest(CoreDataType::class,$coreDataArray,$request,[self::dummyParams => [self::applicant => $positions[$this->getQualification($coreDataArray) ? 1 : 0]]]);
+        $coreData = $this->createFormAndHandleRequest(CoreDataType::class,$coreDataArray,$request,[self::dummyParams => [self::applicant => $positions[$this->getQualification($coreDataArray) ? 1 : 0], self::studentConfirm => in_array($committeeType,self::committeeNoStudent)]]);
         if ($coreData->isSubmitted()) { // a button was clicked or the language was changed
             $data = $this->getDataAndConvert($coreData,$coreDataNode);
             $submitDummy = $request->request->all()['core_data'][self::submitDummy];
@@ -199,7 +199,7 @@ class AppDataController extends ControllerAbstract
              'positions' => $positions,
              'funding' => self::fundingTypes,
              'requestedConfirmArray' => $requestedConfirmArray,
-             'hasSupervisor' => in_array($committeeType,self::committeeSupervisor),
+             'hasStudent' => in_array($committeeType,self::committeeStudent),
              'support' => array_diff_key(self::supportTypes,!$isEUB ? [self::supportCenter => ''] : []),
              'applicantInfo' => self::applicantContributorsInfosTypes,
              'textInputConflict' => $textInput,

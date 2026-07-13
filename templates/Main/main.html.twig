@@ -9,7 +9,8 @@
     <h2 class="MetaDataGroup-Title">{{ 'pages.main.pageTitle'|trans }}</h2>
 {% endblock %}
 {% block content %}
-    {% set isErrorOrXml, prefix, hasCommittee, change = error is not same as '', 'main.text', committeeParams.committeeType not in ['noCommittee',''], 'changeDiv' %} {# either the xml-file could not be loaded, was updated, or an error occurred during saveDocumentAndRedirect #}
+    {% set committeeType = committeeParams.committeeType %}
+    {% set isErrorOrXml, prefix, hasCommittee, change = error is not same as '', 'main.text', committeeType not in ['noCommittee',''], 'changeDiv' %} {# either the xml-file could not be loaded, was updated, or an error occurred during saveDocumentAndRedirect #}
     <div class="MetaData-Label mb-2" {% if isErrorOrXml %} {{ stimulus_action('base','showModal','load@window',{'target': error}) }} {% endif %}>
         {{ (prefix~(hasCommittee ? '' : 'NoCommittee'))|trans(committeeParams|merge({'numCommitteesBeta': numCommitteesBeta}))|raw|nl2br }}
     </div>
@@ -23,7 +24,7 @@
             <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [['committeeChange',change]]}) }}>
                 {{ formRender.addCheckbox(content.committeeChange,{'checked': showCommittee, 'target': ['base','committeeChange']}) }}
             </div>
-            <div id="{{ change }}" style="{{ boolToDisplay(showCommittee) }}">{{ formRender.addCommitteeForms(content,committeeParamsChange,false,wrongPassword) }}</div>
+            <div id="{{ change }}" style="{{ boolToDisplay(showCommittee) }}">{{ formRender.addCommitteeForms(content,committeeParamsChange,false,wrongPassword,committeeTypes,selected,committeeType) }}</div>
         </div>
          {# info modal #}
         {% if wrongPassword %}

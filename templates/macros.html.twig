@@ -185,14 +185,18 @@
     </div>
 {% endmacro %}
 
-{% macro addCommitteeForms(forms, committeeParams, isNewForm, wrongPassword = false) %}
+{% macro addCommitteeForms(forms, committeeParams, isNewForm, wrongPassword = false, committees = [], selected = '', currentCommittee = '') %}
     {# Adds the dropdown for committee selection and the text field for the password. Input arguments:
-        forms:           widget that holds the elements
-        committeeParams: translation parameters
-        isNewForm:       if true, the elements are created on the page 'newForm'
-        wrongPassword:   if true, a modal will be added containing the information that the entered password was incorrect
+        forms:            widget that holds the elements
+        committeeParams:  translation parameters
+        isNewForm:        if true, the elements are created on the page 'newForm'
+        wrongPassword:    if true, a modal will be added containing the information that the entered password was incorrect
+        committees:       array with committees. Keys: optgroups, values: options
+        selected:         selected committee
+        currentCommittee: curent committee
     #}
-    {% set fileName, committee, labelStyle, hintPrefix, buttonClasses, changePrefix = forms.fileName ?? '', forms.committee, 'text-align: end; white-space: nowrap; ', 'newForm.hints.', 'Button_primary_go me-2', 'main.committeeChange.' %}
+    {% set fileName, labelStyle, buttonClasses, idPrefix = forms.fileName ?? '', 'text-align: end; white-space: nowrap; ', 'Button_primary_go me-2', app.request.get('_route') is same as 'app_main' ? 'main' : 'new_form' %}
+    {% set hintPrefix, changePrefix, id = 'newForm.hints.', 'main.committeeChange.', idPrefix~'_committee' %}
     <div class="MetaData-Widget grid align-items-center px-2 gap-2 {% if isNewForm %} mt-4 {% else %} borderLight mb-2 mx-4 mt-1 {% endif %}" style="grid-template-columns: repeat(2,min-content) auto" {% if wrongPassword %} {{ stimulus_action('base','showModal','load@window',{'target': 'passwordModal'}) }} {% endif %}>
         {% if isNewForm %}
             {# file name #}
@@ -201,8 +205,18 @@
             <div class="MetaData-Label">{{ (hintPrefix~'filename')|trans }}</div>
         {% endif %}
         {# committee #}
-        <div class="me-2" style="{{ labelStyle }} grid-column: 1">{{ form_label(committee) }}</div>
-        <div {{ stimulus_action('base','setCommitteeButton','change') }}>{{ form_widget(committee,{'attr': addClass('Button_dropdown dropdownWidth',false,'text-overflow: ellipsis')|merge(addTarget('base','committee'))}) }}</div>
+        <label class="me-2" style="{{ labelStyle }} grid-column: 1" for="{{ id }}">{{ 'newForm.committee.title'|trans }}</label>
+        <select class="Button_dropdown dropdownWidth" style="text-overflow: ellipsis" id="{{ id }}" name="{{ idPrefix~'[committee]' }}" {{ stimulus_action('base','setCommitteeButton','change')|stimulus_target('base','committee') }}>
+            <option value="">{{ 'multiple.choiceTextHint'|trans }}</option>
+            {% for heading, types in committees %}
+                {% set length = types|length %}
+                {% if length>1 or length is same as 1 and currentCommittee not in types %}
+                    <optgroup class="font-bold" style="color: black;" label="{{ (heading)|trans }}">
+                        {{ _self.addCommitteeDropdown(types,currentCommittee,selected) }}
+                    </optgroup>
+                {% endif %}
+            {% endfor %}
+        </select>
         <div class="MetaData-Label">{{ ((isNewForm ? hintPrefix : changePrefix)~'committee')|trans }}</div>
         {# password #}
         {% if forms.passwordInput is defined %}
@@ -227,6 +241,24 @@
             {% endif %}
         </div>
     </div>
+{% endmacro %}
+
+{% macro addCommitteeDropdown(committees, currentCommittee, selected, isSubOption = false) %}
+    {# Adds the committee dropdown. Input argument:
+        committees:       current committees to be added
+        currentCommittee: current committee
+        selected:         selected committee
+        isSubOption:      if true, a sub-option gets created
+    #}
+    {% for key, value in committees %}
+        {% set keyTrans = key|trans %}
+        {% if value is iterable %}
+            <option class="font-bold" style="color: black; background: inherit; font-style: inherit" disabled>{{ keyTrans }}</option>
+            {{ _self.addCommitteeDropdown(value,currentCommittee,selected,true) }}
+        {% elseif value is not same as currentCommittee %} {# selectable option #}
+            <option value="{{ value }}" {% if value is same as selected %} selected {% endif %}>{{ ((isSubOption ? '&nbsp;&nbsp;&nbsp;&nbsp;')~keyTrans)|raw }}</option>
+        {% endif %}
+    {% endfor %}
 {% endmacro %}
 
 {% macro addCheckbox(widget, arguments = {}) %}

@@ -164,13 +164,32 @@ trait ProjectdetailsTrait
     protected const terminateParticipantsOther = 'terminateParticipantsOther'; // must equal one value in terminateParticipantsTypes
     protected const terminateParticipantsTypes = ['projectdetails.pages.consent.terminateParticipants.types.remove' => 'remove', 'projectdetails.pages.consent.terminateParticipants.types.removePartial' => 'removePartial', 'projectdetails.pages.consent.terminateParticipants.types.documentation' => 'documentation', 'projectdetails.pages.consent.terminateParticipants.types.choose' => 'choose', 'projectdetails.pages.consent.terminateParticipants.types.terminateParticipantsOther' => 'terminateParticipantsOther'];
     protected const terminateCriteriaNode = 'terminateCriteria';
+    protected const terminateCriteriaTypes = ['malaise','regulation','time','attention','criteria','malfunction','terminateCriteriaOther','presence','unnecessary'];
+    protected const terminateCriteriaOtherTypes = ['malaise','regulation','terminateCriteriaOther']; // values must equal the values ot $terminateCriteriaTypes
+    protected const terminateCriteriaOther = 'terminateCriteriaOther'; // must equal one value in $terminateCriteriaTypes
     protected const chosen2Node = 'chosen2';
     // measures
     protected const procedureNode = 'procedure';
     protected const measuresNode = 'measures'; // used for page and for question on page
     protected const measuresDescription = 'measuresDescription';
-    protected const measuresVideo = 'measuresVideo'; // must equal one key in measureTypes
-    protected const measuresTypes = ['measuresObservation','measuresVideo','measuresSurvey','measuresInstrumental','otherMeasures'];
+    protected const measuresObservation = 'measuresObservation'; // must equal one key in $measuresInterventionsTypesAll[measures]
+    protected const measuresVideo = 'measuresVideo'; // must equal one key in $measuresInterventionsTypesAll[measures]
+    protected const measuresPhotoVideoAudio = ['photo','video','audio']; // values must equal values in $measuresDocumentationTypes
+    protected const measuresQuestionnaire = 'measuresQuestionnaire'; // must equal one key in $measuresInterventionsTypesAll[measures]
+    protected const interviewQuestionnaire = ['measuresInterview','measuresInterviewGroups','measuresQuestionnaire']; // values must equal the values of measuresInterventionTypes[measures]
+    protected const measuresBodyTypes = ['measuresBlood' => '', 'measuresSaliva' => '', 'measuresHair' => '', 'measuresSkin' => '', 'measuresBodyOther' => '']; // keys must equal the values of measuresInterventionsTypesAll[measures][measuresBody]
+    protected const measuresInterventionsTypes = ['measures' => ['measuresObservation','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresDecision','measuresRT','measuresEyetracking','measuresMotion','measuresEKG','measuresPulse','measuresBreathe','measuresEEG','measuresMEG','measuresMRT','measuresBrainOther','measuresInstrumentalOther','measuresBlood','measuresSaliva','measuresHair','measuresSkin','measuresBodyOther','measuresOther'], 'interventions' => ['noIntervention','interventionsQuestionnaire','everyday','vr','textmaterial','visual','auditive','tactile','olfactory','gustatory','stimuliOther','stress','mental','physical','creative','tasksOther','feedback','educational','psychological','psychotherapy','sport','therapy','stimulation','interventionOther','medical','invasiveExtract','interventionsOther']]; // selectable options
+    protected const measuresInterventionsTypesAll = ['measures' => ['measuresObservation','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresInstrumental' => ['measuresDecision','measuresRT','measuresEyetracking','measuresMotion','measuresHeart' => ['measuresEKG','measuresPulse'],'measuresBreathe','measuresBrain' => ['measuresEEG','measuresMEG','measuresMRT','measuresBrainOther'],'measuresInstrumentalOther'],'measuresBody' => ['measuresBlood','measuresSaliva','measuresHair','measuresSkin','measuresBodyOther'],'measuresOther'], 'interventions' => ['noIntervention','interventionsQuestionnaire','everyday','vr','stimuli' => ['textmaterial','visual','auditive','tactile','olfactory','gustatory','stimuliOther'],'stress','tasks' => ['mental','physical','creative','tasksOther'],'feedback','intervention' => ['educational','psychological','psychotherapy','sport','therapy','stimulation','interventionOther'],'invasive' => ['medical','invasiveExtract'],'interventionsOther']]; // selectable options by category
+    protected const measuresInterventionsOther = ['measures' => ['measuresObservation','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresBrainOther','measuresInstrumentalOther','measuresBodyOther','measuresOther'], 'interventions' => ['everyday','vr','textmaterial','visual','auditive','tactile','olfactory','gustatory','stimuliOther','stress','mental','physical','creative','tasksOther','feedback','educational','psychological','psychotherapy','sport','therapy','stimulation','interventionOther','medical','interventionsOther']];
+    protected const measuresInterventionsIcons = ['measures' => ['measuresObservation','measuresInterview','measuresQuestionnaire','measuresDecision','measuresEyetracking','measuresPulse'], 'interventions' => ['noIntervention','everyday','visual','mental','physical','feedback','stimulation','medical']];
+    protected const measuresFurtherNode = 'measuresFurther'; // node name for documentation, survey conduct and screening nodes
+    protected const measuresDocumentation = 'documentation';
+    protected const measuresDocumentationTypes = ['measuresObservation' => ['measuresObservationdocumentationNotes','measuresObservationdocumentationReport','measuresObservationdocumentationPhoto','measuresObservationdocumentationVideo','measuresObservationdocumentationAudio','measuresObservationdocumentationOther'], 'measuresInterview' => ['measuresInterviewdocumentationNotes','measuresInterviewdocumentationReport','measuresInterviewdocumentationVideo','measuresInterviewdocumentationAudio','measuresInterviewdocumentationOther'], 'measuresInterviewGroups' => ['measuresInterviewGroupsdocumentationNotes','measuresInterviewGroupsdocumentationReport','measuresInterviewGroupsdocumentationVideo','measuresInterviewGroupsdocumentationAudio','measuresInterviewGroupsdocumentationOther']]; // keys must equal the values from $measuresInterventionTypes[measures]
+    protected const documentationOther = 'documentationOther';
+    protected const surveyConductNode = 'surveyConduct';
+    protected const surveyConductTypes = ['projectdetails.pages.measures.measuresInterventions.measures.surveyConduct.types.written' => 'written', 'projectdetails.pages.measures.measuresInterventions.measures.surveyConduct.types.oral' => 'oral', 'projectdetails.pages.measures.measuresInterventions.measures.surveyConduct.types.mixed' => 'mixed'];
+    protected const screeningNode = 'screening';
+    protected const geneNode = 'gene';
     protected const measuresPDF = 'measuresPDF';
     protected const locationNode = 'location';
     protected const locationTypes = ['intern','extern','online','other'];
@@ -178,8 +197,6 @@ trait ProjectdetailsTrait
     protected const interventionsNode = 'interventions';
     protected const interventionsDescription = 'interventionsDescription';
     protected const noIntervention = 'noIntervention'; // must equal one key in interventionsTypes
-    protected const interventionsTypes = ['noIntervention','interventionsSurvey','feedback','everyday','stimulus','tasks','stimulation','psychological','physical','therapy','medical','invasive','other'];
-    protected const measuresInterventionsOther = ['measures' => ['measuresVideo','measuresSurvey','measuresInstrumental','otherMeasures'], 'interventions' => ['feedback','everyday','stimulus','tasks','stimulation','psychological','physical','therapy','medical','invasive','other']]; // values must equal the values in $measuresTypes and $interventionsTypes
     protected const interventionsPDF = 'interventionsPDF';
     protected const otherSourcesNode = 'otherSources';
     protected const otherSourcesPDF = 'otherSourcesPDF';
@@ -338,9 +355,9 @@ trait ProjectdetailsTrait
     protected const listTypes = ['name','eMail','studentNumber','token','sona','prolific','listIP','listOther'];
     protected const listOther = 'listOther'; // must equal one value in $listTypes
     protected const dataResearchNode = 'dataResearch';
-    protected const dataResearchTypesAll = ['demographic','observation','survey','audio','photo','video','instrumental','ip','dataResearchOther','ethnic','political','union','sexual','brainStructure','biometric','health','genetic','hair','saliva','bloodSample','dataResearchSpecialOther'];
-    protected const dataResearchTypes = ['demographic','observation','survey','audio','photo','video','instrumental','ip','dataResearchOther']; // must equal the values in $dataResearchTypesAll
-    protected const dataSpecialTypes = ['ethnic','political','union','sexual','brainStructure','biometric','health','genetic','hair','saliva','bloodSample','dataResearchSpecialOther']; // must equal the values in $dataResearchTypesAll
+    protected const dataResearchTypesAll = ['demographic','observation','survey','photo','video','audio','instrumental','ip','dataResearchOther','ethnic','political','union','sexual','brainStructure','biometric','health','genetic','bloodSample','saliva','hair','dataResearchSpecialOther'];
+    protected const dataResearchTypes = ['demographic','observation','survey','photo','video','audio','instrumental','ip','dataResearchOther']; // must equal the values in $dataResearchTypesAll
+    protected const dataSpecialTypes = ['ethnic','political','union','sexual','brainStructure','biometric','health','genetic','bloodSample','saliva','hair','dataResearchSpecialOther']; // must equal the values in $dataResearchTypesAll
     protected const dataResearchTextFieldsAll = ['demographic','observation','survey','instrumental','dataResearchOther','biometric','health','dataResearchSpecialOther']; // options which need further description. Values must equal the values in $dataResearchTypes
     protected const dataResearchTextFields = ['demographic','observation','survey','instrumental','dataResearchOther']; // must equal the values in $dataResearchTextFieldsAll
     protected const dataSpecialTextFields = ['biometric','health','dataResearchSpecialOther']; // must equal the values in $dataResearchTextFieldsAll

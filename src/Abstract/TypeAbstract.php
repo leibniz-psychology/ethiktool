@@ -210,7 +210,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
         }
     }
 
-    /** Adds the dropdown for committee selection, the text field for entering the password, and the checkbox(es) for confirming.
+    /** Adds the text field for entering the password of a beta committee and the checkbox(es) for confirming.
      * @param FormBuilderInterface $builder FormBuilder where the element is created
      * @param bool $isNewForm if true, the widgets are created for the page 'newForm'
      * @param string $committee current committee
@@ -218,16 +218,8 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      */
     protected function addCommitteeForms(FormBuilderInterface $builder, bool $isNewForm = true, string $committee = ''): void
     {
-        $committeePrefix = 'newForm.committee.';
-        $tempPrefix = $committeePrefix.'headings.';
-        $committeeTypes = [];
-        foreach (array_diff(self::committeeTypes,[$committee]) as $key => $value) {
-            $committeeTypes[$this->translateString($key)] = $value;
-        }
-        ksort($committeeTypes); // sort alphabetically by translated labels
-        $committeeTypesBeta = array_intersect($committeeTypes,self::committeeTypesBeta);
-        $this->addFormElement($builder,self::committee,'choice',$committeePrefix.'title',options: ['choices' => array_merge([$tempPrefix.'use' => array_diff($committeeTypes,self::committeeTypesBeta,['testCommittee'])], [$tempPrefix.'beta' => $committeeTypesBeta], $committee!=='testCommittee' ? [$tempPrefix.'test' => ['newForm.committee.types.testCommittee' => 'testCommittee']] : [])],hint: self::choiceTextHint);
-        if ($committeeTypesBeta!==[]) {
+        $numBeta = count(self::committeeTypesBeta);
+        if ($numBeta>1 || $numBeta===1 && self::committeeTypesBeta[0]!==$committee) { // at least one beta committee that is not currently active exists
             $this->addFormElement($builder,self::passwordInput,'text','newForm.password.title');
         }
         foreach (array_merge([self::requirements],$isNewForm ? [self::technicalHint] : []) as $confirm) {

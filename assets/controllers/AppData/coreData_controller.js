@@ -3,7 +3,7 @@ import {saveUndoModal, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['projectTitleParticipation','applicationFull','exDiv','exReDiv', 'hintTemplate','shortDocs','shortDocsYes','qualificationYes','institutionHint','professorshipHint','phoneLabelOptional','position','projectStart','projectStartNext','projectStartBegun','projectStartBegunDiv','projectStartBegunConfirm','projectStartBegunText','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
+    static targets = ['projectTitleParticipation','applicationFull','exDiv','exReDiv', 'hintTemplate','shortDocs','shortDocsYes','qualificationYes','institutionHint','professorshipHint','phoneLabelOptional','position','studentConfirm','projectStart','projectStartNext','projectStartBegun','projectStartBegunDiv','projectStartBegunConfirm','projectStartBegunText','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
 
     static values = {
         appType: String,
@@ -59,6 +59,9 @@ export default class extends Controller {
         setElementVisibility(other,isOther);
         if (id==='position') {
             setElementVisibility(this.professorshipHintTarget,[this.studentValue,'phd'].includes(value));
+            if (this.hasStudentConfirmTarget) {
+                setElementVisibility(this.studentConfirmTarget,this.positionTarget.value===this.studentValue);
+            }
             this.setApplicant();
         } else if (id==='institution') {
             setElementVisibility(this.institutionHintTarget,isOther);

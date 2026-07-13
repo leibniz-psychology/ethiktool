@@ -41,7 +41,8 @@ class ConsentType extends TypeAbstract
             $this->addRadioGroup($builder,self::terminateParticipantsNode,self::terminateParticipantsTypes,$tempPrefix.'title',$this->appendText(self::terminateParticipantsNode),$tempPrefix.self::textHint,options: [self::labelParams => [self::informationNode => $information]]);
         }
         // termination criteria
-        $this->addFormElement($builder,self::terminateCriteriaNode,'textarea',hint: $translationPrefix.'terminateCriteria.'.self::textHint);
+        $tempPrefix = $translationPrefix.self::terminateCriteriaNode.'.';
+        $this->addCheckboxGroup($builder,self::terminateCriteriaTypes,$tempPrefix.'types.',$this->createPrefixArray(self::terminateCriteriaOtherTypes),array_fill_keys(self::terminateCriteriaOtherTypes,$tempPrefix.'placeholder'));
         // dummy forms
         $this->addDummyForms($builder);
         $builder->setDataMapper($this);
@@ -66,8 +67,8 @@ class ConsentType extends TypeAbstract
         // termination by participants
         $this->setChosenArray($forms,$viewData,self::terminateParticipantsNode,$this->createAppendArray(self::terminateParticipantsNode));
         // terminate criteria
-        if (array_key_exists(self::terminateCriteriaNode,$forms)) {
-            $forms[self::terminateCriteriaNode]->setData($viewData[self::terminateCriteriaNode]);
+        if (array_key_exists(self::terminateCriteriaNode,$viewData)) {
+            $this->setSelectedCheckboxes($forms,$viewData[self::terminateCriteriaNode],$this->combinePrefixArray(self::terminateCriteriaOtherTypes));
         }
     }
 
@@ -102,8 +103,8 @@ class ConsentType extends TypeAbstract
             $newData[self::terminateParticipantsNode] = $this->getChosenArray($forms,self::terminateParticipantsNode,self::terminateParticipantsOther,$this->createAppendArray(self::terminateParticipantsNode));
         }
         // terminate criteria
-        if (array_key_exists(self::terminateCriteriaNode,$forms)) {
-            $newData[self::terminateCriteriaNode] = $forms[self::terminateCriteriaNode]->getData();
+        if (array_key_exists(self::terminateCriteriaOther,$forms)) {
+            $newData[self::terminateCriteriaNode] = $this->getSelectedCheckboxes($forms,self::terminateCriteriaTypes,$this->combinePrefixArray(self::terminateCriteriaOtherTypes));
         }
         $viewData = $newData;
     }

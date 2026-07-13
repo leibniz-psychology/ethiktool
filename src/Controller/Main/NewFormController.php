@@ -98,8 +98,10 @@ class NewFormController extends ControllerAbstract
                     $this->addChosenNode($votesNode,self::instVote);
                     // medicine
                     $medicineNode = $appDataNode->addChild(self::medicine);
-                    $this->addChosenNode($medicineNode,self::medicine);
-                    $this->addChosenNode($medicineNode,self::physicianNode);
+                    if (!in_array($committeeType,self::committeeNoMedicine)) {
+                        $this->addChosenNode($medicineNode,self::medicine);
+                        $this->addChosenNode($medicineNode,self::physicianNode);
+                    }
                     // summary;
                     $appDataNode->addChild(self::summary)->addChild(self::descriptionNode);
 
@@ -138,7 +140,9 @@ class NewFormController extends ControllerAbstract
         } // if ($general->isSubmitted())
         return $this->render('Main/newForm.html.twig', $this->setRenderParameters($request,$general,
             [self::wrongPassword => $wrongPassword,
+             'committeeTypes' => $this->getCommitteeArray(),
              'committeeBeta' => self::committeeTypesBeta,
+             'selected' => $committeeType,
              self::committeeParams.self::newForm => $this->setCommittee($session,$committeeType,$language,false)])); // committee params only for the page, not for the header
     }
 }

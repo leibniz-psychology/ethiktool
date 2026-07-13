@@ -6,6 +6,9 @@
     {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
     <div class="noPageBreak"> {# avoid page break between heading and first paragraph #}
         {{ pdfMacros.addHeading(privacyHeading,savePDF) }}
+        {% if hint is not same as '' %}
+            <div class="{{ textPreview }} fontRed">{{ hint|raw }}</div>
+        {% endif %}
         <div class="{{ textPreview }}" style="{{ style }}">
             {{ privacyIntro|raw|nl2br }}
         </div>
@@ -39,7 +42,7 @@
         text:        translated heading
         savePDF:     if true, the pdf will be saved on disk
     #}
-    <div class="{{ textPreview }} bold" style="margin-top: 1em; {{ savePDF ? 'page-break-inside: avoid; height: 45px; margin-bottom: -20px' }}">{{ paragraph~') '~text }}</div> {# avoid page break between heading and first line #}
+    <div class="{{ textPreview }} bold" style="margin-top: 1em; {{ savePDF ? 'break-inside: avoid; height: 45px; margin-bottom: -20px' }}">{{ paragraph~') '~text }}</div> {# avoid page break between heading and first line #}
 {% endmacro %}
 
 {% macro addParagraphs(content,textPreview, paragraphNumber = 0, additional = []) %}
@@ -52,7 +55,7 @@
     {% set addNumber, hasAdditional, startParagraph = paragraphNumber>0, additional is not same as [], paragraphNumber %}
     {% for heading, paragraphs in content %}
         {% set curAdditional = additional[paragraphNumber-startParagraph] ?? ['',''] %}
-        <div class="{{ textPreview }}" style="page-break-inside: avoid; text-align: justify; line-height: 1.5; margin-top: 1.5em"> {# avoid page break between heading and first (sub-)paragraph #}
+        <div class="{{ textPreview }}" style="break-inside: avoid; text-align: justify; line-height: 1.5; margin-top: 1.5em"> {# avoid page break between heading and first (sub-)paragraph #}
             <div style="font-weight: bold; margin-bottom: 0.5em">{{ (addNumber ? paragraphNumber~') ')~(heading|raw) }}</div>
             {% if curAdditional[0] is not same as '' %}
                 <div style="margin-bottom: 1em">{{ curAdditional[0]|raw|nl2br }}</div>
@@ -75,7 +78,7 @@
         textPreview: classes of div surrounding the paragraph
         pageBreak:   if true, page break inside the div will be avoided
     #}
-    <div class="{{ textPreview }}" style="{% if pageBreak %}page-break-inside: avoid;{% endif %} text-align: justify; margin-bottom: 1em">
+    <div class="{{ textPreview }}" style="{% if pageBreak %}break-inside: avoid;{% endif %} text-align: justify; margin-bottom: 1em">
         {% if paragraph[0] is not same as '' %} {# subheading of sub-paragraph #}
             <div style="margin-bottom: 0.25em">{{ paragraph[0]|raw|nl2br }}</div>
         {% endif %}

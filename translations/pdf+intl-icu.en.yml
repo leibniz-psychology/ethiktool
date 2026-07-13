@@ -2,7 +2,10 @@
 # In case of committeeType, 'other' is the default that is shown if the test committee is chosen.
 # Where possible, translations from the messages-files are used. If equivalent/similar wordings are used here, the keys are the same as in the messages-files.
 heading: >-
-  Proposal to {committeeAcc}
+  {isAllowed, select,
+    true  {Proposal to {committeeAcc}}
+    other {Ethics form for student self-assessment}}
+headingSub: 'This ethics form only serves the purpose of self-assessment for students. Using this form for filing an application with {committeeLocationDat} is not allowed.'
 
 header: |
   Generated with Ethiktool version {toolVersion}
@@ -171,9 +174,9 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
         other {Measures to ensure voluntariness despite the special circumstances (closed group / dependent relationship):}}
     terminateCons: 'Is withdrawal from participation possible at any time and without disadvantages?'
     terminateConsSub: 'Justification and, if applicable, description of disadvantages in case of withdrawal from participation:'
-    terminateCriteria: 'Which circumstances lead to an early termination of data collection by the project contributors?'
+    terminateCriteria: 'Under which circumstances is data collection terminated early by the project contributors?'
     measures: 'Which data collection methods are used to acquire data from participants?'
-    measuresSub: 'Description of the methods:'
+    measuresSub: 'Detailed description of data collection methods:'
     interventions: 'Which specific measures/interventions are participants exposed to as part of the study?'
     interventionsSub: 'Description of the measures/interventions:'
     otherSources: 'Will individually traceable data from other sources be added?'
@@ -263,16 +266,22 @@ addresseePrefix: >-
 singleDocuments:
   application: >-
     {isSingleDocs, select,
-      true  {This is an interim document, not the final application form. {isComplete, select,
-                   true  {Please use the complete proposal file for submission to the ethics committee.}
-                   other {The entries in the Ethiktool are not yet complete or free of errors.}}}
-      other {This document is not intended for submission to the ethics committee. Please use the complete proposal file for submission.}}
+      true  {This is an interim document, not the final {isComplete, select,
+                   true  {{isAllowed, select,
+                            true  {application form. Please use the complete proposal file for submission to the ethics committee.}
+                            other {self-assessment form.}}}
+                   other {application form. The entries in the Ethiktool are not yet complete or free of errors.}}}
+      other {This document is not intended for submission to the ethics committee{isAllowed, select,
+              true  {. Please use the complete proposal file for submission.}
+              other { but for student self-assessment only.}}}}
 
   participation: >-
     This is an interim result, not a ready-to-use participant document. {isComplete, select,
-      true  {Please use the complete proposal file for submission to the ethics committee. {hasReviewDocs, select,
+      true  {{isAllowed, select,
+                true  {Please use the complete proposal file for submission to the ethics committee. {hasReviewDocs, select,
                                                                                               true  {It contains the participant documents in their final form.}
                                                                                               other {}}}
+                other {}}}
       other {The entries in the Ethiktool are not yet complete or free of errors.}}
 
 # application
@@ -559,27 +568,47 @@ projectdetails:
                             other        {assent}} is given}
         notApplicable {not applicable: The {addressee} are not informed in advance or after-the-fact that {participant} are participating in a study.}
         other         {in the following way: {otherDescription}}}
+    terminateCriteria:
+      malaise: 'in case of obvious discomfort or other indication of participant strain or burden: {description}'
+      regulation: 'in case a participant violates safety measures that were communicated in advance: {description}'
+      time: 'in case the planned duration of data collection is considerable exceeded in an individual'
+      attention: 'in case a participant gives wrong answers on several attention-check items'
+      criteria: 'in case it becomes obvious during data collection that an inclusion criterion is not fulfilled or that an exclusion criterion applies'
+      malfunction: 'in case of technical malfunction of the used equipment'
+      terminateCriteriaOther: 'under the following circumstances: {description}'
+      presence: 'termination by the project contributors is not possible because they are not or only temporarily present during data collection'
+      unnecessary: 'termination by the project contributors is not deemed necessary'
   measures:
-    measuresTypes:
-      measuresObservation: 'observation of participant behaviour by a project contributor'
-      measuresVideo: 'recordings or pictures: {description}'
-      measuresSurvey: 'surveys: {description}'
-      measuresInstrumental: 'instrumental measurements: {description}'
-      otherMeasures: 'other data collection method(s): {description}'
-    interventionsTypes:
-      noIntervention: 'no specific intervention/measure, only incidental data'
-      interventionsSurvey: 'questions are being asked (see data collection methods)'
-      feedback: 'feedback to participants: {description}'
-      everyday: 'deliberate induction of everyday situations: {description}'
-      stimulus: 'presentation of stimuli: {description}'
-      tasks: 'task demands: {description}'
-      stimulation: 'electric/magnetic stimulation: {description}'
-      psychological: 'psychological intervention: {description}'
-      physical: 'physical strain: {description}'
-      therapy: '(therapeutic) physical treatment measures: {description}'
-      medical: 'administration of substances: {description}'
-      invasive: 'invasive interventions: {description}'
-      other: 'other measure(s): {description}'
+    measures:
+      measuresFurther:
+        measuresObservation: "\n- documentation of observation of participants: {description}"
+        measuresInterview: "\n- documentation of individual interviews: {description}"
+        measuresInterviewGroups: "\n- documentation of group interviews: {description}"
+        surveyConduct: >-
+
+          - questionnaire administration: {description, select,
+                                                  written {written}
+                                                  oral    {oral}
+                                                  mixed   {written/oral mixed}
+                                                  other   {}}
+        screening: "\n- Is a normed screening questionnaire with standardized values applied? {description}"
+        gene: "\nIs the collected material used for genetic analyses? {description}"
+      documentation:
+        documentationNotes: 'free notes'
+        documentationReport: 'pre-structured protocol'
+        documentationPhoto: 'photos'
+        documentationVideo: 'video recordings'
+        documentationAudio: 'audio recordings'
+        documentationOther: 'in the following way: {description}'
+    interventions:
+      interventionsSurvey: ' (see data collection methods: {dummy})'
+      invasiveExtract: ' (see data collection methods, collection of body material)'
+    description: >-
+      {type, select,
+        measures {
+                  - Description of the methods:
+                                                       }
+        other    {}}{description}
   burdensRisks:
     burdens:
       noBurdens: 'no burdens'
@@ -1252,6 +1281,10 @@ participation:
 # data privacy
 dataPrivacy:
   title: 'Annex on data processing'
+  hint: >- # TODO: translate
+    {committeeType, select,
+      PHT   {Die Prüfung dieses Antrags durch die Ethikkommission erfolgt ausschließlich auf Grundlage ethischer Gesichtspunkte gemäß der geltenden Geschäftsordnung. Eine datenschutzrechtliche Prüfung (insbesondere im Hinblick auf die Einhaltung der DSGVO und des DSG) ist <span style="font-weight: bold">nicht</span> Gegenstand des Verfahrens und wird durch das Votum der Ethikkommission nicht ersetzt. Die datenschutzrechtliche Konformität des Vorhabens liegt in der alleinigen Verantwortung der Antragstellenden und ist eigenständig sicherzustellen.}
+      other {}}
   intro:
     Information on processing personal data within the {numStudies, plural,
     =1    {study “{projectTitle}“}
@@ -1291,6 +1324,22 @@ dataPrivacy:
                  Warburger Str. 100
                  33098 Paderborn
                  Web: https://www.uni-paderborn.de}
+          PHHD  {Pädagogische Hochschule Heidelberg
+                 Keplerstr. 87
+                 69120 Heidelberg,
+                 Web: https://www.ph-heidelberg.de/en}
+          SRH   {SRH University of Applied Sciences Heidelberg
+                 Ludwig Guttmann-Straße 6
+                 69123 Heidelberg
+                 Web: https://www.srh-university.de/en}
+          BICC  {BICC – Bonn International Centre for Conflict Studies gGmbH
+                 Pfarrer-Byns-Str. 1
+                 53121 Bonn
+                 Web: https://www.bicc.de}
+          PHT   {Pädagogische Hochschule Tirol
+                 Pastorstraße 7
+                 A-6010 Innsbruck
+                 https://ph-tirol.ac.at/}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1303,24 +1352,61 @@ dataPrivacy:
     representative:
       title: 'Data protection officer:'
       text: >-
-        The data protection officer can be reached via regular mail at the address of the responsible institution.
-
         {committeeType, select,
-          TUC   {Phone: +49 (0)371 531-12030
+          TUC   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+                
+                
+                 Phone: +49 (0)371 531-12030
                  E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
-          EUB   {Phone: +49 (0)521 106-5225
+          EUB   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+
+
+                 Phone: +49 (0)521 106-5225
                  E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
-          JGU   {Phone: +49 (0)6131 39-20065
+          JGU   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+
+
+                 Phone: +49 (0)6131 39-20065
                  E-Mail: datenschutz@uni-mainz.de
                  Web: https://www.uni-mainz.de/datenschutz/}
-          DLR   {Phone: +49 (0)2203 601-0
+          DLR   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+
+
+                 Phone: +49 (0)2203 601-0
                  E-Mail: datenschutz@dlr.de}
-          TUD   {Phone: +49 (0)351 463-32839
+          TUD   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+
+
+                 Phone: +49 (0)351 463-32839
                  E-Mail: informationssicherheit@tu-dresden.de}
-          UH1   {Phone: +49 (0)5121-883-10922
+          UH1   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+
+
+                 Phone: +49 (0)5121-883-10922
                  E-Mail: datenschutz@uni-hildesheim.de}
-          UPB   {Phone: +49 (0)5251 / 60–4444
+          UPB   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+
+
+                 Phone: +49 (0)5251 / 60–4444
                  E-Mail: datenschutz@uni-paderborn.de}
+          PHHD  {The data protection officer can be reached via regular mail at the address of the responsible institution.
+
+
+                 Phone: 06221 / 477-134
+                 E-Mail: penshorn@ph-heidelberg.de}
+          SRH   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+
+
+                 Phone: 06221 / 6799840
+                 E-Mail: aleksandra.sreckovic@srh.de}
+          BICC  {Althammer & Kill GmbH & Co. KG
+                 Roscherstraße 7
+                 30161 Hannover
+                 Phone: 0211 / 93674890
+                 E-Mail: kontakt-dsb@althammer-kill.de}
+          PHT   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+        
+                 E-Mail: datenschutz@ph-tirol.ac.at}
           other {Phone: +49 (0)1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1552,6 +1638,7 @@ dataPrivacy:
 
 
       Furthermore, you can assert the right to file a complaint with the supervisory data protection authority (article 77 EU-GDPR). The responsible person in the case {committeeLocationGen} is:
+      
 
       {committeeType, select,
         TUC   {Sächsische Datenschutz- und Transparenzbeauftragte
@@ -1587,8 +1674,32 @@ dataPrivacy:
         UPB   {Landesbeauftragte*r für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
                Kavalleriestraße 2-4
                40213 Düsseldorf
-               Tel.: +49 (0)211/38424-0
+               Phone: +49 (0)211/38424-0
                E-Mail: poststelle@ldi.nrw.de}
+        PHHD  {ZENDAS
+               Zentrale Datenschutzstelle der baden-württembergischen Universitäten
+               Universität Stuttgart
+               Breitscheidstr. 2
+               70174 Stuttgart
+               Phone: 0711/685-0
+               E-Mail: poststelle@uni-stuttgart.de}
+        SRH   {ZENDAS
+               Zentrale Datenschutzstelle der baden-württembergischen Universitäten
+               Universität Stuttgart
+               Breitscheidstr. 2
+               70174 Stuttgart
+               Phone: +49 (0)711/685-0
+               E-Mail: poststelle@uni-stuttgart.de}
+        BICC  {Landesbeauftragte*r für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
+               Kavalleriestraße 2-4
+               40213 Düsseldorf
+               Phone: +49 (0)211/38424-0
+               E-Mail: poststelle@ldi.nrw.de}
+        PHT   {Österreichische Datenschutzbehörde
+               Barichgasse 40-42
+               A-1030 Wien
+               Phone: +43 1 52 152-0
+               E-Mail: dsb@dsb.gv.at}
         other {}}
       
       
@@ -1909,12 +2020,6 @@ completeForm:
                     yes   { (see field 41)}
                     other {}}}
           other {}}
-      otherSources: >-
-        {isFull, select,
-          true  {{answer, select,
-                    yes   { (see field 33)}
-                    other {}}}
-          other {}}
       conflict: >-
         {isFull, select,
           true  {{answer, select,
@@ -1995,7 +2100,6 @@ completeForm:
       risks: 'Risks'
       finding: '(Incidental) Findings'
       dataPrivacy: 'Personal data'
-      otherSources: 'Data from other sources'
       dataSourceVotes: 'Research ethics standards'
       legitimization: 'Information/Consent'
       restriction: 'Access restriction/Dissemination'
@@ -2013,7 +2117,6 @@ completeForm:
     risks: 'The study involves dangers or risks for individual persons.'
     finding: 'The study might reveal clinically relevant (incidental) findings.'
     dataPrivacy: 'The study involves relevant processing of personal data.'
-    otherSources: 'Individually traceable data from other sources are retrieved.'
     dataSourceVotes: 'The re-used research data were originally collected with adherence to standards of research ethics.'
     legitimization: 'The persons whose data are analyzed agreed to or were at least aware of their data possibly being re-used for research purposes.'
     restriction: 'The re-use/re-analysis leads to wider dissemination of data that were originally access-restricted.'
@@ -2041,3 +2144,7 @@ logo:
   TUD: 'Logo of Dresden University of Technology'
   UH1: 'Logo of Hildesheim University'
   UPB: 'Logo of Paderborn University'
+  PHHD: 'Logo of Heidelberg University of Education'
+  SRH: 'Logo of SRH University'
+  BICC: 'Logo of Bonn International Centre for Conflict Studies'
+  PHT: 'Logo of University College of Teacher Education Tyrol'

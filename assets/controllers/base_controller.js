@@ -308,7 +308,7 @@ export default class extends Controller {
     setCommitteeButton() {
         let committee = this.committeeTarget.value;
         let isCommitteeSelected = committee!=='';
-        let isBeta = this.committeeBetaValue.includes(committee)
+        let isBeta = this.committeeBetaValue.includes(committee);
         if (this.hasPasswordTarget) {
             let parent = this.passwordTarget.parentElement;
             setElementVisibility(parent.previousElementSibling,isBeta,1);
@@ -341,13 +341,16 @@ export default class extends Controller {
         return element;
     }
 
-    /** Enables or disables a group of checkboxes. The event must have two parameters 'single' (string) and 'multiCheck' (array with strings). If the widget with the id of the 'single' parameter is checked, all widgets in 'multiCheck' are deselected and disabled. Otherwise, if any of the widgets in 'multiCheck' is selected, the widget with the id of the 'single' parameter is deselected and disabled.
+    /** Enables or disables a group of checkboxes. The event must have two parameters 'single' (string or array) and 'multiCheck' (array with strings). If the widget with the id of the 'single' parameter (or any id in the array) is checked, all widgets in 'multiCheck' are deselected and disabled (except the other ones in 'single'). Otherwise, if any of the widgets in 'multiCheck' is selected, the widget with the id of the 'single' parameter (or all in case of array) is deselected and disabled.
      * @param event widget that invoked the method
      */
     setMultiCheckbox(event) {
         let params = event.params;
-        let single = document.getElementById(params.single);
-        let isSingle = single.checked;
+        let single = params.single;
+        if (!Array.isArray(single)) {
+            single = [single];
+        }
+        let isSingle = getSelected(single)[0];
         let anyChecked = false; // gets true if any checkbox except 'single' is checked
         for (let id of params.multiCheck) {
             let widget = document.getElementById(id);
@@ -356,8 +359,11 @@ export default class extends Controller {
             widget.checked = isSingle ? false : isChecked;
             widget.disabled = isSingle;
         }
-        single.checked = anyChecked ? false : isSingle;
-        single.disabled = anyChecked;
+        for (let id of single) {
+            let element = document.getElementById(id);
+            element.checked = anyChecked ? false : element.checked;
+            element.disabled = anyChecked;
+        }
     }
 
     /** Submits the form and refreshes the middle (content) and right (preview) columns.

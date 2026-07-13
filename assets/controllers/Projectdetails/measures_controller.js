@@ -3,10 +3,11 @@ import {getSelected, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['measuresSurvey','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsSurvey','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','duration','measureTimeDays','measureTimeHours','measureTimeMinutes','breaksMinutes','compensationHint'];
+    static targets = ['measuresQuestionnaire','measuresBurdensRisks','measuresDescriptionDiv','measuresDescription','noIntervention','interventionsQuestionnaire','invasiveExtract','interventionsBurdensRisks','interventionsDescriptionDiv','interventionsPDF','loanYes','loanInputHint','onlineHint','locationInputHint','locationDescription','locationEnd','duration','measureTimeDays','measureTimeHours','measureTimeMinutes','breaksMinutes','compensationHint'];
 
     static values = {
         measuresTypes: Array,
+        measuresBodyTypes: Array,
         measuresDescription: Array, // 0: nothing selected, 1: at least one measure selected, 2: at least one measure selected including survey
         interventionsTypes: Array, // without 'no intervention
         location: String,
@@ -15,6 +16,11 @@ export default class extends Controller {
 
     connect() {
         this.setMeasuresInterventions();
+        for (let target of [this.interventionsQuestionnaireTarget, this.invasiveExtractTarget]) { // prevent submitting form by clicking on elements that are set automatically
+            target.addEventListener('click',(event) => {
+                event.preventDefault();
+            });
+        }
         if (this.hasLocationDescriptionTarget || this.hasLoanInputTarget) {
             this.setInputHints(); // needs to be called on connect() in case the page is reloaded by the user
         }
@@ -39,50 +45,42 @@ export default class extends Controller {
 
     // methods that are called from the template or from within this class
 
-    /** Sets the measures and interventions widgets.
-     * @params event widget that invoked the method
-     */
-    setMeasuresInterventions(event) {
-        let isMeasuresSurvey = this.measuresSurveyTarget.checked;
-        let isInterventionsSurvey = this.interventionsSurveyTarget.checked;
-        let isMeasuresSurveyTarget = false; // gets true if the selection of measures survey was changed
-        if (event!==undefined) { // a checkbox was clicked
-            let target = event.target;
-            isMeasuresSurveyTarget = target===this.measuresSurveyTarget;
-            // either both or none of the survey options must be checked
-            if (isMeasuresSurveyTarget) {
-                isInterventionsSurvey = isMeasuresSurvey;
-                if (isInterventionsSurvey) {
-                    this.noInterventionTarget.checked = false; // uncheck in case it was selected before
-                }
-            } else if (target===this.interventionsSurveyTarget) {
-                isMeasuresSurvey = isInterventionsSurvey;
-            }
-            this.measuresSurveyTarget.checked = isMeasuresSurvey;
-            this.interventionsSurveyTarget.checked = isInterventionsSurvey;
+    /** Sets the measures and interventions widgets. */
+    setMeasuresInterventions() {
+        // check if any survey option is selected
+        let isMeasuresSurvey = false;
+        for (let target of this.measuresQuestionnaireTargets) {
+            isMeasuresSurvey = isMeasuresSurvey || target.checked;
         }
-        let [anyMeasure] = getSelected(this.measuresTypesValue);
-        let [anyIntervention,numInterventions] = getSelected(this.interventionsTypesValue);
+        this.interventionsQuestionnaireTarget.checked = isMeasuresSurvey;
+        // check if any measures body option is selected
+        let isMeasuresBody = getSelected(this.measuresBodyTypesValue)[0];
+        this.invasiveExtractTarget.checked = isMeasuresBody;
+        // set visibility of widgets
         // measures
+        let anyMeasure = getSelected(this.measuresTypesValue)[0];
         setElementVisibility(this.measuresBurdensRisksTarget,anyMeasure); // hint for burdens/risks
-        setElementVisibility('measuresSurveyText',isMeasuresSurvey); // text field for description of survey
         if (this.hasMeasuresDescriptionTarget) {
-            setHint(this.measuresDescriptionDivTarget.firstElementChild.firstElementChild,this.measuresDescriptionValue[!anyMeasure ? 0 : (this.measuresSurveyTarget.checked ? 2 : 1)]); // hint above text field
             this.measuresDescriptionTarget.disabled = !anyMeasure;
+            setHint(this.measuresDescriptionDivTarget.firstElementChild.firstElementChild,this.measuresDescriptionValue[!anyMeasure ? 0 : (this.measuresQuestionnaireTargets[2].checked ? 2 : 1)]); // hint above text field
         }
         // interventions
+        let [anyIntervention,numInterventions] = getSelected(this.interventionsTypesValue);
         setElementVisibility(this.interventionsBurdensRisksTarget,anyIntervention); // hint for burdens/risks
         if (this.hasInterventionsDescriptionDivTarget) {
-            setElementVisibility(this.interventionsDescriptionDivTarget,anyIntervention && (numInterventions>1 || !isInterventionsSurvey)); // div containing text field and hint above text field
+            setElementVisibility(this.interventionsDescriptionDivTarget,(numInterventions-(isMeasuresBody ? 1 : 0)-(isMeasuresSurvey ? 1 : 0))>0);
             setElementVisibility(this.interventionsPDFTarget,anyIntervention);
         }
-        if (isMeasuresSurveyTarget) { // deselect and disable the 'no interventions' checkbox in case it was checked before and then measures survey was selected
-            this.noInterventionTarget.checked = false;
-            for (let checkbox of this.interventionsTypesValue) { // enable all checkboxes in case they were disabled
-                document.getElementById(checkbox).disabled = false;
-            }
-            this.noInterventionTarget.disabled = anyIntervention;
+        if (isMeasuresSurvey || isMeasuresBody) { // deselect and disable the 'no interventions' checkbox in case it was checked before
+            this.noInterventionTarget.checked = false; // uncheck in case it was selected before
         }
+        let isNoIntervention = this.noInterventionTarget.checked;
+        for (let checkbox of this.interventionsTypesValue) { // enable/disable all checkboxes
+            document.getElementById(checkbox).disabled = isNoIntervention;
+        }
+        this.noInterventionTarget.disabled = anyIntervention;
+        this.interventionsQuestionnaireTarget.disabled = !isMeasuresSurvey;
+        this.invasiveExtractTarget.disabled = !isMeasuresBody;
     }
 
     /** Sets the hint for deleting inputs for loan and location. */

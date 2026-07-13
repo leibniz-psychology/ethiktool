@@ -27,6 +27,7 @@ class CheckDocController extends ControllerAbstract
 
         $text = $this->getErrors($request,element: $appNode);
         $parameters = $this->setRenderParameters($request,$checkDoc,[],'checkDoc',addErrors: false);
-        return $this->render('Main/checkDoc.html.twig', array_merge($parameters,['text' => $text, 'hasError' => $text!==$this->translateString('checkDoc.noError',$parameters[self::committeeParams])]));
+        $committeeParams = $parameters[self::committeeParams];
+        return $this->render('Main/checkDoc.html.twig', array_merge($parameters,['text' => $text, 'hasError' => $text!==$this->translateString('checkDoc.noError',array_merge($committeeParams,$this->getStudentAllowed($committeeParams[self::committeeType],$this->xmlToArray($appNode->{self::appDataNodeName}->{self::coreDataNode}))))]));
     }
 }
