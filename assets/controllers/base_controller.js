@@ -284,22 +284,7 @@ export default class extends Controller {
             if (this.committeeTarget.value!=='') { // update div with requirements and technical hints
                 let html = document.createElement('div');
                 html.innerHTML = await response.text();
-                let expandables = document.getElementsByClassName('changeExpandable');
-                let classLists = [];
-                for (let element of expandables) {
-                    classLists.push(element.firstElementChild.classList);
-                }
                 this.confirmDivTarget.parentNode.replaceChild(html.querySelector('#confirmDiv'), this.confirmDivTarget);
-                for (let element=0;element<expandables.length;++element) {
-                    let curElement = expandables[element];
-                    let spanElement = curElement.firstElementChild;
-                    spanElement.setAttribute('class','');
-                    for (let curClass of classLists[element]) {
-                        spanElement.classList.add(curClass);
-                    }
-                    setElementVisibility(curElement.nextElementSibling,spanElement.classList.contains('dropdownExpanded')); // text that gets expanded
-                }
-                addExpandableListener(expandables);
             }
         });
     }

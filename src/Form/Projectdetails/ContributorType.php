@@ -46,7 +46,7 @@ class ContributorType extends TypeAbstract
         $viewData = array_fill_keys(self::tasksNodes,'');
         $noForms = [self::language,ControllerAbstract::submitDummy,ControllerAbstract::loadInput];
         foreach ($forms as $key => $element) {
-            if (!in_array($key,$noForms) && $element->getData()) {
+            if (!in_array($key,$noForms,true) && $element->getData()) {
                 $viewData[$this->splitStringByInt($key)] .= ','.$this->splitStringByInt($key,false);
             }
 

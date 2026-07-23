@@ -185,7 +185,7 @@ class DataSourceType extends TypeAbstract
                 $tempArray = [self::chosen => $chosen];
                 $isContributors = $chosen===0;
                 $hasDataSet = $isContributors && $this->isNotBegun || $chosen===1;
-                $hasFurtherQuestions = !($isContributors && !$this->isNotBegun);
+                $hasFurtherQuestions = !$isContributors || $this->isNotBegun;
                 if ($isContributors && array_key_exists(self::voteContributorsConfirm,$forms)) { // description and confirm
                     $tempArray[self::descriptionNode] = $forms[self::voteContributorsNode.self::descriptionCap]->getData();
                     $tempArray[self::voteContributorsConfirm] = $forms[self::voteContributorsConfirm]->getData();

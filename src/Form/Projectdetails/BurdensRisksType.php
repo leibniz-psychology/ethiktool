@@ -5,6 +5,7 @@ namespace App\Form\Projectdetails;
 use App\Abstract\TypeAbstract;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Traversable;
 
 class BurdensRisksType extends TypeAbstract
@@ -105,10 +106,9 @@ class BurdensRisksType extends TypeAbstract
     }
 
     /** Sets the compensation.
-     * @param array $forms form array where the data is set
-     * @param array $viewData array containing the data
+     * @param array<string, mixed> $forms form array where the data is set
+     * @param array<string, mixed> $viewData array containing the data
      * @param string $type must equal 'burdens', 'risks', or 'burdensRisksContributors'
-     * @return void
      */
     private function setCompensation(array $forms, array $viewData, string $type): void
     {
@@ -119,7 +119,7 @@ class BurdensRisksType extends TypeAbstract
     }
 
     /** Gets the compensation data.
-     * @param array $forms form array containing the data
+     * @param FormInterface[] $forms form array containing the data
      * @param string $type must equal 'burdens', 'risks', or 'burdensRisksContributors'
      * @return array array with the compensation data
      */

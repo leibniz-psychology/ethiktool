@@ -13,7 +13,7 @@ class MainController extends ControllerAbstract
     private string $changeCommittee = 'changeCommittee'; // session key if the committee was changed, the old review process was shortDocs, and the new one would be shortNoDocs
 
     #[Route('/', name: 'app_home')] // if the url is entered without the page, i.e., only with locale or without anything
-    public function showHome(Request $request): Response
+    public function showHome(): Response
     {
         return $this->redirectToRoute('app_main');
     }
@@ -54,7 +54,7 @@ class MainController extends ControllerAbstract
             $data = $response['main'];
             $committee = $data[self::committee] ?? '';
             $submitDummy = $data[self::submitDummy];
-            if (count($response)===1 && $submitDummy==='' && !str_contains($submitDummy,self::preview) || str_contains($submitDummy,self::language)) { // checkbox for changing committee was clicked, committee in dropdown was selected or language was changed
+            if (count($response)===1 && $submitDummy==='' || str_contains((string) $submitDummy,self::language)) { // checkbox for changing committee was clicked, committee in dropdown was selected or language was changed
                 $this->setTemp($session,$data,true);
             } elseif (array_key_exists(self::committeeChange,$response)) {
                 if (!$this->checkPassword($session,$data)) {
@@ -82,10 +82,32 @@ class MainController extends ControllerAbstract
                         $this->removeElement(self::shortDocsNode,$applicationProcessNode);
                     }
                 }
-                // remove description node of project start if review after start of data collection is not allowed
+                // remove some nodes of project start if review after start of data collection is not allowed
                 $projectStartNode = $coreDataNode->{self::projectStart};
-                if (!in_array($committee,self::begunCommittees) && $this->checkElement(self::descriptionNode,$projectStartNode)) {
-                    $projectStartNode->{self::chosen} == '';
+                $hasConfirm = $this->checkElement(self::projectStartBegunConfirm,$projectStartNode);
+                $hasRetrospective = $this->checkElement(self::projectStartRetrospective,$projectStartNode);
+                $isConfirmCommittee = in_array($committee,self::begunConfirmCommittees); // true if new committee has confirm
+                $isRetrospectiveCommittee = in_array($committee,self::retrospectiveCommittees); // true if new committee has retrospective
+                $hasBegunNew = $isConfirmCommittee || $isRetrospectiveCommittee; // true if review after start of data collection is allowed for new committee -> each committee where review after start of data collection is allowed either has the confirm checkbox or the retrospective text field
+                if ($hasConfirm && !$isConfirmCommittee) {
+                    $this->removeElement(self::projectStartBegunConfirm,$projectStartNode);
+                    if ($isRetrospectiveCommittee) {
+                        if (!$this->checkElement(self::descriptionNode,$projectStartNode)) { // confirm checkbox was not checked
+                            $projectStartNode->addChild(self::descriptionNode);
+                        }
+                        $projectStartNode->addChild(self::projectStartRetrospective);
+                    }
+                }
+                if ($hasRetrospective && !$isRetrospectiveCommittee) {
+                    $this->removeElement(self::projectStartRetrospective,$projectStartNode);
+                    if ($hasBegunNew) {
+                        $descriptionNode = $projectStartNode->{self::descriptionNode};
+                        $this->insertElementBefore(self::projectStartBegunConfirm,$descriptionNode);
+                        $projectStartNode->{self::projectStartBegunConfirm} = ((string) $descriptionNode)!=='' ? '1' : ''; // automatically check the checkbox to keep input of description node if any input was entered
+                    }
+                }
+                if (($hasConfirm || $hasRetrospective) && !$hasBegunNew) {
+                    $projectStartNode->{self::chosen} = '';
                     $this->removeElement(self::descriptionNode,$projectStartNode);
                 }
                 // remove student if new committee does not allow applicant to be student
@@ -105,7 +127,8 @@ class MainController extends ControllerAbstract
                 $contributorsInfosNode->{self::institutionInfo} = '';
                 $children = $contributorsNode->children();
                 if (count($children)>1) { // further contributors exist
-                    for ($index=1; $index<count($children); ++$index) {
+                    $numChildren = count($children);
+                    for ($index=1; $index<$numChildren; ++$index) {
                         $infosNode = $children[$index]->{self::infosNode};
                         if (((string) $infosNode->{self::institutionInfo})===self::institutionSame) {
                             $infosNode->{self::institutionInfo} = $this->translateString('committee.committeeLocationPure',[self::committee => $oldCommittee]);
@@ -128,7 +151,7 @@ class MainController extends ControllerAbstract
                     $this->removeElement(self::guidelinesNode,$coreDataNode);
                 }
                 // add/remove medicine nodes
-                $hasMedicineOld = !in_array($oldCommittee,self::committeeNoMedicine);
+                $hasMedicineOld = !in_array($oldCommittee,self::committeeNoMedicine,true);
                 $hasMedicine = !in_array($committee,self::committeeNoMedicine);
                 $medicineNode = $appDataNode->{self::medicine};
                 if (!$hasMedicineOld && $hasMedicine) {
@@ -173,7 +196,7 @@ class MainController extends ControllerAbstract
              'wrongPassword' => $wrongPassword,
              'committeeTypes' => $this->getCommitteeArray($currentCommittee),
              'selected' => $committeeTemp,
-             'numCommitteesBeta' => (new \NumberFormatter($request->getLocale(),\NumberFormatter::SPELLOUT))->format(count(self::committeeTypesBeta)),
+             'numCommitteesBeta' => (new \NumberFormatter($request->getLocale(),\NumberFormatter::SPELLOUT))->format(count(self::committeeTypes['newForm.committee.headings.beta'])),
              'redirectParams' => array_merge([
                  'params' => ['isMain' => $sessionValue['isMain'] ?? '', 'isMajor' => $this->getStringFromBool($isMajor)],
                  'modalID' => $errorModal,

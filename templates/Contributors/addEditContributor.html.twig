@@ -22,7 +22,7 @@
                     {% endif %}
                 </div>
                 <div data-action="input->{{ contributorsController }}#setSubmitButton {% if isInstitutionPosition %}input->{{ contributorsController }}#set{{ widget is same as 'position' ? 'Tasks' : 'Institution' }}{% endif %}">
-                    {{ form_widget(content[widget],{'id': widget, 'attr': (isInstitutionPosition ? addTarget(contributorsController, widget) : {})|merge(addStyle('width: 100%'))|merge(isInstitutionPosition ? addClass('Button_dropdown') : {})}) }}
+                    {{ form_widget(content[widget],{'id': widget, 'attr': (isInstitutionPosition ? addTarget(contributorsController, widget) : {})|merge(addStyle('width: 100%; max-width: 300px; text-overflow: ellipsis'))|merge(isInstitutionPosition ? addClass('Button_dropdown') : {})}) }}
                 </div>
                 {% set col2 = 'grid-column: 2;' %}
                 {% if isInstitutionPosition %}

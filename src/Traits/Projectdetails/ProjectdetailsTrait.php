@@ -434,16 +434,15 @@ trait ProjectdetailsTrait
     // functions
 
     /** Get the addressee from the current request. If the route parameters do not contain the current IDs of study, group and measure time point, use getAddressee.
-     * @param Request $request
      * @return string addressee
      */
     protected function getAddresseeFromRequest(Request $request): string
     {
-        return $this->getAddressee($this->xmlToArray($this->getMeasureTimePointNode($request,$request->get('_route_params'))->{self::groupsNode}));
+        return $this->getAddressee($this->xmlToArray($this->getMeasureTimePointNode($request)->{self::groupsNode}));
     }
 
     /** Get the addressee from a groups array. Can be used if the route parameters of the request do not contain the study, group and measure time point IDs, otherwise getAddresseeFromRequest can be used.
-     * @param array $groups array containing the groups elements
+     * @param array<string, mixed> $groups array containing the groups elements
      * @return string addressee
      */
     protected function getAddressee(array $groups): string
@@ -466,13 +465,8 @@ trait ProjectdetailsTrait
         $translationPrefix = 'projectdetails.addressee.';
         if ($onlyPronoun) {
             return $this->translateString($translationPrefix.'participants.pronoun');
-        } else {
-            $returnString = $this->translateString($translationPrefix.($isThirdParty ? 'thirdParties.' : 'participants.').$addressee);
-            if ($addPronoun && $addressee!==self::addresseeParticipants) {
-                $returnString = $this->translateString($translationPrefix.'participants.pronoun'.$addressee).$this->translateString($translationPrefix.'participants.'.$addressee);
-            }
-            return $returnString;
         }
+        return ($addPronoun && $addressee!==self::addresseeParticipants) ? $this->translateString($translationPrefix.'participants.pronoun'.$addressee).$this->translateString($translationPrefix.'participants.'.$addressee) : $this->translateString($translationPrefix.($isThirdParty ? 'thirdParties.' : 'participants.').$addressee);
     }
 
     /** Checks if the question for using a template is answered with either template or self-written text.
@@ -481,7 +475,7 @@ trait ProjectdetailsTrait
      */
     protected function getTemplateChoice(string $choice): bool
     {
-        return in_array($choice,[self::template,self::templateText]);
+        return in_array($choice,[self::template,self::templateText],true);
     }
 
     /** Checks whether inputs in informationIII are necessary.
@@ -504,7 +498,6 @@ trait ProjectdetailsTrait
      * @param string $nodeName name of the node that is appended. Must equal 'study', 'group' or 'measureTimePoint'
      * @param string $nameContent content of the 'name' node of the created node if $nodeName equals 'study' or 'group'
      * @param int|null $copy index of node that should be copied (only nodes whose name equals $nodeName are counted) or null if an empty node should be created
-     * @return void
      */
     protected function addMeasurement(SimpleXMLElement $element, string $nodeName, string $nameContent, ?int $copy = null): void
     {
@@ -531,7 +524,6 @@ trait ProjectdetailsTrait
     /** For each value in $nodes, a child of \$element with the same name is created. This child is added another 'chosen' child.
      * @param SimpleXMLElement $element node where the children get appended
      * @param array $nodeNames names of the children
-     * @return void
      */
     protected function addChildNodesChosen(SimpleXMLElement $element, array $nodeNames): void
     {

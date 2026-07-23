@@ -95,7 +95,7 @@ class TextsType extends TypeAbstract
         // finding text
         if (array_key_exists(self::findingTextNode,$forms)) {
             $tempVal = $forms[self::findingTemplate]->getData();
-            $newData[self::findingTextNode] = array_merge([self::findingTemplate => $tempVal],!$tempVal ? [self::descriptionNode => $forms[self::findingTextNode]->getData()] : []);
+            $newData[self::findingTextNode] = array_merge([self::findingTemplate => $tempVal],$tempVal ? [] : [self::descriptionNode => $forms[self::findingTextNode]->getData()]);
         }
         $viewData = $newData;
     }

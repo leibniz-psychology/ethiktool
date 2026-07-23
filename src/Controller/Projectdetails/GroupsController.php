@@ -18,7 +18,7 @@ class GroupsController extends ControllerAbstract
     {
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session,setRecent: true);
-        $routeParams = $request->get('_route_params');
+        $routeParams = $this->getRouteParams($request);
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
         if ($this->checkInactivePage($measureNode,self::groupsNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
@@ -26,7 +26,7 @@ class GroupsController extends ControllerAbstract
         $measureArray = $this->xmlToArray($measureNode);
         $groupsNode = $measureNode->{self::groupsNode};
         $hasCriteria = $this->checkElement(self::criteriaIncludeNode,$groupsNode);
-        $addresseeLoad = $this->getAddressee($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::groupsNode})); // addressee on page load
+        $addresseeLoad = $this->getAddressee($this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true)->{self::groupsNode})); // addressee on page load
         $isWards = $addresseeLoad!==self::addresseeParticipants;
         $consentArray = $measureArray[self::consentNode];
         $voluntaryArray = $consentArray[self::voluntaryNode];

@@ -3,6 +3,7 @@
 namespace App\Controller\Main;
 
 use App\Abstract\ControllerAbstract;
+use App\Controller\PDF\CompletePDFController;
 use App\Form\Main\CompleteFormType;
 use App\Traits\AppData\AppDataTrait;
 use App\Traits\Main\CompleteFormTrait;
@@ -12,7 +13,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CompleteFormController extends ControllerAbstract
 {
-    use CompleteFormTrait, AppDataTrait;
+    use CompleteFormTrait;
+    use AppDataTrait;
     #[Route('completeForm','completeForm')]
     public function showCompleteForm(Request $request): Response
     {
@@ -38,7 +40,7 @@ class CompleteFormController extends ControllerAbstract
         $isMultiple = [self::studyNode => count($studies)>1,self::groupNode => false,self::measureTimePointNode => false]; // each value gets true if multiple studies, groups, or measure time points exist.
         $reviewProcess = $session->get(self::reviewProcess);
         $isBegun = $this->getBegunDocs($reviewProcess,$session); // true if data collection has already begun and application type is either full or short and participant documents are reviewed
-        $isLegitimizationPDF = !(str_contains($reviewProcess,self::reviewProcessShort) && in_array($parameters[self::committeeType],self::reviewShortChoose) || str_contains($reviewProcess,'Requested')); // neither short without review of participant documents nor requested
+        $isLegitimizationPDF = (!str_contains($reviewProcess,self::reviewProcessShort) || !in_array($parameters[self::committeeType],self::reviewShortChoose)) && !str_contains($reviewProcess,'Requested'); // neither short without review of participant documents nor requested
         $appTypeArray = $coreDataArray[self::applicationType];
         $references = array_key_exists(self::descriptionNode,$appTypeArray) ? [$appTypeArray[self::descriptionNode]] : []; // references if any re-used data was reviewed
         foreach ($studies as $studyID => $study) {
@@ -98,7 +100,7 @@ class CompleteFormController extends ControllerAbstract
                         if ($privacyArray!=='' && array_key_exists(self::createNode, $privacyArray) && ($privacyArray[self::createNode][self::chosen]===self::createSeparate || ($privacyArray[self::addOwnNode] ?? '')==='0')) {
                             $pdfArray[self::privacyNode] = [];
                         }
-                        foreach ($pdfArray as $key => $value) {
+                        foreach (array_keys($pdfArray) as $key) {
                             if (!in_array($reviewProcess, self::reviewTypesPDF[$key]) || $key==='begun' && !$isInformation) { // add pdf only if applicable for the current review process and in case of 'fullBegun' if any information is given
                                 unset($pdfArray[$key]);
                             }
@@ -131,7 +133,7 @@ class CompleteFormController extends ControllerAbstract
             if (count($response)===1 && str_contains($response['complete_form'][self::submitDummy],'finish')) { // complete proposal should be created
                 self::$savePDF = true;
                 self::$isCompleteForm = true;
-                $this->forward('App\Controller\PDF\CompletePDFController::createPDF',['additional' => [$consentContent => $firstPage[$consentContent], str_replace('<a href','<a class="linkNormal" href',$consentFurtherText) => $firstPage[$consentFurtherText]]]); // remove marking of links
+                $this->forward(CompletePDFController::class.'::createPDF',['additional' => [$consentContent => $firstPage[$consentContent], str_replace('<a href','<a class="linkNormal" href',$consentFurtherText) => $firstPage[$consentFurtherText]]]); // remove marking of links
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
         }

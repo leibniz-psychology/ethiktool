@@ -16,7 +16,7 @@ class InformationIIIController extends ControllerAbstract
     #[Route(self::routePrefix.self::informationIIINode,self::informationIIINode)]
     public function showInformationIII(Request $request): Response
     {
-        if ($this->checkInactivePage($this->getMeasureTimePointNode($this->getXMLfromSession($request->getSession()),$request->get('_route_params')),self::informationIIINode)) {
+        if ($this->checkInactivePage($this->getMeasureTimePointNode($request),self::informationIIINode)) {
             return $this->redirectToRoute('app_main');
         }
         return $this->createFormAndHandleSubmit(InformationIIIType::class,$request,[self::informationIIINode],

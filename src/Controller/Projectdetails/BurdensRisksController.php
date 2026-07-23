@@ -17,7 +17,7 @@ class BurdensRisksController extends ControllerAbstract
     public function showBurdensRisks(Request $request): Response
     {
         $session = $request->getSession();
-        $routeParams = $request->get('_route_params');
+        $routeParams = $this->getRouteParams($request);
         $appNode = $this->getXMLfromSession($session); // no setRecent because first it needs to be checked if docNameRecent needs to be set
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
         if ($this->checkInactivePage($measureNode,self::burdensRisksNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
@@ -34,7 +34,7 @@ class BurdensRisksController extends ControllerAbstract
             $conArray = $textsArray[self::conNode];
             $translationPrefix = 'multiple.inputs.pages.';
             $inputArray = $this->setInputArray();
-            $burdensRisksArrayLoad = $this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::burdensRisksNode});
+            $burdensRisksArrayLoad = $this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true)->{self::burdensRisksNode});
             // con
             if (($this->getBurdensOrRisks($burdensRisksArrayLoad,self::burdensNode)[0] || $this->getBurdensOrRisks($burdensRisksArrayLoad,self::risksNode)[0]) && $conArray[self::conTemplate]==='1' && $this->checkInput($conArray,[self::descriptionNode => ''])) {
                 $this->addInputPage($translationPrefix,'textsCon',$inputArray);

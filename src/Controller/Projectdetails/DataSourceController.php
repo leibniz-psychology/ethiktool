@@ -5,6 +5,7 @@ namespace App\Controller\Projectdetails;
 use App\Abstract\ControllerAbstract;
 use App\Form\Projectdetails\DataSourceType;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
+use SimpleXMLElement;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,13 +19,13 @@ class DataSourceController extends ControllerAbstract
     {
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session,setRecent: true);
-        $routeParams = $request->get('_route_params');
+        $routeParams = $this->getRouteParams($request);
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
-        if ($measureNode===null) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
+        if (!($measureNode instanceof SimpleXMLElement)) { // page was opened before a proposal was created/loaded or a non-existent study / group / measure time point was opened
             return $this->redirectToRoute('app_main');
         }
         $dataSourceNode = $measureNode->{self::dataSourceNode};
-        $isLoadNew = $this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams))[self::dataSourceNode][self::originNode][self::chosen]===self::originNew;
+        $isLoadNew = $this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true))[self::dataSourceNode][self::originNode][self::chosen]===self::originNew;
         $modal = [];
         $projectdetailsPrefix = 'projectdetails.pages.';
         if ($isLoadNew) {
@@ -33,12 +34,12 @@ class DataSourceController extends ControllerAbstract
             $modal = ['prefix' => $tempPrefix, 'modalWidth' => true, 'leftButton' => $buttonPrefix.'save', 'middleButton' => $buttonPrefix.'cancel', 'rightButton' => $buttonPrefix.'undo', 'middleCont' => false, 'modalID' => 'originModal', 'link' => 'app_dataSource', 'params' => ['isMultiple' => $this->getStringFromBool($this->getMultiStudyGroupMeasure($appNode))], 'submitParams' => ['routeIDs' => $routeParams], 'routeParams' => $routeParams];
         }
         $reviewProcess = $this->getCurrentReviewProcess($appNode);
-        $hasDocs = !(str_contains($reviewProcess,self::reviewProcessShort) && in_array($this->getCommitteeType($session),self::reviewShortChoose) || str_contains($reviewProcess,'Requested'));
+        $hasDocs = (!str_contains($reviewProcess,self::reviewProcessShort) || !in_array($this->getCommitteeType($session),self::reviewShortChoose,true)) && !str_contains($reviewProcess,'Requested');
         $committeeType = $this->getCommitteeType($session);
 
-        $dataSource = $this->createFormAndHandleRequest(DataSourceType::class,$this->xmlToArray($dataSourceNode),$request,[self::dummyParams => ['isNotBegun' => !in_array($committeeType,self::begunCommittees), 'hasDocs' => $hasDocs]]);
+        $dataSource = $this->createFormAndHandleRequest(DataSourceType::class,$this->xmlToArray($dataSourceNode),$request,[self::dummyParams => ['isNotBegun' => !in_array($committeeType,self::begunCommittees,true), 'hasDocs' => $hasDocs]]);
         if ($dataSource->isSubmitted()) {
-            $submitDummy = $request->request->all()['data_source'][self::submitDummy];
+            $submitDummy = (string) $request->request->all()['data_source'][self::submitDummy];
             if (str_contains($submitDummy,self::preview) && str_contains($submitDummy,'app_dataSource') && !str_contains($submitDummy,'#')) { // download xml file after origin has changed from 'new' to 'existing' or go to data source page of another time point
                 $isSame = true;
                 foreach (explode("\n",$submitDummy) as $type) {

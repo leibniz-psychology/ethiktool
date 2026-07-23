@@ -255,7 +255,7 @@ class DataPrivacyType extends TypeAbstract
                         if ($tempVal!=='') {
                             $internalVal = $this->getArrayValue($tempArray, self::codeCompensationInternal);
                             $isExternal = $tempVal===self::codeCompensationExternal;
-                            if ($isExternal || $tempVal===self::codeCompensationInternal && in_array($internalVal, self::codeCompensationKeys)) {
+                            if ($isExternal || $tempVal===self::codeCompensationInternal && in_array($internalVal, self::codeCompensationKeys,true)) {
                                 $forms[self::codeCompensationNode.($isExternal ? 'external' : $internalVal)]->setData($this->getArrayValue($tempArray, self::codeCompensationPersonal));
                             }
                         }
@@ -381,7 +381,7 @@ class DataPrivacyType extends TypeAbstract
                             // personal keep consent
                             if ($personalKeep!==[]) {
                                 $tempArray = [];
-                                foreach ($personalKeep as $type => $value) {
+                                foreach (array_keys($personalKeep) as $type) {
                                     $tempArray[$type] = str_replace($type, '', $forms[$type.self::personalKeepConsentNode]->getData());
                                 }
                                 $newData[self::personalKeepConsentNode] = $tempArray;
@@ -424,7 +424,7 @@ class DataPrivacyType extends TypeAbstract
                                         $other = $purposeWoPrefix.self::purposeDataOther;
                                         $purposeArray = [self::purposeDataNode => $this->getSelectedCheckboxes($forms, $this->prefixArray(self::purposeDataTypes, $purposeWoPrefix), $this->createPrefixArray($other))];
                                     }
-                                    $isNotOnlyTechnical = !($isTechnical && $isResearch);
+                                    $isNotOnlyTechnical = !$isTechnical || !$isResearch;
                                     // marking remove
                                     if ($isNotOnlyTechnical && !$isPurposeFurther && $isNameListGeneration) { // only for purpose research
                                         $markingRemove = $purposeType.self::markingRemoveNode;
@@ -508,10 +508,9 @@ class DataPrivacyType extends TypeAbstract
     }
 
     /** Sets the access and order processing questions
-     * @param array $forms form array where the data is set
+     * @param array<string, mixed> $forms form array where the data is set
      * @param array|string $accessArray array containing the access data
      * @param string $purposeWoPrefix purpose for which the widgets are set
-     * @return void
      */
     private function setAccess(array $forms, array|string $accessArray, string $purposeWoPrefix): void
     {
@@ -535,9 +534,9 @@ class DataPrivacyType extends TypeAbstract
     }
 
     /** Gets the data from the access and order processing questions.
-     * @param array $forms form array containing the data
+     * @param array<string, mixed> $forms form array containing the data
      * @param string $purposeWoPrefix purpose for which the questions are checked
-     * @return array 0: array containing the access and eventually the order processing questions 1: true if any order processing known question was answered with yes, false otherwise
+     * @return array<int, bool|mixed[]> 0: array containing the access and eventually the order processing questions 1: true if any order processing known question was answered with yes, false otherwise
      */
     private function getAccess(array $forms, string $purposeWoPrefix): array
     {
@@ -546,7 +545,7 @@ class DataPrivacyType extends TypeAbstract
         $anyKnown = false;
         if (array_intersect($accessKeys,$this->prefixArray(self::accessOrderProcessing,$purposeWoPrefix))!==[]) {
             foreach ($accessKeys as $accessKey) {
-                if (in_array(str_replace($purposeWoPrefix,'',$accessKey),self::accessOrderProcessing)) {
+                if (in_array(str_replace($purposeWoPrefix,'',$accessKey),self::accessOrderProcessing,true)) {
                     // order processing
                     $prefix = $accessKey.self::orderProcessingNode;
                     $tempVal = $forms[$prefix]->getData();

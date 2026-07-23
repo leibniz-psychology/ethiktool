@@ -72,7 +72,7 @@ class CompensationType extends TypeAbstract
             // types
             $hasDescription = array_key_exists(self::compensationMoney.self::valueSuffix,$forms);
             $hasAwarding = array_key_exists(self::compensationMoney.self::awardingNode,$forms);
-            foreach ($tempArray as $selection => $value) {
+            foreach (array_keys($tempArray) as $selection) {
                 $isMoney = $selection===self::compensationMoney;
                 $description = $selection.self::descriptionCap;
                 if ($hasDescription) {
@@ -126,7 +126,7 @@ class CompensationType extends TypeAbstract
             // types
             $hasDescription = array_key_exists(self::compensationMoney.self::valueSuffix,$forms); // true if further inputs need to be made
             $hasAwarding = array_key_exists(self::compensationMoney.self::awardingNode,$forms);
-            foreach ($tempArray as $selection => $value) {
+            foreach (array_keys($tempArray) as $selection) {
                 if ($hasDescription) {
                     $isMoney = $selection===self::compensationMoney;
                     $isHours = $selection===self::compensationHours;
@@ -216,9 +216,6 @@ class CompensationType extends TypeAbstract
             }
             $value = round($value,2);
         }
-        if ($isCommaSeparator) {
-            $value = str_replace('.',',',(string) $value);
-        }
-        return $value;
+        return $isCommaSeparator ? str_replace('.',',',(string) $value) : $value;
     }
 }

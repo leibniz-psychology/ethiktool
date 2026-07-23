@@ -28,12 +28,10 @@ trait ContributorsTrait
     // methods
 
     /** Updates the contributor in projectdetails.
-     * @param Request $request
      * @param SimpleXMLElement $appNode root node of the application
      * @param int|string $id id of contributor to be edited or removed; empty string if new contributor is added
      * @param array $tasks array containing the tasks of the removed or edited contributor
      * @param boolean $isRemoved true if a contributor or task was removed, false otherwise
-     * @return void
      */
     protected function updateProjectdetailsContributor(Request $request, SimpleXMLElement $appNode, int|string $id, array $tasks, bool $isRemoved): void
     {
@@ -72,7 +70,6 @@ trait ContributorsTrait
     /** Creates a contributor node for each element in $contributors.
      * @param SimpleXMLElement $appNode root node of the application
      * @param array $contributorArray keys: indices of the contributors, values: infos and tasks of the contributor
-     * @return void
      */
     protected function addAllContributorsNodes(SimpleXMLElement $appNode, array $contributorArray): void
     {
@@ -85,8 +82,7 @@ trait ContributorsTrait
 
     /** Creates a new contributor node and adds content to it.
      * @param SimpleXMLElement $element node where the new contributor node gets appended
-     * @param array $contributor array containing two sub-arrays, one for the infos and one for the tasks
-     * @return void
+     * @param array<string, mixed> $contributor array containing two sub-arrays, one for the infos and one for the tasks
      */
     protected function addContributor(SimpleXMLElement $element, array $contributor): void
     {
@@ -102,7 +98,7 @@ trait ContributorsTrait
         }
         $tasksNode = $node->addChild(self::taskNode);
         foreach (($contributor[self::taskNode] ?: []) as $task => $value) {
-            $tasksNode->addChild($task, $task===self::otherTask ? htmlspecialchars($value) : '');
+            $tasksNode->addChild($task, $task===self::otherTask ? htmlspecialchars((string) $value) : '');
         }
     }
 }

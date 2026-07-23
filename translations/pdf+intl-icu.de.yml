@@ -547,7 +547,7 @@ projectdetails:
       voluntaryEnsure:
         title: >-
           {isReviewFull, select,
-            true  {• Maßnahmen zur Sicherstellung der Freiwilligkeit trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis):<br/>}
+            true  {Maßnahmen zur Sicherstellung der Freiwilligkeit trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis):<br/>}
             other {}}
         types:
           relatable: 'Niemand kann nachvollziehen, wer tatsächlich teilgenommen hat.'
@@ -557,7 +557,7 @@ projectdetails:
           substitute: 'Für nicht-teilnehmende Gruppenmitglieder gibt es eine adäquate Ersatzbeschäftigung, und zwar: {description}'
           independent: 'Die Entscheidung eines Gruppenmitglieds für oder gegen die Studie ist nicht von den Entscheidungen anderer Gruppenmitglieder abhängig.'
           voluntaryEnsureOther: 'Sonstige Maßnahmen: {description}'
-      no: "• Begründung, inwiefern die Freiwilligkeit nicht garantiert ist:\n"
+      no: "Begründung, inwiefern die Freiwilligkeit nicht garantiert ist:\n"
     consent: >-
       {chosen, select,
        written       {schriftlich}
@@ -581,18 +581,17 @@ projectdetails:
   measures:
     measures:
       measuresFurther:
-        measuresObservation: "\n- Dokumentation der Beobachtung der Teilnehmenden: {description}"
-        measuresInterview: "\n- Dokumentation der Einzelinterviews: {description}"
-        measuresInterviewGroups: "\n- Dokumentation der Gruppeninterviews: {description}"
+        measuresObservation: "Dokumentation der Beobachtung der Teilnehmenden: {description}"
+        measuresInterview: "Dokumentation der Einzelinterviews: {description}"
+        measuresInterviewGroups: "Dokumentation der Gruppeninterviews: {description}"
         surveyConduct: >-
-          
-          - Durchführung des Fragebogens: {description, select,
-                                                  written {schriftlich}
-                                                  oral    {mündlich}
-                                                  mixed   {schriftlich/mündlich gemischt}
-                                                  other   {}}
-        screening: "\n- Kommt ein normierter Screening-Fragebogen zum Einsatz? {description}"
-        gene: "\nWerden die entnommenen Körpermaterialien zur Analyse von Gendaten genutzt? {description}"
+          Durchführung des Fragebogens: {description, select,
+                                          written {schriftlich}
+                                          oral    {mündlich}
+                                          mixed   {schriftlich/mündlich gemischt}
+                                          other   {}}
+        screening: "Kommt ein normierter Screening-Fragebogen zum Einsatz? {description}"
+        gene: "Werden die entnommenen Körpermaterialien zur Analyse von Gendaten genutzt? {description}"
       documentation:
         documentationNotes: 'freie Notizen'
         documentationReport: 'vorstrukturiertes Protokoll'
@@ -605,8 +604,7 @@ projectdetails:
       invasiveExtract: ' (siehe Erhebungsmethoden, Entnahme von Körpermaterialien)'
     description: >-
       {type, select,
-        measures {
-                  - Beschreibung der Erhebungsmethoden:
+        measures {Beschreibung der Erhebungsmethoden:
                                                        }
         other    {}}{description}
   burdensRisks:
@@ -739,7 +737,7 @@ participation:
     title: 'Teilnahmedokumente'
     start: >-
       Das Ethiktool hat {levelNamesString} {isService, select,
-                                              true  {für die Antragstellenden Teilnahmedokumente erstellt. Diese sind der zu begutachtenden Version jedoch nicht beigefügt, weil die Begutachtung der Teilnahmedokumente in {committeeDat} für das gewählte Antragsverfahren nicht vorgesehen ist. Folgende Informationen aus den Teilnahmedokumenten sind für die Begutachtung zu berücksichtigen:}
+                                              true  {für die Antragstellenden Teilnahmedokumente erstellt. Diese sind der zu begutachtenden Version jedoch nicht beigefügt, weil die Begutachtung der Teilnahmedokumente bei {committeeDat} für das gewählte Antragsverfahren nicht vorgesehen ist. Folgende Informationen aus den Teilnahmedokumenten sind für die Begutachtung zu berücksichtigen:}
                                               other {keine Studieninformation für die {addressee, select,
                                                                                         children {Erziehungsberechtigen}
                                                                                         wards    {gesetzlichen Vertretungspersonen}
@@ -1354,49 +1352,31 @@ dataPrivacy:
       text: >-
         {committeeType, select,
           TUC   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-                  
-                  
                  Tel.: 0371 531-12030
                  E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
           EUB   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-
-
                  Tel.: 0521 106-5225
                  E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
           JGU   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-
-
                  Tel.: 06131 39-20065
                  E-Mail: datenschutz@uni-mainz.de
                  Web: https://www.uni-mainz.de/datenschutz/}
           DLR   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-
-
                  Tel.: 02203 601-0
                  E-Mail: datenschutz@dlr.de}
           TUD   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-
-
                  Tel.: 0351 463-32839
                  E-Mail: informationssicherheit@tu-dresden.de}
           UH1   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-
-
                  Tel.: 05121-883-10922
                  E-Mail: datenschutz@uni-hildesheim.de}
           UPB   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-
-
                  Tel.: 05251 / 60–4444
                  E-Mail: datenschutz@uni-paderborn.de}
           PHHD  {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-
-
                  Tel.: 06221 / 477-134
                  E-Mail: penshorn@ph-heidelberg.de}
           SRH   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-
-
                  Tel.: 06221 / 6799840
                  E-Mail: aleksandra.sreckovic@srh.de}
           BICC  {Althammer & Kill GmbH & Co. KG
@@ -1404,8 +1384,7 @@ dataPrivacy:
                  30161 Hannover
                  Tel.: 0211 / 93674890
                  E-Mail: kontakt-dsb@althammer-kill.de}
-          PHT   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
-        
+          PHT   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.       
                  E-Mail: datenschutz@ph-tirol.ac.at}
           other {Tel.: 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
@@ -1820,7 +1799,7 @@ consent:
   finding: >-
     Sollten sich Hinweise auf ein {savePDF, select,
           true  {ungewöhnliches Untersuchungsergebnis}
-          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">ungewöhnliches Untersuchungsergebnis</a>}} finden, würde eine Mitteilung darüber mir ggf. eine weitere Abklärung ermöglichen. Ich wurde darüber aufgeklärt, dass die Kenntnis von einem Krankheitsbild dazu führen kann, dass daraus resultierende Schäden nicht mehr versichert werden können. Ich damit einverstanden, dass mir Hinweise auf ein ungewöhnliches Untersuchungsergebnis mitgeteilt werden.
+          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">ungewöhnliches Untersuchungsergebnis</a>}} finden, würde eine Mitteilung darüber mir ggf. eine weitere Abklärung ermöglichen. Ich wurde darüber aufgeklärt, dass die Kenntnis von einem Krankheitsbild dazu führen kann, dass daraus resultierende Schäden nicht mehr versichert werden können. Ich bin damit einverstanden, dass mir Hinweise auf ein ungewöhnliches Untersuchungsergebnis mitgeteilt werden.
   personalKeepConsent: >-
     Ich bin mit der Aufbewahrung und Verwendung der personenbezogenen Forschungsdaten {savePDF, select,
           true  {}

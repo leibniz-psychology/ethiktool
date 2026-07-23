@@ -16,7 +16,7 @@ class LegalController extends ControllerAbstract
     #[Route(self::routePrefix.self::legalNode,self::legalNode)]
     public function showLegal(Request $request): Response
     {
-        $measureNode = $this->getMeasureTimePointNode($this->getXMLfromSession($request->getSession()),$request->get('_route_params'));
+        $measureNode = $this->getMeasureTimePointNode($request);
         if ($this->checkInactivePage($measureNode,self::legalNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }

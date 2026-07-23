@@ -17,14 +17,14 @@ class MeasuresController extends ControllerAbstract
     public function showMeasures(Request $request): Response
     {
         $session = $request->getSession();
-        $routeParams = $request->get('_route_params');
+        $routeParams = $this->getRouteParams($request);
         $appNode = $this->getXMLfromSession($session,setRecent: true); // if no pre information is given, docNameRecent and docName are equal
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
         if ($this->checkInactivePage($measureNode,self::measuresNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
         $hasDocs = $this->getReviewDocs($session);
-        $measureArrayOld = $this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams));
+        $measureArrayOld = $this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true));
         $measuresNode = $measureNode->{self::measuresNode};
         $measuresArrayOld = $measureArrayOld[self::measuresNode];
         $textInputOnline = '';

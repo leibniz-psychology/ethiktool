@@ -126,13 +126,13 @@ class NewFormController extends ControllerAbstract
                 } catch (DOMException | Exception) { // Exception is for SimpleXMLElement
                     return $this->setErrorAndRedirect($session);
                 }
-            } elseif (array_key_exists('backToMain',$response) || str_contains($submitDummy,'header')) { // "abort" or the link in the header was clicked
+            } elseif (array_key_exists('backToMain',$response) || str_contains((string) $submitDummy,'header')) { // "abort" or the link in the header was clicked
                 $this->removeTemp($session);
                 return $this->redirectToRoute('app_main');
-            } elseif (str_contains($submitDummy,self::quit)) { // "quit" was clicked
+            } elseif (str_contains((string) $submitDummy,self::quit)) { // "quit" was clicked
                 return $this->saveDocumentAndRedirect($request,$this->getXMLfromSession($request->getSession()));
             } else { // one of the language elements was clicked or the committee dropdown has changed -> all other buttons are disabled
-                $newLanguage = str_contains($submitDummy,self::language) ? substr(trim(explode("\n",$submitDummy)[1] ?? ''), strlen(self::language.':')) : $language;
+                $newLanguage = str_contains((string) $submitDummy,self::language) ? substr(trim(explode("\n",(string) $submitDummy)[1] ?? ''), strlen(self::language.':')) : $language;
                 $session->set(self::language, $newLanguage);
                 $this->setTemp($session,$data);
                 return $this->redirectToRoute('app_newForm',['_locale' => $newLanguage]);

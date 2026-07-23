@@ -547,7 +547,7 @@ projectdetails:
       voluntaryEnsure:
         title: >-
           {isReviewFull, select,
-            true  {• Measures to ensure voluntariness despite the special circumstances (closed group / dependent relationship):<br/>}
+            true  {Measures to ensure voluntariness despite the special circumstances (closed group / dependent relationship):<br/>}
             other {}}
         types:
           relatable: 'Nobody can retrace who actually participated.'
@@ -557,7 +557,7 @@ projectdetails:
           substitute: 'Non-participating group members are offered an adequate alternative activity, namely: {description}'
           independent: 'The decision of each group member for/against the study is not affected by the decision of other group members.'
           voluntaryEnsureOther: 'Other measures: {description}'
-      no: "• Justification on how and why voluntariness is not guaranteed:\n"
+      no: "Justification on how and why voluntariness is not guaranteed:\n"
     consent: >-
       {chosen, select,
         written       {in writing}
@@ -581,18 +581,17 @@ projectdetails:
   measures:
     measures:
       measuresFurther:
-        measuresObservation: "\n- documentation of observation of participants: {description}"
-        measuresInterview: "\n- documentation of individual interviews: {description}"
-        measuresInterviewGroups: "\n- documentation of group interviews: {description}"
+        measuresObservation: "documentation of observation of participants: {description}"
+        measuresInterview: "documentation of individual interviews: {description}"
+        measuresInterviewGroups: "documentation of group interviews: {description}"
         surveyConduct: >-
-
-          - questionnaire administration: {description, select,
-                                                  written {written}
-                                                  oral    {oral}
-                                                  mixed   {written/oral mixed}
-                                                  other   {}}
-        screening: "\n- Is a normed screening questionnaire with standardized values applied? {description}"
-        gene: "\nIs the collected material used for genetic analyses? {description}"
+          questionnaire administration: {description, select,
+                                          written {written}
+                                          oral    {oral}
+                                          mixed   {written/oral mixed}
+                                          other   {}}
+        screening: "Is a normed screening questionnaire with standardized values applied? {description}"
+        gene: "Is the collected material used for genetic analyses? {description}"
       documentation:
         documentationNotes: 'free notes'
         documentationReport: 'pre-structured protocol'
@@ -601,12 +600,11 @@ projectdetails:
         documentationAudio: 'audio recordings'
         documentationOther: 'in the following way: {description}'
     interventions:
-      interventionsSurvey: ' (see data collection methods: {dummy})'
+      interventionsQuestionnaire: ' (see data collection methods: {dummy})'
       invasiveExtract: ' (see data collection methods, collection of body material)'
     description: >-
       {type, select,
-        measures {
-                  - Description of the methods:
+        measures {Description of the methods:
                                                        }
         other    {}}{description}
   burdensRisks:
@@ -1354,49 +1352,31 @@ dataPrivacy:
       text: >-
         {committeeType, select,
           TUC   {The data protection officer can be reached via regular mail at the address of the responsible institution.
-                
-                
                  Phone: +49 (0)371 531-12030
                  E-Mail: datenschutzbeauftragter@tu-chemnitz.de}
           EUB   {The data protection officer can be reached via regular mail at the address of the responsible institution.
-
-
                  Phone: +49 (0)521 106-5225
                  E-Mail: datenschutzbeauftragte@uni-bielefeld.de}
           JGU   {The data protection officer can be reached via regular mail at the address of the responsible institution.
-
-
                  Phone: +49 (0)6131 39-20065
                  E-Mail: datenschutz@uni-mainz.de
                  Web: https://www.uni-mainz.de/datenschutz/}
           DLR   {The data protection officer can be reached via regular mail at the address of the responsible institution.
-
-
                  Phone: +49 (0)2203 601-0
                  E-Mail: datenschutz@dlr.de}
           TUD   {The data protection officer can be reached via regular mail at the address of the responsible institution.
-
-
                  Phone: +49 (0)351 463-32839
                  E-Mail: informationssicherheit@tu-dresden.de}
           UH1   {The data protection officer can be reached via regular mail at the address of the responsible institution.
-
-
                  Phone: +49 (0)5121-883-10922
                  E-Mail: datenschutz@uni-hildesheim.de}
           UPB   {The data protection officer can be reached via regular mail at the address of the responsible institution.
-
-
                  Phone: +49 (0)5251 / 60–4444
                  E-Mail: datenschutz@uni-paderborn.de}
           PHHD  {The data protection officer can be reached via regular mail at the address of the responsible institution.
-
-
                  Phone: 06221 / 477-134
                  E-Mail: penshorn@ph-heidelberg.de}
           SRH   {The data protection officer can be reached via regular mail at the address of the responsible institution.
-
-
                  Phone: 06221 / 6799840
                  E-Mail: aleksandra.sreckovic@srh.de}
           BICC  {Althammer & Kill GmbH & Co. KG
@@ -1405,7 +1385,6 @@ dataPrivacy:
                  Phone: 0211 / 93674890
                  E-Mail: kontakt-dsb@althammer-kill.de}
           PHT   {The data protection officer can be reached via regular mail at the address of the responsible institution.
-        
                  E-Mail: datenschutz@ph-tirol.ac.at}
           other {Phone: +49 (0)1234 56789
                  E-Mail: datenschutz@test-institution.de}}

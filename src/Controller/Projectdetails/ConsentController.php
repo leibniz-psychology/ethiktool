@@ -17,7 +17,7 @@ class ConsentController extends ControllerAbstract
     public function showConsent(Request $request): Response
     {
         $session = $request->getSession();
-        $routeParams = $request->get('_route_params');
+        $routeParams = $this->getRouteParams($request);
         $appNode = $this->getXMLfromSession($session,setRecent: true); // if no information is given/chosen, docNameRecent equals docName
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
         if ($this->checkInactivePage($measureNode,self::consentNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
@@ -30,10 +30,10 @@ class ConsentController extends ControllerAbstract
         $examined = $groupsArray[self::examinedPeopleNode];
         $addressee = $this->getAddresseeFromRequest($request);
         $hasInformationII = $addressee!==self::addresseeParticipants;
-        $isPreEmpty = in_array($information,self::emptyPre);
-        $isPreEmptyParticipants = in_array($hasInformationII ? $this->getInformationString($measureArray[self::informationIINode]) : '',self::emptyPre);
+        $isPreEmpty = in_array($information,self::emptyPre,true);
+        $isPreEmptyParticipants = in_array($hasInformationII ? $this->getInformationString($measureArray[self::informationIINode]) : '',self::emptyPre,true);
         // check if inputs on texts are made that may be deleted
-        $measureArrayLoad = $this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams));
+        $measureArrayLoad = $this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true));
         $introArrayLoad = $measureArrayLoad[self::textsNode][self::introNode] ?? [];
         $hasIntroDescription = array_key_exists(self::descriptionNode,$introArrayLoad);
         $isNoConsentLoad = $measureArrayLoad[self::consentNode][self::consent][self::chosen]===self::voluntaryConsentNo;

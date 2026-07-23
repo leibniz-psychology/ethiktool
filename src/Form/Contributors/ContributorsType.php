@@ -13,7 +13,7 @@ class ContributorsType extends TypeAbstract
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach (self::applicantContributorsInfosTypes as $info) {
-            if (in_array($info,self::institutionPosition)) {
+            if (in_array($info,self::institutionPosition,true)) {
                 $isInstitution = $info===self::institutionInfo;
                 $this->addFormElement($builder, $info, 'choice',options: array_merge(['choices' => array_flip($isInstitution ? self::institutionTypes : self::positionsTypes)],$isInstitution ? [self::choiceParams => [self::institutionSameOption => $options[self::committeeParams]]] : []),hint: self::choiceTextHint);
                 $this->addFormElement($builder, $this->appendText($info.'Other'), 'text',hint: 'multiple.placeholder.'.$info);

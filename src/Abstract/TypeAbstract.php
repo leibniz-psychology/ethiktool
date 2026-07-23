@@ -70,7 +70,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
         $returnArray = [];
         foreach ($keys as $key) {
             if ($this->getFormData($forms,$key,false)) { // checkbox was selected
-                $returnArray[$key] = !array_key_exists($key,$otherIDs) ? '' : $forms[$otherIDs[$key]]->getData(); // if other group is selected, get description
+                $returnArray[$key] = array_key_exists($key,$otherIDs) ? $forms[$otherIDs[$key]]->getData() : ''; // if other group is selected, get description
                 if ($key===$exclusive) { // if $exclusive is checked immediately before/after any of the other checkboxes is checked (i.e., the second of these two is checked before the page was reloaded after submission), keep only the $exclusive key
                     break;
                 }
@@ -102,7 +102,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
     }
 
     /** Checks if \$key exists in $forms and if so, gets the data from it.
-     * @param array $forms array containing the form data
+     * @param array<string, mixed> $forms array containing the form data
      * @param string $key key to be checked
      * @param mixed $default value that is returned if $key does not exist
      * @return mixed data from \$key or an empty string if \$key does not exist
@@ -115,7 +115,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
     /** Creates an array with keys 'min', 'max', and 'step'.
      * @param int|float $min value for the 'min' key
      * @param int $max value for the 'max' key
-     * @return array array with two keys and values
+     * @return array<string, float|int> array with two keys and values
      */
     protected function setMinMax(int|float $min, int $max): array
     {
@@ -129,7 +129,6 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $name name of the widget
      * @param string $label label which is displayed next to the checkbox
      * @param string $textHint text that is displayed above the text field if nothing was entered
-     * @return void
      */
     protected function addCheckboxTextfield(FormBuilderInterface $builder, string $name, string $label, string $textHint = ''): void
     {
@@ -146,7 +145,6 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $textName if not an empty string, name of a text field
      * @param string $textHint if $textName is not an empty string, the text that is displayed above the text field
      * @param array $options additional options that are passed to the FormBuilder
-     * @return void
      */
     protected function addBinaryRadio(FormBuilderInterface $builder, string $name, string|bool $label = false, string $textareaName = '', string $textareaHint = '', string $textName = '', string $textHint = '', array $options = []): void
     {
@@ -156,14 +154,13 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
     /** Creates a group of radio buttons and, if $textareaName is provided, a textarea.
      * @param FormBuilderInterface $builder Formbuilder where the elements are created
      * @param string $name name of the widget
-     * @param array $choices keys and value of the radio buttons
+     * @param array<string, int> $choices keys and values of the radio buttons
      * @param string|bool $label label next to the group or false if no label should be added
      * @param string $textareaName if not an empty string, name of a textarea
      * @param string $textareaHint if $textareaName is not an empty string, the text that is displayed above the textarea
      * @param string $textName if not an empty string, name of a text field
      * @param string $textHint if $textName is not an empty string, the text that is displayed above the text field
      * @param array $options additional options that are passed to the FormBuilder for the radio group and the text field
-     * @return void
      */
     protected function addRadioGroup(FormBuilderInterface $builder, string $name, array $choices, string|bool $label = false, string $textareaName = '', string $textareaHint = '', string $textName = '', string $textHint = '', array $options = []): void
     {
@@ -186,7 +183,6 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $textareaTextHint if $textareaName is not an empty string, the text that is displayed above the textarea
      * @param array $labelNames if provided, last part of the translation key
      * @param array $options additional options for the checkboxes
-     * @return void
      */
     protected function addCheckboxGroup(FormBuilderInterface $builder, array $names, string $translationKey, string|array $otherNames = [], string|array $textHints = [], string $textareaName = '', string $textareaTextHint = '', array $labelNames = [], array $options = []): void
     {
@@ -214,7 +210,6 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param FormBuilderInterface $builder FormBuilder where the element is created
      * @param bool $isNewForm if true, the widgets are created for the page 'newForm'
      * @param string $committee current committee
-     * @return void
      */
     protected function addCommitteeForms(FormBuilderInterface $builder, bool $isNewForm = true, string $committee = ''): void
     {
@@ -232,7 +227,6 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
 
     /** Adds the submit dummy textarea and the load form.
      * @param FormBuilderInterface $builder FormBuilder where the element is created
-     * @return void
      */
     protected function addDummyForms(FormBuilderInterface $builder): void
     {
@@ -245,16 +239,15 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $name internal name of the element
      * @param string $class Object of the element
      * @param string|bool $label label of the element
-     * @param array $options additional options for the element depending on the type
+     * @param array<string, mixed> $options additional options for the element depending on the type
      * @param string $hint hint that is placed above a text field (will be passed as the placeholder to the template) or the placeholder a radio button group
-     * @return void
      */
     protected function addFormElement(FormBuilderInterface $builder, string $name, string $class, string|bool $label = false, array $options = [], string $hint = ''): void
     {
         $page = self::getPage();
-        if (in_array(self::getReviewProcess(),self::formTypeQuestions[$page][$name] ?? []) || $name==='submitDummy' || in_array($page,['newForm','coreData','landing','contributor','completeForm','quit','main'])) {
+        if (in_array(self::getReviewProcess(),self::formTypeQuestions[$page][$name] ?? [],true) || $name==='submitDummy' || in_array($page,['newForm','coreData','landing','contributor','completeForm','quit','main'],true)) {
             $classType = null;
-            $addOptions = array_merge(['label' => $label, 'required' => false, self::labelParams => $options[self::labelParams] ?? [], self::attrParams => $options[self::attrParams] ?? []], ['attr' => ['placeholder' => str_contains($class,'text') ? $hint : false, 'autocomplete' => 'off']]);
+            $addOptions = ['label' => $label, 'required' => false, self::labelParams => $options[self::labelParams] ?? [], self::attrParams => $options[self::attrParams] ?? [], 'attr' => ['placeholder' => str_contains($class,'text') ? $hint : false, 'autocomplete' => 'off']];
             switch ($class) {
                 case 'choice':
                     $builder->add($name, ChoiceType::class, array_merge(['choices' => $options['choices'], self::choiceParams => $options[self::choiceParams] ?? [], 'empty_data' => '', 'expanded' => $options['expanded'] ?? false, 'multiple' => $options['multiple'] ?? false, 'placeholder' => $hint ?: false],$addOptions));
@@ -309,7 +302,6 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param array|string $keys keys in \$forms and $data to be set. Can either be a single key or an array of keys
      * @param array|string $dataKeys if provided, the corresponding keys in $data
      * @param string $exclude if provided, value where the elements in $forms are not set
-     * @return void
      */
     protected function setSpinner(array $forms, array $data, array|string $keys, array|string $dataKeys = [], string $exclude = ''): void
     {
@@ -329,11 +321,10 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
 
     /** Sets a form element by getting the value from the 'chosen' key of \$array. For each element in \$furtherElements, further form elements are set. All keys are only set if they exist in $forms.
      * @param array $forms Form element holding the widgets
-     * @param array $array array containing the 'chosenKey' key which has a child 'chosen' and eventually further children. Keys: either numerical or keys to be used for the array. Values: keys in $forms
+     * @param array<string, mixed> $array array containing the 'chosenKey' key which has a child 'chosen' and eventually further children. Keys: either numerical or keys to be used for the array. Values: keys in $forms
      * @param string $chosenKey key of the form element to be set with the 'chosen' value
      * @param array $furtherElements further form elements to be set. For each element, it is first checked if the key exists in $array
      * @param bool $useKeys if true, the keys from \$furtherElements are used as the keys for \$array, otherwise the values in $furtherElements are used as keys
-     * @return void
      */
     protected function setChosenArray(array $forms, array $array, string $chosenKey, array $furtherElements, bool $useKeys = true): void
     {
@@ -350,7 +341,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
 
     /** Creates an array with 'description' as key and $value suffixed by 'Text' as value.
      * @param string $value value to be suffixed
-     * @return array key: 'description', value: $value suffixed by 'Text'
+     * @return array<string, string> key: 'description', value: $value suffixed by 'Text'
      */
     protected function createAppendArray(string $value = ''): array
     {
@@ -361,6 +352,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param $array array array where the key is searched
      * @param $key string key to be searched
      * @return string the value of the key if it exists, otherwise an empty string
+     * @param array<string, mixed> $array
      */
     protected function getArrayValue(array $array, string $key): string
     { // added here because it is called by the preceding function
@@ -369,7 +361,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
 
     /** Creates an array with key 'attr' whose value is an array with key 'placeholder' and text as value.
      * @param string $text value for inner array
-     * @return array placeholder array
+     * @return array<string, array<string, string>> placeholder array
      */
     protected function getPlaceholder(string $text): array
     {

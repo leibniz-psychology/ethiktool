@@ -91,11 +91,9 @@ class CompleteFormType extends TypeAbstract
     }
 
     /** Adds a pdf element.
-     * @param FormBuilderInterface $builder
      * @param string $name internal name of the element
      * @param string $label translation key for the label of the pdf button
      * @param array $parameters parameters for the translation
-     * @return void
      */
     private function addPDFfield(FormBuilderInterface $builder, string $name, string $label, array $parameters = []): void
     {

@@ -3,31 +3,15 @@
 namespace App\Twig;
 
 use Symfony\Component\Form\FormView;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
 
-class AppExtension extends AbstractExtension
+class AppExtension
 {
-    public function getFunctions(): array
-    {
-        return [new TwigFunction('boolToDisplay',$this->boolToDisplay(...)),
-                new TwigFunction('boolToString',$this->boolToString(...)),
-                new TwigFunction('addDisableTarget',$this->addDisableTarget(...)),
-                new TwigFunction('addTargetArray',$this->addTargetArray(...)),
-                new TwigFunction('addTarget',$this->addTarget(...)),
-                new TwigFunction('addLabelAttributes',$this->addLabelAttributes(...)),
-                new TwigFunction('addClass',$this->addClass(...)),
-                new TwigFunction('addStyle',$this->addStyle(...)),
-                new TwigFunction('getAnySelected',$this->getAnySelected(...)),
-                new TwigFunction('isArray',$this->isArray(...)),
-                new TwigFunction('addTracking',$this->addTracking(...)),];
-    }
-
     /** Returns the display value for a tag.
      * @param bool $bool bool that gets converted
      * @param int $display if $bool is true: 1: display is set to grid, 2: display is set to flex, otherwise to block
      * @return string 'block', 'grid', or 'flex' if $bool is true, 'none' otherwise
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'boolToDisplay')]
     public function boolToDisplay(bool $bool, int $display = 0): string
     {
         return 'display: '.($bool ? ($display===1 ? 'grid' : ($display===2 ? 'flex' : 'block')) : 'none');
@@ -37,6 +21,7 @@ class AppExtension extends AbstractExtension
      * @param bool $bool bool that gets converted
      * @return string string representation of the bool
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'boolToString')]
     public function boolToString(bool $bool): string
     {
         return $bool ? 'true' : 'false';
@@ -46,6 +31,7 @@ class AppExtension extends AbstractExtension
      * @param bool $addAttribute if true, the array will be wrapped inside an 'attr' array
      * @return array array for the form_widget() call
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'addDisableTarget')]
     public function addDisableTarget(bool $addAttribute = false): array
     {
         return  $addAttribute ? $this->addTargetArray('base','disableLoad') : $this->addTarget('base','disableLoad');
@@ -54,8 +40,9 @@ class AppExtension extends AbstractExtension
     /** Creates an array to be passed as the second argument of a form_widget() call. The array contains a stimulus target.
      * @param string $controller controller where the target gets passed to
      * @param string $target name of the target
-     * @return array array for the form_widget() call
+     * @return array<string, mixed[]> array for the form_widget() call
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'addTargetArray')]
     public function addTargetArray(string $controller, string $target): array
     {
         return ['attr' => $this->addTarget($controller,$target)];
@@ -66,6 +53,7 @@ class AppExtension extends AbstractExtension
      * @param string $target name of the target
      * @return array array for the form_widget() call
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'addTarget')]
     public function addTarget(string $controller, string $target): array
     {
         return ['data-'.$controller.'-target' => $target];
@@ -73,8 +61,9 @@ class AppExtension extends AbstractExtension
 
     /** Creates an array to be passed as the third argument of a form_label() call.
      * @param array $attributes attributes to be added
-     * @return array array for the form_label() cal
+     * @return array<string, mixed[]> array for the form_label() cal
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'addLabelAttributes')]
     public function addLabelAttributes(array $attributes): array
     {
         return ['label_attr' => $attributes];
@@ -86,6 +75,7 @@ class AppExtension extends AbstractExtension
      * @param string $style if provided, a second key 'style' is added
      * @return array array for the form_widget() call
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'addClass')]
     public function addClass(string $classname, bool $addAttr = false, string $style = ''): array
     {
         $returnArray = array_merge($classname!=='' ? ['class' => $classname] : [], $style!=='' ? $this->addStyle($style) : []);
@@ -97,6 +87,7 @@ class AppExtension extends AbstractExtension
      * @param bool $addAttributes if true, the style array is wrapped in an 'attributes' key
      * @return string[] array for the call
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'addStyle')]
     public function addStyle(string $style, bool $addAttributes = false): array
     {
         $styleArray = ['style' => $style];
@@ -107,8 +98,9 @@ class AppExtension extends AbstractExtension
      * @param FormView $forms form array
      * @param array $keys keys to be checked
      * @param string|array $unique keys whose selections means that no other key in $keys can be selected
-     * @return array 0: true if any 'unique' key is selected, 1: true if any of the other keys is selected, otherwise false in both cases, 2: number of selected checkboxes excluding the $unique one
+     * @return array<int, bool|int> 0: true if any 'unique' key is selected, 1: true if any of the other keys is selected, otherwise false in both cases, 2: number of selected checkboxes excluding the $unique one
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'getAnySelected')]
     public function getAnySelected(FormView $forms, array $keys, string|array $unique = ''): array
     {
         $anySelected = false;
@@ -133,6 +125,7 @@ class AppExtension extends AbstractExtension
      * @param array|string $element element to be checked
      * @return bool true if element is an array, false otherwise
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'isArray')]
     public function isArray(array|string $element): bool
     {
         return is_array($element);
@@ -144,6 +137,7 @@ class AppExtension extends AbstractExtension
      * @param string $action action. Defaults to 'click'
      * @return string onClick event
      */
+    #[\Twig\Attribute\AsTwigFunction(name: 'addTracking')]
     public function addTracking(string $category, string $name, string $action = 'click'): string
     {
         return "_paq.push(['trackEvent', '".$category."', '".$action."', '".$name."'])";

@@ -42,7 +42,7 @@ class CoreDataType extends TypeAbstract
             if ($key!==self::fundingQuali) {
                 $this->addFormElement($builder,$this->appendText($key),'textarea',hint: $tempPrefix.$key);
             }
-            if (in_array($key,self::fundingResearchExternal)) {
+            if (in_array($key,self::fundingResearchExternal,true)) {
                 $this->addRadioGroup($builder,$key.'FundingState',$fundingStateChoices);
             }
         }
@@ -51,7 +51,7 @@ class CoreDataType extends TypeAbstract
         $dummyParams = $options[self::dummyParams];
         $committeeParams = $options[self::committeeParams];
         foreach (self::applicantContributorsInfosTypes as $info) {
-            if (!in_array($info,self::institutionPosition)) {
+            if (!in_array($info,self::institutionPosition,true)) {
                 $this->addFormElement($builder, $info, 'text');
             } else {
                 $isInstitution = $info===self::institutionInfo;
@@ -85,7 +85,7 @@ class CoreDataType extends TypeAbstract
         // conflict
         $this->addBinaryRadio($builder,self::conflictNode,$translationPrefix.'conflict.'.'title',self::conflictNode.self::descriptionCap);
         // support
-        foreach (array_diff_key(self::supportTypes,!$isEUB ? [self::supportCenter => ''] : []) as $key => $value) {
+        foreach (array_diff_key(self::supportTypes,$isEUB ? [] : [self::supportCenter => '']) as $key => $value) {
             $this->addFormElement($builder,$key,'checkbox',$value);
             if ($key!==self::noSupport) {
                 $this->addFormElement($builder,$this->appendText($key),'textarea',hint: $translationPrefix.'support.'.self::textHint);
@@ -188,10 +188,10 @@ class CoreDataType extends TypeAbstract
         $isBegun = $this->getFormData($forms,self::projectStartBegun,false); // true if research project has already started
         $isRequested = false;
         $fundingArray = [];
-        foreach (self::fundingTypes as $key => $value) {
+        foreach (array_keys(self::fundingTypes) as $key) {
             if ($forms[$key]->getData()) { // source was selected
                 $isFundingQuali = $key===self::fundingQuali;
-                $fundingArray[$key] = !$isFundingQuali ? [self::descriptionNode => $forms[$this->appendText($key)]->getData()] : ''; // text in the text field
+                $fundingArray[$key] = $isFundingQuali ? '' : [self::descriptionNode => $forms[$this->appendText($key)]->getData()]; // text in the text field
                 if ($isFundingQuali) { // if fundingQuali is checked immediately before/after any of the other checkboxes is checked (i.e., the second of these two is checked before the page was reloaded after submission), keep only the fundingQuali key
                     break;
                 } elseif (array_key_exists($key.'FundingState',$forms)) {
@@ -201,7 +201,7 @@ class CoreDataType extends TypeAbstract
                 }
             }
         }
-        $isNeitherBegunRequested = !($isBegun || $isRequested);
+        $isNeitherBegunRequested = !$isBegun && !$isRequested;
         $applicationProcessArray = $this->getChosenArray($forms,self::applicationProcessNode,self::reviewProcessShort, $isNeitherBegunRequested ? [self::shortDocsNode] : [],false);
         $isFull = $applicationProcessArray[self::chosen]===self::reviewProcessFull;
         $hasShortDocs = $isNeitherBegunRequested && array_key_exists(self::shortDocsNode,$applicationProcessArray);
@@ -222,7 +222,7 @@ class CoreDataType extends TypeAbstract
         // application process
         $newData[self::applicationProcessNode] = $applicationProcessArray;
         // project dates
-        $tempArray = [self::chosen => !$forms[self::projectStartNext]->getData() ? $this->getDate($forms[self::projectStart]->getData()) : '0'];
+        $tempArray = [self::chosen => $forms[self::projectStartNext]->getData() ? '0' : $this->getDate($forms[self::projectStart]->getData())];
         if ($isBegun) {
             $isConfirm = true;
             if (array_key_exists(self::projectStartBegunConfirm,$forms)) { // confirm contact to committe
@@ -283,7 +283,7 @@ class CoreDataType extends TypeAbstract
         foreach (array_keys(self::supportTypes) as $support) {
             if (array_key_exists($support,$forms) && $forms[$support]->getData()) { // support type exists and was selected
                 $isNoSupport = $support===self::noSupport;
-                $tempArray[$support] = !$isNoSupport ?  $forms[$this->appendText($support)]->getData() : '';
+                $tempArray[$support] = $isNoSupport ?  '' : $forms[$this->appendText($support)]->getData();
                 if ($isNoSupport) { // if noSupport is checked immediately before/after any of the other checkboxes is checked (i.e., the second of these two is checked before the page was reloaded after submission), keep only the noSupport key
                     break;
                 }
@@ -303,6 +303,6 @@ class CoreDataType extends TypeAbstract
      */
     private function getDate(?DateTime $dateTime): string
     {
-        return !is_null($dateTime) ? $dateTime->format('Y-m-d') : '';
+        return is_null($dateTime) ? '' : $dateTime->format('Y-m-d');
     }
 }

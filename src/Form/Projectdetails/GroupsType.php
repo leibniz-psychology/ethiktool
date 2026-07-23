@@ -116,7 +116,7 @@ class GroupsType extends TypeAbstract
                 $criteriaArray = ''; // if no criteria, add an empty string and not an empty array
                 if ($curCriteria!=='') {
                     $criteriaArray = [];
-                    foreach (explode("\n",$curCriteria) as $index => $criterion) {
+                    foreach (explode("\n",(string) $curCriteria) as $index => $criterion) {
                         $criteriaArray[$type.$index] = trim($criterion);
                     }
                 }

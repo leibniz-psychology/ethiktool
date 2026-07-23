@@ -12,7 +12,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class ContributorsController extends ControllerAbstract
 {
-    use ContributorsTrait, AppDataTrait; // AppDataTrait for updating the applicant in coreData
+    use ContributorsTrait;
+    use AppDataTrait; // for updating the applicant in coreData
 
     #[Route('contributors','contributors')]
     public function showContributors(Request $request): Response
@@ -36,8 +37,8 @@ class ContributorsController extends ControllerAbstract
         if ($contributors->isSubmitted()) {
             $dataContributors = $request->request->all()['contributors'];
             $submitDummy = $dataContributors[self::submitDummy];
-            if (str_contains($submitDummy,'modalSubmitButton')) { // contributor was added, edited, or removed. Must equal the name of the button in formModal.html.twig
-                $submitType = explode(':',$submitDummy)[1];
+            if (str_contains((string) $submitDummy,'modalSubmitButton')) { // contributor was added, edited, or removed. Must equal the name of the button in formModal.html.twig
+                $submitType = explode(':',(string) $submitDummy)[1];
                 $dataContributors[self::submitDummy] = '';
                 $request->request->set('contributors',$dataContributors); // reset submit dummy to redirect to the same page
                 $id = preg_replace('/\D/','',$submitType); // id of contributor to be edited or removed; empty string if new contributor is added

@@ -20,7 +20,7 @@ class CompletePDFController extends PDFAbstract
             self::committeeType => $this->getCommitteeType($session),
             self::isCommitteeBeta => $committeeParams[self::isCommitteeBeta],
             self::committeeParams => $committeeParams,
-            'isFull' => $this->getStringFromBool(str_contains($session->get(self::reviewProcess),self::reviewProcessFull)),
+            'isFull' => $this->getStringFromBool(str_contains((string) $session->get(self::reviewProcess),self::reviewProcessFull)),
             'briefReports' => $this->getBriefReport($session,false),
             'savePDF' => self::$savePDF,
             'hints' => [$this->translateString('completeForm.finish.text.end.title',['isTool' => 'false']).':', $this->getFinishEndText($session,false)],
@@ -31,7 +31,7 @@ class CompletePDFController extends PDFAbstract
             'isNotParticipation' => true]));
 
         if (self::$savePDF) {
-            $this->forward('App\Controller\PDF\ApplicationController::createPDF');
+            $this->forward(ApplicationController::class.'::createPDF');
             $this->generatePDF($session,$completePDF,'complete');
             self::$pdf->removeTemporaryFiles();
             return new Response();

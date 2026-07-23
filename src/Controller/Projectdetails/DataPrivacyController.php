@@ -16,7 +16,7 @@ class DataPrivacyController extends ControllerAbstract
     #[Route(self::routePrefix.self::privacyNode,self::privacyNode)]
     public function showDataPrivacy(Request $request): Response
     {
-        $routeParams = $request->get('_route_params');
+        $routeParams = $this->getRouteParams($request);
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session,setRecent: true); // changes on other pages are only made if $hasCreate is true, but it cannot be checked at this point
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
@@ -118,7 +118,7 @@ class DataPrivacyController extends ControllerAbstract
                 $iconArrayPersonalKeep[$type] = $this->translateString($tempPrefix.$type);
             }
             // create string indicating the personal data may/must be collected
-            $measureTimePoint = $this->xmlToArray($this->getMeasureTimePointNode($request, $routeParams));
+            $measureTimePoint = $this->xmlToArray($this->getMeasureTimePointNode($request));
             $maybeString = ''; // personal data may be collected
             $sureString = ''; // personal data must be collected
             $translationPrefix = $privacyPrefix.'personal.types.';
@@ -142,7 +142,7 @@ class DataPrivacyController extends ControllerAbstract
             $measuresFurther = $pageArray[self::measuresFurtherNode] ?? '';
             if ($measuresFurther!=='') {
                 $isMeasuresVideo = false;
-                $videoCap = array_map('ucfirst',self::measuresPhotoVideoAudio);
+                $videoCap = array_map(ucfirst(...),self::measuresPhotoVideoAudio);
                 foreach (array_keys(self::measuresDocumentationTypes) as $documentation) {
                     $isMeasuresVideo = $isMeasuresVideo || array_intersect_key($this->createPrefixArray($videoCap,$documentation.self::measuresDocumentation),($measuresFurther[$documentation] ?? '') ?: [])!==[];
                 }
@@ -194,7 +194,7 @@ class DataPrivacyController extends ControllerAbstract
                         }
                         $laterInformation = $awarding[self::laterTypesName] ?? '';
                         $typeParam = array_merge($routeParam, ['type' => $type]);
-                        if ($chosen==='immediately' && in_array($type, [self::compensationMoney, 'voucher'])) { // immediately for money or voucher
+                        if ($chosen==='immediately' && in_array($type, [self::compensationMoney, 'voucher'],true)) { // immediately for money or voucher
                             $maybeString .= $this->translateString($translationPrefix.'immediately', $typeParam)."\n";
                         } elseif ($chosen===self::awardingLater && $laterInformation!=='') { // later
                             $tempVal = $this->translateString($translationPrefix.self::awardingLater, array_merge($typeParam, [self::awardingLater => $laterInformation, self::descriptionNode => ($awarding[self::laterOtherDescription] ?? '') ?: $otherTrans]))."\n";
@@ -217,7 +217,7 @@ class DataPrivacyController extends ControllerAbstract
         if ($dataPrivacy->isSubmitted()) {
             $privacy = $this->getPrivacyReuse($this->getDataAndConvert($dataPrivacy, $privacyNode));
             if ($hasCreate) {
-                $privacyLoad = $this->getPrivacyReuse($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session, true), $routeParams)->{self::privacyNode}));
+                $privacyLoad = $this->getPrivacyReuse($this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true)->{self::privacyNode}));
                 [$appNodeNew, $measureNodeNew] = $this->getClonedMeasureTimePoint($appNode, $routeParams);
                 $anyDiff = false;
                 foreach ($privacyLoad as $key => $value) {

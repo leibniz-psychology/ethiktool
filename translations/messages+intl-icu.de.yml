@@ -403,8 +403,8 @@ main:
     Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
 
     <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz oder an der Universität Bielefeld ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet{numCommitteesBeta, select,
-                  Null  {.}
-                  Eins  { und befindet sich für eine Ethikkommission bereits im Beta-Stadium.}
+                  null  {.}
+                  eins  { und befindet sich für eine Ethikkommission bereits im Beta-Stadium.}
                   other { und befindet sich für {numCommitteesBeta} Ethikkommissionen bereits im Beta-Stadium.}}
     
     Über „Neuer Antrag“ können Sie die Antragserstellung für die entsprechende Kommission beginnen.

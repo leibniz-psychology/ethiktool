@@ -25,9 +25,12 @@ class CheckDocClass extends ControllerAbstract
     private string $curWindow = ''; // title of the current window
     private string $curSubPageHeading = ''; // current heading of a type of page
     private string $curPage = ''; // title of the current page
-    private array $isOne = [self::studyNode => true, self::groupNode => true, self::measureTimePointNode => true]; // true if one element of the type is created
+    /** @var array<string, true> true if one element of the type is created */
+    private array $isOne = [self::studyNode => true, self::groupNode => true, self::measureTimePointNode => true];
+    /** @var array<string, int> */
     private array $IDs = [self::studyNode => 0, self::groupNode => 0, self::measureTimePointNode => 0];
-    private array $studyGroupMeasureName = [self::studyNode => '', self::groupNode => '', self::measureTimePointNode => '']; // name of the current study, group, and time point
+    /** @var array<string, string> name of the current study, group, and time point */
+    private array $studyGroupMeasureName = [self::studyNode => '', self::groupNode => '', self::measureTimePointNode => ''];
     private bool $anyWindowMissing = false; // indicates if there is any error on any page of the current window
     private bool $anyError = false; // indicates if there is any error excluding missing inputs
     private string $reviewProcess = ''; // review process
@@ -59,8 +62,10 @@ class CheckDocClass extends ControllerAbstract
     private bool $noPreParticipants = false; // same as $noPre, but for participants, if third parties
     private bool $noPost = false; // gets  true if post-information is answered with 'no'
     private bool $noPostParticipants = false; // same as $noPost, but for participants, if third parties
-    private array $information = [2,2]; // 0: pre information, 1: post information
-    private array $informationII = [2,2]; // same as $information, but for participants, if third parties; currently only needed in checkConsent, but set as global variable as other variables for informationII need to be set anyways
+    /** @var int[] 0: pre information, 1: post information */
+    private array $information = [2,2];
+    /** @var int[] same as $information, but for participants, if third parties; currently only needed in checkConsent, but set as global variable as other variables for informationII need to be set anyway */
+    private array $informationII = [2,2];
     private bool $isInformationII = false; // gets true if informationII is active
     private string $consentAddressee = ''; // consent of participants or (if third parties are involved) of third parties
     // prefixes
@@ -73,7 +78,6 @@ class CheckDocClass extends ControllerAbstract
     private const missingTypes = 'checkDoc.projectdetails.missingTypes';
 
     /** Creates an object of CheckDocClass and checks the document for errors. If an xml document is passed, the entire document is checked.
-     * @param Request $request
      * @param string $page if not an empty string, only the errors on a single page are checked
      * @param bool $returnCheck if true and $page is an empty string, a boolean is returned whether no errors were found
      * @param SimpleXMLElement|bool|null $element if not null, the xml document to be checked
@@ -132,153 +136,150 @@ class CheckDocClass extends ControllerAbstract
         // check document
         if ($element!==null) {
             return $checkDoc->checkDocument($request,$element);
-        } else {
-            if ($session->has(self::docName)) {
-                if ($page==='') {
-                    $returnVal = $checkDoc->checkDocument($request);
-                    return $returnCheck ? $returnVal===$checkDoc->getNoError() : $returnVal;
-                } else {
-                    try {
-                        $routeParams = $hasRouteIDs ? $routeIDs : $request->get('_route_params');
-                        if (array_key_exists(self::measureID,$routeParams)) { // check of a projectdetails page
-                            $studyID = $routeParams[self::studyID];
-                            $groupID = $routeParams[self::groupID];
-                            $measureID = $routeParams[self::measureID];
-                            $checkDoc->IDs = [self::studyNode => $studyID, self::groupNode => $groupID,self::measureTimePointNode => $measureID];
-                            $checkDoc->measure = $checkDoc->xmlToArray($checkDoc->getMeasureTimePointNode($appNode,[self::studyID => $studyID, self::groupID => $groupID, self::measureID => $measureID]));
-                            $checkDoc->setProjectdetailsVariables();
-                        }
-                        $type = '';
-                        $checkDoc->anyError = false;
-                        switch ($page) {
-                            case self::appDataNodeName: // landing page for application data
-                                $checkDoc->addPageHash = true;
-                                $checkDoc->curWindow = $checkDoc->translateString('pages.appData.title');
-                                $checkDoc->checkCoreData();
-                                $checkDoc->checkVotes();
-                                $checkDoc->checkMedicine();
-                                $checkDoc->checkSummary();
-                                break;
-                            case self::coreDataNode:
-                                $checkDoc->checkCoreData(false);
-                                break;
-                            case self::voteNode:
-                                $checkDoc->checkVotes(false);
-                                break;
-                            case self::medicine:
-                                $checkDoc->checkMedicine(false);
-                                break;
-                            case self::summary:
-                                $checkDoc->checkSummary(false);
-                                break;
-                            case 'contributors':
-                                $checkDoc->checkContributors();
-                                break;
-                            case self::projectdetailsNodeName: // landing page for projectdetails
-                                $checkDoc->addPageHash = true;
-                                $landingArray = $hasRouteIDs || $onlyError ? $routeIDs : ($session->get(self::landing) ?? []);
-                                $hasStudyID = array_key_exists(self::studyID,$landingArray);
-                                $hasGroupID = array_key_exists(self::groupID,$landingArray);
-                                $hasMeasureID = array_key_exists(self::measureID,$landingArray);
-                                $type = $hasMeasureID ? self::measureTimePointNode : ($hasGroupID ? self::groupNode : ($hasStudyID ? self::studyNode : ''));
-                                $studies = $checkDoc->addZeroIndex($checkDoc->appArray[self::projectdetailsNodeName][self::studyNode]);
-                                $studyIDcheck = ($landingArray[self::studyID] ?? 1)-1;
-                                if (!$hasStudyID) { // project structure
-                                    $checkDoc->checkLanding();
-                                }
-                                foreach (($hasStudyID ? [$studyIDcheck => $studies[$studyIDcheck]] : $studies) as $studyID => $study) {
-                                    $groups = $checkDoc->addZeroIndex($study[self::groupNode]);
-                                    $groupIDcheck = ($landingArray[self::groupID] ?? 1)-1;
-                                    $checkDoc->addProjectdetailsTitle(subPage: self::studyNode);
-                                    foreach (($hasGroupID ? [$groupIDcheck => $groups[$groupIDcheck]] : $groups) as $groupID => $group) {
-                                        $measures = $checkDoc->addZeroIndex($group[self::measureTimePointNode]);
-                                        $measureIDcheck = ($landingArray[self::measureID] ?? 1)-1;
-                                        $checkDoc->addProjectdetailsTitle(subPage: self::groupNode);
-                                        foreach (($hasMeasureID ? [$measureIDcheck => $measures[$measureIDcheck]] : $measures) as $measureID => $measure) {
-                                            $checkDoc->IDs = [self::studyNode => $studyID+1, self::groupNode => $groupID+1,self::measureTimePointNode => $measureID+1];
-                                            $checkDoc->measure = $measure;
-                                            $checkDoc->setProjectdetailsVariables();
-                                            $checkDoc->checkDataSource();
-                                            if ($measure[self::groupsNode]!=='') {
-                                                $checkDoc->checkGroups();
-                                                $checkDoc->checkInformation(self::informationNode);
-                                                $checkDoc->checkInformation(self::informationIINode);
-                                                $checkDoc->checkConsent();
-                                                $checkDoc->checkMeasures();
-                                                $checkDoc->checkBurdensRisks();
-                                                $checkDoc->checkCompensation();
-                                                $checkDoc->checkTexts();
-                                                $checkDoc->checkInformationIII();
-                                                $checkDoc->checkLegal();
-                                                $checkDoc->checkDataPrivacy();
-                                                $checkDoc->checkDataReuse();
-                                                $checkDoc->checkContributor();
-                                            }
-                                        }
-                                    }
-                                    $checkDoc->setProjectdetailsTitle(subPage: self::groupNode);
-                                }
-                                $checkDoc->setProjectdetailsTitle(subPage: self::studyNode);
-                                break;
-                            case self::dataSourceNode:
-                                $checkDoc->checkDataSource(false);
-                                break;
-                            case self::groupsNode:
-                                $checkDoc->checkGroups(false);
-                                break;
-                            case self::informationNode:
-                                $checkDoc->checkInformation(self::informationNode,false);
-                                break;
-                            case self::informationIINode:
-                                $checkDoc->checkInformation(self::informationIINode,false);
-                                break;
-                            case self::consentNode:
-                                $checkDoc->checkConsent(false);
-                                break;
-                            case self::measuresNode:
-                                $checkDoc->checkMeasures(false);
-                                break;
-                            case self::burdensRisksNode:
-                                $checkDoc->checkBurdensRisks(false);
-                                break;
-                            case self::compensationNode:
-                                $checkDoc->checkCompensation(false);
-                                break;
-                            case self::textsNode:
-                                $checkDoc->checkTexts(false);
-                                break;
-                            case self::informationIIINode:
-                                $checkDoc->checkInformationIII(false);
-                                break;
-                            case self::legalNode:
-                                $checkDoc->checkLegal(false);
-                                break;
-                            case self::privacyNode:
-                                $checkDoc->checkDataPrivacy(false);
-                                break;
-                            case self::dataReuseNode:
-                                $checkDoc->checkDataReuse(false);
-                                break;
-                            case self::contributorNode:
-                                $checkDoc->checkContributor(false);
-                                break;
-                        }
-                        if ($checkDoc->getBriefReport($session)) {
-                            $checkDoc->addReviewProcessError();
-                        }
-                        return !$onlyError ? $checkDoc->getReviewMissing().trim($checkDoc->translateString('checkDoc.'.($checkDoc->checkLabel==='' ? 'noErrorPage' : 'errorPage'),['page' => $page, 'type' => $type]).$checkDoc->checkLabel) : $checkDoc->anyError;
-                    } catch (\Throwable) {
-                        return $returnCheck ? false : '';
-                    }
-                }
-            } else {
-                return false;
+        }
+        if ($session->has(self::docName)) {
+            if ($page==='') {
+                $returnVal = $checkDoc->checkDocument($request);
+                return $returnCheck ? $returnVal===$checkDoc->getNoError() : $returnVal;
             }
+            try {
+                $routeParams = $hasRouteIDs ? $routeIDs : $checkDoc->getRouteParams($request);
+                if (array_key_exists(self::measureID,$routeParams)) { // check of a projectdetails page
+                    $studyID = $routeParams[self::studyID];
+                    $groupID = $routeParams[self::groupID];
+                    $measureID = $routeParams[self::measureID];
+                    $checkDoc->IDs = [self::studyNode => $studyID, self::groupNode => $groupID,self::measureTimePointNode => $measureID];
+                    $checkDoc->measure = $checkDoc->xmlToArray($checkDoc->getMeasureTimePointNode($appNode,[self::studyID => $studyID, self::groupID => $groupID, self::measureID => $measureID]));
+                    $checkDoc->setProjectdetailsVariables();
+                }
+                $type = '';
+                $checkDoc->anyError = false;
+                switch ($page) {
+                    case self::appDataNodeName: // landing page for application data
+                        $checkDoc->addPageHash = true;
+                        $checkDoc->curWindow = $checkDoc->translateString('pages.appData.title');
+                        $checkDoc->checkCoreData();
+                        $checkDoc->checkVotes();
+                        $checkDoc->checkMedicine();
+                        $checkDoc->checkSummary();
+                        break;
+                    case self::coreDataNode:
+                        $checkDoc->checkCoreData(false);
+                        break;
+                    case self::voteNode:
+                        $checkDoc->checkVotes(false);
+                        break;
+                    case self::medicine:
+                        $checkDoc->checkMedicine(false);
+                        break;
+                    case self::summary:
+                        $checkDoc->checkSummary(false);
+                        break;
+                    case 'contributors':
+                        $checkDoc->checkContributors();
+                        break;
+                    case self::projectdetailsNodeName: // landing page for projectdetails
+                        $checkDoc->addPageHash = true;
+                        $landingArray = $hasRouteIDs || $onlyError ? $routeIDs : ($session->get(self::landing) ?? []);
+                        $hasStudyID = array_key_exists(self::studyID,$landingArray);
+                        $hasGroupID = array_key_exists(self::groupID,$landingArray);
+                        $hasMeasureID = array_key_exists(self::measureID,$landingArray);
+                        $type = $hasMeasureID ? self::measureTimePointNode : ($hasGroupID ? self::groupNode : ($hasStudyID ? self::studyNode : ''));
+                        $studies = $checkDoc->addZeroIndex($checkDoc->appArray[self::projectdetailsNodeName][self::studyNode]);
+                        $studyIDcheck = ($landingArray[self::studyID] ?? 1)-1;
+                        if (!$hasStudyID) { // project structure
+                            $checkDoc->checkLanding();
+                        }
+                        foreach (($hasStudyID ? [$studyIDcheck => $studies[$studyIDcheck]] : $studies) as $studyID => $study) {
+                            $groups = $checkDoc->addZeroIndex($study[self::groupNode]);
+                            $groupIDcheck = ($landingArray[self::groupID] ?? 1)-1;
+                            $checkDoc->addProjectdetailsTitle(subPage: self::studyNode);
+                            foreach (($hasGroupID ? [$groupIDcheck => $groups[$groupIDcheck]] : $groups) as $groupID => $group) {
+                                $measures = $checkDoc->addZeroIndex($group[self::measureTimePointNode]);
+                                $measureIDcheck = ($landingArray[self::measureID] ?? 1)-1;
+                                $checkDoc->addProjectdetailsTitle(subPage: self::groupNode);
+                                foreach (($hasMeasureID ? [$measureIDcheck => $measures[$measureIDcheck]] : $measures) as $measureID => $measure) {
+                                    $checkDoc->IDs = [self::studyNode => $studyID+1, self::groupNode => $groupID+1,self::measureTimePointNode => $measureID+1];
+                                    $checkDoc->measure = $measure;
+                                    $checkDoc->setProjectdetailsVariables();
+                                    $checkDoc->checkDataSource();
+                                    if ($measure[self::groupsNode]!=='') {
+                                        $checkDoc->checkGroups();
+                                        $checkDoc->checkInformation(self::informationNode);
+                                        $checkDoc->checkInformation(self::informationIINode);
+                                        $checkDoc->checkConsent();
+                                        $checkDoc->checkMeasures();
+                                        $checkDoc->checkBurdensRisks();
+                                        $checkDoc->checkCompensation();
+                                        $checkDoc->checkTexts();
+                                        $checkDoc->checkInformationIII();
+                                        $checkDoc->checkLegal();
+                                        $checkDoc->checkDataPrivacy();
+                                        $checkDoc->checkDataReuse();
+                                        $checkDoc->checkContributor();
+                                    }
+                                }
+                            }
+                            $checkDoc->setProjectdetailsTitle(subPage: self::groupNode);
+                        }
+                        $checkDoc->setProjectdetailsTitle(subPage: self::studyNode);
+                        break;
+                    case self::dataSourceNode:
+                        $checkDoc->checkDataSource(false);
+                        break;
+                    case self::groupsNode:
+                        $checkDoc->checkGroups(false);
+                        break;
+                    case self::informationNode:
+                        $checkDoc->checkInformation(self::informationNode,false);
+                        break;
+                    case self::informationIINode:
+                        $checkDoc->checkInformation(self::informationIINode,false);
+                        break;
+                    case self::consentNode:
+                        $checkDoc->checkConsent(false);
+                        break;
+                    case self::measuresNode:
+                        $checkDoc->checkMeasures(false);
+                        break;
+                    case self::burdensRisksNode:
+                        $checkDoc->checkBurdensRisks(false);
+                        break;
+                    case self::compensationNode:
+                        $checkDoc->checkCompensation(false);
+                        break;
+                    case self::textsNode:
+                        $checkDoc->checkTexts(false);
+                        break;
+                    case self::informationIIINode:
+                        $checkDoc->checkInformationIII(false);
+                        break;
+                    case self::legalNode:
+                        $checkDoc->checkLegal(false);
+                        break;
+                    case self::privacyNode:
+                        $checkDoc->checkDataPrivacy(false);
+                        break;
+                    case self::dataReuseNode:
+                        $checkDoc->checkDataReuse(false);
+                        break;
+                    case self::contributorNode:
+                        $checkDoc->checkContributor(false);
+                        break;
+                }
+                if ($checkDoc->getBriefReport($session)) {
+                    $checkDoc->addReviewProcessError();
+                }
+                return $onlyError ? $checkDoc->anyError : $checkDoc->getReviewMissing().trim($checkDoc->translateString('checkDoc.'.($checkDoc->checkLabel==='' ? 'noErrorPage' : 'errorPage'),['page' => $page, 'type' => $type]).$checkDoc->checkLabel);
+            } catch (\Throwable) {
+                return $returnCheck ? false : '';
+            }
+        } else {
+            return false;
         }
     }
 
     /** Checks the entire document for error.
-     * @param Request $request
      * @param SimpleXMLElement|bool|null $appNode if not null, the document to be checked
      * @return string string containing the errors
      * @throws Exception if an error occurs during the check
@@ -366,7 +367,7 @@ class CheckDocClass extends ControllerAbstract
             }
             $this->setProjectdetailsTitle(subPage: self::studyNode);
             // error messages if a task of a contributor is not selected in any measure time point
-            if ($anyOriginNew && $this->isMultiple && in_array($this->reviewProcess,self::reviewDocs)) {
+            if ($anyOriginNew && $this->isMultiple && in_array($this->reviewProcess,self::reviewDocs,true)) {
                 $this->checkLabel = trim($this->checkLabel)."\n";
                 $contributor = $this->getContributorsArray($this->appArray);
                 $translationPage = self::projectdetailsPrefix.self::contributorNode.'.task';
@@ -430,7 +431,7 @@ class CheckDocClass extends ControllerAbstract
     /** Sets the variables for a study or group.
      * @param string $type type. Must equal 'study' or 'group'
      * @param int $id id of the type
-     * @param array $array array containing all studies or all groups of a study
+     * @param array<string, mixed> $array array containing all studies or all groups of a study
      * @return array all groups of the current study if $type equals 'study', all time points for the current group otherwise
      */
     private function setStudyGroup(string $type, int $id, array $array): array
@@ -447,7 +448,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the core data page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      * @throws \DateMalformedStringException
      */
     private function checkCoreData(bool $setTitle = true): void
@@ -457,13 +457,13 @@ class CheckDocClass extends ControllerAbstract
         // project titles
         $this->checkMissingContent($this->coreDataArray,[self::projectTitle => 'coreData.projectTitle']);
         // project title participation
-        if (array_key_exists(self::projectTitleParticipation,$this->coreDataArray) && in_array($this->reviewProcess,self::reviewDocs)) {
+        if (array_key_exists(self::projectTitleParticipation,$this->coreDataArray) && in_array($this->reviewProcess,self::reviewDocs,true)) {
             $tempVal = $translationPrefix.self::projectTitleParticipation;
             $this->checkMissingTextfield($this->coreDataArray[self::projectTitleParticipation],null,self::projectTitleDifferent,$tempVal,self::projectTitleParticipation,$tempVal);
         }
         // application type
         $appTypeArray = $this->coreDataArray[self::applicationType];
-        if (in_array($this->checkMissingChosen($appTypeArray,'coreData.appType.title',null,self::applicationType),self::appExtendedResubmission)) {
+        if (in_array($this->checkMissingChosen($appTypeArray,'coreData.appType.title',null,self::applicationType),self::appExtendedResubmission,true)) {
             if (array_key_exists(self::appTypeExtended,$appTypeArray)) {
                 $this->checkMissingChosen($appTypeArray,$translationPrefix.self::appTypeExtended,null,'extendedDiv',name: self::appTypeExtended);
             }
@@ -493,7 +493,7 @@ class CheckDocClass extends ControllerAbstract
             $isStartPast = $start<=$today;
             $tempPrefix = $translationPrefix.'start.';
             if ($isStartPast && !$isBegun) {
-                $this->addCheckLabelString($tempPrefix.'past','projectDates',['hasBegun' => $this->getStringFromBool(in_array($this->committeeType,self::begunCommittees))]);
+                $this->addCheckLabelString($tempPrefix.'past','projectDates',['hasBegun' => $this->getStringFromBool(in_array($this->committeeType,self::begunCommittees,true))]);
             }
             elseif (!$isStartPast && $isBegun) {
                 $this->addCheckLabelString($tempPrefix.'begunToPast','projectDates');
@@ -513,7 +513,7 @@ class CheckDocClass extends ControllerAbstract
         $end = $this->coreDataArray[self::projectEnd];
         if ($end!=='') {
             $end = (new DateTime($end))->setTime(0,0);
-            if ($end<=$today && (!$isBegun || in_array($this->committeeType,self::begunIncompleteCommittees))) {
+            if ($end<=$today && (!$isBegun || in_array($this->committeeType,self::begunIncompleteCommittees,true))) {
                 $this->addCheckLabelString($translationPrefix.'end',self::projectEnd);
             }
             if ($validStart && $end<$start) { // $start and $end are neither empty strings
@@ -559,7 +559,7 @@ class CheckDocClass extends ControllerAbstract
         $applicant = $this->coreDataArray[self::applicant];
         $this->checkMissingContent($applicant,$this->translateArray('multiple.infos.',array_diff(self::applicantContributorsInfosTypes,$applicant[self::position]===self::positionsStudent ? [self::phoneNode] : []),true), hash: self::applicant);
         $name = $applicant[self::nameNode];
-        if ($name!=='' && count(explode(' ',$name))===1) {
+        if ($name!=='' && count(explode(' ',(string) $name))===1) {
             $this->addCheckLabelString($translationPrefix.self::nameNode,self::nameNode);
         }
         // validity of eMail
@@ -577,7 +577,7 @@ class CheckDocClass extends ControllerAbstract
         }
         // validity of phone
         $tempVal = $applicant[self::phoneNode];
-        if ($tempVal!=='' && preg_match("/^\+?([0-9][\s\/-]?)+[0-9]+$/",$tempVal)===0) {
+        if ($tempVal!=='' && preg_match("/^\\+?(\\d[\\s\\/-]?)+\\d+\$/",(string) $tempVal)===0) {
             $this->addCheckLabelString($translationPrefix.self::phoneNode,self::phoneNode);
         }
         // student confirm
@@ -603,7 +603,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the votes page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkVotes(bool $setTitle = true): void
     {
@@ -621,14 +620,13 @@ class CheckDocClass extends ControllerAbstract
         $pageArray = $voteArray[self::instVote];
         if ($this->checkMissingChosen($pageArray,$translationPrefix.'instVote',2,self::instVote,true,self::chosen,$this->committeeParam)===0) { // answer was yes
             $hasReference = $pageArray[self::instReference]!=='';
-            $this->checkMissingContent($pageArray,array_merge(!in_array($this->coreDataArray[self::applicationType][self::chosen],self::appExtendedResubmission) ? [self::instReference => $translationPrefix.'instVoteReference'] : [],[self::instVoteText => $translationPrefix.self::instVoteText]),hash: $this->addDiv($hasReference ? self::instVote : self::instReference,$hasReference));
+            $this->checkMissingContent($pageArray,array_merge(in_array($this->coreDataArray[self::applicationType][self::chosen],self::appExtendedResubmission) ? [] : [self::instReference => $translationPrefix.'instVoteReference'],[self::instVoteText => $translationPrefix.self::instVoteText]),hash: $this->addDiv($hasReference ? self::instVote : self::instReference,$hasReference));
         }
         $this->setAppDataTitle($setTitle);
     }
 
     /** Checks for errors on the medicine page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkMedicine(bool $setTitle = true): void
     {
@@ -651,7 +649,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the summary page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkSummary(bool $setTitle = true): void
     {
@@ -661,7 +658,6 @@ class CheckDocClass extends ControllerAbstract
     }
 
     /** Checks for errors on the contributors page.
-     * @return void
      */
     private function checkContributors(): void
     {
@@ -686,7 +682,7 @@ class CheckDocClass extends ControllerAbstract
                 $this->checkMissingContent($infos,$this->translateArray('multiple.infos.',self::infosMandatory,true),lineTitle: $lineTitle, addHash: false);
                 $tempPrefix = self::contributorsPrefix.self::infosNode.'.';
                 $tempVal = $infos[self::nameNode];
-                if ($tempVal!=='' && count(explode(' ',$tempVal))===1) {
+                if ($tempVal!=='' && count(explode(' ',(string) $tempVal))===1) {
                     $this->addCheckLabelString($lineTitle.': '.$this->translateString($tempPrefix.self::nameNode),colorRed: false);
                 }
                 if (!$hasPosition) {
@@ -697,7 +693,7 @@ class CheckDocClass extends ControllerAbstract
                     $this->addCheckLabelString($lineTitle.': '.$this->translateString($tempPrefix.'validEmail'),colorRed: false);
                 }
                 $tempVal = $infos[self::phoneNode] ?? '';
-                if ($tempVal!=='' && !preg_match("/^\+?([0-9][\s\/-]?)+[0-9]+$/",$tempVal)) {
+                if ($tempVal!=='' && !preg_match("/^\\+?(\\d[\\s\\/-]?)+\\d+\$/",(string) $tempVal)) {
                     $this->addCheckLabelString($lineTitle.': '.$this->translateString($tempPrefix.'validPhone'),colorRed: false);
                 }
                 foreach (self::institutionPosition as $info) {
@@ -716,7 +712,7 @@ class CheckDocClass extends ControllerAbstract
         // check if any mandatory task is missing or any task that must not be selected is selected
         $isAllOriginNoCollection = $this->allOriginSelected && !$this->isDataCollection;
         foreach ($this->isMandatory as $task => $value) {
-            $isTaskDataCollection = in_array($task,['experiment','contact']);
+            $isTaskDataCollection = in_array($task,['experiment','contact'],true);
             $taskParam = ['task' => $this->translateString('contributors.tasks.'.$task)];
             if (!$value && ($this->isDataCollection || !$isTaskDataCollection)) { // mandatory task is missing
                 $this->addCheckLabelString($tasksPrefix.'missingMandatory',parameters: $taskParam);
@@ -728,7 +724,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the landing page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkLanding(bool $setTitle = true): void
     {
@@ -743,7 +738,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the data source page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkDataSource(bool $setTitle = true): void
     {
@@ -777,12 +771,10 @@ class CheckDocClass extends ControllerAbstract
                         $this->checkMissingChildrenOther($tempArray,self::committeeResultPositiveNode,$tempPrefix.'missing',[self::committeeResultPositiveOther => $tempPrefix.self::descriptionNode],addDescription: false);
                     }
                     // description if negative or no vote
-                    if (array_key_exists(self::descriptionNode,$tempArray)) {
-                        if ($tempArray[self::descriptionNode]==='') {
-                            $tempPrefix .= self::descriptionNode.'.';
-                            $this->errorMessage = $tempPrefix.'start';
-                            $this->addCheckLabelString($tempPrefix.'end',$this->addDiv(self::dataSourceResultNode,true,false),['type' => $tempVal],false);
-                        }
+                    if (array_key_exists(self::descriptionNode, $tempArray) && $tempArray[self::descriptionNode]==='') {
+                        $tempPrefix .= self::descriptionNode.'.';
+                        $this->errorMessage = $tempPrefix.'start';
+                        $this->addCheckLabelString($tempPrefix.'end',$this->addDiv(self::dataSourceResultNode,true,false),['type' => $tempVal],false);
                     }
                     // checkbox if negative vote
                     if (array_key_exists(self::committeeResultNegativeNode,$tempArray)) {
@@ -803,7 +795,7 @@ class CheckDocClass extends ControllerAbstract
                                 $this->addCheckLabelString($tempPrefix.self::supportCommittee,parameters: $this->committeeParam);
                             }
                         }
-                        if (in_array($this->committeeType,self::begunCommittees)) { // no vote, but contributors from old project are also in this project and begun is possible -> project start must be begun and origin must be 'new'
+                        if (in_array($this->committeeType,self::begunCommittees,true)) { // no vote, but contributors from old project are also in this project and begun is possible -> project start must be begun and origin must be 'new'
                             $tempPrefix .= 'begun.';
                             $this->errorMessage = $tempPrefix.'start';
                             $this->addCheckLabelString($tempPrefix.'end',$this->addDiv(self::voteContributorsConfirm));
@@ -843,7 +835,7 @@ class CheckDocClass extends ControllerAbstract
                 // data source identification
                 $tempPrefix = $translationPage.self::dataSourceIdentificationNode.'.';
                 $tempArray = $pageArray[self::legitimizationNode];
-                if (in_array($this->checkMissingChosen($pageArray,$tempPrefix.'missing',null,self::dataSourceIdentificationNode,true,self::dataSourceIdentificationNode),[self::dataSourceIdentificationNo,'partly']) && $tempArray!=='' && array_key_exists(self::legitimizationConsentNew,$tempArray)) { // information and consent for re-using data -> re-identification must be possible
+                if (in_array($this->checkMissingChosen($pageArray,$tempPrefix.'missing',null,self::dataSourceIdentificationNode,true,self::dataSourceIdentificationNode),[self::dataSourceIdentificationNo,'partly'],true) && $tempArray!=='' && array_key_exists(self::legitimizationConsentNew,$tempArray)) { // information and consent for re-using data -> re-identification must be possible
                     $this->addCheckLabelString($tempPrefix.self::legitimizationNode);
                 }
                 // publication
@@ -863,7 +855,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the groups page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkGroups(bool $setTitle = true): void
     {
@@ -875,10 +866,8 @@ class CheckDocClass extends ControllerAbstract
         $this->checkMissingContent($pageArray,[self::minAge => $translationPage.'minAge',self::maxAge => $translationPage.'maxAge']);
         // examined people
         $isExamined = $this->checkMissingChildrenOther($pageArray, self::examinedPeopleNode, $translationPage.self::examinedPeopleNode);
-        if ($isExamined) { // at least one group is selected
-            if (array_key_exists(self::peopleDescription,$pageArray)) {
-                $this->checkMissingContent($pageArray,[self::peopleDescription => $translationPage.self::descriptionNode],true,hash: $this->addDiv(self::peopleDescription)); // description of groups
-            }
+        if ($isExamined && array_key_exists(self::peopleDescription,$pageArray)) { // at least one group is selected
+            $this->checkMissingContent($pageArray,[self::peopleDescription => $translationPage.self::descriptionNode],true,hash: $this->addDiv(self::peopleDescription)); // description of groups
         }
         // closed group
         $tempPrefix = $translationPage.self::closedNode.'.';
@@ -925,7 +914,6 @@ class CheckDocClass extends ControllerAbstract
     /** Checks for errors on the information(II) page.
      * @param string $page page to be checked. Must equal 'information' or 'informationII'
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkInformation(string $page, bool $setTitle = true): void
     {
@@ -940,14 +928,14 @@ class CheckDocClass extends ControllerAbstract
                         $this->checkMissingChosen($pageArray,$translationStart.'typePre',null,self::preType,name: self::preType); // type of information
                     }
                     // pre content
-                    if (in_array($this->checkMissingChosen($pageArray,$translationStart.self::preContent,null,self::preContent,true,self::preContent),self::preContentIncomplete)) { // partial or deceit
+                    if (in_array($this->checkMissingChosen($pageArray,$translationStart.self::preContent,null,self::preContent,true,self::preContent),self::preContentIncomplete,true)) { // partial or deceit
                         $tempArray = $pageArray[self::preComplete];
                         $this->checkMissingTextfieldEmpty($tempArray,$translationStart.self::deceit,$translationStart.'deceitDescription',self::preComplete,false,hashDescription: $this->addDiv(self::preComplete,true)); // complete post-information and description of information given
                         if (array_key_exists(self::preCompleteType,$tempArray)) {
-                            $this->checkMissingChosen($tempArray,$translationStart.'deceitType',null,'completePostType',true,self::preCompleteType)===self::informationOral;
+                            $this->checkMissingChosen($tempArray,$translationStart.'deceitType',null,'completePostType',true,self::preCompleteType);
                             $tempPrefix = $translationStart.self::preAbort.'.';
                             $tempArray = $tempArray[self::preAbort];
-                            if (in_array($this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::preAbort,true),self::preAbortDescriptions)) {
+                            if (in_array($this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::preAbort,true),self::preAbortDescriptions,true)) {
                                 $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.self::descriptionNode],parameter: ['isOther' => $this->getStringFromBool($tempArray[self::chosen]===self::preAbortOther)],hash: $this->addDiv(self::preAbort,true,false));
                             }
                         }
@@ -975,7 +963,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the consent page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkConsent(bool $setTitle = true): void
     {
@@ -1037,10 +1024,10 @@ class CheckDocClass extends ControllerAbstract
             }
             // testing both elements separately is way faster than count(array_intersect($information,[0,1]))
             // neither pre- nor post-information -> voluntary/consent not applicable
-            if ($this->noPost && !in_array($chosen,$emptyNotApplicable)) {
+            if ($this->noPost && !in_array($chosen,$emptyNotApplicable,true)) {
                 $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $paramsAddressee);
             }
-            if ($this->noPostParticipants && !in_array($chosenParticipant,$emptyNotApplicable)) {
+            if ($this->noPostParticipants && !in_array($chosenParticipant,$emptyNotApplicable,true)) {
                 $this->addCheckLabelString($translationPage.'informationToNotApplicable',parameters: $paramsParticipants);
             }
             // voluntary/consent not applicable -> neither pre- nor post-information
@@ -1054,22 +1041,22 @@ class CheckDocClass extends ControllerAbstract
         // checks of consistency of voluntary and consent
         // no voluntariness -> no consent
         $emptyNo = ['',self::voluntaryConsentNo];
-        if ($voluntaryAddressee===self::voluntaryConsentNo && !in_array($this->consentAddressee,$emptyNo)) {
+        if ($voluntaryAddressee===self::voluntaryConsentNo && !in_array($this->consentAddressee,$emptyNo,true)) {
             $this->addCheckLabelString($tempPrefix.'voluntaryToConsent',parameters: $paramsAddressee);
         }
-        if ($voluntaryParticipant===self::voluntaryConsentNo && !in_array($consentParticipant,$emptyNo)) {
+        if ($voluntaryParticipant===self::voluntaryConsentNo && !in_array($consentParticipant,$emptyNo,true)) {
             $this->addCheckLabelString($tempPrefix.'voluntaryToConsent',parameters: $paramsParticipants);
         }
         // no consent -> no voluntariness
-        if ($this->consentAddressee===self::voluntaryConsentNo && !in_array($voluntaryAddressee,$emptyNo)) {
+        if ($this->consentAddressee===self::voluntaryConsentNo && !in_array($voluntaryAddressee,$emptyNo,true)) {
             $this->addCheckLabelString($tempPrefix.'consentToVoluntary',parameters: $paramsAddressee);
         }
-        if ($consentParticipant===self::voluntaryConsentNo && !in_array($voluntaryParticipant,$emptyNo)) {
+        if ($consentParticipant===self::voluntaryConsentNo && !in_array($voluntaryParticipant,$emptyNo,true)) {
             $this->addCheckLabelString($tempPrefix.'consentToVoluntary',parameters: $paramsParticipants);
         }
         // terminate cons
         $tempPrefix = $translationPage.self::terminateConsNode.'.';
-        $this->checkMissingTextfield($pageArray[self::terminateConsNode],2,1,$tempPrefix.'missing',$this->addDiv(self::terminateConsNode),$tempPrefix.self::descriptionNode, $this->addDiv(self::terminateConsNode,true,false),true)==='1';
+        $this->checkMissingTextfield($pageArray[self::terminateConsNode],2,1,$tempPrefix.'missing',$this->addDiv(self::terminateConsNode),$tempPrefix.self::descriptionNode, $this->addDiv(self::terminateConsNode,true,false),true);
         if (array_key_exists(self::terminateConsParticipationNode,$pageArray)) {
             $this->checkMissingContent($pageArray,[self::terminateConsParticipationNode => $tempPrefix.self::terminateConsParticipationNode], true, parameter: $this->paramsAddressee, hash: $this->addDiv(self::terminateConsParticipationNode));
         }
@@ -1078,7 +1065,7 @@ class CheckDocClass extends ControllerAbstract
         $tempPrefix = $translationPage.self::terminateParticipantsNode.'.';
         if (array_key_exists(self::terminateParticipantsNode,$pageArray)) {
           $terminate = $this->checkMissingTextfield($pageArray[self::terminateParticipantsNode],null,self::terminateParticipantsOther,$tempPrefix.'title',self::terminateParticipantsNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::terminateParticipantsNode,true));
-          if (!in_array($terminate,['','remove','choose']) && $this->noPre && in_array($this->consentAddressee,self::consentTypesAll)) { // no pre information and consent is given -> data must either be deleted or participants must choose whether to delete or keep
+          if (!in_array($terminate,['','remove','choose'],true) && $this->noPre && in_array($this->consentAddressee,self::consentTypesAll,true)) { // no pre information and consent is given -> data must either be deleted or participants must choose whether to delete or keep
               $this->addCheckLabelString($tempPrefix.self::informationNode,parameters: array_merge($this->paramsAddressee,$this->routeIDs));
           }
           if ($this->noPost && $terminate==='choose') { // neither pre nor post information -> participants can not choose whether to delete or keep the data
@@ -1095,7 +1082,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the measures page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkMeasures(bool $setTitle = true): void
     {
@@ -1115,19 +1101,17 @@ class CheckDocClass extends ControllerAbstract
                 $this->addCheckLabelString(self::missingMultiple,$type,colorRed: false);
             } else { // at least one option was selected
                 $this->checkMeasuresInterventions($tempArray,$type);
-                if ($type===self::measuresNode) {
-                    if (array_key_exists(self::measuresFurtherNode,$pageArray)) {
-                        $measuresFurther = $pageArray[self::measuresFurtherNode];
-                        $tempPrefix = $typePrefix.self::measuresDocumentation.'.';
-                        foreach (array_keys(self::measuresDocumentationTypes) as $documentation) { // documentation
-                            if (array_key_exists($documentation,$measuresFurther)) {
-                                $this->checkMissingChildrenOther($measuresFurther,$documentation,$tempPrefix.'missing',[$documentation.self::documentationOther => $tempPrefix.self::descriptionNode],['type' => $documentation],hash: $this->addDiv($documentation));
-                            }
+                if ($type===self::measuresNode && array_key_exists(self::measuresFurtherNode,$pageArray)) {
+                    $measuresFurther = $pageArray[self::measuresFurtherNode];
+                    $tempPrefix = $typePrefix.self::measuresDocumentation.'.';
+                    foreach (array_keys(self::measuresDocumentationTypes) as $documentation) { // documentation
+                        if (array_key_exists($documentation,$measuresFurther)) {
+                            $this->checkMissingChildrenOther($measuresFurther,$documentation,$tempPrefix.'missing',[$documentation.self::documentationOther => $tempPrefix.self::descriptionNode],['type' => $documentation],hash: $this->addDiv($documentation));
                         }
-                        foreach ([self::surveyConductNode,self::screeningNode,self::geneNode] as $further) { // survey conduct, screening, and gene
-                            if (array_key_exists($further,$measuresFurther)) {
-                                $this->checkMissingChosen($measuresFurther,$typePrefix.$further,null,$further,true,$further);
-                            }
+                    }
+                    foreach ([self::surveyConductNode,self::screeningNode,self::geneNode] as $further) { // survey conduct, screening, and gene
+                        if (array_key_exists($further,$measuresFurther)) {
+                            $this->checkMissingChosen($measuresFurther,$typePrefix.$further,null,$further,true,$further);
                         }
                     }
                 }
@@ -1209,7 +1193,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the burdensRisks page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkBurdensRisks(bool $setTitle = true): void
     {
@@ -1228,7 +1211,7 @@ class CheckDocClass extends ControllerAbstract
             if ($isSelected) {
                 $multiArray = $tempArray[$typeKey];
                 $isNoID = array_key_exists($isBurdens ? self::noBurdens : self::noRisks,$multiArray);
-                if (!(count($multiArray)==1 && $isNoID)) {
+                if (count($multiArray)!==1 || !$isNoID) {
                     $this->checkMissingContent($tempArray,[self::descriptionNode => $title],true,parameter: $params,hash: $this->addDiv($type,true,false));
                 }
                 if ($isBurdens) {
@@ -1260,7 +1243,7 @@ class CheckDocClass extends ControllerAbstract
             if ($this->noPre) { // no pre information -> no finding
                 $this->addCheckLabelString($tempPrefix.'information',parameters: $this->routeIDs);
             }
-            if (in_array($this->consentAddressee,[self::voluntaryConsentNo,self::voluntaryConsentNotApplicable])) { // finding -> consent
+            if (in_array($this->consentAddressee,[self::voluntaryConsentNo,self::voluntaryConsentNotApplicable],true)) { // finding -> consent
                 $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->routeIDs);
             }
         }
@@ -1274,7 +1257,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the compensation page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkCompensation(bool $setTitle = true): void
     {
@@ -1328,7 +1310,7 @@ class CheckDocClass extends ControllerAbstract
                                     $tempPrefix = $awardingPrefix.self::compensationLottery.'.';
                                     $this->checkMissingContent($awardingArray,array_merge([self::lotteryStart.self::descriptionCap => $tempPrefix.'start', self::lotteryStart => $tempPrefix.'announcement'],array_key_exists(self::lotteryStartOtherDescription,$awardingArray) ? [self::lotteryStartOtherDescription => $tempPrefix.'announcementOther'] : []),lineTitle: $lineTitle,hash: $hashDiv);
                                 }
-                                $chosen = $this->checkMissingChosen($awardingArray,$awardingPrefix.'missing',null,!$isLottery ? $hashDiv : self::awardingNode.self::compensationLottery.'Heading',parameters: $typeParams);
+                                $chosen = $this->checkMissingChosen($awardingArray,$awardingPrefix.'missing',null,$isLottery ? self::awardingNode.self::compensationLottery.'Heading' : $hashDiv,parameters: $typeParams);
                                 if ($chosen!=='' && $type!==self::compensationOther) {
                                     $hashDiv = $type.$chosen;
                                     if (array_key_exists(self::descriptionNode,$awardingArray)) { // (first) description text field of chosen option
@@ -1360,7 +1342,7 @@ class CheckDocClass extends ControllerAbstract
                     if (array_key_exists(self::compensationVoluntaryLoss,$pageArray[self::compensationVoluntaryNode])) {
                         if (!$isLonger30) { // complete loss of compensation after more than 30 minutes -> total duration must be greater than 30 minutes
                             $this->addCheckLabelString($tempPrefix.self::compensationVoluntaryLoss,parameters: $this->routeIDs);
-                        } elseif (!in_array($chosen,['',self::terminateNothing])) { // complete loss of compensation after more than 30 minutes -> also complete loss if terminated
+                        } elseif (!in_array($chosen,['',self::terminateNothing],true)) { // complete loss of compensation after more than 30 minutes -> also complete loss if terminated
                             $this->addCheckLabelString($tempPrefix.'lossToTerminate');
                         }
                     } elseif ($isLonger30 && $chosen===self::terminateNothing) { // complete loss if terminate and total duration longer than 30 minutes -> voluntary nature must be compromised by complete loss
@@ -1374,7 +1356,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the texts page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkTexts(bool $setTitle = true): void
     {
@@ -1414,7 +1395,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the informationIII page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkInformationIII(bool $setTitle = true): void
     {
@@ -1434,7 +1414,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the legal page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkLegal(bool $setTitle = true): void
     {
@@ -1451,7 +1430,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the data privacy page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkDataPrivacy(bool $setTitle = true): void
     {
@@ -1472,8 +1450,8 @@ class CheckDocClass extends ControllerAbstract
             if (array_key_exists(self::createNode,$pageArray)) {
                 $tempArray = $pageArray[self::createNode];
                 $tempPrefix = $translationPage.self::createNode.'.';
-                $create = $this->checkMissingChosen($tempArray, $tempPrefix.'missing', null, self::createNode, true);
-                if ($this->noPost && !in_array($create, ['', self::privacyNotApplicable])) { // neither pre- nor post-information -> create not applicable
+                $create = $this->checkMissingChosen($tempArray, $tempPrefix.'missing', null, self::createNode,true);
+                if ($this->noPost && !in_array($create, ['', self::privacyNotApplicable],true)) { // neither pre- nor post-information -> create not applicable
                     $this->addCheckLabelString($tempPrefix.'informationToNotApplicable', parameters: $this->routeIDs);
                 } elseif ($create===self::privacyNotApplicable && in_array(0, $this->information)) { // create not applicable -> neither pre- nor post-information
                     $this->addCheckLabelString($tempPrefix.'notApplicableToInformation', parameters: $this->routeIDs);
@@ -1490,7 +1468,7 @@ class CheckDocClass extends ControllerAbstract
                     $qualification = $this->coreDataArray[self::qualification] ?? '';
                     $responsibility = $this->checkMissingChosen($pageArray, $tempPrefix.'missing', null, self::responsibilityNode, true, self::responsibilityNode);
                     $taskData = explode(',',$this->measure[self::contributorNode][self::taskData] ?? '');
-                    if ($qualification==='0' && $this->coreDataArray[self::applicant][self::position]===self::positionsStudent && in_array($responsibility,[self::responsibilityOnlyOwn,self::responsibilityOtherOther,self::responsibilityMultiple]) && in_array('0',$taskData) && count($taskData)===1) { // student with qualification and only contributor with task data -> responsibility must be private
+                    if ($qualification==='0' && $this->coreDataArray[self::applicant][self::position]===self::positionsStudent && in_array($responsibility,[self::responsibilityOnlyOwn,self::responsibilityOtherOther,self::responsibilityMultiple],true) && in_array('0',$taskData) && count($taskData)===1) { // student with qualification and only contributor with task data -> responsibility must be private
                         $this->addCheckLabelString($tempPrefix.'private',parameters: $this->paramsAddressee);
                     }
                     if ($responsibility===self::responsibilityOnlyOwn) {
@@ -1514,13 +1492,13 @@ class CheckDocClass extends ControllerAbstract
                     $dataOnline = '';
                     $dataOnlineProcessing = '';
                     $tempArray = ['', self::privacyNotApplicable];
-                    if ($responsibility===self::privacyNotApplicable && !in_array($transferOutside, $tempArray)) { // responsibility not applicable -> transfer outside must also be not applicable
+                    if ($responsibility===self::privacyNotApplicable && !in_array($transferOutside, $tempArray,true)) { // responsibility not applicable -> transfer outside must also be not applicable
                         $this->addCheckLabelString($translationPage.self::responsibilityNode.'To'.self::transferOutsideNode);
-                    } elseif ($transferOutside===self::privacyNotApplicable && !in_array($responsibility, $tempArray)) { // transfer outside not applicable -> responsibility must also be not applicable
+                    } elseif ($transferOutside===self::privacyNotApplicable && !in_array($responsibility, $tempArray,true)) { // transfer outside not applicable -> responsibility must also be not applicable
                         $this->addCheckLabelString($translationPage.self::transferOutsideNode.'To'.self::responsibilityNode);
                     }
-                    if (in_array($responsibility, [self::responsibilityOnlyOwn, self::privacyNotApplicable]) && // responsibility
-                        in_array($transferOutside, [self::transferOutsideNo, self::privacyNotApplicable])) { // transfer outside
+                    if (in_array($responsibility, [self::responsibilityOnlyOwn, self::privacyNotApplicable],true) && // responsibility
+                        in_array($transferOutside, [self::transferOutsideNo, self::privacyNotApplicable],true)) { // transfer outside
                         // data online (processing)
                         if (array_key_exists(self::dataOnlineNode, $pageArray)) {
                             $tempArray = $pageArray[self::dataOnlineNode];
@@ -1529,7 +1507,7 @@ class CheckDocClass extends ControllerAbstract
 
                         }
                         $dataPersonal = $this->checkMissingChosen($pageArray, $translationPage.self::dataPersonalNode, null, self::dataPersonalNode, true, self::dataPersonalNode); // data personal
-                        $hasPersonal = in_array($dataPersonal, self::dataPersonal); // true if any personal data are collected
+                        $hasPersonal = in_array($dataPersonal, self::dataPersonal,true); // true if any personal data are collected
                         // marking
                         $markingSecondString = self::markingNode.self::markingSuffix;
                         $markings = [self::markingNode => '', $markingSecondString => ''];
@@ -1571,7 +1549,7 @@ class CheckDocClass extends ControllerAbstract
                                 if (array_key_exists(self::codePersonal, $tempArray)) { // if internal, key may not exist
                                     $tempVal = $this->checkMissingChosen($tempArray, $tempPrefix.self::codePersonal, null, $this->addDiv($markingChosen).$suffix, name: self::codePersonal, lineTitle: $lineTitle);
                                     $isMarkingAnswered = $isMarkingAnswered && $tempVal!=='';
-                                    $isMarkingPersonal = $isMarkingPersonal || in_array($tempVal, self::markingDataResearchTypes); // whether the code has personal data
+                                    $isMarkingPersonal = $isMarkingPersonal || in_array($tempVal, self::markingDataResearchTypes,true); // whether the code has personal data
                                     $isCurList = $tempVal===self::markingList;
                                     $isMarkingPersonalNotGeneration = $isMarkingPersonalNotGeneration || $isCurList;
                                     $isCodeMaybe = $isCodeMaybe || $tempVal===self::generation;
@@ -1616,7 +1594,7 @@ class CheckDocClass extends ControllerAbstract
                             // purposes translated -> here because data personal is also needed
                             $purposeTrans = [];
                             $purposeTransGen = [];
-                            foreach ($this->translateArray($projectdetailsPrefixTool.self::privacyNode.'.'.self::purposeResearchNode.'.typesShort.', array_merge([self::dataPersonalNode], self::allPurposeTypes), true) as $purpose => $translationKey) {
+                            foreach ($this->translateArray($projectdetailsPrefixTool.self::privacyNode.'.'.self::purposeResearchNode.'.typesShort.', array_merge([self::dataPersonalNode], self::allPurposeTypes),true) as $purpose => $translationKey) {
                                 $purposeTrans[$purpose] = $this->translateString($translationKey);
                                 if ($purpose!==self::dataPersonalNode) {
                                     $purposeTransGen[$purpose] = $this->translateString(str_replace('typesShort', 'typesShortGen', $translationKey));
@@ -1653,7 +1631,7 @@ class CheckDocClass extends ControllerAbstract
                                             $typeParam = ['type' => $this->translateString($projectdetailsPrefixTool.self::privacyNode.'.'.self::personalKeepNode.'.typesShort.'.$type)];
                                             if ($description==='') {
                                                 $this->errorMessage = $tempPrefix.self::descriptionNode;
-                                                $this->addCheckLabelString(self::missingSingle, $this->addDiv($type, true), $typeParam, colorRed: false);
+                                                $this->addCheckLabelString(self::missingSingle, $this->addDiv($type,true), $typeParam, colorRed: false);
                                             }
                                             // personal keep consent
                                             if ($this->checkMissingChosen($tempArray,$personalKeepConsentPrefix.'missing',null,$type.'PersonalKeepConsentDiv',name: $type, parameters: $typeParam)==='optional' && $this->consentAddressee===self::voluntaryConsentNo) { // no consent -> personal keep consent must not be optional
@@ -1800,10 +1778,10 @@ class CheckDocClass extends ControllerAbstract
                                 }
                             }
                             // further checks
-                            $this->checkResponsibilityTransfer($responsibility, $transferOutside, $hasPersonal, $allPersonalAnswered, true);
+                            $this->checkResponsibilityTransfer($responsibility, $transferOutside, $hasPersonal, $allPersonalAnswered,true);
                             $ipPrefix = $furtherPrefix.'ip.';
                             $isIP = array_key_exists('ip', $dataResearch);
-                            $isDataPersonal = in_array($dataPersonal, ['', 'personal']);
+                            $isDataPersonal = in_array($dataPersonal, ['', 'personal'],true);
                             if ($isIP) {
                                 // location not online -> data research must not be ip
                                 if (!in_array($measuresArray[self::locationNode][self::chosen], ['', self::locationOnline])) {
@@ -1815,7 +1793,7 @@ class CheckDocClass extends ControllerAbstract
                                 }
                             }
                             // list has ip-addresses -> only if ip-addresses are linked to research data
-                            if ($isListIP && (!in_array($dataOnline, ['', self::dataOnlineTechnical]) || $dataOnline===self::dataOnlineTechnical && !in_array($dataOnlineProcessing, ['', self::dataOnlineProcessingLinked]))) {
+                            if ($isListIP && (!in_array($dataOnline, ['', self::dataOnlineTechnical],true) || $dataOnline===self::dataOnlineTechnical && !in_array($dataOnlineProcessing, ['', self::dataOnlineProcessingLinked]))) {
                                 $this->addCheckLabelString($ipPrefix.'ipList', parameters: $this->routeIDs);
                             }
                             $isDataResearch = $dataResearch!==[];
@@ -1909,7 +1887,7 @@ class CheckDocClass extends ControllerAbstract
                             }
                         } else { // marking is 'other'
                             $this->checkResponsibilityTransfer($responsibility, $transferOutside, $hasPersonal);
-                            if (in_array($dataPersonal, ['', self::dataPersonalNo]) && ($pageArray[self::dataOnlineProcessingNode] ?? '')===self::dataOnlineProcessingLinked) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
+                            if (in_array($dataPersonal, ['', self::dataPersonalNo],true) && ($pageArray[self::dataOnlineProcessingNode] ?? '')===self::dataOnlineProcessingLinked) { // ip-addresses can be linked to research data -> research data must be marked with list which contains the ip
                                 $this->addCheckLabelString($translationPage.'further.ip.linkedMarking');
                             }
                         }
@@ -1932,7 +1910,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the data reus page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkDataReuse(bool $setTitle = true): void
     {
@@ -1981,7 +1958,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Checks for errors on the contributor page.
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function checkContributor(bool $setTitle = true): void
     {
@@ -1994,7 +1970,7 @@ class CheckDocClass extends ControllerAbstract
                 $isTask = $contributors[0]!=='';
                 if (in_array($task,$this->tasksMandatory) && !$isTask) { // task is mandatory
                     $isTaskAvailable = $this->isMandatory[$task]; // true if task was not selected for at least one contributor on 'contributors' page
-                    $this->addCheckLabelString($translationPage.'mandatory',$isTaskAvailable ? $task : '', ['task' => $this->translateString(self::tasksTypes[$task]), 'type' => !$isTaskAvailable ? 'missing' : 'other'],!$isTaskAvailable);
+                    $this->addCheckLabelString($translationPage.'mandatory',$isTaskAvailable ? $task : '', ['task' => $this->translateString(self::tasksTypes[$task]), 'type' => $isTaskAvailable ? 'other' : 'missing'],!$isTaskAvailable);
                 } elseif ($isTask) {
                     $tasksCopy = &$this->contributorTasks[$task]; // contributor of the current task. key: contributor index, value: empty or other description
                     foreach ($contributors as $index) {
@@ -2009,7 +1985,6 @@ class CheckDocClass extends ControllerAbstract
     }
 
     /** Sets the variables needed for the projectdetails pages of checkDocument().
-     * @return void
      */
     private function setProjectdetailsVariables(): void
     {
@@ -2073,12 +2048,10 @@ class CheckDocClass extends ControllerAbstract
         foreach ($selections as $key => $value) {
             if (is_array($value)) {
                 $returnArray = array_merge($returnArray,$this->checkMeasuresInterventions($value,$type));
-            } else { // selected option
-                if (in_array($key,$otherTypes) && $value==='') {
-                    $this->errorMessage = self::projectdetailsPrefix.self::measuresNode.'.'.$type.'.otherTypes.'.$key;
-                    $this->addCheckLabelString(self::missingSingle,$key,colorRed: false);
-                    $returnArray[] = $key;
-                }
+            } elseif (in_array($key,$otherTypes,true) && $value==='') { // selected option
+                $this->errorMessage = self::projectdetailsPrefix.self::measuresNode.'.'.$type.'.otherTypes.'.$key;
+                $this->addCheckLabelString(self::missingSingle,$key,colorRed: false);
+                $returnArray[] = $key;
             }
         }
         return $returnArray;
@@ -2090,7 +2063,6 @@ class CheckDocClass extends ControllerAbstract
      * @param bool $hasPersonal true if personal data are collected, false otherwise
      * @param bool $allPersonalAnswered true if all relevant questions about personal data are answered, false otherwise
      * @param bool $checkBoth if true, both directions of the dependency are checked, otherwise only the not applicable -> no personal data direction
-     * @return void
      */
     private function checkResponsibilityTransfer(string $responsibility, string $transferOutside, bool $hasPersonal, bool $allPersonalAnswered = true, bool $checkBoth = false): void
     {
@@ -2108,12 +2080,10 @@ class CheckDocClass extends ControllerAbstract
     }
 
     // methods for individual pages. Added here because at least one method calls a function defined afterward.
-
     /** Checks for error of the compensation question on the burdens/risks page.
-     * @param array $pageArray array containing the elements of the questions for the type
+     * @param array<string, mixed> $pageArray array containing the elements of the questions for the type
      * @param string $type type to be checked. Must equal 'burdens', 'risks', or 'burdensRisksContributors
-     * @param array $params parameters for the translation
-     * @return void
+     * @param array<string, string> $params parameters for the translation
      */
     private function checkBurdensRisksCompensation(array $pageArray, string $type, array $params): void
     {
@@ -2128,10 +2098,9 @@ class CheckDocClass extends ControllerAbstract
     }
 
     /** Checks the access and order processing questions.
-     * @param array $pageArray array with one child containing the access questions
+     * @param array<string, mixed> $pageArray array with one child containing the access questions
      * @param string $purposeNameWoPrefix purpose for which the access questions are checked
      * @param array $purposeParam translation parameters
-     * @return void
      */
     private function checkAccess(array $pageArray, string $purposeNameWoPrefix, array $purposeParam): void
     {
@@ -2155,7 +2124,7 @@ class CheckDocClass extends ControllerAbstract
                     // order processing known
                     if ($chosen==='0') {
                         $this->checkMissingContent($accessQuestions,[self::orderProcessingKnownNode => $privacyPrefix.self::orderProcessingKnownNode],parameter: $typeParam,hash: $this->addDiv($accessKey.self::orderProcessingKnownNode));
-                    } elseif (in_array($accessWoPrefix,$accessYes) && $chosen==='1') { // if external, order processing must be answered with 'yes'
+                    } elseif (in_array($accessWoPrefix,$accessYes,true) && $chosen==='1') { // if external, order processing must be answered with 'yes'
                         $this->addCheckLabelString($tempPrefix.'externalService',parameters: $typeParam);
                     }
                 }
@@ -2164,7 +2133,6 @@ class CheckDocClass extends ControllerAbstract
     }
 
     // functions for checking if a valid input was made
-
     /** Checks if the 'chosen' key of \$element has content. If not or if the content is not between zero (inclusively) and \$maxVal (exclusively), \$checkLabel is updated. If the value equals \$selected, the element with the key \$description is checked for content. If \$maxVal is null, the 'chosen' key is expected to have a string value.
      * @param array $element array containing the keys
      * @param int|null $maxVal value the 'chosen' element is checked against or null if the element contains a string
@@ -2175,7 +2143,7 @@ class CheckDocClass extends ControllerAbstract
      * @param string $hashDescription id of element for description to be linked to. If empty, $hash with 'DescriptionDiv' appended will be used
      * @param bool $addDescription true if the description prefix should be prepended if the \$descriptionKey element is empty, false otherwise
      * @param string $descriptionKey key of the element to be checked if the value equals \$selected. Defaults to self::descriptionNode
-     * @param array $parameters parameters for the translation keys
+     * @param array<string, string>|string[]|array<string, mixed> $parameters parameters for the translation keys
      * @return int|string the value of the 'chosen' element if it is a number or a string, otherwise \$maxVal if not null
      */
     private function checkMissingTextfield(array $element, ?int $maxVal, int|string $selected, string $chosenDescription, string $hash, string $description = '', string $hashDescription = '', bool $addDescription = false, string $descriptionKey = self::descriptionNode, array $parameters = []): int|string
@@ -2196,7 +2164,7 @@ class CheckDocClass extends ControllerAbstract
      * @param string $chosenKey if provided, key of \$element to be checked. Defaults to self::chosen
      * @param string $descriptionKey key of the element to be checked if \$element is not empty. Defaults to self::descriptionNode
      * @param string $hashDescription id of element for description to be linked to. If empty, $hash with 'DescriptionDiv' appended will be used
-     * @param array $parameters parameters for the translation
+     * @param array<string, mixed> $parameters parameters for the translation
      * @return string the value of the 'chosen' element
      */
     private function checkMissingTextfieldEmpty(array $element, string $chosenDescription, string $description, string $hash, bool $addDescription = true, string $chosenKey = self::chosen, string $descriptionKey = self::descriptionNode, string $hashDescription = '', array $parameters = []): string
@@ -2209,11 +2177,11 @@ class CheckDocClass extends ControllerAbstract
     }
 
     /** Calls checkMissingChildren. If it returns true and $other is not empty, it is checked if the key(s) exist and if so, if they have content.
-     * @param array $element array which contains the elements to be checked
+     * @param array<string, mixed> $element array which contains the elements to be checked
      * @param string $key key in $element to be checked
      * @param string $message translation key for a part in the error message
-     * @param array $other if provided: keys: key in the children of the checked element to be checked for existence. value: translation key for the part of the error message
-     * @param array $params parameters for the translations
+     * @param array<string, string> $other if provided: keys: key in the children of the checked element to be checked for existence. value: translation key for the part of the error message
+     * @param array<string, mixed> $params parameters for the translations
      * @param bool $addDescription if true, the error message for a missing description if prefixed by 'description of'
      * @param string $hash id of element to be linked to for the checkMissingChildren() call. If empty, $key will be used
      * @return bool true if the element has children, false otherwise
@@ -2223,7 +2191,7 @@ class CheckDocClass extends ControllerAbstract
         $returnBool = $this->checkMissingChildren($element,$key,$message,$params,$hash);
         if ($returnBool && $other!==[]) {
             $children = $element[$key];
-            $params['isOther'] = $params['isOther'] ?? true;
+            $params['isOther'] ??= true;
             foreach ($other as $key => $translationKey) {
                 if (array_key_exists($key,$children)) { // choice that needs input if selected
                     $this->checkMissingContent($children,[$key => $translationKey],$addDescription,parameter: $params);
@@ -2234,10 +2202,10 @@ class CheckDocClass extends ControllerAbstract
     }
 
     /** Checks if the element with the key \$key has children and if not, adds an error message to \$checkLabel.
-     * @param array $element array which contains the element to be checked
+     * @param array<string, mixed> $element array which contains the element to be checked
      * @param string $key key in $element to be checked
      * @param string $message translation key for a part in the error message
-     * @param array $parameters parameters to be added to the translation
+     * @param array<string, string>|array<string, mixed> $parameters parameters to be added to the translation
      * @param string $hash id of element to be linked to. If empty, $key will be used
      * @return bool true if the element has children, false otherwise
      */
@@ -2252,7 +2220,7 @@ class CheckDocClass extends ControllerAbstract
     }
 
     /** Checks if a specific key of \$element is either empty, not a number, or not between zero (inclusively) and \$maxVal (exclusively). If so, an error message is added to \$checkLabel. If \$maxVal is null, then it is only checked if the key is empty.
-     * @param array $element array containing the key to be checked
+     * @param array<string, mixed> $element array containing the key to be checked
      * @param string $question translation key for a part in the error message
      * @param int|null $maxVal maximum value that the array element is checked against
      * @param string $hash id of element to be linked to
@@ -2268,7 +2236,7 @@ class CheckDocClass extends ControllerAbstract
         $curValAsInt = (int)($curVal); // if $curVal is a string, 0 is returned
         $returnVal = $curValAsInt;
         $isString = $maxVal===null;
-        if ($curVal==='' || !$isString && (preg_match("/\D/",$curVal) || $curValAsInt<0 || $curValAsInt>=$maxVal)) {
+        if ($curVal==='' || !$isString && (preg_match("/\D/",(string) $curVal) || $curValAsInt<0 || $curValAsInt>=$maxVal)) {
             $message = $this->translateString($question,$parameters);
             $this->errorMessage = $addPrefix ? $this->translateString('checkDoc.missingChosen',['question' => $message]) : $lineTitle.($lineTitle!=='' ? ': ' : '').$message;
             $this->addCheckLabelString($this->translateString(self::missingSingle), $hash, colorRed: false);
@@ -2300,25 +2268,23 @@ class CheckDocClass extends ControllerAbstract
                 $isFunding = $fundingStatesSelected;
             }
         }
-        $hasBegun = in_array($this->committeeType,self::begunCommittees);
+        $hasBegun = in_array($this->committeeType,self::begunCommittees,true);
         return $this->coreDataArray[self::applicationProcessNode][self::chosen]==='' || // no application process chosen
                 !$isFunding || // funding (state) is missing
-                !$anyRequested && $hasBegun && $projectStartArray[self::chosen]==='' && (!(array_key_exists(self::projectStartBegunConfirm,$projectStartArray) || array_key_exists(self::descriptionNode,$projectStartArray))) // neither project start nor that data collection has already started is chosen -> check only if no funding is requested
+                !$anyRequested && $hasBegun && $projectStartArray[self::chosen]==='' && (!array_key_exists(self::projectStartBegunConfirm,$projectStartArray) && !array_key_exists(self::descriptionNode,$projectStartArray)) // neither project start nor that data collection has already started is chosen -> check only if no funding is requested
                 ? $this->translateString('checkDoc.reviewMissing',['hasBegun' => $this->getStringFromBool($hasBegun)])."\n\n" : '';
     }
 
     // methods for checking if a valid input was made
-
     /** Checks every key of \$element whose name is in \$inArray if the value is empty or equals \$default. If so, an error message is added to \$checkLabel.
      * @param array $element array whose elements are checked for content. The keys equal the node names
-     * @param array $inArray key: corresponding key in \$element. value: translation key for a part of the error message that is added
+     * @param array<string, string>|string[] $inArray key: corresponding key in \$element. value: translation key for a part of the error message that is added
      * @param bool $addDescription if provided and true, the translation is prefixed by "description of"
      * @param string $default default value where the error message is added
      * @param string $lineTitle translation key that is added at the beginning of the error message if at least one the checked elements is empty
-     * @param array $parameter parameter for the translation of either \$lineTitle (if given) or the description error
+     * @param array<string, mixed> $parameter parameter for the translation of either \$lineTitle (if given) or the description error
      * @param string $hash id of the element to be linked to. If empty, the first key of $inArray which is added to the error message will be used
      * @param bool $addHash if true, a link will be added
-     * @return void
      */
     private function checkMissingContent(array $element, array $inArray, bool $addDescription = false, string $default = '', string $lineTitle = '', array $parameter = [], string $hash = '', bool $addHash = true): void
     {
@@ -2348,7 +2314,6 @@ class CheckDocClass extends ControllerAbstract
 
     /** Sets \$curWindow, adds it as a subtitle to \$checkLabel and sets \$anyWindowMissing to false.
      * @param string $title title to add. Must be a valid key in the translation file
-     * @return void
      */
     private function addTitle(string $title): void
     {
@@ -2361,7 +2326,6 @@ class CheckDocClass extends ControllerAbstract
     /** Sets the heading for the appData subpages and $anyMissing to false.
      * @param string $subPage subPage page name that is added to the heading
      * @param bool $setTitle if true, the page title will be added above the errors
-     * @return void
      */
     private function addAppDataTitle(string $subPage, bool $setTitle = true): void
     {
@@ -2377,7 +2341,6 @@ class CheckDocClass extends ControllerAbstract
      * @param string $pageName page name that is added to the heading if the heading for a single page should be added, otherwise an empty string
      * @param bool $setTitle if true, the page title will be added above the errors
      * @param string|null $subPage which heading to add. Must equal 'study', 'group' or 'measureTimePoint'. Null if $pageName is empty.
-     * @return void
      */
     private function addProjectdetailsTitle(string $pageName = '', bool $setTitle = true, ?string $subPage = null): void
     {
@@ -2408,25 +2371,21 @@ class CheckDocClass extends ControllerAbstract
     /** Checks if there is an error on either the current page or any page of the current type and sets the corresponding variables.
      * @param bool $setTitle if true, the page title will be checked
      * @param string|null $subPage which heading to remove if there is no error. Must equal 'study', 'group', or 'measureTimePoint'. Null if errors on a single page are checked
-     * @return void
      */
     private function setProjectdetailsTitle(bool $setTitle = true, ?string $subPage = null): void
     {
-        if ($setTitle) {
-            if ($subPage===null) {
-                if ($this->anyMissing) {
-                    $this->anyWindowMissing = true;
-                    $this->checkLabel .= "\n";
-                } else {
-                    $this->checkLabel = str_replace($this->curPage."\n", '', $this->checkLabel);
-                }
+        if ($setTitle && $subPage===null) {
+            if ($this->anyMissing) {
+                $this->anyWindowMissing = true;
+                $this->checkLabel .= "\n";
+            } else {
+                $this->checkLabel = str_replace($this->curPage."\n", '', $this->checkLabel);
             }
         }
     }
 
     /** Checks if there is an error on the current page and if so, adds a line break to \$checkLabel and sets \$anyWindowMissing to true. Otherwise, the heading from $checkLabel is removed.
      * @param bool $setTitle if true, the page title will be checked
-     * @return void
      */
     private function setAppDataTitle(bool $setTitle = true): void
     {
@@ -2440,9 +2399,7 @@ class CheckDocClass extends ControllerAbstract
         }
     }
 
-    /** Checks if there is an error on any page of the current group by checking \$anyWindowMissing and if not, the heading from \$checkLabel is removed.
-     * @return void
-     */
+    /** Checks if there is an error on any page of the current group by checking \$anyWindowMissing and if not, the heading from \$checkLabel is removed. */
     private function setTitle(): void
     {
         if (!$this->anyWindowMissing) {
@@ -2452,9 +2409,7 @@ class CheckDocClass extends ControllerAbstract
 
     // further methods
 
-    /** Adds the error message that the wrong review process is selected to $checkLabel.
-     * @return void
-     */
+    /** Adds the error message that the wrong review process is selected to $checkLabel. */
     private function addReviewProcessError(): void
     {
         $tempVal = $this->checkLabel;
@@ -2464,12 +2419,11 @@ class CheckDocClass extends ControllerAbstract
         $this->checkLabel .= "\n".$tempVal;
     }
 
-    /** Translates a string, adds it to \$checkLabel, and sets \$anyMissing ans \$anyError to true.
+    /** Translates a string, adds it to \$checkLabel, and sets \$anyMissing and \$anyError to true.
      * @param string $label translation key for the String to be added
      * @param string $hash id of the element to be linked to. If empty, no link will be added
-     * @param array $parameters parameters for the translation
+     * @param array<string, mixed>|array<string, string>|array<string, int>|string[] $parameters parameters for the translation
      * @param bool $colorRed if true, the string will be prefixed by 'error' colored in red.
-     * @return void
      */
     private function addCheckLabelString(string $label, string $hash = '', array $parameters = [], bool $colorRed = true): void
     {

@@ -5,6 +5,7 @@ namespace App\Form\Projectdetails;
 use App\Abstract\TypeAbstract;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Traversable;
 
 class MeasuresType extends TypeAbstract
@@ -197,9 +198,8 @@ class MeasuresType extends TypeAbstract
     }
 
     /** Sets the selections for measures or interventions
-     * @param array $forms form array where the data is set
+     * @param FormInterface[] $forms form array where the data is set
      * @param array|string $selections selected options
-     * @return void
      */
     private function setMeasuresInterventions(array $forms, array|string $selections): void
     {
@@ -219,9 +219,9 @@ class MeasuresType extends TypeAbstract
     }
 
     /** Gets the selections for measures or interventions.
-     * @param array $forms form array containing the data
-     * @param array $elements elements to be checked for selection
-     * @param array $others elements where a description must be provided
+     * @param FormInterface[] $forms form array containing the data
+     * @param array<mixed[], mixed> $elements elements to be checked for selection
+     * @param string[] $others elements where a description must be provided
      * @return array selected elements
      */
     private function getMeasuresInterventions(array $forms, array $elements, array $others): array
@@ -233,10 +233,8 @@ class MeasuresType extends TypeAbstract
                 if ($tempArray!==[]) {
                     $returnArray[$key] = $tempArray;
                 }
-            } else { // selectable option
-                if ($forms[$value]->getData()) {
-                    $returnArray[$value] = in_array($value,$others) ? $forms[$this->appendText($value)]->getData() : '';
-                }
+            } elseif ($forms[$value]->getData()) { // selectable option
+                $returnArray[$value] = in_array($value,$others) ? $forms[$this->appendText($value)]->getData() : '';
             }
         }
         return $returnArray;

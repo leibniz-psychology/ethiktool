@@ -34,9 +34,9 @@ class AppDataController extends ControllerAbstract
         $coreDataArray = $this->xmlToArray($coreDataNode);
         $positions = $this->setPositions($session);
         $conflictReviewProcesses = self::reviewQuestions[self::textsNode][self::conflictTextNode]; // review processes for which a description needs to be given
-        $reviewProcessOld = !$session->has('updateProcess') ? $this->getCurrentReviewProcess($appNodeOld) : self::reviewFullDocs;
+        $reviewProcessOld = $session->has('updateProcess') ? self::reviewFullDocs : $this->getCurrentReviewProcess($appNodeOld);
         $coreDataArrayOld = $this->xmlToArray($appNodeOld->{self::appDataNodeName}->{self::coreDataNode});
-        $isConflictOld = $coreDataArrayOld[self::conflictNode][self::chosen]==='0' && in_array($reviewProcessOld,$conflictReviewProcesses);
+        $isConflictOld = $coreDataArrayOld[self::conflictNode][self::chosen]==='0' && in_array($reviewProcessOld,$conflictReviewProcesses,true);
         $textInput = '';
         $textInputRequested = ''; // if begun is selected and then requested is selected
         $tempArray = $coreDataArrayOld[self::projectStart];
@@ -99,12 +99,12 @@ class AppDataController extends ControllerAbstract
         $modalPrefix = self::coreDataNode.'.modal.';
         $tempPrefix = $modalPrefix.'buttons.';
         $tempArray = ['prefix' => $modalPrefix, 'modalWidth' => true, 'link' => 'app_coreData', 'leftButton' => $tempPrefix.'save', 'middleButton' => $tempPrefix.'cancel', 'rightButton' => $tempPrefix.'undo', 'middleCont' => false];
-        $hasShortDocs = in_array($committeeType,self::reviewShortChoose);
+        $hasShortDocs = in_array($committeeType,self::reviewShortChoose,true);
         if (str_contains($reviewProcessOld,self::reviewProcessFull)) {
             $modals[] = array_merge($tempArray,['modalID' => 'fullShort', 'params' => array_merge($session->get(self::committeeParams),['type' => 'fullToShort', 'hasShortDocs' => $this->getStringFromBool($hasShortDocs && $hasTexts)])]); // fullDocs to shortDocs or fullDocs to shortNoDocs
             $modals[] = array_merge($tempArray,['modalID' => 'begunRequestedShort', 'params' => ['type' => 'fullToShort', 'hasShortDocs' => 'false']]); // fullBegun or fullRequested to any short
         }
-        $isOldDocs = in_array($reviewProcessOld,self::reviewDocs);
+        $isOldDocs = in_array($reviewProcessOld,self::reviewDocs,true);
         if ($isOldDocs && $hasTexts) {
             $modals[] = array_merge($tempArray,['modalID' => 'docsBegun', 'params' => ['type' => self::projectStart]]); // fullDocs to fullBegun, shortDocs to shortBegun, shortService to shortBegun
             $modals[] = array_merge($tempArray,['modalID' => 'docsRequested', 'params' => ['type' => self::funding]]); // fullDocs to fullRequested, shortDocs to shortRequested, shortService to shortRequested
@@ -119,11 +119,11 @@ class AppDataController extends ControllerAbstract
             $requestedConfirmArray[] = $this->translateString(self::coreDataNode.'.'.self::funding.'.'.self::requestedConfirm.'.headingHint',array_merge($committeeParams,['isFull' => $bool]));
         }
 
-        $coreData = $this->createFormAndHandleRequest(CoreDataType::class,$coreDataArray,$request,[self::dummyParams => [self::applicant => $positions[$this->getQualification($coreDataArray) ? 1 : 0], self::studentConfirm => in_array($committeeType,self::committeeNoStudent)]]);
+        $coreData = $this->createFormAndHandleRequest(CoreDataType::class,$coreDataArray,$request,[self::dummyParams => [self::applicant => $positions[$this->getQualification($coreDataArray) ? 1 : 0], self::studentConfirm => in_array($committeeType,self::committeeNoStudent,true)]]);
         if ($coreData->isSubmitted()) { // a button was clicked or the language was changed
             $data = $this->getDataAndConvert($coreData,$coreDataNode);
             $submitDummy = $request->request->all()['core_data'][self::submitDummy];
-            if (str_contains($submitDummy,self::preview) && str_contains($submitDummy,'app_coreData') && !str_contains($submitDummy,'#')) { // download xml-file after review process has been changed
+            if (str_contains((string) $submitDummy,self::preview) && str_contains((string) $submitDummy,'app_coreData') && !str_contains((string) $submitDummy,'#')) { // download xml-file after review process has been changed
                 return $this->getDownloadResponse($session,getSecondLast: true);
             }
             $appNodeNew = $this->cloneNode($appNode);
@@ -136,7 +136,7 @@ class AppDataController extends ControllerAbstract
                 $instVoteArray = $this->xmlToArray($instVoteNode);
                 $instVoteArray[self::chosen] = 0;
                 $instVoteArray[self::instReference] = $appType[self::descriptionNode];
-                $instVoteArray[self::instVoteText] = $instVoteArray[self::instVoteText] ?? '';
+                $instVoteArray[self::instVoteText] ??= '';
                 $this->arrayToXml($instVoteArray,$instVoteNode);
             }
             // update applicant in contributors
@@ -165,7 +165,7 @@ class AppDataController extends ControllerAbstract
             $reviewProcessNew = $this->getCurrentReviewProcess($appNodeNew);
             $session->set(self::reviewProcess,$reviewProcessNew);
             $isConflict = $data[self::conflictNode][self::chosen]===0;
-            $isConflictNew = !$isConflictOld && $isConflict && in_array($reviewProcessNew,$conflictReviewProcesses); // conflict was not chosen, but is chosen now
+            $isConflictNew = !$isConflictOld && $isConflict && in_array($reviewProcessNew,$conflictReviewProcesses,true); // conflict was not chosen, but is chosen now
             $updateConflict = $hasTexts && $isConflictNew || $isConflictOld && !$isConflict;
             foreach ($appNodeNew->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
@@ -184,7 +184,7 @@ class AppDataController extends ControllerAbstract
                     }
                 }
             }
-            if (!$isOldDocs && in_array($reviewProcessNew,self::reviewDocs) && !$this->getMultiStudyGroupMeasure($appNodeNew)) { // old review process was without participant documents and new review process is with participant documents. May only be true if only one time points exists
+            if (!$isOldDocs && in_array($reviewProcessNew,self::reviewDocs,true) && !$this->getMultiStudyGroupMeasure($appNodeNew)) { // old review process was without participant documents and new review process is with participant documents. May only be true if only one time points exists
                 $this->setProjectdetailsContributor($request,$appNodeNew); // add indices to contributor tasks
             }
             $isNotLeave = !$this->getLeavePage($coreData,$session,self::coreDataNode);
@@ -199,8 +199,8 @@ class AppDataController extends ControllerAbstract
              'positions' => $positions,
              'funding' => self::fundingTypes,
              'requestedConfirmArray' => $requestedConfirmArray,
-             'hasStudent' => in_array($committeeType,self::committeeStudent),
-             'support' => array_diff_key(self::supportTypes,!$isEUB ? [self::supportCenter => ''] : []),
+             'hasStudent' => in_array($committeeType,self::committeeStudent,true),
+             'support' => array_diff_key(self::supportTypes,$isEUB ? [] : [self::supportCenter => '']),
              'applicantInfo' => self::applicantContributorsInfosTypes,
              'textInputConflict' => $textInput,
              'textInputRequested' => $textInputRequested,
@@ -222,7 +222,7 @@ class AppDataController extends ControllerAbstract
         $votes = $this->createFormAndHandleRequest(VotesType::class,$this->xmlToArray($votesNode),$request);
         if ($votes->isSubmitted()) {
             $this->getDataAndConvert($votes,$votesNode);
-            if (in_array($appType,self::appExtendedResubmission)) { // set reference because text field is disabled
+            if (in_array($appType,self::appExtendedResubmission,true)) { // set reference because text field is disabled
                 $votesNode->{self::instVote}->{self::instReference} = $appTypeNode->{self::descriptionNode};
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
@@ -231,7 +231,7 @@ class AppDataController extends ControllerAbstract
         $tempVal = $this->translateString($translationPrefix.'positiveNo');
         return $this->render('AppData/votes.html.twig', $this->setRenderParameters($request,$votes,
                 ['appType' => $appType,
-                 'isDocs' => $this->getStringFromBool(!in_array($this->getCurrentReviewProcess($appNode),[self::reviewShortService,self::reviewShortNoDocs])),
+                 'isDocs' => $this->getStringFromBool(!in_array($this->getCurrentReviewProcess($appNode),[self::reviewShortService,self::reviewShortNoDocs],true)),
                  'otherVoteResultHeadingText' => ['positive' => $tempVal, self::otherVoteResultNegative => $this->translateString($translationPrefix.self::otherVoteResultNegative), 'noVote' => $tempVal],
                  'exReArray' => self::appExtendedResubmission],'appData.votes')
             );

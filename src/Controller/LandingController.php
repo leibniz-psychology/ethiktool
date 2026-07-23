@@ -40,7 +40,7 @@ class LandingController extends ControllerAbstract
         $newTrans = []; // label for button for creating a new element
         $copyTrans = []; // hint above text field for copying an element
         $removeTrans = []; // heading and text for the remove modal
-        $pageHeading = (!$isProjectdetailsOverview ? $this->translateString('pages.'.self::landing) : ''); // heading on page
+        $pageHeading = $isProjectdetailsOverview ? '' : $this->translateString('pages.'.self::landing); // heading on page
         $tabNameStart = $this->translateString('pages.tabName').$pageHeading;
         $tabName = $tabNameStart; // tab name -> without given names of levels;
         $removePrefix = $projectdetailsPrefix.'removeModal.';
@@ -63,7 +63,7 @@ class LandingController extends ControllerAbstract
                 $tabName .= $tempVal;
             }
         }
-        $tempVal = $pageHeading.($isPageOverview ? '' : $this->translateString('pages.'.lcfirst($title).'.title'));
+        $tempVal = $pageHeading.($isPageOverview ? '' : $this->translateString('pages.'.lcfirst((string) $title).'.title'));
         $isNotMultiple = !$this->getMultiStudyGroupMeasure($appNode);
         if ($isPageOverview && $isNotMultiple) { // overview of one measure time point
             $studyDetailsTrans = $this->translateString('projectdetails.sidebar');
@@ -72,7 +72,7 @@ class LandingController extends ControllerAbstract
         } elseif (!$isPageOverview) { // overview of project structure
             $tabName = $tabNameStart.$tempVal;
         }
-        $pageHeading = !$isPageOverview ? $tempVal : $pageHeading;
+        $pageHeading = $isPageOverview ? $pageHeading : $tempVal;
 
         $pages = [];
         // names of the elements, split by levels. E.g.: names has several values: one index for each study and 'names' containing the names of all studies. Each of these elements has the same structure (one index for each group and one element with the names of all groups of this study). Each of these elements has an array as the value containing the names of the measure time points of this group
@@ -116,7 +116,7 @@ class LandingController extends ControllerAbstract
             [self::dummyParams => [self::isProjectdetails => $isProjectdetails, self::isMeasure => array_key_exists(self::measureID,$landingArray),'allStudies' => $allStudies]]);
         if ($landing->isSubmitted()) { // language has changed or a link was clicked
             $data = $landing->getData();
-            $submitDummy = $data[self::submitDummy]; // submitDummy as string
+            $submitDummy = (string) $data[self::submitDummy]; // submitDummy as string
             if (!str_contains($submitDummy,'loadedXML:')) { // if a proposal is loaded, the submit dummy contains the entire xml
                 $isNew = str_contains($submitDummy,'new') && !str_contains($submitDummy,'app_newForm');
                 $isCopy = str_contains($submitDummy,self::copy);
@@ -132,7 +132,7 @@ class LandingController extends ControllerAbstract
                     // logic: $submitDummy has the form 'key:value\n\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\n' (substr call). The split the string by "\n" such that the first element contains "remove:..." (first explode). Then split again by the colon such that the second element contains the indices (second explode). Then split again by the underscore to get the individual indices (third explode). Same for 'edit'.
                     $indicesString = explode(':', explode("\n", substr($submitDummy, strpos($submitDummy, $isNewCopy ? ($isNew ? self::newElement : self::copy) : ($isRemove ? self::remove : self::edit))))[0])[1];
                     $indices = explode('_', $indicesString);
-                    $name = !$isRemove ? $data[($isNewCopy ? self::newElement : self::editName).'_'.(!$isCopy ? $indicesString : implode('_',array_slice($indices,0,count($indices)-1)))] : '';
+                    $name = $isRemove ? '' : $data[($isNewCopy ? self::newElement : self::editName).'_'.($isCopy ? implode('_',array_slice($indices,0,count($indices)-1)) : $indicesString)];
                 }
                 if ($isNewCopy) {
                     $newIndices = [0,0,0];
@@ -192,24 +192,22 @@ class LandingController extends ControllerAbstract
                     } catch (\Throwable) {} // if remove button is double-clicked, it may already be removed
                     if (!$isRemove) {
                         $editRemoveNode->{self::nameNode} = $name;
-                    } else { // element is removed
-                        if ($editRemoveNode!==null) {
-                            $dom = dom_import_simplexml($editRemoveNode);
-                            $childNodes = $dom->parentNode->childNodes;
-                            $index = 0;
-                            while ($childNodes->length>$index) { // remove '#text' nodes
-                                $child = $childNodes->item($index);
-                                if ($child->nodeName==='#text') {
-                                    $child->remove();
-                                } else {
-                                    ++$index;
-                                }
+                    } elseif ($editRemoveNode!==null) { // element is removed
+                        $dom = dom_import_simplexml($editRemoveNode);
+                        $childNodes = $dom->parentNode->childNodes;
+                        $index = 0;
+                        while ($childNodes->length>$index) { // remove '#text' nodes
+                            $child = $childNodes->item($index);
+                            if ($child->nodeName==='#text') {
+                                $child->remove();
+                            } else {
+                                ++$index;
                             }
-                            if ($childNodes->count()>($isNotStudy ? 2 : 1) && in_array($childNodes->item(1)->nodeName, [self::studyNode, self::groupNode, self::measureTimePointNode])) { // if the remove button is double-clicked and an element after the one to be removed exists, it would also be removed
-                                $dom->parentNode->removeChild($dom);
-                                if (!$this->getMultiStudyGroupMeasure($appNode)) { // only one study with one group with one measure time point remaining
-                                    $this->setProjectdetailsContributor($request, $appNode);
-                                }
+                        }
+                        if ($childNodes->count()>($isNotStudy ? 2 : 1) && in_array($childNodes->item(1)->nodeName, [self::studyNode, self::groupNode, self::measureTimePointNode])) { // if the remove button is double-clicked and an element after the one to be removed exists, it would also be removed
+                            $dom->parentNode->removeChild($dom);
+                            if (!$this->getMultiStudyGroupMeasure($appNode)) { // only one study with one group with one measure time point remaining
+                                $this->setProjectdetailsContributor($request, $appNode);
                             }
                         }
                     }
@@ -230,7 +228,7 @@ class LandingController extends ControllerAbstract
             ['menu' => $pages,
              'tabName' => $tabName,
              'pageHeading' => $pageHeading,
-             'page' => lcfirst($title),
+             'page' => lcfirst((string) $title),
              'IDs' => $IDs,
              'allStudies' => $allStudies,
              'nameTrans' => $nameTrans,

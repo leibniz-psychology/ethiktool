@@ -10,13 +10,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
-class FooterController
+readonly class FooterController
 {
-    private HttpClientInterface $client;
-
-    public function __construct(HttpClientInterface $client)
+    public function __construct(private HttpClientInterface $client)
     {
-        $this->client = $client;
     }
 
     #[Route('footer','footer')]
@@ -30,6 +27,6 @@ class FooterController
                 $content = $response->getContent();
             }
         } catch (ExceptionInterface) {}
-        return new Response($content,200,['content-type'=>'text/html']);
+        return new Response($content, Response::HTTP_OK,['content-type'=>'text/html']);
     }
 }

@@ -19,7 +19,7 @@
     {% set responsiblePrefix, representativePrefix = contactPrefix~'responsible.', contactPrefix~'representative.' %}
     {% for heading, text in {((responsiblePrefix~'title')|trans): [(responsiblePrefix~'text')|trans(committeeParams)], ((contactPrefix~'data')|trans): data}|merge({((representativePrefix~'title')|trans) : [(representativePrefix~'text')|trans(committeeParams)]}) %}
         <div class="noPageBreak {{ textPreview }}" style="margin-top: 0.5em">
-            {% if loop.index==1 %} {# add here to keep on same page as the first sub-paragraph #}
+            {% if loop.index is same as 1 %} {# add here to keep on same page as the first sub-paragraph #}
                 {{ _self.addParagraphHeading(textPreview,paragraph,(contactPrefix~'title')|trans,savePDF) }}
             {% endif %}
             {{ heading }}

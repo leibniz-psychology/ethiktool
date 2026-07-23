@@ -16,7 +16,7 @@ class TextsController extends ControllerAbstract
     #[Route(self::routePrefix.self::textsNode,self::textsNode)]
     public function showTexts(Request $request): Response
     {
-        $routeParams = $request->get('_route_params');
+        $routeParams = $this->getRouteParams($request);
         $appNode = $this->getXMLfromSession($request->getSession());
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);
         if ($this->checkInactivePage($measureNode,self::textsNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, or the current measure time point is reanalysis
@@ -31,7 +31,7 @@ class TextsController extends ControllerAbstract
         $isFinding = $finding[self::chosen]==='0';
         $compensation = $measureArray[self::compensationNode][self::compensationTypeNode];
         $information = $this->getInformationString($measureArray[self::informationNode]);
-        $isNotInformationNoConsent = !(in_array($information,self::prePostArray) && $measureArray[self::consentNode][self::consentNode][self::chosen]===self::voluntaryConsentNo);
+        $isNotInformationNoConsent = !in_array($information,self::prePostArray,true) || $measureArray[self::consentNode][self::consentNode][self::chosen]!==self::voluntaryConsentNo;
 
         return $this->createFormAndHandleSubmit(TextsType::class,$request,[self::textsNode],
             ['maxCharsIntroGoals' => 800,

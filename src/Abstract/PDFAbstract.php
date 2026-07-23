@@ -37,14 +37,10 @@ class PDFAbstract extends ControllerAbstract
     protected function addHeadingLink(string $string, array $parameters = [], string $fragment = ''): string
     {
         $string = $this->translateStringPDF($string,$parameters);
-        if (!self::$savePDF && self::$isPageLink && $fragment!==self::dummyString) {
-            $string = $this->convertStringToLink($string,self::$linkedPage,self::$routeIDs,$fragment);
-        }
-        return $string;
+        return (!self::$savePDF && self::$isPageLink && $fragment!==self::dummyString) ? $this->convertStringToLink($string,self::$linkedPage,self::$routeIDs,$fragment) : $string;
     }
 
     /** Creates the string indicating that the downloaded files are not the final ones.
-     * @param Request $request
      * @param string $type must equal 'application' oder 'participation'
      * @param array $allowedParam array with key 'isAllowed' and as bool as a string as value
      * @param bool $hasReviewDocs true if participant documents are created and reviewed, false otherwise. May only be provided if $type equals 'participation'
@@ -78,7 +74,6 @@ class PDFAbstract extends ControllerAbstract
      * @param Session $session current session
      * @param string $html html string to be converted to pdf
      * @param string $name name of the pdf file
-     * @return void
      */
     protected function generatePDF(Session $session, string $html, string $name): void
     {

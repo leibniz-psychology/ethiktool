@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use DateTime;
 use SimpleXMLElement;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -13,7 +14,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '3.4.0';
+    protected const toolVersion = '3.4.1';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -98,7 +99,7 @@ trait PageTrait
     }
 
     /** Creates a string with concatenated IDs and underscores between them. Optionally the string can be prefixed or suffixed.
-     * @param array $ids array of three elements in following order: study ID, group ID, measure time point ID
+     * @param array<int, mixed> $ids array of three elements in following order: study ID, group ID, measure time point ID
      * @param string $prefix string to be added at the beginning
      * @param string $suffix string to be added at the end
      * @return string concatenated IDs
@@ -230,6 +231,22 @@ trait PageTrait
     private function addDiv(string $string, bool $addMiddle = false, bool $addText = true): string
     {
         return $string.($addMiddle ? ($addText ? 'Text' : self::descriptionCap) : '').'Div';
+    }
+
+    /** Gets the route from the request.
+     * @return string route
+     */
+    protected function getRoute(Request $request):string
+    {
+        return $request->attributes->get('_route');
+    }
+
+    /** Gets the route parameter from the request.
+     * @return array route parameter
+     */
+    protected function getRouteParams(Request $request): array
+    {
+        return $request->attributes->get('_route_params');
     }
 
     /** Creates an array where each key is the concatenation of \$prefix and a value in \$values and the values are $values.

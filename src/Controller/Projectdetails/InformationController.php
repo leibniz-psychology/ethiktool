@@ -18,8 +18,8 @@ class InformationController extends ControllerAbstract
     public function showInformation(Request $request): Response
     {
         $session = $request->getSession();
-        $routeParams = $request->get('_route_params');
-        $route = substr($request->get('_route'),4); // 'information' or 'informationII'
+        $routeParams = $this->getRouteParams($request);
+        $route = substr($this->getRoute($request),4); // 'information' or 'informationII'
         $isInformationII = $route===self::informationIINode;
         $appNode = $this->getXMLfromSession($session,setRecent: !$isInformationII);
         $measureNode = $this->getMeasureTimePointNode($appNode,$routeParams);

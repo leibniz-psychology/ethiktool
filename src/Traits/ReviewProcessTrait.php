@@ -1146,10 +1146,7 @@ trait ReviewProcessTrait
                             ? ($applicationProcessArray[self::shortDocsNode]===self::shortDocsYes ? self::reviewShortService : self::reviewShortNoDocs)
                             : self::reviewShortDocs)));
         }
-        if ($reviewProcess==='') {
-            $reviewProcess = $this->getReviewShortDefault($application[self::committee]);
-        }
-        return $reviewProcess;
+        return $reviewProcess==='' ? $this->getReviewShortDefault($application[self::committee]) : $reviewProcess;
     }
 
     /** Checks if the current review process may contain participation documents.
@@ -1167,21 +1164,20 @@ trait ReviewProcessTrait
      */
     protected function getReviewShortDefault(string $committeeType): string
     {
-        return in_array($committeeType,self::reviewShortChoose) ? self::reviewShortNoDocs : self::reviewShortDocs;
+        return in_array($committeeType,self::reviewShortChoose,true) ? self::reviewShortNoDocs : self::reviewShortDocs;
     }
 
     /** Updates the nodes of measure time point
      * @param Request $request request to get the locale
      * @param SimpleXMLElement $measureTimePointNode node containing the information about the current measure time point
      * @param string $reviewProcess type of review process
-     * @return void
      */
     protected function updateNodesByReviewProcess(Request $request, SimpleXMLElement $measureTimePointNode, string $reviewProcess): void
     {
         if (count($measureTimePointNode->{'groups'}->children())>0) { // update of nodes is only necessary if new data is collected, i.e., groups etc. are active
             foreach (self::reviewQuestions as $page => $pageNodes) { // keys: page names, values: array of questions with review types
                 $pageNode = $measureTimePointNode->{$page};
-                if (!in_array($reviewProcess, self::reviewTypePages[$page])) { // no question is asked on the current page
+                if (!in_array($reviewProcess, self::reviewTypePages[$page],true)) { // no question is asked on the current page
                     $this->removeAllChildNodes($pageNode);
                 } elseif ($this->checkElement($page,$measureTimePointNode)) { // the current page exists and at least one question is asked on the current page
                     $lastIndex = count($pageNodes) - 1; // index of last question
@@ -1212,21 +1208,17 @@ trait ReviewProcessTrait
                                         ++$depIndex;
                                     }
                                     $curValues = $values[$index];
-                                    $hasValue = $curNode!==null && $curNode->getName()!=='' && in_array((string)$curNode, is_array($curValues) ? $curValues : [$curValues]);
-                                    if ($isOr) {
-                                        $createNode = $createNode || $hasValue;
-                                    } else {
-                                        $createNode = $createNode && $hasValue;
-                                    }
+                                    $hasValue = $curNode!==null && $curNode->getName()!=='' && in_array((string) $curNode, is_array($curValues) ? $curValues : [$curValues]);
+                                    $createNode = $isOr ? $createNode || $hasValue : $createNode && $hasValue;
                                 }
                             }
                             if ($createNode) { // node should be created
-                                $index = array_search($node, $pageNodeKeys); // index of question
+                                $index = array_search($node, $pageNodeKeys,true); // index of question
                                 $isNextAsked = false; // gets true for the first question following the current one that is also asked
                                 while ($index<$lastIndex && !$isNextAsked) {
                                     ++$index;
                                     $nextKey = $pageNodeKeys[$index];
-                                    $isNextAsked = in_array($reviewProcess, $pageNodes[$nextKey]) && $this->checkElement($nextKey, $pageNode);
+                                    $isNextAsked = in_array($reviewProcess, $pageNodes[$nextKey],true) && $this->checkElement($nextKey, $pageNode);
                                 }
                                 if ($index>=$lastIndex && !$isNextAsked) { // last question on page
                                     $nodeAfter = $pageNode->addChild('dummy');
@@ -1252,7 +1244,7 @@ trait ReviewProcessTrait
                 }
             }
             $informationNode = $measureTimePointNode->{self::informationNode};
-            $isPre = $this->checkElement(self::pre, $informationNode) && ((string)$informationNode->{self::pre})==='0';
+            $isPre = $this->checkElement(self::pre, $informationNode) && ((string) $informationNode->{self::pre})==='0';
             $legalNode = $measureTimePointNode->{self::legalNode}; // legal nodes are not changed if the review process changes
             $hasLegal = count($legalNode->children())>0;
             if (!$isPre) {
@@ -1260,28 +1252,28 @@ trait ReviewProcessTrait
                 if ($hasLegal) {
                     $this->removeAllChildNodes($legalNode);
                 }
-            } elseif (!$hasLegal && in_array($reviewProcess, self::reviewTypePages[self::legalNode])) {
+            } elseif (!$hasLegal && in_array($reviewProcess, self::reviewTypePages[self::legalNode],true)) {
                 $this->addLegalNodes($legalNode, $this->xmlToArray($measureTimePointNode));
             }
             // nodes that exist if any information is given
-            if ($isPre || $this->checkElement(self::post, $informationNode) && ((string)$informationNode->{self::post}->{self::chosen})==='0') {
+            if ($isPre || $this->checkElement(self::post, $informationNode) && ((string) $informationNode->{self::post}->{self::chosen})==='0') {
                 $consentNode = $measureTimePointNode->{self::consentNode};
                 // document translation
-                if (((string)$consentNode->{self::consent}->{self::chosen})===self::consentOral) {
+                if (((string) $consentNode->{self::consent}->{self::chosen})===self::consentOral) {
                     $this->removeElement(self::documentTranslationNode, $informationNode);
                 }
                 // finding text
-                if (((string)$measureTimePointNode->{self::burdensRisksNode}->{self::findingNode}->{self::chosen})!=='0') {
+                if (((string) $measureTimePointNode->{self::burdensRisksNode}->{self::findingNode}->{self::chosen})!=='0') {
                     $this->removeElement(self::findingTextNode, $measureTimePointNode->{self::textsNode});
                 }
                 // terminate cons participation
-                if (((string)$consentNode->{self::terminateConsNode}->{self::chosen})!=='1') {
+                if (((string) $consentNode->{self::terminateConsNode}->{self::chosen})!=='1') {
                     $this->removeElement(self::terminateConsParticipationNode, $consentNode);
                 }
             }
             // data privacy
             $privacyNode = $measureTimePointNode->{self::privacyNode}[0];
-            if ($this->checkElement(self::markingNode, $privacyNode) && ((string)$privacyNode->{self::markingNode}->{self::chosen})===self::markingOther) {
+            if ($this->checkElement(self::markingNode, $privacyNode) && ((string) $privacyNode->{self::markingNode}->{self::chosen})===self::markingOther) {
                 foreach ([self::dataResearchNode, self::anonymizationNode, self::storageNode, self::personalKeepNode, self::accessNode, self::purposeFurtherNode, self::processingFurtherNode] as $nodeName) { // remove all nodes that may have been created, but not needed because marking is 'other'
                     $this->removeElement($nodeName, $privacyNode);
                 }
@@ -1305,16 +1297,16 @@ trait ReviewProcessTrait
             if ($isPersonalPurpose && !$isAnonymized) {
                 $this->removeElement(self::dataReuseNode, $dataReuseNode);
             }
-            if ($this->checkElement(self::dataReuseNode, $dataReuseNode) && !in_array((string)$dataReuseNode->{self::dataReuseNode}, self::dataReuseTypesYes)) {
+            if ($this->checkElement(self::dataReuseNode, $dataReuseNode) && !in_array((string) $dataReuseNode->{self::dataReuseNode}, self::dataReuseTypesYes)) {
                 $this->removeElement(self::dataReuseHowNode, $dataReuseNode);
             }
-            if (!($isPersonalPurpose && $isAnonymized)) {
+            if (!$isPersonalPurpose || !$isAnonymized) {
                 $this->removeElement(self::dataReuseHowNode.'reuse', $dataReuseNode);
             }
         }
         $dataSourceNode = $measureTimePointNode->{self::dataSourceNode};
         $votesNode = $dataSourceNode->{self::dataSourceVotesNode} ?? null;
-        if (in_array($this->getCommitteeType($request->getSession()), self::begunCommittees) && $votesNode!==null && $this->checkElement(self::voteContributorsNode, $votesNode) && ((string)$votesNode->{self::voteContributorsNode}->{self::chosen})==='0') { // reanalysis without vote, but involvement of contributors and review process begun is possible -> no further questions
+        if (in_array($this->getCommitteeType($request->getSession()), self::begunCommittees) && $votesNode!==null && $this->checkElement(self::voteContributorsNode, $votesNode) && ((string) $votesNode->{self::voteContributorsNode}->{self::chosen})==='0') { // reanalysis without vote, but involvement of contributors and review process begun is possible -> no further questions
             $this->removeElement(self::dataSetNode, $dataSourceNode);
             $this->removeElement(self::dataSetPDF, $dataSourceNode);
         } elseif (str_contains($reviewProcess,'Requested')) {

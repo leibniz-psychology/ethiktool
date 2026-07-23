@@ -3,9 +3,10 @@
 
 {% block body %}
     {% set isPreview, request, submitDummy, classes = pageTitle is not same as '', app.request, content.submitDummy, 'border rounded-lg shadow-sm' %}
+    {% set requestAttributes = request.attributes %}
     <div {{ stimulus_controller('base',
-        {'route': request.get('_route'),
-         'routeParams': request.get('_route_params'),
+        {'route': requestAttributes.get('_route'),
+         'routeParams': requestAttributes.get('_route_params'),
          'preview': preview ?? 0,
          'previewTab': previewTab ?? '',
          'committeeBeta': committeeBeta}) }} class="pb-5 grid">

@@ -63,6 +63,9 @@ secret.*.y?ml
 /templates/components/tracking.html.twig
 /public/
 /config/secrets/
+/config/packages/csrf.yaml
+/config/reference.php
+Dockerfile
 /src/Traits/Main/BetaCommitteeTrait.php
 
 ###> phpstan/phpstan ###

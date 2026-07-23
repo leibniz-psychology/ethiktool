@@ -16,7 +16,7 @@ class CompensationController extends ControllerAbstract
     #[Route(self::routePrefix.self::compensationNode,self::compensationNode)]
     public function showCompensation(Request $request): Response
     {
-        $routeParams = $request->get('_route_params');
+        $routeParams = $this->getRouteParams($request);
         $session = $request->getSession();
         $appNode = $this->getXMLfromSession($session);
         $measure = $this->getMeasureTimePointNode($appNode,$routeParams);
@@ -25,7 +25,7 @@ class CompensationController extends ControllerAbstract
         }
         $compensationNode = $measure->{self::compensationNode}[0];
         $hasDocs = $this->getReviewDocs($session);
-        $isCodeCompensationLoad = $this->checkCompensationAwarding($this->xmlToArray($this->getMeasureTimePointNode($this->getXMLfromSession($session,true),$routeParams)->{self::compensationNode}[0]));
+        $isCodeCompensationLoad = $this->checkCompensationAwarding($this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true)->{self::compensationNode}[0]));
         $textInput = '';
         $measureArray = $this->xmlToArray($measure);
         if ($hasDocs) {
@@ -45,7 +45,7 @@ class CompensationController extends ControllerAbstract
         }
         $isDurationParam = ['isDuration' => $this->getDuration($this->xmlToArray($measure->{self::measuresNode}->{self::durationNode}))>30];
 
-        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request,[self::informationNode => $this->getInformationString($measureArray[self::informationNode]), self::dummyParams => array_merge($isDurationParam,['hasDetails' => !(in_array($this->getCommitteeType($session),self::reviewShortChoose) && in_array($session->get(self::reviewProcess),[self::reviewShortBegun,self::reviewShortRequested]))])]);
+        $compensation = $this->createFormAndHandleRequest(CompensationType::class, $this->xmlToArray($compensationNode),$request,[self::informationNode => $this->getInformationString($measureArray[self::informationNode]), self::dummyParams => array_merge($isDurationParam,['hasDetails' => !in_array($this->getCommitteeType($session),self::reviewShortChoose,true) || !in_array($session->get(self::reviewProcess),[self::reviewShortBegun,self::reviewShortRequested])])]);
         if ($compensation->isSubmitted()) {
             $data = $this->getDataAndConvert($compensation,$compensationNode);
             if ($hasDocs) {
