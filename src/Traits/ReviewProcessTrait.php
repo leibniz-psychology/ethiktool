@@ -378,6 +378,7 @@ trait ReviewProcessTrait
             'attention' => ['fullBegun','fullRequested','fullDocs'],
             'criteria' => ['fullBegun','fullRequested','fullDocs'],
             'malfunction' => ['fullBegun','fullRequested','fullDocs'],
+            'behaviour' => ['fullBegun','fullRequested','fullDocs'],
             'terminateCriteriaOther' => ['fullBegun','fullRequested','fullDocs'],
             'terminateCriteriaOtherText' => ['fullBegun','fullRequested','fullDocs'],
             'presence' => ['fullBegun','fullRequested','fullDocs'],

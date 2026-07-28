@@ -310,8 +310,8 @@ coreData:
     end: 'To: '
     next: 'as soon as possible '
     begun: >-
-      
-      
+
+
       The research project has already started. {isConfirm, select,
             true  {The applicants confirm that {committeeNom} allowed them to submit the research project for ethics review although it already started.}
             other {}}
@@ -514,7 +514,7 @@ projectdetails:
       database: 'database(s) ({description})'
       external: 'external recruiting service(s) ({description})'
       multiplier: 'dissemination via multipliers'
-      recruitmentOther: 'other ways of recruitment ({description})'
+      recruitmentOther: 'the following ways of recruitment: {description}'
   information:
     type: >-
       {chosen, select,
@@ -556,7 +556,7 @@ projectdetails:
           onetime: 'The study is advertised only once and with at most one brief reminder.'
           substitute: 'Non-participating group members are offered an adequate alternative activity, namely: {description}'
           independent: 'The decision of each group member for/against the study is not affected by the decision of other group members.'
-          voluntaryEnsureOther: 'Other measures: {description}'
+          voluntaryEnsureOther: 'the following measures: {description}'
       no: "Justification on how and why voluntariness is not guaranteed:\n"
     consent: >-
       {chosen, select,
@@ -575,6 +575,7 @@ projectdetails:
       attention: 'in case a participant gives wrong answers on several attention-check items'
       criteria: 'in case it becomes obvious during data collection that an inclusion criterion is not fulfilled or that an exclusion criterion applies'
       malfunction: 'in case of technical malfunction of the used equipment'
+      behaviour: 'in case of inappropriate behaviour of a participant during data collection'
       terminateCriteriaOther: 'under the following circumstances: {description}'
       presence: 'termination by the project contributors is not possible because they are not or only temporarily present during data collection'
       unnecessary: 'termination by the project contributors is not deemed necessary'
@@ -1279,16 +1280,16 @@ participation:
 # data privacy
 dataPrivacy:
   title: 'Annex on data processing'
-  hint: >- # TODO: translate
+  hint: >-
     {committeeType, select,
-      PHT   {Die Prüfung dieses Antrags durch die Ethikkommission erfolgt ausschließlich auf Grundlage ethischer Gesichtspunkte gemäß der geltenden Geschäftsordnung. Eine datenschutzrechtliche Prüfung (insbesondere im Hinblick auf die Einhaltung der DSGVO und des DSG) ist <span style="font-weight: bold">nicht</span> Gegenstand des Verfahrens und wird durch das Votum der Ethikkommission nicht ersetzt. Die datenschutzrechtliche Konformität des Vorhabens liegt in der alleinigen Verantwortung der Antragstellenden und ist eigenständig sicherzustellen.}
+      PHT   {The review of this proposal by the ethics committee is based exclusively on ethical aspects according to the current regulations and rules of procedure. A review of compliance with data protection regulations (especially of conformance with EU-GDPR and DSG) is <span style="font-weight: bold">not</span> part of the review process; data protection is not covered by the Ethics Committee's vote. Compliance with data protection regulations lies in the sole responsibility of the project contributors and must be independently secured.}
       other {}}
   intro:
     Information on processing personal data within the {numStudies, plural,
     =1    {study “{projectTitle}“}
     other {research project “{projectTitle}“, study {studyID}}} (version of {curDate}).
     With this data privacy statement, {committeeLocation} fulfills its obligation to provide information according to article 13 and 14 of the European Union's General Data Protection regulation (EU-GDPR).
-    
+
     Please refer to the definitions in article 4 EU-GDPR with respect to the terms used herein, such as “personal data“, “processing“, “data controller“, “third party“ etc.
   contact:
     title: 'Contact data'
@@ -1337,7 +1338,11 @@ dataPrivacy:
           PHT   {Pädagogische Hochschule Tirol
                  Pastorstraße 7
                  A-6010 Innsbruck
-                 https://ph-tirol.ac.at/}
+                 Web: https://ph-tirol.ac.at/}
+          BTU   {Brandenburgische Technische Universität Cottbus
+                 Platz der Deutschen Einheit 1
+                 03046 Cottbus
+                 Web: https://www.b-tu.de/}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1386,6 +1391,9 @@ dataPrivacy:
                  E-Mail: kontakt-dsb@althammer-kill.de}
           PHT   {The data protection officer can be reached via regular mail at the address of the responsible institution.
                  E-Mail: datenschutz@ph-tirol.ac.at}
+          BTU   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+                 Phone: 0355 / 69-2112
+                 E-Mail: datenschutz@b-tu.de}
           other {Phone: +49 (0)1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1485,7 +1493,7 @@ dataPrivacy:
     title: 'Data transfer'
     access:
       start: 'Only the following persons/entities have access to the personal data for {purpose}'
-      types: 
+      types:
         contributors: 'All project contributors {committeeLocationGen}'
         contributorsPart: 'Individual project contributors {committeeLocationGen}: '
         institution: 'The following non-project contributors {committeeLocationGen}: '
@@ -1610,14 +1618,14 @@ dataPrivacy:
 
       • the right to receive the personal data (data portability, article 20 EU-GDPR).
 
-      You can exercise these rights by contacting the responsible project contributors (see section 1). Please note that exercising the specified rights is possible only until the time point of anonymization or deletion (see section 5). 
-      
-      
+      You can exercise these rights by contacting the responsible project contributors (see section 1). Please note that exercising the specified rights is possible only until the time point of anonymization or deletion (see section 5).
+
+
       Further objections or potential complaints can also be placed with the data protection officer {committeeLocationGen} specified in section 1.
 
 
       Furthermore, you can assert the right to file a complaint with the supervisory data protection authority (article 77 EU-GDPR). The responsible person in the case {committeeLocationGen} is:
-      
+
 
       {committeeType, select,
         TUC   {Sächsische Datenschutz- und Transparenzbeauftragte
@@ -1679,9 +1687,14 @@ dataPrivacy:
                A-1030 Wien
                Phone: +43 1 52 152-0
                E-Mail: dsb@dsb.gv.at}
+        BTU   {Landesbeauftragte für den Datenschutz und für das Recht auf Akteneinsicht
+               Stahnsdorfer Damm 77
+               14532 Kleinmachnow
+               Phone: +49 33203 356-0
+               E-Mail: poststelle@lda.brandenburg.de}
         other {}}
-      
-      
+
+
       If you have any questions on data processing within this study, please contact the responsible project contributors (see section 1).
 
 # complete post information
@@ -1742,7 +1755,7 @@ consent:
                                                                     other {participation in}} the study within the research project entitled “{projectTitle}“{isPersonal, select,
           true  { and the annex on data processing}
           other {}}. I have been sufficiently informed and had the opportunity to ask questions.
-    
+
     I am aware that {information, select,
                       post  {the consent on the use {addressee, select,
                                                    children {of my child''s data is voluntary and that my child and I will not experience any disadvantages if I do not give my consent.}
@@ -2110,7 +2123,7 @@ metadata:
   version: 'Ethiktool version {toolVersion}'
   keywords: |
     Generated by Ethiktool version {toolVersion}; no modification must be made to the PDF file before submission to the ethics committee.
-    
+
     Generation time: {createTime} (Europe/Berlin)
 
 # alternative texts for logo
@@ -2127,3 +2140,4 @@ logo:
   SRH: 'Logo of SRH University'
   BICC: 'Logo of Bonn International Centre for Conflict Studies'
   PHT: 'Logo of University College of Teacher Education Tyrol'
+  BTU: 'Logo of Brandenburg University of Technology Cottbus-Senftenberg'

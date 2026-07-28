@@ -164,7 +164,7 @@ trait ProjectdetailsTrait
     protected const terminateParticipantsOther = 'terminateParticipantsOther'; // must equal one value in terminateParticipantsTypes
     protected const terminateParticipantsTypes = ['projectdetails.pages.consent.terminateParticipants.types.remove' => 'remove', 'projectdetails.pages.consent.terminateParticipants.types.removePartial' => 'removePartial', 'projectdetails.pages.consent.terminateParticipants.types.documentation' => 'documentation', 'projectdetails.pages.consent.terminateParticipants.types.choose' => 'choose', 'projectdetails.pages.consent.terminateParticipants.types.terminateParticipantsOther' => 'terminateParticipantsOther'];
     protected const terminateCriteriaNode = 'terminateCriteria';
-    protected const terminateCriteriaTypes = ['malaise','regulation','time','attention','criteria','malfunction','terminateCriteriaOther','presence','unnecessary'];
+    protected const terminateCriteriaTypes = ['malaise','regulation','time','attention','criteria','malfunction','behaviour','terminateCriteriaOther','presence','unnecessary'];
     protected const terminateCriteriaOtherTypes = ['malaise','regulation','terminateCriteriaOther']; // values must equal the values ot $terminateCriteriaTypes
     protected const terminateCriteriaOther = 'terminateCriteriaOther'; // must equal one value in $terminateCriteriaTypes
     protected const chosen2Node = 'chosen2';

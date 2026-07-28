@@ -154,11 +154,8 @@
                         {% set vars, isInstitutionPosition, isInstitutionProfessorship = widget.vars, info in ['institution','position'], isProfessorship or info is same as 'institution' %}
                         {% set name, value = vars.name, vars.value %}
                         {% set isOther = value is same as (info~'Other')  %}
-                        <div class="flex justify-content-end" id="{{ info }}">
-                            {% if info is same as 'phone' and hasStudent %}
-                                <div class="align-self-center" style="text-align: end" {{ stimulus_target(coreDataController,'phoneLabelOptional') }}>{{ (infoPrefix~'phoneOptional')|trans~':' }}</div>
-                            {% endif %}
-                            {{ form_label(widget,(infoPrefix~info)|trans~':',addLabelAttributes(addClass('align-self-center')|merge({'id': name~'Label'}))|merge({'id': name})) }}
+                        <div class="justify-content-end">
+                            {{ form_label(widget,(info is same as 'phone' ? 'multiple.optional'|trans~' ')~(infoPrefix~info)|trans~':',addLabelAttributes(addClass('align-self-center')|merge({'id': name~'Label', 'style': 'text-align: end'}))|merge({'id': name})) }}
                             {% if info is same as 'department' or isInstitutionProfessorship %}
                                 <div {% if isInstitutionProfessorship %} {{ stimulus_target(coreDataController,info~'Hint')}} style="{{ boolToDisplay(isProfessorship ? content['position'].vars.value in ['student','phd'] : isOther) }}" {% endif %}>
                                     {{ formRender.addIcon((infoPrefix~'hints.'~info)|trans(committeeParams)) }}
@@ -189,7 +186,7 @@
                 'hint': [conflictPrefix],
                 'text': [content.conflictDescription,
                     fontNormal|merge({
-                    'attributes': textHeightLong,
+                    'attributes': textMinHeightLong,
                     'hint': conflictYesDescription,
                     'textHintID': conflictHint,
                     'resize': true})],

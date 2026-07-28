@@ -363,7 +363,7 @@ abstract class ControllerAbstract extends AbstractController
                     }
                     $session->set(self::reviewProcess,$isLoaded1 ? self::reviewFullDocs : $this->getCurrentReviewProcess($xmlArray)); // if loaded file is before version 2.0.0, set fullDocs to keep all inputs. Needs to be set before getErrors() is called
                     $this->setCommittee($session, $xmlArray[self::committee], $oldLanguage);
-                    $session->set(self::fileName, preg_replace("/_(20[0-9]{10})$/",'',str_replace('.xml', '', $loadInput->getClientOriginalName())));
+                    $session->set(self::fileName, preg_replace("/_(20\\d{10})\$/",'',str_replace('.xml', '', $loadInput->getClientOriginalName())));
                     $session->set(self::docName, [$xml->asXML()]);
                     $session->set(self::contributorsSessionName, [0 => $this->getContributorsArray($xmlArray)]);
                     $loadedExploded = explode('.',$loadedVersion);
@@ -935,17 +935,18 @@ abstract class ControllerAbstract extends AbstractController
     {
         $session = $request->getSession();
         $committeeType = $this->getCommitteeType($session);
-        $hasSupervisor = in_array($committeeType,self::committeeSupervisor,true);
+        $hasSupervisorPhD = in_array($committeeType,self::committeeSupervisorPhD);
+        $hasSupervisor = in_array($committeeType,self::committeeSupervisor,true) || $hasSupervisorPhD;
         return [array_values($hasSupervisor
                     ? self::tasksNodes
                     : array_diff(self::tasksNodes,[self::taskSupervision])),
-                array_values($hasSupervisor && in_array($this->xmlToArray($this->getXMLfromSession($session,getRecent: true))[self::appDataNodeName][self::coreDataNode][self::applicant][self::position],array_merge([self::positionsStudent],$committeeType===self::committeeEUB ? [self::positionsPhd] : []))
+                array_values($hasSupervisor && in_array($this->xmlToArray($this->getXMLfromSession($session,getRecent: true))[self::appDataNodeName][self::coreDataNode][self::applicant][self::position],array_merge([self::positionsStudent], $hasSupervisorPhD ? [self::positionsPhd] : []))
                     ? self::tasksMandatory
                     : array_diff(self::tasksMandatory,[self::taskSupervision]))];
     }
 
     /** Checks if the qualification question was answered with yes.
-     * @param array<string, mixed> $coreDataArray array containing the core data
+     * @param array<string, mixed> $coreDataArray array containing the core data data
      * @return bool true if qualification questions exists and was answered with yes, false otherwise
      */
     protected function getQualification(array $coreDataArray): bool
@@ -1044,8 +1045,6 @@ abstract class ControllerAbstract extends AbstractController
                 $isXML ? [] : ['Content-Length' => filesize($zipName)]));
         if (!$isXML) {
             unlink($zipName);
-        } elseif ($session->has(self::quit)) { // prevent downloading again if on page 'quit' and page is reloaded
-            $session->set(self::quit,'');
         }
         return $returnResponse;
     }

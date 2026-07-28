@@ -152,7 +152,7 @@ class CheckDocClass extends ControllerAbstract
                     $checkDoc->measure = $checkDoc->xmlToArray($checkDoc->getMeasureTimePointNode($appNode,[self::studyID => $studyID, self::groupID => $groupID, self::measureID => $measureID]));
                     $checkDoc->setProjectdetailsVariables();
                 }
-                $type = '';
+                $isSubPage = 'false';
                 $checkDoc->anyError = false;
                 switch ($page) {
                     case self::appDataNodeName: // landing page for application data
@@ -181,24 +181,22 @@ class CheckDocClass extends ControllerAbstract
                     case self::projectdetailsNodeName: // landing page for projectdetails
                         $checkDoc->addPageHash = true;
                         $landingArray = $hasRouteIDs || $onlyError ? $routeIDs : ($session->get(self::landing) ?? []);
-                        $hasStudyID = array_key_exists(self::studyID,$landingArray);
-                        $hasGroupID = array_key_exists(self::groupID,$landingArray);
-                        $hasMeasureID = array_key_exists(self::measureID,$landingArray);
-                        $type = $hasMeasureID ? self::measureTimePointNode : ($hasGroupID ? self::groupNode : ($hasStudyID ? self::studyNode : ''));
+                        $hasIDs = array_key_exists(self::studyID,$landingArray);
+                        $isSubPage = $checkDoc->getStringFromBool($hasIDs);
                         $studies = $checkDoc->addZeroIndex($checkDoc->appArray[self::projectdetailsNodeName][self::studyNode]);
                         $studyIDcheck = ($landingArray[self::studyID] ?? 1)-1;
-                        if (!$hasStudyID) { // project structure
+                        if (!$hasIDs) { // project structure
                             $checkDoc->checkLanding();
                         }
-                        foreach (($hasStudyID ? [$studyIDcheck => $studies[$studyIDcheck]] : $studies) as $studyID => $study) {
+                        foreach (($hasIDs ? [$studyIDcheck => $studies[$studyIDcheck]] : $studies) as $studyID => $study) {
                             $groups = $checkDoc->addZeroIndex($study[self::groupNode]);
                             $groupIDcheck = ($landingArray[self::groupID] ?? 1)-1;
                             $checkDoc->addProjectdetailsTitle(subPage: self::studyNode);
-                            foreach (($hasGroupID ? [$groupIDcheck => $groups[$groupIDcheck]] : $groups) as $groupID => $group) {
+                            foreach (($hasIDs ? [$groupIDcheck => $groups[$groupIDcheck]] : $groups) as $groupID => $group) {
                                 $measures = $checkDoc->addZeroIndex($group[self::measureTimePointNode]);
                                 $measureIDcheck = ($landingArray[self::measureID] ?? 1)-1;
                                 $checkDoc->addProjectdetailsTitle(subPage: self::groupNode);
-                                foreach (($hasMeasureID ? [$measureIDcheck => $measures[$measureIDcheck]] : $measures) as $measureID => $measure) {
+                                foreach (($hasIDs ? [$measureIDcheck => $measures[$measureIDcheck]] : $measures) as $measureID => $measure) {
                                     $checkDoc->IDs = [self::studyNode => $studyID+1, self::groupNode => $groupID+1,self::measureTimePointNode => $measureID+1];
                                     $checkDoc->measure = $measure;
                                     $checkDoc->setProjectdetailsVariables();
@@ -270,7 +268,7 @@ class CheckDocClass extends ControllerAbstract
                 if ($checkDoc->getBriefReport($session)) {
                     $checkDoc->addReviewProcessError();
                 }
-                return $onlyError ? $checkDoc->anyError : $checkDoc->getReviewMissing().trim($checkDoc->translateString('checkDoc.'.($checkDoc->checkLabel==='' ? 'noErrorPage' : 'errorPage'),['page' => $page, 'type' => $type]).$checkDoc->checkLabel);
+                return $onlyError ? $checkDoc->anyError : $checkDoc->getReviewMissing().trim($checkDoc->translateString('checkDoc.'.($checkDoc->checkLabel==='' ? 'noErrorPage' : 'errorPage'),['page' => $page, 'isSubPage' => $isSubPage, 'isMultiple' => $checkDoc->getStringFromBool($checkDoc->isMultiple)]).$checkDoc->checkLabel);
             } catch (\Throwable) {
                 return $returnCheck ? false : '';
             }
@@ -557,7 +555,7 @@ class CheckDocClass extends ControllerAbstract
         }
         // applicant
         $applicant = $this->coreDataArray[self::applicant];
-        $this->checkMissingContent($applicant,$this->translateArray('multiple.infos.',array_diff(self::applicantContributorsInfosTypes,$applicant[self::position]===self::positionsStudent ? [self::phoneNode] : []),true), hash: self::applicant);
+        $this->checkMissingContent($applicant,$this->translateArray('multiple.infos.',array_diff(self::applicantContributorsInfosTypes,[self::phoneNode]),true), hash: self::applicant);
         $name = $applicant[self::nameNode];
         if ($name!=='' && count(explode(' ',(string) $name))===1) {
             $this->addCheckLabelString($translationPrefix.self::nameNode,self::nameNode);
@@ -668,8 +666,8 @@ class CheckDocClass extends ControllerAbstract
         $tasksPrefix = self::contributorsPrefix.'tasks.';
         // check individual contributors
         $position = $this->coreDataArray[self::applicant][self::position];
-        $isEUB = $this->committeeType===self::committeeEUB;
-        $translationParameters = [self::position => $position, 'isEUB' => $this->getStringFromBool($isEUB)];
+        $translationParameters = [self::position => $position];
+        $supervisorPositions = array_merge([self::positionsStudent],in_array($this->committeeType,self::committeeSupervisorPhD) ? [self::positionsPhd] : []);
         foreach ($windowArray as $index => $contributor) {
             $infos = $contributor[self::infosNode];
             $tasks = $contributor[self::taskNode];
@@ -705,7 +703,7 @@ class CheckDocClass extends ControllerAbstract
                 }
             }
             // tasks
-            if ($hasPosition && $numTasks===0 || $this->checkSupervisor($this->committeeType,$position) && in_array($position,array_merge([self::positionsStudent],$isEUB ? [self::positionsPhd] : [])) && $index>0 && $numTasks===1 && ($this->coreDataArray[self::qualification] ?? '')!=='0' && array_key_exists(self::taskSupervision,$tasks)) { // contributor does not have any (further) task
+            if ($hasPosition && $numTasks===0 || $this->checkSupervisor($this->committeeType,$position) && in_array($position,$supervisorPositions) && $index>0 && $numTasks===1 && ($this->coreDataArray[self::qualification] ?? '')!=='0' && array_key_exists(self::taskSupervision,$tasks)) { // contributor does not have any (further) task
                 $this->addCheckLabelString($tasksPrefix.'missing',parameters: $parameter);
             }
         }

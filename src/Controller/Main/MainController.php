@@ -4,6 +4,7 @@ namespace App\Controller\Main;
 
 use App\Abstract\ControllerAbstract;
 use App\Form\Main\MainType;
+use SimpleXMLElement;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -115,12 +116,22 @@ class MainController extends ControllerAbstract
                 $contributorsNode = $appNode->{self::contributorsNodeName};
                 $contributorsApplicantNode = $contributorsNode->{self::contributorNode}[0];
                 $contributorsInfosNode = $contributorsApplicantNode->{self::infosNode};
-                $removeStudent = ((string) $applicantNode->{self::position})===self::positionsStudent && !in_array($committee,self::committeeStudent);
-                if ($removeStudent) { // remove position and all tasks
+                $position = (string) $applicantNode->{self::position};
+                $isStudent = $position===self::positionsStudent;
+                $updateApplicant = $isStudent && !in_array($committee,self::committeeStudent);
+                $contributorsApplicantTasks = $contributorsApplicantNode->{self::taskNode};
+                if ($updateApplicant) { // remove position and all tasks
                     $applicantNode->{self::position} = '';
                     $contributorsInfosNode->{self::position} = '';
-                    $contributorsApplicant = $contributorsApplicantNode->{self::taskNode};
-                    $this->removeAllChildNodes($contributorsApplicant);
+                    $this->removeAllChildNodes($contributorsApplicantTasks);
+                } else {
+                    $isEUBoldStudent = $isEUBold && $isStudent;
+                    if ($isEUBoldStudent || $position===self::positionsPhd && in_array($committee,self::committeePhDnoLeaderData)) { // remove task data and eventually task leader if they were selected
+                        $updateApplicant = true;
+                        foreach ($isEUBoldStudent ? [self::taskData] : [self::taskLeader,self::taskData] as $task) {
+                            $this->removeElement($task,$contributorsApplicantTasks);
+                        }
+                    }
                 }
                 // remove institution for applicant and change institution for other contributors if value is 'institutionSame'
                 $applicantNode->{self::institutionInfo} = '';
@@ -138,7 +149,7 @@ class MainController extends ControllerAbstract
                 $contributorsArray = $this->addZeroIndex($this->xmlToArray($contributorsNode)[self::contributorNode]);
                 $session->set(self::contributorsSessionName,[0 => $contributorsArray]);
                 $this->addAllContributorsNodes($appNode,$contributorsArray);
-                if ($removeStudent) {
+                if ($updateApplicant) {
                     $this->updateProjectdetailsContributor($request,$appNode,0,[],false); // needs to be called after addAllContributorsNodes()
                 }
                 // add/remove qualification and guidelines node
@@ -170,12 +181,27 @@ class MainController extends ControllerAbstract
                     foreach ($studyNode->{self::groupNode} as $groupNode) {
                         foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
                             $this->updateNodesByReviewProcess($request,$measureTimePointNode,$reviewProcess);
+                            // update compensation if change from/to BICC
                             $compensationNode = $measureTimePointNode->{self::compensationNode};
-                            if (!$isBICCold && $isBICC) { // select 'no compensation'
+                            if (!$isBICCold && $isBICC && $this->checkElement(self::compensationTypeNode,$compensationNode)) { // select 'no compensation' if page is active
                                 $this->removeAllChildNodes($compensationNode);
                                 $compensationNode->addChild(self::compensationTypeNode)->addChild(self::compensationNo);
                             } elseif ($isBICCold && !$isBICC && !$this->checkElement(self::terminateNode,$compensationNode)) { // deselect 'no compensation' in case it was selected
                                 $this->removeAllChildNodes($compensationNode->{self::compensationTypeNode});
+                            }
+                            // update data privacy access
+                            $dataPrivacyNode = $measureTimePointNode->{self::privacyNode};
+                            if ($this->checkElement(self::accessNode,$dataPrivacyNode)) {
+                                $this->updateAccess($dataPrivacyNode->{self::accessNode});
+                            }
+                            foreach ([self::purposeResearchNode,self::purposeFurtherNode] as $type) {
+                                if ($this->checkElement($type,$dataPrivacyNode)) {
+                                    foreach ($dataPrivacyNode->{$type}->children() as $child) {
+                                        if ($this->checkElement(self::accessNode,$child)) {
+                                            $this->updateAccess($child->{self::accessNode});
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -203,5 +229,41 @@ class MainController extends ControllerAbstract
                  'prefix' => 'multiple.loadMessage.'.$errorModal.'.',
                  'link' => $isMajorOrShort ? 'app_coreData' : 'app_contributors'],
                  $isMajorOrShort ? ['hash' => $isMajor ? '#applicationProcess' : '#shortDocs'] : [])]));
+    }
+
+    /** Updates the access node when the committee has changed.
+     * @param SimpleXMLElement $accessNode node with selected access options as children
+     * @return void
+     */
+    private function updateAccess(SimpleXMLElement $accessNode): void
+    {
+        $children = $accessNode->children();
+        $numChildren = count($children);
+        $hasMultipleChildren = $numChildren>1;
+        if ($numChildren>0) {
+            $firstName = $children[0]->getName();
+            if (str_ends_with($firstName,'contributors')) { // 'all' contributors have access -> replace by 'some' contributors
+                $this->removeElement($firstName,$accessNode); // remove 'all' contributors
+                $firstName .= 'Part';
+                if ($hasMultipleChildren) {
+                    $this->insertElementBefore($firstName,$children[0]);
+                } else {
+                    $accessNode->addChild($firstName);
+                }
+            }
+            if ($hasMultipleChildren) {
+                foreach ($accessNode->children() as $child) { // remove description of contributors options
+                    $name = $child->getName();
+                    if (str_ends_with($name,'Part') || str_ends_with($name,'institution')) { // some contributors or non-contributors
+                        $accessNode->{$name} = '';
+                    } elseif (str_ends_with($name,'contributorsOther')) { // external contributors
+                        $orderProcessing = $accessNode->{$name}->{self::orderProcessingNode};
+                        if ($this->checkElement(self::descriptionNode,$orderProcessing)) {
+                            $orderProcessing->{self::descriptionNode} = '';
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,9 +1,10 @@
 twig:
-    default_path: '%kernel.project_dir%/templates'
+    file_name_pattern: '*.twig'
     globals:
         appLocales: ['de','en'] # all available languages
         textHeight: 8rem # height of text areas
         textHeightLong: {'style': 'height: 10rem'} # height of text area with more text to enter
+        textMinHeightLong: {'style': 'min-height: 10rem'} # height of text areas whose height changes dynamically that have more text to enter
         # if headingStyle is changed, it also needs to be changed in macros.html.twig
         labelDummy: {'label_attr': {'for': 'submitDummy'}} # label attribute for heading labels to avoid browser warning of missing association with a form field
         headingHint: 'headingHint' # translation key for hints that are placed below headings
@@ -12,7 +13,7 @@ twig:
         checkLabel: {'class': 'CheckBox-Label minAutoGrid'} # to be passed to the 'label_attr' key of form_label() calls of checkboxes
         textInput:  {'class': 'MetaData-TextInput'} # to be passed to the 'attr' key of form_widget() calls of text fields
         textInputAttr: {'attr': {'class': 'MetaData-TextInput'}}
-        resizeHeight: 'min-height: 5rem; max-height: 50rem; ' # for text fields that are vertically resizable
+        resizeHeight: 'min-height: 6rem; max-height: 30rem; height: unset; field-sizing: content; ' # for text fields whose height changes dynamically
         fontNormal: {'fontStyle': true} # hints that should be displayed in normal font and size
         removeHint: {'remove': true} # hints that indicate removal of inputs on other pages
         modalWide: 'max-width: 800px;' # maximum width of modals if they should be wider than other modals

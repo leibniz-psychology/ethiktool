@@ -310,8 +310,8 @@ coreData:
     end: 'Bis: '
     next: 'nächstmöglicher Zeitpunkt '
     begun: >-
-      
-      
+
+
       Das Forschungsprojekt hat bereits begonnen. {isConfirm, select,
             true  {Die Antragstellenden bestätigen, dass ihnen {committeeNom} erlaubt hat, das bereit begonnene Forschungsprojekt zur Begutachtung einzureichen.}
             other {}}
@@ -432,7 +432,7 @@ projectdetails:
           informationII  {Zustimmung}
           other          {Einwilligung}}
       preComplete: 'nachträgliche vollständige Aufklärung'
-      dataPrivacy: >- 
+      dataPrivacy: >-
         {personal, select,
           personal  {}
           other     {ggf. }} Anlage zur Verarbeitung personenbezogener Daten
@@ -514,7 +514,7 @@ projectdetails:
       database: 'Datenbank(en) ({description})'
       external: 'externe Rekrutierungsplattform(en) ({description})'
       multiplier: 'Weiterleitung über Multiplikatoren'
-      recruitmentOther: 'sonstige Rekrutierungswege ({description})'
+      recruitmentOther: 'folgende Rekrutierungswege: {description}'
   information:
     type: >-
       {chosen, select,
@@ -556,7 +556,7 @@ projectdetails:
           onetime: 'Es wird nur einmal für die Studie geworben und höchstens einmal kurz erinnert.'
           substitute: 'Für nicht-teilnehmende Gruppenmitglieder gibt es eine adäquate Ersatzbeschäftigung, und zwar: {description}'
           independent: 'Die Entscheidung eines Gruppenmitglieds für oder gegen die Studie ist nicht von den Entscheidungen anderer Gruppenmitglieder abhängig.'
-          voluntaryEnsureOther: 'Sonstige Maßnahmen: {description}'
+          voluntaryEnsureOther: 'Folgende Maßnahmen: {description}'
       no: "Begründung, inwiefern die Freiwilligkeit nicht garantiert ist:\n"
     consent: >-
       {chosen, select,
@@ -569,12 +569,13 @@ projectdetails:
        notApplicable {nicht zutreffend: Die {addressee} werden weder vorab noch nachträglich darüber aufgeklärt, dass {participant} an einer Studie teilnehmen.}
        other         {auf folgende Art: {otherDescription}}}
     terminateCriteria:
-      malaise: 'bei offensichtlichem Unwohlsein oder sonstigen Belastungsanzeichen der Teilnehmenden: {description}'
-      regulation: 'bei Nicht-Einhaltung von vorab kommunizierten Sicherheitsbestimmungen seitens der Teilnehmenden: {description}'
+      malaise: 'bei offensichtlichem Unwohlsein oder sonstigen Belastungsanzeichen der teilnehmenden Person: {description}'
+      regulation: 'bei Nicht-Einhaltung von vorab kommunizierten Sicherheitsbestimmungen seitens der teilnehmenden Person: {description}'
       time: 'bei erheblicher Überschreitung der veranschlagten Zeitdauer der Erhebung'
       attention: 'bei falscher Beantwortung mehrerer Items zur Aufmerksamkeitskontrolle'
       criteria: 'wenn sich während der Erhebung herausstellt, dss ein Einschlusskriterium nicht erfüllt ist oder ein Ausschlusskriterium zutrifft'
       malfunction: 'bei technischer Fehlfunktion der verwendeten Geräte'
+      behaviour: 'bei unangemessenem Verhalten der teilnehmenden Person im Rahmen der Datenerhebung'
       terminateCriteriaOther: 'unter folgenden Bedingungen: {description}'
       presence: 'Abbruch seitens der Projektbeteiligten ist nicht möglich, da diese während der Erhebung nicht oder nur zeitweise anwesend sind'
       unnecessary: 'Abbruch seitens der Projektbeteiligten wird als nicht nötig erachtet'
@@ -686,7 +687,7 @@ projectdetails:
     resultPositive:
       question: 'Das damalige Votum umfasste nicht die Fragestellung, die hier betrachtet werden soll.'
       access: 'Der Zugang zu den Daten wird nur bei Vorlage eines Ethikvotums gewährt.'
-      committeeResultPositiveOther: 'andere Begründung: {description}'
+      committeeResultPositiveOther: 'aus folgendem Grund: {description}'
     voteContributors:
       title: "Waren hier projektbeteiligte Personen auch an dem ursprünglichen Forschungsprojekt beteiligt, aus dem die Daten nachgenutzt werden sollen?\n"
       description: "\nBegründung, warum kein Ethikantrag gestellt wurde:\n"
@@ -1231,7 +1232,7 @@ participation:
           Der Code wird von {addressee, select,
                               children {Ihrem Kind bzw.}
                               wards    {der von Ihnen betreuten Person bzw. }
-                              other    {}} Ihnen selbst frei gewählt. Es liegen keine Dokumentationen vor, die den Code mit personenidentifizierenden Daten verknüpfen. Nur für Personen mit Kenntnis des Codes ist eine Identifikation möglich. 
+                              other    {}} Ihnen selbst frei gewählt. Es liegen keine Dokumentationen vor, die den Code mit personenidentifizierenden Daten verknüpfen. Nur für Personen mit Kenntnis des Codes ist eine Identifikation möglich.
         contributors: 'Der Code wird von den Projektbeteiligten vergeben.'
         types:
           pattern:
@@ -1281,14 +1282,14 @@ dataPrivacy:
   title: 'Anlage zur Datenverarbeitung'
   hint: >-
     {committeeType, select,
-      PHT   {Die Prüfung dieses Antrags durch die Ethikkommission erfolgt ausschließlich auf Grundlage ethischer Gesichtspunkte gemäß der geltenden Geschäftsordnung. Eine datenschutzrechtliche Prüfung (insbesondere im Hinblick auf die Einhaltung der DSGVO und des DSG) ist <span style="font-weight: bold">nicht</span> Gegenstand des Verfahrens und wird durch das Votum der Ethikkommission nicht ersetzt. Die datenschutzrechtliche Konformität des Vorhabens liegt in der alleinigen Verantwortung der Antragstellenden und ist eigenständig sicherzustellen.}
+      PHT   {Die Prüfung dieses Antrags durch die Ethikkommission erfolgt ausschließlich auf Grundlage ethischer Gesichtspunkte gemäß der geltenden Geschäftsordnung. Eine datenschutzrechtliche Prüfung (insbesondere im Hinblick auf die Einhaltung der DSGVO und des DSG) ist <span style="font-weight: bold">nicht</span> Gegenstand des Verfahrens und wird durch das Votum der Ethikkommission nicht ersetzt. Die datenschutzrechtliche Konformität des Vorhabens liegt in der alleinigen Verantwortung der Projektbeteiligten und ist eigenständig sicherzustellen.}
       other {}}
   intro: >-
     Informationen zur Verarbeitung personenbezogener Daten im Rahmen {numStudies, plural,
                                                                        =1    {der Studie „{projectTitle}“}
                                                                        other {des Forschungsprojekts „{projectTitle}“, Studie {studyID}}} (Version vom {curDate}).
     Mit diesen Datenschutzhinweisen kommt {committeeLocation} ihrer Informationspflicht gemäß Artikel 13 und 14 der EU-Datenschutzgrundverordnung (DS-GVO) nach.
-    
+
     Hinsichtlich der weiteren verwendeten Begriffe „personenbezogene Daten“, „Verarbeitung“, „Verantwortlicher“, „Dritter“ etc. wird auf die Definitionen in Artikel 4 der DS-GVO verwiesen.
   contact:
     title: 'Kontaktdaten'
@@ -1337,6 +1338,10 @@ dataPrivacy:
                  Pastorstraße 7
                  A-6010 Innsbruck
                  Web: https://ph-tirol.ac.at/}
+          BTU   {Brandenburgische Technische Universität Cottbus
+                 Platz der Deutschen Einheit 1
+                 03046 Cottbus
+                 Web: https://www.b-tu.de/}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1384,8 +1389,11 @@ dataPrivacy:
                  30161 Hannover
                  Tel.: 0211 / 93674890
                  E-Mail: kontakt-dsb@althammer-kill.de}
-          PHT   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.       
+          PHT   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
                  E-Mail: datenschutz@ph-tirol.ac.at}
+          BTU   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+                 Tel.: 0355 / 69-2112
+                 E-Mail: datenschutz@b-tu.de}
           other {Tel.: 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1610,14 +1618,14 @@ dataPrivacy:
 
       • das Recht auf Datenübertragung der personenbezogenen Daten (Art. 20 DS-GVO).
 
-      Sie können diese Rechte wahrnehmen, indem Sie sich an die verantwortlichen Projektbeteiligten (siehe Abschnitt 1) wenden. Bitte beachten Sie, dass die Ausübung der zuvor genannten Rechte nur bis zum Zeitpunkt der Anonymisierung bzw. Löschung (siehe Abschnitt 5) möglich ist. 
-      
-      
+      Sie können diese Rechte wahrnehmen, indem Sie sich an die verantwortlichen Projektbeteiligten (siehe Abschnitt 1) wenden. Bitte beachten Sie, dass die Ausübung der zuvor genannten Rechte nur bis zum Zeitpunkt der Anonymisierung bzw. Löschung (siehe Abschnitt 5) möglich ist.
+
+
       Sonstige Einwände und mögliche Beschwerden können Sie auch an die in Abschnitt 1 genannten Datenschutzbeauftragten {committeeLocationGen} richten.
 
 
       Zudem haben Sie das Recht, eine Beschwerde bei der datenschutzrechtlichen Aufsichtsbehörde einzureichen (Art. 77 DS-GVO). Im Fall {committeeLocationGen} ist zuständig:
-      
+
 
       {committeeType, select,
         TUC   {Sächsische Datenschutz- und Transparenzbeauftragte
@@ -1679,9 +1687,14 @@ dataPrivacy:
                A-1030 Wien
                Tel.: +43 1 52 152-0
                E-Mail: dsb@dsb.gv.at}
+        BTU   {Landesbeauftragte für den Datenschutz und für das Recht auf Akteneinsicht
+               Stahnsdorfer Damm 77
+               14532 Kleinmachnow
+               Tel.: +49 33203 356-0
+               E-Mail: poststelle@lda.brandenburg.de}
         other {}}
-      
-      
+
+
       Sollten Sie Fragen zur Datenverarbeitung in dieser Studie haben, wenden Sie sich gern an die verantwortlichen Projektbeteiligten (siehe Abschnitt 1).
 
 # complete post information
@@ -1742,7 +1755,7 @@ consent:
           other {}} {informationType, select,
                       oral  {erhalten}
                       other {gelesen}} und verstanden. Ich bin ausreichend informiert worden und hatte die Möglichkeit, Fragen zu stellen.
-    
+
     Mir ist bewusst, dass {information, select,
                             post  {die Zustimmung zur Verwendung {addressee, select,
                                                          children {der Daten meines Kindes freiwillig ist und dass weder meinem Kind noch mir bei einer Nicht-Einwilligung Nachteile entstehen.}
@@ -2110,7 +2123,7 @@ metadata:
   version: 'Ethiktool Version {toolVersion}'
   keywords: |
     Erstellt durch das Ethiktool Version {toolVersion}; vor der Einreichung bei der Ethikkommission duerfen keine Modifikationen an der PDF-Datei vorgenommen werden.
-    
+
     Erstelldatum: {createTime} (Europa/Berlin)
 
 # alternative texts for logo
@@ -2127,3 +2140,4 @@ logo:
   SRH: 'Logo der SRH University'
   BICC: 'Logo des Bonn International Centre for Conflict Studies'
   PHT: 'Logo der Pädagogischen Hochschule Tirol'
+  BTU: 'Logo der Brandenburgischen Technischen Universität Cottbus-Senftenberg'

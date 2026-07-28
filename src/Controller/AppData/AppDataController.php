@@ -149,15 +149,15 @@ class AppDataController extends ControllerAbstract
             $contributorsArray[0][self::infosNode] = $tempArray;
             $position = $data[self::applicant][self::position];
             $isSupervisorNew = $this->checkSupervisor($committeeType,$position);
-            if ($isSupervisorNew && $position===self::positionsStudent) {
-                $contributorsArray[0][self::taskNode] = array_diff_key($contributorsArray[0][self::taskNode] ?: [], [self::taskLeader => '', self::taskData => '']); // remove leader and data from tasks
+            $isStudentNew = $position===self::positionsStudent;
+            $isPhDnewNoTasks = $position===self::positionsPhd && in_array($committeeType,self::committeePhDnoLeaderData);
+            if ($isSupervisorNew && ($isStudentNew || $isPhDnewNoTasks)) { // leader may be removed without data, but not vice versa
+                $contributorsArray[0][self::taskNode] = array_diff_key($contributorsArray[0][self::taskNode] ?: [],array_merge([self::taskLeader => ''],$isStudentNew && !$this->getQualification($data) || $isPhDnewNoTasks ? [self::taskData => ''] : [])); // remove leader and eventually data from tasks
             }
-            if ($position===self::positionsPhd && $positionLoad===self::positionsStudent && $isEUB) { // position changed from student to phd -> remove position from other contributors that are supervisor
+            if ($position===self::positionsPhd && $positionLoad===self::positionsStudent && in_array($committeeType,self::committeeSupervisorPhD)) { // position changed from student to phd -> remove position from other contributors that are supervisor
                 $this->removeContributorIndices($appNode,$this->removePhd($contributorsArray));
-                $contributorsChanged = true;
             } elseif ($this->checkSupervisor($committeeType,$positionLoad) && !$isSupervisorNew) { // position changed such that no supervisor is needed anymore -> remove task 'supervision' from all contributors
                 $this->removeContributorIndices($appNode,$this->removeSupervision($contributorsArray),false);
-                $contributorsChanged = true;
             }
             $this->addAllContributorsNodes($appNodeNew,$contributorsArray);
             $session->set(self::contributorsSessionName,array_merge($session->get(self::contributorsSessionName),[$contributorsArray])); // needs to be set before calling updateProjectdetailsContributor
@@ -199,7 +199,6 @@ class AppDataController extends ControllerAbstract
              'positions' => $positions,
              'funding' => self::fundingTypes,
              'requestedConfirmArray' => $requestedConfirmArray,
-             'hasStudent' => in_array($committeeType,self::committeeStudent,true),
              'support' => array_diff_key(self::supportTypes,$isEUB ? [] : [self::supportCenter => '']),
              'applicantInfo' => self::applicantContributorsInfosTypes,
              'textInputConflict' => $textInput,

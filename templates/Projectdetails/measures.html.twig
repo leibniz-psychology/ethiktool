@@ -32,7 +32,7 @@
             </div>
             {% if content[description] is defined %}
                 <div {{ stimulus_target(measuresController,description~'Div') }}>
-                    {{ formRender.addTextfield(content[description], fontNormal|merge(addStyle('height: '~textHeight,true))|merge(
+                    {{ formRender.addTextfield(content[description], fontNormal|merge(addStyle('',true))|merge(
                         {'hint': typePrefix~'textHints.description'}|
                         merge(not isInterventions ? {'contTarget': [measuresController,description], 'resize': true} : {}))) }}
                 </div>  {# hint text may be set in controller, but must not be empty here #}

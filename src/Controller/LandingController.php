@@ -29,9 +29,9 @@ class LandingController extends ControllerAbstract
             return $this->redirectToRoute('app_main');
         }
         $projectdetailsNode = $appNode->{self::projectdetailsNodeName};
-        $hasStudyID = array_key_exists(self::studyID,$landingArray);
-        $isPageOverview = $isProjectdetails && $hasStudyID; // true if overview of one measure time point
-        $isProjectdetailsOverview = $isProjectdetails && !$hasStudyID;
+        $hasIDs = array_key_exists(self::studyID,$landingArray);
+        $isPageOverview = $isProjectdetails && $hasIDs; // true if overview of one measure time point
+        $isProjectdetailsOverview = $isProjectdetails && !$hasIDs;
         $IDs = [null,null,null];
         $projectdetailsArray = $this->xmlToArray($projectdetailsNode);
         $allStudies = $this->addZeroIndex($projectdetailsArray[self::studyNode]); // $projectdetailsNode converted to array, but every sub-element has a numerical index (and a key 'name' which is not used) and the measure time point level has an array which contains the name (not used) and arrays with information about the pages
@@ -40,8 +40,9 @@ class LandingController extends ControllerAbstract
         $newTrans = []; // label for button for creating a new element
         $copyTrans = []; // hint above text field for copying an element
         $removeTrans = []; // heading and text for the remove modal
+        $isMultiple = $this->getMultiStudyGroupMeasure($appNode);
         $pageHeading = $isProjectdetailsOverview ? '' : $this->translateString('pages.'.self::landing); // heading on page
-        $tabNameStart = $this->translateString('pages.tabName').$pageHeading;
+        $tabNameStart = $this->translateString('pages.tabName').(!$isProjectdetails || $isMultiple ? $pageHeading : '');
         $tabName = $tabNameStart; // tab name -> without given names of levels;
         $removePrefix = $projectdetailsPrefix.'removeModal.';
         $currentElement = $allStudies;
@@ -63,16 +64,15 @@ class LandingController extends ControllerAbstract
                 $tabName .= $tempVal;
             }
         }
-        $tempVal = $pageHeading.($isPageOverview ? '' : $this->translateString('pages.'.lcfirst((string) $title).'.title'));
-        $isNotMultiple = !$this->getMultiStudyGroupMeasure($appNode);
-        if ($isPageOverview && $isNotMultiple) { // overview of one measure time point
+        $tempVal = ($isPageOverview ? '' : $this->translateString('pages.'.lcfirst((string) $title).'.title'));
+        if ($isPageOverview && !$isMultiple) { // overview of one measure time point
             $studyDetailsTrans = $this->translateString('projectdetails.sidebar');
             $pageHeading = $studyDetailsTrans;
             $tabName = $tabNameStart.$studyDetailsTrans;
         } elseif (!$isPageOverview) { // overview of project structure
             $tabName = $tabNameStart.$tempVal;
         }
-        $pageHeading = $isPageOverview ? $pageHeading : $tempVal;
+        $pageHeading .= $isPageOverview ? '' : $tempVal;
 
         $pages = [];
         // names of the elements, split by levels. E.g.: names has several values: one index for each study and 'names' containing the names of all studies. Each of these elements has the same structure (one index for each group and one element with the names of all groups of this study). Each of these elements has an array as the value containing the names of the measure time points of this group
@@ -126,7 +126,7 @@ class LandingController extends ControllerAbstract
                 $isEditRemove = $isEdit || $isRemove;
                 $name = ''; // name of new element
                 if ($isNewCopy || $isEditRemove) {
-                    if ($isNewCopy && $isNotMultiple || $isRemove) { // set focus only if second element is created of an element is removed
+                    if ($isNewCopy && !$isMultiple || $isRemove) { // set focus only if second element is created of an element is removed
                         $session->set(self::structureDescription,'');
                     }
                     // logic: $submitDummy has the form 'key:value\n\nkey:value'. Cut everything before the 'remove' such that the string starts with 'remove:index\n' (substr call). The split the string by "\n" such that the first element contains "remove:..." (first explode). Then split again by the colon such that the second element contains the indices (second explode). Then split again by the underscore to get the individual indices (third explode). Same for 'edit'.

@@ -17,8 +17,8 @@ multiple:
         The XML file of the ethics application was loaded successfully. {isMain, select,
                                         true  {}
                                         other {You were re-directed to the main page.}} You can now continue editing the application.
-        
-        
+
+
         You loaded an XML file that was created with an older version of the Ethiktool. In newer versions, {isMajor, select,
           true  {choosing the type of review process is mandatory. Depending on the chosen review process, the Ethiktool requests different inputs. Please choose the type of review process before making any further entries. Would you like to switch to this choice on the “Core data“ page?}
           other {institution and department of the project contributors need to be entered separately. The existing inputs were transferred to the department field. Would you like to switch to the “Project contributors“ page to adapt the institution(s)?}}
@@ -134,7 +134,6 @@ multiple:
     eMail: 'E-mail address'
     position: 'Position'
     phone: 'Work phone'
-    phoneOptional: '(optional) Work phone'
     hints:
       name: 'If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space).'
       institution: 'Please check if you are eligible to submit a proposal to {committeeDat} although you do not belong to {committeeLocationDat}.'
@@ -179,6 +178,7 @@ committee:
       SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
       BICC  {the bicc Ethics Committee}
       PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
+      BTU   {the Ethics Committee of BTU Cottbus-Senftenberg}
       other {the test ethics committee}}
   committeeGen: >-
     {committee, select,
@@ -193,6 +193,7 @@ committee:
     SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
     BICC  {the bicc Ethics Committee}
     PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
+    BTU   {the Ethics Committee of BTU Cottbus-Senftenberg}
     other {the test ethics committee}}
   committeeDat: >-
     {committee, select,
@@ -207,6 +208,7 @@ committee:
       SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
       BICC  {the bicc Ethics Committee}
       PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
+      BTU   {the Ethics Committee of BTU Cottbus-Senftenberg}
       other {the test ethics committee}}
   committeeAcc: >-
     {committee, select,
@@ -221,6 +223,7 @@ committee:
       SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
       BICC  {the bicc Ethics Committee}
       PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
+      BTU   {the Ethics Committee of BTU Cottbus-Senftenberg}
       other {the test ethics committee}}
   committeeLocation: >-
     {committee, select,
@@ -232,9 +235,10 @@ committee:
       UH1   {Hildesheim University}
       UPB   {Paderborn University}
       PHHD  {Heidelberg University of Education}
-      SRH   {SRH Campus Heidelberg}
+      SRH   {SRH University of Applied Sciences Heidelberg}
       BICC  {Bonn International Centre for Conflict Studies}
       PHT   {University College of Teacher Education Tyrol}
+      BTU   {BTU Cottbus-Senftenberg}
       other {the institution of the test ethics committee}}
   committeeLocationPure: >-
     {committee, select,
@@ -246,9 +250,10 @@ committee:
       UH1   {Hildesheim University}
       UPB   {Paderborn University}
       PHHD  {Heidelberg University of Education}
-      SRH   {SRH Campus Heidelberg}
+      SRH   {SRH University of Applied Sciences Heidelberg}
       BICC  {Bonn International Centre for Conflict Studies}
       PHT   {University College of Teacher Education Tyrol}
+      BTU   {BTU Cottbus-Senftenberg}
       other {Institution of the test ethics committee}}
   committeeLocationDat: >-
     {committee, select,
@@ -260,9 +265,10 @@ committee:
       UH1   {Hildesheim University}
       UPB   {Paderborn University}
       PHHD  {Heidelberg University of Education}
-      SRH   {SRH Campus Heidelberg}
+      SRH   {SRH University of Applied Sciences Heidelberg}
       BICC  {Bonn International Centre for Conflict Studies}
       PHT   {University College of Teacher Education Tyrol}
+      BTU   {BTU Cottbus-Senftenberg}
       other {the institution of the test ethics committee}}
   committeeLocationGen: >-
     {committee, select,
@@ -274,9 +280,10 @@ committee:
       UH1   {of Hildesheim University}
       UPB   {of Paderborn University}
       PHHD  {of Heidelberg University of Education}
-      SRH   {of SRH Campus Heidelberg}
+      SRH   {of SRH University of Applied Sciences Heidelberg}
       BICC  {of Bonn International Centre for Conflict Studies}
       PHT   {of University College of Teacher Education Tyrol}
+      BTU   {of BTU Cottbus-Senftenberg}
       other {of the institution of the test ethics committee}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
@@ -299,6 +306,7 @@ newForm: # placed immediately after 'committee' to have the committee names all 
       SRH: 'SRH University of Applied Sciences Heidelberg'
       BICC: 'Bonn: bicc Ethics Committee'
       PHT: 'Innsbruck: Ethics Committee of University College of Teacher Education Tyrol'
+      BTU: 'Cottbus: Ethics Committee of BTU Cottbus-Senftenberg'
       testCommittee: 'Test ethics committee'
   password:
     title: 'Password:'
@@ -398,14 +406,14 @@ main:
   textNoCommittee: |
     The “Ethiktool“ software supports applicants in writing their ethics proposal. A user-centered dialogue guides applicants through all relevant questions for ethics review on a case-by-case basis.
     As a result of the step-by-step query, the Ethiktool generates all documents that are reviewed by the ethics committee: the ethics application and the participant documents (i.e., texts for information and consent) addressing the persons who are interested in participation (provided they are capable of giving consent themselves - otherwise the Ethiktool generates the documents for the legal guardians).
-    
+
     Further information is available in the sections “About us“ and “About the Ethiktool“. Please note the “Technical Information“ and “Terms of Use“ for the Ethiktool.
     You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
 
-    <i>Please note: In the current project phase, the Ethiktool is intended for filing an application at Chemnitz University of Technology or at Bielefeld University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites{numCommitteesBeta, select,
+    <i>Please note: In the current project phase, the Ethiktool is intended for filing an application at Chemnitz University of Technology, at Bielefeld University or at Paderborn University. Alternatively, you can test the Ethiktool's functionality by choosing “Test ethics committee“. The Ethiktool is currently being prepared for use at other sites{numCommitteesBeta, select,
             zero  {.}
-            one   {; one ethics committee is already in the beta stage.}
-            other {; {numCommitteesBeta} ethics committees are already in the beta stage.}}
+            one   {; one further ethics committee is in the beta stage.}
+            other {; {numCommitteesBeta} further ethics committees are in the beta stage.}}
 
     You can start creating an application for the respective committee via the “New proposal“ option.
     You can load and edit an existing XML file created by the Ethiktool via “Load proposal”.</i>
@@ -413,73 +421,78 @@ main:
     <b>You are preparing an ethics application for {committeeType, select,
                                                       testCommittee {testing the functionality of the Ethiktool}
                                                       other         {submission to {committeeAcc}}}.</b>
-    
-    
+
+
     {committeeType, select,
               EUB   {Please note that documents for informing participants who are capable of giving consent (or else the documents for the legal guardians) are generated automatically using the Ethiktool and you do <b>not</b> need to prepare the information in advance based on the template on the website of the Ethics Review Board. The information (part 1 of the template) and consent form (part 2) are automatically generated based on the details provided in the tool. If desired, the data privacy statement (part 3) can also be generated automatically on a case-by-case basis. You will receive a PDF document for further use.</br></br>}
               other {}} Please note that creating the application involved confirmation that the <a class="linkInternal" href data-bs-toggle="modal" data-bs-target="#technicalHints">technical information</a> has been noted and that the following <b>requirements for the application</b> are fulfilled:</br></br>
   textRequirementsTitle: 'Requirements for the application'
-  textRequirements: | # other in select is test committee. For readability of the translation files newlines instead of br-tags are used. TODO: translate first part of PHHD/SRH
+  textRequirements: | # other in select is test committee. For readability of the translation files newlines instead of br-tags are used.
     {committeeType, select,
       TUC   {Any person carrying out independent research at Chemnitz University of Technology is eligible to apply; this explicitly includes doctoral candidates. The responsibility for the ethics application in case of undergraduate theses and other student research projects lies with the teaching staff or supervisors.
 
              The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible.
-    
+
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee.}
       EUB   {Members and affiliates of Bielefeld University are eligible to apply. Students can also file an application for their final theses and other student research; the teaching staff or supervisor(s) have to check and approve the application before submission.
 
              The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review. Further information on the procedure for retrospective assessments can be found <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/faq/index.xml" target="_blank">here</a>.
-    
+
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee.
-    
+
              Research projects involving physicians as project contributors usually have to be evaluated by a medical ethics committee. In individual cases a review by the non-medical Bielefeld University Ethics Review Board may be possible. Further information can be found <a href="https://www.uni-bielefeld.de/fakultaeten/medizin/forschung/foerderung/ethikkommission/" target="_blank">here</a>.}
       JGU   {All members of the Department of Psychology of Johannes Gutenberg University Mainz are eligible to apply. The eligibility to apply extends to researchers who are preparing an application for their own position (e.g., with the DFG) in a project to be conducted at the Department of Psychology of JGU Mainz; in this case, a brief statement by the leader of the lab in whose group the project shall be conducted must be submitted with the ethics application.
-    
+
              The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible.
-    
+
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. (For further specifications, see <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>.)}
       DLR   {Any person working at the German Aerospace Center (DLR) is eligible to apply; this also includes students with an employment contract at the DLR. Students without an employment contract must discuss with a scientific contributor to their project working at the DLR whether this person applies for ethics approval at the DLR or whether the ethics committee of the student's home university is responsible.
-    
+
              The ethics proposal should be submitted <i>before</i> the start of a research project. Retrospective review is possible only in justified exceptional cases. In such cases, please contact the Research Ethics Office of the German Aerospace Center and ask whether authorisation for retrospective review can be granted.
-    
+
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. The same applies to research projects involving physicians as project contributors.}
       TUD   {Eligibility criteria for applying to the Ethics Board of Dresden University of Technology After will be announced here after the official resolution on the Board's establishment.
-    
+
              Furthermore, the dinstinction between proposals to the Ethics Board and proposals to the Ethics Committee of TU Dresden (for medical research) will be explained.
-    
+
              The ethics proposal should be submitted <i>before</i> the start of a research project. Retrospective review is possible only in justified exceptional cases. Further instructions on how to proceed in such cases will follow.}
       UH1   {Any person carrying out independent research at Faculty 1 of Hildesheim University is eligible to apply; this explicitly includes doctoral candidates. External doctoral candidates are eligible to apply if the thesis is supervised at Faculty 1 of Hildesheim University. Students can also file an application for their final theses and other student research, the teaching staff or supervisor(s) have to check and approve the application before submission.
-    
+
              The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review.
-    
-             Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. 
-    
+
+             Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee.
+
              Research projects involving physicians as project contributors, in which clearly delimitable medical research questions shall be addressed, usually have to be evaluated by a medical ethics committee. In individual cases a review by the non-medical Ethics Review Board of Faculty 1 of Hildesheim University may be possible.}
       UPB   {Eligible applicants are researchers affiliated with Paderborn University (UPB); this explicitly includes doctoral candidates of UPB. Applications for student theses, study-related research projects, or projects by external doctoral candidates must be submitted by the respective supervisor at UPB.
-    
+
             The ethics proposal must be submitted before the start of any study involving human participants. Retrospective ethics approvals are not possible.
-    
+
             The Ethics Committee of Paderborn University does not fulfil the functions of a public ethics committee under the North Rhine-Westphalia Health Professions Act and does not review research with medical or pharmacological questions. Such research projects must be submitted to a medical ethics committee.}
-      PHHD  {Die Kommission wird auf Antrag eines Mitglieds oder Angehörigen der Pädagogischen Hochschule oder der SRH University tätig. Ein Votum der Ethikkommission für ein Forschungsvorhaben kann nur beantragt werden, wenn dieses für Dritte (z. B. Fördermittelgeber, Verlage) erforderlich ist. In allen anderen Fällen kann ein Rat der Ethikkommission eingeholt werden. Der Antrag an die Ethikkommission ist mindestens einen Monat vor Beantragung des Forschungsvorhabens zu stellen.
-            Studierende sind in ethischen Fragen zu wissenschaftlichen Arbeiten nicht selbst antragsberechtigt und können nur in Ausnahmefällen einen Rat über eine Betreuerin oder einen Betreuer einholen. 
-            Die Antragsbearbeitung erfolgt unter der Voraussetzung, dass der Antrag bisher bei keiner anderen Ethikkommission zur Begutachtung eingereicht wurde.
-    
-            The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible.
-    
+      PHHD  {The Ethics Committee acts upon a proposal by a member or affiliate of SRH University of Applied Sciences Heidelberg. A vote by the Ethics committee for a research project can only be applied for if third parties require this (e.g., funding institutions, publishers). A recommendation by the Ethics Committee can be asked for in all other cases.
+            Students are not eligible to apply for ethics votes or recommendations regarding their planned research. In exceptional cases, they can ask for ethics recommendations via their supervisor.
+            The proposal is reviewed by the Ethics Committee under the condition that no ethics proposal was submitted in parallel to a different ethics review board.
+
+            The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible. In case of funding acquisition, the ethics proposal must be submitted to the Ethics Committee at least one month before submission of the funding proposal.
+
             Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. Research projects involving physicians as project contributors usually have to be evaluated by a medical ethics committee.}
-      SRH   {Die Kommission wird auf Antrag eines Mitglieds oder Angehörigen der Pädagogischen Hochschule oder der SRH University tätig. Ein Votum der Ethikkommission für ein Forschungsvorhaben kann nur beantragt werden, wenn dieses für Dritte (z. B. Fördermittelgeber, Verlage) erforderlich ist. In allen anderen Fällen kann ein Rat der Ethikkommission eingeholt werden. Der Antrag an die Ethikkommission ist mindestens einen Monat vor Beantragung des Forschungsvorhabens zu stellen.
-            Studierende sind in ethischen Fragen zu wissenschaftlichen Arbeiten nicht selbst antragsberechtigt und können nur in Ausnahmefällen einen Rat über eine Betreuerin oder einen Betreuer einholen.
-            Die Antragsbearbeitung erfolgt unter der Voraussetzung, dass der Antrag bisher bei keiner anderen Ethikkommission zur Begutachtung eingereicht wurde.
-            
-            The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible.
-    
+      SRH   {The Ethics Committee acts upon a proposal by a member or affiliate of Heidelberg University of Education. A vote by the Ethics committee for a research project can only be applied for if third parties require this (e.g., funding institutions, publishers). A recommendation by the Ethics Committee can be asked for in all other cases.
+            Students are not eligible to apply for ethics votes or recommendations regarding their planned research. In exceptional cases, they can ask for ethics recommendations via their supervisor.
+            The proposal is reviewed by the Ethics Committee under the condition that no ethics proposal was submitted in parallel to a different ethics review board.
+
+            The ethics proposal must be submitted <i>before</i> the start of a research project; retrospective ethics approvals are not possible. In case of funding acquisition, the ethics proposal must be submitted to the Ethics Committee at least one month before submission of the funding proposal.
+
             Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. Research projects involving physicians as project contributors usually have to be evaluated by a medical ethics committee.}
       BICC  {Eligible applicants include staff members of the BICC – Bonn International Centre for Conflict Studies. Students may also submit an ethics application for their thesis or other student research projects if these are carried out as part of research projects at the BICC; supervisors must have read and approved the application prior to submission.
-    
+
              The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Committee may carry out a retrospective review. Further information in case of a retrospective review must be obtained from the ethics committee via <a href="ethics@bicc.de">ethics@bicc.de</a>.}
       PHT   {Any person carrying out research at PH Hochschule Tirol is eligible to apply. The responsibility for the ethics application in case of undergraduate theses and other student research projects lies with the teaching staff or supervisors.
-    
+
             The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review.}
+      BTU   {Any person carrying out independent research at BTU Cottbus-Senftenberg is eligible to apply; this explicitly includes doctoral candidates. The responsibility for the ethics application in case of undergraduate theses and other student research projects lies with the teaching staff or supervisors.
+
+             The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review.
+
+             Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. Research projects involving physicians as project contributors usually have to be evaluated by a medical ethics committee. In individual cases a review by the non-medical Ethics Committee of BTU Cottbus-Senftenberg may be possible.}
       other {You are creating a test ethics application that is <b>not designed to be submitted to an ethics review board</b>. Therefore, no eligibility requirements need to be fulfilled at this point.}}
   newFormModal:
     title: 'jump to new proposal'
@@ -631,6 +644,9 @@ coreData:
           DLR   {(Planned)}
           TUD   {(Planned)}
           UH1   {(Planned)}
+          BICC  {(Planned)}
+          PHT   {(Planned)}
+          BTU   {(Planned)}
           other {Planned}} project start
       hints:
         headingHint: 'Beginning of data collection; if no new data are collected but available data re-used: Beginning of re-analysis'
@@ -640,6 +656,9 @@ coreData:
             DLR   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started or have been completed is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
             TUD   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started or have been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.}
             UH1   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started or have been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.}
+            BICC  {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started is possible only in justified exceptional cases and after authorisation for a retrospective review has been granted via e-mail. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.</br> Please only proceed if authorisation for retrospective review has been granted.}
+            PHT   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started or have been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.}
+            BTU   {Ethics applications must be submitted before the project start. An ethics vote for research projects which already started or have been completed is possible only in justified exceptional cases. Please note that in case of change requirements by the ethics committee, the vote only applies to parts of the research project after their fulfilment.}
             other {}}
         textHint:
           current: 'Please describe which parts of the data collection have already been completed (e.g., contacting participants, number of datasets collected) and which parts are still ongoing. Further information in the Ethiktool must be completed prospectively.'
@@ -647,8 +666,10 @@ coreData:
       begun: >-
           The research project has already started.
           {committeeType, select,
-            UH1   {Justification}
             TUD   {Justification}
+            UH1   {Justification}
+            PHT   {Justification}
+            BTU   {Justification}
             other {Authorisation}}
           for retrospective review is needed.
       begunConfirm: 'I hereby confirm that I consulted {committeeDat} and was reassured that I am allowed to submit the research project for ethics review although it already started.'
@@ -659,6 +680,8 @@ coreData:
           DLR   {(Planned)}
           TUD   {(Planned)}
           UH1   {(Planned)}
+          PHT   {(Planned)}
+          BTU   {(Planned)}
           other {Planned}} end of the project
       hint: 'This does not refer to the end of data collection, but to finalizing data analysis and compilation. The ethics vote issued is valid for the research project with the duration specified here.'
   funding:
@@ -685,7 +708,7 @@ coreData:
     requestedConfirm:
       title: 'Confirmation of congruence'
       headingHint: >- # other in committeeType is those without participant documents for short proposals and with no special requirements
-        Funding institutions usually require an ethics vote for the exact content of the funding proposal. Therefore, the studies laid out in the ethics proposal must be congruent to those in the funding proposal in terms of content. For consistency from the funder's perspective, the title of the ethics proposal and the funding proposal should be identical. 
+        Funding institutions usually require an ethics vote for the exact content of the funding proposal. Therefore, the studies laid out in the ethics proposal must be congruent to those in the funding proposal in terms of content. For consistency from the funder's perspective, the title of the ethics proposal and the funding proposal should be identical.
         Please do not combine third-party-funding-dependent and -independent studies within one ethics proposal. The ethics committee acts on the assumption that the studies laid out in the ethics proposal will only be conducted if third-party funding is granted.
         {committeeType, select,
           TUC   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
@@ -695,6 +718,7 @@ coreData:
                              true  {with participant documents and further details}
                              other {}} for receiving a final ethics vote.}
           UPB   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
+          BTU   {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
           other {{isFull, select,
                    true  {For this reason, the ethics committee issues a preliminary vote for submission to the funder. In case of successful funding acquisition, the ethics proposal must be resubmitted with participant documents and further details for receiving a final ethics vote.}
                    other {}}}}
@@ -1283,11 +1307,14 @@ projectdetails:
           attention: 'in case a participant gives wrong answers on several attention-check items'
           criteria: 'in case it becomes obvious during data collection that an inclusion criterion is not fulfilled or that an exclusion criterion applies'
           malfunction: 'in case of technical malfunction of the used equipment'
+          behaviour: 'in case of inappropriate behaviour of a participant during data collection'
           terminateCriteriaOther: 'under other circumstances'
           presence: 'termination by the project contributors is not possible because they are not or only temporarily present during data collection'
           unnecessary: 'termination by the project contributors is not deemed necessary'
         placeholder: 'please specify'
-        otherHint: 'termination by the participants is queried elsewhere and must not be mentioned here'
+        hints:
+            behaviour: 'e.g., insulting or threatening behaviour, inappropriate body contact'
+            terminateCriteriaOther: 'termination by the participants is queried elsewhere and must not be mentioned here'
     measures:
       procedure:
         title: 'Procedure'
@@ -1986,7 +2013,7 @@ projectdetails:
                                                                       other    {participants}}.
             own: >-
               The code is freely chosen by the {addressee, select,
-                                                  children {children or legal guardians} 
+                                                  children {children or legal guardians}
                                                   wards    {supervised individuals or legal guardians}
                                                   other    {participants}}.
             contributors: 'The code is assigned by the project contributors.'
@@ -2305,7 +2332,7 @@ projectdetails:
                                                                       other    {participants}}.
             own: >-
               The code is freely chosen by the {addressee, select,
-                                      children {children or legal guardians} 
+                                      children {children or legal guardians}
                                       wards    {supervised individuals or legal guardians}
                                       other    {participants}}. There is no further documentation that relates the code with personally identifying information. Identification is possible only for persons who know the code.
             contributors: 'The code is assigned by the project contributors.'
@@ -2425,7 +2452,8 @@ checkDoc:
     The technical check has not revealed any missing or incorrect entries. However, please check your entries carefully, as not all discrepancies can be detected automatically.{isAllowed, select,
       true  {
              You can now generate the documents for submission to {committeeAcc} by selecting “<a class="linkInternal" href="completeForm">complete proposal</a>“.}
-      other {}}
+      other {
+             You used the Ethiktool for self-assessment of the ethical aspects of your planned research as a student. To proceed, please review the contents of the ethics form with the supervisor of your student research project.}}
   reviewMissing: >-
     <span style="font-weight: bold"><span class="errorStyle">Please note</span>: At least one choice regarding <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#applicationProcess">the type of review process</a>{hasBegun, select,
               true  {, the beginning of <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">data collection</a>}
@@ -2434,11 +2462,11 @@ checkDoc:
   noErrorPage: >-
     The technical check has not revealed any missing or incorrect entries {page, select,
                                                                             AppData        {on the proposal data pages}
-                                                                            Projectdetails {{type, select,
-                                                                                              study            {on the pages for the groups and time points of this study}
-                                                                                              group            {on the pages for the time points of this group}
-                                                                                              measureTimePoint {on the pages of this time point}
-                                                                                              other            {on the Project structure pages}}}
+                                                                            Projectdetails {{isSubPage, select,
+                                                                                              true  {{isMultiple, select,
+                                                                                                        true  {on the pages of this combination of study, group and time point}
+                                                                                                        other {under “study details“}}}
+                                                                                              other {on the Project structure pages}}}
                                                                             other          {on this page}}. However, please check your entries carefully, as not all discrepancies can be detected automatically.
   missing: # currently only once used at the same time, therefore no plural keyword
     single: ' is missing.'
@@ -2541,7 +2569,7 @@ checkDoc:
                                                                                           other {}}}}.
       missingMandatory: 'Role “{task}“ was not selected for any project contributor.'
       missingOther: >-
-        Project contributor {index} ({name}): Specification of {type, select, 
+        Project contributor {index} ({name}): Specification of {type, select,
                                                                 institution {institution}
                                                                 other       {other position}}
       dataSource: 'If no <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves newly collected data, the function “{task}“ cannot be selected for any <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors">project contributor.</a>'
@@ -3226,6 +3254,7 @@ completeForm:
                           SRH   {<a href="https://www.srh-university.de/de/forschung/ethikkommission/" target="_blank">current composition of {committeeGen}</a>}
                           BICC  {<a href="https://biccde.sharepoint.com/sites/biccjanus/SitePages/Ethics-Committee.aspx" target="_blank">current composition of {committeeGen}</a> (internal link)}
                           PHT   {current composition of {committeeGen}}
+                          BTU   {<a href="https://www.b-tu.de/en/universitaet/struktur/governing-boards-and-representative-bodies/ethics-committee" target="_blank">current composition of {committeeGen}</a>}
                           other {current composition of {committeeGen}}} and inform us of any possible conflicts of interest below:
     types:
       noBias: 'No member of the ethics committee has a conflict of interest.'
@@ -3233,7 +3262,7 @@ completeForm:
       access: 'The following members of the ethics committee must not view the application documents (usually if there is a justified concern about information being passed on):'
     hint: 'These persons must not be involved in the decision-making process, but may view the application documents.'
   consentFurther:
-    text: >-
+    text: >- # TODO: check PHHD link, add links for BICC, TUD, PHT
       The ethics review is based on the regulations and rules of procedure for {committeeAcc} in its current version{committeeType, select,
         TUC   {, available at <a href="https://www.tu-chemnitz.de/tu/ethik/ordnung.php" target="_blank">https://www.tu-chemnitz.de/tu/ethik/ordnung.php</a>}
         EUB   {, available under “Regulations“ and “Rules of procedure“ at the <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">website of {committeeGen}</a>}
@@ -3246,6 +3275,7 @@ completeForm:
         SRH   {, available at <a href="https://www.srh-university.de/en/research/ethics-committee/" target="_blank">https://www.srh-university.de/en/research/ethics-committee/</a>}
         BICC  {, available at <a href="" target="_blank"></a>}
         PHT   {. These regulations will be accessible here after the official resolution on the Board's establishment}
+        BTU   {, available at <a href="https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf" target="_blank">https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf</a> (internal link)}
         other {}}.
       {committeeType, select,
         EUB   {}
@@ -3261,7 +3291,7 @@ completeForm:
                                                  =1    {proposal with the case number}
                                                  other {proposals with the case numbers}} {reference}.}}}
         other {Ethics proposals and all associated documents are processed electronically. The employees of the office and the members of {committeeGen} are involved in processing the documents. The persons involved are obliged to maintain confidentiality and to comply with data protection regulations. In particularly justified exceptional cases, the applicant has the option of restricting access to the proposal documents for individual members of the ethics committee (usually if there are justified concerns about the disclosure of information).
-         After completion of the review by {committeeAcc}, all documents and correspondence are stored, irrespective of the vote issued, for a period of 10 years after the end of the research project specified in the proposal. Access to the stored data is granted to employees of the office of {committeeGen}.  
+         After completion of the review by {committeeAcc}, all documents and correspondence are stored, irrespective of the vote issued, for a period of 10 years after the end of the research project specified in the proposal. Access to the stored data is granted to employees of the office of {committeeGen}.
          {numReferences, plural,
            =0    {}
            other {For the purpose and for the duration of the review of the current proposal {isExRe, select,
@@ -3305,7 +3335,7 @@ completeForm:
           Instructions {isTool, select,
                          true  {}
                          other {for the applicants}} on how to proceed
-        text: >- # TODO: translate PHHD/SRH
+        text: >- # TODO: add PHHD link, add TUD e-mail
           {isTool, select,
             true  {
                   <li>A ZIP file “{fileName}_completeApplication_{curDate}.zip“ is generated, which contains all documents (complete proposal, single documents, XML file).</li>
@@ -3323,10 +3353,11 @@ completeForm:
           TUD   {to {committeeAcc} at the yet-to-be-determined e-mail address of {committeeGen}}
           UH1   {to {committeeAcc} at ethikfb1@uni-hildesheim.de}
           UPB   {to {committeeAcc} at ethik-kommission@zv.uni-paderborn.de}
-          PHHD  {über Ihr Dekanat an die Vorsitzende bzw. den Vorsitzenden der Ethikkommission unter ethikkommission@vw.ph-heidelberg.de or ethikkommission.HSHD@srh.de (please check the <a href="" target="_blank">website of the ethics committee</a> for the current e-mail address to be used). Die bzw. der Vorsitzende prüft die Antragsberechtigung und versendet dann ggf. die Unterlagen an alle Kommissionsmitglieder.}
-          SRH   {über Ihr Dekanat an die Vorsitzende bzw. den Vorsitzenden der Ethikkommission unter ethikkommission@vw.ph-heidelberg.de or ethikkommission.HSHD@srh.de (please check the <a href="https://www.srh-university.de/en/research/ethics-committee" target="_blank">website of the ethics committee</a> for the current e-mail address to be used). Die bzw. der Vorsitzende prüft die Antragsberechtigung und versendet dann ggf. die Unterlagen an alle Kommissionsmitglieder.}
+          PHHD  {to the Chair of the Ethics Committee at ethikkommission@vw.ph-heidelberg.de or ethikkommission.HSHD@srh.de (please check the <a href="" target="_blank">website of the ethics committee</a> for the current e-mail address to be used). The Chair verifies the eligibility of the applicant and, where appropriate, sends the ethics proposal to the Committee members.}
+          SRH   {to the Chair of the Ethics Committee at ethikkommission@vw.ph-heidelberg.de or ethikkommission.HSHD@srh.de (please check the <a href="https://www.srh-university.de/en/research/ethics-committee" target="_blank">website of the ethics committee</a> for the current e-mail address to be used). The Chair verifies the eligibility of the applicant and, where appropriate, sends the ethics proposal to the Committee members.}
           BICC  {to {committeeAcc} at ethics@bicc.de}
           PHT   {to {committeeAcc} at ethikkommission@ph-tirol.ac.at}
+          BTU   {to {committeeAcc} at ethik@b-tu.de}
           other {the e-mail address of {committeeGen}}}.</li>
 
 quitModal:
@@ -3345,15 +3376,15 @@ preview: # tab names in preview
 
 quit: |
   You successfully terminated the Ethiktool. Any Ethiktool-related form content was removed from your browser cache. Thank you for using the Ethiktool.
-  
+
   We would like to invite you to participate in a <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=en" target="_blank">brief anonymous survey</a> regarding the use of the Ethiktool - thank you very much in advance!
-  
+
   We continuously extend and improve the Ethiktool. We therefore greatly appreciate your support by sending us error reports, questions and remarks via email to <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. If you experience technical issues with the current version, please contact <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
-  
+
   If you use the Ethiktool for your research, please cite our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en#publications" target="_blank">work</a>.
-  
+
   The Ethiktool is a joint development of a project team headed by Prof. Dr. Alexandra Bendixen (Chemnitz University of Technology, TUC), which comprises members from TUC, the Leibniz Institute for Psychology (ZPID), and Bielefeld University. You are welcome to read more about the Ethiktool development on our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
-  
+
   *E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).
 
 # header modals
@@ -3368,7 +3399,7 @@ aboutUs:
     <a href="https://www.tu-chemnitz.de/physik/SFKS/tinafrenzel.html.en" target="_blank">Tina Frenzel</a>, M.Sc. (TU Chemnitz)
     Dr. <a class="linkExternal" href="https://leibniz-psychology.org/profil-katarina-blask" target="_blank">Katarina Blask</a> (Leibniz Institute for Psychology (ZPID))
     Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/inka/index.html.en" target="_blank">Inka Schmitz</a> (former member)
-    
+
     Our mission is to facilitate the generation and evaluation of ethics proposals. Hence we provide the Ethiktool free of charge to all interested ethics committees. The Ethiktool development is based on our longstanding experience in ethics committee work and our experience with the predecessor software, which was developed under the leadership of Alexandra Bendixen and introduced at TU Chemnitz in 2021. The development of the current version has been financially supported by the Volkswagen Foundation since 2023, with their support set to continue until 2026.
 
     For more information about us, please visit our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en" target="_blank">project website</a>.
@@ -3376,16 +3407,16 @@ aboutUs:
 aboutTool:
   title: 'About the Ethiktool'
   text: |
-    You are using version {toolVersion} of the browser-based Ethiktool. A list of changes relative to previous versions can be found <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html.en" target="_blank">here</a>. 
-    
-    The Ethiktool simplifies the generation and evaluation of ethics proposals for research involving human participants, in particular for non-medical research. Based on your responses to questions that are automatically adapted to your input, the Ethiktool generates the application documents as well as all participant documents (including information, consent, and data privacy - provided the participants are capable of giving consent themselves; otherwise the Ethiktool generates the documents for their legal guardians). The Ethiktool is a joint development of a project team headed by Prof. Dr. Alexandra Bendixen (Chemnitz University of Technology, TUC), which comprises members from TUC, the Leibniz Institute for Psychology (ZPID), and Bielefeld University. The development has been based on experience with a predecessor software developed and used at TUC. 
-    
+    You are using version {toolVersion} of the browser-based Ethiktool. A list of changes relative to previous versions can be found <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html.en" target="_blank">here</a>.
+
+    The Ethiktool simplifies the generation and evaluation of ethics proposals for research involving human participants, in particular for non-medical research. Based on your responses to questions that are automatically adapted to your input, the Ethiktool generates the application documents as well as all participant documents (including information, consent, and data privacy - provided the participants are capable of giving consent themselves; otherwise the Ethiktool generates the documents for their legal guardians). The Ethiktool is a joint development of a project team headed by Prof. Dr. Alexandra Bendixen (Chemnitz University of Technology, TUC), which comprises members from TUC, the Leibniz Institute for Psychology (ZPID), and Bielefeld University. The development has been based on experience with a predecessor software developed and used at TUC.
+
     We continuously extend and improve the Ethiktool. We therefore greatly appreciate your support by sending us error reports, questions and remarks via email to <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. If you experience technical issues with the current version, please contact <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
-    
+
     Are you a member of an ethics committee, IRB or otherwise involved in evaluating or processing ethics applications? If you are interested in introducing the Ethiktool at your site, you are very welcome to contact us at <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*.
-    
+
     If you use the Ethiktool for your research, please cite our <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html.en#publications" target="_blank">work</a>.
-    
+
     *E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).
 
 technicalHints:
@@ -3412,29 +3443,29 @@ technicalHints:
       other         {need to be submitted to {committeeType, select,
                                                 noCommittee {your ethics committee}
                                                 other       {{committeeAcc}}}. You will also receive individual documents for each part of the application for your own use. Please note that you will need the XML file for any revisions to your application.}}
-    
+
     At any time, you can download the XML file as well as the individual documents for the various parts of the application as PDF files using the button “Single documents“. Please note that the single documents are <b>not</b> intended for submission to the ethics committee.
-    
+
     The Ethiktool is regularly updated automatically. You are using version {toolVersion}; a version history can be found <a data-lang="en" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html.en" target="_blank">here</a>.
 
 termsOfUse:
   title: 'Terms of Use'
   text: |
-    The use of the Ethiktool is free of charge. You use the software on your own responsibility. Neither the Leibniz Institute for Psychology (ZPID) nor Chemnitz University of Technology (TUC) nor any party otherwise connected to the Ethiktool assumes any responsibility or liability for the correctness of the generated documents in terms of content or lawfulness, nor for the assessment of the ethical admissibility and legitimacy of the planned research. The responsibility for conducting the research in a legally and ethically impeccable manner remains solely with the researchers, or – in cases that include responsibility or liability of other bodies – with those bodies. The responsibility for ethics assessment remains solely with the applicable ethics committee or review board or with the persons, bodies and organisations that are commissioned by the respective committee or board. 
-    
+    The use of the Ethiktool is free of charge. You use the software on your own responsibility. Neither the Leibniz Institute for Psychology (ZPID) nor Chemnitz University of Technology (TUC) nor any party otherwise connected to the Ethiktool assumes any responsibility or liability for the correctness of the generated documents in terms of content or lawfulness, nor for the assessment of the ethical admissibility and legitimacy of the planned research. The responsibility for conducting the research in a legally and ethically impeccable manner remains solely with the researchers, or – in cases that include responsibility or liability of other bodies – with those bodies. The responsibility for ethics assessment remains solely with the applicable ethics committee or review board or with the persons, bodies and organisations that are commissioned by the respective committee or board.
+
     Information on data protection and the processing of personal data as defined by the European Union's General Data Protection Regulation (GDPR) can be found at <a class="linkExternal" href="https://leibniz-psychology.org/datenschutz" target="_blank">https://leibniz-psychology.org/datenschutz</a>.
-    
+
     The Ethiktool, all its texts, content and links (including texts, content and links on all of its subpages) as well as its source code are subject to the open source software licence “European Union Public Licence” in its version 1.2 of May 19th, 2017 (<a href="https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12" target="_blank">EUPL v. 1.2</a>) and constitute “the work” in terms of this licence. In particular, any derivative works (e.g., extension, modification) are also part of the work. Moreover, the work may only be distributed or communicated under the terms of this licence, and no additional terms or conditions may be offered or imposed on the work (“CopyLeft”). The source code is available <a href="https://github.com/leibniz-psychology/ethiktool" target="_blank">here</a> .
-    
+
     We are happy to support you in introducing the Ethiktool at your institution and to include a version tailored to your institution's needs within our software. If you are interested, please contact us at <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*.
 
     *E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).
-    
+
     This is a translation of the German version (“Nutzungsbedingungen”). In the event of differing content, the German version shall prevail.
 
 contactModal:
   title: 'Contact'
   text: |
     We are looking forward to your feedback. For questions and suggestions on content, please refer to the Ethiktool contributors at Chemnitz University of Technology (<a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*). For technical questions, please refer to the Ethiktool contributors at Leibniz Institute for Psychology (ZPID) (<a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>).
-    
+
     *E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).

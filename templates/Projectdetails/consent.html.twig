@@ -70,12 +70,12 @@
         {# terminate criteria #}
         {% if content.malaise is defined %}
             {% set tempPrefix, terminateWoSingle, uniqueKeys = translationPrefix~'terminateCriteria.', terminateCriteriaTypes[:-2], ['presence','unnecessary'] %}
-            {% set anySelected = getAnySelected(content,terminateCriteriaTypes,uniqueKeys) %}
+            {% set anySelected, hintsPrefix = getAnySelected(content,terminateCriteriaTypes,uniqueKeys), tempPrefix~'hints.' %}
             {% set isAnyUnique = anySelected[0] %}
             <div class="mt-8" id="terminateCriteria">
                 {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
                 <div class="MetaData-Widget mt-2" {{ stimulus_action('base','setMultiCheckbox','change',{'single': uniqueKeys, 'multiCheck': terminateCriteriaTypes[:-2]}) }}>
-                    {{ formRender.addCheckboxGroup(content,terminateCriteriaTypes,{'other': terminateCriteriaOtherTypes, 'icons': {'terminateCriteriaOther': tempPrefix~'otherHint'}}|merge(isAnyUnique or anySelected[1] ? {'targets': isAnyUnique ? terminateWoSingle : uniqueKeys} :{})) }}
+                    {{ formRender.addCheckboxGroup(content,terminateCriteriaTypes,{'other': terminateCriteriaOtherTypes, 'icons': {'behaviour': hintsPrefix~'behaviour', 'terminateCriteriaOther': hintsPrefix~'terminateCriteriaOther'}}|merge(isAnyUnique or anySelected[1] ? {'targets': isAnyUnique ? terminateWoSingle : uniqueKeys} :{})) }}
                 </div>
             </div>
         {% endif %}

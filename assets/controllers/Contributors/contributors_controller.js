@@ -3,7 +3,7 @@ import {sanitizeString, setElementVisibility} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['nameError','institutionIcon','professorshipIcon','eMailError','institution','institutionOther','position','positionOther','phoneLabel','phoneError','supervisionTask','supervisionIcon','otherTask','taskOtherDescription','taskHint','modal','modalLabel','modalSubmit','modalFooter']
+    static targets = ['nameError','institutionIcon','professorshipIcon','eMailError','institution','institutionOther','position','positionOther','phoneError','supervisionTask','supervisionIcon','otherTask','taskOtherDescription','taskHint','modal','modalLabel','modalSubmit','modalFooter']
 
     static values = {
         committeeType: String,
@@ -12,10 +12,11 @@ export default class extends Controller {
         institutions: Array,
         positions: Object,
         committeeStudent: Array, // committees where student is allowed position
+        committeePhdSupervisor: Array, // committees where a supervisor is needed if position is PhD
+        committeePhdTasks: Array, // committees where leader and data can not be selected as tasks if position is PhD
         isQualification: Boolean, // true if qualification question was answered with yes
         noChoice: String,
         infosNames: Array,
-        phoneLabel: Array, // 0: mandatory, 1: optional
         tasksNames: Array,
         tasksHints: Array // 0: no position selected, 1: position selected
     }
@@ -27,7 +28,6 @@ export default class extends Controller {
         this.institutionPosition = ['institution','position'];
         this.positionOtherValue = 'positionOther'; // value of the option-tag
         this.applicantPosition = this.contributorsValue[0]['infos']['position'];
-        this.isStudentApplicantValue = this.applicantPosition===this.studentChoiceValue; // true if position of applicant is student
         // fill the modal inputs if a contributor gets edited
         this.modalTarget.addEventListener('show.bs.modal', event => {
             let id = event.relatedTarget.getAttribute('data-bs-id');
@@ -135,25 +135,24 @@ export default class extends Controller {
         this.setSubmitButton();
     }
 
-    /** Enables or disables the tasks and sets the visibility of the 'other' text fields. Additionally, sets the label for the phone text field. */
+    /** Enables or disables the tasks and sets the visibility of the 'other' text fields. */
     setTasks() {
         let position = this.positionTarget.value;
         let disabled = position==='';
         let isStudent = position===this.studentChoiceValue;
         let isPhd = position===this.phdChoiceValue;
-        let isApplicantPhdEUB = this.applicantPosition===this.phdChoiceValue && this.committeeTypeValue==='EUB';
-        let isSupervisorNeeded = this.applicantPosition===this.studentChoiceValue || isApplicantPhdEUB;
+        let isApplicantPhdSupervisor = this.applicantPosition===this.phdChoiceValue && this.committeePhdSupervisorValue.includes(this.committeeTypeValue); // supervisor is needed for PhD
+        let isApplicantPhdTasks = this.committeePhdTasksValue.includes(this.committeeTypeValue); // leader and data not allowed for PhD
+        let isSupervisorNeeded = this.applicantPosition===this.studentChoiceValue || isApplicantPhdSupervisor;
         let isApplicant = this.idValue===0;
-        this.isStudentApplicantValue = isApplicant && isStudent;
-        let noStudentTasks = ['leader','data','supervision'];
         for (let task of this.tasksNamesValue) {
             let widget = document.getElementById(task);
-            let noAvailableTask = isStudent && noStudentTasks.includes(task) && !(this.isQualificationValue && task==='data') || task==='supervision' && (isApplicant || !isSupervisorNeeded || isApplicantPhdEUB && isPhd);
+            let isSupervision = task==='supervision';
+            // let noAvailableTask = isStudent && ['leader','data','supervision'].includes(task) && !(this.isQualificationValue && task==='data' && isApplicant) || isSupervision && (isApplicant || !isSupervisorNeeded || isApplicantPhdSupervisor && isPhd) || ['leader','data'].includes(task) && isApplicant && isPhd && isApplicantPhdTasks;
+            let noAvailableTask = ['leader','data'].includes(task) && (isStudent && !(isApplicant && this.isQualificationValue && task==='data') || isApplicant && isPhd && isApplicantPhdTasks) || isSupervision && (isApplicant || !isSupervisorNeeded || isStudent || isPhd && isApplicantPhdSupervisor);
             widget.disabled = noAvailableTask || disabled;
             widget.checked = noAvailableTask || disabled ? false : widget.checked;
         }
-        let isPhoneMandatory = this.idValue===0 && !this.isStudentApplicantValue || this.getSupervisionTask();
-        this.phoneLabelTarget.textContent = (isPhoneMandatory ? '*' : '')+this.phoneLabelValue[isPhoneMandatory ? 0 : 1]+':'; // needs to be set here because method is also invoked if position changed and phone for student is optional
         setElementVisibility(this.taskOtherDescriptionTarget,this.otherTaskTarget.checked,1)
         this.taskHintTarget.innerHTML = this.tasksHintsValue[disabled ? 0 : 1];
         this.taskHintTarget.style.fontStyle = disabled ? 'italic' : 'normal';
@@ -166,13 +165,12 @@ export default class extends Controller {
     /** (de)actives the submit button depending on the inputs that were made. */
     setSubmitButton() {
         let disabled = false;
-        let isApplicant = this.idValue===0;
         for (let info of this.infosNamesValue) {
             let tempVal = false;
             let value = document.getElementById(info).value.trim();
             let hasValue = value!=='';
             let isPhone = info==='phone';
-            disabled |= (isPhone && (isApplicant && this.isStudentApplicantValue || !this.getSupervisionTask())) ? false : !hasValue; // phone is mandatory for first contributor if not student and for contributors with task 'supervision'
+            disabled |= !isPhone && !hasValue;
             if (info==='name') {
                 tempVal = value.split(' ').length===1;
                 setElementVisibility(this.nameErrorTarget,hasValue && tempVal,1);
@@ -194,19 +192,12 @@ export default class extends Controller {
         }
         disabled = disabled || numTasks===0 || // no task selected
             this.otherTaskTarget.checked && this.taskOtherDescriptionTarget.value.trim()==='' || // 'other' task description is missing
-            numTasks===1 && !this.isQualificationValue && this.getSupervisionTask(); // only 'supervision' is selected
+            numTasks===1 && !this.isQualificationValue && this.hasSupervisionTaskTarget && this.supervisionTaskTarget.checked; // only 'supervision' is selected
         this.modalSubmitTarget.disabled = disabled;
         setElementVisibility(this.modalFooterTarget,disabled);
     }
 
     // methods that are called from within this class
-
-    /** Returns whether the task 'supervision' is checked.
-     * @returns true if the task is checked, false otherwise
-     */
-    getSupervisionTask() {
-        return this.hasSupervisionTaskTarget && this.supervisionTaskTarget.checked;
-    }
 
     /** Returns if a string is either empty or matches a regular expression.
      * @param input string to be tested

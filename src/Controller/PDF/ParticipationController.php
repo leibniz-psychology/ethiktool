@@ -401,7 +401,7 @@ class ParticipationController extends PDFAbstract
                                 $contInfos = $contributors[$index][self::infosNode];
                                 $curInfos = $this->addContributorInfo($contInfos);
                                 $hasFurtherTasks = $tasks!==[]; // true if contributor has further tasks except leader and contact
-                                if (($hasFurtherTasks || $isCurContact) && !in_array($index, $leaderIndices,true)) { // contributor has further tasks, but not leader, in current variant
+                                if (($hasFurtherTasks || $isCurContact) && !in_array($index, $leaderIndices)) { // contributor has further tasks, but not leader, in current variant
                                     $tempVal = $contInfos[self::institutionInfo];
                                     $furtherArray[$tempVal!==self::institutionSame ? $this->addMarkInput($tempVal,self::$markInput) : $tempVal][$this->addMarkInput($contInfos[self::department],self::$markInput)][] = $this->addMarkInput($contInfos[self::nameNode],self::$markInput).($hasFurtherTasks ? ' ('.implode(', ',$tasks).')' : '');
                                     if ($isCurContact) {

@@ -60,7 +60,7 @@
                 {{ formRender.addHeading(titlesPrefix~'finish') }}
                 <div class="MetaData-Label" {{ stimulus_target(completeFormController,'finishText') }}>{{ finishText[0] }}</div>
                 <div class="MetaData-Label" {{ stimulus_target(completeFormController,'finishTextMissing') }}>{{ finishText[1] }}</div>
-                <button class="Button_primary_act ms-4 mt-2 mb-2" type="button" name="finish" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target(completeFormController,'finish') }} onclick="{{ addTracking('Button','Complete Preparation') }}">{{ formRender.addButtonIcon(finishPrefix~'title','pdf') }}</button>
+                <button class="Button_primary_act ms-4 mt-2 mb-2" type="button" name="finish" {{ stimulus_action('base','saveUndoDocuments','click')|stimulus_target(completeFormController,'finish') }}>{{ formRender.addButtonIcon(finishPrefix~'title','pdf') }}</button>
                 <div class="MetaData-Label" style="margin-left: -1.5rem">
                     {{ formRender.addExpandable(finishPrefix~'text.end.title',{'isTool': 'true'}) }}
                     <div class="MetaData-Widget mx-4 mt-2 borderLight" style="display: none">{{ finishText[2]|raw }}</div>

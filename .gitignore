@@ -67,6 +67,10 @@ secret.*.y?ml
 /config/reference.php
 Dockerfile
 /src/Traits/Main/BetaCommitteeTrait.php
+/assets/controllers/csrf_protection_controller.js
+.editorconfig
+.env
+.env.dev
 
 ###> phpstan/phpstan ###
 phpstan.neon

@@ -1,5 +1,4 @@
-import './bootstrap.js';
-import './bootstrap';
+import './stimulus_bootstrap.js';
 import 'bootstrap';
 /*
  * Welcome to your app's Main JavaScript file!

@@ -3,7 +3,7 @@ import {saveUndoModal, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['projectTitleParticipation','applicationFull','exDiv','exReDiv', 'hintTemplate','shortDocs','shortDocsYes','qualificationYes','institutionHint','professorshipHint','phoneLabelOptional','position','studentConfirm','projectStart','projectStartNext','projectStartBegun','projectStartBegunDiv','projectStartBegunConfirm','projectStartBegunText','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
+    static targets = ['projectTitleParticipation','applicationFull','exDiv','exReDiv', 'hintTemplate','shortDocs','shortDocsYes','qualificationYes','institutionHint','professorshipHint','position','studentConfirm','projectStart','projectStartNext','projectStartBegun','projectStartBegunDiv','projectStartBegunConfirm','projectStartBegunText','fundingResearch','fundingResearchRequested','fundingExternal','fundingExternalRequested','requestedInput','requestedConfirm','requestedConfirmHint','conflictNo','conflictInput'];
 
     static values = {
         appType: String,
@@ -24,7 +24,9 @@ export default class extends Controller {
         this.conflictYesTarget = document.getElementById(this.conflictNoTarget.id.replace('1','0')); // renderButtons allows only one target; therefore, get the other by using the id
         this.applicationProcessLoadValue = this.reviewProcessLoadValue.includes('full') ? 'full' : 'short';
         this.setApplicationType();
-        this.setApplicant();
+        if (this.hasQualificationYesTarget) {
+            this.setApplicant();
+        }
         this.setProjectStart(false);
         this.setConflict();
     }
@@ -62,7 +64,6 @@ export default class extends Controller {
             if (this.hasStudentConfirmTarget) {
                 setElementVisibility(this.studentConfirmTarget,this.positionTarget.value===this.studentValue);
             }
-            this.setApplicant();
         } else if (id==='institution') {
             setElementVisibility(this.institutionHintTarget,isOther);
         }
@@ -96,31 +97,26 @@ export default class extends Controller {
         this.setReviewProcessWidgets(null,checkModal);
     }
 
-    /** Sets the positions and the phone label for the applicant. */
+    /** Sets the positions for the applicant. */
     setApplicant() {
-        if (this.hasPhoneLabelOptionalTarget) {
-            let positionApplicant = this.positionTarget.value;
-            // remove all positions and recreate them
-            while (this.positionTarget.hasChildNodes()) {
-                this.positionTarget.firstChild.remove();
-            }
-            let positions = Object.keys(this.positionsValue[this.hasQualificationYesTarget && this.qualificationYesTarget.checked ? 1 : 0]);
-            let positionsTranslated = this.positionsValue[2];
-            for (let choice of [''].concat(positions)) {
-                let newChoice = document.createElement('option');
-                this.positionTarget.append(newChoice);
-                newChoice.value = choice;
-                newChoice.textContent = choice!=='' ? positionsTranslated[choice] : this.noChoiceValue;
-            }
-            if (positions.includes(positionApplicant)) { // keep selection if still allowed
-                this.positionTarget.value = positionApplicant;
-            }
-            if (!positions.includes(this.positionOtherValue)) { // if position of applicant was 'other' and then qualification was answered with yes, hide the text field
-                setElementVisibility(this.positionOtherValue,false);
-            }
-            let isStudent = positionApplicant===this.studentValue; // position may have changed
-            setElementVisibility('phoneLabel',!isStudent);
-            setElementVisibility(this.phoneLabelOptionalTarget,isStudent);
+        let positionApplicant = this.positionTarget.value;
+        // remove all positions and recreate them
+        while (this.positionTarget.hasChildNodes()) {
+            this.positionTarget.firstChild.remove();
+        }
+        let positions = Object.keys(this.positionsValue[this.hasQualificationYesTarget && this.qualificationYesTarget.checked ? 1 : 0]);
+        let positionsTranslated = this.positionsValue[2];
+        for (let choice of [''].concat(positions)) {
+            let newChoice = document.createElement('option');
+            this.positionTarget.append(newChoice);
+            newChoice.value = choice;
+            newChoice.textContent = choice!=='' ? positionsTranslated[choice] : this.noChoiceValue;
+        }
+        if (positions.includes(positionApplicant)) { // keep selection if still allowed
+            this.positionTarget.value = positionApplicant;
+        }
+        if (!positions.includes(this.positionOtherValue)) { // if position of applicant was 'other' and then qualification was answered with yes, hide the text field
+            setElementVisibility(this.positionOtherValue,false);
         }
     }
 

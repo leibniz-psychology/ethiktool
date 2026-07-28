@@ -60,7 +60,7 @@ class ContributorsController extends ControllerAbstract
                         $tempArray[self::phoneNode] = $phone;
                     }
                     $newData[self::infosNode] = $tempArray;
-                    //tasks
+                    // tasks
                     foreach (self::tasksNodes as $value) {
                         if (array_key_exists($value, $dataContributors)) {
                             $tasks[$value] = $value===self::otherTask ? $dataContributors[self::otherDescription] : '';
@@ -100,7 +100,6 @@ class ContributorsController extends ControllerAbstract
             return $this->saveDocumentAndRedirect($request,$appNode);
         } // if ($contributors->isSubmitted())
         [,,$positionsTranslated] = $this->setPositions($session);
-        $phone = 'multiple.infos.'.self::phoneNode;
         $isQualification = $this->getQualification($this->xmlToArray($coreDataNode));
         return $this->render('Contributors/contributors.html.twig', $this->setRenderParameters($request,$contributors,
             ['isQualification' => $isQualification,
@@ -109,8 +108,9 @@ class ContributorsController extends ControllerAbstract
              'tasksMandatory' => $tasks[1],
              'addSupervisionIcon' => !$isQualification && $isSupervisorOld,
              'contributorsArray' => $contributorsArray,
-             'phoneLabel' => [$this->translateString($phone), $this->translateString($phone.'Optional')],
              'committeeStudent' => self::committeeStudent,
+             'committeePhdSupervisor' => self::committeeSupervisorPhD,
+             'committeePhdTasks' => self::committeePhDnoLeaderData,
              'institutionTypes' => array_keys(self::institutionTypes),
              'positions' => $positionsTranslated],
             'contributors.contributors'));

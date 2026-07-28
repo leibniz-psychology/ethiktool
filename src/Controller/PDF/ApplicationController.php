@@ -276,7 +276,6 @@ class ApplicationController extends PDFAbstract
             $applicantWidth = 0; // width of the divs containing the labels
             $tempVal = ($coreDataArray[self::qualification] ?? '')==='0';
             $tempArray = $coreDataArray[self::applicant];
-            $isStudent = $tempArray[self::position]===self::positionsStudent;
             $multipleInfosPrefix = 'multiple.infos.';
             $infos = [];
             foreach (self::applicantContributorsInfosTypes as $info) {
@@ -288,7 +287,7 @@ class ApplicationController extends PDFAbstract
                     $types = $isInstitution ? self::institutionTypes : self::positionsTypes;
                     $curInfo = array_key_exists($curInfo,$types) ? $this->translateString($types[$curInfo],$committeeParam).($isInstitution ? '' : ($tempVal && in_array($curInfo, [self::positionsStudent, self::positionsPhd],true) ? $this->translateStringPDF($pagePrefix.self::qualification) : '')) : $curInfo;
                 }
-                if ($info!==self::phoneNode || (!$isStudent || $curInfo!=='')) { // phone for student is optional
+                if ($info!==self::phoneNode || $curInfo!=='') { // phone for student is optional
                     $infos[$key] = $curInfo;
                 }
             }

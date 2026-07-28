@@ -130,16 +130,4 @@ class AppExtension
     {
         return is_array($element);
     }
-
-    /** Adds the 'onClick' event for tracking.
-     * @param string $category category
-     * @param string $name name
-     * @param string $action action. Defaults to 'click'
-     * @return string onClick event
-     */
-    #[\Twig\Attribute\AsTwigFunction(name: 'addTracking')]
-    public function addTracking(string $category, string $name, string $action = 'click'): string
-    {
-        return "_paq.push(['trackEvent', '".$category."', '".$action."', '".$name."'])";
-    }
 }
