@@ -14,16 +14,18 @@ class CompletePDFController extends PDFAbstract
     public function createPDF(Request $request, array $additional): Response
     {
         $session = $request->getSession();
-        $completeArray = $this->xmlToArray($this->getXMLfromSession($session))[self::completeFormNodeName];
+        $appArray = $this->xmlToArray($this->getXMLfromSession($session));
+        $completeArray = $appArray[self::completeFormNodeName];
         $committeeParams = $session->get(self::committeeParams);
+        $committeeType = $committeeParams[self::committeeType];
         $completePDF = $this->renderView('PDF/_completePDF.html.twig',array_merge($committeeParams,[
-            self::committeeType => $this->getCommitteeType($session),
+            self::committeeType => $committeeType,
             self::isCommitteeBeta => $committeeParams[self::isCommitteeBeta],
             self::committeeParams => $committeeParams,
             'isFull' => $this->getStringFromBool(str_contains((string) $session->get(self::reviewProcess),self::reviewProcessFull)),
             'briefReports' => $this->getBriefReport($session,false),
             'savePDF' => self::$savePDF,
-            'hints' => [$this->translateString('completeForm.finish.text.end.title',['isTool' => 'false']).':', $this->getFinishEndText($session,false)],
+            'hints' => [$this->translateString('completeForm.finish.text.end.title',['isTool' => 'false']).':', $this->getFinishEndText($session,false, $this->checkSupervisor($committeeType,$appArray[self::appDataNodeName][self::coreDataNode][self::applicant][self::position]))],
             self::content => $additional,
             'messages' => $completeArray[self::descriptionNode],
             self::bias => $completeArray[self::bias],

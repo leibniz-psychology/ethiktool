@@ -625,7 +625,7 @@ coreData:
       undo: 'Änderung rückgängig machen'
   applicationProcess:
     title: 'Art des Antragsverfahrens'
-    headingHint: 'Der Umfang der notwendigen Angaben und einzureichenden Unterlagen unterscheidet sich je nach Charakter des Forschungsprojekts. Wenn Sie sicher sind, dass Ihr Projekt ethisch heikle Aspekte beinhaltet (z.B. besondere Belastungen/Risiken, fehlende Vorab-Aufklärung, Täuschung, Teilnehmende mit besonderem Schutzbedarf), wählen Sie bitte „Vollantrag“ aus. Wenn Ihr Projekt keine solchen Aspekte beinhaltet oder wenn Sie unsicher sind, wählen Sie bitte „Kurzantrag“ aus. Das Ethiktool weist Sie bei Bedarf darauf hin, dass aufgrund Ihrer Angaben ein Wechsel des Antragsverfahrens notwendig ist.'
+    headingHint: 'Der Umfang der notwendigen Angaben und einzureichenden Unterlagen unterscheidet sich je nach Charakter des Forschungsprojekts. Wenn es naheliegt, dass Ihr Projekt einer ausführlichen Prüfung bedarf (z.B. aufgrund besonderer Belastungen/Risiken, fehlender Vorab-Aufklärung, Täuschung, besonderem Schutzbedarf der Teilnehmenden), wählen Sie bitte „Vollantrag“ aus. Wenn Ihr Projekt keine solchen Aspekte beinhaltet oder wenn Sie unsicher sind, wählen Sie bitte „Kurzantrag“ aus. Das Ethiktool weist Sie bei Bedarf darauf hin, dass aufgrund Ihrer Angaben ein Wechsel des Antragsverfahrens notwendig ist.'
     types:
       short: 'Kurzantrag'
       full: 'Vollantrag'
@@ -3232,10 +3232,16 @@ completeForm:
       Hiermit versichere ich, dass ich das aus meinen Angaben automatisch erstellte Antragsdokument {anyDoc, select,
                                                                                                       true  {sowie die Teilnahmedokumente (Informations- und Einwilligungstexte)}
                                                                                                       other {}} aufmerksam gelesen habe. Alle Angaben in diesen Dokumenten sind vollständig und wahrheitsgemäß und entsprechen dem geplanten Vorgehen im beantragten Forschungsprojekt.
+
       {position, select,
-        student {Als studentische/r Antragsteller/in bestätige ich ferner, dass die eingereichte Fassung des Antrags von meinem/meiner verantwortlichen Betreuer/in geprüft und gebilligt wurde. (Bewusst falsche Angaben im Zusammenhang mit einer studentischen Arbeit können als Täuschungsversuch und/oder Verstoß gegen die Regeln Guter Wissenschaftliche Praxis gewertet werden.) Der/die verantwortliche Betreuer/in ist durch den/die Antragsteller/in bei der Antragstellung und sämtlicher Korrespondenz im Zusammenhang mit der Begutachtung einzubeziehen (z.B. durch CC bei E-Mail-Korrespondenz mit {committeeDat}). Ich ermächtige {committeeAcc}, bei Bedarf selbstständig mit dem/der Betreuer/in Kontakt aufzunehmen.}
-        phd     {Als Doktorand/in bestätige ich ferner, dass die eingereichte Fassung des Antrags von meinem/meiner verantwortlichen Betreuer/in geprüft und gebilligt wurde. (Bewusst falsche Angaben im Zusammenhang mit einer Promotion können als Verstoß gegen die Regeln Guter Wissenschaftlicher Praxis gewertet werden.) Der/die verantwortliche Betreuer/in ist durch den/die Antragsteller/in bei der Antragstellung und sämtlicher Korrespondenz im Zusammenhang mit der Begutachtung einzubeziehen (z.B. durch CC bei E-Mail-Korrespondenz mit {committeeDat}). Ich ermächtige {committeeAcc}, bei Bedarf selbstständig mit dem/der Betreuer/in Kontakt aufzunehmen.}
+        student {
+        Als studentische/r Antragsteller/in bestätige ich ferner, dass die eingereichte Fassung des Antrags von meinem/meiner verantwortlichen Betreuer/in geprüft und gebilligt wurde. (Bewusst falsche Angaben im Zusammenhang mit einer studentischen Arbeit können als Täuschungsversuch und/oder Verstoß gegen die Regeln Guter Wissenschaftliche Praxis gewertet werden.) Der/die verantwortliche Betreuer/in ist durch den/die Antragsteller/in bei der Antragstellung und sämtlicher Korrespondenz im Zusammenhang mit der Begutachtung einzubeziehen (z.B. durch CC bei E-Mail-Korrespondenz mit {committeeDat}). Ich ermächtige {committeeAcc}, bei Bedarf selbstständig mit dem/der Betreuer/in Kontakt aufzunehmen.
+        }
+        phd     {
+        Als Doktorand/in bestätige ich ferner, dass die eingereichte Fassung des Antrags von meinem/meiner verantwortlichen Betreuer/in geprüft und gebilligt wurde. (Bewusst falsche Angaben im Zusammenhang mit einer Promotion können als Verstoß gegen die Regeln Guter Wissenschaftlicher Praxis gewertet werden.) Der/die verantwortliche Betreuer/in ist durch den/die Antragsteller/in bei der Antragstellung und sämtlicher Korrespondenz im Zusammenhang mit der Begutachtung einzubeziehen (z.B. durch CC bei E-Mail-Korrespondenz mit {committeeDat}). Ich ermächtige {committeeAcc}, bei Bedarf selbstständig mit dem/der Betreuer/in Kontakt aufzunehmen.
+        }
         other   {}}
+
       Ferner versichere ich, dass ich die für das Forschungsprojekt einschlägigen gesetzlichen Bestimmungen und Richtlinien (einschließlich der Regelungen zum Datenschutz) in den aktuell gültigen Fassungen kenne und bei der Planung sowie der Antragstellung nach bestem Wissen berücksichtigt habe.
     confirm: 'Ich bestätige die Korrektheit der Ethikantragsdokumente und die Berücksichtigung der einschlägigen Bestimmungen.'
     hint: 'Wenn eine Angabe in den automatisch erstellten Dokumenten fehlerhaft sein sollte, weil sich ein spezieller Umstand Ihres Forschungsprojekts von den Vorlagen nicht abdecken lässt, wenden Sie sich bitte an den <a href="mailto:ethiktool@tu-chemnitz.de">Ethiktool-Support</a>. E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.'
@@ -3345,6 +3351,9 @@ completeForm:
                   <li>Bearbeiten Sie weder die PDF-Datei des Gesamtantrags noch die XML-Datei mit anderen Programmen.</li>}
             other {<li>Bitte prüfen Sie die Inhalte des Gesamtantrags nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter.</li>}}
           <li>Die ethische Begutachtung erfolgt ausschließlich auf Basis der PDF-Datei des Gesamtantrags.</li>
+          {isSupervisor, select,
+            true  {<li>Bei der Einreichung von Qualifikationsarbeiten nehmen Sie die Erstbetreuung mit in die Korrespondenz auf.</li>}
+            other {}}
           <li>Wenn alle Angaben korrekt sind, senden Sie die PDF-Datei des Gesamtantrags mit der zugehörigen XML-Datei {committeeType, select,
           TUC   {an {committeeAcc} unter ethik@tu-chemnitz.de (E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet, bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Hinweise zum Datenschutz</a>)}
           EUB   {an {committeeAcc} unter ethikkommission@uni-bielefeld.de}

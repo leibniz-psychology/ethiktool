@@ -372,6 +372,7 @@ projectdetails:
       one time point {isMeasureTimePointName, select,
                         true  {({measureTimePointName})}
                         other {}}{origin}
+    hint: 'The overview presented here refers to the project structure created in the Ethiktool. To facilitate review, studies/groups/time points may be presented together in the Ethiktool if there are only few differences between them and these differences can simply be depicted together.'
     structureDescription: "Description of project structure:\n"
     origin:
       new: 'New data collection'

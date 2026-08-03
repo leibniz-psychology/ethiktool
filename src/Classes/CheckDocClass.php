@@ -667,7 +667,7 @@ class CheckDocClass extends ControllerAbstract
         // check individual contributors
         $position = $this->coreDataArray[self::applicant][self::position];
         $translationParameters = [self::position => $position];
-        $supervisorPositions = array_merge([self::positionsStudent],in_array($this->committeeType,self::committeeSupervisorPhD) ? [self::positionsPhd] : []);
+        $supervisorPositions = array_merge([self::positionsStudent],in_array($this->committeeType,self::committeeSupervisorPhD, true) ? [self::positionsPhd] : []);
         foreach ($windowArray as $index => $contributor) {
             $infos = $contributor[self::infosNode];
             $tasks = $contributor[self::taskNode];

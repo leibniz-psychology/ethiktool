@@ -46,7 +46,7 @@
         {% if hasProcessing %}
             <div id="processingDiv">
                 {{ formRender.addHeading(translationPrefix~'processing.title') }}
-                {{ formRender.addTextfield(content.processing,{'attributes': textMinHeightLong, 'resize': true}) }}
+                {{ formRender.addTextfield(content.processing,{'attributes': textMinHeightLong}) }}
             </div>
         {% endif %}
         {# create #}

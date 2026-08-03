@@ -64,24 +64,27 @@
             </table>
         </div>
     </div>
-    {% set boxNumber = boxNumber+1 %}
+    {% set boxNumber, tempPrefix = boxNumber+1, 'projectdetails.overview.' %}
     {# further boxes #}
     {% for box in boxContent|slice(2) %} {# first two entries are application type and project title #}
         {% if box['heading'] is not same as levelHeading %}
             {{ _self.addBox(box,boxNumber,savePDF) }}
         {% else %}  {# overview of level names  #}
+            {% set hint, margin = (tempPrefix~'hint')|trans, 'margin-top: 1em;' %}
             <div class="pdfBox">
                 {{ _self.addHeading(boxNumber,levelHeading,savePDF,'') }}
                 <div class="boxInner {% if not savePDF %} previewSmall {% endif %}">
                     {% if box['content'] is not same as '' %}
                         {{ _self.addLevelNames(levelNames) }}
+                        <div style="margin-top: 1em;">{{ hint }}</div>
                         {% if structureDescription is not same as '' %}
-                            <div style="margin-top: 1em">
-                                {{ ('projectdetails.overview.structureDescription'|trans~structureDescription)|nl2br }}
+                            <div style="{{ margin }}">
+                                {{ ((tempPrefix~'structureDescription')|trans~structureDescription)|nl2br }}
                             </div>
                         {% endif %}
                     {% else %} {# each level only exists once #}
                         {{ levelNames }}
+                        <div style="{{ margin }}">{{ hint }}</div>
                     {% endif %}
                 </div>
             </div>

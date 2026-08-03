@@ -625,7 +625,7 @@ coreData:
       undo: 'Undo change'
   applicationProcess:
     title: 'Review process'
-    headingHint: 'The extent of required inputs and documents differs according to the nature of the research project. If you are sure that your project contains ethically critical aspects (e.g., particular burdens/risks, lack of prior information, deception, vulnerable participants), please choose “full proposal“. If your project does not contain such elements or if you are unsure, please choose “short proposal“. If applicable, the Ethiktool will warn you that a change of review process is needed as a consequence of your selections.'
+    headingHint: 'The extent of required inputs and documents differs according to the nature of the research project. If it seems likely that your project needs to be reviewed in more detail (e.g., due to particular burdens/risks, lack of prior information, deception, vulnerable participants), please choose “full proposal“. If your project does not contain such elements or if you are unsure, please choose “short proposal“. If applicable, the Ethiktool will warn you that a change of review process is needed as a consequence of your selections.'
     types:
       short: 'short proposal'
       full: 'full proposal'
@@ -3232,10 +3232,16 @@ completeForm:
       I hereby confirm that I have read the application form automatically generated from my entries {anyDoc, select,
                                                                                                       true  {and the participant documents (information and consents forms)}
                                                                                                       other {}} carefully. All information in these documents is complete and accurate and corresponds to the planned procedure in the research project applied for.
+
       {position, select,
-        student {As student applicant, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information related to a student thesis may be considered an attempt to cheat or scientific misconduct.) The responsible supervisor must be involved in the proposal submission and any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence with {committeeDat}). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.}
-        phd     {As doctoral candidate, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information in connection with a doctoral thesis may be regarded as scientific misconduct.) The responsible supervisor must be informed about the proposal submission and about any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.}
+        student {
+        As student applicant, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information related to a student thesis may be considered an attempt to cheat or scientific misconduct.) The responsible supervisor must be involved in the proposal submission and any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence with {committeeDat}). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.
+        }
+        phd     {
+        As doctoral candidate, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information in connection with a doctoral thesis may be regarded as scientific misconduct.) The responsible supervisor must be informed about the proposal submission and about any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.
+        }
         other   {}}
+
       I further confirm that I am aware of all legal regulations applicable to the research project (including regulations on data protection) in their current versions and that I have respected them to the best of my knowledge in planning the research project and in compiling this application.
     confirm: 'I confirm the correctness of the ethics application documents and the compliance with all applicable regulations.'
     hint: 'If a detail in the automatically generated documents is incorrect because a specific aspect of your research project is not covered by the templates, please contact the <a href="mailto:ethiktool@tu-chemnitz.de">Ethiktool support</a>. E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).'
@@ -3345,6 +3351,9 @@ completeForm:
                   <li>Do <b>not</b> modify the PDF file of the complete proposal nor the XML file with any other software.</li>}
             other {<li>Please check all contents of the complete proposal carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>}}
           <li>The ethics review is based exclusively on the PDF file of the complete proposal.</li>
+          {isSupervisor, select,
+            true  {<li>If submitting a qualification work, the responsible supervisor must be involved in the correspondence.</li>}
+            other {}}
           <li>If all entries are correct, please send the PDF file of the complete proposal with the corresponding XML file {committeeType, select,
           TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
           EUB   {to {committeeAcc} at ethikkommission@uni-bielefeld.de}

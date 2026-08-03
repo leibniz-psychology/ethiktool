@@ -144,8 +144,11 @@ input[type="file"] {
 }
 
 textarea {
-    height: 6rem;
+    min-height: 6rem;
+    max-height: 30rem;
+    height: unset;
     resize: none;
+    field-sizing: content;
 }
 
 a {

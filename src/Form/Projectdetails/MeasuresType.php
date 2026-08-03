@@ -152,7 +152,7 @@ class MeasuresType extends TypeAbstract
         if (array_key_exists(self::interventionsDescription,$forms)) {
             $numSelected = count($interventions); // not necessarily the real number of selected elements because sub-categories may be selected
             $tempVal = $numSelected>0 && !array_key_exists(self::noIntervention,$interventions);
-            if ($tempVal && ($numSelected-count(array_intersect_key(['survey' => '', 'invasiveExtract' => ''],$interventions)))>0) {
+            if ($tempVal && ($numSelected-count(array_intersect_key(['interventionsQuestionnaire' => '', 'invasiveExtract' => ''],$interventions)))>0) {
                 $newData[self::interventionsDescription] = $forms[self::interventionsDescription]->getData();
             }
             if ($tempVal && $forms[self::interventionsPDF]->getData()) {

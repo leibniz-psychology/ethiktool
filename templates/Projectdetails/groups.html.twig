@@ -31,7 +31,7 @@
             <div class="mt-4 mb-4">{{ formRender.addHint(translationPrefix~'wardsHint',{'target': [groupsController,'wardsHint']}) }}</div>
             {# examined people #}
             {% set wardsName, isTextInputVoluntary = content.wards.vars.name, textInputVoluntary is not same as '' %}
-            {% set iconTemp, heightString = {(wardsName): ''}, 'height: '~textHeight %}
+            {% set iconTemp, heightString = {(wardsName): ''}, textHeight %}
             {{ formRender.addCheckboxGroup(content,examined,{
                 'addDiv': ['examinedPeople','','mt-2'],
                 'icons': {'healthy': examinedPrefix~'healthyIcon'},

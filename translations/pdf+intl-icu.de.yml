@@ -372,6 +372,7 @@ projectdetails:
       ein Zeitpunkt {isMeasureTimePointName, select,
                       true  {({measureTimePointName})}
                       other {}}{origin}
+    hint: 'Die hier dargestellte Übersicht bezieht sich auf die im Ethiktool angelegte Projektstruktur. Zur Erleichterung der Begutachtung können im Ethiktool in Einzelfällen Studien/Gruppen/Zeitpunkte gemeinsam dargestellt werden, wenn es zwischen ihnen nur wenige Unterschiede gibt und sich diese leicht gemeinsam abbilden lassen.'
     structureDescription: "Erläuterung der Projektstruktur:\n"
     origin:
       new: 'Eigene Datenerhebung'

@@ -215,7 +215,7 @@ abstract class ControllerAbstract extends AbstractController
         try { // set times for maintenance messages
             $date = $this->getCurrentTime();
             $timeString = strtotime($date->format('H:i:s'));
-            return $date->format('l')==='Monday' ? ($timeString>=strtotime('7:30:00') ? ($timeString<strtotime('8:00:00') ? 'before' : ($timeString<strtotime('8:30:00') ? 'during' : '')) : '') : '';
+            return $date->format('l')==='Thursday' ? ($timeString>=strtotime('7:30:00') ? ($timeString<strtotime('8:00:00') ? 'before' : ($timeString<strtotime('8:30:00') ? 'during' : '')) : '') : '';
         } catch (\Throwable) {
             return '';
         }
@@ -889,7 +889,7 @@ abstract class ControllerAbstract extends AbstractController
 
     /** Checks if either burdens, risks, or burdens/risks for contributors are selected.
      * @param array|string $burdensRisksArray array containing the burdens and risks information
-     * @param string $type must equal 'burdens','risks', or 'burdensRisksContributors
+     * @param string $type must equal 'burdens','risks', or 'burdensRisksContributors'
      * @param bool $checkEveryday if true and $type equals 'burdens', the first element of the return array is only true if the 'burdensEveryday' question is answered with yes
      * @return array 0: true if any option except 'no' is selected (burdens/risks for contributors: if 'yes' is selected), 1: true if 'no' is selected; otherwise false in both cases
      */
@@ -907,7 +907,7 @@ abstract class ControllerAbstract extends AbstractController
             return [!$isNo && (!$isBurdens || !$checkEveryday || $typeArray[self::burdensEveryday]=='0'),$isNo];
         }
         // burdens/risks for contributors
-        $chosen = $typeArray[self::chosen];
+        $chosen = $typeArray[self::chosen] ?? '';
         return [$chosen==='0',$chosen==='1'];
     }
 
@@ -935,7 +935,7 @@ abstract class ControllerAbstract extends AbstractController
     {
         $session = $request->getSession();
         $committeeType = $this->getCommitteeType($session);
-        $hasSupervisorPhD = in_array($committeeType,self::committeeSupervisorPhD);
+        $hasSupervisorPhD = in_array($committeeType,self::committeeSupervisorPhD, true);
         $hasSupervisor = in_array($committeeType,self::committeeSupervisor,true) || $hasSupervisorPhD;
         return [array_values($hasSupervisor
                     ? self::tasksNodes

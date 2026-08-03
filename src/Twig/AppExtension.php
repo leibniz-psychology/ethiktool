@@ -3,6 +3,7 @@
 namespace App\Twig;
 
 use Symfony\Component\Form\FormView;
+use Twig\Attribute\AsTwigFunction;
 
 class AppExtension
 {
@@ -11,7 +12,7 @@ class AppExtension
      * @param int $display if $bool is true: 1: display is set to grid, 2: display is set to flex, otherwise to block
      * @return string 'block', 'grid', or 'flex' if $bool is true, 'none' otherwise
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'boolToDisplay')]
+    #[AsTwigFunction(name: 'boolToDisplay')]
     public function boolToDisplay(bool $bool, int $display = 0): string
     {
         return 'display: '.($bool ? ($display===1 ? 'grid' : ($display===2 ? 'flex' : 'block')) : 'none');
@@ -21,7 +22,7 @@ class AppExtension
      * @param bool $bool bool that gets converted
      * @return string string representation of the bool
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'boolToString')]
+    #[AsTwigFunction(name: 'boolToString')]
     public function boolToString(bool $bool): string
     {
         return $bool ? 'true' : 'false';
@@ -31,7 +32,7 @@ class AppExtension
      * @param bool $addAttribute if true, the array will be wrapped inside an 'attr' array
      * @return array array for the form_widget() call
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'addDisableTarget')]
+    #[AsTwigFunction(name: 'addDisableTarget')]
     public function addDisableTarget(bool $addAttribute = false): array
     {
         return  $addAttribute ? $this->addTargetArray('base','disableLoad') : $this->addTarget('base','disableLoad');
@@ -42,7 +43,7 @@ class AppExtension
      * @param string $target name of the target
      * @return array<string, mixed[]> array for the form_widget() call
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'addTargetArray')]
+    #[AsTwigFunction(name: 'addTargetArray')]
     public function addTargetArray(string $controller, string $target): array
     {
         return ['attr' => $this->addTarget($controller,$target)];
@@ -53,7 +54,7 @@ class AppExtension
      * @param string $target name of the target
      * @return array array for the form_widget() call
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'addTarget')]
+    #[AsTwigFunction(name: 'addTarget')]
     public function addTarget(string $controller, string $target): array
     {
         return ['data-'.$controller.'-target' => $target];
@@ -63,7 +64,7 @@ class AppExtension
      * @param array $attributes attributes to be added
      * @return array<string, mixed[]> array for the form_label() cal
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'addLabelAttributes')]
+    #[AsTwigFunction(name: 'addLabelAttributes')]
     public function addLabelAttributes(array $attributes): array
     {
         return ['label_attr' => $attributes];
@@ -75,7 +76,7 @@ class AppExtension
      * @param string $style if provided, a second key 'style' is added
      * @return array array for the form_widget() call
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'addClass')]
+    #[AsTwigFunction(name: 'addClass')]
     public function addClass(string $classname, bool $addAttr = false, string $style = ''): array
     {
         $returnArray = array_merge($classname!=='' ? ['class' => $classname] : [], $style!=='' ? $this->addStyle($style) : []);
@@ -87,7 +88,7 @@ class AppExtension
      * @param bool $addAttributes if true, the style array is wrapped in an 'attributes' key
      * @return string[] array for the call
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'addStyle')]
+    #[AsTwigFunction(name: 'addStyle')]
     public function addStyle(string $style, bool $addAttributes = false): array
     {
         $styleArray = ['style' => $style];
@@ -100,7 +101,7 @@ class AppExtension
      * @param string|array $unique keys whose selections means that no other key in $keys can be selected
      * @return array<int, bool|int> 0: true if any 'unique' key is selected, 1: true if any of the other keys is selected, otherwise false in both cases, 2: number of selected checkboxes excluding the $unique one
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'getAnySelected')]
+    #[AsTwigFunction(name: 'getAnySelected')]
     public function getAnySelected(FormView $forms, array $keys, string|array $unique = ''): array
     {
         $anySelected = false;
@@ -125,7 +126,7 @@ class AppExtension
      * @param array|string $element element to be checked
      * @return bool true if element is an array, false otherwise
      */
-    #[\Twig\Attribute\AsTwigFunction(name: 'isArray')]
+    #[AsTwigFunction(name: 'isArray')]
     public function isArray(array|string $element): bool
     {
         return is_array($element);

@@ -233,7 +233,6 @@ class MainController extends ControllerAbstract
 
     /** Updates the access node when the committee has changed.
      * @param SimpleXMLElement $accessNode node with selected access options as children
-     * @return void
      */
     private function updateAccess(SimpleXMLElement $accessNode): void
     {

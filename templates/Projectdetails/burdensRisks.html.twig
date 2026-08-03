@@ -35,7 +35,7 @@
                     'visibility': visibility,
                     'hint': translationPrefix~'textHint',
                     'textHintParams': typeParam,
-                    'attributes': textHeightLong})) }}
+                    'attributes': textMinHeightLong})) }}
                 {# description of no burdens #}
                 {% if hasBurdensNoDescription %}
                     {{ formRender.addTextfield(content.burdensNoDescription,fontNormal|merge({'visibility': content.noBurdens.vars.checked})) }}
@@ -54,7 +54,7 @@
                     {% set value = compensation.vars.value %}
                     {% set noSelection, yesTrans, noTrans = value is same as '', (compensationPrefix~'yes')|trans(typeParam), (compensationPrefix~'no')|trans %}
                     {{ formRender.renderButtons(compensation,{
-                        'text': [content[type~'CompensationDescription'],fontNormal|merge({'hint': noSelection ? 'multiple.choiceTextHint' : (value is same as '0' ? yesTrans : noTrans), 'attributes': textHeightLong|merge({'disabled': noSelection})})],
+                        'text': [content[type~'CompensationDescription'],fontNormal|merge({'hint': noSelection ? 'multiple.choiceTextHint' : (value is same as '0' ? yesTrans : noTrans), 'attributes': textMinHeightLong|merge({'disabled': noSelection})})],
                         'stim': ['base','setWidgetByValue',{'widgetValue': ['',type~'CompensationDescription',{'0': yesTrans, '1': noTrans}]}]}) }}
                 </div>
                 {% if isBurdens %}

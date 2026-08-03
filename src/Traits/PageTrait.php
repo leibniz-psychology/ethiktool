@@ -14,7 +14,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '3.5.0';
+    protected const toolVersion = '3.5.1';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -275,7 +275,7 @@ trait PageTrait
         return self::$translator->trans($string, $parameters,$domain);
     }
 
-    // functions involvin xml
+    // functions involving xml
 
     /** Checks if an xml-element exists.
      * @param string $name name of the element

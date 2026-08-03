@@ -86,7 +86,7 @@
             </div>
             <div {{ stimulus_target(dataSourceController,'further') }}>
                 {# data set #}
-                {% set tempPrefix, heightParam = translationPrefix~'dataSet.', fontNormal|merge({'attributes': textHeightLong}) %}
+                {% set tempPrefix, heightParam = translationPrefix~'dataSet.', fontNormal|merge({'attributes': textMinHeightLong}) %}
                 <div class="mt-8" id="dataSet" {{ stimulus_target(dataSourceController,'dataSet') }}>
                     {{ formRender.addHeading(tempPrefix~'title') }}
                     {{ formRender.addTextfield(content.dataSet,heightParam|merge({'hint': tempPrefix~'textHint', 'textHintParams': {'hasDocs': boolToString(hasDocs)}})) }}

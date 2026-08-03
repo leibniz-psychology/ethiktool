@@ -1126,7 +1126,7 @@ class ParticipationController extends PDFAbstract
                                 $isReuse = str_contains($dataReuseHow,'class') && (!$isAnonymized || $storage==='keep' && $isReuseHowTwice && !$isTwicePublicAnonymized);
                                 if ($isDataPersonal && ($isReuse || $isTeaching)) {
                                     $tempVal .= ' '.$this->translateStringPDF($tempPrefix.self::dataReuseHowNode,array_merge($translationSaveParam,['hash' => $isAnonymizationNo ? self::anonymizationNode : self::storageNode])).
-                                        ($isReuse ? (rtrim($this->translateStringPDF($tempPrefix.'reuseTypes.'.$dataReuseHow,$translationSaveParam),'.').' '.$this->translateStringPDF($tempPrefix.'end',array_merge($translationSaveParam,['optional' => $this->getStringFromBool($isReuseConsent && !$isTeachingConsent), 'isTeaching' => $this->getStringFromBool($isTeaching)]))) : '').
+                                        ($isReuse ? ' '.(rtrim($this->translateStringPDF($tempPrefix.'reuseTypes.'.$dataReuseHow,$translationSaveParam),'.').' '.$this->translateStringPDF($tempPrefix.'end',array_merge($translationSaveParam,['optional' => $this->getStringFromBool($isReuseConsent && !$isTeachingConsent), 'isTeaching' => $this->getStringFromBool($isTeaching)]))) : '').
                                         ($isTeaching ? $this->translateStringPDF($tempPrefix.self::personalKeepTeaching,array_merge($translationSaveParam,['optional' => $this->getStringFromBool($isTeachingConsent), 'isReuse' => $this->getStringFromBool($isReuse)])) : '').'.';
                                 }
                                 $this->addParagraph($tempPrefix.'title',$tempVal,isPrivacy: true);

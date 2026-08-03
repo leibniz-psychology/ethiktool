@@ -150,11 +150,11 @@ class AppDataController extends ControllerAbstract
             $position = $data[self::applicant][self::position];
             $isSupervisorNew = $this->checkSupervisor($committeeType,$position);
             $isStudentNew = $position===self::positionsStudent;
-            $isPhDnewNoTasks = $position===self::positionsPhd && in_array($committeeType,self::committeePhDnoLeaderData);
+            $isPhDnewNoTasks = $position===self::positionsPhd && in_array($committeeType,self::committeePhDnoLeaderData, true);
             if ($isSupervisorNew && ($isStudentNew || $isPhDnewNoTasks)) { // leader may be removed without data, but not vice versa
                 $contributorsArray[0][self::taskNode] = array_diff_key($contributorsArray[0][self::taskNode] ?: [],array_merge([self::taskLeader => ''],$isStudentNew && !$this->getQualification($data) || $isPhDnewNoTasks ? [self::taskData => ''] : [])); // remove leader and eventually data from tasks
             }
-            if ($position===self::positionsPhd && $positionLoad===self::positionsStudent && in_array($committeeType,self::committeeSupervisorPhD)) { // position changed from student to phd -> remove position from other contributors that are supervisor
+            if ($position===self::positionsPhd && $positionLoad===self::positionsStudent && in_array($committeeType,self::committeeSupervisorPhD, true)) { // position changed from student to phd -> remove position from other contributors that are supervisor
                 $this->removeContributorIndices($appNode,$this->removePhd($contributorsArray));
             } elseif ($this->checkSupervisor($committeeType,$positionLoad) && !$isSupervisorNew) { // position changed such that no supervisor is needed anymore -> remove task 'supervision' from all contributors
                 $this->removeContributorIndices($appNode,$this->removeSupervision($contributorsArray),false);

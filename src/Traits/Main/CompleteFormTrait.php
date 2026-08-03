@@ -22,10 +22,11 @@ trait CompleteFormTrait
     /** Creates the string for instructions on how to proceed.
      * @param Session $session current session
      * @param bool $isTool true if the string should be created for the tool, false otherwise
+     * @param bool $isSupervisor true if a supervisor is needed, false otherwise
      * @return string string for instructions on how to proceed
      */
-    protected function getFinishEndText(Session $session, bool $isTool): string
+    protected function getFinishEndText(Session $session, bool $isTool, bool $isSupervisor): string
     {
-        return $this->translateString('completeForm.finish.text.end.text',array_merge($session->get(self::committeeParams),[self::fileName => $session->get(self::fileName), 'curDate' => $this->getCurrentTime()->format('Ymd'), 'isTool' => $this->getStringFromBool($isTool)]));
+        return $this->translateString('completeForm.finish.text.end.text',array_merge($session->get(self::committeeParams),[self::fileName => $session->get(self::fileName), 'curDate' => $this->getCurrentTime()->format('Ymd'), 'isTool' => $this->getStringFromBool($isTool), 'isSupervisor' => $this->getStringFromBool($isSupervisor)]));
     }
 }

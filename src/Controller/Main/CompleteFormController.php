@@ -22,7 +22,8 @@ class CompleteFormController extends ControllerAbstract
         $appNode = $this->getXMLfromSession($session);
         $appDataNode = $appNode->{self::appDataNodeName} ?? '';
         $coreDataArray = $appDataNode!=='' ? $this->xmlToArray($appDataNode->{self::coreDataNode}) : [];
-        if (!($appNode && $this->getErrors($request,returnCheck: true) && $this->getStudentAllowed($this->getCommitteeType($session),$coreDataArray,false))) { // page was opened before a proposal was created/loaded or with missing/erroneous inputs
+        $committeeType = $this->getCommitteeType($session);
+        if (!($appNode && $this->getErrors($request,returnCheck: true) && $this->getStudentAllowed($committeeType,$coreDataArray,false))) { // page was opened before a proposal was created/loaded or with missing/erroneous inputs
             return $this->redirectToRoute('app_main');
         }
         $pdfFilename = '';
@@ -119,7 +120,8 @@ class CompleteFormController extends ControllerAbstract
         $completeFormArray = $this->xmlToArray($completeFormNode);
         $translationPrefix = 'completeForm.';
         $privacyPrefix = $translationPrefix.self::consentFurther.'.';
-        $consentContent = $this->translateString($translationPrefix.'consent.text',array_merge($parameters,['position' => $coreDataArray[self::applicant][self::position], 'anyDoc' => $anyDoc]));
+        $position = $coreDataArray[self::applicant][self::position];
+        $consentContent = $this->translateString($translationPrefix.'consent.text',array_merge($parameters,['position' => $position, 'anyDoc' => $anyDoc]));
         $isExRe = in_array($appTypeArray[self::chosen],self::appExtendedResubmission);
         $numReferences = count($references);
         $consentFurtherText = $this->translateString($privacyPrefix.'text',array_merge($parameters,['isExRe' => $this->getStringFromBool($isExRe), 'reference' => str_replace('<','&lt;',$this->replaceDummyString($references)), 'numReferences' => $numReferences, 'isReUse' => $this->getStringFromBool(!$isExRe && $numReferences>0 || $isExRe && $numReferences>1)])); // prevent opening tags in user-entered text
@@ -151,7 +153,7 @@ class CompleteFormController extends ControllerAbstract
                  'pdf' => $pdf,
                  'names' => $names,
                  'isMultiple' => $isMultiple,
-                 'finishText' => [$this->translateString($tempPrefix),$this->translateString($tempPrefix.'Missing'),$this->getFinishEndText($session,true)],
+                 'finishText' => [$this->translateString($tempPrefix),$this->translateString($tempPrefix.'Missing'),$this->getFinishEndText($session,true,$this->checkSupervisor($committeeType,$position))],
                   self::isCommitteeBeta => $parameters[self::isCommitteeBeta]],'completeForm',addErrors: false));
     }
 

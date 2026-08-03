@@ -34,7 +34,7 @@
                 <div {{ stimulus_target(measuresController,description~'Div') }}>
                     {{ formRender.addTextfield(content[description], fontNormal|merge(addStyle('',true))|merge(
                         {'hint': typePrefix~'textHints.description'}|
-                        merge(not isInterventions ? {'contTarget': [measuresController,description], 'resize': true} : {}))) }}
+                        merge(not isInterventions ? {'contTarget': [measuresController,description]} : {}))) }}
                 </div>  {# hint text may be set in controller, but must not be empty here #}
             {% endif %}
             {% if pdf is not same as '' %}
@@ -54,7 +54,7 @@
             {{ formRender.renderButtons(otherSources,{'hint': [tempPrefix], 'stimVisible': {'values': [['0',otherSourcesDiv]]}}) }}
             <div id="{{ otherSourcesDiv }}" style="{{ boolToDisplay(otherSources.vars.value is same as '0') }}">
                 {{ formRender.addTextfield(content.otherSourcesDescription,fontNormal|
-                    merge({'attributes': textHeightLong, 'hint': [translationPrefix~'otherSources']})|
+                    merge({'attributes': textMinHeightLong, 'hint': [translationPrefix~'otherSources']})|
                     merge(isInformation and reviewProcess not in ['fullBegun','fullRequested'] ? transferParam : {})) }}
                 {{ formRender.addHint(tempPrefix~'hint',{'params': routeIDsParam}) }}
                 <div class="mt-4">

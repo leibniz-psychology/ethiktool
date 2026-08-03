@@ -136,7 +136,7 @@
         hint:          array of either one or two elements:
                        0: array of one or two elements: translation key for a hint above the text fields and optionally translation parameters
                        1: if provided, the hint will be displayed in normal style
-        divHeight:     if provided, the height of the div. Defaults to the global twig variable textHeight. Is set only if 'resize' is not provided
+        divHeight:     if provided, the height of the div. Defaults to the global twig variable textHeight
         visible:       if provided, visibility of the textarea.
         template:      if provided, form element for a checkbox for using a template. Will be placed above the character count
         templateClass: if provided and template is also provided, the template widget will be wrapped in a MetaData-Widget class
@@ -146,11 +146,10 @@
                         1: stimulus action that is called if the checkbox is clicked
                         2: if provided, parameters that are passed to the stimulus action
         noHeading:     if provided, no heading will be added
-        resize:        if provided, the textarea will be vertically resizable
-        countStyle:    if provided, additional styles for the textarea. May overwrite the values that were added if 'resize' is true
+        countStyle:    if provided, additional styles for the textarea
     #}
     {% set isVisible, hintArray, isTemplate, transfer, stim = boolToDisplay(arguments.visible ?? true,1), arguments.hint ?? [''], arguments.template is defined, arguments.transfer ?? [], arguments.stim ?? [] %}
-    {% set hintText, vars, isTransfer, isResize, height = hintArray[0], form.vars, transfer is not same as [], arguments.resize is defined, arguments.divHeight ?? textHeight %}
+    {% set hintText, vars, isTransfer, height = hintArray[0], form.vars, transfer is not same as [], arguments.divHeight is defined ? 'min-height: '~arguments.divHeight : textHeight %}
     {% set name, isTemplateClass, markInputClass, style = vars.name, arguments.templateClass is defined, isTransfer ? ' markInput', arguments.countStyle ?? '' %}
     {% if arguments.noHeading is not defined %}
         <div class="MetaData-Title">{{ form_label(form) }}</div>
@@ -159,10 +158,10 @@
         {{ _self.addHint(hintText[0],{'params': hintText[1] ?? {}}|merge(hintArray[1] is defined ? {'hintStyle': true} : {})) }}
     {% endif %}
     <div class="grid" style="grid-template-columns: auto {% if isTransfer %}min-content{% endif %} min-content">
-        <div class="MetaData-Widget pt-0 {% if isTransfer %} pe-0 {% endif %}" id="{{ name~'Div' }}" style="grid-column: 1; height: {{ height }}; {{ isVisible }}; {{ style }}">
-            {% set style = 'grid-area: 1/ 1;'~(not isResize ? ' height: '~height~'; ')~style %}
+        <div class="MetaData-Widget pt-0 {% if isTransfer %} pe-0 {% endif %}" id="{{ name~'Div' }}" style="grid-column: 1; {{ height }}; {{ isVisible }}; {{ style }}">
+            {% set style = 'grid-area: 1/ 1; height: '~height~'; '~style %}
             <div class="{{ 'border'~markInputClass }}" style="{{ resizeHeight }} background-color: white; white-space: pre-wrap; overflow-y: auto; word-break: break-word; {{ style }}"></div>
-            {{ form_widget(form,{'attr': addClass('p-0'~markInputClass, false, (isResize ? resizeHeight)~'background-color: transparent;'~style)|merge(addTarget('base','countableText'))}) }}
+            {{ form_widget(form,{'attr': addClass('p-0'~markInputClass, false, resizeHeight~'background-color: transparent;'~style)|merge(addTarget('base','countableText'))}) }}
         </div>
         {% if isTransfer %}
             <div id="{{ name~'PDF' }}" class="pe-2" style="{{ isVisible }}">{{ _self.addPDFhint(transfer[0],transfer[1]) }}</div>
@@ -328,7 +327,7 @@
     {% set vars, attributes = form.vars, arguments.attributes ?? {} %}
     {% set name, transfer, attr, contTargetArray, namely = vars.name, arguments.transfer ?? {}, vars.attr, arguments.contTarget ?? [''], arguments.addNamely ?? '' %}
     {% set isTransfer, textHint, contTarget = transfer is not same as {}, attr.placeholder is defined and attr.placeholder is not same as '' ? attr.placeholder : (arguments.hint ?? ''), contTargetArray[0] %}
-    {% if arguments.resize is defined %}
+    {% if vars.block_prefixes[1] is same as 'textarea' %} {# dynamically resize if textarea #}
         {% set attributes = attributes|merge({'style': resizeHeight~(attributes.style ?? '')}) %}
     {% endif %}
     <div id="{{ name~'Div' }}" class="mb-3 {% if arguments.noTopMargin is not defined %} mt-4 {% endif %}" style="{{ boolToDisplay(arguments.visibility ?? true) }}">

@@ -10,7 +10,7 @@
             'informationHintName': informationHintName
     }) }}>
         {# pre #}
-        {% set styleHeight, preHintDiv, preYes, preNo, hasTextInputPre = addStyle('height: '~textHeight), 'preHintDiv', 'preYes', 'preNo', textInputPre is not same as '' %}
+        {% set styleHeight, preHintDiv, preYes, preNo, hasTextInputPre = addStyle(textHeight), 'preHintDiv', 'preYes', 'preNo', textInputPre is not same as '' %}
         {% set isPreNo, textParams = preValue is same as '1', fontNormal|merge({'attributes': styleHeight, 'textHintParams': addresseeStringParam|merge({'participant': isInformation ? participantsString : participantsStringpost})}) %}
         <div id="pre" {% if isFull %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
             {{ formRender.renderButtons(pre,{
