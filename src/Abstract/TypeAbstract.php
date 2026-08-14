@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /** Contains all methods that are used by several forms (*Type class). Therefore, it extends AbstractType. All form classes inherit this class. */
@@ -74,6 +75,28 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
                 if ($key===$exclusive) { // if $exclusive is checked immediately before/after any of the other checkboxes is checked (i.e., the second of these two is checked before the page was reloaded after submission), keep only the $exclusive key
                     break;
                 }
+            }
+        }
+        return $returnArray;
+    }
+
+    /** Gets the selections for checkboxes that may have multiple levels..
+     * @param FormInterface[] $forms form array containing the data
+     * @param array<mixed[], mixed> $elements elements to be checked for selection
+     * @param string[] $others elements where a description must be provided
+     * @return array selected elements
+     */
+    protected function getSelectedCheckboxesMultiLevel(array $forms, array $elements, array $others): array
+    {
+        $returnArray = [];
+        foreach ($elements as $key => $value) {
+            if (is_array($value)) {
+                $tempArray = $this->getSelectedCheckboxesMultiLevel($forms,$value,$others);
+                if ($tempArray!==[]) {
+                    $returnArray[$key] = $tempArray;
+                }
+            } elseif ($forms[$value]->getData()) { // selectable option
+                $returnArray[$value] = in_array($value,$others) ? $forms[$this->appendText($value)]->getData() : '';
             }
         }
         return $returnArray;
@@ -291,6 +314,27 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
                 $forms[$key]->setData(true);
                 if (array_key_exists($key,$otherIDs)) {
                     $forms[$otherIDs[$key]]->setData($value);
+                }
+            }
+        }
+    }
+
+    /** Sets the selections for checkboxes that may have multiple levels.
+     * @param FormInterface[] $forms form array where the data is set
+     * @param array|string $selections selected options
+     */
+    protected function setSelectedCheckboxesMultiLevel(array $forms, array|string $selections): void
+    {
+        if (is_array($selections)) {
+            foreach ($selections as $key => $value) {
+                if (is_array($value)) {
+                    $this->setSelectedCheckboxesMultiLevel($forms,$value);
+                } else { // selectable option
+                    $forms[$key]->setData(true);
+                    $other = $this->appendText($key);
+                    if (array_key_exists($other,$forms)) {
+                        $forms[$other]->setData($value);
+                    }
                 }
             }
         }

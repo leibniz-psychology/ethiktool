@@ -5,7 +5,6 @@ namespace App\Form\Projectdetails;
 use App\Abstract\TypeAbstract;
 use App\Traits\Projectdetails\ProjectdetailsTrait;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
 use Traversable;
 
 class MeasuresType extends TypeAbstract
@@ -71,7 +70,7 @@ class MeasuresType extends TypeAbstract
         }
         // measures and interventions
         foreach ([self::measuresNode,self::interventionsNode] as $type) {
-            $this->setMeasuresInterventions($forms,$viewData[$type]);
+            $this->setSelectedCheckboxesMultiLevel($forms,$viewData[$type]);
             $tempVal = $type.self::descriptionCap;
             if (array_key_exists($tempVal,$forms)) {
                 $forms[$tempVal]->setData($this->getArrayValue($viewData,$tempVal));
@@ -121,7 +120,7 @@ class MeasuresType extends TypeAbstract
             $newData[self::procedureNode] = $forms[self::procedureNode]->getData();
         }
         // measures
-        $measures = $this->getMeasuresInterventions($forms,self::measuresInterventionsTypesAll[self::measuresNode],self::measuresInterventionsOther[self::measuresNode]);
+        $measures = $this->getSelectedCheckboxesMultiLevel($forms,self::measuresInterventionsTypesAll[self::measuresNode],self::measuresInterventionsOther[self::measuresNode]);
         $newData[self::measuresNode] = $measures;
         $tempArray = [];
         foreach (self::measuresDocumentationTypes as $documentation => $options) { // documentation
@@ -147,7 +146,7 @@ class MeasuresType extends TypeAbstract
             }
         }
         // interventions
-        $interventions = $this->getMeasuresInterventions($forms,self::measuresInterventionsTypesAll[self::interventionsNode],self::measuresInterventionsOther[self::interventionsNode]);
+        $interventions = $this->getSelectedCheckboxesMultiLevel($forms,self::measuresInterventionsTypesAll[self::interventionsNode],self::measuresInterventionsOther[self::interventionsNode]);
         $newData[self::interventionsNode] = $interventions;
         if (array_key_exists(self::interventionsDescription,$forms)) {
             $numSelected = count($interventions); // not necessarily the real number of selected elements because sub-categories may be selected
@@ -195,48 +194,5 @@ class MeasuresType extends TypeAbstract
         }
         $newData[self::durationNode] = $tempArray;
         $viewData = $newData;
-    }
-
-    /** Sets the selections for measures or interventions
-     * @param FormInterface[] $forms form array where the data is set
-     * @param array|string $selections selected options
-     */
-    private function setMeasuresInterventions(array $forms, array|string $selections): void
-    {
-        if (is_array($selections)) {
-            foreach ($selections as $key => $value) {
-                if (is_array($value)) {
-                    $this->setMeasuresInterventions($forms,$value);
-                } else { // selectable option
-                    $forms[$key]->setData(true);
-                    $other = $this->appendText($key);
-                    if (array_key_exists($other,$forms)) {
-                        $forms[$other]->setData($value);
-                    }
-                }
-            }
-        }
-    }
-
-    /** Gets the selections for measures or interventions.
-     * @param FormInterface[] $forms form array containing the data
-     * @param array<mixed[], mixed> $elements elements to be checked for selection
-     * @param string[] $others elements where a description must be provided
-     * @return array selected elements
-     */
-    private function getMeasuresInterventions(array $forms, array $elements, array $others): array
-    {
-        $returnArray = [];
-        foreach ($elements as $key => $value) {
-            if (is_array($value)) {
-                $tempArray = $this->getMeasuresInterventions($forms,$value,$others);
-                if ($tempArray!==[]) {
-                    $returnArray[$key] = $tempArray;
-                }
-            } elseif ($forms[$value]->getData()) { // selectable option
-                $returnArray[$value] = in_array($value,$others) ? $forms[$this->appendText($value)]->getData() : '';
-            }
-        }
-        return $returnArray;
     }
 }

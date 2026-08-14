@@ -182,31 +182,23 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     otherSources: 'Will individually traceable data from other sources be added?'
     presence: 'Are project contributors present during data collection?'
     presenceSub: 'Description of temporary presence:'
-    burdens: 'Which burdens or strains will participants be exposed to?'
-    burdensSub: >-
-      {burdens, select,
-        true  {Description of the burdens}
-        other {}} {noBurdens, select,
-                    true  {{burdens, select,
-                              true {resp. }
-                              other {}} justification why no burdens or strains are expected.}
-                    other {}}:
-    burdensBoxSub: 'The fields 20-30 are not applicable because the research project does not involve re-using available data.'
-    burdensCompensation: 'Are precautionary measures or compensations planned for the burdens mentioned above?'
-    risks: 'Which potential dangers or risks does participation involve?'
-    risksSub: 'Description of the risks:'
-    risksCompensation: 'Are precautionary measures or compensations planned for the risks mentioned above?'
-    burdensRisksContributors: 'Are project contributors or uninvolved third parties exposed to burdens or risks that exceed the level to be expected in everyday life?'
+    burdens: 'Which demanding, inconvenient or otherwise significant aspects does participation inevitably entail?'
+    burdensSub: 'Description of the burdens:'
+#    burdensCompensation: 'Are precautionary measures or compensations planned for the burdens mentioned above?'
+    risks: 'Which unintended consequences (risks, hazards) might participation entail?'
+    risksSub: 'Further details on the risks:'
+    risksOccurrence: 'Which measures are planned to reduce the likelihood of occurrence and/or the severity of the consequences?'
+    risksOccurrenceSub: 'Justification(s) why no measures are planned:'
+    risksOccurrenceBoxSub: 'The fields 22-32 are not applicable because the research project does not involve re-using available data.'
+#    risksCompensation: 'Are precautionary measures or compensations planned for the risks mentioned above?'
+    burdensRisksContributors: 'Which burdens or risks are project contributors exposed to?'
     burdensRisksContributorsSub: 'Description of burdens/risks:'
     burdensRisksContributorsCompensation: 'Are precautionary measures or compensations planned for the burdens/risks mentioned above?'
-    burdensRisksDescription: >- # if both questions are not answered yet, both will be named
-      The {burdens, select,
-            true  {burdens /}
-            other {}} {risks, select,
-                        true  {risks /}
-                        other {}} disadvantages are described in the study information sheet as follows:
-    finding: 'Might the applied data collection methods reveal clinically relevant (incidental) findings in individual participants?'
-    findingSub: 'How are incidental findings handled?'
+    burdensRisksUninvolved: 'Which burdens or risks are uninvolved third parties exposed to?'
+    burdensRisksUninvolvedSub: 'Description of burdens/risks:'
+    burdensRisksUninvolvedCompensation: 'Are precautionary measures or compensations planned for the burdens/risks mentioned above?'
+#    finding: 'Description of (incidental) findings or suspicions'
+#    findingSub: 'How are incidental findings or suspicions handled?'
     feedback: 'Do participants receive feedback on their individual test results?'
     feedbackSub: 'Description of type and framing of feedback:'
     compensation: 'Compensation'
@@ -216,7 +208,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     dataReuseBoxSub: >-
       The fields {isReviewFull, select,
                     true  {46-56}
-                    other {20-30}} are not applicable because {isOrigin, select,
+                    other {22-32}} are not applicable because {isOrigin, select,
                                                                 true  {the research project does not involve re-using available data.}
                                                                 other {entries on the origin of the data are missing.}}
     originSources: 'From which sources are data retrieved?'
@@ -372,7 +364,7 @@ projectdetails:
       one time point {isMeasureTimePointName, select,
                         true  {({measureTimePointName})}
                         other {}}{origin}
-    hint: 'The overview presented here refers to the project structure created in the Ethiktool. To facilitate review, studies/groups/time points may be presented together in the Ethiktool if there are only few differences between them and these differences can simply be depicted together.'
+    hint: 'This overview refers to the project structure created in the Ethiktool. To facilitate review, studies/groups/time points may be laid out jointly in the Ethiktool in some cases, if there are only few differences between them and these differences can easily be presented in a joint manner.'
     structureDescription: "Description of project structure:\n"
     origin:
       new: 'New data collection'
@@ -611,32 +603,26 @@ projectdetails:
         other    {}}{description}
   burdensRisks:
     burdens:
-      noBurdens: 'no burdens'
-      physical: 'physical burden'
-      mental: 'cognitive burden'
-      emotional: 'psychological or emotional burden'
-      sensitive: 'intimate contents'
-      otherBurdens: 'other stress/burden factors'
       burdensEveryday: "\nAccording to the applicants' judgment, these burdens do not exceed the level commonly encountered in the participants' everyday life."
     risks:
-      noRisks: 'no risks'
-      risksPhysical: 'physical discomfort'
-      risksIntegrity: 'threat to physical integrity'
-      risksMental: 'cognitive exhaustion'
-      risksEmotional: 'psychological or emotional impairment'
-      risksSocial: 'social, economic or political risks'
-      otherRisks: 'other risks'
-    finding: >- # other is participants
-      {chosen, select,
-        always  {The {addressee, select,
-                        children {legal guardians}
-                        wards    {legal guardians}
-                        other    {participants}} are informed of any (incidental) findings that occur. (notification mandatory)}
-        consent {The {addressee, select,
-                        children {legal guardians}
-                        wards    {legal guardians}
-                        other    {participants}} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)}
-        other   {}}
+      description: "Description of the risks:\n"
+      finding:
+        description: "Description of incidental findings/suspicions:\n {description}"
+        informing: >-
+          Handling of incidental findings/suspicions:
+          The {addressee, select,
+                children {legal guardians}
+                wards    {legal guardians}
+                other    {participants}} {type, select,
+                                          always  {are informed of any incidental findings/suspicions that occur (notification mandatory).}
+                                          consent {can select in the consent form whether they would like to be informed about incidental findings/suspicions that occur (notification optional).}
+                                          other   {are not informed of any incidental findings or suspicions. The justification is as follows:
+                                                      {description}}}
+    risksOccurrence: "According to the applicant' judgment, no significant likelihood of occurrence and no severity of consequences that goes beyond mere discomfort remains, once all measures have been implemented."
+    risksNoMeasure:
+      notNecessary: 'The identified risks are not of particular severity.'
+      notPossible: 'The identified risks cannot be reduced or their consequences mitigated.'
+      risksNoMeasureOther: '{description}'
   compensation:
     compensation: >-
       Information about compensation can be found {hasDocs, select,
@@ -726,10 +712,11 @@ participation:
     goals: 'Introduction and aims of the study'
     conflict: 'Potential conflicts of interest by the project contributors'
     procedure: 'Study procedure'
-    finding: 'Incidental findings'
+    informing: 'Incidental findings'
     compensation: 'Compensation'
     pro: 'Advantages and disadvantages of participation'
     criteria: 'Inclusion and exclusion criteria'
+    risksOccurrence: 'Measures for risk reduction' # only needed for intermediate page
     voluntary: 'Voluntariness and withdrawal'
     legal: 'Legal aspects'
     dataPrivacy: 'Data protection and data usage'
@@ -874,6 +861,9 @@ participation:
       {time, plural,
         =1    { 1 minute}
         other { # minutes}}
+  informing:
+    always: 'The study is for research purposes only. A medical or psychological assessment of the data is not performed. However, we might notice an unusual test result (incidental finding or suspicion) in the context of {description}. In this case, we will inform you and recommend that you seek further diagnostic assessment. If a disease is detected during this diagnostic assessment, this could possibly result in disadvantages for you, e.g., make it more difficult to contract private health insurance or life insurance. Please note: Even if we do not find any unusual results, this does not confirm a specific health condition; the examination is for research purposes only and does not constitute or replace a medical diagnosis.'
+    consent: 'The study is for research purposes only. A medical or psychological assessment of the data is not performed. However, we might notice an unusual test result (incidental finding or suspicion) in the context of {description}. In this case, if you agree, we will inform you and recommend that you seek further diagnostic assessment. If a disease is detected during this diagnostic assessment, this could possibly result in disadvantages for you, e.g., make it more difficult to contract private health insurance or life insurance. Please note: Even if we do not find any unusual results, this does not confirm a specific health condition; the examination is for research purposes only and does not constitute or replace a medical diagnosis.'
   compensation:
     start: >- # other in addressee select is participants
       {information, select,
@@ -982,6 +972,16 @@ participation:
       Disadvantages{isBurdensRisks, select,
                   true  {/risks}
                   other {}}
+    risksTrigger:
+      triggerIntimate: "\nThe study contains partly personal or intimate questions. The study should therefore be completed in an undisturbed environment. Please ensure that privacy is maintained during participation and that no unauthorised persons can view the responses."
+      burdensome: "\nThe data collection covers the following topic that can be perceived as distressing: {description}"
+      threat: "\nWe treat all information and collected data as confidential. The project contributors are required to maintain confidentiality. The analysis is carried out anonymously, without mentioning any names. However, the duty of confidentiality does not apply if there are concrete indications of an acute risk of self-harm or harm to others. In such cases, the project contributors reserve the right to immediately notify appropriate entities (e.g., medical personnel, emergency services, or the relevant authorities) in order to prevent harm."
+      crime: "\nWe treat all information and collected data as confidential. The analysis is conducted anonymously, without mentioning any names. However, please note that our confidentiality promise is subject to legal limitations. If, in the course of the study, we receive information regarding the planning or execution of certain very serious criminal offenses (as listed in Section 138 of the German Criminal Code (StGB), such as high treason, murder, or manslaughter), we may be legally obliged to disclose this information to the authorities. In such exceptional cases, disclosure will only occur if it is absolutely necessary to prevent an imminent, serious crime and if we would otherwise be subject to criminal liability ourselves."
+      triggerOther: "\n{description}"
+    risksContact:
+      contactContributors: "\nFor individual support, you may contact the project contributors."
+      contactInfo: "\nYou may contact the following project-independent resources for advice or support: {description}"
+      contactOther: "\n{description}"
   criteria:
     include: >- # other is participant
       {information, select,
@@ -993,7 +993,7 @@ participation:
                              children {Your child can}
                              wards    {The individual under your supervision can}
                              other    {You can}} participate in the study if }}
-    finding: 'you agree to us informing you of any unusual test results (incidental finding)'
+    finding: 'you agree to us informing you of any unusual test results (incidental findings/suspicions)'
     exclude: >-
       {information, select,
         post  {and because the following does not apply:}
@@ -1812,8 +1812,8 @@ consent:
   optionalHeading: 'Additionally, I take the following decisions:'
   finding: >-
     If the investigation points towards an unusual test result ({savePDF, select,
-          true  {incidental finding}
-          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">incidental finding</a>}}), informing me about this would allow me to possibly seek further diagnostic assessment. I was informed that knowing about a disease could lead to difficulties in contracting insurance for resulting adversities. I agree to being told about an unusual test result (incidental finding).
+          true  {incidental finding/suspicion}
+          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">incidental finding/suspicion</a>}}), informing me about this would allow me to possibly seek further diagnostic assessment. I was informed that knowing about a disease could lead to difficulties in contracting insurance for resulting adversities. I agree to being told about an unusual test result (incidental finding/suspicion).
   personalKeepConsent: >-
     I agree to the storage and use of personal research data {savePDF, select,
           true  {}
@@ -1848,8 +1848,8 @@ consent:
               other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#demonstrationPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">exemplary demonstration</a>}}
       finding: >-
         being informed about unusual test results {savePDF, select,
-          true  {incidental findings}
-          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">incidental findings</a>}}
+          true  {incidental findings/suspicions}
+          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">incidental findings/suspicions</a>}}
     lastSplit: ' as well as '
   digital: 'Note: Consent is given by clicking on a corresponding button.'
   oral: 'Note: Consent is documented by a project contributor.'
@@ -1983,13 +1983,7 @@ completeForm:
       burdens: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (see field {isBurdens, select,
-                                              true  {35/36}
-                                              other {}}{isBurdensRisksContributors, select,
-                                                          true  {{isBurdens, select,
-                                                                    true  {, }
-                                                                    other {}}39/40}
-                                                          other {}})}
+                    yes     { (see field 35)}
                     unclear { (see field 35)}
                     other   {}}}
           other {{answer, select,
@@ -1998,20 +1992,19 @@ completeForm:
       risks: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (see field {isRisks, select,
-                                            true  {37/38}
-                                            other {}}{isBurdensRisksContributors, select,
-                                                        true  {{isRisks, select,
-                                                                  true  {, }
-                                                                  other {}}39/40}
-                                                        other {}})}
+                    yes     { (see field 36/37)}
+                    unclear { (see field 36/37)}
                     other   {}}}
+          other {{answer, select,
+                    unclear { (see field 21//22)}
+                    other   {}}}}
+      burdensRisksContributors: >-
+        {answer, select,
+          yes   { (see field 38/39)}
           other {}}
-      finding: >-
-        {isFull, select,
-          true  {{answer, select,
-                    yes   { (see field 41)}
-                    other {}}}
+      burdensRisksUninvolved: >-
+        {answer, select,
+          yes   { (see field 40/41)}
           other {}}
       conflict: >-
         {isFull, select,
@@ -2041,12 +2034,12 @@ completeForm:
           yes   {}
           other { (see field {isFull, select,
                                 true  {47}
-                                other {21}})}}
+                                other {23}})}}
       legitimization: >-
         {answer, select,
           unclear { (see field {isFull, select,
                                   true  {52}
-                                  other {26}})}
+                                  other {28}})}
           no      { (see field 46)}
           other   {}}
       restriction: >-
@@ -2091,7 +2084,8 @@ completeForm:
       preContent: 'Deception'
       burdens: 'Burdens'
       risks: 'Risks'
-      finding: '(Incidental) Findings'
+      burdensRisksContributors: 'Burdens/risks for project contributors'
+      burdensRisksUninvolved: 'Burdens/risks for third parties'
       dataPrivacy: 'Personal data'
       dataSourceVotes: 'Research ethics standards'
       legitimization: 'Information/Consent'
@@ -2104,11 +2098,12 @@ completeForm:
     voluntary: 'The decision about participation/data use is voluntary.'
     terminateCons: 'Withdrawal from participation is possible at any time and without disadvantages.'
     examinedPeople: 'The study involves persons who belong to a vulnerable group with respect to the scope of the research.'
-    wards: 'The study solely involves persons who are capable of giving consent themselves.'
+    wards: 'The study only involves persons who are capable of giving consent themselves.'
     preContent: 'Participating in the study involves being actively and deliberately deceived.'
-    burdens: 'The study involves burdens that go beyond the level commonly encountered in everyday life.'
-    risks: 'The study involves dangers or risks for individual persons.'
-    finding: 'The study might reveal clinically relevant (incidental) findings.'
+    burdens: 'The study involves burdens for participants that go beyond the level commonly encountered in everyday life.'
+    risks: 'The study involves risks for participants.'
+    burdensRisksContributors: 'The study involves burdens or risks for project contributors.'
+    burdensRisksUninvolved: 'The study involves burdens or risks for third parties.'
     dataPrivacy: 'The study involves relevant processing of personal data.'
     dataSourceVotes: 'The re-used research data were originally collected with adherence to standards of research ethics.'
     legitimization: 'The persons whose data are analyzed agreed to or were at least aware of their data possibly being re-used for research purposes.'

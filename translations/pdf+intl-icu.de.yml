@@ -182,31 +182,23 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     otherSources: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
     presence: 'Sind Projektbeteiligte bei der Erhebung anwesend?'
     presenceSub: 'Beschreibung der zeitweisen Anwesenheit:'
-    burdens: 'Welchen Belastungen bzw. Beanspruchungen werden die Teilnehmenden ausgesetzt?'
-    burdensSub: >-
-      {burdens, select,
-        true  {Beschreibung der Belastungen}
-        other {}} {noBurdens, select,
-                    true  {{burdens, select,
-                              true {bzw. }
-                              other {}} Begründung, warum keine Belastungen bzw. Beanspruchungen erwartet werden}
-                    other {}}:
-    burdensBoxSub: 'Die Felder 20-30 entfallen, da in diesem Forschungsprojekt keine vorhandenen Daten nachgenutzt werden.'
-    burdensCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Belastungen Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
-    risks: 'Welche potenziellen Gefährdungen oder Risiken bringt die Teilnahme mit sich?'
-    risksSub: 'Beschreibung der Risiken:'
-    risksCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
-    burdensRisksContributors: 'Werden die Projektbeteiligten oder unbeteiligte Dritte Belastungen bzw. Risiken ausgesetzt, die über das im Alltag zu erwartende Maß hinausgehen?'
+    burdens: 'Welche beanspruchenden, belastenden oder anderweitig nennenswerten Aspekte bringt die Teilnahme zwangsläufig mit sich?'
+    burdensSub: 'Beschreibung der Belastungen:'
+#    burdensCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Belastungen Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
+    risks: 'Welche unbeabsichtigten Folgen (Risiken, Gefährdungen) kann die Teilnahme mit sich bringen?'
+    risksSub: 'Weitere Angaben zu den Risiken:'
+    risksOccurrence: 'Durch welche Maßnahmen sollen die Auftretenswahrscheinlichkeit und/oder die Schwere der Folgen minimiert werden?'
+    risksOccurrenceSub: 'Begründung(en), warum keine Maßnahmen ergriffen werden:'
+    risksOccurrenceBoxSub: 'Die Felder 22-32 entfallen, da in diesem Forschungsprojekt keine vorhandenen Daten nachgenutzt werden.'
+#    risksCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
+    burdensRisksContributors: 'Welchen Belastungen bzw. Risiken sind die Projektbeteiligten ausgesetzt?'
     burdensRisksContributorsSub: 'Beschreibung der Belastungen bzw. Risiken'
-    burdensRisksContributorsCompensation: 'Sind bezogen auf die in dem vorherigen Feld genannten Belastungen bzw. Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
-    burdensRisksDescription: >- # if both questions are not answered yet, both will be named
-      Die {burdens, select,
-            true  {Belastungen /}
-            other {}} {risks, select,
-                        true  {Risiken /}
-                        other {}} Nachteile werden in der Studieninformation wie folgt beschrieben:
-    finding: 'Kann es passieren, dass die verwendeten Erhebungsmethoden bei einzelnen Teilnehmenden klinisch relevante (Zufalls-)Befunde aufdecken?'
-    findingSub: 'Wie wird mit aufgetretenen (Zufalls-)Befunden umgegangen?'
+    burdensRisksContributorsCompensation: 'Sind bezogen auf die in dem vorherigen Feld genannten Belastungen/Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
+    burdensRisksUninvolved: 'Welchen Belastungen bzw. Risiken sind unbeteiligte Dritte ausgesetzt?'
+    burdensRisksUninvolvedSub: 'Beschreibung der Belastungen bzw. Risiken'
+    burdensRisksUninvolvedCompensation: 'Sind bezogen auf die in dem vorherigen Feld genannten Belastungen/Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
+#    finding: 'Beschreibung der Zufallsbefunde/Verdachtsmomente'
+#    findingSub: 'Wie wird mit aufgetretenen Zufallsbefunden/Verdachtsmomenten umgegangen?'
     feedback: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
     feedbackSub: 'Beschreibung von Art und Rahmung der Rückmeldungen:'
     compensation: 'Aufwandsentschädigung'
@@ -216,7 +208,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     dataReuseBoxSub: >-
       Die Felder {isReviewFull, select,
                     true  {46-56}
-                    other {20-30}} entfallen, da {isOrigin, select,
+                    other {22-32}} entfallen, da {isOrigin, select,
                                                     true  {in diesem Forschungsprojekt keine vorhandenen Daten nachgenutzt werden.}
                                                     other {noch Angaben zum Ursprung der Daten fehlen.}}
     originSources: 'Aus welchen Quellen werden Daten genutzt?'
@@ -372,7 +364,7 @@ projectdetails:
       ein Zeitpunkt {isMeasureTimePointName, select,
                       true  {({measureTimePointName})}
                       other {}}{origin}
-    hint: 'Die hier dargestellte Übersicht bezieht sich auf die im Ethiktool angelegte Projektstruktur. Zur Erleichterung der Begutachtung können im Ethiktool in Einzelfällen Studien/Gruppen/Zeitpunkte gemeinsam dargestellt werden, wenn es zwischen ihnen nur wenige Unterschiede gibt und sich diese leicht gemeinsam abbilden lassen.'
+    hint: 'Diese Übersicht bezieht sich auf die im Ethiktool angelegte Projektstruktur. Zur Erleichterung der Begutachtung können im Ethiktool in Einzelfällen Studien/Gruppen/Zeitpunkte gemeinsam dargestellt werden, wenn es zwischen ihnen nur wenige Unterschiede gibt und sich diese leicht gemeinsam abbilden lassen.'
     structureDescription: "Erläuterung der Projektstruktur:\n"
     origin:
       new: 'Eigene Datenerhebung'
@@ -611,32 +603,26 @@ projectdetails:
         other    {}}{description}
   burdensRisks:
     burdens:
-      noBurdens: 'keine Belastungen'
-      physical: 'körperliche Belastung'
-      mental: 'kognitive Belastung'
-      emotional: 'psychische oder emotionale Belastung'
-      sensitive: 'intime Inhalte'
-      otherBurdens: 'andere Belastungsfaktoren'
       burdensEveryday: "\nNach Einschätzung der Antragstellenden sind diese Belastungen für die Teilnehmenden alltagsüblich."
     risks:
-      noRisks: 'keine Risiken'
-      risksPhysical: 'körperliches Unwohlsein'
-      risksIntegrity: 'Gefährdung der körperlichen Unversehrtheit'
-      risksMental: 'kognitive Erschöpfung'
-      risksEmotional: 'psychische oder emotionale Beeinträchtigung'
-      risksSocial: 'soziale, ökonomische oder politische Risiken'
-      otherRisks: 'sonstige Risiken'
-    finding: >- # other is participants
-      {chosen, select,
-        always  {Die {addressee, select,
-                        children {Erziehungsberechtigten}
-                        wards    {gesetzlichen Vertretungspersonen}
-                        other    {Teilnehmenden}} werden immer über aufgetretene (Zufalls-)Befunde informiert. (Mitteilung obligatorisch)}
-        consent {Die {addressee, select,
-                        children {Erziehungsberechtigten}
-                        wards    {gesetzlichen Vertretungspersonen}
-                        other    {Teilnehmenden}} können in der Einwilligung auswählen, ob sie über aufgetretene (Zufalls-)Befunde informiert werden möchten. (Mitteilung optional)}
-        other   {}}
+      description: "Beschreibung der Risiken:\n"
+      finding:
+        description: "Beschreibung der Zufallsbefunde/Verdachtsmomente:\n {description}"
+        informing: >-
+          Umgang mit den Zufallsbefunden/Verdachtsmomenten:
+          Die {addressee, select,
+                children {Erziehungsberechtigten}
+                wards    {gesetzlichen Vertretungspersonen}
+                other    {Teilnehmenden}} werden {type, select,
+                                                    always  {immer über aufgetretene Zufallsbefunde/Verdachtsmomente informiert (Mitteilung obligatorisch).}
+                                                    consent {können in der Einwilligung auswählen, ob sie über aufgetretene Zufallsbefunde/Verdachtsmomente informiert werden möchten (Mitteilung optional).}
+                                                    other   {werden nicht über aufgetretene Zufallsbefunde/Verdachtsmomente informiert. Die Begründung lautet wie folgt:
+                                                              {description}}}
+    risksOccurrence: "Nach Einschätzung der Antragstellenden bleibt nach Durchführung aller Maßnahmen keine Auftretenswahrscheinlichkeit von nennenswerter Höhe und keine Schwere der Folgen, die über bloßes Unbehagen hinausgeht."
+    risksNoMeasure:
+      notNecessary: 'Die benannten Risiken sind nicht von nennenswerter Höhe bzw. Schwere.'
+      notPossible: 'Die benannten Risiken lassen sich nicht reduzieren bzw. die Folgen nicht mildern.'
+      risksNoMeasureOther: '{description}'
   compensation:
     compensation: >-
       Informationen zur Aufwandsentschädigung finden sich {hasDocs, select,
@@ -726,10 +712,11 @@ participation:
     goals: 'Hintergrund und Zielsetzung der Studie'
     conflict: 'Mögliche Interessenkonflikte der Projektbeteiligten'
     procedure: 'Studienablauf'
-    finding: 'Zufallsbefunde'
+    informing: 'Zufallsbefunde'
     compensation: 'Aufwandsentschädigung'
     pro: 'Vor- und Nachteile der Teilnahme'
     criteria: 'Ein- und Ausschlusskriterien für die Teilnahme'
+    risksOccurrence: 'Maßnahmen zur Risikominimierung' # only needed for intermediate page
     voluntary: 'Freiwilligkeit und Rücktrittsrecht'
     legal: 'Rechtliche Hinweise'
     dataPrivacy: 'Datenschutz und Datennutzung'
@@ -874,6 +861,9 @@ participation:
       {time, plural,
         =1    { 1 Minute}
         other { # Minuten}}
+  informing:
+    always: 'Die Studie dient ausschließlich Forschungszwecken. Eine medizinische oder psychologische Beurteilung der Daten erfolgt nicht. Es könnte uns jedoch ein ungewöhnliches Untersuchungsergebnis (Zufallsbefund bzw. Verdachtsmoment) im Rahmen {description} auffallen. In diesem Fall werden wir Sie darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen. Sofern bei dieser diagnostischen Abklärung eine Erkrankung festgestellt werden sollte, könnten Ihnen daraus unter Umständen Nachteile entstehen, z.B. der Abschluss einer privaten Krankenversicherung oder einer Lebensversicherung erschwert werden. Bitte beachten Sie: Auch wenn von uns kein ungewöhnliches Untersuchungsergebnis wahrgenommen wird, ist dies keine Bestätigung eines bestimmten Gesundheitsbildes/-zustands; die Untersuchung dient allein Forschungszwecken und stellt bzw. ersetzt keine ärztliche Diagnose.'
+    consent: 'Die Studie dient ausschließlich Forschungszwecken. Eine medizinische oder psychologische Beurteilung der Daten erfolgt nicht. Es könnte uns jedoch ein ungewöhnliches Untersuchungsergebnis (Zufallsbefund bzw. Verdachtsmoment) im Rahmen {description} auffallen. In diesem Fall werden wir Sie, sofern Sie einverstanden sind, darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen. Sofern bei dieser diagnostischen Abklärung eine Erkrankung festgestellt werden sollte, könnten Ihnen daraus unter Umständen Nachteile entstehen, z.B. der Abschluss einer privaten Krankenversicherung oder einer Lebensversicherung erschwert werden. Bitte beachten Sie: Auch wenn von uns kein ungewöhnliches Untersuchungsergebnis wahrgenommen wird, ist dies keine Bestätigung eines bestimmten Gesundheitsbildes/-zustands; die Untersuchung dient allein Forschungszwecken und stellt bzw. ersetzt keine ärztliche Diagnose.'
   compensation:
     start: >- # other in addressee select is participants
       {information, select,
@@ -982,6 +972,16 @@ participation:
       Nachteile{isBurdensRisks, select,
                   true  {/Risiken}
                   other {}}
+    risksTrigger:
+      triggerIntimate: "\nDie Studie enthält teilweise persönliche bzw. intime Fragen. Die Studie sollte daher in einem ungestörten Umfeld bearbeitet werden. Bitte achten Sie darauf, dass die Privatsphäre während der Teilnahme gewahrt bleibt und keine unbefugten Personen Einblick in die Antworten nehmen können."
+      burdensome: "\nDie Erhebung umfasst folgendes Thema, das als belastend wahrgenommen werden kann: {description}"
+      threat: "\nWir behandeln alle Angaben und erhobenen Daten vertraulich. Die Projektbeteiligten sind zur Verschwiegenheit verpflichtet. Die Auswertung erfolgt anonymisiert bzw. ohne Nennung von Namen. Die Schweigepflicht bzw. Vertraulichkeit gilt jedoch nicht, wenn konkrete Anzeichen für eine akute Selbstgefährdung oder die Gefährdung anderer Personen vorliegen. Die Projektbeteiligten behalten sich vor, in solchen Fällen unverzüglich geeignete Stellen (z.B. medizinisches Personal, Notdienste oder zuständige Behörden) zu informieren, um Schaden abzuwenden."
+      crime: "\nWir behandeln alle Angaben und erhobenen Daten vertraulich. Die Auswertung erfolgt anonymisiert bzw. ohne Nennung von Namen. Bitte beachten Sie jedoch, dass unser Vertraulichkeitsversprechen rechtlichen Grenzen unterliegt. Sollten uns im Rahmen der Studie Informationen über die Planung oder Ausführung bestimmter, sehr schwerwiegender Straftaten berichtet werden (wie sie im deutschen Strafgesetzbuch in § 138 StGB aufgeführt sind, zum Beispiel schwerer Hochverrat, Mord oder Totschlag), sind wir unter Umständen gesetzlich verpflichtet, diese Informationen an zuständige Stellen (z.B. Behörden) weiterzugeben. Eine Weitergabe erfolgt in einem solchen Ausnahmefall nur dann, wenn dies zwingend geboten ist, um eine drohende, schwere Tat abzuwenden, und wenn wir uns andernfalls selbst strafbar machen würden."
+      triggerOther: "\n{description}"
+    risksContact:
+      contactContributors: "\nSie haben die Möglichkeit, sich bei Unterstützungsbedarf an die Projektbeteiligten zu wenden."
+      contactInfo: "\nSie können folgende projektunabhängige Anlaufstellen zur Beratung bzw. Unterstützung kontaktieren: {description}"
+      contactOther: "\n{description}"
   criteria:
     include: >- # other is participant
       {information, select,
@@ -993,7 +993,7 @@ participation:
                  children {Ihr Kind kann}
                  wards    {Die von Ihnen betreute Person kann}
                  other    {Sie können}} an der Studie teilnehmen, wenn}}
-    finding: 'Sie damit einverstanden sind, dass wir Sie ggf. über eine Auffälligkeit (Zufallsbefund) informieren'
+    finding: 'Sie damit einverstanden sind, dass wir Sie ggf. über eine Auffälligkeit (Zufallsbefund/Verdachtsmoment) informieren'
     exclude: >-
       {information, select,
         post  {und weil nicht zutrifft, dass}
@@ -1848,8 +1848,8 @@ consent:
               other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#demonstrationPersonalKeepConsentDiv" data-base-route-i-ds-param="{routeIDs}">beispielhaften Demonstration</a>}}
       finding: >-
         das Informiertwerden über ggf. auftretende Auffälligkeiten ({savePDF, select,
-          true  {Zufallsbefunde)}
-          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">Zufallsbefunde</a>)}}
+          true  {Zufallsbefunde/Verdachtsmomente)}
+          other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#findingDiv" data-base-route-i-ds-param="{routeIDs}">Zufallsbefunde/Verdachtsmomente</a>)}}
     lastSplit: ' sowie '
   digital: 'Hinweis: Die Einwilligung erfolgt über das Anklicken eines entsprechenden Buttons.'
   oral: 'Hinweis: Die Einwilligung wird von einer projektbeteiligten Person dokumentiert.'
@@ -1983,13 +1983,7 @@ completeForm:
       burdens: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (siehe Feld {isBurdens, select,
-                                            true  {35/36}
-                                            other {}}{isBurdensRisksContributors, select,
-                                                        true  {{isBurdens, select,
-                                                                  true  {, }
-                                                                  other {}}39/40}
-                                                        other {}})}
+                    yes     { (siehe Feld 35)}
                     unclear { (siehe Feld 35)}
                     other   {}}}
           other {{answer, select,
@@ -1998,20 +1992,19 @@ completeForm:
       risks: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (siehe Feld {isRisks, select,
-                                            true  {37/38}
-                                            other {}}{isBurdensRisksContributors, select,
-                                                        true  {{isRisks, select,
-                                                                  true  {, }
-                                                                  other {}}39/40}
-                                                        other {}})}
+                    yes     { (siehe Feld 36/37)}
+                    unclear { (siehe Feld 36/37)}
                     other   {}}}
+          other {{answer, select,
+                    unclear { (siehe Feld 21/22)}
+                    other   {}}}}
+      burdensRisksContributors: >-
+        {answer, select,
+          yes   { (siehe Feld 38/39)}
           other {}}
-      finding: >-
-        {isFull, select,
-          true  {{answer, select,
-                    yes   { (siehe Feld 41)}
-                    other {}}}
+      burdensRisksUninvolved: >-
+        {answer, select,
+          yes   { (siehe Feld 40/41)}
           other {}}
       conflict: >-
         {isFull, select,
@@ -2041,12 +2034,12 @@ completeForm:
           yes   {}
           other { (siehe Feld {isFull, select,
                                 true  {47}
-                                other {21}})}}
+                                other {23}})}}
       legitimization: >-
         {answer, select,
           unclear { (siehe Feld {isFull, select,
                                   true  {52}
-                                  other {26}})}
+                                  other {28}})}
           no      { (siehe Feld 46)}
           other   {}}
       restriction: >-
@@ -2091,7 +2084,8 @@ completeForm:
       preContent: 'Täuschung'
       burdens: 'Belastungen'
       risks: 'Risiken'
-      finding: '(Zufalls-)Befunde'
+      burdensRisksContributors: 'Belastungen/Risiken für Projektbeteiligte'
+      burdensRisksUninvolved: 'Belastungen/Risiken für unbeteiligte Dritte'
       dataPrivacy: 'Personenbezogene Daten'
       dataSourceVotes: 'Forschungsethische Standards'
       legitimization: 'Aufklärung/Einwilligung'
@@ -2106,9 +2100,10 @@ completeForm:
     examinedPeople: 'An der Studie nehmen Personen teil, die in Bezug auf den Forschungsgegenstand einer vulnerablen Gruppe angehören.'
     wards:  'An der Studie nehmen nur Personen teil, die selbst ihre Einwilligung geben können.'
     preContent: 'Die Studienteilnahme beinhaltet eine aktive, gezielte Täuschung.'
-    burdens: 'Die Studie beinhaltet Belastungen, die über das im Alltag zu erwartende Maß hinausgehen.'
-    risks: 'Die Studie beinhaltet Gefährdungen oder Risiken für einzelne Personen.'
-    finding: 'In der Studie werden u.U. klinisch relevante (Zufalls-)Befunde aufgedeckt.'
+    burdens: 'Die Studie beinhaltet Belastungen für die Teilnehmenden, die über das im Alltag zu erwartende Maß hinausgehen.'
+    risks: 'Die Studie beinhaltet Risiken für die Teilnehmenden.'
+    burdensRisksContributors: 'Die Studie beinhaltet Belastungen oder Risiken für Projektbeteiligte.'
+    burdensRisksUninvolved: 'Die Studie beinhaltet Belastungen oder Risiken für unbeteiligte Dritte.'
     dataPrivacy: 'In der Studie findet eine relevante Verarbeitung personenbezogener Daten statt.'
     dataSourceVotes: 'Die nachgenutzten Forschungsdaten wurden ursprünglich unter Einhaltung forschungsethischer Standards gewonnen.'
     legitimization: 'Die Personen, deren Daten analysiert werden, haben eingewilligt bzw. es war ihnen zumindest bewusst, dass ihre Daten zu Forschungszwecken nachgenutzt werden können.'

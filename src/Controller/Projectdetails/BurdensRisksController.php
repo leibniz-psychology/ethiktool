@@ -29,32 +29,23 @@ class BurdensRisksController extends ControllerAbstract
             $session->set(self::docNameRecent,$session->get(self::docName));
         }
         $burdensRisksNode = $measureNode->{self::burdensRisksNode};
-        [$textInputCon,$textInputFinding] = ['',''];
+        $textInputCon = '';
         if ($isTexts) { // check if texts page has input that may be deleted
             $conArray = $textsArray[self::conNode];
-            $translationPrefix = 'multiple.inputs.pages.';
             $inputArray = $this->setInputArray();
             $burdensRisksArrayLoad = $this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true)->{self::burdensRisksNode});
             // con
             if (($this->getBurdensOrRisks($burdensRisksArrayLoad,self::burdensNode)[0] || $this->getBurdensOrRisks($burdensRisksArrayLoad,self::risksNode)[0]) && $conArray[self::conTemplate]==='1' && $this->checkInput($conArray,[self::descriptionNode => ''])) {
-                $this->addInputPage($translationPrefix,'textsCon',$inputArray);
+                $this->addInputPage('multiple.inputs.pages.','textsCon',$inputArray);
             }
             $textInputCon = $this->setInputHint($inputArray);
-            // finding
-            if (array_key_exists(self::findingTextNode,$textsArray)) {
-                $inputArray = $this->setInputArray();
-                $findingArray = $textsArray[self::findingTextNode];
-                if ($burdensRisksArrayLoad[self::findingNode][self::chosen]==='0' && ($findingArray[self::findingTemplate]!=='' || $this->checkInput($findingArray,[self::descriptionNode => '']))) {
-                    $this->addInputPage($translationPrefix,'textsFinding',$inputArray);
-                }
-                $textInputFinding = $this->setInputHint($inputArray);
-            }
         }
-        $iconArray = [];
-        $translationPrefix = 'projectdetails.pages.burdensRisks.';
-        foreach ([self::burdensNode,self::risksNode] as $type) {
-            $typeUC = ucfirst($type);
-            $iconArray[$type] = $this->combinePrefixArray(array_diff($type===self::burdensNode ? self::burdensTypes : self::risksTypes,['no'.$typeUC,'other'.$typeUC]),$translationPrefix.$type.'.hintsTypes.');
+
+        // text hints for informing text field
+        $addresseeStringParam = [self::addressee => $this->getAddresseeString($this->getAddresseeFromRequest($request))];
+        $informingHints = [];
+        foreach (['noTemplate','cloze',self::informingNo] as $type) {
+            $informingHints[$type] = $this->translateString('projectdetails.pages.'.self::burdensRisksNode.'.'.self::findingNode.'.'.self::informingNode.'.textHints.'.$type,$addresseeStringParam);
         }
 
         $burdensRisks = $this->createFormAndHandleRequest(BurdensRisksType::class,$this->xmlToArray($burdensRisksNode),$request);
@@ -73,23 +64,21 @@ class BurdensRisksController extends ControllerAbstract
                 } elseif (!$isBurdensRisks && $conArray[self::conTemplate]==='1' && $isDescription) {
                     $this->removeElement(self::descriptionNode,$conNode);
                 }
-                // update finding consent
-                $isFinding = $data[self::findingNode][self::chosen]===0;
-                $isFindingConsent = array_key_exists(self::findingTextNode,$textsArray);
-                if ($isFinding && !$isFindingConsent) {
-                    $this->addChildNodes($textsNode->addChild(self::findingTextNode),[self::findingTemplate,self::descriptionNode]);
-                } elseif (!$isFinding && $isFindingConsent) {
-                    $this->removeElement(self::findingTextNode,$textsNode);
-                }
             }
             $isNotLeave = !$this->getLeavePage($burdensRisks,$session,self::burdensRisksNode);
             return $this->saveDocumentAndRedirect($request,!$isTexts || $isNotLeave ? $appNode : $appNodeNew,$isTexts && $isNotLeave ? $appNodeNew : null); // appNodeNew is defined if isTexts is true
         }
         return $this->render('Projectdetails/burdensRisks.html.twig',
             $this->setRenderParameters($request,$burdensRisks,
-                ['checkboxTypes' => [self::burdensNode => self::burdensTypes,self::risksNode => self::risksTypes],
-                 'iconArrays' => $iconArray,
-                 'textInputCon' => $textInputCon,
-                 'textInputFinding' => $textInputFinding],'projectdetails.burdensRisks',true));
+                ['burdensRisksTypes' => self::burdensRisksTypes,
+                 'burdensRisksTypesAll' => self::burdensRisksTypesAll,
+                 'burdensRisksOther' => self::burdensRisksOther,
+                 'burdensRisksIcons' => self::burdensRisksIcons,
+                 'risksNoMeasureTypes' => self::risksNoMeasureTypes,
+                 'isDebriefing' => $this->getStringFromBool($this->xmlToArray($measureNode->{self::informationIIINode})!==[]),
+                 'informingTemplates' => array_diff(array_values(self::informingTypes),[self::informingNo]),
+                 'informingHints' => $informingHints,
+                 'maxCharsFinding' => 500,
+                 'textInputCon' => $textInputCon],'projectdetails.burdensRisks',true));
     }
 }

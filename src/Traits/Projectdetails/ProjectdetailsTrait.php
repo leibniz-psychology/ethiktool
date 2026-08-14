@@ -218,19 +218,27 @@ trait ProjectdetailsTrait
     protected const burdensRisksNode = 'burdensRisks';
     protected const burdensNode = 'burdens';
     protected const burdensTypesNode = 'burdensType';
-    protected const noBurdens = 'noBurdens'; // must equal one of the values in burdensTypes
-    protected const burdensTypes = ['noBurdens','physical', 'mental', 'emotional', 'sensitive', 'otherBurdens'];
-    protected const burdensNoDescription = 'burdensNoDescription';
+    protected const burdensRisksTypes = ['burdens' => ['noBurdens','mental','emotional','physical','political','union','sexual','ethnic','income','health','genetic','illegal','burdensSensitiveOther','touch','integrity','otherBurdens'], 'risks' => ['noRisks','risksMental','risksMisinformation','risksCognitiveOther','risksEmotionalEmotional','risksEmotionalPsychological','risksEmotionalOther','risksExhaustion','risksIntegrity','risksMotion','risksStimuli','risksPhysicalOther','risksIncidental','risksSuspicion','risksEmployment','risksRelationship','risksLegal','risksSocialOther','otherRisks'], 'risksOccurrence' => ['noRisksOccurrence','risksOccurrenceContent','disease','implant','pregnant','allergy','exclusionOther','trigger','instruction','limit','occurrenceBeforeOther','contactContributors','contactInfo','contactOther','abort','simple','stay','firstAid','crisis','conditionOther','encourage','breaks','rectification','occurrenceAfterOther'],'risksTrigger' => ['triggerIntimate','burdensome','threat','crime','triggerOther'], 'burdensRisksContributors' => ['noBurdensRisksContributors','burdensRisksContributorsEmotional','burdensRisksContributorsPhysical','ethicalFinding','ethicalLegal','ethicalOther','burdensRisksContributorsOther'], 'burdensRisksUninvolved' => ['noBurdensRisksUninvolved','observation','burdensRisksUninvolvedPhysical','represent','institution','burdensRisksUninvolvedOther']]; // selectable options
+    protected const burdensRisksTypesAll = ['burdens' => ['noBurdens','mental','emotional','physical','burdensSensitive' => ['political','union','sexual','ethnic','income','health','genetic','illegal','burdensSensitiveOther'],'touch','integrity','otherBurdens'], 'risks' => ['noRisks','risksCognitive' => ['risksMental','risksMisinformation','risksCognitiveOther'],'risksEmotional' => ['risksEmotionalEmotional','risksEmotionalPsychological','risksEmotionalOther'],'risksPhysical' => ['risksExhaustion','risksIntegrity','risksMotion','risksStimuli','risksPhysicalOther'],'risksFinding' => ['risksIncidental','risksSuspicion'],'risksSocial' => ['risksEmployment','risksRelationship','risksLegal','risksSocialOther'],'otherRisks'], 'risksOccurrence' => ['noRisksOccurrence','occurrenceBefore' => ['exclusion' => ['risksOccurrenceContent','disease','implant','pregnant','allergy','exclusionOther'],'trigger','unitSide' => ['instruction','limit'],'occurrenceBeforeOther'],'occurrenceAfter' => ['contact' => ['contactContributors','contactInfo','contactOther'],'condition' => ['abort','simple','stay','firstAid','crisis','conditionOther'],'encourage','breaks','rectification','occurrenceAfterOther']], 'risksTrigger' => ['triggerIntimate','burdensome','threat','crime','triggerOther'], 'burdensRisksContributors' => ['noBurdensRisksContributors','burdensRisksContributorsEmotional','burdensRisksContributorsPhysical','ethical' => ['ethicalFinding','ethicalLegal','ethicalOther'],'burdensRisksContributorsOther'], 'burdensRisksUninvolved' => ['noBurdensRisksUninvolved','observation','burdensRisksUninvolvedPhysical','represent','institution','burdensRisksUninvolvedOther']]; // selectable options by category
+    protected const burdensRisksOther = ['burdens' => ['burdensSensitiveOther','otherBurdens'], 'risks' => ['risksCognitiveOther','risksEmotionalOther','risksPhysicalOther','risksSocialOther','otherRisks'], 'risksOccurrence' => ['allergy','exclusionOther','occurrenceBeforeOther','contactInfo','contactOther','conditionOther','occurrenceAfterOther'], 'risksTrigger' => ['burdensome','triggerOther'], 'burdensRisksContributors' => ['ethicalOther','burdensRisksContributorsOther'], 'burdensRisksUninvolved' => ['burdensRisksUninvolvedOther']];
+    protected const burdensRisksIcons = ['burdens' => ['noBurdens','mental','emotional','physical','burdensSensitive','touch','integrity'], 'risks' => ['risksMisinformation','risksEmotionalEmotional','risksExhaustion','risksFinding','risksSuspicion','risksSocial','risksLegal'], 'risksOccurrence' => ['exclusion','risksOccurrenceContent','disease','implant','trigger','limit','contactContributors','simple','encourage','rectification'], 'risksTrigger' => ['triggerOther'], 'burdensRisksContributors' => ['burdensRisksContributorsEmotional','burdensRisksContributorsPhysical','ethical','ethicalLegal'], 'burdensRisksUninvolved' => ['observation','burdensRisksContributorsPhysical','represent','institution']];
+    protected const risksOccurrenceNode = 'risksOccurrence';
+    protected const risksTriggerNode = 'risksTrigger';
+    protected const risksNoMeasureNode = 'risksNoMeasure';
+    protected const risksNoMeasureTypes = ['notNecessary','notPossible','risksNoMeasureOther'];
+    protected const risksNoMeasureOther = 'risksNoMeasureOther'; // value must equal one value in $risksNoMeasureTypes
+    protected const risksAfterNode = 'risksAfter';
     protected const burdensEveryday = 'burdensEveryday';
     protected const risksNode = 'risks';
     protected const risksTypesNode = 'risksType';
-    protected const noRisks = 'noRisks'; // must equal one of the values in risksTypes
-    protected const risksTypes = ['noRisks','risksPhysical', 'risksIntegrity', 'risksMental', 'risksEmotional', 'risksSocial', 'otherRisks'];
     protected const burdensRisksContributorsNode = 'burdensRisksContributors';
+    protected const burdensRisksUninvolvedNode = 'burdensRisksUninvolved';
     protected const burdensRisksCompensationNode = 'compensation';
     protected const informingNode = 'informing';
-    protected const informingAlways = 'always';
-    protected const informingConsent = 'consent';
+    protected const informingTypes = ['projectdetails.pages.burdensRisks.finding.informing.types.always' => 'always', 'projectdetails.pages.burdensRisks.finding.informing.types.consent' => 'consent', 'projectdetails.pages.burdensRisks.finding.informing.types.informingNo' => 'informingNo']; // values must equal the values of the following variables
+    protected const informingTemplate = 'informingTemplate';
+    protected const informingTypesTemplate = ['always','consent']; // values must equal the value of $informingTypes
+    protected const informingNo = 'informingNo';
     protected const findingNode = 'finding';
     protected const feedbackNode = 'feedback';
     // compensation

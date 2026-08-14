@@ -67,7 +67,6 @@ multiple:
     pages:
       textsIntro: 'Studieninformation'
       textsCon: 'Studieninformation'
-      textsFinding: 'Studieninformation'
       textsConflict: 'Studieninformation'
       consentApparatusInsuranceWay: 'Rechtliches'
       dataPrivacyOnline: 'Datenschutz'
@@ -79,15 +78,10 @@ multiple:
     consent: 'den Nachteilen des vorzeitigen Abbruchs für die {addressee}'
     texts: >-
       der Einleitung, den Zielen, dem Ablauf{isConflict, select,
-                                               true  {, den Vor-/Nachteilen{isFinding, select,
-                                                                              true  {, der Aufklärung über (Zufalls-)Befunde}
-                                                                              other {}} und der Aufklärung über Interessenkonflikte}
-                                               other {{isFinding, select,
-                                                        true  {, den Vor-/Nachteilen und der Aufklärung über (Zufalls-)Befunde}
-                                                        other { und den Vor-/Nachteilen}} }}
+                                               true  {, den Vor-/Nachteilen und der Aufklärung über Interessenkonflikte}
+                                               other { und den Vor-/Nachteilen}}
     textsIntro: 'dem Freitext der Studien-Einleitung'
     textsCon: 'dem Freitext der Nachteile'
-    textsFinding: 'der Aufklärung über (Zufalls-)Befunde'
     textsConflict: 'der Aufklärung über Interessenkonflikte'
     consentApparatusInsuranceWay: >-
       {input, select,
@@ -468,14 +462,14 @@ main:
             Der Ethikantrag ist vor Beginn einer Untersuchung mit Menschen einzureichen. Das Erteilen eines nachträglichen Ethik-Votums ist nicht möglich.
 
             Die Ethik-Kommission der Universität Paderborn nimmt nicht die Aufgaben einer öffentlich-rechtlichen Ethik-Kommission nach dem Heilberufsgesetz Nordrhein-Westfalen wahr und begutachtet nicht Forschungsvorhaben mit medizinischen oder pharmakologischen Fragestellungen. Forschungsvorhaben im medizinischen Bereich müssen bei einer medizinischen Ethikkommission eingereicht werden.}
-      PHHD  {Die Kommission wird auf Antrag eines Mitglieds oder Angehörigen der Pädagogischen Hochschule Heidelberg tätig. Ein Votum der Ethikkommission für ein Forschungsvorhaben kann nur beantragt werden, wenn dieses für Dritte (z. B. Fördermittelgeber, Verlage) erforderlich ist. In allen anderen Fällen kann ein Rat der Ethikkommission eingeholt werden.
+      PHHD  {Die Kommission wird auf Antrag eines Mitglieds oder Angehörigen der Pädagogischen Hochschule Heidelberg tätig. Ein Votum der Ethikkommission für ein Forschungsvorhaben kann nur beantragt werden, wenn dieses für Dritte (z.B. Fördermittelgeber, Verlage) erforderlich ist. In allen anderen Fällen kann ein Rat der Ethikkommission eingeholt werden.
             Studierende sind in ethischen Fragen zu wissenschaftlichen Arbeiten nicht selbst antragsberechtigt und können nur in Ausnahmefällen einen Rat über eine Betreuerin oder einen Betreuer einholen.
             Die Antragsbearbeitung erfolgt unter der Voraussetzung, dass der Antrag nicht parallel bei einer anderen Ethikkommission zur Begutachtung eingereicht wurde.
 
             Der Ethikantrag muss <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden; ein rückwirkendes Ethikvotum ist ausgeschlossen. Im Fall von Fördermittelanträgen ist der Antrag an die Ethikkommission mindestens einen Monat vor Beantragung des Forschungsvorhabens zu stellen.
 
             Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethik-Kommission eingereicht werden. Forschungsprojekte mit Ärztinnen bzw. Ärzten als Projektbeteiligte müssen normalerweise durch eine medizinische Ethikkommission geprüft werden.}
-      SRH   {Die Kommission wird auf Antrag eines Mitglieds oder Angehörigen der SRH University of Applied Sciences Heidelberg tätig. Ein Votum der Ethikkommission für ein Forschungsvorhaben kann nur beantragt werden, wenn dieses für Dritte (z. B. Fördermittelgeber, Verlage) erforderlich ist. In allen anderen Fällen kann ein Rat der Ethikkommission eingeholt werden.
+      SRH   {Die Kommission wird auf Antrag eines Mitglieds oder Angehörigen der SRH University of Applied Sciences Heidelberg tätig. Ein Votum der Ethikkommission für ein Forschungsvorhaben kann nur beantragt werden, wenn dieses für Dritte (z.B. Fördermittelgeber, Verlage) erforderlich ist. In allen anderen Fällen kann ein Rat der Ethikkommission eingeholt werden.
             Studierende sind in ethischen Fragen zu wissenschaftlichen Arbeiten nicht selbst antragsberechtigt und können nur in Ausnahmefällen einen Rat über eine Betreuerin oder einen Betreuer einholen.
             Die Antragsbearbeitung erfolgt unter der Voraussetzung, dass der Antrag nicht parallel bei einer anderen Ethikkommission zur Begutachtung eingereicht wurde.
 
@@ -1505,79 +1499,207 @@ projectdetails:
           breaksMinutes: 'Minuten:'
           hint: 'Sie können als Zeitwert auch ''0'' eintragen.'
     burdensRisks: # other is burdens/risks for contributors
-      textHint: >-
-        Bitte beschreiben Sie die {type, select,
-                                    burdens {ausgewählten Belastungen bzw. Beanspruchungen}
-                                    risks   {ausgewählten Risiken}
-                                    other   {Belastungen bzw. Risiken}} genauer.
-      compensation:
-        title: >-
-          Sind bezogen auf die o.g. {type, select,
-                                      burdens {Belastungen bzw. Beanspruchungen}
-                                      risks   {Risiken}
-                                      other   {Belastungen bzw. Risiken}} Vorsichtsmaßnahmen bzw. Kompensationen geplant?
-        textHints:
-          yes: >-
-            Bitte beschreiben Sie die Vorsichtsmaßnahmen bzw. Kompensationen genauer und stellen dabei den Bezug zu den {type, select,
-                                                                                                        burdens {gewählten Belastungen bzw. Beanspruchungen}
-                                                                                                        risks   {gewählten Risiken}
-                                                                                                        other   {Belastungen/Risiken}} her. Die Freiwilligkeit der Teilnahme und das Recht auf nachteilsfreien Rücktritt sind hier nicht gesondert aufzuführen, da diese Prinzipien unabhängig von Belastungen oder Risiken gelten.
-          no: 'Bitte begründen Sie, warum keine Vorsichtsmaßnahmen bzw. Kompensationen geplant sind.'
+      placeholder: 'bitte spezifizieren'
+      typesMain:
+        burdensSensitive: 'intime Inhalte' # from here: burdens
+        risksCognitive: 'kognitive Auswirkungen' # from here: risks
+        risksEmotional: 'psychisch-emotionale Auswirkungen'
+        risksPhysical: 'körperliche Auswirkungen'
+        risksFinding: 'Aufdeckung von Befunden oder Verdachtsmomenten hinsichtlich psychischer oder körperlicher Erkrankungen'
+        risksSocial: 'soziale, ökonomische oder politische Risiken bei Kenntnis von Ansichten, Neigungen oder Verhaltensweisen'
+        occurrenceBefore: 'Maßnahmen zur Reduktion der Auftretenswahrscheinlichkeit' # from here: risks occurrence
+        exclusion: 'bestimmte Gruppen werden aus Sicherheitsgründen von der Teilnahme ausgeschlossen'
+        unitSide: 'die Auftretenswahrscheinlichkeit wird geräteseitig minimiert'
+        occurrenceAfter: 'Maßnahmen zur Linderung der Folgen im Falle des Auftretens'
+        contact: 'es werden Kontakte zur weiteren Unterstützung benannt'
+        condition: 'die Projektbeteiligten vergewissern sich, ob es der teilnehmenden Person gut geht, und ergreifen bei Bedarf adäquate Maßnahmen'
+        ethical: 'moralisch-ethische Verantwortung durch Kenntnis von Informationen über die Teilnehmenden' # from here: burdens risks contributors
+      icons:
+        noBurdens: 'Hiermit ist nicht gemeint, dass Sie die Belastungen für alltagsüblich halten, sondern dass es tatsächlich <b>keine</b> nennenswerten Belastungen gibt.' # from here: burdens
+        mental: 'z.B. durch Konzentrationsanforderung, Tätigkeitsdauer'
+        emotional: 'z.B. aversive Reize, kurzfristige Auslösung negativer Gefühle, kurzfristige Täuschung mit persönlicher Relevanz'
+        physical: 'z.B. durch physische Anstrengung, Tätigkeitsdauer'
+        burdensSensitive: 'Erhebungsinhalte, die in die Privatsphäre eindringen'
+        touch: 'z.B. beim Anbringen von Elektroden oder Markern'
+        integrity: 'z.B. durch Entnahme von Körpermaterial, Verabreichung von Substanzen'
+        risksMisinformation: 'z.B. bei Studien mit fiktiven Informationen, deren Wahrheitsgehalt über die Studie hinaus Bedeutung hat' # from here: risks
+        risksEmotionalEmotional: 'z.B. längerfristige negative Stimmungsänderung, nachhaltige Täuschung mit persönlicher Relevanz'
+        risksExhaustion: 'z.B. Muskelkater, Schmerzen, Kreislaufprobleme'
+        risksFinding: 'Bitte beachten Sie, dass die Aufdeckung von Befunden oder Verdachtsmomenten ethische Verantwortung und praktische Konsequenzen mit sich bringt. Bitte reflektieren Sie daher die möglichen Konsequenzen der Aufdeckung etwaiger Befunde/Verdachtsmomente bereits bei der Planung des Studiendesigns und prüfen Sie Alternativen.</br> Maßnahmen zur Minderung der Auftretenswahrscheinlichkeit und der Folgen müssen hier nicht angegeben werden; der Umgang mit etwaigen Befunden/Verdachtsmomenten wird separat erfragt.'
+        risksIncidental: 'nahezu sichere diagnostische Befunde, z.B. Entdeckung eines Tumors beim Einsatz von bildgebenden Verfahren, psychische Diagnose in einem klinisch-diagnostischen Interview'
+        risksSuspicion: 'z.B. Auffälligkeit in einem Screening-Fragebogen, in einem nicht-geeichten Laborverfahren zum Screening auf sensorische Einbußen'
+        risksSocial: 'Diese Kategorie ist auch zu wählen, wenn Sie es aufgrund Ihrer Datenschutzmaßnahmen für unwahrscheinlich halten, dass z.B. Aussagen tatsächlich bekannt werden; es geht zunächst um das prinzipielle Risiko.'
+        risksLegal: 'z.B. für Aufenthaltsstatus, Gerichtsbarkeit'
+        exclusion: 'Bitte listen Sie unter <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#excludeStart" data-base-route-i-ds-param={routeIDs}>Ausschlusskriterien</a> alle Kriterien auf' # from here: risks occurrence
+        risksOccurrenceContent: 'z.B. Personen mit traumatischen Erfahrungen'
+        disease: 'z.B. Epilepsie, Depression'
+        implant: 'z.B. Herzschrittmacher, Medikamentenpumpen, Schrauben nach Knochenbruch, Zahn-Stabilisatoren, Permanent Make-Up'
+        trigger: 'Der genaue Wortlaut wird separat erfragt.'
+        limit: 'hardware- oder softwareseitig'
+        contactContributors: 'Das Kontaktangebot bezieht sich hier explizit auf Unterstützung zur Linderung möglicher Folgen und unterscheidet sich dadurch von der allgemeinen Kontaktmöglichkeit für Fragen zur Studie; bitte bedenken Sie, dass eine zeitnahe Antwort gewährleistet sein muss und die Projektbeteiligten über fachliche Kompetenz im Umgang mit etwaigen Unterstützungsgesuchen verfügen müssen.'
+        simple: 'z.B. Wasser, Traubenzucker, Frischluftzufuhr, Sitz-/Liege-Möglichkeit'
+        encourage: 'Hiermit ist nicht der allgemeine Hinweis auf die Freiwilligkeit der Teilnahme und das individuelle Rücktrittsrecht gemeint.'
+        rectification: >-
+            Der Wortlaut der Richtigstellung ist {isDebriefing, select,
+                            true  {unter <a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII#infoAfterinformationIII" data-base-route-i-ds-param={routeIDs}>Debriefing</a>}
+                            other {im Debriefing}} näher zu beschreiben.
+        triggerOther: 'z.B. „Die Beantwortung von Fragen zum Thema ... kann ...“' # from here: risks trigger
+        burdensRisksContributorsEmotional: 'z.B. durch Konfrontation mit unangenehmen Inhalten, durch öffentliche Anfeindung aufgrund des Forschungsziels' # from here: burdens risks contributors
+        burdensRisksContributorsPhysical: 'z.B. durch Erhebungen in Kriegs- und Krisengebieten, in Konfliktzonen, in sicherheitsgefährdeten Bereichen, durch Konfrontationspotential mit Teilnehmenden'
+        ethical: 'Informationen, die den Teilnehmenden selbst bereits bekannt oder auch für diese neu sind, wie Zufallsbefunde, Verdachtsmomente oder Aspekte mit rechtlicher Relevanz'
+        ethicalLegal: 'z.B. an den Teilnehmenden verübte oder seitens der Teilnehmenden begangene Gewaltdelikte (Hinweis: Bitte beachten Sie auch die weiterführenden <a href="https://www.konsortswd.de/wp-content/uploads/RatSWD_Output1.7_Kenntnissnahme-Straftaten_2023.pdf" target="_blank">Handreichung des RatSWD</a> zum Umgang mit der Kenntnisnahme von Straftaten.'
+        observation: 'z.B. bei Ton-/Bildaufnahmen im öffentlichen Raum. Davon abzugrenzen sind absichtliche Beobachtungen als Teil der Studie, etwa im Rahmen ethnografischer Forschung.' # from here: burdens risks uninvolved
+        burdensRisksUninvolvedPhysical: 'z.B. Zusammenstöße bei Studien im öffentlichen Raum'
+        represent: 'z.B. durch gesellschaftspolitische Schlussfolgerungen aus den Forschungsergebnissen'
+        institution: 'z.B. durch Reputationsschaden, sicherheitsrelevante Aspekte'
       burdens:
-        title: 'Welchen Belastungen bzw. Beanspruchungen werden die Teilnehmenden ausgesetzt?'
+        title: 'Welche beanspruchenden, belastenden oder anderweitig nennenswerten Aspekte (nachfolgend: „Belastungen“) bringt die Teilnahme zwangsläufig mit sich?'
         hints:
-          headingHint: 'Hier sind Belastungen gemeint, die durch die Studienteilnahme zwangsläufig für alle Teilnehmenden entstehen. Bitte setzen Sie die Belastungen durch die Studienteilnahme in Beziehung zur Alltagserfahrung der teilnehmenden Personengruppe (d.h. ob diese Gruppe sich im Alltag einer vergleichbaren Belastung aussetzen würde).'
-          noBurdens: 'Bitte begründen Sie, warum Sie davon ausgehen, dass keine Belastungen bzw. Beanspruchungen vorliegen.'
+          headingHint: 'Hier geht es um Belastungen, die durch die Teilnahme in jedem Fall entstehen, da sie unabdingbar mit dem Untersuchungsdesign einhergehen (d.h. ohne die Belastung wäre das Forschungsziel nicht erreichbar). Üblicherweise sind alle Teilnehmenden (bzw. bei Mehrgruppen-Designs zumindest eine gesamte Gruppe) von der Belastung betroffen. Es kann sich dabei auch um milde Belastungen („Unannehmlichkeiten“) handeln, denen sich die Teilnehmenden auch in ihrem Alltag bedenkenlos aussetzen würden. Die Alltagsüblichkeit wird separat erfragt.'
+          textHint: 'Bitte beschreiben Sie die ausgewählten Belastungen genauer und ordnen Sie deren Ausmaß mit Bezug auf die Zielgruppe ein. Für die Ethikkommission muss nachvollziehbar sein, ob die Belastungen alltagsüblich sind, d.h. ob die Teilnehmenden sich in ihrem Alltag einer solchen Belastung ebenfalls aussetzen würden. Bitte beachten Sie, dass es explizit um Belastungen durch die Studienteilnahme geht. Wenn Sie bspw. ein Training evaluieren, an dem die Zielgruppe ohnehin teilnehmen würde, dann ist nur die Evaluation relevant und nicht das Training selbst.'
         types:
           noBurdens: 'keine Belastungen'
-          physical: 'körperliche Belastung'
           mental: 'kognitive Belastung'
-          emotional: 'psychische oder emotionale Belastung'
-          sensitive: 'intime Inhalte'
+          emotional: 'psychisch-emotionale Belastung'
+          physical: 'körperliche Belastung'
+          political: 'politische, religiöse oder weltanschauliche Überzeugungen'
+          union: 'Gewerkschaftszugehörigkeit'
+          sexual: 'sexuelle Präferenzen'
+          ethnic: 'ethnische Herkunft'
+          income: 'Einkommens-/Vermögensverhältnisse'
+          health: 'Gesundheit'
+          genetic: 'genetische/biometrische Daten'
+          illegal: 'illegales oder abweichendes Verhalten wie Drogenkonsum/Gewalt'
+          burdensSensitiveOther: 'sonstige intime Inhalte'
+          touch: 'Berührungen durch Projektbeteiligte'
+          integrity: 'Eingriff in die körperliche Integrität'
           otherBurdens: 'andere Belastungsfaktoren'
-        hintsTypes:
-          physical: 'z.B. durch Anstrengung, Entnahme von Körpersubstanzen, Tätigkeitsdauer'
-          mental: 'z.B. durch Konzentrationsanforderung, Tätigkeitsdauer'
-          emotional: 'z.B. aversive Reize, kurzfristige Auslösung negativer Gefühle, Täuschung mit persönlicher Relevanz'
-          sensitive: 'Fragen, die in die Privatsphäre eindringen (z.B. zu politischen Überzeugungen, zu illegalem Verhalten, zur Gesundheit, zu sexuellen Präferenzen)'
         burdensEveryday: 'Geht mindestens eine der o.g. Belastungen über das im Alltag der Teilnehmenden zu erwartende Maß hinaus?'
       risks:
-        title: 'Welche potenziellen Gefährdungen oder Risiken bringt die Teilnahme mit sich?'
+        title: 'Welche unbeabsichtigten Folgen (Risiken, Gefährdungen) kann die Teilnahme mit sich bringen?'
         hints:
-          headingHint: 'Hier sind Gefährdungen gemeint, die eventuell eintreten können (aber nicht müssen) und die ggf. nur einzelne Teilnehmende betreffen. Bitte setzen Sie die möglichen Gefährdungen zu dem Risiko in Beziehung, dem die teilnehmende Personengruppe im Alltag üblicherweise ausgesetzt ist („minimal risk“).'
+          headingHint: 'Hier geht es um unerwünschte Folgen, die im Rahmen der Studie nicht beabsichtigt sind, aber als Konsequenz der Teilnahme eintreten können. Oft sind von solchen Folgen nur einzelne Teilnehmende betroffen. Bitte geben Sie zunächst mögliche Folgen an, die <b>ohne</b> Ergreifen von Sicherheitsmaßnahmen auftreten könnten – auch solche Risiken, die Sie durch Standard-Sicherheitsmaßnahmen problemlos in den Griff bekommen. Die Auftretenswahrscheinlichkeit, Folgenschwere und ggf. Maßnahmen zur Abhilfe werden unten separat erfragt.'
+          textHint: 'Bitte beschreiben Sie die ausgewählten Risiken genauer. Gehen Sie darauf ein, wie wahrscheinlich deren Auftreten ist und wie schwerwiegend die potenziellen Folgen wären. Bitte begründen Sie Ihre Einschätzungen, z.B. können Sie die Auftretenswahrscheinlichkeit auf Basis praktischer Erfahrungen oder aktueller Studienlage abzuschätzen. Zur Einschätzung des Schweregrads können Sie u.a. reflektieren, ob die Folgen ohne Behandlung von allein wieder abklingen würden. Bitte ordnen Sie auch ein, wie sich die Auftretenswahrscheinlichkeit und die Schwere der Folgen durch die ergriffenen Maßnahmen ändern.'
         types:
           noRisks: 'keine Risiken'
-          risksPhysical: 'körperliches Unwohlsein'
-          risksIntegrity: 'Gefährdung der körperlichen Unversehrtheit'
-          risksMental: 'kognitive Erschöpfung'
-          risksEmotional: 'psychische oder emotionale Beeinträchtigung'
-          risksSocial: 'soziale, ökonomische oder politische Risiken'
+          risksMental: 'Erschöpfung infolge von Beanspruchung'
+          risksMisinformation: 'Glauben an Fehlinformationen über die Studie hinaus'
+          risksCognitiveOther: 'sonstige kognitive Folgen'
+          risksEmotionalEmotional: 'emotionale Beeinträchtigung'
+          risksEmotionalPsychological: 'Auslösung/Verschlimmerung von Symptomen psychischer Erkrankung, Retraumatisierung'
+          risksEmotionalOther: 'sonstige psychisch-emotionale Folgen'
+          risksExhaustion: 'Erschöpfung/Ermüdung infolge körperlicher Belastung'
+          risksIntegrity: 'Verletzung oder anderweitige Beeinträchtigung der körperlichen Unversehrtheit'
+          risksMotion: 'Simulator-/Bewegungs-Übelkeit'
+          risksStimuli: 'Überreizung oder Beeinträchtigung der Sinne'
+          risksPhysicalOther: 'sonstige körperliche Folgen'
+          risksIncidental: 'Zufallsbefunde'
+          risksSuspicion: 'Verdachtsmomente hinsichtlich psychischer oder körperlicher Erkrankungen'
+          risksEmployment: 'negative Konsequenzen für ein Arbeits- oder Versicherungsverhältnis'
+          risksRelationship: 'negative Konsequenzen für soziale Beziehungen'
+          risksLegal: 'negative rechtliche Konsequenzen'
+          risksSocialOther: 'sonstige soziale, ökonomische oder politische Risiken'
           otherRisks: 'sonstige Risiken'
-        hintsTypes:
-          risksPhysical: 'z.B. körperliche Erschöpfung/Ermüdung, Simulator Sickness'
-          risksIntegrity: 'z.B. durch Schmerzen, Verletzungen, Sinnesbeeinträchtigungen'
-          risksMental: 'z.B. durch Konzentrationsanforderung, Tätigkeitsdauer'
-          risksEmotional: 'z.B. Auslösung negativer Stimmung, nachhaltige Täuschung mit persönlicher Relevanz, Auslösung/Verschlimmerung von Symptomen psychischer Erkrankungen, Retraumatisierung'
-          risksSocial: 'z.B. negative Konsequenzen für ein Arbeits- oder Versicherungsverhältnis oder für soziale Beziehungen bei Bekanntwerden von Aussagen (z.B. über illegales oder abweichendes Verhalten wie Drogenkonsum/Gewalt, über sexuelle Präferenzen, ethnische Herkunft, politische, religiöse oder weltanschauliche Überzeugungen, Gewerkschaftszugehörigkeit, genetische und biometrische Daten, Gesundheitsdaten)'
-      burdensRisksContributors:
-        title: 'Werden die Projektbeteiligten oder unbeteiligte Dritte Belastungen bzw. Risiken ausgesetzt, die über das im Alltag zu erwartende Maß hinausgehen?'
+      risksOccurrence:
+        title: 'Durch welche Maßnahmen sollen die Auftretenswahrscheinlichkeit der Risiken und/oder die Schwere von deren Folgen minimiert werden?'
         hints:
-          headingHint: 'Gemeint sind beispielsweise emotionale Belastungen für datenerhebende Personen oder anderweitige Risiken, die sich für Projektbeteiligte aus ihrer Rolle ergeben (z.B. durch Reisen in Kriegs- und Krisengebiete). Zu reflektieren sind auch etwaige Belastungen/Risiken für unbeteiligte Dritte, beispielsweise durch Zusammenstöße bei Studien im öffentlichen Raum.'
-      finding:
-        title: 'Kann es passieren, dass die verwendeten Erhebungsmethoden bei einzelnen Teilnehmenden klinisch relevante (Zufalls-)Befunde aufdecken?'
-        headingHint: 'Beispielsweise beim Einsatz von bildgebenden Verfahren, aber auch bei klinisch-diagnostischen Interviews in psychologischen Studien kann es zu (Zufalls-)Befunden/Verdachtsdiagnosen bzw. unerwarteten Funden kommen, die jeweils für einzelne Teilnehmende potenzielle gesundheitliche oder reproduktive Bedeutung haben. Zu berücksichtigen sind hierbei sowohl Zufallsbefunde, also eine Normabweichung oder Veränderung, die im Rahmen wissenschaftlicher Forschung auffällt, aber über das eigentliche Ziel der Untersuchung hinausgeht (z.B. eine Anomalie bei Hirnaufnahmen), als auch Normabweichungen, die im Rahmen des Forschungsziels anfallen (z.B. Hinweise auf Suizidalität in diagnostischen Interviews, Erkenntnisse über Defizite aus Sprachstandserhebungen).'
-        textHint: 'Beschreiben Sie bitte, welche (Zufalls-)Befunde anfallen können.'
-        informing:
-          title: 'Wie wird mit aufgetretenen (Zufalls-)Befunden umgegangen?'
-          headingHint: >-
-            Wenn es im Rahmen der Datenerhebung zu (Zufalls-)Befunden kommen kann, sind die {addressee, select,
-                                                                                                          children {Erziehungsberechtigten}
-                                                                                                          wards    {gesetzlichen Vertretungspersonen}
-                                                                                                          other    {Teilnehmenden}} über die Möglichkeit und sich daraus ergebende Konsequenzen aufzuklären.
+          headingHint: 'Bedenken Sie sowohl Vorsichtsmaßnahmen, um die Auftretenswahrscheinlichkeit möglicher Folgen zu reduzieren, als auch Kompensationsmaßnahmen, um die Schwere der Folgen zu mildern. Sofern es anhand der ausgewählten Risiken nicht offensichtlich ist, erläutern Sie bitte im vorherigen Feld, welche Maßnahme sich auf welches Risiko bezieht.</br> Die grundsätzliche Freiwilligkeit der Teilnahme und das individuelle Rücktrittsrecht stellen keine geeigneten Kompensationsmaßnahmen dar; sie gelten auch für belastungs- und risikofreie Erhebungen.'
+        types:
+          noRisksOccurrence: 'keine Maßnahmen'
+          risksOccurrenceContent: 'Personen, die sich durch die Inhalte/Anforderungen der Erhebung stark belastet fühlen würden'
+          disease: 'Personen mit bestimmten Vorerkrankungen'
+          implant: 'Personen mit Metallimplantaten/-teilen bzw. elektrischen Geräten am/im Körper'
+          pregnant: 'schwangere Personen'
+          allergy: 'Personen mit Unverträglichkeiten / Allergien'
+          exclusionOther: 'sonstige Merkmale, die aus Sicherheitsgründen zum Ausschluss führen'
+          trigger: 'die Studieninformation enthält eine Triggerwarnung'
+          instruction: 'die Durchführenden sind in der sicherheitsgemäßen Anwendung der Geräte geschult'
+          limit: 'die verwendeten Geräte verfügen über voreingestellte Sicherheitsgrenzen'
+          occurrenceBeforeOther: 'sonstige Maßnahmen zur Minimierung der Auftretenswahrscheinlichkeit'
+          contactContributors: 'die Projektbeteiligten bieten selbst Unterstützung im Bedarfsfall an'
+          contactInfo: 'für den Bedarfsfall werden Kontakte zu projektunabhängigen Anlaufstellen mitgegeben'
+          contactOther: 'sonstige Kontaktmöglichkeiten'
+          abort: 'die Untersuchung wird unterbrochen bzw. ggf. abgebrochen'
+          simple: 'einfache Maßnahmen zur Linderung werden vorgehalten'
+          stay: 'die teilnehmende Person wird so lange vor Ort behalten, bis es ihr wieder besser geht, bzw. wird verkehrssicher nach Hause begleitet'
+          firstAid: 'eine in erster Hilfe geschulte Person ist bei der Erhebung anwesend bzw. unmittelbar greifbar'
+          crisis: 'eine in psychologischer Beratung/Krisenintervention geschulte Person ist bei der Erhebung anwesend bzw. unmittelbar greifbar'
+          conditionOther: 'sonstige Maßnahmen bei Bedarf'
+          encourage: 'die Teilnehmenden werden explizit ermutigt, sich im Falle von psychischem oder physischem Unwohlsein bemerkbar zu machen bzw. die Studie abzubrechen'
+          breaks: 'über die geplanten Pausen hinaus sind weitere, an individuelle Bedarfe angepasste Pausen möglich'
+          rectification: 'Fehlinformationen werden im Nachhinein richtiggestellt'
+          occurrenceAfterOther: 'andere Maßnahmen zur Linderung der Folgen'
+      risksTrigger:
+        title: 'Welche Triggerwarnung(en) soll die Studieninformation enthalten?'
+        types:
+          triggerIntimate: 'Die Studie enthält teilweise persönliche bzw. intime Fragen. Die Studie sollte daher in einem ungestörten Umfeld bearbeitet werden. Bitte achten Sie darauf, dass die Privatsphäre während der Teilnahme gewahrt bleibt und keine unbefugten Personen Einblick in die Antworten nehmen können.'
+          burdensome: 'Die Erhebung umfasst ein Thema, das als belastend wahrgenommen werden kann'
+          threat: 'Wir behandeln alle Angaben und erhobenen Daten vertraulich. Die Projektbeteiligten sind zur Verschwiegenheit verpflichtet. Die Auswertung erfolgt anonymisiert bzw. ohne Nennung von Namen. Die Schweigepflicht bzw. Vertraulichkeit gilt jedoch nicht, wenn konkrete Anzeichen für eine akute Selbstgefährdung oder die Gefährdung anderer Personen vorliegen. Die Projektbeteiligten behalten sich vor, in solchen Fällen unverzüglich geeignete Stellen (z.B. medizinisches Personal, Notdienste oder zuständige Behörden) zu informieren, um Schaden abzuwenden.'
+          crime: 'Wir behandeln alle Angaben und erhobenen Daten vertraulich. Die Auswertung erfolgt anonymisiert bzw. ohne Nennung von Namen. Bitte beachten Sie jedoch, dass unser Vertraulichkeitsversprechen rechtlichen Grenzen unterliegt. Sollten uns im Rahmen der Studie Informationen über die Planung oder Ausführung bestimmter, sehr schwerwiegender Straftaten berichtet werden (wie sie im deutschen Strafgesetzbuch in § 138 StGB aufgeführt sind, zum Beispiel schwerer Hochverrat, Mord oder Totschlag), sind wir unter Umständen gesetzlich verpflichtet, diese Informationen an zuständige Stellen (z.B. Behörden) weiterzugeben. Eine Weitergabe erfolgt in einem solchen Ausnahmefall nur dann, wenn dies zwingend geboten ist, um eine drohende, schwere Tat abzuwenden, und wenn wir uns andernfalls selbst strafbar machen würden.'
+          triggerOther: 'selbst formulierte Triggerwarnung'
+      risksNoMeasure:
+          title: 'Warum werden keine Maßnahmen ergriffen?'
           types:
-            always: 'Die {addressee} werden immer über aufgetretene (Zufalls-)Befunde informiert. (Mitteilung obligatorisch)'
-            consent: 'Die {addressee} können in der Einwilligung auswählen, ob sie über aufgetretene (Zufalls-)Befunde informiert werden möchten. (Mitteilung optional)'
-          hint: 'Da Sie ausgewählt haben, dass die Mitteilung obligatorisch ist, wird den Einschlusskriterien automatisch hinzugefügt, dass die Teilnahme nur mit Einverständnis zur Mitteilung etwaiger Zufallsbefunde möglich ist.'
+            notNecessary: 'die benannten Risiken sind nicht von nennenswerter Höhe bzw. Schwere'
+            notPossible: 'die benannten Risiken lassen sich nicht reduzieren bzw. die Folgen nicht mildern'
+            risksNoMeasureOther: 'sonstige Begründung'
+          textHint: 'Bitte beschreiben.'
+      risksAfter: 'Bleibt nach Durchführung aller Maßnahmen eine Auftretenswahrscheinlichkeit von nennenswerter Höhe und/oder eine Schwere der Folgen, die über bloßes Unbehagen hinausgeht?'
+      burdensRisksContributors:
+        title: 'Welchen Belastungen bzw. Risiken sind die Projektbeteiligten ausgesetzt?'
+        hints:
+          headingHint: '' # needed for technical reasons
+          textHint: 'Bitte beschreiben Sie die Belastungen bzw. Risiken genauer.'
+        types:
+          noBurdensRisksContributors: 'keine Belastungen bzw. Risiken'
+          burdensRisksContributorsEmotional: 'psychisch-emotionale Belastungen für Projektbeteiligte'
+          burdensRisksContributorsPhysical: 'physische Belastungen/Risiken für Projektbeteiligte'
+          ethicalFinding: 'Konfrontation mit Zufallsbefunden/Verdachtsmomenten'
+          ethicalLegal: 'Konfrontation mit Tatsachen, die rechtliche Relevanz haben'
+          ethicalOther: 'Sonstiges'
+          burdensRisksContributorsOther: 'Sonstige Belastungen/Risiken für Projektbeteiligte'
+      burdensRisksUninvolved:
+        title: 'Welchen Belastungen bzw. Risiken sind unbeteiligte Dritte ausgesetzt?'
+        hints:
+          headingHint: '' # needed for technical reasons
+          textHint: 'Bitte beschreiben Sie die Belastungen bzw. Risiken genauer.'
+        types:
+          noBurdensRisksUninvolved: 'keine Belastungen bzw. Risiken'
+          observation: 'unbeabsichtigte Beobachtung bzw. Aufzeichnung des Verhaltens unbeteiligter Dritter'
+          burdensRisksUninvolvedPhysical: 'körperliche Risiken'
+          represent: 'Risiken für die Personengruppen/Communities, die die Teilnehmenden repräsentieren'
+          institution: 'Risiken für die Institution'
+          burdensRisksUninvolvedOther: 'Sonstige Belastungen/Risiken für unbeteiligte Dritte'
+      compensation:
+        title: 'Sind bezogen auf die o.g. Belastungen bzw. Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
+        textHints:
+            yes: >-
+              Bitte beschreiben Sie die Vorsichtsmaßnahmen bzw. Kompensationen genauer und stellen dabei den Bezug zu den Belastungen/Risiken her. Mögliche Maßnahmen sind beispielsweise {type, select,
+                burdensRisksContributors {Supervision, Abwechslung bei der Datenerhebung bzw. Auswertung, Erhebung durch Teams statt Einzelpersonen, Reisevorkehrungen, Verschleierung/Schutz von Angaben über die eigene Person, Vorabaufklärung Projektbeteiligter über die Rechtslage, internes Vorgehensprotokoll.}
+                other                    {technische Vorkehrungen, Informationen durch öffentliche Aushänge, reflektierte Kommunikation von Forschungsergebnissen.}}
+            no: 'Bitte begründen Sie, warum keine Vorsichtsmaßnahmen bzw. Kompensationen geplant sind.'
+      finding:
+        title: 'Beschreiben Sie bitte, welche Zufallsbefunde bzw. Verdachtsmomente anfallen können.'
+        informing:
+          title: 'Wie wird mit aufgetretenen Zufallsbefunden bzw. Verdachtsmomenten umgegangen?'
+          headingHint: >-
+            Wenn es im Rahmen der Datenerhebung zu Zufallsbefunden bzw. Verdachtsmomenten kommen kann, sind die {addressee, select,
+                  children {Erziehungsberechtigten}
+                  wards    {gesetzlichen Vertretungspersonen}
+                  other    {Teilnehmenden}} grundsätzlich über die Möglichkeit und sich daraus ergebende Konsequenzen zu informieren.
+          templates:
+            always: 'Die Studie dient ausschließlich Forschungszwecken. Eine medizinische oder psychologische Beurteilung der Daten erfolgt nicht. Es könnte uns jedoch ein ungewöhnliches Untersuchungsergebnis (Zufallsbefund bzw. Verdachtsmoment) im Rahmen ________ auffallen. In diesem Fall werden wir Sie darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen. Sofern bei dieser diagnostischen Abklärung eine Erkrankung festgestellt werden sollte, könnten Ihnen daraus unter Umständen Nachteile entstehen, z.B. der Abschluss einer privaten Krankenversicherung oder einer Lebensversicherung erschwert werden. Bitte beachten Sie: Auch wenn von uns kein ungewöhnliches Untersuchungsergebnis wahrgenommen wird, ist dies keine Bestätigung eines bestimmten Gesundheitsbildes/-zustands; die Untersuchung dient allein Forschungszwecken und stellt bzw. ersetzt keine ärztliche Diagnose.'
+            consent: 'Die Studie dient ausschließlich Forschungszwecken. Eine medizinische oder psychologische Beurteilung der Daten erfolgt nicht. Es könnte uns jedoch ein ungewöhnliches Untersuchungsergebnis (Zufallsbefund bzw. Verdachtsmoment) im Rahmen ________ auffallen. In diesem Fall werden wir Sie, sofern Sie einverstanden sind, darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen. Sofern bei dieser diagnostischen Abklärung eine Erkrankung festgestellt werden sollte, könnten Ihnen daraus unter Umständen Nachteile entstehen, z.B. der Abschluss einer privaten Krankenversicherung oder einer Lebensversicherung erschwert werden. Bitte beachten Sie: Auch wenn von uns kein ungewöhnliches Untersuchungsergebnis wahrgenommen wird, ist dies keine Bestätigung eines bestimmten Gesundheitsbildes/-zustands; die Untersuchung dient allein Forschungszwecken und stellt bzw. ersetzt keine ärztliche Diagnose.'
+          useTemplate: 'Vorlage nutzen'
+          types:
+            always: 'Die {addressee} werden immer über aufgetretene Zufallsbefunde/Verdachtsmomente informiert. (Mitteilung obligatorisch)'
+            consent: 'Die {addressee} können in der Einwilligung auswählen, ob sie über aufgetretene Zufallsbefunde/Verdachtsmomente informiert werden möchten. (Mitteilung optional)'
+            informingNo: 'Die {addressee} werden nicht über aufgetretene Zufallsbefunde/Verdachtsmomente informiert.'
+          hint: 'Da Sie ausgewählt haben, dass die Mitteilung obligatorisch ist, wird den Einschlusskriterien automatisch hinzugefügt, dass die Teilnahme nur mit Einverständnis zur Mitteilung etwaiger Zufallsbefunde bzw. Verdachtsmomente möglich ist.'
+          textHints:
+            noTemplate: 'Wortlaut für die Studieninformation'
+            cloze: 'Bitte ergänzen Sie die Angaben zur Vorlage (z.B. „der EKG-Untersuchung“, „der Sprachstandserhebung“, „des Hörtests“). Achten Sie darauf, dass sich Ihre Formulierung in den obenstehenden Satz des Vorlagentextes einfügt.' # text hint
+            informingNo: 'Bitte begründen Sie, warum die {addressee} nicht darüber informiert werden sollen.'
       feedback:
         title: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
         headingHint: 'Eine Rückmeldung individueller Testergebnisse sollte - insbesondere bei persönlich bedeutsamen Testinhalten - sorgsam überdacht werden. Bitte berücksichtigen Sie, dass eine Rückmeldung ggf. negative oder beunruhigende Ergebnisse umfassen kann. Eine Rückmeldung sollte nur erfolgen, wenn die Projektbeteiligten über Erfahrung in der Rahmung der individuellen Ergebnisse verfügen. Bitte beachten Sie auch, dass für die Rückmeldung individueller Testergebnisse voraussichtlich personenbezogene Daten benötigt werden, die mit den erhobenen Forschungsdaten verknüpft sind. Alternativ kann ein allgemeiner Ergebnisbericht zur Verfügung gestellt werden (auch hierfür werden voraussichtlich personenbezogene Daten benötigt, diese müssen jedoch nicht mit den individuellen Forschungsdaten verknüpft werden).'
@@ -1776,14 +1898,12 @@ projectdetails:
           risks: >-
             Mit der Teilnahme {information, select,
                                 post  {waren}
-                                other {sind}} {isFinding, select,
-                                                true  {- mit Ausnahme möglicher Zufallsbefunde -}
-                                                other {}} keine vorhersehbaren Nachteile oder Risiken verbunden.
+                                other {sind}} keine vorhersehbaren Nachteile oder Risiken verbunden.
           noTemplate: 'Aufgrund der Auswahl von <a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">Belastungen oder Risiken</a> kann keine Vorlage erstellt werden.'
       findingText:
-        title: 'Aufklärung über (Zufalls-)Befunde:'
+        title: 'Information über Zufallsbefunde/Verdachtsmomente:'
         template: >-
-          Die Studie dient ausschließlich Forschungszwecken. Eine medizinische oder psychologische Beurteilung der Daten erfolgt nicht. Es könnte uns jedoch ein ungewöhnliches Untersuchungsergebnis (Zufallsbefund) auffallen. In diesem Fall werden wir Sie{consent, select,
+          Die Studie dient ausschließlich Forschungszwecken. Eine medizinische oder psychologische Beurteilung der Daten erfolgt nicht. Es könnte uns jedoch ein ungewöhnliches Untersuchungsergebnis (Zufallsbefund/Verdachtsmoment) auffallen. In diesem Fall werden wir Sie{consent, select,
                                                                           true  {, sofern Sie einverstanden sind, darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen.}
                                                                           other { darüber informieren und Ihnen empfehlen, dieses Ergebnis diagnostisch weiter abklären zu lassen.}} Sofern bei dieser diagnostischen Abklärung eine Erkrankung festgestellt werden sollte, könnten {addressee, select,
                   children {Ihrem Kind}
@@ -1894,7 +2014,7 @@ projectdetails:
           otherSources: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">Daten von anderen Stellen</a>: Hinzuziehung individuell zuordenbarer Daten'
           loan: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#loan" data-base-route-i-ds-param="{routeIDs}">Geräteausgabe an Teilnehmende</a>: Ggf. werden personenbezogene Daten zur Bestätigung des Erhalts der Geräte verarbeitet.'
           online: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">Datenerhebung online</a>: Ggf. werden personenbezogene Daten (insbesondere IP-Adressen) zur technischen Qualitätssicherung verarbeitet.'
-          finding: '<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#finding" data-base-route-i-ds-param="{routeIDs}">Klinisch relevante Zufallsbefunde</a>: Ggf. werden personenbezogene Daten verarbeitet, um Teilnehmende über aufgetretene Zufallsbefunde zu informieren, insbesondere wenn die Rückmeldung nicht sofort, sondern zeitverzögert erfolgt.'
+          finding: '<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#finding" data-base-route-i-ds-param="{routeIDs}">Klinisch relevante Zufallsbefunde</a>: Ggf. werden personenbezogene Daten verarbeitet, um Teilnehmende über aufgetretene Zufallsbefunde/Verdachtsmomente zu informieren, insbesondere wenn die Rückmeldung nicht sofort, sondern zeitverzögert erfolgt.'
           feedback: '<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#feedback" data-base-route-i-ds-param="{routeIDs}">Rückmeldung individueller Testergebnisse an Teilnehmende</a>: Ggf. werden personenbezogene Daten verarbeitet, insbesondere wenn die Rückmeldung nicht sofort, sondern zeitverzögert erfolgt.'
           compensation:
             immediately: >- # other is voucher for type
@@ -2612,7 +2732,7 @@ checkDoc:
           begun: # 1:1
             start: 'Wenn das Forschungsprojekt, aus dem die Daten nachgenutzt werden sollen, nicht von einer Ethikkommission begutachtet wurde, aber damalige Projektbeteiligte auch am aktuellen Forschungsprojekt beteiligt sind, muss ausgewählt werden, dass das Projekt <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectDates">bereits begonnen</a> hat. Beachten Sie auch die weiteren '
             end: 'Hinweise.'
-          supportCommittee: 'Sie haben bestätigt, dass Sie Kontakt zu {committeeDat} aufgenommen haben. Das passt nicht dazu, dass keine <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">Beratung durch {committeeGen}</a> stattgefunden hat.'# 1:1
+          supportCommittee: 'Sie haben bestätigt, dass Sie Kontakt zu {committeeDat} aufgenommen haben. Das passt nicht dazu, dass keine <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#support">Beratung durch {committeeGen}</a> stattgefunden hat.' # 1:1
         dataSet: 'Gewinnung der ursprünglichen Forschungsdaten' # 'Beschreibung der [] fehlt.'
         dataSourceProcedure: 'Beschreibung des Vorgehens für die Nachnutzung bzw. Reanalyse' # '[] fehlt.'
         restriction:
@@ -2899,27 +3019,100 @@ checkDoc:
           measureTime: 'Mindestens ein Wert der reinen Erhebungszeit muss größer als 0 sein.'
           breaksMinutes: 'Vor-/Nachbereitungszeit'
           description: 'zeitlichen Verteilung der Erhebungen' # 'Beschreibung der [] fehlt.'
-      burdensRisks: # other is burdens/risks for contributors
+      burdensRisks: # other is burdens/risks for uninvolved
         title: >-
-          {burdensRisksType, select,
-            burdens {Belastungen}
-            risks   {Risiken}
-            other   {Belastungen/Risiken für Projektbeteiligte/Dritte}}
-        compensation: >-
-          {isNoCompensation, select,
-            true  {Begründung für fehlende}
-            other {}} Vorsichtsmaßnahmen für {burdensRisksType, select,
-                                                burdens {Belastungen}
-                                                risks   {Risiken}
-                                                other   {Belastungen/Risiken für Projektbeteiligte/Dritte}}
-        noBurdens: 'Begründung, warum keine Belastungen erwartet werden,'
+          {type, select,
+            burdens                   {Belastungen}
+            risks                     {Risiken}
+            risksOccurrence           {Maßnahmen zur Minimierung der Auftretenswahrscheinlichkeit bzw. Folgen der Risiken}
+            risksTrigger              {Triggerwarnungen für die Studieninformation}
+            burdensRisksContributors  {Belastungen/Risiken für Projektbeteiligte}
+            other                     {Belastungen/Risiken für Dritte}}
+        burdens: # ('[] fehlt.', wo nicht anders angegeben)
+          otherTypes:
+            burdensSensitiveOther: 'Benennung der sonstigen intimen Inhalte'
+            otherBurdens: 'Benennung der sonstigen Belastungsfaktoren'
+          mental: 'Wenn die Teilnehmenden einer <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">mentalen/kognitiven Aufgabenanforderung</a> ausgesetzt werden, muss „kognitive Belastung“ ausgewählt werden.' # 1:1 from here
+          emotional: 'Wenn die Teilnehmenden <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">Stress</a> ausgesetzt werden, muss „psychisch-emotionale Belastung“ ausgewählt werden.'
+          physical: 'Wenn die Teilnehmenden einer <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">körperlichen Aufgabenanforderung oder Intervention</a> ausgesetzt werden, muss „körperliche Belastung“ ausgewählt werden.'
+          physicalNo: 'Wenn „körperliche Belastung“ als Belastung ausgewählt wurde, muss unter <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">Maßnahmen</a> eine dazu passende Auswahl getroffen werden.'
+          integrity: 'Wenn die Teilnehmenden <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">invasiven Eingriffen</a> ausgesetzt sind, muss „Eingriff in die körperliche Integrität“ als Belastung ausgewählt werden.'
+          health: 'Wenn „(f)MRT“ als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measures" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> ausgewählt wurde, muss „intime Inhalte: Gesundheit“ als Belastung ausgewählt werden.'
+          genetic: 'Wenn entnommenes Material zur <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#gene" data-base-route-i-ds-param="{routeIDs}">Analyse von Gendaten</a> verwendet wird, muss „genetische/biometrische Daten“ als Belastung ausgewählt werden.' # 1:1 until here
         burdensEveryday: 'Antwort auf Frage, ob die Belastungen das alltagsübliche Maß übersteigen,'
+        risks:
+          otherTypes:
+            risksCognitiveOther: 'Benennung der sonstigen kognitiven Folgen'
+            risksEmotionalOther: 'Benennung der sonstigen psychisch-emotionalen Folgen'
+            risksPhysicalOther: 'Benennung der sonstigen körperlichen Folgen'
+            risksSocialOther: 'Benennung der sonstigen sozialen, ökonomischen oder politischen Folgen'
+            otherRisks: 'Benennung der sonstigen Risiken'
+          risksMental: 'Wenn „Erschöpfung infolge von Beanspruchung“ als Risiko ausgewählt wurde, muss „kognitive Belastung“ unter Belastungen ebenfalls ausgewählt werden.' # 1:1 from here
+          risksExhaustion: 'Wenn „Erschöpfung/Ermüdung infolge körperlicher Belastung“ als Risiko ausgewählt wurde, muss „körperliche Belastung“ unter Belastungen ebenfalls ausgewählt werden.'
+          risksMotionFromInterventions: 'Wenn die Teilnehmenden <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">virtueller Realität</a> ausgesetzt werden, muss „Simulator-/Bewegungs-Übelkeit“ als Risiko ausgewählt werden.'
+          risksMotion: 'Wenn „Simulator-/Bewegungs-Übelkeit“ als Risiko ausgewählt wurde, muss „virtuelle Realität“ als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> ausgewählt werden.'
+          risksStimuli: 'Wenn „Überreizung oder Beeinträchtigung der Sinne“ als Risiko ausgewählt wurde, müssen Stimuli als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> präsentiert werden.'
+          risksSocial: 'Wenn soziale, ökonomische oder politische Risiken auftreten können, müssen intime Inhalte als Belastung ausgewählt werden.' # 1:1 until here
         finding:
-          title: '(Zufalls-)Befunden'
-          description: '(Zufalls-)Befunde'
-          informing: 'Umgang mit den (Zufalls-)Befunden'
-          information: 'Wenn (Zufalls-)Befunde aufgedeckt werden könnten, muss es eine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> geben.'
-          consent: 'Wenn (Zufalls-)Befunde aufgedeckt werden könnten, muss eine <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">Einwilligung</a> erfolgen.'
+          description: 'Zufallsbefunde/Verdachtsmomente' # 'Beschreibung der [] fehlt.'
+          informing:
+            missing: 'Umgang mit den Zufallsbefunden/Verdachtsmomenten'
+            description: >-
+              {type, select,
+                informingNo {Begründung für fehlende Information über Zufallsbefunde/Verdachtsmomente}
+                other       {Wortlaut für die Studieninformation}}
+            information: 'Wenn Zufallsbefunde oder Verdachtsmomente aufgedeckt werden könnten, muss es eine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> geben.'
+            consent: 'Wenn Zufallsbefunde oder Verdachtsmomente aufgedeckt werden könnten, muss eine <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">Einwilligung</a> erfolgen.'
+        risksOccurrence:
+          missing: 'Maßnahmen zur Minimierung der Auftretenswahrscheinlichkeit bzw. Schwere der Folgen' # '[] fehlen.'
+          risksNoMeasure:
+            missing: 'Gründe, warum keine Maßnahmen ergriffen werden,' # '[] fehlen.'
+            description: 'Sonstige Begründung für fehlende Maßnahmen'
+          otherTypes:
+            allergy: 'Benennung der Unverträglichkeiten/Allergien'
+            excludeOther: 'Benennung der sonstigen Ausschlusskriterien'
+            occurrenceBeforeOther: 'Benennung der sonstigen Maßnahmen zur Minimierung der Auftretenswahrscheinlichkeit'
+            contactInfo: 'Benennung der Anlaufstellen und Kontaktmöglichkeiten'
+            contactOther: 'Sonstiger Hinweis zu Kontaktmöglichkeiten'
+            conditionOther: 'Benennung der sonstigen Bedarfsmaßnahmen'
+            occurrenceAfterOther: 'Benennung der sonstigen Maßnahmen zur Linderung der Folgen'
+          trigger: 'Sie haben ausgewählt, dass die Studieninformation eine Triggerwarnung enthalten soll. Das ist nur möglich, wenn es eine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">Vorab-Aufklärung</a> gibt.'
+          abort: 'Wenn die Untersuchung bei Unwohlsein der teilnehmenden Person unterbrochen bzw. abgebrochen wird, muss dies auch als <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#terminateCriteria" data-base-route-i-ds-param="{routeIDs}">Kriterium für einen Abbruch durch die Projektbeteiligten</a> ausgewählt werden.'
+          firstAidCrisis: >-
+            Sie haben ausgewählt, dass eine in {type, select,
+                firstAid {erster Hilfe}
+                other    {psychologischer Beratung/Krisenintervention}} geschulte Person bei der Erhebung anwesend ist. Das ist nur möglich, wenn {isPresence, select,
+                      true  {Projektbeteiligte bei der Erhebung <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">anwesend</a> sind}
+                      other {die Erhebung nicht <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">online</a> stattfindet}}.
+          rectification: >-
+            Sie haben ausgewählt, dass Fehlinformationen im Nachhinein richtiggestellt werden. Das ist nur {isRisks, select,
+                      true  {sinnvoll, wenn das Risiko besteht, dass Fehlinformationen über die Studie hinaus geglaubt werden.}
+                      other {möglich, wenn eine <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preComplete" data-base-route-i-ds-param="{routeIDs}">nachträgliche vollständige Aufklärung</a> stattfindet.}}
+        risksTrigger:
+          otherTypes:
+            burdensome: 'Thema, das als belastend wahrgenommen werden kann,'
+            risksTriggerOther: 'Sonstige Triggerwarnung'
+        risksAfter: 'Antwort auf Frage, ob nach Durchführung der Maßnahmen ein nennenswertes Risiko verbleibt,'
+        burdensRisksContributors:
+          otherTypes:
+            ethicalOther: 'Benennung der sonstigen Kenntnis von Informationen über die Teilnehmenden'
+            burdensRisksContributorsOther: 'Benennung der sonstigen Belastungen/Risiken für Projektbeteiligte'
+          ethicalFinding: 'Wenn für die Projektbeteiligten das Risiko der Konfrontation mit Zufallsbefunden/Verdachtsmomenten besteht, muss dies auch als Risiko für die Teilnehmenden ausgewählt werden.'
+          ethicalLegal: 'Wenn für die Projektbeteiligten das Risiko der Konfrontation mit rechtlich relevanten Tatsachen besteht, müssen soziale, ökonomische oder politische Risiken für die Teilnehmenden ausgewählt werden.'
+        burdensRisksUninvolved:
+          otherTypes:
+            burdensRisksUninvolvedOther: 'Benennung der sonstigen Belastungen/Risiken für unbeteiligte Dritte'
+        compensation:
+          missing: >-
+            Antwort auf Frage nach Vorsichtsmaßnahmen bzw. Kompensationen bezüglich der Belastungen/Risiken für {type, select,
+                                                                                                        burdensRisksContributors {Projektbeteiligte}
+                                                                                                        other                    {Dritte}}
+          description: >-
+            {chosen, select,
+              0     {Beschreibung der}
+              other {Begründung für fehlende}} Vorsichtsmaßnahmen bezüglich der {type, select,
+                                                  burdensRisksContributors {Belastungen/Risiken für Projektbeteiligte}
+                                                  other                    {Belastungen/Risiken für Dritte}}
         feedback:
           title: 'Rückmeldung individueller Testergebnisse'
           description: 'individuellen Testergebnisse'
@@ -2990,7 +3183,6 @@ checkDoc:
         goals: 'Hintergrund und Zielsetzung der Studie'
         pro: 'Vorteile'
         con: 'Nachteile'
-        findingText: 'Aufklärung über (Zufalls-)Befunde'
         conflictText: 'Aufklärung über Interessenkonflikte'
       informationIII:
         goals: 'Ziele der Studie'
@@ -3351,9 +3543,6 @@ completeForm:
                   <li>Bearbeiten Sie weder die PDF-Datei des Gesamtantrags noch die XML-Datei mit anderen Programmen.</li>}
             other {<li>Bitte prüfen Sie die Inhalte des Gesamtantrags nochmals gründlich. Falls Änderungen erforderlich sind, nehmen Sie diese ausschließlich im Ethiktool vor und laden Sie anschließend alle Dokumente (ZIP-Datei) erneut herunter.</li>}}
           <li>Die ethische Begutachtung erfolgt ausschließlich auf Basis der PDF-Datei des Gesamtantrags.</li>
-          {isSupervisor, select,
-            true  {<li>Bei der Einreichung von Qualifikationsarbeiten nehmen Sie die Erstbetreuung mit in die Korrespondenz auf.</li>}
-            other {}}
           <li>Wenn alle Angaben korrekt sind, senden Sie die PDF-Datei des Gesamtantrags mit der zugehörigen XML-Datei {committeeType, select,
           TUC   {an {committeeAcc} unter ethik@tu-chemnitz.de (E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet, bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Hinweise zum Datenschutz</a>)}
           EUB   {an {committeeAcc} unter ethikkommission@uni-bielefeld.de}
@@ -3368,6 +3557,9 @@ completeForm:
           PHT   {an {committeeAcc} unter ethikkommission@ph-tirol.ac.at}
           BTU   {an {committeeAcc} unter ethik@b-tu.de}
           other {an {committeeAcc} unter der E-Mail-Adresse {committeeGen}}}.</li>
+          {isSupervisor, select,
+            true  {<li>Bei der Einreichung von Ethikanträgen zu Qualifikationsarbeiten nehmen Sie die Erstbetreuung mit in die Korrespondenz auf.</li>}
+            other {}}
 
 quitModal:
   title: 'Bearbeitung dieses Antrags beenden'

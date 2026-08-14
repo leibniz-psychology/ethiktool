@@ -85,9 +85,9 @@ class DataSourceController extends ControllerAbstract
                 $this->addChildNodes($measuresNode->addChild(self::durationNode),self::durationTypes);
                 // burdens/risks
                 $burdensRisksNode = $measureNodeNew->{self::burdensRisksNode};
-                $this->addChildNodes($burdensRisksNode->addChild(self::burdensNode),[self::burdensTypesNode]);
-                $this->addChildNodes($burdensRisksNode->addChild(self::risksNode),[self::risksTypesNode]);
-                $this->addChosenNode($burdensRisksNode,self::burdensRisksContributorsNode);
+                foreach ([self::burdensNode,self::risksNode,self::burdensRisksContributorsNode,self::burdensRisksUninvolvedNode] as $type) {
+                    $this->addChildNodes($burdensRisksNode->addChild($type),[$type.'Type']);
+                }
                 $this->addChildNodesChosen($burdensRisksNode,[self::findingNode,self::feedbackNode]);
                 // compensation
                 $compensationNode = $measureNodeNew->{self::compensationNode};

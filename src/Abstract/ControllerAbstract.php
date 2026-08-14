@@ -854,12 +854,11 @@ abstract class ControllerAbstract extends AbstractController
             $conArray = $measureArray[self::textsNode][self::conNode] ?? '';
             if ($conArray!=='') {
                 $isTemplate = $conArray[self::conTemplate]==='1';
-                $burdensRisksArray = $measureArray[self::burdensRisksNode];
-                $isBurdensRisks = $this->getBurdensRisks($burdensRisksArray);
+                $isBurdensRisks = $this->getBurdensRisks($measureArray[self::burdensRisksNode]);
                 if ($isTemplate || $addTemplate) {
                     $translationPrefix = 'projectdetails.pages.texts.con.template.';
                     if (!$isBurdensRisks) { // add no burdens/risks
-                        $returnString .= ' '.$this->translateString($translationPrefix.self::risksNode,[self::informationNode => $information, 'isFinding' => $this->getStringFromBool($burdensRisksArray[self::findingNode][self::chosen]==='0')]);
+                        $returnString .= ' '.$this->translateString($translationPrefix.self::risksNode,[self::informationNode => $information]);
                     }
                     if ($addNoTemplate && $returnString==='') { // add sentence that no template could be created
                         $returnString = $this->translateString($translationPrefix.'noTemplate',['routeIDs' => '{&quot;'.self::studyID.'&quot;:'.'&quot;'.$routeParams[self::studyID].'&quot;, &quot;'.self::groupID.'&quot;:&quot;'.$routeParams[self::groupID].'&quot;, &quot;'.self::measureID.'&quot;:&quot;'.$routeParams[self::measureID].'&quot;}']);
@@ -887,28 +886,22 @@ abstract class ControllerAbstract extends AbstractController
         return false;
     }
 
-    /** Checks if either burdens, risks, or burdens/risks for contributors are selected.
+    /** Checks if either burdens, risks, or burdens/risks for contributors or third partis are selected.
      * @param array|string $burdensRisksArray array containing the burdens and risks information
-     * @param string $type must equal 'burdens','risks', or 'burdensRisksContributors'
+     * @param string $type must equal 'burdens','risks', 'burdensRisksContributors' or 'burdensRisksUninvolved'
      * @param bool $checkEveryday if true and $type equals 'burdens', the first element of the return array is only true if the 'burdensEveryday' question is answered with yes
-     * @return array 0: true if any option except 'no' is selected (burdens/risks for contributors: if 'yes' is selected), 1: true if 'no' is selected; otherwise false in both cases
+     * @return array 0: true if any option except 'no' is selected, 1: true if 'no' is selected; otherwise false in both cases
      */
     protected function getBurdensOrRisks(array|string $burdensRisksArray, string $type, bool $checkEveryday = true): array
     {
         $typeArray = $burdensRisksArray[$type] ?? [];
-        if ($type!==self::burdensRisksContributorsNode) {
-            $tempArray = $typeArray[$type.'Type'] ?? '';
-            $tempArray = $tempArray==='' ? [] : $tempArray;
-            if ($tempArray==[]) {
-                return [false,false];
-            }
-            $isBurdens = $type===self::burdensNode;
-            $isNo = array_key_exists($isBurdens ? self::noBurdens : self::noRisks,$tempArray);
-            return [!$isNo && (!$isBurdens || !$checkEveryday || $typeArray[self::burdensEveryday]=='0'),$isNo];
+        $tempArray = $typeArray[$type.'Type'] ?? '';
+        $tempArray = $tempArray==='' ? [] : $tempArray;
+        if ($tempArray===[]) {
+            return [false,false];
         }
-        // burdens/risks for contributors
-        $chosen = $typeArray[self::chosen] ?? '';
-        return [$chosen==='0',$chosen==='1'];
+        $isNo = array_key_exists('no'.ucfirst($type),$tempArray);
+        return [!$isNo && ($type!==self::burdensNode || !$checkEveryday || $typeArray[self::burdensEveryday]=='0'),$isNo];
     }
 
     /** Sets the positions for the applicant with and without qualification. Additionally, all positions are translated.
@@ -1409,24 +1402,25 @@ abstract class ControllerAbstract extends AbstractController
                                     ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
                             // burdens and risks
                             $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
-                            $tempVal = $burdensRisksArray[self::burdensRisksContributorsNode][self::chosen];
-                            $isBurdensRisksContributors = $tempVal==='0';
                             $burdensEveryday = $burdensRisksArray[self::burdensNode][self::burdensEveryday] ?? '';
-                            $allShort = $allShort && $tempVal==='1';
-                            $parameters['isBurdensRisksContributors'] = $this->getStringFromBool($isBurdensRisksContributors);
-                            foreach ([self::burdensNode, self::risksNode] as $type) {
+                            $risksArray = $burdensRisksArray[self::risksNode];
+                            $risksOccurrence = $risksArray[self::risksOccurrenceNode] ?? '';
+                            $hasRisksOccurrence = $risksOccurrence!=='';
+                            $isNoRisksOccurrence = $hasRisksOccurrence && array_key_exists('noRisksOccurrence',$risksOccurrence);
+                            $risksNoMeasure = $risksArray[self::risksNoMeasureNode] ?? '';
+                            $hasRisksNoMeasure = $risksNoMeasure!=='';
+                            $hasRisksNoMeasureNotNecessary = $hasRisksNoMeasure && array_key_exists('notNecessary',$risksNoMeasure);
+                            $risksAfter = $risksArray[self::risksAfterNode] ?? '';
+                            foreach ([self::burdensNode,self::risksNode,self::burdensRisksContributorsNode,self::burdensRisksUninvolvedNode] as $type) {
                                 $isBurdens = $type===self::burdensNode;
+                                $isRisks = $type===self::risksNode;
                                 $tempArray = $burdensRisksArray[$type][$type.'Type'];
                                 $isChosen = is_array($tempArray);
-                                $isCurrent = $isChosen && array_diff_key($tempArray, [($isBurdens ? self::noBurdens : self::noRisks) => ''])!==[];
-                                $allShort = $allShort && $isChosen && !$isCurrent;
-                                $parameters['is'.ucfirst($type)] = $this->getStringFromBool($isCurrent);
-                                $briefReport[$this->getBriefReportHeading($type)] = $this->getBriefReportAnswer($type, $isBurdensRisksContributors || $isCurrent && (!$isBurdens || $burdensEveryday==='0') ? self::answerYes : ($isBurdens && $burdensEveryday==='1' ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
+                                $isNo = array_key_exists('no'.ucfirst($type),$tempArray);
+                                $isCurrent = $isChosen && !$isNo;
+                                $allShort = $allShort && $isChosen && !$isCurrent && (!$isRisks || $isNo || $hasRisksOccurrence && ($isNoRisksOccurrence && $hasRisksNoMeasureNotNecessary) || !$isNoRisksOccurrence && $risksAfter==='1');
+                                $briefReport[$this->getBriefReportHeading($type)] = $this->getBriefReportAnswer($type,$isCurrent && (!$isBurdens || $burdensEveryday==='0') && (!$isRisks || $hasRisksOccurrence && (!$isNoRisksOccurrence && $risksAfter==='0' || $isNoRisksOccurrence && $hasRisksNoMeasure && !$hasRisksNoMeasureNotNecessary)) ? self::answerYes : ($isBurdens && $burdensEveryday==='1' || $isRisks && ($hasRisksOccurrence && (!$isNoRisksOccurrence && $risksAfter==='1' || $isNoRisksOccurrence && $hasRisksNoMeasure && !$hasRisksNoMeasureNotNecessary)) ? self::answerUnclear : self::answerNo),$parameters,$getReviewError);
                             }
-                            // finding
-                            $tempVal = $burdensRisksArray[self::findingNode][self::chosen];
-                            $allShort = $allShort && $tempVal==='1';
-                            $briefReport[$this->getBriefReportHeading(self::findingNode)] = $this->getBriefReportAnswer(self::findingNode, $tempVal==='0' ? self::answerYes : self::answerNo, $parameters, $getReviewError);
                             // data privacy -> no set of $allShort because data privacy is only relevant for full proposals
                             if ($isReviewFull) {
                                 $dataPrivacyArray = $measureTimePoint[self::privacyNode];
@@ -1925,10 +1919,11 @@ abstract class ControllerAbstract extends AbstractController
         $patch = $loadedVersion[2];
         $isMajor1 = $major==='1';
         $isMajor2 = $major==='2';
+        $isMajor3 = $major==='3';
         $isMinorSmaller3 = $minor<'3';
         $isMajorSmaller3 = $major<'3';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajorSmaller3 || $minor<'4';
+        $isSmallerCurrent = $major<'4';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
@@ -1937,8 +1932,9 @@ abstract class ControllerAbstract extends AbstractController
         $isSmaller281 = $isMajor1 || $isMajor2 && $minor<'8'; // only productive minor version 8 is 2.8.1
         $isSmaller290 = $isMajor1 || $isMajor2 && $minor<'9';
         $isSmaller2100 = $isMajor1 || $isMajor2 && $minor<'10';
-        $isSmaller320 = $isMajorSmaller3 || $minor<'2';
-        $isSmaller330 = $isMajorSmaller3 || $minor<'3';
+        $isSmaller320 = $isMajorSmaller3 || $isMajor3 && $minor<'2';
+        $isSmaller330 = $isMajorSmaller3 || $isMajor3 && $minor<'3';
+        $isSmaller340 = $isMajorSmaller3 || $isMajor3 && $minor<'4';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2024,6 +2020,7 @@ abstract class ControllerAbstract extends AbstractController
                         $burdensRisksNode = $measureTimePointNode->{self::burdensRisksNode};
                         $burdensNode = $burdensRisksNode->{self::burdensNode};
                         $compensationNode = $measureTimePointNode->{self::compensationNode}[0];
+                        $textsNode = $measureTimePointNode->{self::textsNode};
                         $privacyNode = $measureTimePointNode->{self::privacyNode};
                         if ($isMajor1) {
                             // updates for versions before 2.0.0
@@ -2126,10 +2123,8 @@ abstract class ControllerAbstract extends AbstractController
                                 }
 
                             }
-                            // burdensRisks (update of nodes)
-                            if ($burdensNode->{self::burdensTypesNode}->{self::noBurdens}->getName()!=='') { // 'no burdens' is selected
-                                $this->insertElementBefore(self::burdensNoDescription, $burdensRisksNode->{self::risksNode});
-                                $burdensRisksNode->{self::burdensNoDescription} = (string) $burdensNode->{self::descriptionNode};
+                            // burdensRisks (update of nodes) -> version 2.0.0 added 'burdensNoDescription' if 'no burdens' was selected. Version 4.0.0 removed the node, therefore there is no need to add it here
+                            if ($burdensNode->{self::burdensTypesNode}->{'noBurdens'}->getName()!=='') { // 'no burdens' is selected
                                 $this->removeElement(self::descriptionNode, $burdensNode);
                             }
                             // compensation (update of nodes)
@@ -2187,7 +2182,6 @@ abstract class ControllerAbstract extends AbstractController
                                 $this->removeElement(self::peopleDescription, $groupsNode);
                             }
                             // measures
-                            $textsNode = $measureTimePointNode->{self::textsNode};
                             $hasTexts = count($textsNode->children())>0;
                             // move procedure node from texts to measures
                             $this->insertElementBefore(self::procedureNode, $measuresNode->{self::measuresNode});
@@ -2358,61 +2352,118 @@ abstract class ControllerAbstract extends AbstractController
                             }
                         }
                         // updates for versions before 3.4.0
-                        foreach ([self::measuresNode,self::interventionsNode] as $type) {
-                            $types = self::measuresInterventionsTypes[$type];
-                            $typeNode = $measuresNode->{$type};
-                            $remove = [];
-                            $isMeasure = $type===self::measuresNode;
-                            $descriptions = [];
-                            foreach ($typeNode->children() as $child) {
-                                $name = $child->getName();
-                                if (!in_array($name,$types)) { // remove node with no equivalent
-                                    $remove[] = $name;
-                                    $description = (string) $child;
-                                    if ($description!=='') {
-                                        $descriptions[] = $description;
+                        if ($isSmaller340 && count($measuresNode->children())>0) { // update only if new data are collected
+                            foreach ([self::measuresNode,self::interventionsNode] as $type) {
+                                $this->updateMultiSelection($measuresNode->{$type},self::measuresInterventionsTypes[$type],$type.'Other'); // remove nodes with no equivalent
+                            }
+                            $measures = $measuresNode->{self::measuresNode};
+                            $tempArray = [];
+                            foreach ([self::measuresObservation => [self::measuresObservation], self::measuresQuestionnaire => [self::surveyConductNode,self::screeningNode]] as $measure => $further) {
+                                if ($this->checkElement($measure,$measures)) {
+                                    $tempArray = array_merge($tempArray,$further);
+                                }
+                            }
+                            if ($tempArray!==[]) { // add 'measuresFurther' node
+                                $this->insertElementBefore(self::measuresFurtherNode,$measuresNode->{$this->checkElement(self::measuresDescription,$measuresNode) ? self::measuresDescription : self::interventionsNode},$tempArray);
+                            }
+                            $this->updateMultiSelectionOrder($measuresNode->{self::interventionsNode},['tasks' => ['physical'], 'intervention' => ['stimulation','psychological','therapy'], 'invasive' => ['medical']]); // move interventions in sub-categories
+                            $terminateCriteriaNode = $consentNode->{self::terminateCriteriaNode} ?? '';
+                            if ($terminateCriteriaNode!=='' && count($terminateCriteriaNode->children())===0) { // replace text field by multi-selection
+                                $terminateCriteria = (string) $terminateCriteriaNode;
+                                $consentNode->{self::terminateCriteriaNode} = '';
+                                if ($terminateCriteria!=='') { // set entered text as 'other'
+                                    $terminateCriteriaNode->addChild(self::terminateCriteriaOther,$terminateCriteria);
+                                }
+                            }
+                        }
+                        // updates for versions before 4.0.0
+                        if (count($burdensRisksNode->children())>0) { // update only if new data are collected
+                            $burdensTypesNodeCloned = $this->cloneNode($burdensNode->{self::burdensTypesNode});
+                            $risksNode = $burdensRisksNode->{self::risksNode};
+                            $risksTypesNodeCloned = $this->cloneNode($risksNode->{self::risksTypesNode});
+                            foreach ([self::burdensNode, self::risksNode] as $type) {
+                                $curNode = $burdensRisksNode->{$type};
+                                $typeNode = $curNode->{$type.'Type'};
+                                $this->updateMultiSelection($typeNode, self::burdensRisksTypes[$type], 'other'.ucfirst($type)); // remove nodes with no equivalent
+                                $isBurdens = $type===self::burdensNode;
+                                if ($isBurdens) {
+                                    if ($this->checkElement(self::burdensRisksCompensationNode, $curNode)) {
+                                        $curNode->{self::descriptionNode} = trim(((string)$curNode->{self::descriptionNode})."\n".((string)$curNode->{self::burdensRisksCompensationNode}->{self::descriptionNode})); // move compensation description to burdens description
+                                    }
+                                    $this->removeElement('burdensNoDescription', $burdensRisksNode); // remove description if 'no burdens' was selected
+                                } else {
+                                    $this->updateMultiSelectionOrder($risksNode->{self::risksTypesNode}, ['risksCognitive' => ['risksMental'], 'risksPhysical' => ['risksIntegrity']]); // move risks to sub-category
+                                    $findingNodeOld = $burdensRisksNode->{self::findingNode};
+                                    if (((string)$findingNodeOld->{self::chosen})==='0') { // update finding
+                                        if ($this->checkElement('noRisks',$typeNode)) { // remove 'no risks' and add description node
+                                            $this->removeElement('noRisks',$typeNode);
+                                            $curNode->addChild(self::descriptionNode);
+                                        }
+                                        $this->addChildNodes($typeNode->addChild('risksFinding'), ['risksIncidental', 'risksSuspicion']); // finding are now sub-options of risks
+                                        $findingNode = $risksNode->addChild(self::findingNode); // keep description and informing in separate node
+                                        $findingNode->addChild(self::descriptionNode, (string)$findingNodeOld->{self::descriptionNode});
+                                        $informingNode = $this->addChosenNode($findingNode, self::informingNode);
+                                        $tempVal = (string)$findingNodeOld->{self::informingNode};
+                                        $informingNode->{self::chosen} = $tempVal;
+                                        $hasFindingText = $this->checkElement(self::findingTextNode,$textsNode);
+                                        $findingTextNode = $textsNode->{self::findingTextNode};
+                                        if ($tempVal!=='') {
+                                            $hasTemplate = $hasFindingText && !$this->checkElement(self::descriptionNode, $findingTextNode); // if template is chosen, no description node exists
+                                            $informingNode->addChild(self::informingTemplate, $hasTemplate ? '1' : '');
+                                            $informingNode->addChild(self::descriptionNode, $hasTemplate || $hasFindingText ? '' : (string)$findingTextNode->{self::descriptionNode});
+                                        }
+                                        $this->removeElement(self::findingTextNode, $textsNode); // remove finding node from texts
+                                    }
+                                    // add risks occurrence and risks after
+                                    if (count($typeNode->children())>0 && !$this->checkElement('noRisks', $typeNode)) {
+                                        $this->addChildNodes($curNode, [self::risksOccurrenceNode]);
+                                        $curNode->{self::risksOccurrenceNode}->addChild(self::risksOccurrenceNode.'Type');
+                                    }
+                                }
+                                $this->removeElement(self::burdensRisksCompensationNode, $curNode); // remove compensation question
+                                $oldNode = $isBurdens ? $burdensTypesNodeCloned : $risksTypesNodeCloned;
+                                foreach ($isBurdens ? ['sensitive' => 'burdensSensitive'] : ['risksEmotional' => 'risksEmotional', 'risksPhysical' => 'risksPhysical', 'risksSocial' => 'risksSocial'] as $key => $value) { // for options that now have sub-options, select 'other' option of this category
+                                    if ($this->checkElement($key, $oldNode)) {
+                                        $other = $value.'Other';
+                                        if ($this->checkElement($value, $typeNode)) {
+                                            $typeNode->{$value}->addChild($other);
+                                        } else {
+                                            $typeNode->addChild($value)->addChild($other);
+                                        }
                                     }
                                 }
                             }
-                            foreach ($remove as $nodeName) {
-                                $this->removeElement($nodeName,$typeNode);
+                            $this->removeElement(self::findingNode, $burdensRisksNode); // remove finding node
+                            $burdensRisksContributorsNode = $burdensRisksNode->{self::burdensRisksContributorsNode};
+                            $chosen = (string)$burdensRisksContributorsNode->{self::chosen};
+                            $isAnswered = $chosen!=='';
+                            $isContributors = $chosen==='0';
+                            if ($this->checkElement(self::feedbackNode,$burdensRisksNode)) {
+                                $this->insertElementBefore(self::burdensRisksUninvolvedNode, $burdensRisksNode->{self::feedbackNode});
+                            } else {
+                                $burdensRisksNode->addChild(self::burdensRisksUninvolvedNode);
                             }
-                            if ($descriptions!==[]) { // add all descriptions from removed options as 'other' description
-                                $typeNode->addChild($isMeasure ? 'measuresOther' : 'interventionsOther',implode('; ',$descriptions));
-                            }
-                        }
-                        $measures = $measuresNode->{self::measuresNode};
-                        $tempArray = [];
-                        foreach ([self::measuresObservation => [self::measuresObservation], self::measuresQuestionnaire => [self::surveyConductNode,self::screeningNode]] as $measure => $further) {
-                            if ($this->checkElement($measure,$measures)) {
-                                $tempArray = array_merge($tempArray,$further);
-                            }
-                        }
-                        if ($tempArray!==[]) { // add 'measuresFurther' node
-                            $this->insertElementBefore(self::measuresFurtherNode,$measuresNode->{$this->checkElement(self::measuresDescription,$measuresNode) ? self::measuresDescription : self::interventionsNode},$tempArray);
-                        }
-                        $interventionsNode = $measuresNode->{self::interventionsNode};
-                        foreach (['tasks' => ['physical'], 'intervention' => ['stimulation','psychological','therapy'], 'invasive' => ['medical']] as $subCategory => $interventions) { // move interventions in sub-categories
-                            $tempArray = [];
-                            foreach ($interventions as $intervention) {
-                                if ($this->checkElement($intervention,$interventionsNode)) {
-                                    $tempArray[$intervention] = (string) $interventionsNode->{$intervention};
-                                    $this->removeElement($intervention,$interventionsNode);
+                            foreach ([self::burdensRisksContributorsNode, self::burdensRisksUninvolvedNode] as $type) {
+                                $tempVal = $type.'Type';
+                                $curNode = $burdensRisksNode->{$type};
+                                $curNode->addChild($tempVal);
+                                if ($isAnswered) {
+                                    $curNode->{$tempVal}->addChild($isContributors ? $type.'Other' : 'no'.ucfirst($type));
+                                    if ($type===self::burdensRisksUninvolvedNode && $isContributors) { // add description and compensation node
+                                        $curNode->addChild(self::descriptionNode);
+                                        $this->addChosenNode($curNode, self::burdensRisksCompensationNode);
+                                    }
                                 }
                             }
-                            if ($tempArray!==[]) {
-                                $subNode = $interventionsNode->addChild($subCategory);
-                                foreach ($tempArray as $key => $value) {
-                                    $subNode->addChild($key,$value);
+                            $this->removeElement(self::chosen, $burdensRisksContributorsNode);
+                            // add criteria to groups as they are also asked for short review processes
+                            if (!$this->checkElement(self::criteriaIncludeNode,$groupsNode)) {
+                                $nodeAfter = $groupsNode->{$this->checkElement(self::sampleSizeNode,$groupNode) ? self::sampleSizeNode : self::recruitment};
+                                foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $criteria) {
+                                    $this->insertElementBefore($criteria,$nodeAfter,[self::noCriteriaNode,self::criteriaNode]);
                                 }
-                            }
-                        }
-                        $terminateCriteriaNode = $consentNode->{self::terminateCriteriaNode} ?? '';
-                        if ($terminateCriteriaNode!=='' && count($terminateCriteriaNode->children())===0) { // replace text field by multi-selection
-                            $terminateCriteria = (string) $terminateCriteriaNode;
-                            $consentNode->{self::terminateCriteriaNode} = '';
-                            if ($terminateCriteria!=='') { // set entered text as 'other'
-                                $terminateCriteriaNode->addChild(self::terminateCriteriaOther,$terminateCriteria);
+                                $groupsNode->{self::criteriaIncludeNode}->{self::criteriaNode}->addChild(self::criteriaIncludeNode.'0');
+                                $this->setFirstInclusion($groupsNode,$request->getLocale()); // set first inclusion criterion
                             }
                         }
                     } // foreach measure time point
@@ -2429,6 +2480,58 @@ abstract class ControllerAbstract extends AbstractController
         $this->insertElementBefore(self::department,$infosNode->{'professorship'});
         $infosNode->{self::department} = (string) $infosNode->{self::institutionInfo};
         $infosNode->{self::institutionInfo} = '';
+    }
+
+    /** Updates a multi selection by removing all children from $typeNode that have no equivalent in $types.
+     * @param SimpleXMLElement $typeNode Node where children may get removed
+     * @param array $types names of children that are not removed
+     * @param string $otherNode name of node that gets created and where all descriptions of removed elements will be added
+     * @return void
+     */
+    private function updateMultiSelection(SimpleXMLElement $typeNode, array $types, string $otherNode): void
+    {
+        $remove = [];
+        $descriptions = [];
+        foreach ($typeNode->children() as $child) {
+            $name = $child->getName();
+            if (!in_array($name,$types)) { // remove node with no equivalent
+                $remove[] = $name;
+                $description = (string) $child;
+                if ($description!=='') {
+                    $descriptions[] = $description;
+                }
+            }
+        }
+        foreach ($remove as $nodeName) {
+            $this->removeElement($nodeName,$typeNode);
+        }
+        if ($descriptions!==[]) { // add all descriptions from removed options as 'other' description
+            $typeNode->addChild($otherNode,implode('; ',$descriptions));
+        }
+    }
+
+    /** Moves nodes into sub-categories.
+     * @param SimpleXMLElement $node node that gets updated
+     * @param array $categories new category order
+     * @return void
+     */
+    private function updateMultiSelectionOrder(SimpleXMLElement $node, array $categories): void
+    {
+        foreach ($categories as $subCategory => $options) {
+            $tempArray = [];
+            foreach ($options as $option) {
+                if ($this->checkElement($option,$node)) {
+                    $tempArray[$option] = (string) $node->{$option};
+                    $this->removeElement($option,$node);
+                }
+            }
+            if ($tempArray!==[]) {
+                $subNode = $node->addChild($subCategory);
+                foreach ($tempArray as $key => $value) {
+                    $subNode->addChild($key,$value);
+                }
+            }
+        }
     }
 
     /** Removes indices from the contributor tasks.

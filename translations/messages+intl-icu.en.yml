@@ -67,7 +67,6 @@ multiple:
     pages:
       textsIntro: 'Study information'
       textsCon: 'Study information'
-      textsFinding: 'Study information'
       textsConflict: 'Study information'
       consentApparatusInsuranceWay: 'Legal aspects'
       dataPrivacyOnline: 'Data privacy'
@@ -79,15 +78,10 @@ multiple:
     consent: 'the disadvantages of withdrawal for the {addressee}'
     texts: >-
       the introduction, the aims, the procedure{isConflict, select,
-                                                 true  {, the advantages/disadvantages{isFinding, select,
-                                                                                        true  {, the information about incidental findings}
-                                                                                        other {}} and the information about conflict of interest}
-                                                 other {{isFinding, select,
-                                                          true  {, the advantages/disadvantages and the information about incidental findings}
-                                                          other {}} and the advantages/disadvantages}}
+                                                 true  {, the advantages/disadvantages and the information about conflict of interest}
+                                                 other { and the advantages/disadvantages}}
     textsIntro: 'the text on study introduction'
     textsCon: 'the text on disadvantages'
-    textsFinding: 'the information about incidental findings'
     textsConflict: 'the information about conflicts of interest'
     consentApparatusInsuranceWay: >-
       {input, select,
@@ -1505,79 +1499,207 @@ projectdetails:
           breaksMinutes: 'Minutes:'
           hint: 'You may enter a duration of ''0''.'
     burdensRisks: # other is burdens/risks for contributors
-      textHint: >-
-        Please describe the {type, select,
-                              burdens {selected burdens or strains}
-                              risks   {selected risks}
-                              other   {burdens/risks}} in detail.
-      compensation:
-        title: >-
-          Are precautionary measures or compensations planned for the {type, select,
-                                                                        burdens {burdens or strains mentioned above}
-                                                                        risks   {risks mentioned above}
-                                                                        other   {burdens/risks}}?
-        textHints:
-          yes: >-
-            Please describe the precautionary measures or compensations in detail with reference to the {type, select,
-                                                                      burdens {selected burdens or strains}
-                                                                      risks   {selected risks}
-                                                                      other   {burdens/risks}}. Please do not mention the voluntary nature of participation or the right to withdraw from participation without disadvantages because these principles hold independent of burdens or risks.
-          no: 'Please explain why no precautionary measures or compensations are planned.'
+      placeholder: 'please specify'
+      typesMain:
+        burdensSensitive: 'intimate contents' # from here: burdens
+        risksCognitive: 'cognitive effects ' # from here: risks
+        risksEmotional: 'psychological/emotional effects'
+        risksPhysical: 'bodily/physical effects '
+        risksFinding: 'identification of incidental findings or suspicions of mental or physical illness'
+        risksSocial: 'social, economic or political risks arising from knowledge of views, tendencies or behaviours'
+        occurrenceBefore: 'measures to reduce the likelihood of occurrence' # from here: risks occurrence
+        exclusion: 'specific groups are excluded from participation for safety reasons'
+        unitSide: 'the likelihood of occurrence is minimised at the device level'
+        occurrenceAfter: 'measures to mitigate the consequences in case of occurrence'
+        contact: 'contacts for further support are given'
+        condition: 'the project contributors ascertain that the participant is well, and take appropriate measures if needed'
+        ethical: 'moral/ethical responsibility through getting to know certain information about participants' # from here: burdens risks contributors
+      icons:
+        noBurdens: 'This does not refer to the consideration that the burdens are part of everyday life, but rather that there is in fact <b>no</b> noteworthy burden.' # from here: burdens
+        mental: 'e.g., through concentration requirements, the mere duration of the activity'
+        emotional: 'e.g., due to aversive stimuli, short-term induction of negative feelings, short-term deception with personal relevance'
+        physical: 'e.g., due to physical exertion, duration of the activity'
+        burdensSensitive: 'content that invades privacy'
+        touch: 'e.g., when attaching electrodes or markers'
+        integrity: 'e.g., through the collection of bodily material, administration of substances'
+        risksMisinformation: 'e.g., in studies involving fictional information whose validity holds significance beyond the study itself' # from here: risks
+        risksEmotionalEmotional: 'e.g., triggering of negative mood, deception with lasting personal relevance'
+        risksExhaustion: 'e.g., muscle soreness, pain, cardiovascular/circulatory problems'
+        risksFinding: 'Please bear in mind that the identification of findings or suspicions entails ethical responsibilities and practical consequences. You should therefore consider the potential consequences of identifying possible findings or suspicions already while planning the study and explore alternatives.</br> Measures to reduce the likelihood of occurrence and to mitigate the consequences do not need to be specified here; the handling of any findings or suspicions is covered in a separate question.'
+        risksIncidental: 'nearly certain diagnostic findings, e.g. discovery of a tumor during imaging procedures, mental health diagnosis in a clinical-diagnostic interview'
+        risksSuspicion: 'e.g., abnormalities in a screening questionnaire, in a non-calibrated laboratory test for sensory impairments'
+        risksSocial: 'This category should also be selected if, based on your data protection measures, you consider it unlikely that, for example, statements will actually be revealed and become public; the primary focus here is on the risk in principle.'
+        risksLegal: 'e.g., for residency status, jurisdiction'
+        exclusion: 'Please list all criteria as <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#excludeStart" data-base-route-i-ds-param={routeIDs}>exclusion criteria</a>.' # from here: risks occurrence
+        risksOccurrenceContent: 'e.g., individuals with traumatic experiences'
+        disease: 'e.g., epilepsy, depression'
+        implant: 'e.g., pacemakers, medication pumps, screws following a bone fracture, dental stabilisers, permanent make-up'
+        trigger: 'The wording is covered in a separate question.'
+        limit: 'hardware- or software-based'
+        contactContributors: 'This contact offer explicitly refers to support in mitigating potential consequences, and is therefore different from general contact options for questions on the study; please consider that a prompt response must be guaranteed and that the project contributors must have the relevant expertise in dealing with potential requests for support.'
+        simple: 'e.g., water, glucose tablets, fresh air, the option to sit or lie down'
+        encourage: 'This does not refer to the general note regarding the voluntary nature of participation and the individual''s right to withdraw.'
+        rectification: >-
+          The wording of the correction must be described in more detail {isDebriefing, select,
+                                true  {in the <a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII#infoAfterinformationIII" data-base-route-i-ds-param={routeIDs}>Debriefing</a> section}
+                                other {in the debriefing}}.
+        triggerOther: 'e.g., “Answering questions on the topic ... may ...“' # from here: risks trigger
+        burdensRisksContributorsEmotional: 'e.g., through exposure to distressing content, public hostility due to the research objective' # from here: burdens risks contributors
+        burdensRisksContributorsPhysical: 'e.g., through field work in war zones, areas of conflict/crisis, in areas posing a security risk, or due to the potential for confrontation with participants'
+        ethical: 'information that is already known to the participants themselves or is new to them, such as incidental findings/suspicions or aspects of legal relevance'
+        ethicalLegal: 'e.g., violent offences committed against or by participants (Note: Please also refer to the further <a href="https://www.konsortswd.de/wp-content/uploads/RatSWD_Output1.7_Kenntnissnahme-Straftaten_2023.pdf" target="_blank">information from RatSWD</a> (in German) on dealing with knowledge of criminal offences).'
+        observation: 'e.g., in case of audio/video recordings in public spaces. This is to be distinguished from intentional observations as part of the study, such as within ethnographic research.' # from here: burdens risks uninvoled
+        burdensRisksUninvolvedPhysical: 'e.g., collisions during studies in public space'
+        represent: 'e.g., through socio-political conclusions drawn from the research findings'
+        institution: 'e.g., damage to reputation, security-related aspects'
       burdens:
-        title: 'Which burdens or strains will participants be exposed to?'
+        title: 'Which demanding, inconvenient or otherwise significant aspects (hereinafter: “burdens“) does participation inevitably entail?'
         hints:
-          headingHint: 'This refers to burdens that inevitably arise for all participants as a result of participating in the study. Please compare the burdens of study participation with everyday experience of the target group (i.e., whether this is something they would engage in during their everyday activities).'
-          noBurdens: 'Please justify why you assume that no burdens or strains are present.'
+          headingHint: 'This refers to burdens that inevitably arise as a result of participation, as they are an integral part of the study design (i.e., without the burden, the research objective could not be reached). Usually, all participants (or, in multi-group designs, at least one entire group) are affected by the burden. These may also be mild burdens (“inconveniences“) to which participants would expose themselves without hesitation in their everyday lives. The comparison of the burdens with everyday experience of the target group is covered in a separate question.'
+          textHint: 'Please describe the selected burdens in more detail and classify their extent with regard to the target group. The ethics committee must be able to determine how common these burdens are; that is, whether participants would also be exposed to such burdens in their everyday lives. Please note that this explicitly concerns burdens arising from participation in the study. If, for example, you are evaluating a training in which the target group would participate anyway, then only the evaluation is relevant, not the training itself.'
         types:
           noBurdens: 'no burdens'
-          physical: 'physical strain'
-          mental: 'cognitive load'
-          emotional: 'psychological or emotional burden'
-          sensitive: 'intimate contents'
+          mental: 'cognitive strain'
+          emotional: 'psychological or emotional strain'
+          physical: 'bodily/physical strain'
+          political: 'political, religious or ideological beliefs'
+          union: 'trade union membership'
+          sexual: 'sexual preferences'
+          ethnic: 'ethnic origin'
+          income: 'income or financial circumstances'
+          health: 'health'
+          genetic: 'genetic/biometric data '
+          illegal: 'illegal or deviant behaviour such as drug use/violence'
+          burdensSensitiveOther: 'other intimate content'
+          touch: 'physical contact with project contributors'
+          integrity: 'interference with physical integrity'
           otherBurdens: 'other stress/burden factors'
-        hintsTypes:
-          physical: 'e.g., through exertion, extraction of biospecimen, the mere duration of the activity'
-          mental: 'e.g., through concentration requirements, duration of the activity'
-          emotional: 'e.g., aversive stimuli, short-term induction of negative emotions, deception with personal relevance'
-          sensitive: 'questions that invade privacy (e.g., about political beliefs, illegal behaviour, health, sexual preferences)'
-        burdensEveryday: 'Does at least one of the burdens mentioned above exceed the level commonly encountered in the participants'' everyday life?'
+        burdensEveryday: 'Does at least one of the burdens mentioned above exceed the level commonly encountered in the participant''s everyday life?'
       risks:
-        title: 'Which potential dangers or risks does participation involve?'
+        title: 'Which unintended consequences (risks, hazards) might participation entail?'
         hints:
-          headingHint: 'This refers to dangers that may (but do not have to) occur and that may only affect individual participants. Please compare the potential dangers with the “minimal risk“ typically involved in this participant group''s everyday activities.' # heading hint
+          headingHint: 'This refers to undesirable consequences that are not intended within the context of the study, but may occur as a result of participation. Often, only individual participants are affected by such consequences. Please first list any possible consequences that could occur <b>without</b> safety measures being taken – including risks that you can easily manage through standard safety measures. The likelihood of occurrence, the severity of the consequences and, where applicable, measures to mitigate them are covered in a separate question below.'
+          textHint: 'Please describe the selected risks in more detail. Discuss how likely they are to occur and how serious the potential consequences would be. Please justify your assessments. For example, you can estimate the likelihood of occurrence based on practical experience or current research. To assess the severity, you may, amongst other things, consider whether the consequences would subside on their own without treatment. Please also indicate how the likelihood of occurrence and the severity of the consequences are affected by the measures taken.'
         types:
           noRisks: 'no risks'
-          risksPhysical: 'physical discomfort'
-          risksIntegrity: 'threat to physical integrity'
-          risksMental: 'cognitive exhaustion'
-          risksEmotional: 'psychological or emotional impairment'
-          risksSocial: 'social, economic or political risks'
+          risksMental: 'exhaustion resulting from cognitive strain'
+          risksMisinformation: 'belief in misinformation beyond the scope of the study'
+          risksCognitiveOther: 'other cognitive effects'
+          risksEmotionalEmotional: 'emotional impairment'
+          risksEmotionalPsychological: 'triggering or exacerbation of mental illness symptoms, re-traumatisation'
+          risksEmotionalOther: 'other psychological or emotional effects'
+          risksExhaustion: 'exhaustion/fatigue resulting from physical strain'
+          risksIntegrity: 'injury or other impairment of physical integrity'
+          risksMotion: 'simulator/motion sickness'
+          risksStimuli: 'overstimulation or impairment of the senses'
+          risksPhysicalOther: 'other physical effects'
+          risksIncidental: 'incidental findings'
+          risksSuspicion: 'suspicions regarding mental or physical illness '
+          risksEmployment: 'negative consequences for an employment or insurance contract'
+          risksRelationship: 'negative consequences for social relationships'
+          risksLegal: 'negative legal consequences'
+          risksSocialOther: 'other social, economic or political risks'
           otherRisks: 'other risks'
-        hintsTypes:
-          risksPhysical: 'e.g., bodily exhaustion/fatigue, simulator sickness'
-          risksIntegrity: 'e.g., through pain, injury, sensory impairment'
-          risksMental: 'e.g., through concentration requirements, duration of the activity'
-          risksEmotional: 'e.g., triggering of negative mood, deception with lasting personal relevance, triggering/exacerbation of mental illness symptoms, re-traumatisation'
-          risksSocial: 'e.g., negative consequences for an employment or insurance contract or for social relationships in case statements are revealed (e.g., about illegal or deviant behaviour such as drug use or violence, about sexual preferences, ethnic origin, political, religious or ideological beliefs, trade union membership, genetic and biometric data, health data)'
-      burdensRisksContributors:
-        title: 'Are project contributors or uninvolved third parties exposed to burdens or risks that exceed the level to be expected in everyday life?'
+      risksOccurrence:
+        title: 'Which measures are planned to reduce the likelihood of risk occurrence and/or the severity of the consequences?'
         hints:
-          headingHint: 'This refers, for example, to emotional stress for individuals collecting the data or other risks that arise for project contributors from their role (e.g., travelling to war zones or areas of conflict). Please also consider potential burdens/risks for uninvolved third parties, for example due to collisions during studies in public spaces.'
+          headingHint: 'Consider both precautionary measures to reduce the likelihood of occurrence and compensatory measures to mitigate the severity of the consequences. If it is not obvious from the selected risks, please state in the previous field which measure relates to which risk. The voluntary nature of participation or the right to withdraw from participation without disadvantages do not constitute suitable mitigation measures; these principles also apply to studies that are free from burdens or risks.'
+        types:
+          noRisksOccurrence: 'no measures'
+          risksOccurrenceContent: 'individuals who would feel severely distressed by the content or requirements of the study'
+          disease: 'individuals with certain pre-existing medical conditions'
+          implant: 'individuals with metal implants/parts or electrical devices on or in their bodies'
+          pregnant: 'pregnant individuals'
+          allergy: 'individuals with intolerances or allergies'
+          exclusionOther: 'other characteristics that lead to exclusion for safety reasons'
+          trigger: 'the study information sheet contains a trigger warning'
+          instruction: 'the operators are trained in the safe use of the equipment'
+          limit: 'the used equipment has pre-set safety limits'
+          occurrenceBeforeOther: 'other measures to minimise the likelihood of occurrence'
+          contactContributors: 'the project contributors offer support themselves if needed'
+          contactInfo: 'contact details of project-independent resources are indicated for cases of need'
+          contactOther: 'other contact information'
+          abort: 'the study is paused or, if necessary, terminated'
+          simple: 'simple measures to provide relief are available'
+          stay: 'the participant is kept on site until they feel better, or is accompanied home in a safe manner'
+          firstAid: 'a person trained in first aid is present or immediately available during data collection'
+          crisis: 'a person trained in psychological counseling/crisis intervention is present or immediately available during data collection'
+          conditionOther: 'other measures'
+          encourage: 'participants are explicitly encouraged to speak up or to withdraw from the study in the event of mental or physical discomfort'
+          breaks: 'in addition to the scheduled breaks, further breaks tailored to individual needs are offered'
+          rectification: 'misinformation is rectified after-the-fact'
+          occurrenceAfterOther: 'other measures to mitigate the consequences'
+      risksTrigger:
+        title: 'Which trigger warning(s) shall the study information sheet contain?'
+        types:
+          triggerIntimate: 'The study contains partly personal or intimate questions. The study should therefore be completed in an undisturbed environment. Please ensure that privacy is maintained during participation and that no unauthorised persons can view the responses.'
+          burdensome: 'The data collection covers a topic that can be perceived as distressing.'
+          threat: 'We treat all information and collected data as confidential. The project contributors are required to maintain confidentiality. The analysis is carried out anonymously, without mentioning any names. However, the duty of confidentiality does not apply if there are concrete indications of an acute risk of self-harm or harm to others. In such cases, the project contributors reserve the right to immediately notify appropriate entities (e.g., medical personnel, emergency services, or the relevant authorities) in order to prevent harm.'
+          crime: 'We treat all information and collected data as confidential. The analysis is conducted anonymously, without mentioning any names. However, please note that our confidentiality promise is subject to legal limitations. If, in the course of the study, we receive information regarding the planning or execution of certain very serious criminal offenses (as listed in Section 138 of the German Criminal Code (StGB), such as high treason, murder, or manslaughter), we may be legally obliged to disclose this information to the authorities. In such exceptional cases, disclosure will only occur if it is absolutely necessary to prevent an imminent, serious crime and if we would otherwise be subject to criminal liability ourselves.'
+          triggerOther: 'self-formulated trigger warning'
+      risksNoMeasure:
+        title: 'Why are no measures implemented?'
+        types:
+          notNecessary: 'the identified risks are not of particular severity'
+          notPossible: 'the identified risks cannot be reduced or their consequences mitigated'
+          risksNoMeasureOther: 'other reasons'
+        textHint: 'Please specify.'
+      risksAfter: 'Once all measures have been implemented, is there still a significant likelihood of occurrence or a severity of consequences that goes beyond mere discomfort?'
+      burdensRisksContributors:
+        title: 'Which burdens or risks are project contributors exposed to?'
+        hints:
+          headingHint: '' # needed for technical reasons
+          textHint: 'Please describe the burdens/risks in detail.'
+        types:
+          noBurdensRisksContributors: 'no burdens or risks'
+          burdensRisksContributorsEmotional: 'psychological or emotional burdens for project contributors'
+          burdensRisksContributorsPhysical: 'physical burdens/risks for project contributors'
+          ethicalFinding: 'confrontation with incidental findings/suspicions'
+          ethicalLegal: 'confrontation with facts that have legal relevance'
+          ethicalOther: 'other'
+          burdensRisksContributorsOther: 'other burdens/risks for project contributors'
+      burdensRisksUninvolved:
+        title: 'Which burdens or risks are uninvolved third parties be exposed to?'
+        hints:
+          headingHint: '' # needed for technical reasons
+          textHint: 'Please describe the burdens/risks in detail.'
+        types:
+          noBurdensRisksUninvolved: 'no burdens or risks'
+          observation: 'unintentional observation or recording of the behaviour of uninvolved third parties'
+          burdensRisksUninvolvedPhysical: 'physical risks'
+          represent: 'risks to the groups/communities represented by the participants'
+          institution: 'risks to the institution'
+          burdensRisksUninvolvedOther: 'other burdens/risks for uninvolved third parties'
+      compensation:
+        title: 'Are any precautionary measures or compensations planned for the burdens/risks?'
+        textHints:
+            yes: >-
+              Please describe the precautionary measures or compensations in detail with reference to the burdens/risks. Possible measures include, for example, {type, select,
+                 burdensRisksContributors {supervision, rotation of roles during data collection or analysis, data collection by teams rather than individuals, travel arrangements, anonymisation or protection of personal details, providing project contributors with advance information on the legal situation, or an internal protocol for procedures.}
+                 other                    {technical precautions, information provided via public notices/announcements, and the thoughtful communication of research findings.}}
+            no: 'Please explain why no precautionary measures or compensations are planned.'
       finding:
-        title: 'Might the applied data collection methods reveal clinically relevant (incidental) findings in individual participants?'
-        headingHint: 'When using imaging procedures, but also during clinical diagnostic interviews in psychological studies, (incidental) findings/suspected diagnoses or unexpected findings may occur that have potential health or reproductive significance for individual participants. This includes both incidental findings, i.e. a deviation from the norm or a change that becomes apparent in the course of scientific research but goes beyond the actual aim of the study (e.g., an anomaly in brain scans), and deviations from the norm that arise in the course of the research objective (e.g., indications of suicidality in diagnostic interviews, findings about deficits from language assessments).'
-        textHint: 'Please describe which incidental findings might occur.'
+        title: 'Please describe which incidental findings or suspicions might occur.'
         informing:
-          title: 'How are incidental findings handled?'
+          title: 'How are any incidental findings or suspicions handled?'
           headingHint: >-
-            If (incidental) findings may occur in the course of data collection, the {addressee, select,
-                                                                                                          children {legal guardians}
-                                                                                                          wards    {legal guardians}
-                                                                                                          other    {participants}} must be informed about this possibility and the resulting consequences.
+            If incidental findings or suspicions may arise during data collection, the {addressee, select,
+                        children {legal guardians}
+                        wards    {legal guardians}
+                        other    {participants}} must generally be informed of this possibility and the resulting consequences.
+          templates:
+            always: 'The study is for research purposes only. A medical or psychological assessment of the data is not performed. However, we might notice an unusual test result (incidental finding or suspicion) in the context of ________. In this case, we will inform you and recommend that you seek further diagnostic assessment. If a disease is detected during this diagnostic assessment, this could possibly result in disadvantages for you, e.g., make it more difficult to contract private health insurance or life insurance. Please note: Even if we do not find any unusual results, this does not confirm a specific health condition; the examination is for research purposes only and does not constitute or replace a medical diagnosis.'
+            consent: 'The study is for research purposes only. A medical or psychological assessment of the data is not performed. However, we might notice an unusual test result (incidental finding or suspicion) in the context of ________. In this case, if you agree, we will inform you and recommend that you seek further diagnostic assessment. If a disease is detected during this diagnostic assessment, this could possibly result in disadvantages for you, e.g., make it more difficult to contract private health insurance or life insurance. Please note: Even if we do not find any unusual results, this does not confirm a specific health condition; the examination is for research purposes only and does not constitute or replace a medical diagnosis.'
+          useTemplate: 'use template'
           types:
-            always: 'The {addressee} are informed of any (incidental) findings that occur. (notification mandatory)'
-            consent: 'The {addressee} can select in the consent form whether they would like to be informed about (incidental) findings that have occurred. (notification optional)'
-          hint: 'Because you selected that notification is mandatory, the inclusion criteria automatically contain that participation requires consent to be informed.'
+            always: 'The {addressee} are informed of any incidental findings/suspicions that occur. (notification mandatory)'
+            consent: 'The {addressee} can select in the consent form whether they would like to be informed about incidental findings/suspicions that occur. (notification optional)'
+            informingNo: 'The {addressee} are not informed of any incidental findings/suspicions.'
+          hint: 'Because you selected that notification is mandatory, the inclusion criteria automatically contain that participation requires consent to be informed about incidental findings/suspicions.'
+          textHints:
+            noTemplate: 'Wording for the study information sheet'
+            cloze: 'Please add the information in the template (e.g., “the ECG measurement“, “the language assessment“, “the hearing test“). Make sure your wording complements the sentence of the template text above.' # text hint
+            informingNo: 'Please explain why the {addressee} shall not be informed about these findings. '
       feedback:
         title: 'Do participants receive feedback on their individual test results?'
         headingHint: 'Feedback on individual test results should be carefully considered - especially in case of personally relevant test content. Please consider that feedback may include negative or worrying results. Feedback should only be given if the project contributors are experienced in framing individual results. Please also note that feedback on individual test results is likely to require personal data linked to the collected research data. Alternatively, a general report can be provided (this is also likely to require personal data, but this does not have to be linked to the individual research data).'
@@ -1774,16 +1896,14 @@ projectdetails:
                           other   {burdens and risks}}. The {addressee} must be informed about this. Please use the text box for this purpose.
         template:
           risks: >-
-            No foreseeable disadvantages or risks {isFinding, select,
-                                                    true  {- except for possible incidental findings -}
-                                                    other {}} {information, select,
-                                                                post  {were}
-                                                                other {are}} associated with the participation.
+            No foreseeable disadvantages or risks {information, select,
+                                                    post  {were}
+                                                    other {are}} associated with the participation.
           noTemplate: 'Due to selection of <a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">burdens and risks</a> no template can be generated.'
       findingText:
-        title: 'Information about incidental findings:'
+        title: 'Information about incidental findings/suspicions:'
         template: >-
-          The study is for research purposes only. A medical or psychological assessment of the data is not performed. However, we might notice an unusual test result (incidental finding). In this case, {consent, select,
+          The study is for research purposes only. A medical or psychological assessment of the data is not performed. However, we might notice an unusual test result (incidental finding/suspicion). In this case, {consent, select,
                                                   true  {if you agree, we will inform you and recommend that you seek further diagnostic assessment.}
                                                   other {we will inform you and recommend that you seek further diagnostic assessment.}} If a disease is detected during this diagnostic assessment, this could possibly result in disadvantages for {addressee, select,
                   children {your child}
@@ -1894,7 +2014,7 @@ projectdetails:
           otherSources: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#otherSources" data-base-route-i-ds-param="{routeIDs}">Data from other sources</a>: Adding of individually traceable data'
           loan: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#loan" data-base-route-i-ds-param="{routeIDs}">Handing out devices to participants</a>: Possibly, personal data are processed to confirm having received the device.'
           online: '<a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">Online data collection</a>: Possibly, personal data (in particular IP addresses) are processed for technical quality assurance.'
-          finding: '<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#finding" data-base-route-i-ds-param="{routeIDs}">Clinically relevant incidental findings</a>: Possibly, personal data are processed to inform participants about incidental findings, especially when the information is not given immediately but at a later point in time.'
+          finding: '<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#finding" data-base-route-i-ds-param="{routeIDs}">Clinically relevant incidental findings</a>: Possibly, personal data are processed to inform participants about incidental findings/suspicions, especially when the information is not given immediately but at a later point in time.'
           feedback: '<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#feedback" data-base-route-i-ds-param="{routeIDs}">Communicating individual test results to participants</a>: Possibly, personal data are processed to inform participants about individual results, especially when feedback is not given immediately but at a later point in time.'
           compensation:
             immediately: >- # other is voucher for type
@@ -2203,7 +2323,7 @@ projectdetails:
           relatableDeletion: 'Individual data removal requests'
           relatableLinking: 'Linking of research data across multiple time points'
         icons:
-          relatableFeedback: 'e.g., to inform about incidental findings if needed'
+          relatableFeedback: 'e.g., to inform about unusual test results if needed'
           relatableDeletion: 'according to article 11 EU-GDPR, it is not necessary to collect personal data only for the purpose of fulfilling individual data removal requests, if these personal data would otherwise not have been collected'
           relatableLinking: 'if linking cannot be achieved by other means (e.g., by having participants store a code or reproduce it based on a given scheme)'
         contactResultHint: 'The option “Transmission of an individual result report“ should only be selected here if a link with the research data is required. This is usually the case for sending <u>individual</u> results. Distributing a <u>general</u> result overview requires contact data, but usually not a link of research data with contact data. In this case, please choose “Contacting for result transmission“ in the question about (further) purposes for which personal data are processed.'
@@ -2901,25 +3021,98 @@ checkDoc:
           description: 'data collection distribution across time' # 'Description of [] is missing.'
       burdensRisks:
         title: >-
-          {burdensRisksType, select,
-            burdens {burdens}
-            risks   {risks}
-            other   {burdens/risks for project contributors/third parties}}
-        compensation: >-
-          {isNoCompensation, select,
-            true  {justification for missing}
-            other {}} precautionary measures against {burdensRisksType, select,
-                                                        burdens {burdens}
-                                                        risks   {risks}
-                                                        other   {burdens/risks for contributors/third parties}}
-        noBurdens: 'reasons why no burdens are expected'
+          {type, select,
+            burdens                  {Burdens}
+            risks                    {Risks}
+            risksOccurrence          {Measures to reduce the likelihood of occurrence and/or severity of the consequences}
+            risksTrigger             {Trigger warning(s) for the study information sheet}
+            burdensRisksContributors {Burdens/risks for project contributors}
+            other                    {Burdens/risks for third parties}}
+        burdens: # ('[] is missing.', wo nicht anders angegeben)
+          otherTypes:
+            burdensSensitiveOther: 'Specification of other intimate contents'
+            otherBurdens: 'Specification of other stress/burden factors'
+          mental: 'If participants are exposed to <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">mental/cognitive task demands</a>, “cognitive strain" must be selected in the list of burdens.' # 1:1
+          emotional: 'If participants are exposed to <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">stress</a>, “psychological or emotional strain“ must be selected in the list of burdens.'
+          physical: 'If participants are exposed to <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">physical task demands or interventions</a>, “bodily/physical strain“ must be selected in the list of burdens.'
+          physicalNo: 'If “bodily/physical strain“ is selected as a burden, a compatible selection must be made for <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a>.'
+          integrity: 'If participants are exposed to <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">invasive interventions</a>, “interference with physical integrity“ must be selected in the list of burdens.'
+          health: 'If “(f)MRI“ is selected as a <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measures" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, “intimate content: health“ must be selected in the list of burdens.'
+          genetic: 'If collected material is used for <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#gene" data-base-route-i-ds-param="{routeIDs}">genetic analyses</a>, “genetic/biometric data“ must be selected in the list of burdens.'
         burdensEveryday: 'Answer to question whether any burden exceeds the level commonly encountered in everyday life'
+        risks:
+          otherTypes:
+            risksCognitiveOther: 'Specification of other cognitive effects'
+            risksEmotionalOther: 'Specification of other psychological/emotional effects'
+            risksPhysicalOther: 'Specification of other bodily/physical effects'
+            risksSocialOther: 'Specification of other social, economic or political risks'
+            otherRisks: 'Specification of other risks'
+          risksMental: 'If “exhaustion resulting from cognitive strain“ is selected as a risk, “cognitive strain“ must be selected in the list of burdens as well.'
+          risksExhaustion: 'If “exhaustion/fatigue resulting from physical strain“ is selected as a risk, “bodily/physical strain“ must be selected in the list of burdens as well.'
+          risksMotionFromInterventions: 'If participants are exposed to <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">virtual reality</a>, “simulator/motion sickness“ must be selected in the list of risks.'
+          risksMotion: 'If “simulator/motion sickness“ is selected as a risk, “virtual reality“ must be selected in the list of <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a>.'
+          risksStimuli: 'If “overstimulation or impairment of the senses“ is selected as a risk, stimulus presentation must be selected in the list of <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a>.'
+          risksSocial: 'if social, economic or political risks can occur, intimate contents must be selected in the list of burdens.'
         finding:
-          title: 'incidental findings'
-          description: 'incidental findings'
-          informing: 'handling of incidental findings'
-          information: 'If incidental findings might be revealed, <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> must be provided.'
-          consent: 'If incidental findings might be revealed, <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">consent</a> must be obtained.'
+          description: 'incidental findings/suspicions' # 'Description of [] is missing.'
+          informing:
+            missing: 'handling of incidental findings/suspicions'
+            description: >-
+              {type, select,
+                informingNo {Explanation for missing information regarding incidental findings/suspicions}
+                other       {Wording for the study information sheet}}
+            information: 'If incidental findings or suspicions might be revealed, <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> must be provided.'
+            consent: 'If incidental findings or suspicions might be revealed, <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">consent</a> must be obtained.'
+        risksOccurrence:
+          missing: 'Measures to reduces the likelihood of occurrence and/or severity of consequences' # '[] are missing.'
+          risksNoMeasure:
+            missing: 'Reasons why no measures are implemented' # '[] are missing.'
+            description: 'Other reasons why no measures are implemented'
+          otherTypes:
+            allergy: 'Specification of intolerances or allergies'
+            excludeOther: 'Specification of other exclusion criteria'
+            occurrenceBeforeOther: 'Specification of other measures to minimise the likelihood of occurrence'
+            contactInfo: 'Specification of resources and contact details for advice or support'
+            contactOther: 'Specification of other contact possibilities'
+            conditionOther: 'Specification of other measures in case of need'
+            occurrenceAfterOther: 'Specification of other measures to mitigate the consequences'
+          trigger: 'You selected that the study information sheet shall contain a trigger warning. This is possible only if <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">prior information</a> is provided.'
+          abort: 'If the study is paused or terminated in case of participant discomfort, this must be selected as a <a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#terminateCriteria" data-base-route-i-ds-param="{routeIDs}">criterion for termination by the project contributors</a> as well.'
+          firstAidCrisis: >-
+            You selected that a person trained in {type, select,
+                firstAid {first aid}
+                other    {psychological counseling/crisis intervention}} is present during data collection. This is possible only if {isPresence, select,
+                      true  {project contributors are <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#presence" data-base-route-i-ds-param="{routeIDs}">present</a> during data collection}
+                      other {data collection does not take place <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#location" data-base-route-i-ds-param="{routeIDs}">online</a>}}.
+          rectification: >-
+            You selected that misinformation is rectified after-the-fact. This is {isRisks, select,
+                      true  {feasible only if there is a risk of belief in misinformation beyond the scope of the study.}
+                      other {possibly only if <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preComplete" data-base-route-i-ds-param="{routeIDs}">full debriefing</a> is provided.}}
+        risksTrigger:
+          otherTypes:
+            burdensome: 'Topic that may be perceived as distressing'
+            risksTriggerOther: 'Other trigger warning'
+        risksAfter: 'Answer to question whether a significant risk persists after implementation of measures'
+        burdensRisksContributors:
+          otherTypes:
+            ethicalOther: 'Specification of other knowledge of information about participants'
+            burdensRisksContributorsOther: 'Specification of other burdens/risks for project contributors'
+          ethicalFinding: 'If project contributors may be confronted with incidental findings/suspicions, this must be selected in the list of risks for participants as well.'
+          ethicalLegal: 'If project contributors may be confronted with legally relevant facts, the selection for participants must include social, economic or political risks.'
+        burdensRisksUninvolved:
+          otherTypes:
+            burdensRisksUninvolvedOther: 'Specification of other burdens/risks for third parties'
+        compensation:
+          missing: >-
+            Answer to question about precautionary/compensatory measures against burdens/risks for {type, select,
+                                                                      burdensRisksContributors {project contributors}
+                                                                      other                    {third parties}}
+          description: >-
+            {chosen, select,
+              0     {Description of}
+              other {Justification for missing}} precautionary/compensatory measures against burdens/risks for {type, select,
+                                                  burdensRisksContributors {project contributors}
+                                                  other                    {third parties}}
         feedback:
           title: 'feedback on individual test results'
           description: 'individual test results'
@@ -2990,7 +3183,6 @@ checkDoc:
         goals: 'background and goals/aims of the study'
         pro: 'advantages'
         con: 'disadvantages'
-        findingText: 'information regarding incidental findings'
         conflictText: 'information regarding conflicts of interest'
       informationIII:
         goals: 'goals of the study'
@@ -3351,9 +3543,6 @@ completeForm:
                   <li>Do <b>not</b> modify the PDF file of the complete proposal nor the XML file with any other software.</li>}
             other {<li>Please check all contents of the complete proposal carefully. If any changes are necessary, implement these only within the Ethiktool, and then download all documents (ZIP file) again.</li>}}
           <li>The ethics review is based exclusively on the PDF file of the complete proposal.</li>
-          {isSupervisor, select,
-            true  {<li>If submitting a qualification work, the responsible supervisor must be involved in the correspondence.</li>}
-            other {}}
           <li>If all entries are correct, please send the PDF file of the complete proposal with the corresponding XML file {committeeType, select,
           TUC   {ethik@tu-chemnitz.de (E-mails to this address are processed via a ticket system, please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">information on data protection</a>)}
           EUB   {to {committeeAcc} at ethikkommission@uni-bielefeld.de}
@@ -3368,6 +3557,9 @@ completeForm:
           PHT   {to {committeeAcc} at ethikkommission@ph-tirol.ac.at}
           BTU   {to {committeeAcc} at ethik@b-tu.de}
           other {the e-mail address of {committeeGen}}}.</li>
+          {isSupervisor, select,
+            true  {<li>If submitting an ethics proposal for a qualification thesis, the responsible supervisor must be involved in the communication.</li>}
+            other {}}
 
 quitModal:
   title: 'Quit editing this proposal'

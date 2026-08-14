@@ -28,7 +28,6 @@ class InformationController extends ControllerAbstract
         }
         $informationNode = $measureNode->{$route}[0];
         $measureArray = $this->xmlToArray($measureNode);
-        $isFinding = $measureArray[self::burdensRisksNode][self::findingNode][self::chosen]==='0';
         $addressee = $this->getAddressee($measureArray[self::groupsNode]);
         $addresseeString = $this->getAddresseeString($addressee,!$isInformationII);
         $translationPrefix = 'pages.projectdetails.';
@@ -79,7 +78,6 @@ class InformationController extends ControllerAbstract
             // texts
             $textsArray = $measureArray[self::textsNode];
             $conArray = $textsArray[self::conNode] ?? null; // can only be null if tempArray is an empty string
-            $findingConsentArray = $textsArray[self::findingTextNode] ?? [];
             $isConflict = $textsArray!=='' && array_key_exists(self::conflictTextNode,$textsArray);
             if ($textsArray!=='') {
                 // post
@@ -88,9 +86,8 @@ class InformationController extends ControllerAbstract
                     $this->checkInput($textsArray,[self::goalsNode => '']) ||
                     $this->checkInput($textsArray[self::proNode],[self::proTemplate => '', self::descriptionNode => '']) ||
                     $this->checkInput($conArray,array_fill_keys(array_keys($conArray),'')) ||
-                    $findingConsentArray!==[] && $this->checkInput($findingConsentArray,array_fill_keys(array_keys($findingConsentArray),'')) ||
                     $isConflict && $this->checkInput($textsArray, [self::conflictTextNode => ''])) {
-                    $this->addInputPage($translationPrefix,self::textsNode,$inputArray,['isFinding' => $this->getStringFromBool($isFinding), 'isConflict' => $this->getStringFromBool($isConflict)]);
+                    $this->addInputPage($translationPrefix,self::textsNode,$inputArray,['isConflict' => $this->getStringFromBool($isConflict)]);
                 }
                 $textInputPost = $this->setInputHint($inputArray);
             }
@@ -128,14 +125,11 @@ class InformationController extends ControllerAbstract
                 if (($isPreOld || $isPostOld) && !$isInformation) { // any information and now no information at all -> remove texts nodes
                     $this->removeAllChildNodes($textsNode);
                 } elseif (!$isPreOld) {
-                    if (!$isPostOld && $isInformation) { // no information at all and now any information -> add intro, goals, pro, con, and eventually finding consent
+                    if (!$isPostOld && $isInformation) { // no information at all and now any information -> add intro, goals, pro and con
                         $this->addChildNodes($textsNode,[self::introNode,self::goalsNode,self::proNode,self::conNode]);
                         $this->addChildNodes($textsNode->{self::introNode},[self::introTemplate,self::descriptionNode]);
                         $this->addChildNodes($textsNode->{self::proNode},[self::proTemplate,self::descriptionNode]);
                         $this->addChildNodes($textsNode->{self::conNode},[self::conTemplate,self::descriptionNode]);
-                        if ($isFinding) {
-                            $this->addChildNodes($textsNode->addChild(self::findingTextNode),[self::findingTemplate,self::descriptionNode]);
-                        }
                         if ($isConflict) {
                             $textsNode->addChild(self::conflictTextNode);
                         }

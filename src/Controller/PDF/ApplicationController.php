@@ -41,7 +41,7 @@ class ApplicationController extends PDFAbstract
     private array $levelTrans; // translations of levels
     private bool $isReviewFull; // true if review process is full
     /** @var string[] boxes that are created for short review processes */
-    private array $boxesShort = ['coreData.appType','coreData.projectTitle','coreData.projectDates','coreData.funding','coreData.conflict','coreData.support','votes.otherVote','votes.instVote','summary','projectdetails.overview','projectdetails.examinedPeople','projectdetails.closed','projectdetails.recruitment','projectdetails.consent','projectdetails.measures','projectdetails.interventions','projectdetails.burdens','projectdetails.originSources','projectdetails.dataSourceVotes','projectdetails.dataSet','projectdetails.dataSourceProcedure','projectdetails.restriction','projectdetails.dataSourceAccess','projectdetails.legitimization','projectdetails.dataSourceIdentification','projectdetails.publication','projectdetails.dataSourceBurdensRisks','projectdetails.dataSourceBurdensRisksContributors'];
+    private array $boxesShort = ['coreData.appType','coreData.projectTitle','coreData.projectDates','coreData.funding','coreData.conflict','coreData.support','votes.otherVote','votes.instVote','summary','projectdetails.overview','projectdetails.examinedPeople','projectdetails.closed','projectdetails.recruitment','projectdetails.consent','projectdetails.measures','projectdetails.interventions','projectdetails.burdens','projectdetails.interventions','projectdetails.risks','projectdetails.interventions','projectdetails.risksOccurrence','projectdetails.originSources','projectdetails.dataSourceVotes','projectdetails.dataSet','projectdetails.dataSourceProcedure','projectdetails.restriction','projectdetails.dataSourceAccess','projectdetails.legitimization','projectdetails.dataSourceIdentification','projectdetails.publication','projectdetails.dataSourceBurdensRisks','projectdetails.dataSourceBurdensRisksContributors'];
 
     /** @param array<int, mixed> $routeIDs */
     public function createPDF(Request $request, array $routeIDs = []): ?Response
@@ -73,13 +73,12 @@ class ApplicationController extends PDFAbstract
              * $isAnyDataSourceFurther: true if any further question for data source is asked
              * $isAnyDataSet: true if any data set question is asked
              * $isAnyOtherSources: true if any other sources question was answered with yes.
-             * $isAnyBurdensRisks: indicates if any burdens (0), risks (1), or burdens/risks for contributors (2) are selected (respectively answered with no in the last case).
-             * $isAnyBurdensNo: true if any 'noBurdens' was selected.
+             * $isAnyBurdensRisks: indicates if any burdens (0), risks (1), or burdens/risks for contributors (2) or uninvolved (3) are selected (respectively answered with no in the last case).
              * $isAnyBurdensEveryday: true if any burdens everyday question was answered with yes
              * $anyVoluntary: true is any no-description needs to be given
              * anyConsent: array with two elements regarding the consent question: 0: consent question was answered with 'no', 1: true if any assent question was answered with 'no', otherwise false in both cases.
             */
-            [$allAddressees, $isAnyWards, $isAnySupplement, $isAnyOriginMissing, $isAnyDataSourceFurther, $isAnyDataSet, $isAnyOriginNew, $isAnyOriginExisting, $isAnyDataSourceVotes, $isAnyOtherSources, $isAnyBurdensRisks, $isAnyBurdensNo, $isAnyBurdensEveryday, $anyVoluntary, $anyConsent] = [[self::addresseeParticipants => false, self::addresseeChildren => false, self::addresseeWards => false], false, array_fill_keys($supplementTypes,false), false, false, false, false, false, false, false, [self::burdensNode => false, self::risksNode => false, self::burdensRisksContributorsNode => false], false, false, false, [false, false]];
+            [$allAddressees, $isAnyWards, $isAnySupplement, $isAnyOriginMissing, $isAnyDataSourceFurther, $isAnyDataSet, $isAnyOriginNew, $isAnyOriginExisting, $isAnyDataSourceVotes, $isAnyOtherSources, $isAnyBurdensRisks, $isAnyBurdensEveryday, $anyVoluntary, $anyConsent] = [[self::addresseeParticipants => false, self::addresseeChildren => false, self::addresseeWards => false], false, array_fill_keys($supplementTypes,false), false, false, false, false, false, false, false, [self::burdensNode => false, self::risksNode => false, self::burdensRisksContributorsNode => false, self::burdensRisksUninvolvedNode => false], false, false, [false, false]];
             /* The following values are true if either for third parties or participants at least one of the information questions was answered in the respective way:
              * $isAnyPre: yes
              * $isAnyDocInformation: true if any information may be created, i.e., if for by third parties either pre or post information is yes
@@ -105,7 +104,7 @@ class ApplicationController extends PDFAbstract
             $originNew = self::originNode.self::originNew;
             $originMissing = self::originNode.'Missing';
             $dataSetSupplement = self::dataSetNode.'Supplement';
-            $allTrue = [self::dataSourceNode => false, self::dataSetNode => false, $dataSetSupplement => false, self::legitimizationNode => false, self::addresseeParticipants => false, $preTrans => false, $preInformation => false, $postTrans => false, self::measuresNode.'PDF' => false, self::interventionsNode.'PDF' => false, self::otherSourcesNode.'PDF' => false, self::addresseeChildren => false, self::addresseeWards => false, self::originNode => false, $originNew => false, $originMissing => false, self::dataSourceVotesNode => false, self::pre => false, $preNo => false, $preNotYet => false, $completePost => false, self::preAbort => false, self::preAbortOther => false, self::preAbortNo => false, self::post => false, $postNo => false, self::otherSourcesNode => false, self::burdensNode => false, $burdensNo => false, self::burdensEveryday => false, self::risksNode => false, self::burdensRisksContributorsNode => false, self::voluntaryNode => false, self::consent => false, $consentNo => false]; // Each entry gets true if the respective value in one of the preceding variables gets true
+            $allTrue = [self::dataSourceNode => false, self::dataSetNode => false, $dataSetSupplement => false, self::legitimizationNode => false, self::addresseeParticipants => false, $preTrans => false, $preInformation => false, $postTrans => false, self::measuresNode.'PDF' => false, self::interventionsNode.'PDF' => false, self::otherSourcesNode.'PDF' => false, self::addresseeChildren => false, self::addresseeWards => false, self::originNode => false, $originNew => false, $originMissing => false, self::dataSourceVotesNode => false, self::pre => false, $preNo => false, $preNotYet => false, $completePost => false, self::preAbort => false, self::preAbortOther => false, self::preAbortNo => false, self::post => false, $postNo => false, self::otherSourcesNode => false, self::burdensNode => false, $burdensNo => false, self::burdensEveryday => false, self::risksNode => false, self::burdensRisksContributorsNode => false, self::burdensRisksUninvolvedNode => false, self::voluntaryNode => false, self::consent => false, $consentNo => false]; // Each entry gets true if the respective value in one of the preceding variables gets true
             foreach ($studyArray as $study) {
                 foreach ($this->addZeroIndex($study[self::groupNode]) as $group) {
                     foreach ($this->addZeroIndex($group[self::measureTimePointNode]) as $measureTimePoint) {
@@ -211,16 +210,12 @@ class ApplicationController extends PDFAbstract
                             }
                             // burdens and risks
                             $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
-                            foreach ([self::burdensNode, self::risksNode, self::burdensRisksContributorsNode] as $type) {
-                                $isBurdens = $type===self::burdensNode;
-                                $tempArray = $this->getBurdensOrRisks($burdensRisksArray, $type, false);
-                                if ($tempArray[0]) { // at least one option except 'no' is selected
+                            foreach ([self::burdensNode, self::risksNode, self::burdensRisksContributorsNode, self::burdensRisksUninvolvedNode] as $type) {
+                                if ($this->getBurdensOrRisks($burdensRisksArray, $type, false)[0]) { // at least one option except 'no' is selected
                                     [$isAnyBurdensRisks[$type], $allTrue[$type]] = [true, true];
-                                    if ($isBurdens && $burdensRisksArray[self::burdensNode][self::burdensEveryday]==='0') {
+                                    if ($type===self::burdensNode && ($burdensRisksArray[self::burdensNode][self::burdensEveryday] ?? '')==='0') {
                                         [$isAnyBurdensEveryday, $allTrue[self::burdensEveryday]] = [true, true];
                                     }
-                                } elseif ($isBurdens && $tempArray[1]) {
-                                    [$isAnyBurdensNo, $allTrue[$burdensNo]] = [true, true];
                                 }
                             }
                             // voluntary
@@ -681,7 +676,7 @@ class ApplicationController extends PDFAbstract
                                 if ($description!=='') { // description
                                     $subContent .= $this->getSpanMarginLeft().$this->translateStringPDF($measuresPagePrefix.self::descriptionNode,[self::descriptionNode => $description, 'type' => $type]);
                                 }
-                                $content = $this->getMeasuresInterventions($measuresArray[$type] ?? '',$type);
+                                $content = $this->getSelectedCheckboxesMulti($measuresArray[$type] ?? '',$type,$projectdetailsPagesPrefix.self::measuresNode.'.measuresInterventions.',$isMeasures ? [] : ['interventionsQuestionnaire','invasiveExtract'], $isMeasures ? '' : $projectdetailsPrefix.self::measuresNode.'.'.self::interventionsNode.'.');
                                 if (!$isMeasures && str_contains($content,'{dummy}')) { // interventions questionnaire
                                     $tempArray = [];
                                     $measures = $measuresArray[self::measuresNode];
@@ -706,22 +701,54 @@ class ApplicationController extends PDFAbstract
                             self::$linkedPage = self::burdensRisksNode;
                             $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
                             $burdensRisksArray = $burdensRisksArray==='' ? [] : $burdensRisksArray;
-                            foreach ([self::burdensNode, self::risksNode, self::burdensRisksContributorsNode] as $type) {
+                            $burdensRisksPrefixTool = $projectdetailsPagesPrefix.self::burdensRisksNode.'.';
+                            foreach ([self::burdensNode,self::risksNode,self::burdensRisksContributorsNode,self::burdensRisksUninvolvedNode] as $type) {
                                 $isBurdens = $type===self::burdensNode;
+                                $isRisks = $type===self::risksNode;
                                 $typeArray = $burdensRisksArray[$type] ?? [];
-                                $typeKey = $type.'Type';
-                                $description = $typeArray[self::descriptionNode] ?? '';
+                                $selections = $typeArray[$type.'Type'] ?? '';
                                 $tempPrefix = $burdensRisksPrefix.$type.'.';
-                                $this->addBoxContent($type, $type!==self::burdensRisksContributorsNode ? $this->getSelectedCheckboxes($typeArray[$type.'Type'] ?? '', $tempPrefix) : $this->translateBinaryAnswer($typeArray[self::chosen] ?? ''), $isBurdens ? ($burdensRisksArray[self::burdensNoDescription] ?? $description.(($typeArray[self::burdensEveryday] ?? '')==='1' ? $this->translateStringPDF($tempPrefix.self::burdensEveryday) : '')) : $description, paragraph: $isBurdens ? 'burdens' : '', fragment: $typeKey, boxSub: $isBurdens && !$this->isReviewFull && !$isAnyOriginExisting);
-                                $tempArray = $typeArray[self::burdensRisksCompensationNode] ?? [];
-                                $compensation = $type.'Compensation';
-                                $isCompensation = $isAnyBurdensRisks[$type] && (!$isBurdens || $isAnyBurdensEveryday);
-                                $this->addBoxContent($compensation, $isCompensation ? ($this->getBurdensOrRisks($burdensRisksArray, $type)[0] ? $this->translateBinaryAnswer($tempArray[self::chosen] ?? '', true,true).($tempArray[self::descriptionNode] ?? '') : self::dummyBox) : self::noBox, fragment: $isCompensation ? $this->addDiv($compensation) : $typeKey);
+                                $content = $this->getSelectedCheckboxesMulti($selections,$type,$burdensRisksPrefixTool);
+                                $subContent = '';
+                                if ($selections!=='' && !array_key_exists('no'.ucfirst($type),$selections)) { // at least one option except 'no' was selected
+                                    $subContent = ($isRisks ? $this->getSpanMarginLeft(false).$this->translateStringPDF($tempPrefix.self::descriptionNode) : '').$typeArray[self::descriptionNode].($isBurdens && $typeArray[self::burdensEveryday]==='1' ? $this->translateStringPDF($tempPrefix.self::burdensEveryday) : ''); // description and eventually additional burdens sentence
+                                    // finding
+                                    if ($isRisks && array_key_exists(self::findingNode,$typeArray)) {
+                                        $tempPrefix .= self::findingNode.'.';
+                                        $tempArray = $typeArray[self::findingNode];
+                                        $subContent .= $this->getSpanMarginLeft().$this->translateStringPDF($tempPrefix.self::descriptionNode,[self::descriptionNode => $tempArray[self::descriptionNode]]);
+                                        $tempArray = $tempArray[self::informingNode];
+                                        $tempVal = $tempArray[self::chosen];
+                                        if ($tempVal!=='') {
+                                            $subContent .= $this->getSpanMarginLeft().$this->translateStringPDF($tempPrefix.self::informingNode,array_merge($addresseeParam,['type' => $tempVal, self::descriptionNode => $tempArray[self::descriptionNode] ?? '']));
+                                        }
+                                    }
+                                }
+                                $this->addBoxContent($type, $content, $subContent!=='' ? $this->addDivPadding($subContent) : '', paragraph: $isBurdens ? self::burdensNode : '', fragment: $type);
+                                // risksOccurrence
+                                if ($isRisks) {
+                                    $content = $isAnyBurdensRisks[self::risksNode] ? self::dummyBox : self::noBox;
+                                    $subContent = '';
+                                    if (array_key_exists(self::risksOccurrenceNode,$typeArray)) {
+                                        $tempArray = $typeArray[self::risksOccurrenceNode];
+                                        $selections = $tempArray[self::risksOccurrenceNode.'Type'];
+                                        $content = $this->getSelectedCheckboxesMulti($selections,self::risksOccurrenceNode,$burdensRisksPrefixTool).(($typeArray[self::risksAfterNode] ?? '')==='1' ? $this->translateStringPDF($burdensRisksPrefix.self::risksOccurrenceNode) : '');
+                                        if ($selections!=='' && array_key_exists('no'.ucfirst(self::risksOccurrenceNode),$selections)) { // risks no measure
+                                            $subContent = $this->getSelectedCheckboxes($tempArray[self::risksNoMeasureNode],$burdensRisksPrefix.self::risksNoMeasureNode.'.',implodeLines: true);
+                                        }
+                                    }
+                                    $this->addBoxContent(self::risksOccurrenceNode,$content,$subContent,boxSub: !$this->isReviewFull && !$isAnyOriginExisting);
+                                } elseif (in_array($type,[self::burdensRisksContributorsNode,self::burdensRisksUninvolvedNode])) { // compensation
+                                    $isCompensation = $isAnyBurdensRisks[$type];
+                                    $content = $isCompensation ? self::dummyBox : self::noBox;
+                                    if (array_key_exists(self::burdensRisksCompensationNode,$typeArray)) {
+                                        $tempArray = $typeArray[self::burdensRisksCompensationNode];
+                                        $content = $this->translateBinaryAnswer($tempArray[self::chosen],true,true).($tempArray[self::descriptionNode] ?? '');
+                                    }
+                                    $tempVal = $type.ucfirst(self::burdensRisksCompensationNode);
+                                    $this->addBoxContent($tempVal,$content,fragment: $isCompensation ? $this->addDiv($tempVal) : '');
+                                }
                             }
-                            // finding (burdens/risks)
-                            $tempArray = $burdensRisksArray[self::findingNode] ?? [];
-                            $tempVal = $tempArray[self::chosen] ?? '';
-                            $this->addBoxContent(self::findingNode, $this->translateBinaryAnswer($tempVal, addHyphenYes: true).($tempArray[self::descriptionNode] ?? ''), $tempVal==='0' ? $this->translateStringPDF($burdensRisksPrefix.self::findingNode, array_merge($addresseeParam, [self::chosen => $tempArray[self::informingNode]])) : '');
                             // feedback (burdens/risks)
                             $tempArray = $burdensRisksArray[self::feedbackNode] ?? [];
                             $this->addBoxContent(self::feedbackNode, $this->translateBinaryAnswer($tempArray[self::chosen] ?? ''), $tempArray[self::descriptionNode] ?? '');
@@ -867,7 +894,6 @@ class ApplicationController extends PDFAbstract
             $isPreNotYet = $isAnyPre || $isNotAnyPreYet;
             $parameters = array_merge($childrenWardsParams, $informationHintParam, $reviewFullParam, [
                 self::burdensNode => $this->getStringFromBool($isAnyBurdensRisks[self::burdensNode]),
-                'noBurdens' => $this->getStringFromBool($isAnyBurdensNo),
                 self::risksNode => $this->getStringFromBool($isAnyBurdensRisks[self::risksNode]),
                 'informationTypes' => $isPreNotYet && !$isAnyNotPre ? 'onlyPre' : ($isPreNotYet ? 'prePost' : 'onlyNotPre'),
                 'anyPreNo' => $this->getStringFromBool($isAnyNotPre),
@@ -1007,26 +1033,28 @@ class ApplicationController extends PDFAbstract
         }
     }
 
-    /** Creates the content for measures and interventions.
+    /** Creates the content for checkboxes that may have multiple levels.
      * @param array|string $selections selected options
-     * @param string $type must equal 'measures' or 'interventions'
+     * @param string $type type that will added as a suffix to $translationPrefix for single options
+     * @param string $translationPrefix prefix for the translation of the selections. Will be suffixed by $type.'.types.' for translation of selections
+     * @param array $additional selections for which additional text will be added
+     * @param string $additionalString if $additional is not empty, translation prefix for the additional content
      * @param int $level category level
      * @return string content for the pdf application
      */
-    private function getMeasuresInterventions(array|string $selections, string $type, int $level = 1): string
+    private function getSelectedCheckboxesMulti(array|string $selections, string $type, string $translationPrefix, array $additional = [], string $additionalString = '', int $level = 1): string
     {
         $returnString = '';
         if ($selections!=='') {
             $isLevel1 = $level===1;
             $lineStart = $isLevel1 ? $this->getSpanMarginLeft(false) : '';
-            $tempPrefix = 'projectdetails.pages.measures.measuresInterventions.';
             foreach ($selections as $key => $value) {
                 if (is_array($value)) {
-                    $selectionString = $lineStart.$this->translateString($tempPrefix.'typesMain.'.$key).($isLevel1 ? ': ' : ' (').$this->getMeasuresInterventions($value,$type,++$level).($isLevel1 ? '' : '), ');
+                    $selectionString = $lineStart.$this->translateString($translationPrefix.'typesMain.'.$key).($isLevel1 ? ': ' : ' (').$this->getSelectedCheckboxesMulti($value,$type,$translationPrefix,$additional,$additionalString,++$level).($isLevel1 ? '' : '), ');
                 } else { // selectable option
                     $hasValue = $value!=='';
                     $isOther = str_ends_with((string) $key,'Other');
-                    $selectionString = $lineStart.($isOther && $hasValue ? $value : $this->translateString($tempPrefix.$type.'.types.'.$key)).(!$isOther && $hasValue ? ' ('.$value.')' : '').(in_array($key,['interventionsQuestionnaire','invasiveExtract'],true) ? $this->translateStringPDF('projectdetails.measures.interventions.'.$key) : '').($isLevel1 ? '' : ', ');
+                    $selectionString = $lineStart.($isOther && $hasValue ? $value : $this->translateString($translationPrefix.$type.'.types.'.$key)).(!$isOther && $hasValue ? ' ('.$value.')' : '').(in_array($key,$additional,true) ? $this->translateStringPDF($additionalString.$key) : '').($isLevel1 ? '' : ', ');
                 }
                 $returnString .= $isLevel1 ? $this->addDivPadding($selectionString) : $selectionString;
             }

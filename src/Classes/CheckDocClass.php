@@ -1098,7 +1098,7 @@ class CheckDocClass extends ControllerAbstract
                 $this->errorMessage = $typePrefix.'missing';
                 $this->addCheckLabelString(self::missingMultiple,$type,colorRed: false);
             } else { // at least one option was selected
-                $this->checkMeasuresInterventions($tempArray,$type);
+                $this->checkMissingDescriptions($tempArray,self::measuresInterventionsOther[$type],self::measuresNode.'.'.$type);
                 if ($type===self::measuresNode && array_key_exists(self::measuresFurtherNode,$pageArray)) {
                     $measuresFurther = $pageArray[self::measuresFurtherNode];
                     $tempPrefix = $typePrefix.self::measuresDocumentation.'.';
@@ -1198,51 +1198,165 @@ class CheckDocClass extends ControllerAbstract
         $translationPage = self::projectdetailsPrefix.self::burdensRisksNode.'.';
         $title = $translationPage.'title';
         $pageArray = $this->measure[self::burdensRisksNode];
-        // burdens and risks
-        foreach ([self::burdensNode,self::risksNode] as $type) {
-            $tempArray = $pageArray[$type];
-            $isBurdens = $type===self::burdensNode;
-            $typeKey = $isBurdens ? self::burdensTypesNode : self::risksTypesNode;
-            $typeParam = ['burdensRisksType' => $type];
-            $params = array_merge($typeParam,['type' => $this->translateString(self::projectdetailsPrefix.self::burdensRisksNode.'.title',$typeParam)]);
-            $isSelected = $this->checkMissingChildren($tempArray,$typeKey,self::missingTypes,$params);
-            if ($isSelected) {
-                $multiArray = $tempArray[$typeKey];
-                $isNoID = array_key_exists($isBurdens ? self::noBurdens : self::noRisks,$multiArray);
-                if (count($multiArray)!==1 || !$isNoID) {
-                    $this->checkMissingContent($tempArray,[self::descriptionNode => $title],true,parameter: $params,hash: $this->addDiv($type,true,false));
-                }
-                if ($isBurdens) {
-                    if (array_key_exists(self::burdensEveryday,$tempArray)) {
-                        $this->checkMissingChosen($tempArray,$translationPage.self::burdensEveryday,2,$this->addDiv(self::burdensEveryday),name: self::burdensEveryday);
-                        $isNoID = $tempArray[self::burdensEveryday]!=='0'; // compensation is only asked if burdens everyday is answered with yes
+        $measuresArray = $this->measure[self::measuresNode];
+        $interventions = $this->flattenArray($measuresArray[self::interventionsNode]);
+        $hasInterventions = $interventions!==[];
+        // burdens, risks, burdens risks contributors and burdens risks uninvolved
+        foreach (array_keys(self::burdensRisksTypesAll) as $type) {
+            if (!in_array($type,[self::risksOccurrenceNode,self::risksTriggerNode])) {
+                $typeArray = $pageArray[$type];
+                $selections = $typeArray[$type.'Type'];
+                $typeParam = ['type' => $type];
+                if ($selections==='') {
+                    $this->errorMessage = $title;
+                    $this->addCheckLabelString(self::missingMultiple, $type, $typeParam, false);
+                } else { // at least one option was selected
+                    $this->checkMissingDescriptions($selections, self::burdensRisksOther[$type], self::burdensRisksNode.'.'.$type);
+                    if (array_key_exists(self::descriptionNode, $typeArray)) { // description
+                        $this->checkMissingContent($typeArray, [self::descriptionNode => $title], true, parameter: $typeParam, hash: $this->addDiv($type, true,false));
                     }
-                    if (array_key_exists(self::burdensNoDescription,$pageArray)) {
-                        $this->checkMissingContent($pageArray,[self::burdensNoDescription => $translationPage.'noBurdens'],hash: $this->addDiv(self::burdensNoDescription));
+                    $selections = $this->flattenArray($selections);
+                    $isNotNo = !in_array('no'.ucfirst($type),$selections);
+                    if ($type===self::burdensNode) {
+                        $tempPrefix = $translationPage.self::burdensNode.'.';
+                        if ($hasInterventions && !in_array(self::noIntervention,$interventions)) {
+                            foreach (['mental' => 'mental','stress' => 'emotional','invasive' => 'integrity'] as $intervention => $burden) {
+                                if (in_array($intervention,$interventions) && !in_array($burden,$selections)) { // intervention selected -> burden must also be selected
+                                    $this->addCheckLabelString($tempPrefix.$burden,parameters: $this->paramsAddressee);
+                                }
+                            }
+                        }
+                        $hasInterventionPhysical = count(array_diff(['physical','sport'],$interventions))<2;
+                        $hasBurdensPhysical = in_array('physical',$selections);
+                        if (!$hasBurdensPhysical && $hasInterventionPhysical) { // 'physical' or 'sport' in interventions -> 'physical' in burdens
+                            $this->addCheckLabelString($tempPrefix.'physical',parameters: $this->paramsAddressee);
+                        } elseif ($hasBurdensPhysical && !$hasInterventionPhysical && $hasInterventions && count(array_diff(['everyday','interventionsOther'],$interventions))===2) { // 'physical' in burdens -> 'physical', 'sport', 'everyday' or 'other interventions' in interventions
+                            $this->addCheckLabelString($tempPrefix.'physicalNo',parameters: $this->paramsAddressee);
+                        }
+                        $measures = $measuresArray[self::measuresNode];
+                        if ($measures!=='') {
+                            if (array_key_exists('measuresMRT',$measures['measuresInstrumental']['measuresBrain'] ?? []) && !in_array('health',$selections)) { // '(f)MRT' in measures -> 'health' in burdens
+                                $this->addCheckLabelString($tempPrefix.'health',parameters: $this->paramsAddressee);
+                            }
+                            if (($measuresArray[self::measuresFurtherNode][self::geneNode] ?? '')==='0' && !in_array('genetic',$selections)) { // data is used for gene analysis -> 'genetic' in burdens
+                                $this->addCheckLabelString($tempPrefix.'genetic',parameters: $this->paramsAddressee);
+                            }
+                        }
+                        // burdens everyday
+                        if ($isNotNo) {
+                            $this->checkMissingChosen($typeArray, $translationPage.self::burdensEveryday, 2, $this->addDiv(self::burdensEveryday), name: self::burdensEveryday);
+                        }
+                    } elseif ($type===self::risksNode) {
+                        $tempPrefix = $translationPage.self::risksNode.'.';
+                        $burdens = $this->flattenArray($pageArray[self::burdensNode][self::burdensTypesNode]);
+                        if ($burdens!==[]) {
+                            foreach (['mental' => 'risksMental','physical' => 'risksExhaustion','burdensSensitive' => 'risksSocial'] as $burden => $risk) {
+                                if (!in_array($burden,$burdens) && in_array($risk,$selections)) { // risk selected -> burden must also be selected
+                                    $this->addCheckLabelString($tempPrefix.$risk,parameters: $this->paramsAddressee);
+                                }
+                            }
+                        }
+                        if ($hasInterventions) {
+                            foreach (['vr' => 'risksMotion','stimuli' => 'risksStimuli'] as $intervention => $risk) {
+                                if (!in_array($intervention,$interventions) && in_array($risk,$selections)) { // risk selected -> intervention must also be selected
+                                    $this->addCheckLabelString($tempPrefix.$risk,parameters: $this->paramsAddressee);
+                                }
+                            }
+                        }
+                        if (in_array('vr',$interventions) && !in_array('risksMotion',$selections)) { // 'vr' in interventions -> 'simulator/motion sickness' in risks
+                            $this->addCheckLabelString($tempPrefix.'risksMotionFromInterventions',parameters: $this->paramsAddressee);
+                        }
+                        // finding
+                        if (array_key_exists(self::findingNode, $typeArray)) {
+                            $tempPrefix = $translationPage.self::findingNode.'.';
+                            $tempArray = $typeArray[self::findingNode];
+                            // description
+                            $this->checkMissingContent($tempArray, [self::descriptionNode => $tempPrefix.self::descriptionNode], true, hash: self::findingNode);
+                            // informing
+                            $tempPrefix .= self::informingNode.'.';
+                            $tempArray = $tempArray[self::informingNode];
+                            $tempVal = $tempArray[self::chosen];
+                            $this->checkMissingTextfieldEmpty($tempArray, $tempPrefix.'missing', $tempPrefix.self::descriptionNode, self::informingNode,false, parameters: ['type' => $tempVal]);
+                            if (in_array($tempVal,self::informingTypesTemplate)) {
+                                if ($this->noPre) { // participants are (eventually) informed about findings -> information must be pre
+                                    $this->addCheckLabelString($tempPrefix.self::informationNode,parameters: $this->paramsAddressee);
+                                }
+                                if ($this->consentAddressee===self::voluntaryConsentNo) { // participants are (eventually) informed about findings -> consent must be given
+                                    $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->paramsAddressee);
+                                }
+                            }
+                        }
+                        if ($isNotNo) {
+                            // risks occurrence
+                            $tempArray = $typeArray[self::risksOccurrenceNode];
+                            $risksOccurrence = $tempArray[self::risksOccurrenceNode.'Type'];
+                            $risksOccurrencePrefix = $translationPage.self::risksOccurrenceNode.'.';
+                            if ($risksOccurrence==='') {
+                                $this->errorMessage = $risksOccurrencePrefix.'missing';
+                                $this->addCheckLabelString(self::missingMultiple,self::risksOccurrenceNode,colorRed: false);
+                            } else { // at least one option was selected
+                                $this->checkMissingDescriptions($risksOccurrence, self::burdensRisksOther[self::risksOccurrenceNode], self::burdensRisksNode.'.'.self::risksOccurrenceNode);
+                                $risksOccurrence = $this->flattenArray($risksOccurrence);
+                                if (in_array('trigger',$risksOccurrence) && $this->information[0]===1) { // trigger warning -> information must be pre
+                                    $this->addCheckLabelString($risksOccurrencePrefix.'trigger',parameters: $this->paramsAddressee);
+                                }
+                                $terminateCriteria = $this->measure[self::consentNode][self::terminateCriteriaNode] ?? '';
+                                if (in_array('abort',$risksOccurrence) && $terminateCriteria!=='' && !array_key_exists('malaise',$terminateCriteria)) { // study may be aborted if participant does not feel good -> same terminate criterion must be selected
+                                    $this->addCheckLabelString($risksOccurrencePrefix.'abort',parameters: $this->paramsAddressee);
+                                }
+                                $isLocationOnline = ($measuresArray[self::locationNode][self::chosen] ?? '')===self::locationOnline;
+                                $isNotPresence = $measuresArray[self::presenceNode][self::chosen]==='no';
+                                $isFirstAid = in_array('firstAid',$risksOccurrence);
+                                $isCrisis = in_array('crisis',$risksOccurrence);
+                                foreach ([[$isFirstAid,$isLocationOnline,'firstAid','false'],[$isFirstAid,$isNotPresence,'firstAid','true'],[$isCrisis,$isLocationOnline,'crisis','false'],[$isCrisis,$isNotPresence,'crisis','true']] as $array) {
+                                    if ($array[0] && $array[1]) { // trained person is present -> location must not be online and contributors must be present
+                                        $this->addCheckLabelString($risksOccurrencePrefix.'firstAidCrisis',parameters: array_merge($this->paramsAddressee,['type' => $array[2], 'isPresence' => $array[3]]));
+                                    }
+                                }
+                                if (in_array('rectification',$risksOccurrence)) {
+                                    $tempVal = $risksOccurrencePrefix.'rectification';
+                                    if (!in_array('risksMisinformation',$selections)) { // misinformation is corrected -> risk of misinformation
+                                        $this->addCheckLabelString($tempVal,parameters: array_merge($this->paramsAddressee,['isRisks' => 'true']));
+                                    }
+                                    if (($this->measure[self::informationNode][self::preComplete][self::chosen] ?? '')==='1') { // misinformation is corrected -> full debriefing must be provided
+                                        $this->addCheckLabelString($tempVal,parameters: array_merge($this->paramsAddressee,['isRisks' => 'false']));
+                                    }
+                                }
+                            }
+                            // risks no measure
+                            if (array_key_exists(self::risksNoMeasureNode, $tempArray)) {
+                                $tempPrefix = $risksOccurrencePrefix.self::risksNoMeasureNode.'.';
+                                $selections = $tempArray[self::risksNoMeasureNode];
+                                if ($this->checkMissingChildren($tempArray,self::risksNoMeasureNode,$tempPrefix.'missing') && array_key_exists(self::risksNoMeasureOther,$selections)) {
+                                    $this->checkMissingContent($selections,[self::risksNoMeasureOther => $tempPrefix.self::descriptionNode],hash: $this->addDiv(self::risksNoMeasureNode,true,false));
+                                }
+                            }
+                            // risks trigger
+                            if (array_key_exists(self::risksTriggerNode, $tempArray)) {
+                                $tempPrefix = $translationPage.self::risksTriggerNode.'.';
+                                $this->checkMissingChildrenOther($tempArray[self::risksTriggerNode], self::risksTriggerNode.'Type', $tempPrefix.'missing', $this->combinePrefixArray(['burdensome', 'risksTriggerOther'], $tempPrefix));
+                            }
+                            // risks after
+                            if (array_key_exists(self::risksAfterNode,$typeArray)) {
+                                $this->checkMissingChosen($typeArray, $translationPage.self::risksAfterNode, 2, self::risksAfterNode,name: self::risksAfterNode);
+                            }
+                        }
+                    } elseif (in_array($type, [self::burdensRisksContributorsNode, self::burdensRisksUninvolvedNode]) && $isNotNo) {
+                        // compensation
+                        $tempPrefix = $translationPage.self::burdensRisksCompensationNode.'.';
+                        $tempArray = $typeArray[self::burdensRisksCompensationNode];
+                        $tempVal = $type.'Compensation';
+                        $this->checkMissingTextfieldEmpty($tempArray, $tempPrefix.'missing', $tempPrefix.self::descriptionNode, $this->addDiv($tempVal), false,hashDescription: $this->addDiv($tempVal,true,false), parameters: array_merge($typeParam,[self::chosen => $tempArray[self::chosen]]));
+                        $risks = $this->flattenArray($pageArray[self::risksNode][self::risksTypesNode]);
+                        if ($type===self::burdensRisksContributorsNode && $risks!==[]) {
+                            foreach (['ethicalFinding' => 'risksFinding', 'ethicalLegal' => 'risksSocial'] as $contributors => $risk) {
+                                if (in_array($contributors,$selections) && !in_array($risk,$risks)) { // burden/risk for contributors -> risk for participants
+                                    $this->addCheckLabelString($translationPage.self::burdensRisksContributorsNode.'.'.$contributors);
+                                }
+                            }
+                        }
                     }
-                }
-                if (!$isNoID) {
-                    $this->checkBurdensRisksCompensation($tempArray,$type,$params);
-                }
-            }
-        }
-        // burdensRisksContributors
-        $tempArray = $pageArray[self::burdensRisksContributorsNode];
-        $tempVal = $title;
-        $params = ['burdensRisksType' => self::burdensRisksContributorsNode];
-        if ($this->checkMissingTextfield($tempArray,2,0,$tempVal,self::burdensRisksContributorsNode.'Type',$tempVal,$this->addDiv(self::burdensRisksContributorsNode,true,false),true, parameters: $params)===0) {
-            $this->checkBurdensRisksCompensation($tempArray,self::burdensRisksContributorsNode,$params);
-        }
-        // finding
-        $tempPrefix = $translationPage.self::findingNode.'.';
-        $tempArray = $pageArray[self::findingNode];
-        if ($this->checkMissingTextfield($tempArray,2,0,$tempPrefix.'title',self::findingNode,$tempPrefix.self::descriptionNode,$this->addDiv(self::descriptionNode),true)===0) {
-            $this->checkMissingChosen($tempArray,$tempPrefix.self::informingNode,null,$this->addDiv(self::findingNode),true,self::informingNode);
-            if ($this->noPre) { // no pre information -> no finding
-                $this->addCheckLabelString($tempPrefix.'information',parameters: $this->routeIDs);
-            }
-            if (in_array($this->consentAddressee,[self::voluntaryConsentNo,self::voluntaryConsentNotApplicable],true)) { // finding -> consent
-                $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->routeIDs);
+                } // at least one option was selected
             }
         }
         // feedback
@@ -2243,6 +2357,27 @@ class CheckDocClass extends ControllerAbstract
         return $isString ? $curVal : $returnVal;
     }
 
+    /** Checks missing descriptions of checkboxes that may have multiple levels.
+     * @param array|string $selections selected options
+     * @param array $otherTypes options where a description is needed
+     * @param string $translationPrefix part of the translation key for the error message. Will be prefixed by 'checkDoc.projectdetails.pages.' and suffixed by '.otherTypes.'
+     * @return array all selected options
+     */
+    private function checkMissingDescriptions(array|string $selections, array $otherTypes, string $translationPrefix): array
+    {
+        $returnArray = [];
+        foreach ($selections as $key => $value) {
+            if (is_array($value)) {
+                $returnArray = array_merge($returnArray,$this->checkMissingDescriptions($value,$otherTypes,$translationPrefix));
+            } elseif (in_array($key,$otherTypes,true) && $value==='') { // selected option
+                $this->errorMessage = self::projectdetailsPrefix.$translationPrefix.'.otherTypes.'.$key;
+                $this->addCheckLabelString(self::missingSingle,$key,colorRed: false);
+                $returnArray[] = $key;
+            }
+        }
+        return $returnArray;
+    }
+
     // further functions
 
     /** Creates the hint saying that inputs for project start and/or funding are missing.
@@ -2403,6 +2538,25 @@ class CheckDocClass extends ControllerAbstract
         if (!$this->anyWindowMissing) {
             $this->checkLabel = trim(str_replace($this->curWindow.":\n",'',$this->checkLabel))."\n\n";
         }
+    }
+
+    /** Merges all keys and values of a multidimensional array in one array dimension.
+     * @param array|string $array $array array to be flattened
+     * @return array flattened array
+     */
+    private function flattenArray(array|string $array): array {
+        if (!is_array($array)) {
+            return [];
+        }
+        $returnArray = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $returnArray = array_merge($returnArray,[$key],$this->flattenArray($value));
+            } else {
+                $returnArray[] = $key;
+            }
+        }
+        return $returnArray;
     }
 
     // further methods

@@ -19,8 +19,8 @@ class TextsType extends TypeAbstract
         $this->isBurdensRisks = $dummyParams['isBurdensRisks'];
         $this->isNotInformationNoConsent = $dummyParams['isNotInformationNoConsent'];
         $translationPrefix = 'projectdetails.pages.texts.';
-        $templateArray = [self::introNode,self::proNode,self::conNode,self::findingTextNode];
-        foreach (array_merge([self::introNode,self::goalsNode,self::proNode,self::conNode],$dummyParams['isFinding'] ? [self::findingTextNode] : [],$dummyParams['isConflict'] ? [self::conflictTextNode] : []) as  $type) {
+        $templateArray = [self::introNode,self::proNode,self::conNode];
+        foreach (array_merge([self::introNode,self::goalsNode,self::proNode,self::conNode],$dummyParams['isConflict'] ? [self::conflictTextNode] : []) as  $type) {
             $this->addFormElement($builder,$type,'textarea',$translationPrefix.$type.'.title');
             if (in_array($type,$templateArray)) {
                 $this->addFormElement($builder,$type.'Template','checkbox',$translationPrefix.'useTemplate');
@@ -55,12 +55,6 @@ class TextsType extends TypeAbstract
         $tempArray = $viewData[self::conNode];
         $forms[self::conTemplate]->setData($this->getBoolFromString($tempArray[self::conTemplate]));
         $forms[self::conNode]->setData($this->getArrayValue($tempArray,self::descriptionNode));
-        // finding text
-        if (array_key_exists(self::findingTextNode,$forms)) {
-            $tempArray = $viewData[self::findingTextNode];
-            $forms[self::findingTemplate]->setData($this->getBoolFromString($tempArray[self::findingTemplate]));
-            $forms[self::findingTextNode]->setData($this->getArrayValue($tempArray,self::descriptionNode));
-        }
     }
 
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
@@ -92,11 +86,6 @@ class TextsType extends TypeAbstract
             $tempArray[self::descriptionNode] = $forms[self::conNode]->getData();
         }
         $newData[self::conNode] = $tempArray;
-        // finding text
-        if (array_key_exists(self::findingTextNode,$forms)) {
-            $tempVal = $forms[self::findingTemplate]->getData();
-            $newData[self::findingTextNode] = array_merge([self::findingTemplate => $tempVal],$tempVal ? [] : [self::descriptionNode => $forms[self::findingTextNode]->getData()]);
-        }
         $viewData = $newData;
     }
 }
