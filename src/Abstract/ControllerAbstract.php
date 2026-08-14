@@ -1414,7 +1414,7 @@ abstract class ControllerAbstract extends AbstractController
                             foreach ([self::burdensNode,self::risksNode,self::burdensRisksContributorsNode,self::burdensRisksUninvolvedNode] as $type) {
                                 $isBurdens = $type===self::burdensNode;
                                 $isRisks = $type===self::risksNode;
-                                $tempArray = $burdensRisksArray[$type][$type.'Type'];
+                                $tempArray = $burdensRisksArray[$type][$type.'Type'] ?: [];
                                 $isChosen = is_array($tempArray);
                                 $isNo = array_key_exists('no'.ucfirst($type),$tempArray);
                                 $isCurrent = $isChosen && !$isNo;
@@ -2386,11 +2386,15 @@ abstract class ControllerAbstract extends AbstractController
                                 $typeNode = $curNode->{$type.'Type'};
                                 $this->updateMultiSelection($typeNode, self::burdensRisksTypes[$type], 'other'.ucfirst($type)); // remove nodes with no equivalent
                                 $isBurdens = $type===self::burdensNode;
+                                $hasCompensation = $this->checkElement(self::burdensRisksCompensationNode,$curNode);
+                                $compensationNode = $hasCompensation ? $curNode->{self::burdensRisksCompensationNode} : null;
+                                $compensationDescription = $hasCompensation ? trim((string)$compensationNode->{self::descriptionNode}) : '';
                                 if ($isBurdens) {
-                                    if ($this->checkElement(self::burdensRisksCompensationNode, $curNode)) {
-                                        $curNode->{self::descriptionNode} = trim(((string)$curNode->{self::descriptionNode})."\n".((string)$curNode->{self::burdensRisksCompensationNode}->{self::descriptionNode})); // move compensation description to burdens description
+                                    if ($hasCompensation) {
+                                        $curNode->{self::descriptionNode} = trim(((string)$curNode->{self::descriptionNode})."\n".$compensationDescription); // move compensation description to burdens description
                                     }
                                     $this->removeElement('burdensNoDescription', $burdensRisksNode); // remove description if 'no burdens' was selected
+                                    $this->updateMultiSelectionOther($typeNode,$burdensTypesNodeCloned,['sensitive' => 'burdensSensitive']);
                                 } else {
                                     $this->updateMultiSelectionOrder($risksNode->{self::risksTypesNode}, ['risksCognitive' => ['risksMental'], 'risksPhysical' => ['risksIntegrity']]); // move risks to sub-category
                                     $findingNodeOld = $burdensRisksNode->{self::findingNode};
@@ -2399,7 +2403,7 @@ abstract class ControllerAbstract extends AbstractController
                                             $this->removeElement('noRisks',$typeNode);
                                             $curNode->addChild(self::descriptionNode);
                                         }
-                                        $this->addChildNodes($typeNode->addChild('risksFinding'), ['risksIncidental', 'risksSuspicion']); // finding are now sub-options of risks
+                                        $this->addChildNodes($typeNode->addChild('risksFinding'), ['risksIncidental']); // finding are now sub-options of risks
                                         $findingNode = $risksNode->addChild(self::findingNode); // keep description and informing in separate node
                                         $findingNode->addChild(self::descriptionNode, (string)$findingNodeOld->{self::descriptionNode});
                                         $informingNode = $this->addChosenNode($findingNode, self::informingNode);
@@ -2414,24 +2418,25 @@ abstract class ControllerAbstract extends AbstractController
                                         }
                                         $this->removeElement(self::findingTextNode, $textsNode); // remove finding node from texts
                                     }
+                                    $this->updateMultiSelectionOther($typeNode,$risksTypesNodeCloned,['risksEmotional' => 'risksEmotional', 'risksPhysical' => 'risksPhysical', 'risksSocial' => 'risksSocial']);
                                     // add risks occurrence and risks after
                                     if (count($typeNode->children())>0 && !$this->checkElement('noRisks', $typeNode)) {
                                         $this->addChildNodes($curNode, [self::risksOccurrenceNode]);
-                                        $curNode->{self::risksOccurrenceNode}->addChild(self::risksOccurrenceNode.'Type');
-                                    }
-                                }
-                                $this->removeElement(self::burdensRisksCompensationNode, $curNode); // remove compensation question
-                                $oldNode = $isBurdens ? $burdensTypesNodeCloned : $risksTypesNodeCloned;
-                                foreach ($isBurdens ? ['sensitive' => 'burdensSensitive'] : ['risksEmotional' => 'risksEmotional', 'risksPhysical' => 'risksPhysical', 'risksSocial' => 'risksSocial'] as $key => $value) { // for options that now have sub-options, select 'other' option of this category
-                                    if ($this->checkElement($key, $oldNode)) {
-                                        $other = $value.'Other';
-                                        if ($this->checkElement($value, $typeNode)) {
-                                            $typeNode->{$value}->addChild($other);
-                                        } else {
-                                            $typeNode->addChild($value)->addChild($other);
+                                        $risksOccurrenceNode = $curNode->{self::risksOccurrenceNode};
+                                        $typeNodeName = self::risksOccurrenceNode.'Type';
+                                        $risksOccurrenceNode->addChild($typeNodeName);
+                                        $risksCompensation = (string) $compensationNode->{self::chosen};
+                                        $risksOccurrenceTypeNode = $risksOccurrenceNode->{$typeNodeName};
+                                        if ($risksCompensation==='0') { // select both 'other' occurrences and add description to first one
+                                            $risksOccurrenceTypeNode->addChild('occurrenceBefore')->addChild('occurrenceBeforeOther',$compensationDescription);
+                                            $risksOccurrenceTypeNode->addChild('occurrenceAfter')->addChild('occurrenceAfterOther');
+                                        } elseif ($risksCompensation==='1') { // select 'no risks occurrences' and add description to risksNoMeasure 'other'
+                                            $risksOccurrenceTypeNode->addChild('noRisksOccurrence');
+                                            $risksOccurrenceNode->addChild(self::risksNoMeasureNode)->addChild(self::risksNoMeasureOther,$compensationDescription);
                                         }
                                     }
                                 }
+                                $this->removeElement(self::burdensRisksCompensationNode, $curNode); // remove compensation question
                             }
                             $this->removeElement(self::findingNode, $burdensRisksNode); // remove finding node
                             $burdensRisksContributorsNode = $burdensRisksNode->{self::burdensRisksContributorsNode};
@@ -2529,6 +2534,26 @@ abstract class ControllerAbstract extends AbstractController
                 $subNode = $node->addChild($subCategory);
                 foreach ($tempArray as $key => $value) {
                     $subNode->addChild($key,$value);
+                }
+            }
+        }
+    }
+
+    /** For each key in $options, if $oldNode has a child with that name, a child with the respective value is created for $newNode (if not already existing). This node is added a child with name $value.'Other'.
+     * @param SimpleXMLElement $newNode node where the new nodes may be appended
+     * @param SimpleXMLElement $oldNode node where existence of children is checked
+     * @param array $options keys: node names to be checked in $oldNode, values: names of children that may be added to $newNode
+     * @return void
+     */
+    private function updateMultiSelectionOther(SimpleXMLElement $newNode, SimpleXMLElement $oldNode, array $options): void
+    {
+        foreach ($options as $key => $value) { // for options that now have sub-options, select 'other' option of this category
+            if ($this->checkElement($key, $oldNode)) {
+                $other = $value.'Other';
+                if ($this->checkElement($value, $newNode)) {
+                    $newNode->{$value}->addChild($other);
+                } else {
+                    $newNode->addChild($value)->addChild($other);
                 }
             }
         }

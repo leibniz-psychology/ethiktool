@@ -1632,11 +1632,16 @@ projectdetails:
       risksTrigger:
         title: 'Which trigger warning(s) shall the study information sheet contain?'
         types:
+          triggerIntimate: 'template for intimate questions'
+          burdensome: 'template for potentially distressing topic'
+          threat: 'template for indications of potential harm to self or others'
+          crime: 'template for serious criminal offense alerts'
+          triggerOther: 'self-formulated trigger warning'
+        templates:
           triggerIntimate: 'The study contains partly personal or intimate questions. The study should therefore be completed in an undisturbed environment. Please ensure that privacy is maintained during participation and that no unauthorised persons can view the responses.'
-          burdensome: 'The data collection covers a topic that can be perceived as distressing.'
+          burdensome: 'The data collection covers the following topic that can be perceived as distressing:'
           threat: 'We treat all information and collected data as confidential. The project contributors are required to maintain confidentiality. The analysis is carried out anonymously, without mentioning any names. However, the duty of confidentiality does not apply if there are concrete indications of an acute risk of self-harm or harm to others. In such cases, the project contributors reserve the right to immediately notify appropriate entities (e.g., medical personnel, emergency services, or the relevant authorities) in order to prevent harm.'
           crime: 'We treat all information and collected data as confidential. The analysis is conducted anonymously, without mentioning any names. However, please note that our confidentiality promise is subject to legal limitations. If, in the course of the study, we receive information regarding the planning or execution of certain very serious criminal offenses (as listed in Section 138 of the German Criminal Code (StGB), such as high treason, murder, or manslaughter), we may be legally obliged to disclose this information to the authorities. In such exceptional cases, disclosure will only occur if it is absolutely necessary to prevent an imminent, serious crime and if we would otherwise be subject to criminal liability ourselves.'
-          triggerOther: 'self-formulated trigger warning'
       risksNoMeasure:
         title: 'Why are no measures implemented?'
         types:
@@ -3049,8 +3054,7 @@ checkDoc:
             otherRisks: 'Specification of other risks'
           risksMental: 'If “exhaustion resulting from cognitive strain“ is selected as a risk, “cognitive strain“ must be selected in the list of burdens as well.'
           risksExhaustion: 'If “exhaustion/fatigue resulting from physical strain“ is selected as a risk, “bodily/physical strain“ must be selected in the list of burdens as well.'
-          risksMotionFromInterventions: 'If participants are exposed to <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">virtual reality</a>, “simulator/motion sickness“ must be selected in the list of risks.'
-          risksMotion: 'If “simulator/motion sickness“ is selected as a risk, “virtual reality“ must be selected in the list of <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a>.'
+          risksMotion: 'If participants are exposed to <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">virtual reality</a>, “simulator/motion sickness“ must be selected in the list of risks.'
           risksStimuli: 'If “overstimulation or impairment of the senses“ is selected as a risk, stimulus presentation must be selected in the list of <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a>.'
           risksSocial: 'if social, economic or political risks can occur, intimate contents must be selected in the list of burdens.'
         finding:
@@ -3478,7 +3482,7 @@ completeForm:
       {committeeType, select,
         EUB   {}
         DLR   {Ethics proposals and all associated documents are processed electronically (only in PDF and XML form). The employees of the Research Ethics Office are involved in processing the documents; when necessary, this extends to selected individuals entrusted with data protection, export control, law and compliance, as well as the members of the ethics committee at the German Aerospace Center (DLR). The persons involved are obliged to maintain confidentiality and to comply with data protection regulations. In particularly justified exceptional cases, the applicant has the option of restricting access to the proposal documents for individual persons from this group - usually if there are justified concerns about the disclosure of information.
-          After completion of ethics assessment by the Research Ethics Office (when necessary, also by the extended group of persons or the ethics committee) at the DLR, all documents and correspondence are stored, irrespective of the vote issued, for a period of 10 years after the receipt of application. Access to the stored data is granted only via employees of the DLR’s Research Ethics Office.
+          After completion of ethics assessment by the Research Ethics Office (when necessary, also by the extended group of persons or the ethics committee) at the DLR, all documents and correspondence are stored, irrespective of the vote issued, for a period of 10 years after the receipt of application. Access to the stored data is granted only via employees of the DLR's Research Ethics Office.
             {numReferences, plural,
               =0    {}
               other {For the purpose and for the duration of the review of the current proposal {isExRe, select,

@@ -1632,11 +1632,16 @@ projectdetails:
       risksTrigger:
         title: 'Welche Triggerwarnung(en) soll die Studieninformation enthalten?'
         types:
+          triggerIntimate: 'Vorlage zu intimen Fragen'
+          burdensome: 'Vorlage zu belastendem Thema'
+          threat: 'Vorlage zu Anzeichen von Selbst- oder Fremdgefährdung'
+          crime: 'Vorlage zur Kenntnis schwerer Straftaten'
+          triggerOther: 'selbst formulierte Triggerwarnung'
+        templates:
           triggerIntimate: 'Die Studie enthält teilweise persönliche bzw. intime Fragen. Die Studie sollte daher in einem ungestörten Umfeld bearbeitet werden. Bitte achten Sie darauf, dass die Privatsphäre während der Teilnahme gewahrt bleibt und keine unbefugten Personen Einblick in die Antworten nehmen können.'
-          burdensome: 'Die Erhebung umfasst ein Thema, das als belastend wahrgenommen werden kann'
+          burdensome: 'Die Erhebung umfasst folgendes Thema, das als belastend wahrgenommen werden kann:'
           threat: 'Wir behandeln alle Angaben und erhobenen Daten vertraulich. Die Projektbeteiligten sind zur Verschwiegenheit verpflichtet. Die Auswertung erfolgt anonymisiert bzw. ohne Nennung von Namen. Die Schweigepflicht bzw. Vertraulichkeit gilt jedoch nicht, wenn konkrete Anzeichen für eine akute Selbstgefährdung oder die Gefährdung anderer Personen vorliegen. Die Projektbeteiligten behalten sich vor, in solchen Fällen unverzüglich geeignete Stellen (z.B. medizinisches Personal, Notdienste oder zuständige Behörden) zu informieren, um Schaden abzuwenden.'
           crime: 'Wir behandeln alle Angaben und erhobenen Daten vertraulich. Die Auswertung erfolgt anonymisiert bzw. ohne Nennung von Namen. Bitte beachten Sie jedoch, dass unser Vertraulichkeitsversprechen rechtlichen Grenzen unterliegt. Sollten uns im Rahmen der Studie Informationen über die Planung oder Ausführung bestimmter, sehr schwerwiegender Straftaten berichtet werden (wie sie im deutschen Strafgesetzbuch in § 138 StGB aufgeführt sind, zum Beispiel schwerer Hochverrat, Mord oder Totschlag), sind wir unter Umständen gesetzlich verpflichtet, diese Informationen an zuständige Stellen (z.B. Behörden) weiterzugeben. Eine Weitergabe erfolgt in einem solchen Ausnahmefall nur dann, wenn dies zwingend geboten ist, um eine drohende, schwere Tat abzuwenden, und wenn wir uns andernfalls selbst strafbar machen würden.'
-          triggerOther: 'selbst formulierte Triggerwarnung'
       risksNoMeasure:
           title: 'Warum werden keine Maßnahmen ergriffen?'
           types:
@@ -3049,8 +3054,7 @@ checkDoc:
             otherRisks: 'Benennung der sonstigen Risiken'
           risksMental: 'Wenn „Erschöpfung infolge von Beanspruchung“ als Risiko ausgewählt wurde, muss „kognitive Belastung“ unter Belastungen ebenfalls ausgewählt werden.' # 1:1 from here
           risksExhaustion: 'Wenn „Erschöpfung/Ermüdung infolge körperlicher Belastung“ als Risiko ausgewählt wurde, muss „körperliche Belastung“ unter Belastungen ebenfalls ausgewählt werden.'
-          risksMotionFromInterventions: 'Wenn die Teilnehmenden <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">virtueller Realität</a> ausgesetzt werden, muss „Simulator-/Bewegungs-Übelkeit“ als Risiko ausgewählt werden.'
-          risksMotion: 'Wenn „Simulator-/Bewegungs-Übelkeit“ als Risiko ausgewählt wurde, muss „virtuelle Realität“ als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> ausgewählt werden.'
+          risksMotion: 'Wenn die Teilnehmenden <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">virtueller Realität</a> ausgesetzt werden, muss „Simulator-/Bewegungs-Übelkeit“ als Risiko ausgewählt werden.'
           risksStimuli: 'Wenn „Überreizung oder Beeinträchtigung der Sinne“ als Risiko ausgewählt wurde, müssen Stimuli als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> präsentiert werden.'
           risksSocial: 'Wenn soziale, ökonomische oder politische Risiken auftreten können, müssen intime Inhalte als Belastung ausgewählt werden.' # 1:1 until here
         finding:

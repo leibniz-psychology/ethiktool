@@ -100,7 +100,7 @@ class GroupsType extends TypeAbstract
         $newData[self::examinedPeopleNode] = $tempArray;
         // people description
         $numSelected = count($tempArray);
-        if ($minAge<18 || $numSelected>1 || $numSelected===1 && !array_key_exists(self::healthyExaminedNode,$tempArray)) {
+        if ($minAge!==null && $minAge<18 || $numSelected>1 || $numSelected===1 && !array_key_exists(self::healthyExaminedNode,$tempArray)) {
             $newData[self::peopleDescription] = $forms[self::peopleDescription]->getData();
         }
         // closed group

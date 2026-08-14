@@ -603,7 +603,11 @@ projectdetails:
         other    {}}{description}
   burdensRisks:
     burdens:
-      burdensEveryday: "\nNach Einschätzung der Antragstellenden sind diese Belastungen für die Teilnehmenden alltagsüblich."
+      burdensEveryday: >-
+        
+        Nach Einschätzung der Antragstellenden sind diese Belastungen für die Teilnehmenden {burdensEveryday, select,
+                                                                                              0     {nicht} 
+                                                                                              other {}} alltagsüblich.
     risks:
       description: "Beschreibung der Risiken:\n"
       finding:
@@ -618,7 +622,11 @@ projectdetails:
                                                     consent {können in der Einwilligung auswählen, ob sie über aufgetretene Zufallsbefunde/Verdachtsmomente informiert werden möchten (Mitteilung optional).}
                                                     other   {werden nicht über aufgetretene Zufallsbefunde/Verdachtsmomente informiert. Die Begründung lautet wie folgt:
                                                               {description}}}
-    risksOccurrence: "Nach Einschätzung der Antragstellenden bleibt nach Durchführung aller Maßnahmen keine Auftretenswahrscheinlichkeit von nennenswerter Höhe und keine Schwere der Folgen, die über bloßes Unbehagen hinausgeht."
+    risksOccurrence: >-
+      
+      Nach Einschätzung der Antragstellenden bleibt nach Durchführung aller Maßnahmen {risksAfter, select,
+                  0     {eine Auftretenswahrscheinlichkeit von nennenswerter Höhe und/oder eine}
+                  other {keine Auftretenswahrscheinlichkeit von nennenswerter Höhe und keine}} Schwere der Folgen, die über bloßes Unbehagen hinausgeht.
     risksNoMeasure:
       notNecessary: 'Die benannten Risiken sind nicht von nennenswerter Höhe bzw. Schwere.'
       notPossible: 'Die benannten Risiken lassen sich nicht reduzieren bzw. die Folgen nicht mildern.'

@@ -49,7 +49,7 @@
                         <div class="flex {% if loop.index>1 %} topMarginButtons {% endif %}"> {# no addCheckbox because of additional attributes #}
                         {{ form_widget(curWidget,params|merge({'attr': checkInput|merge(widget in ['other','supervision'] ? addTarget(contributorsController,widget~'Task') : {})})) }}
                         {{ form_label(curWidget,null, params|merge(addLabelAttributes(checkLabel|merge(addStyle('vertical-align: unset'))))) }}
-                        {% if widget in tasksMandatory and not isSupervision or addSupervisionIcon %}
+                        {% if widget in tasksMandatory and (not isSupervision or addSupervisionIcon) %}
                             <div {% if isSupervision %} {{ stimulus_target(contributorsController,'supervisionIcon') }} {% endif %}>
                                 {{ formRender.addIcon((tempPrefix~'hints.mandatory')|trans({'type': widget})|raw) }}
                             </div>

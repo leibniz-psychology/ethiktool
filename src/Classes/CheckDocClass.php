@@ -337,7 +337,7 @@ class CheckDocClass extends ControllerAbstract
                         $this->IDs[self::measureTimePointNode] = $measureID+1;
                         $this->setProjectdetailsVariables();
                         $tempVal = $measure[self::dataSourceNode][self::originNode][self::chosen];
-                        $anyOriginNew = $tempVal===self::originNew;
+                        $anyOriginNew = $anyOriginNew || $tempVal===self::originNew;
                         $allOriginChosen = $allOriginChosen && $tempVal!=='';
                         $this->checkDataSource(); // data source
                         if ($measure[self::groupsNode]!=='') {
@@ -1257,14 +1257,12 @@ class CheckDocClass extends ControllerAbstract
                             }
                         }
                         if ($hasInterventions) {
-                            foreach (['vr' => 'risksMotion','stimuli' => 'risksStimuli'] as $intervention => $risk) {
-                                if (!in_array($intervention,$interventions) && in_array($risk,$selections)) { // risk selected -> intervention must also be selected
-                                    $this->addCheckLabelString($tempPrefix.$risk,parameters: $this->paramsAddressee);
-                                }
+                            if (!in_array('stimuli',$interventions) && in_array('risksStimuli',$selections)) { // 'overstimulation' in risks -> stimuli in interventions
+                                $this->addCheckLabelString($tempPrefix.'risksStimuli',parameters: $this->paramsAddressee);
                             }
-                        }
-                        if (in_array('vr',$interventions) && !in_array('risksMotion',$selections)) { // 'vr' in interventions -> 'simulator/motion sickness' in risks
-                            $this->addCheckLabelString($tempPrefix.'risksMotionFromInterventions',parameters: $this->paramsAddressee);
+                            if (in_array('vr',$interventions) && !in_array('risksMotion',$selections)) { // 'vr' in interventions -> 'simulator/motion sickness' in risks
+                                $this->addCheckLabelString($tempPrefix.'risksMotion',parameters: $this->paramsAddressee);
+                            }
                         }
                         // finding
                         if (array_key_exists(self::findingNode, $typeArray)) {

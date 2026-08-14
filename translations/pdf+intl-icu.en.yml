@@ -603,7 +603,11 @@ projectdetails:
         other    {}}{description}
   burdensRisks:
     burdens:
-      burdensEveryday: "\nAccording to the applicants' judgment, these burdens do not exceed the level commonly encountered in the participants' everyday life."
+      burdensEveryday: >-
+        
+        According to the applicants' judgment, these burdens do {burdensEveryday, select,
+                                                                  0     {}
+                                                                  other {not}} exceed the level commonly encountered in the participants' everyday life.
     risks:
       description: "Description of the risks:\n"
       finding:
@@ -618,7 +622,11 @@ projectdetails:
                                           consent {can select in the consent form whether they would like to be informed about incidental findings/suspicions that occur (notification optional).}
                                           other   {are not informed of any incidental findings or suspicions. The justification is as follows:
                                                       {description}}}
-    risksOccurrence: "According to the applicant' judgment, no significant likelihood of occurrence and no severity of consequences that goes beyond mere discomfort remains, once all measures have been implemented."
+    risksOccurrence: >-
+      
+      According to the applicant''s judgment, {risksAfter, select,
+                  o     {a significant likelihood of occurrence and/or a}
+                  other {no significant likelihood of occurrence and no}} severity of consequences that goes beyond mere discomfort remains, once all measures have been implemented.
     risksNoMeasure:
       notNecessary: 'The identified risks are not of particular severity.'
       notPossible: 'The identified risks cannot be reduced or their consequences mitigated.'

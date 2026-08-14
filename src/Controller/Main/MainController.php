@@ -75,7 +75,7 @@ class MainController extends ControllerAbstract
                 $reviewProcess = '';
                 $shortChange = false;
                 if (((string) $applicationProcessNode->{self::chosen})===self::reviewProcessShort) { // review process is short
-                    if ($isShortChoose && !$hasShortDocs) { // old committee has no shortDocs, but new one has
+                    if ($isShortChoose && !$hasShortDocs && !in_array($this->getCurrentReviewProcess($appNode),[self::reviewShortBegun,self::reviewShortRequested])) { // old committee has no shortDocs, but new one has, and review process is neither begun nor requested
                         $applicationProcessNode->addChild(self::shortDocsNode);
                         $reviewProcess = self::reviewShortService; // keep input for participation documents
                         $shortChange = true;

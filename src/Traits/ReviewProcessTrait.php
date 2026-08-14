@@ -1060,8 +1060,8 @@ trait ReviewProcessTrait
     /** Each key is a pdf that may have to be added if the complete proposal is created. Each value is an array indicating the application types for which the pdf may have to be added. Only PDFs for projectdetails are listed here, i.e., not the votes pdf.
      */
     protected const reviewTypesPDF = [ // keys must equal the values in ControllerAbstract::customPDForder
-        'dataSet' => ['shortDocs','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-        'legitimization' => ['shortDocs','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+        'dataSet' => ['shortDocs','shortBegun','fullBegun','fullDocs'],
+        'legitimization' => ['shortDocs','shortBegun','fullBegun','fullDocs'],
         'dataPrivacy' => ['shortDocs','fullDocs'],
         'begun' => ['shortBegun','fullBegun'],
         'information' => ['fullDocs'],

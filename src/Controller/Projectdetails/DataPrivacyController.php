@@ -23,7 +23,7 @@ class DataPrivacyController extends ControllerAbstract
         if ($this->checkInactivePage($measureNode,self::privacyNode)) { // page was opened before a proposal was created/loaded, a non-existent study / group / measure time point was opened, page is not active for the current review process, or the current measure time point is reanalysis
             return $this->redirectToRoute('app_main');
         }
-        $privacyNode = $measureNode->{self::privacyNode};
+        $privacyNode = $measureNode->{self::privacyNode}[0];
         $hasCreate = $this->checkElement(self::createNode,$privacyNode);
         if ($hasCreate) {
             $projectdetailsPrefix = 'projectdetails.pages.';
