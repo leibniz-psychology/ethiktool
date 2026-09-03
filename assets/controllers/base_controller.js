@@ -182,7 +182,7 @@ export default class extends Controller {
             let multi = params.multi;
             if (setOr===true) {
                 setOr = [];
-                for (let index = 0; index < multi.length; index++) {
+                for (let index = 0; index<multi.length; index++) {
                     setOr.push(index);
                 }
             }
@@ -190,7 +190,7 @@ export default class extends Controller {
                 let elements = this.checkArray(array[0]);
                 let numElements = elements.length;
                 let isChecked = Array(numElements).fill(false);
-                for (let element = 0; element < numElements; ++element) {
+                for (let element = 0; element<numElements; ++element) {
                     isChecked[element] = document.getElementById(elements[element]).checked;
                 }
                 let isVisible = setOr.includes(index) ? isChecked.includes(true) : !isChecked.includes(false);

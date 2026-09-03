@@ -173,22 +173,40 @@ committee:
       BICC  {the bicc Ethics Committee}
       PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
       BTU   {the Ethics Committee of BTU Cottbus-Senftenberg}
+      HTW   {the Ethics Committee of HTW Berlin University of Applied Science}
+      UOL   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      JHS   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      HZO   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      OFFIS {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      HIFMB {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      DLRO  {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      IDMT  {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      DFKIO {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
       other {the test ethics committee}}
   committeeGen: >-
     {committee, select,
-    TUC   {the Ethics Committee of Chemnitz University of Technology}
-    EUB   {the Bielefeld University Ethics Review Board}
-    JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
-    DLR   {the Research Ethics Office of the German Aerospace Center}
-    TUD   {the Ethics Board of Dresden University of Technology}
-    UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
-    UPB   {the Ethics Committee of Paderborn University}
-    PHHD  {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
-    SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
-    BICC  {the bicc Ethics Committee}
-    PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
-    BTU   {the Ethics Committee of BTU Cottbus-Senftenberg}
-    other {the test ethics committee}}
+      TUC   {the Ethics Committee of Chemnitz University of Technology}
+      EUB   {the Bielefeld University Ethics Review Board}
+      JGU   {the Ethics Committee of the Department of Psychology of JGU Mainz}
+      DLR   {the Research Ethics Office of the German Aerospace Center}
+      TUD   {the Ethics Board of Dresden University of Technology}
+      UH1   {the Ethics Review Board of Faculty 1 of Hildesheim University}
+      UPB   {the Ethics Committee of Paderborn University}
+      PHHD  {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+      SRH   {the Joint Ethics Committee of Heidelberg University of Education and SRH University}
+      BICC  {the bicc Ethics Committee}
+      PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
+      BTU   {the Ethics Committee of BTU Cottbus-Senftenberg}
+      HTW   {the Ethics Committee of HTW Berlin University of Applied Science}
+      UOL   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      JHS   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      HZO   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      OFFIS {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      HIFMB {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      DLRO  {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      IDMT  {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      DFKIO {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      other {the test ethics committee}}
   committeeDat: >-
     {committee, select,
       TUC   {the Ethics Committee of Chemnitz University of Technology}
@@ -203,6 +221,15 @@ committee:
       BICC  {the bicc Ethics Committee}
       PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
       BTU   {the Ethics Committee of BTU Cottbus-Senftenberg}
+      HTW   {the Ethics Committee of HTW Berlin University of Applied Science}
+      UOL   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      JHS   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      HZO   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      OFFIS {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      HIFMB {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      DLRO  {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      IDMT  {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      DFKIO {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
       other {the test ethics committee}}
   committeeAcc: >-
     {committee, select,
@@ -218,6 +245,15 @@ committee:
       BICC  {the bicc Ethics Committee}
       PHT   {the Ethics Committee of University College of Teacher Education Tyrol}
       BTU   {the Ethics Committee of BTU Cottbus-Senftenberg}
+      HTW   {the Ethics Committee of HTW Berlin University of Applied Science}
+      UOL   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      JHS   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      HZO   {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      OFFIS {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      HIFMB {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      DLRO  {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      IDMT  {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
+      DFKIO {the Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg}
       other {the test ethics committee}}
   committeeLocation: >-
     {committee, select,
@@ -233,6 +269,15 @@ committee:
       BICC  {Bonn International Centre for Conflict Studies}
       PHT   {University College of Teacher Education Tyrol}
       BTU   {BTU Cottbus-Senftenberg}
+      HTW   {HTW Berlin University of Applied Science}
+      UOL   {Carl von Ossietzky University Oldenburg}
+      JHS   {Jade University of Applied Sciences}
+      HZO   {Oldenburg Hearing Center}
+      OFFIS {OFFIS}
+      HIFMB {Helmholtz Institute Oldenburg}
+      DLRO  {German Aerospace Center site Oldenburg}
+      IDMT  {Fraunhofer IDMT Oldenburg}
+      DFKIO {DFKI Oldenburg}
       other {the institution of the test ethics committee}}
   committeeLocationPure: >-
     {committee, select,
@@ -248,6 +293,15 @@ committee:
       BICC  {Bonn International Centre for Conflict Studies}
       PHT   {University College of Teacher Education Tyrol}
       BTU   {BTU Cottbus-Senftenberg}
+      HTW   {HTW Berlin University of Applied Science}
+      UOL   {Carl von Ossietzky University Oldenburg}
+      JHS   {Jade University of Applied Sciences}
+      HZO   {Oldenburg Hearing Center}
+      OFFIS {OFFIS}
+      HIFMB {Helmholtz Institute Oldenburg}
+      DLRO  {German Aerospace Center site Oldenburg}
+      IDMT  {Fraunhofer IDMT Oldenburg}
+      DFKIO {DFKI Oldenburg}
       other {Institution of the test ethics committee}}
   committeeLocationDat: >-
     {committee, select,
@@ -263,6 +317,15 @@ committee:
       BICC  {Bonn International Centre for Conflict Studies}
       PHT   {University College of Teacher Education Tyrol}
       BTU   {BTU Cottbus-Senftenberg}
+      HTW   {HTW Berlin University of Applied Science}
+      UOL   {Carl von Ossietzky University Oldenburg}
+      JHS   {Jade University of Applied Sciences}
+      HZO   {Oldenburg Hearing Center}
+      OFFIS {OFFIS}
+      HIFMB {Helmholtz Institute Oldenburg}
+      DLRO  {German Aerospace Center site Oldenburg}
+      IDMT  {Fraunhofer IDMT Oldenburg}
+      DFKIO {DFKI Oldenburg}
       other {the institution of the test ethics committee}}
   committeeLocationGen: >-
     {committee, select,
@@ -278,6 +341,15 @@ committee:
       BICC  {of Bonn International Centre for Conflict Studies}
       PHT   {of University College of Teacher Education Tyrol}
       BTU   {of BTU Cottbus-Senftenberg}
+      HTW   {of HTW Berlin University of Applied Science}
+      UOL   {of Carl von Ossietzky University Oldenburg}
+      JHS   {of Jade University of Applied Sciences}
+      HZO   {of Oldenburg Hearing Center}
+      OFFIS {of OFFIS}
+      HIFMB {of Helmholtz Institute Oldenburg}
+      DLRO  {of German Aerospace Center site Oldenburg}
+      IDMT  {of Fraunhofer IDMT Oldenburg}
+      DFKIO {of DFKI Oldenburg}
       other {of the institution of the test ethics committee}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
@@ -301,6 +373,16 @@ newForm: # placed immediately after 'committee' to have the committee names all 
       BICC: 'Bonn: bicc Ethics Committee'
       PHT: 'Innsbruck: Ethics Committee of University College of Teacher Education Tyrol'
       BTU: 'Cottbus: Ethics Committee of BTU Cottbus-Senftenberg'
+      HTW: 'Berlin: HTW Berlin University of Applied Science'
+      OL: 'Oldenburg: Commission for Research Impact Assessment and Ethics, Carl von Ossietzky University Oldenburg'
+      UOL: 'Carl von Ossietzky University Oldenburg'
+      JHS: 'Jade University of Applied Sciences'
+      HZO: 'Oldenburg Hearing Center'
+      OFFIS: 'OFFIS'
+      HIFMB: 'Helmholtz Institute Oldenburg'
+      DLRO: 'DLR site Oldenburg'
+      IDMT: 'Fraunhofer IDMT Oldenburg'
+      DFKIO: 'DFKI Oldenburg'
       testCommittee: 'Test ethics committee'
   password:
     title: 'Password:'
@@ -487,6 +569,51 @@ main:
              The ethics proposal should be submitted <i>before</i> the start of a research project. Only in justified exceptional cases, the Ethics Review Board may carry out a retrospective review.
 
              Research projects involving medical, pharmaceutical or other research that may require an assessment in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG) or other legal requirements must be submitted to a medical ethics committee. Research projects involving physicians as project contributors usually have to be evaluated by a medical ethics committee. In individual cases a review by the non-medical Ethics Committee of BTU Cottbus-Senftenberg may be possible.}
+      HTW   {Any person carrying out independent research at HTW Berlin University of Applied Science is eligible to apply; usually a full-time professor at HTW Berlin. The responsibility for the ethics application in case of (under-)graduate theses and other student research projects lies with the teaching staff or supervisors.
+    
+             The ethics proposal must be submitted least 6 weeks before the start of a research project; retrospective ethics approvals are not possible.
+    
+             The Ethics Committee does not perform the tasks of other committees whose jurisdiction is governed by European, federal, or state law (e.g., according to the Medicinal Products Act, the Medical Devices Act).}
+      UOL   {Researchers at Carl von Ossietzky University Oldenburg and at higher education institutions and organisations linked to the university by cooperation agreements are eligible to apply. For final theses and other student research projects, responsibility for the application to the commission lies with the examiner or supervisor in charge.
+    
+             The ethics application must be submitted before the research project starts; the commission’s vote has to be issued before data collection begins. Retrospective reviews are not possible.
+    
+             Research projects involving medical or pharmaceutical research, or falling under legal frameworks such as the German Medicinal Products Act (AMG), medical device law (MPG/MPDG), the Transfusion Act (TFG), the Radiation Protection Act or Section 15 of the professional code of the Lower Saxony Medical Association, are reviewed by the Medical Ethics Committee of Faculty VI. This usually also applies when physicians are involved in the project, when patients are examined who receive inpatient or outpatient treatment as part of the study, or when medication is administered or invasive procedures are carried out. The administration office decides on the allocation of an application to one of the two commissions in consultation with both chairs. Further information can be found <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">here</a>.}
+      JHS   {Researchers at Carl von Ossietzky University Oldenburg and at higher education institutions and organisations linked to the university by cooperation agreements are eligible to apply. For final theses and other student research projects, responsibility for the application to the commission lies with the examiner or supervisor in charge.
+    
+             The ethics application must be submitted before the research project starts; the commission’s vote has to be issued before data collection begins. Retrospective reviews are not possible.
+    
+             Research projects involving medical or pharmaceutical research, or falling under legal frameworks such as the German Medicinal Products Act (AMG), medical device law (MPG/MPDG), the Transfusion Act (TFG), the Radiation Protection Act or Section 15 of the professional code of the Lower Saxony Medical Association, are reviewed by the Medical Ethics Committee of Faculty VI. This usually also applies when physicians are involved in the project, when patients are examined who receive inpatient or outpatient treatment as part of the study, or when medication is administered or invasive procedures are carried out. The administration office decides on the allocation of an application to one of the two commissions in consultation with both chairs. Further information can be found <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">here</a>.}
+      HZO   {Researchers at Carl von Ossietzky University Oldenburg and at higher education institutions and organisations linked to the university by cooperation agreements are eligible to apply. For final theses and other student research projects, responsibility for the application to the commission lies with the examiner or supervisor in charge.
+    
+             The ethics application must be submitted before the research project starts; the commission’s vote has to be issued before data collection begins. Retrospective reviews are not possible.
+    
+             Research projects involving medical or pharmaceutical research, or falling under legal frameworks such as the German Medicinal Products Act (AMG), medical device law (MPG/MPDG), the Transfusion Act (TFG), the Radiation Protection Act or Section 15 of the professional code of the Lower Saxony Medical Association, are reviewed by the Medical Ethics Committee of Faculty VI. This usually also applies when physicians are involved in the project, when patients are examined who receive inpatient or outpatient treatment as part of the study, or when medication is administered or invasive procedures are carried out. The administration office decides on the allocation of an application to one of the two commissions in consultation with both chairs. Further information can be found <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">here</a>.}
+      OFFIS {Researchers at Carl von Ossietzky University Oldenburg and at higher education institutions and organisations linked to the university by cooperation agreements are eligible to apply. For final theses and other student research projects, responsibility for the application to the commission lies with the examiner or supervisor in charge.
+    
+             The ethics application must be submitted before the research project starts; the commission’s vote has to be issued before data collection begins. Retrospective reviews are not possible.
+    
+             Research projects involving medical or pharmaceutical research, or falling under legal frameworks such as the German Medicinal Products Act (AMG), medical device law (MPG/MPDG), the Transfusion Act (TFG), the Radiation Protection Act or Section 15 of the professional code of the Lower Saxony Medical Association, are reviewed by the Medical Ethics Committee of Faculty VI. This usually also applies when physicians are involved in the project, when patients are examined who receive inpatient or outpatient treatment as part of the study, or when medication is administered or invasive procedures are carried out. The administration office decides on the allocation of an application to one of the two commissions in consultation with both chairs. Further information can be found <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">here</a>.}
+      HIFMB {Researchers at Carl von Ossietzky University Oldenburg and at higher education institutions and organisations linked to the university by cooperation agreements are eligible to apply. For final theses and other student research projects, responsibility for the application to the commission lies with the examiner or supervisor in charge.
+    
+             The ethics application must be submitted before the research project starts; the commission’s vote has to be issued before data collection begins. Retrospective reviews are not possible.
+    
+             Research projects involving medical or pharmaceutical research, or falling under legal frameworks such as the German Medicinal Products Act (AMG), medical device law (MPG/MPDG), the Transfusion Act (TFG), the Radiation Protection Act or Section 15 of the professional code of the Lower Saxony Medical Association, are reviewed by the Medical Ethics Committee of Faculty VI. This usually also applies when physicians are involved in the project, when patients are examined who receive inpatient or outpatient treatment as part of the study, or when medication is administered or invasive procedures are carried out. The administration office decides on the allocation of an application to one of the two commissions in consultation with both chairs. Further information can be found <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">here</a>.}
+      DLRO  {Researchers at Carl von Ossietzky University Oldenburg and at higher education institutions and organisations linked to the university by cooperation agreements are eligible to apply. For final theses and other student research projects, responsibility for the application to the commission lies with the examiner or supervisor in charge.
+    
+             The ethics application must be submitted before the research project starts; the commission’s vote has to be issued before data collection begins. Retrospective reviews are not possible.
+    
+             Research projects involving medical or pharmaceutical research, or falling under legal frameworks such as the German Medicinal Products Act (AMG), medical device law (MPG/MPDG), the Transfusion Act (TFG), the Radiation Protection Act or Section 15 of the professional code of the Lower Saxony Medical Association, are reviewed by the Medical Ethics Committee of Faculty VI. This usually also applies when physicians are involved in the project, when patients are examined who receive inpatient or outpatient treatment as part of the study, or when medication is administered or invasive procedures are carried out. The administration office decides on the allocation of an application to one of the two commissions in consultation with both chairs. Further information can be found <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">here</a>.}
+      IDMT  {Researchers at Carl von Ossietzky University Oldenburg and at higher education institutions and organisations linked to the university by cooperation agreements are eligible to apply. For final theses and other student research projects, responsibility for the application to the commission lies with the examiner or supervisor in charge.
+    
+             The ethics application must be submitted before the research project starts; the commission’s vote has to be issued before data collection begins. Retrospective reviews are not possible.
+    
+             Research projects involving medical or pharmaceutical research, or falling under legal frameworks such as the German Medicinal Products Act (AMG), medical device law (MPG/MPDG), the Transfusion Act (TFG), the Radiation Protection Act or Section 15 of the professional code of the Lower Saxony Medical Association, are reviewed by the Medical Ethics Committee of Faculty VI. This usually also applies when physicians are involved in the project, when patients are examined who receive inpatient or outpatient treatment as part of the study, or when medication is administered or invasive procedures are carried out. The administration office decides on the allocation of an application to one of the two commissions in consultation with both chairs. Further information can be found <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">here</a>.}
+      DFKIO {Researchers at Carl von Ossietzky University Oldenburg and at higher education institutions and organisations linked to the university by cooperation agreements are eligible to apply. For final theses and other student research projects, responsibility for the application to the commission lies with the examiner or supervisor in charge.
+    
+             The ethics application must be submitted before the research project starts; the commission’s vote has to be issued before data collection begins. Retrospective reviews are not possible.
+    
+             Research projects involving medical or pharmaceutical research, or falling under legal frameworks such as the German Medicinal Products Act (AMG), medical device law (MPG/MPDG), the Transfusion Act (TFG), the Radiation Protection Act or Section 15 of the professional code of the Lower Saxony Medical Association, are reviewed by the Medical Ethics Committee of Faculty VI. This usually also applies when physicians are involved in the project, when patients are examined who receive inpatient or outpatient treatment as part of the study, or when medication is administered or invasive procedures are carried out. The administration office decides on the allocation of an application to one of the two commissions in consultation with both chairs. Further information can be found <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">here</a>.}
       other {You are creating a test ethics application that is <b>not designed to be submitted to an ethics review board</b>. Therefore, no eligibility requirements need to be fulfilled at this point.}}
   newFormModal:
     title: 'jump to new proposal'
@@ -3457,6 +3584,15 @@ completeForm:
                           BICC  {<a href="https://biccde.sharepoint.com/sites/biccjanus/SitePages/Ethics-Committee.aspx" target="_blank">current composition of {committeeGen}</a> (internal link)}
                           PHT   {current composition of {committeeGen}}
                           BTU   {<a href="https://www.b-tu.de/en/universitaet/struktur/governing-boards-and-representative-bodies/ethics-committee" target="_blank">current composition of {committeeGen}</a>}
+                          HTW   {<a href="https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission" target="_blank">current composition of {committeeGen}</a>}
+                          UOL   {<a href="https://uol.de/en/senate/ethic" target="_blank">current composition of {committeeGen}</a>}
+                          JHS   {<a href="https://uol.de/en/senate/ethic" target="_blank">current composition of {committeeGen}</a>}
+                          HZO   {<a href="https://uol.de/en/senate/ethic" target="_blank">current composition of {committeeGen}</a>}
+                          OFFIS {<a href="https://uol.de/en/senate/ethic" target="_blank">current composition of {committeeGen}</a>}
+                          HIFMB {<a href="https://uol.de/en/senate/ethic" target="_blank">current composition of {committeeGen}</a>}
+                          DLRO  {<a href="https://uol.de/en/senate/ethic" target="_blank">current composition of {committeeGen}</a>}
+                          IDMT  {<a href="https://uol.de/en/senate/ethic" target="_blank">current composition of {committeeGen}</a>}
+                          DFKIO {<a href="https://uol.de/en/senate/ethic" target="_blank">current composition of {committeeGen}</a>}
                           other {current composition of {committeeGen}}} and inform us of any possible conflicts of interest below:
     types:
       noBias: 'No member of the ethics committee has a conflict of interest.'
@@ -3478,6 +3614,15 @@ completeForm:
         BICC  {, available at <a href="" target="_blank"></a>}
         PHT   {. These regulations will be accessible here after the official resolution on the Board's establishment}
         BTU   {, available at <a href="https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf" target="_blank">https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf</a> (internal link)}
+        HTW   {, available at <a href="https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission" target="_blank">https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission</a>}
+        UOL   {, available at <a href="https://uol.de/en/senate/ethic" target="_blank">https://uol.de/en/senate/ethic</a>}
+        JHS   {, available at <a href="https://uol.de/en/senate/ethic" target="_blank">https://uol.de/en/senate/ethic</a>}
+        HZO   {, available at <a href="https://uol.de/en/senate/ethic" target="_blank">https://uol.de/en/senate/ethic</a>}
+        OFFIS {, available at <a href="https://uol.de/en/senate/ethic" target="_blank">https://uol.de/en/senate/ethic</a>}
+        HIFMB {, available at <a href="https://uol.de/en/senate/ethic" target="_blank">https://uol.de/en/senate/ethic</a>}
+        DLRO  {, available at <a href="https://uol.de/en/senate/ethic" target="_blank">https://uol.de/en/senate/ethic</a>}
+        IDMT  {, available at <a href="https://uol.de/en/senate/ethic" target="_blank">https://uol.de/en/senate/ethic</a>}
+        DFKIO {, available at <a href="https://uol.de/en/senate/ethic" target="_blank">https://uol.de/en/senate/ethic</a>}
         other {}}.
       {committeeType, select,
         EUB   {}
@@ -3560,6 +3705,15 @@ completeForm:
           BICC  {to {committeeAcc} at ethics@bicc.de}
           PHT   {to {committeeAcc} at ethikkommission@ph-tirol.ac.at}
           BTU   {to {committeeAcc} at ethik@b-tu.de}
+          HTW   {to {committeeAcc} at ethikkommission-antrag@htw-berlin.de}
+          UOL   {to {committeeAcc} at antraege.ethikkommissionen@uol.de}
+          JHS   {to {committeeAcc} at antraege.ethikkommissionen@uol.de}
+          HZO   {to {committeeAcc} at antraege.ethikkommissionen@uol.de}
+          OFFIS {to {committeeAcc} at antraege.ethikkommissionen@uol.de}
+          HIFMB {to {committeeAcc} at antraege.ethikkommissionen@uol.de}
+          DLRO  {to {committeeAcc} at antraege.ethikkommissionen@uol.de}
+          IDMT  {to {committeeAcc} at antraege.ethikkommissionen@uol.de}
+          DFKIO {to {committeeAcc} at antraege.ethikkommissionen@uol.de}
           other {the e-mail address of {committeeGen}}}.</li>
           {isSupervisor, select,
             true  {<li>If submitting an ethics proposal for a qualification thesis, the responsible supervisor must be involved in the communication.</li>}

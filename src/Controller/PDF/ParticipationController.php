@@ -14,7 +14,7 @@ class ParticipationController extends PDFAbstract
     use ProjectdetailsTrait;
 
     private array $linkedSubHeadings = []; // pages where links of subheadings should go to
-    // $content: array passed to the template. Keys: headings, values: array with two elements: First element: array of sub-paragraphs. Each of these arrays consists of two elements: sub-heading and content of the sub-paragraph. Second element: boolean if the content of each sub-paragraph should be on the same page. If false, the sub-heading and the first line will be on the same page.
+    // $content: array passed to the template. Keys: headings, values: array with two elements: First element: array of sub-paragraphs. Each of these arrays consists of two elements: subheading and content of the sub-paragraph. Second element: boolean if the content of each sub-paragraph should be on the same page. If false, the subheading and the first line will be on the same page.
     private string $linkedSubHeadingsString = 'linkedSubHeadings';
     private array $content;
     private array $privacyContent;
@@ -427,7 +427,7 @@ class ParticipationController extends PDFAbstract
                                 $contInfos = $contributors[$index][self::infosNode];
                                 $curInfos = $this->addContributorInfo($contInfos);
                                 $hasFurtherTasks = $tasks!==[]; // true if contributor has further tasks except leader and contact
-                                if (($hasFurtherTasks || $isCurContact) && !in_array($index, $leaderIndices)) { // contributor has further tasks, but not leader, in current variant
+                                if (($hasFurtherTasks || $isCurContact) && !in_array($index, $leaderIndices)) { // contributor has further tasks, but not leader, in current variant. No 'strict' for in_array because $index may be an int or a string
                                     $tempVal = $contInfos[self::institutionInfo];
                                     $furtherArray[$tempVal!==self::institutionSame ? $this->addMarkInput($tempVal,self::$markInput) : $tempVal][$this->addMarkInput($contInfos[self::department],self::$markInput)][] = $this->addMarkInput($contInfos[self::nameNode],self::$markInput).($hasFurtherTasks ? ' ('.implode(', ',$tasks).')' : '');
                                     if ($isCurContact) {

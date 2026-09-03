@@ -14,7 +14,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '4.0.1';
+    protected const toolVersion = '4.0.2';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -25,8 +25,8 @@ trait PageTrait
     /** @var string name of parameter indicating if current committee type is in beta status. */
     protected const isCommitteeBeta = 'isCommitteeBeta';
     /** @var array committee translation keys and values. Keys: headings for optgroups. values: key-value pairs of committees. keys: translation keys. values: either the value or an array if two or more institutions share the same committee. Each element in this array is again a key-value pair. */
-    protected const committeeTypes = ['newForm.committee.headings.use' => ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.UPB' => 'UPB'], 'newForm.committee.headings.beta' => ['newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.TUD' => 'TUD', 'newForm.committee.types.UH1' => 'UH1', 'newForm.committee.types.PHHDSRH' => ['newForm.committee.types.PHHD' => 'PHHD', 'newForm.committee.types.SRH' => 'SRH'], 'newForm.committee.types.BICC' => 'BICC', 'newForm.committee.types.PHT' => 'PHT', 'newForm.committee.types.BTU' => 'BTU'], 'newForm.committee.headings.test' => ['newForm.committee.types.testCommittee' => 'testCommittee']];
-    protected const committeeTypesBeta = ['JGU','DLR','TUD','UH1','PHHD','SRH','BICC','PHT','BTU']; // committees that are currently in beta status. Values must equal the values of $committeeTypes
+    protected const committeeTypes = ['newForm.committee.headings.use' => ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.UPB' => 'UPB'], 'newForm.committee.headings.beta' => ['newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.TUD' => 'TUD', 'newForm.committee.types.UH1' => 'UH1', 'newForm.committee.types.PHHDSRH' => ['newForm.committee.types.PHHD' => 'PHHD', 'newForm.committee.types.SRH' => 'SRH'], 'newForm.committee.types.BICC' => 'BICC', 'newForm.committee.types.PHT' => 'PHT', 'newForm.committee.types.BTU' => 'BTU', 'newForm.committee.types.HTW' => 'HTW', 'newForm.committee.types.OL' => ['newForm.committee.types.UOL' => 'UOL', 'newForm.committee.types.JHS' => 'JHS', 'newForm.committee.types.HZO' => 'HZO', 'newForm.committee.types.OFFIS' => 'OFFIS', 'newForm.committee.types.HIFMB' => 'HIFMB', 'newForm.committee.types.DLRO' => 'DLRO', 'newForm.committee.types.IDMT' => 'IDMT', 'newForm.committee.types.DFKIO' => 'DFKIO']], 'newForm.committee.headings.test' => ['newForm.committee.types.testCommittee' => 'testCommittee']];
+    protected const committeeTypesBeta = ['JGU','DLR','TUD','UH1','PHHD','SRH','BICC','PHT','BTU','HTW','UOL','JHS','HZO','OFFIS','HIFMB','DLRO','IDMT','DFKIO']; // committees that are currently in beta status. Values must equal the values of $committeeTypes
     protected const committeeNoMedicine = ['BICC','PHT']; // committees with disabled medicine. Values must equal the values of $committeeTypes
 
     // constant variables

@@ -984,7 +984,8 @@ class ApplicationController extends PDFAbstract
                 $sub = trim($curContent[self::sub]);
                 if (in_array($title, $additionalContent) && (($isAnySupplement[$title] ?? false) || $isAnyInformation && in_array($title,$informationContent,true) && (!in_array($title,[self::burdensNode,self::risksNode],true) || $hasDocs && $isNotShortService && ($title===self::burdensNode && $isAnyBurdensEveryday || $title===self::risksNode && $isAnyBurdensRisks[self::risksNode])) || $title===self::examinedPeopleNode && ($isAnyInformation || $isAnyNoPost) && ($this->isReviewFull || $hasCriteria) || $title===self::processingNode)) {
                     $isMain = $sub==='';
-                    $content = ($isMain ? $main : $sub).($content!=='' ? "\n\n".$this->translateStringPDF($projectdetailsPrefix.'pdf.'.$title,$informationHintParam) : '');
+                    $content = $isMain ? $main : $sub;
+                    $content .= ($content!=='' ? (!str_ends_with($content,'</div>') && !str_ends_with($content,'</br>') ? "\n" : '')."\n".$this->translateStringPDF($projectdetailsPrefix.'pdf.'.$title,$informationHintParam) : '');
                     if ($isMain) {
                         $main = $content;
                     } else {

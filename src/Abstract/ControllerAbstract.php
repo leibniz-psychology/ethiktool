@@ -1279,7 +1279,7 @@ abstract class ControllerAbstract extends AbstractController
         $medicineArray = $appDataArray[self::medicine];
         $coreDataArray = $appDataArray[self::coreDataNode];
         $tempVal = $coreDataArray[self::conflictNode][self::chosen];
-        $allShort = $tempVal==='1'; // gets false if any question is either not yet answered or answered such that a full proposal is required
+        $allShort = $tempVal==='1'; // gets false if any question is either not yet answered or answered such that a full proposal is required or the line of the brief report is 'unclear'
         $conflictMedicine = [$this->getBriefReportHeading(self::conflictNode) => $this->getBriefReportAnswer(self::conflictNode,$tempVal==='0' ? self::answerYes : self::answerNo,$parameters,$getReviewError)];
         $isMedicinePhysician = false;
         $hasMedicine = $medicineArray!=='';
@@ -1350,8 +1350,7 @@ abstract class ControllerAbstract extends AbstractController
                             $allShort = $allShort && $compensationArray[self::compensationTypeNode]!=='';
                             $parameters['isVoluntary'] = $this->getStringFromBool($isVoluntary);
                             $parameters['isConsent'] = $this->getStringFromBool($isConsentOther);
-                            $compensationVoluntaryArray = $compensationArray[self::compensationVoluntaryNode] ?? '';
-                            $compensationVoluntaryArray = $compensationVoluntaryArray!=='' ? $compensationVoluntaryArray : [];
+                            $compensationVoluntaryArray = ($compensationArray[self::compensationVoluntaryNode] ?? '') ?: [];
                             $allShort = $allShort && array_diff($voluntary, ['yes'])===[] && (!array_key_exists(self::compensationVoluntaryNode, $compensationArray) || array_key_exists(self::compensationVoluntaryNo,$compensationVoluntaryArray)) && in_array($consentChosen, [self::consentWritten,'digital',self::consentOral]);
                             $briefReport[$this->getBriefReportHeading(self::voluntaryNode)] = $this->getBriefReportAnswer(self::voluntaryNode, in_array(self::voluntaryConsentNo, $voluntary)
                                 ? self::answerNo
@@ -1404,22 +1403,21 @@ abstract class ControllerAbstract extends AbstractController
                             $burdensRisksArray = $measureTimePoint[self::burdensRisksNode];
                             $burdensEveryday = $burdensRisksArray[self::burdensNode][self::burdensEveryday] ?? '';
                             $risksArray = $burdensRisksArray[self::risksNode];
-                            $risksOccurrence = $risksArray[self::risksOccurrenceNode] ?? '';
-                            $hasRisksOccurrence = $risksOccurrence!=='';
-                            $isNoRisksOccurrence = $hasRisksOccurrence && array_key_exists('noRisksOccurrence',$risksOccurrence);
-                            $risksNoMeasure = $risksArray[self::risksNoMeasureNode] ?? '';
+                            $risksOccurrence = $risksArray[self::risksOccurrenceNode] ?? [];
+                            $hasRisksOccurrence = ($risksOccurrence[self::risksOccurrenceNode.'Type'] ?? '')!=='';
+                            $risksNoMeasure = $risksOccurrence[self::risksNoMeasureNode] ?? '';
                             $hasRisksNoMeasure = $risksNoMeasure!=='';
-                            $hasRisksNoMeasureNotNecessary = $hasRisksNoMeasure && array_key_exists('notNecessary',$risksNoMeasure);
-                            $risksAfter = $risksArray[self::risksAfterNode] ?? '';
+                            $isNotNecessary = $hasRisksNoMeasure && array_key_exists('notNecessary',$risksNoMeasure);
+                            $hasRisksNotMeasureAnyButNotNecessary = $hasRisksNoMeasure && !$isNotNecessary;
+                            $risksAfter = $risksArray[self::risksAfterNode] ?? ''; // can only be non-empty if $hasRisksOccurrence is true and $isNoRisksOccurrence is false
                             foreach ([self::burdensNode,self::risksNode,self::burdensRisksContributorsNode,self::burdensRisksUninvolvedNode] as $type) {
                                 $isBurdens = $type===self::burdensNode;
                                 $isRisks = $type===self::risksNode;
                                 $tempArray = $burdensRisksArray[$type][$type.'Type'] ?: [];
-                                $isChosen = is_array($tempArray);
-                                $isNo = array_key_exists('no'.ucfirst($type),$tempArray);
-                                $isCurrent = $isChosen && !$isNo;
-                                $allShort = $allShort && $isChosen && !$isCurrent && (!$isRisks || $isNo || $hasRisksOccurrence && ($isNoRisksOccurrence && $hasRisksNoMeasureNotNecessary) || !$isNoRisksOccurrence && $risksAfter==='1');
-                                $briefReport[$this->getBriefReportHeading($type)] = $this->getBriefReportAnswer($type,$isCurrent && (!$isBurdens || $burdensEveryday==='0') && (!$isRisks || $hasRisksOccurrence && (!$isNoRisksOccurrence && $risksAfter==='0' || $isNoRisksOccurrence && $hasRisksNoMeasure && !$hasRisksNoMeasureNotNecessary)) ? self::answerYes : ($isBurdens && $burdensEveryday==='1' || $isRisks && ($hasRisksOccurrence && (!$isNoRisksOccurrence && $risksAfter==='1' || $isNoRisksOccurrence && $hasRisksNoMeasure && !$hasRisksNoMeasureNotNecessary)) ? self::answerUnclear : self::answerNo),$parameters,$getReviewError);
+                                $isChosen = $tempArray!==[];
+                                $isCurrent = $isChosen && !array_key_exists('no'.ucfirst($type),$tempArray);
+                                $allShort = $allShort && $isChosen && !$isCurrent;
+                                $briefReport[$this->getBriefReportHeading($type)] = $this->getBriefReportAnswer($type,$isCurrent && (!$isBurdens || $burdensEveryday==='0') && (!$isRisks || $hasRisksOccurrence && ($risksAfter==='0' || $hasRisksNotMeasureAnyButNotNecessary)) ? self::answerYes : ($isBurdens && $burdensEveryday==='1' || $isRisks && ($risksAfter==='1' || $isNotNecessary) ? self::answerUnclear : self::answerNo),$parameters,$getReviewError);
                             }
                             // data privacy -> no set of $allShort because data privacy is only relevant for full proposals
                             if ($isReviewFull) {

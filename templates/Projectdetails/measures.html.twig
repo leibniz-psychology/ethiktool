@@ -154,7 +154,7 @@
     {% set measuresPrefix = translationPrefix~'measures.' %}
     {% set documentationPrefix = measuresPrefix~'documentation.' %}
     {% for key, value in measuresInterventions %}
-        {% if value is iterable %} {# sub-heading #}
+        {% if value is iterable %} {# subheading #}
             {% set isMeasuresBody = key is same as 'measuresBody' %}
             <div class="topMarginButtons ms-1">
                 <div class="text-decoration-underline">{{ (translationPrefix~'typesMain.'~key)|trans }}</div>
@@ -171,7 +171,7 @@
             </div>
         {% else %} {# selectable option #}
             {% set widget, isOther, isNoIntervention = content[value], value in otherTypes, value is same as 'noIntervention' %}
-            {% set isCheckedStyle, isMeasuresQuestionnaire, surveyDiv = boolToDisplay(widget.vars.checked,1), value is same as 'measuresQuestionnaire', 'measuresSruveyDiv' %}
+            {% set isCheckedStyle, isMeasuresQuestionnaire, surveyDiv = boolToDisplay(widget.vars.checked,1), value is same as 'measuresQuestionnaire', 'measuresSurveyDiv' %}
             <div class="grid topMarginButtons" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[value, [value~'Text']|merge(isMeasuresQuestionnaire ? [surveyDiv] : [])]], 'isGrid': true}) }} {% endif %}>
                 {{ formRender.addCheckbox(widget,
                     (value in iconTypes ? {'checkIcon': [(translationPrefix~'icons.'~value)|trans]} : {})|

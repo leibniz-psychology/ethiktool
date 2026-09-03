@@ -184,21 +184,17 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     presenceSub: 'Beschreibung der zeitweisen Anwesenheit:'
     burdens: 'Welche beanspruchenden, belastenden oder anderweitig nennenswerten Aspekte bringt die Teilnahme zwangsläufig mit sich?'
     burdensSub: 'Beschreibung der Belastungen:'
-#    burdensCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Belastungen Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     risks: 'Welche unbeabsichtigten Folgen (Risiken, Gefährdungen) kann die Teilnahme mit sich bringen?'
     risksSub: 'Weitere Angaben zu den Risiken:'
     risksOccurrence: 'Durch welche Maßnahmen sollen die Auftretenswahrscheinlichkeit und/oder die Schwere der Folgen minimiert werden?'
     risksOccurrenceSub: 'Begründung(en), warum keine Maßnahmen ergriffen werden:'
     risksOccurrenceBoxSub: 'Die Felder 22-32 entfallen, da in diesem Forschungsprojekt keine vorhandenen Daten nachgenutzt werden.'
-#    risksCompensation: 'Sind bezogen auf die im vorherigen Feld genannten Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     burdensRisksContributors: 'Welchen Belastungen bzw. Risiken sind die Projektbeteiligten ausgesetzt?'
     burdensRisksContributorsSub: 'Beschreibung der Belastungen bzw. Risiken'
     burdensRisksContributorsCompensation: 'Sind bezogen auf die in dem vorherigen Feld genannten Belastungen/Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     burdensRisksUninvolved: 'Welchen Belastungen bzw. Risiken sind unbeteiligte Dritte ausgesetzt?'
     burdensRisksUninvolvedSub: 'Beschreibung der Belastungen bzw. Risiken'
     burdensRisksUninvolvedCompensation: 'Sind bezogen auf die in dem vorherigen Feld genannten Belastungen/Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
-#    finding: 'Beschreibung der Zufallsbefunde/Verdachtsmomente'
-#    findingSub: 'Wie wird mit aufgetretenen Zufallsbefunden/Verdachtsmomenten umgegangen?'
     feedback: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
     feedbackSub: 'Beschreibung von Art und Rahmung der Rückmeldungen:'
     compensation: 'Aufwandsentschädigung'
@@ -1346,11 +1342,45 @@ dataPrivacy:
           PHT   {Pädagogische Hochschule Tirol
                  Pastorstraße 7
                  A-6010 Innsbruck
-                 Web: https://ph-tirol.ac.at/}
+                 Web: https://ph-tirol.ac.at}
           BTU   {Brandenburgische Technische Universität Cottbus
                  Platz der Deutschen Einheit 1
                  03046 Cottbus
-                 Web: https://www.b-tu.de/}
+                 Web: https://www.b-tu.de}
+          HTW   {Hochschule für Technik und Wirtschaft Berlin
+                 Treskowallee 8
+                 10318 Berlin
+                 Web: https://www.htw-berlin.de}
+          UOL   {Carl von Ossietzky Universität Oldenburg
+                 Ammerländer Heerstraße 114–118
+                 26129 Oldenburg
+                 Web: https://uol.de}
+          JHS   {Jade Hochschule (Körperschaft d. ö. R.)
+                 Friedrich-Paffrath-Str. 101
+                 26389 Wilhelmshaven
+                 Web: https://www.jade-hs.de}
+          HZO   {Hörzentrum Oldenburg gGmbH
+                 Marie-Curie-Straße 2
+                 26129 Oldenburg
+                 Web: https://hz-ol.de}
+          OFFIS {OFFIS e.V.
+                 Escherweg 2
+                 26121 Oldenburg
+                 Web: https://www.offis.de}
+          HIFMB {Helmholtz-Institut für Funktionelle Marine Biodiversität an der Universität Oldenburg (HIFMB)
+                 Im Technologiepark 5
+                 26129 Oldenburg
+                 Web: https://hifmb.de/de}
+          DLRO  {Deutsches Zentrum für Luft- und Raumfahrt e.V. (DLR) Standort Oldenburg
+                 Carl-von-Ossietzky-Straße 15
+                 26129 Oldenburg
+                 Web: https://www.dlr.de}
+          IDMT  {Fraunhofer-Institut für Digitale Medientechnologie IDMT
+                 Marie-Curie-Straße 2
+                 26129 Oldenburg}
+          DFKIO {Deutsches Forschungszentrum für Künstliche Intelligenz GmbH (DFKI)
+                 Marie-Curie-Straße 1
+                 26129 Oldenburg}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1403,6 +1433,40 @@ dataPrivacy:
           BTU   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
                  Tel.: 0355 / 69-2112
                  E-Mail: datenschutz@b-tu.de}
+          HTW   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+                 Tel.: 030 / 5019-2950
+                 E-Mail: datenschutz@htw-berlin.de}
+          UOL   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+                 Tel.: 0441 / 798-4196
+                 E-Mail: dsuni@uol.de}
+          JHS   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+                 E-Mail: datenschutz@jade-hs.de}
+          HZO   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+                 Tel.: 0441 / 2172-111
+                 E-Mail: datenschutz@hz-ol.de}
+          OFFIS {datenschutz nord GmbH
+                 Konsul-Smidt-Straße 88
+                 28217 Bremen
+                 E-Mail: office@datenschutz-nord.de}
+          HIFMB {Alfred-Wegener-Institut Helmholtz-Zentrum für Polar- und Meeresforschung
+                 Am Handelshafen 12
+                 27570 Bremerhaven
+                 Tel.: 0471 / 4831-1637
+                 E-Mail: datenschutz@awi.de}
+          DLRO  {Deutsches Zentrum für Luft- und Raumfahrt e.V.
+                 Linder Höhe
+                 51147 Köln
+                 Tel.: 02203 / 601-0
+                 E-Mail: datenschutz@dlr.de}
+          IDMT  {Fraunhofer-Gesellschaft zur Förderung der angewandten Forschung e.V.
+                 Hansastraße 27c
+                 80686 München
+                 E-Mail: datenschutz@zv.fraunhofer.de}
+          DFKIO {Deutsches Forschungszentrum für Künstliche Intelligenz GmbH
+                 Trippstadter Str. 122
+                 67663 Kaiserslautern
+                 Tel.: 0631 / 20575-0
+                 E-Mail: datenschutz@dfki.de}
           other {Tel.: 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1701,6 +1765,51 @@ dataPrivacy:
                14532 Kleinmachnow
                Tel.: +49 33203 356-0
                E-Mail: poststelle@lda.brandenburg.de}
+        HTW   {Berliner Beauftragte für Datenschutz und Informationsfreiheit
+               Alt-Moabit 59-61
+               10555 Berlin
+               Tel.: +49 30 13889-0
+               E-Mail: mailbox@datenschutz-berlin.de}
+        UOL   {Landesbeauftragte für den Datenschutz Niedersachsen
+               Prinzenstraße 5
+               30159 Hannover
+               Tel.: +49 511 120-4500
+               E-Mail: poststelle@lfd.niedersachsen.de}
+        JHS   {Landesbeauftragte für den Datenschutz Niedersachsen
+               Prinzenstraße 5
+               30159 Hannover
+               Tel.: +49 511 120-4500
+               E-Mail: poststelle@lfd.niedersachsen.de}
+        HZO   {Landesbeauftragte für den Datenschutz Niedersachsen
+               Prinzenstraße 5
+               30159 Hannover
+               Tel.: +49 511 120-4500
+               E-Mail: poststelle@lfd.niedersachsen.de}
+        OFFIS {Landesbeauftragte für den Datenschutz Niedersachsen
+               Prinzenstraße 5
+               30159 Hannover
+               Tel.: +49 511 120-4500
+               E-Mail: poststelle@lfd.niedersachsen.de}
+        HIFMB {Landesbeauftragte für Datenschutz und Informationsfreiheit der Freien Hansestadt Bremen
+               Georgstraße 122 - 124
+               27570 Bremerhaven
+               Tel.: +49 421 3612010
+               E-Mail: office@datenschutz.bremen.de}
+        DLRO  {Bundesbeauftragte für den Datenschutz und die Informationsfreiheit (BfDI)
+               Graurheindorfer Straße 153
+               53117 Bonn
+               Tel.: +49 (0)228-997799-0
+               E-Mail: poststelle@bfdi.bund.de}
+        IDMT  {Bayerisches Landesamt für Datenschutzaufsicht (BayLDA)
+               Postfach 1349
+               91504 Ansbach
+               Tel.: +49 (0) 981 180093-0
+               E-Mail: poststelle@lda.bayern.de}
+        DFKIO {Landesbeauftragte für den Datenschutz und die Informationsfreiheit Rheinland-Pfalz
+               Hintere Bleiche 34
+               55116 Mainz
+               Tel.: +49 (0) 6131 8920-0
+               E-Mail: poststelle@datenschutz.rlp.de}
         other {}}
 
 
@@ -2145,3 +2254,12 @@ logo:
   BICC: 'Logo des Bonn International Centre for Conflict Studies'
   PHT: 'Logo der Pädagogischen Hochschule Tirol'
   BTU: 'Logo der Brandenburgischen Technischen Universität Cottbus-Senftenberg'
+  HTW: 'Logo der HTW Berlin'
+  UOL: 'Logo der Carl von Ossietzky Universität Oldenburg'
+  JHS: 'Logo der Carl von Ossietzky Universität Oldenburg'
+  HZO: 'Logo der Carl von Ossietzky Universität Oldenburg'
+  OFFIS: 'Logo der Carl von Ossietzky Universität Oldenburg'
+  HIFMB: 'Logo der Carl von Ossietzky Universität Oldenburg'
+  DLRO: 'Logo der Carl von Ossietzky Universität Oldenburg'
+  IDMT: 'Logo der Carl von Ossietzky Universität Oldenburg'
+  DFKIO: 'Logo der Carl von Ossietzky Universität Oldenburg'

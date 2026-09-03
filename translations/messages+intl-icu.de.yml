@@ -173,22 +173,40 @@ committee:
       BICC  {die bicc-Ethikkommission}
       PHT   {die Ethikkommission der Pädagogischen Hochschule Tirol}
       BTU   {die Ethikkommission der BTU Cottbus-Senftenberg}
+      HTW   {die Ethik-Kommission der HTW Berlin}
+      UOL   {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      JHS   {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      HZO   {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      OFFIS {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      HIFMB {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      DLRO  {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      IDMT  {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      DFKIO {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
       other {die Test-Ethikkommission}}
   committeeGen: >-
     {committee, select,
-    TUC   {der Ethikkommission der Technischen Universität Chemnitz}
-    EUB   {der Ethik-Kommission der Universität Bielefeld}
-    JGU   {der Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
-    DLR   {der Geschäftsstelle Forschungsethik des DLR}
-    TUD   {des Ethikbeirats der Technischen Universität Dresden}
-    UH1   {der Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
-    UPB   {der Ethik-Kommission der Universität Paderborn}
-    PHHD  {der gemeinsamen Ethikkommission der Pädagogischen Hochschule und der SRH University}
-    SRH   {der gemeinsamen Ethikkommission der Pädagogischen Hochschule und der SRH University}
-    BICC  {der bicc-Ethikkommission}
-    PHT   {der Ethikkommission der Pädagogischen Hochschule Tirol}
-    BTU   {der Ethikkommission der BTU Cottbus-Senftenberg}
-    other {der Test-Ethikkommission}}
+      TUC   {der Ethikkommission der Technischen Universität Chemnitz}
+      EUB   {der Ethik-Kommission der Universität Bielefeld}
+      JGU   {der Ethikkommission des Psychologischen Instituts der Johannes Gutenberg-Universität Mainz}
+      DLR   {der Geschäftsstelle Forschungsethik des DLR}
+      TUD   {des Ethikbeirats der Technischen Universität Dresden}
+      UH1   {der Ethikkommission des Fachbereichs 1 der Universität Hildesheim}
+      UPB   {der Ethik-Kommission der Universität Paderborn}
+      PHHD  {der gemeinsamen Ethikkommission der Pädagogischen Hochschule und der SRH University}
+      SRH   {der gemeinsamen Ethikkommission der Pädagogischen Hochschule und der SRH University}
+      BICC  {der bicc-Ethikkommission}
+      PHT   {der Ethikkommission der Pädagogischen Hochschule Tirol}
+      BTU   {der Ethikkommission der BTU Cottbus-Senftenberg}
+      HTW   {der Ethik-Kommission der HTW Berlin}
+      UOL   {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      JHS   {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      HZO   {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      OFFIS {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      HIFMB {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      DLRO  {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      IDMT  {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      DFKIO {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      other {der Test-Ethikkommission}}
   committeeDat: >-
     {committee, select,
       TUC   {der Ethikkommission der Technischen Universität Chemnitz}
@@ -203,6 +221,15 @@ committee:
       BICC  {der bicc-Ethikkommission}
       PHT   {der Ethikkommission der Pädagogischen Hochschule Tirol}
       BTU   {der Ethikkommission der BTU Cottbus-Senftenberg}
+      HTW   {der Ethik-Kommission der HTW Berlin}
+      UOL   {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      JHS   {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      HZO   {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      OFFIS {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      HIFMB {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      DLRO  {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      IDMT  {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      DFKIO {der Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
       other {der Test-Ethikkommission}}
   committeeAcc: >-
     {committee, select,
@@ -218,6 +245,15 @@ committee:
       BICC  {die bicc-Ethikkommission}
       PHT   {die Ethikkommission der Pädagogischen Hochschule Tirol}
       BTU   {die Ethikkommission der BTU Cottbus-Senftenberg}
+      HTW   {die Ethik-Kommission der HTW Berlin}
+      UOL   {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      JHS   {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      HZO   {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      OFFIS {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      HIFMB {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      DLRO  {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      IDMT  {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
+      DFKIO {die Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg}
       other {die Test-Ethikkommission}}
   committeeLocation: >-
     {committee, select,
@@ -233,6 +269,15 @@ committee:
       BICC  {das Bonn International Centre for Conflict Studies}
       PHT   {die Pädagogische Hochschule Tirol}
       BTU   {die BTU Cottbus-Senftenberg}
+      HTW   {die HTW Berlin}
+      UOL   {die Carl von Ossietzky Universität Oldenburg}
+      JHS   {die Jade Hochschule}
+      HZO   {das Hörzentrum Oldenburg}
+      OFFIS {das OFFIS}
+      HIFMB {das Helmholtz Institut Oldenburg}
+      DLRO  {das DLR Standort Oldenburg}
+      IDMT  {das Fraunhofer IDMT Oldenburg}
+      DFKIO {das DFKI Oldenburg}
       other {die Institution der Test-Ethikkommission}}
   committeeLocationPure: >-
     {committee, select,
@@ -248,6 +293,15 @@ committee:
       BICC  {Bonn International Centre for Conflict Studies}
       PHT   {Pädagogische Hochschule Tirol}
       BTU   {BTU Cottbus-Senftenberg}
+      HTW   {HTW Berlin}
+      UOL   {Carl von Ossietzky Universität Oldenburg}
+      JHS   {Jade Hochschule}
+      HZO   {Hörzentrum Oldenburg}
+      OFFIS {OFFIS}
+      HIFMB {Helmholtz Institut Oldenburg}
+      DLRO  {DLR Standort Oldenburg}
+      IDMT  {Fraunhofer IDMT Oldenburg}
+      DFKIO {DFKI Oldenburg}
       other {Institution der Test-Ethikkommission}}
   committeeLocationDat: >-
     {committee, select,
@@ -263,6 +317,15 @@ committee:
       BICC  {dem Bonn International Centre for Conflict Studies}
       PHT   {der Pädagogischen Hochschule Tirol}
       BTU   {der BTU Cottbus-Senftenberg}
+      HTW   {der HTW Berlin}
+      UOL   {der Carl von Ossietzky Universität Oldenburg}
+      JHS   {der Jade Hochschule}
+      HZO   {dem Hörzentrum Oldenburg}
+      OFFIS {dem OFFIS}
+      HIFMB {dem Helmholtz Institut Oldenburg}
+      DLRO  {dem DLR Standort Oldenburg}
+      IDMT  {dem Fraunhofer IDMT Oldenburg}
+      DFKIO {dem DFKI Oldenburg}
       other {der Institution der Test-Ethikkommission}}
   committeeLocationGen: >-
     {committee, select,
@@ -278,6 +341,15 @@ committee:
       BICC  {des Bonn International Centre for Conflict Studies}
       PHT   {der Pädagogischen Hochschule Tirol}
       BTU   {der BTU Cottbus-Senftenberg}
+      HTW   {HTW Berlin}
+      UOL   {der Carl von Ossietzky Universität Oldenburg}
+      JHS   {der Jade Hochschule}
+      HZO   {des Hörzentrums Oldenburg}
+      OFFIS {des OFFIS}
+      HIFMB {des Helmholtz Instituts Oldenburg}
+      DLRO  {des DLR Standort Oldenburg}
+      IDMT  {des Fraunhofer IDMT Oldenburg}
+      DFKIO {des DFKI Oldenburg}
       other {der Institution der Test-Ethikkommission}}
 
 newForm: # placed immediately after 'committee' to have the committee names all in one place
@@ -301,6 +373,16 @@ newForm: # placed immediately after 'committee' to have the committee names all 
       BICC: 'Bonn: bicc-Ethikkommission'
       PHT: 'Innsbruck: Ethikkommission der Pädagogischen Hochschule Tirol'
       BTU: 'Cottbus: Ethikkommission der BTU Cottbus-Senftenberg'
+      HTW: 'Berlin: Ethik-Kommission der HTW Berlin'
+      OL: 'Oldenburg: Kommission für Forschungsfolgenabschätzung und Ethik der Carl von Ossietzky Universität Oldenburg'
+      UOL: 'Carl von Ossietzky Universität Oldenburg'
+      JHS: 'Jade Hochschule'
+      HZO: 'Hörzentrum Oldenburg'
+      OFFIS: 'OFFIS'
+      HIFMB: 'Helmholtz Institut Oldenburg'
+      DLRO: 'DLR Standort Oldenburg'
+      IDMT: 'Fraunhofer IDMT Oldenburg'
+      DFKIO: 'DFKI Oldenburg'
       testCommittee: 'Test-Ethikkommission'
   password:
     title: 'Passwort:'
@@ -487,6 +569,51 @@ main:
              Ein Antrag soll in der Regel <i>vor</i> der Durchführung eines Forschungsprojekts gestellt werden. In begründeten Ausnahmefällen kann die Ethikkommission eine nachträgliche Prüfung vornehmen.
 
              Forschungsprojekte, bei denen medizinische, pharmazeutische Forschung oder anderweitige Forschung durchgeführt wird, die ggf. eine Bewertung nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPDG) oder anderen gesetzlichen Vorgaben erfordert, müssen bei einer medizinischen Ethik-Kommission eingereicht werden. Forschungsprojekte mit Ärztinnen bzw. Ärzten als Projektbeteiligte müssen normalerweise durch eine medizinische Ethikkommission geprüft werden. In Einzelfällen ist eine Begutachtung durch die nicht-medizinische Ethikkommission der BTU Cottbus-Senftenberg möglich.}
+      HTW   {Antragsberechtigt sind Personen, die an der Hochschule für Technik und Wirtschaft Berlin (HTW Berlin) eigenständig wissenschaftlich tätig sind; in der Regel ein*e hauptamtliche*r Professor*in der HTW Berlin. Die Verantwortung für die Ethikantragstellung im Fall von Studienabschlussarbeiten und anderen studentischen Forschungsprojekten liegt bei den Lehrpersonen bzw. Betreuenden.
+    
+             Der Ethikantrag muss mindestens 6 Wochen vor der Durchführung eines Forschungsprojekts gestellt werden; ein rückwirkendes Ethikvotum ist ausgeschlossen.
+    
+             Die Ethik-Kommission nimmt nicht die Aufgaben anderer Kommissionen wahr, deren Zuständigkeit durch Europa-, Bundes- oder Landesrecht geregelt ist (z.B. nach Arzneimittelgesetz, Medizinproduktegesetz).}
+      UOL   {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
+    
+             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+    
+             Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
+      JHS   {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
+    
+             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+    
+             Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
+      HZO   {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
+    
+             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+    
+             Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
+      OFFIS {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
+    
+             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+    
+             Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
+      HIFMB {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
+    
+             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+    
+             Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
+      DLRO  {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
+    
+             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+    
+             Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
+      IDMT  {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
+    
+             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+    
+             Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
+      DFKIO {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
+    
+             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+    
+             Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
       other {Sie erstellen einen Test-Ethikantrag, für den <b>keine Einreichung bei einer Ethikkommission</b> vorgesehen ist. Daher sind auch keine Voraussetzungen für die Antragstellung zu erfüllen.}}
   newFormModal:
     title: 'Wechsel zu Neuer Antrag'
@@ -3445,19 +3572,28 @@ completeForm:
   bias:
     title: >- # TODO: add PHHD link
       Bitte prüfen Sie die {committeeType, select,
-                          TUC   {<a href="https://www.tu-chemnitz.de/tu/ethik/mitglieder.php" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                          EUB   {<a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/personen/index.xml" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                          JGU   {<a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                          DLR   {<a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                          TUD   {aktuelle Zusammensetzung {committeeGen}}
-                          UH1   {<a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                          UPB   {<a href="https://www.uni-paderborn.de/universitaet/ethik-kommission" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                          PHHD  {<a href="" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                          SRH   {<a href="https://www.srh-university.de/de/forschung/ethikkommission/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                          BICC  {<a href="https://biccde.sharepoint.com/sites/biccjanus/SitePages/Ethics-Committee.aspx" target="_blank">aktuelle Zusammensetzung {committeeGen}</a> (interner Link)}
-                          PHT   {aktuelle Zusammensetzung {committeeGen}}
-                          BTU   {<a href="https://www.b-tu.de/universitaet/gremien-und-vertretungen/ethikkommision" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
-                          other {aktuelle Zusammensetzung {committeeGen}}} und teilen Sie uns nachfolgend mögliche Befangenheiten mit:
+          TUC   {<a href="https://www.tu-chemnitz.de/tu/ethik/mitglieder.php" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          EUB   {<a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/personen/index.xml" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          JGU   {<a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          DLR   {<a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          TUD   {aktuelle Zusammensetzung {committeeGen}}
+          UH1   {<a href="https://www.uni-hildesheim.de/fb1/gremien/ethikkommission/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          UPB   {<a href="https://www.uni-paderborn.de/universitaet/ethik-kommission" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          PHHD  {<a href="" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          SRH   {<a href="https://www.srh-university.de/de/forschung/ethikkommission/" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          BICC  {<a href="https://biccde.sharepoint.com/sites/biccjanus/SitePages/Ethics-Committee.aspx" target="_blank">aktuelle Zusammensetzung {committeeGen}</a> (interner Link)}
+          PHT   {aktuelle Zusammensetzung {committeeGen}}
+          BTU   {<a href="https://www.b-tu.de/universitaet/gremien-und-vertretungen/ethikkommision" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          HTW   {<a href="https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          UOL   {<a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/kommissionsmitglieder" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          JHS   {<a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/kommissionsmitglieder" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          HZO   {<a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/kommissionsmitglieder" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          OFFIS {<a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/kommissionsmitglieder" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          HIFMB {<a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/kommissionsmitglieder" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          DLRO  {<a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/kommissionsmitglieder" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          IDMT  {<a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/kommissionsmitglieder" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          DKFIO {<a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/kommissionsmitglieder" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
+          other {aktuelle Zusammensetzung {committeeGen}}} und teilen Sie uns nachfolgend mögliche Befangenheiten mit:
     types:
       noBias: 'Es liegt keine Befangenheit eines Mitglieds der Ethikkommission vor.'
       participate: 'Folgende Mitglieder der Ethikkommission sind am Forschungsprojekt selbst beteiligt oder stehen in einem Weisungsverhältnis zu einer projektbeteiligten Person:'
@@ -3478,6 +3614,15 @@ completeForm:
         BICC  {, abrufbar unter <a href="" target="_blank"></a>}
         PHT   {. Diese Regelungen sind mit der offiziellen Beschlussfassung hier abrufbar}
         BTU   {, abrufbar unter <a href="https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf" target="_blank">https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf</a> (interner Link)}
+        HTW  {, abrufbar unter <a href="https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission" target="_blank">https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission</a>}
+        UOL   {, abrufbar unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik</a>}
+        JHS   {, abrufbar unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik</a>}
+        HZO   {, abrufbar unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik</a>}
+        OFFIS {, abrufbar unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik</a>}
+        HIFMB {, abrufbar unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik</a>}
+        DLRO  {, abrufbar unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik</a>}
+        IDMT  {, abrufbar unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik</a>}
+        DFKIO {, abrufbar unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik</a>}
         other {}}.
       {committeeType, select,
         EUB   {}
@@ -3560,6 +3705,15 @@ completeForm:
           BICC  {an {committeeAcc} unter ethics@bicc.de}
           PHT   {an {committeeAcc} unter ethikkommission@ph-tirol.ac.at}
           BTU   {an {committeeAcc} unter ethik@b-tu.de}
+          HTW   {an {committeeAcc} unter ethikkommission-antrag@htw-berlin.de}
+          UOL   {an {committeeAcc} unter antraege.ethikkommissionen@uol.de}
+          JHS   {an {committeeAcc} unter antraege.ethikkommissionen@uol.de}
+          HZO   {an {committeeAcc} unter antraege.ethikkommissionen@uol.de}
+          OFFIS {an {committeeAcc} unter antraege.ethikkommissionen@uol.de}
+          HIFMB {an {committeeAcc} unter antraege.ethikkommissionen@uol.de}
+          DLRO  {an {committeeAcc} unter antraege.ethikkommissionen@uol.de}
+          IDMT  {an {committeeAcc} unter antraege.ethikkommissionen@uol.de}
+          DFKIO {an {committeeAcc} unter antraege.ethikkommissionen@uol.de}
           other {an {committeeAcc} unter der E-Mail-Adresse {committeeGen}}}.</li>
           {isSupervisor, select,
             true  {<li>Bei der Einreichung von Ethikanträgen zu Qualifikationsarbeiten nehmen Sie die Erstbetreuung mit in die Korrespondenz auf.</li>}
