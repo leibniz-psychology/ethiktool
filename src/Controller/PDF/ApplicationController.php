@@ -274,8 +274,8 @@ class ApplicationController extends PDFAbstract
             $tempArray = $coreDataArray[self::applicant];
             $multipleInfosPrefix = 'multiple.infos.';
             $infos = [];
-            foreach (self::applicantContributorsInfosTypes as $info) {
-                $key = $this->translateString($multipleInfosPrefix.$info);
+            foreach ($this->getApplicantContributorsInfos($committeeType) as $info) {
+                $key = $this->translateString($multipleInfosPrefix.$info,$committeeParam);
                 $applicantWidth = max($applicantWidth, ceil(mb_strwidth($key) / 1.5));
                 $curInfo = $tempArray[$info];
                 if (in_array($info,self::institutionPosition,true)) {
@@ -736,9 +736,18 @@ class ApplicationController extends PDFAbstract
                                         $tempArray = $typeArray[self::risksOccurrenceNode];
                                         $selections = $tempArray[self::risksOccurrenceNode.'Type'];
                                         $risksAfter = $typeArray[self::risksAfterNode] ?? '';
-                                        $content = $this->getSelectedCheckboxesMulti($selections,self::risksOccurrenceNode,$burdensRisksPrefixTool).($risksAfter!=='' ? $this->translateStringPDF($burdensRisksPrefix.self::risksOccurrenceNode,[self::risksAfterNode => $risksAfter]) : '');
-                                        if ($selections!=='' && array_key_exists('no'.ucfirst(self::risksOccurrenceNode),$selections)) { // risks no measure
-                                            $subContent = $this->getSelectedCheckboxes($tempArray[self::risksNoMeasureNode],$burdensRisksPrefix.self::risksNoMeasureNode.'.',implodeLines: true);
+                                        if ($selections!=='') {
+                                            $content = '';
+                                            foreach (['occurrenceBefore','occurrenceAfter'] as $risksOccurrence) {
+                                                if (array_key_exists($risksOccurrence,$selections)) {
+                                                    $content .= "• ".$this->translateString($burdensRisksPrefixTool.'typesMain.'.$risksOccurrence).":</li>\n".$this->addDivPadding($this->getSelectedCheckboxesMulti($selections[$risksOccurrence],self::risksOccurrenceNode,$burdensRisksPrefixTool),false);
+                                                }
+                                            }
+                                            if ($risksAfter!=='') {
+                                                $content .= $this->translateStringPDF($burdensRisksPrefix.self::risksOccurrenceNode,[self::risksAfterNode => $risksAfter]);
+                                            } elseif (array_key_exists('no'.ucfirst(self::risksOccurrenceNode),$selections)) { // risks no measure
+                                                $subContent = $this->getSelectedCheckboxes($tempArray[self::risksNoMeasureNode],$burdensRisksPrefix.self::risksNoMeasureNode.'.',implodeLines: true);
+                                            }
                                         }
                                     }
                                     $this->addBoxContent(self::risksOccurrenceNode,$content,$subContent,boxSub: !$this->isReviewFull && !$isAnyOriginExisting);

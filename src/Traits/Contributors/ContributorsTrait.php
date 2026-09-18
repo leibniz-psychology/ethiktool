@@ -14,7 +14,6 @@ trait ContributorsTrait
     // node names
     protected const eMailNode = 'eMail';
     protected const phoneNode = 'phone';
-    protected const infosMandatory = ['name', 'institution', 'department', 'professorship', 'eMail']; // mandatory infos. Must equal values from $applicantContributorsInfosTypes and in the translation file (multiple->infos)
     protected const tasksNodes = ['leader', 'research', 'experiment', 'contact', 'data', 'supervision', 'other'];
     protected const taskLeader = 'leader'; // must equal one value in $taskNodes
     protected const taskData = 'data'; // must equal one value in $taskNodes
@@ -70,26 +69,29 @@ trait ContributorsTrait
     /** Creates a contributor node for each element in $contributors.
      * @param SimpleXMLElement $appNode root node of the application
      * @param array $contributorArray keys: indices of the contributors, values: infos and tasks of the contributor
+     * @param string $committeeType current committee
      */
-    protected function addAllContributorsNodes(SimpleXMLElement $appNode, array $contributorArray): void
+    protected function addAllContributorsNodes(SimpleXMLElement $appNode, array $contributorArray, string $committeeType): void
     {
         $contributorsNode = $appNode->{self::contributorsNodeName};
         $this->removeAllChildNodes($contributorsNode);
+        $infosMandatory = $this->getApplicantContributorsInfos($committeeType,false);
         foreach ($contributorArray as $contributor) {
-            $this->addContributor($contributorsNode, $contributor);
+            $this->addContributor($contributorsNode, $contributor,$infosMandatory);
         }
     }
 
     /** Creates a new contributor node and adds content to it.
      * @param SimpleXMLElement $element node where the new contributor node gets appended
      * @param array<string, mixed> $contributor array containing two sub-arrays, one for the infos and one for the tasks
+     * @param array $infosMandatory mandatory infos
      */
-    protected function addContributor(SimpleXMLElement $element, array $contributor): void
+    protected function addContributor(SimpleXMLElement $element, array $contributor, array $infosMandatory): void
     {
         $node = $element->addChild(self::contributorNode);
         $infosNode = $node->addChild(self::infosNode);
         $tempArray = $contributor[self::infosNode];
-        foreach (self::infosMandatory as $value) {
+        foreach ($infosMandatory as $value) {
             $infosNode->addChild($value,htmlspecialchars($tempArray[$value]));
         }
         $infosNode->addChild(self::position,$tempArray[self::position]);

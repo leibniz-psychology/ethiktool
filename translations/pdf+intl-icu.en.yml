@@ -601,9 +601,9 @@ projectdetails:
     burdens:
       burdensEveryday: >-
         
-        According to the applicants' judgment, these burdens do {burdensEveryday, select,
+        According to the applicants' judgment, these burdens {burdensEveryday, select,
                                                                   0     {}
-                                                                  other {not}} exceed the level commonly encountered in the participants' everyday life.
+                                                                  other {do not}} exceed the level commonly encountered in the participants' everyday life.
     risks:
       description: "Description of the risks:\n"
       finding:
@@ -1288,6 +1288,7 @@ dataPrivacy:
   hint: >-
     {committeeType, select,
       PHT   {The review of this proposal by the ethics committee is based exclusively on ethical aspects according to the current regulations and rules of procedure. A review of compliance with data protection regulations (especially of conformance with EU-GDPR and DSG) is <span style="font-weight: bold">not</span> part of the review process; data protection is not covered by the Ethics Committee's vote. Compliance with data protection regulations lies in the sole responsibility of the project contributors and must be independently secured.}
+      UH1   {Compliance with data protection regulations lies in the responsibility of the project contributors and must be independently secured. The data protection team of Hildesheim University is not responsible for the validity of the information.}
       other {}}
   intro:
     Information on processing personal data within the {numStudies, plural,

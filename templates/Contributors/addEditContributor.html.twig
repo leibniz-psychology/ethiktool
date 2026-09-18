@@ -14,7 +14,7 @@
                 {% set isProfessorship = widget is same as 'professorship' %}
                 {% set isInstitutionPosition, isIcon = widget in ['institution','position'], widget in ['name','institution','department','professorship']  %}
                 <div class="grid justify-content-end" style="{% if isIcon %} grid-template-columns: auto min-content; {% else %} text-align: end;{% endif %}">
-                    {{ (widget is same as 'phone' ? 'multiple.optional'|trans~' ' : '*')~(infosPrefix~widget)|trans~':' }}
+                    {{ (widget is same as 'phone' ? 'multiple.optional'|trans~' ' : '*')~(infosPrefix~widget)|trans(committeeParams)~':' }}
                     {% if isIcon %}
                         <div {% if isProfessorship %} style="{{ boolToDisplay(content.position.vars.value in ['student','phd'],1) }}" {% endif %} {% if isProfessorship or widget is same as 'institution' %} {{ stimulus_target(contributorsController,widget~'Icon') }} {% endif %}>
                             {{ formRender.addIcon((infosPrefix~'hints.'~widget)|trans(committeeParams)) }}

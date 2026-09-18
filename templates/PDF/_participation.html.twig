@@ -29,16 +29,11 @@
             {% if supervisorString is same as '' %}
                 {% for heading, institutions in contributorsIntro %}
                     <div class="{{ textPreview }}" style="margin-top: 1em">{{ heading|raw }}</div>
-                    {% if isArray(institutions) %}
-                        {% for institution, departments in institutions %}
-                            <div class="{{ textPreview }}">{{ (institution~':')|raw }}</div>
-                            {% for department, curContributors in departments %}
-                                <div class="{{ textPreview }}" style="margin-left: 1.5em;">{{ (department~': '~(curContributors|join(', ')))|raw }}</div>
-                            {% endfor %}
+                    {% for institution, departments in institutions %}
+                        {% for department, curContributors in departments %}
+                            <div class="{{ textPreview }}">{{ (curContributors|join(', ')~' ('~institution~', '~department~')')|raw }}</div>
                         {% endfor %}
-                    {% else %}
-                        <div class="{{ textPreview }}">{{ institutions|raw }}</div>
-                    {% endif %}
+                    {% endfor %}
                 {% endfor %}
             {% else %}
                 <div class="{{ textPreview }}" style="margin-top: 1em">{{ supervisorString|raw }}</div>

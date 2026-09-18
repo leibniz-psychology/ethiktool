@@ -81,7 +81,8 @@ class NewFormController extends ControllerAbstract
                         $coreDataNode->addChild(self::qualification);
                     }
                     $applicantNode = $coreDataNode->addChild(self::applicant);
-                    foreach (self::applicantContributorsInfosTypes as $info) {
+                    $applicantContributorsInfos = $this->getApplicantContributorsInfos($committeeType);
+                    foreach ($applicantContributorsInfos as $info) {
                         $applicantNode->addChild($info);
                     }
                     $coreDataNode->addChild(self::projectStart)->addChild(self::chosen);
@@ -106,7 +107,7 @@ class NewFormController extends ControllerAbstract
                     $appDataNode->addChild(self::summary)->addChild(self::descriptionNode);
 
                     // contributors
-                    $this->addContributor($xml->addChild(self::contributorsNodeName),[self::infosNode => array_fill_keys(self::applicantContributorsInfosTypes,''), self::taskNode => []]);
+                    $this->addContributor($xml->addChild(self::contributorsNodeName),[self::infosNode => array_fill_keys($applicantContributorsInfos,''), self::taskNode => []],$this->getApplicantContributorsInfos($committeeType,false));
 
                     // project details
                     $this->addMeasurement($xml->addChild(self::projectdetailsNodeName),self::studyNode,'');

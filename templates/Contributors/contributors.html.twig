@@ -33,7 +33,7 @@
                 <div style="grid-column: span {{ numTasks }}; {{ borderStyle }}">{{ 'contributors.tasks.title'|trans|slice(1) }}</div>
                 {% set borderStyle = style~'border-right: none;' %}
                 {% for info in infos %}
-                    <div class="borderLight" style="grid-area: 2 / {{ loop.index }}; {{ borderStyle }}">{{ ('multiple.infos.'~info)|trans }}</div>
+                    <div class="borderLight" style="grid-area: 2 / {{ loop.index }}; {{ borderStyle }}">{{ ('multiple.infos.'~info)|trans(committeeParams) }}</div>
                     {% if loop.index0<numTasks %}
                         <div class="borderLight" style="grid-area: 2 / {{ loop.index+numInfos }}; {{ borderStyle }}">{{ ('contributors.tasksShort.'~tasks[loop.index0])|trans }}</div>
                     {% endif %}

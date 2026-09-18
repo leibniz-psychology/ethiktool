@@ -1288,6 +1288,7 @@ dataPrivacy:
   hint: >-
     {committeeType, select,
       PHT   {Die Prüfung dieses Antrags durch die Ethikkommission erfolgt ausschließlich auf Grundlage ethischer Gesichtspunkte gemäß der geltenden Geschäftsordnung. Eine datenschutzrechtliche Prüfung (insbesondere im Hinblick auf die Einhaltung der DSGVO und des DSG) ist <span style="font-weight: bold">nicht</span> Gegenstand des Verfahrens und wird durch das Votum der Ethikkommission nicht ersetzt. Die datenschutzrechtliche Konformität des Vorhabens liegt in der alleinigen Verantwortung der Projektbeteiligten und ist eigenständig sicherzustellen.}
+      UH1   {Die datenschutzrechtliche Konformität des Vorhabens liegt in der Verantwortung der Projektbeteiligten und ist eigenständig sicherzustellen. Das Team Datenschutz der Universität Hildesheim übernimmt keine Verantwortung für die Richtigkeit der Angaben.}
       other {}}
   intro: >-
     Informationen zur Verarbeitung personenbezogener Daten im Rahmen {numStudies, plural,

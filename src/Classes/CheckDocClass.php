@@ -555,7 +555,7 @@ class CheckDocClass extends ControllerAbstract
         }
         // applicant
         $applicant = $this->coreDataArray[self::applicant];
-        $this->checkMissingContent($applicant,$this->translateArray('multiple.infos.',array_diff(self::applicantContributorsInfosTypes,[self::phoneNode]),true), hash: self::applicant);
+        $this->checkMissingContent($applicant,$this->translateArray('multiple.infos.',array_diff(self::applicantContributorsInfosTypes,array_merge([self::phoneNode],in_array($this->committeeType,self::committeeNoProfessorship) ? [self::professorship] : [])),true), parameter: $this->committeeParam, hash: self::applicant);
         $name = $applicant[self::nameNode];
         if ($name!=='' && count(explode(' ',(string) $name))===1) {
             $this->addCheckLabelString($translationPrefix.self::nameNode,self::nameNode);
@@ -668,6 +668,7 @@ class CheckDocClass extends ControllerAbstract
         $position = $this->coreDataArray[self::applicant][self::position];
         $translationParameters = [self::position => $position];
         $supervisorPositions = array_merge([self::positionsStudent],in_array($this->committeeType,self::committeeSupervisorPhD, true) ? [self::positionsPhd] : []);
+        $infosMandatory = $this->getApplicantContributorsInfos($this->committeeType,false);
         foreach ($windowArray as $index => $contributor) {
             $infos = $contributor[self::infosNode];
             $tasks = $contributor[self::taskNode];
@@ -677,7 +678,7 @@ class CheckDocClass extends ControllerAbstract
             $hasPosition = $infos[self::position]!=='';
             if ($index>0) {
                 $lineTitle = $this->translateString(self::contributorsPrefix.'lineTitle',$parameter);
-                $this->checkMissingContent($infos,$this->translateArray('multiple.infos.',self::infosMandatory,true),lineTitle: $lineTitle, addHash: false);
+                $this->checkMissingContent($infos,$this->translateArray('multiple.infos.',$infosMandatory,true),lineTitle: $lineTitle, parameter: $this->committeeParam, addHash: false);
                 $tempPrefix = self::contributorsPrefix.self::infosNode.'.';
                 $tempVal = $infos[self::nameNode];
                 if ($tempVal!=='' && count(explode(' ',(string) $tempVal))===1) {
@@ -1217,6 +1218,9 @@ class CheckDocClass extends ControllerAbstract
                     }
                     $selections = $this->flattenArray($selections);
                     $isNotNo = !in_array('no'.ucfirst($type),$selections);
+                    $measures = $measuresArray[self::measuresNode] ?: [];
+                    $measuresFurtherArray = $measuresArray[self::measuresFurtherNode] ?? [];
+                    $hasFMRI = array_key_exists('measuresMRT',$measures['measuresInstrumental']['measuresBrain'] ?? []);
                     if ($type===self::burdensNode) {
                         $tempPrefix = $translationPage.self::burdensNode.'.';
                         if ($hasInterventions && !in_array(self::noIntervention,$interventions)) {
@@ -1233,12 +1237,11 @@ class CheckDocClass extends ControllerAbstract
                         } elseif ($hasBurdensPhysical && !$hasInterventionPhysical && $hasInterventions && count(array_diff(['everyday','interventionsOther'],$interventions))===2) { // 'physical' in burdens -> 'physical', 'sport', 'everyday' or 'other interventions' in interventions
                             $this->addCheckLabelString($tempPrefix.'physicalNo',parameters: $this->paramsAddressee);
                         }
-                        $measures = $measuresArray[self::measuresNode];
-                        if ($measures!=='') {
-                            if (array_key_exists('measuresMRT',$measures['measuresInstrumental']['measuresBrain'] ?? []) && !in_array('health',$selections)) { // '(f)MRT' in measures -> 'health' in burdens
+                        if ($measures!==[]) {
+                            if ($hasFMRI && !in_array('health',$selections)) { // '(f)MRI' in measures -> 'health' in burdens
                                 $this->addCheckLabelString($tempPrefix.'health',parameters: $this->paramsAddressee);
                             }
-                            if (($measuresArray[self::measuresFurtherNode][self::geneNode] ?? '')==='0' && !in_array('genetic',$selections)) { // data is used for gene analysis -> 'genetic' in burdens
+                            if (($measuresFurtherArray[self::geneNode] ?? '')==='0' && !in_array('genetic',$selections)) { // data is used for gene analysis -> 'genetic' in burdens
                                 $this->addCheckLabelString($tempPrefix.'genetic',parameters: $this->paramsAddressee);
                             }
                         }
@@ -1262,6 +1265,12 @@ class CheckDocClass extends ControllerAbstract
                             }
                             if (in_array('vr',$interventions) && !in_array('risksMotion',$selections)) { // 'vr' in interventions -> 'simulator/motion sickness' in risks
                                 $this->addCheckLabelString($tempPrefix.'risksMotion',parameters: $this->paramsAddressee);
+                            }
+                            if ($hasFMRI && !in_array('risksIncidental',$selections)) { // '(f)MRI' in measures -> 'incidental findings' in risks
+                                $this->addCheckLabelString($tempPrefix.'risksIncidental',parameters: $this->paramsAddressee);
+                            }
+                            if (($measuresFurtherArray[self::screeningNode] ?? '')==='0' && !in_array('risksSuspicion',$selections)) { // screening questionnaire in measures -> 'suspicion' in risks
+                                $this->addCheckLabelString($tempPrefix.'risksSuspicion',parameters: $this->paramsAddressee);
                             }
                         }
                         // finding

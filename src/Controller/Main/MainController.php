@@ -147,8 +147,24 @@ class MainController extends ControllerAbstract
                     }
                 }
                 $contributorsArray = $this->addZeroIndex($this->xmlToArray($contributorsNode)[self::contributorNode]);
+                // add/remove professorship
+                $isProfessorship = !in_array($committee,self::committeeNoProfessorship);
+                if ((!in_array($oldCommittee,self::committeeNoProfessorship))!==$isProfessorship) {
+                    if ($isProfessorship) {
+                        $this->insertElementBefore(self::professorship,$applicantNode->{self::eMailNode});
+                    } else {
+                        $this->removeElement(self::professorship,$applicantNode);
+                    }
+                    foreach ($contributorsArray as &$contributor) {
+                        if ($isProfessorship) {
+                            $contributor[self::infosNode] = array_merge($contributor[self::infosNode],[self::professorship => '']);
+                        } else {
+                            unset($contributor[self::infosNode][self::professorship]);
+                        }
+                    }
+                }
                 $session->set(self::contributorsSessionName,[0 => $contributorsArray]);
-                $this->addAllContributorsNodes($appNode,$contributorsArray);
+                $this->addAllContributorsNodes($appNode,$contributorsArray,$committee);
                 if ($updateApplicant) {
                     $this->updateProjectdetailsContributor($request,$appNode,0,[],false); // needs to be called after addAllContributorsNodes()
                 }

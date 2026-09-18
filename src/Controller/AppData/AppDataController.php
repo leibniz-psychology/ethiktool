@@ -118,6 +118,7 @@ class AppDataController extends ControllerAbstract
         foreach (['true','false'] as $bool) {
             $requestedConfirmArray[] = $this->translateString(self::coreDataNode.'.'.self::funding.'.'.self::requestedConfirm.'.headingHint',array_merge($committeeParams,['isFull' => $bool]));
         }
+        $applicantInfos = $this->getApplicantContributorsInfos($committeeType);
 
         $coreData = $this->createFormAndHandleRequest(CoreDataType::class,$coreDataArray,$request,[self::dummyParams => [self::applicant => $positions[$this->getQualification($coreDataArray) ? 1 : 0], self::studentConfirm => in_array($committeeType,self::committeeNoStudent,true)]]);
         if ($coreData->isSubmitted()) { // a button was clicked or the language was changed
@@ -143,7 +144,7 @@ class AppDataController extends ControllerAbstract
             $contributorsArray = $this->getContributors($session,true);
             $dataApplicant = $data[self::applicant];
             $tempArray = [];
-            foreach (self::applicantContributorsInfosTypes as $info) {
+            foreach ($applicantInfos as $info) {
                 $tempArray[$info] = $dataApplicant[$info] ?? '';
             }
             $contributorsArray[0][self::infosNode] = $tempArray;
@@ -159,7 +160,7 @@ class AppDataController extends ControllerAbstract
             } elseif ($this->checkSupervisor($committeeType,$positionLoad) && !$isSupervisorNew) { // position changed such that no supervisor is needed anymore -> remove task 'supervision' from all contributors
                 $this->removeContributorIndices($appNode,$this->removeSupervision($contributorsArray),false);
             }
-            $this->addAllContributorsNodes($appNodeNew,$contributorsArray);
+            $this->addAllContributorsNodes($appNodeNew,$contributorsArray,$committeeType);
             $session->set(self::contributorsSessionName,array_merge($session->get(self::contributorsSessionName),[$contributorsArray])); // needs to be set before calling updateProjectdetailsContributor
             $this->updateProjectdetailsContributor($request,$appNodeNew,'',[],false);
             $reviewProcessNew = $this->getCurrentReviewProcess($appNodeNew);
@@ -200,7 +201,7 @@ class AppDataController extends ControllerAbstract
              'funding' => self::fundingTypes,
              'requestedConfirmArray' => $requestedConfirmArray,
              'support' => array_diff_key(self::supportTypes,$isEUB ? [] : [self::supportCenter => '']),
-             'applicantInfo' => self::applicantContributorsInfosTypes,
+             'applicantInfo' => $applicantInfos,
              'textInputConflict' => $textInput,
              'textInputRequested' => $textInputRequested,
              'modals' => $modals],'appData.coreData'));

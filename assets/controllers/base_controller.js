@@ -10,6 +10,8 @@ import {
     setHint,
     showModal
 } from "./multiFunction";
+import getWindowScroll from "@popperjs/core/lib/dom-utils/getWindowScroll";
+import {max} from "@popperjs/core/lib/utils/math";
 
 export default class extends Controller {
 
@@ -35,6 +37,7 @@ export default class extends Controller {
         }
         if (this.hasPreviewTarget) {
             this.previewTarget.scrollTop = this.previewValue;
+            this.setPreviewHeight();
         }
         // set text of hints
         this.setAllHints();
@@ -481,7 +484,7 @@ export default class extends Controller {
         divElement.innerHTML = text;
         divElement.scrollTop = element.scrollTop; // adjust scrollbar of div
         // set count display
-        count.textContent = numChars.toString();
+        count.textContent = numChars.toString()+'/'+maxChars.toString();
         count.style.color = isGreater ? '#f5770c' : 'black';
         // set visibility of icon
         setElementVisibility(count.nextElementSibling,isGreater);
@@ -557,6 +560,15 @@ export default class extends Controller {
                 textDiv.parentElement.style.height = height; // height of div surrounding textarea and div
             }).observe(textfield);
         }
+        // adjust height of preview to have the checkDoc box visible during scrolling as long as possible
+        if (this.hasPreviewTarget) {
+            window.addEventListener('scroll', () => {
+                this.setPreviewHeight();
+            });
+            window.addEventListener('resize', () => { // in case view is changed from "normal" to responsive
+                this.setPreviewHeight();
+            });
+        }
         // prevent submitting the form by pressing enter
         for (let inputField of document.getElementsByTagName('input')) {
             addInputListener(inputField);
@@ -615,6 +627,21 @@ export default class extends Controller {
                 })
             }
         }
+    }
+
+    /** Sets the height of the preview. */
+    setPreviewHeight() {
+        let checkDoc = document.getElementById('checkDoc');
+        let checkDocHeight = checkDoc!==null ? parseFloat(getComputedStyle(checkDoc).height)+8 : '0'; // +8 for space between checkDoc and preview
+        let maxHeight = Math.max(parseFloat(getComputedStyle(this.sidebarTarget).height),parseFloat(getComputedStyle(this.contentTarget).height));
+        let newHeight = Math.min(this.formTarget.getBoundingClientRect().bottom,window.innerHeight,maxHeight); // set height either to end of form or browser height
+        let parent = this.previewTarget.parentElement;  // div surrounding checkDoc and preview
+        parent.style.height = newHeight+'px';
+        parent.style.maxHeight = maxHeight+'px';
+        console.log(parseFloat(getComputedStyle(this.sidebarTarget).height),parseFloat(getComputedStyle(this.contentTarget).height),maxHeight);
+        this.previewTarget.style.height = (newHeight-checkDocHeight)+'px';
+        this.previewTarget.style.minHeight = (355-checkDocHeight)+'px'; // set minHeight in case total height is greater than browser height
+        this.previewTarget.style.maxHeight = (maxHeight-checkDocHeight)+'px';
     }
 
     /** Checks if an uploaded file has a valid extension.

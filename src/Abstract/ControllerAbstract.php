@@ -100,6 +100,7 @@ abstract class ControllerAbstract extends AbstractController
     }
 
     // functions
+
     /** Creates the form and handles the submission of the form. If the data should be saved, it is saved in the session and on disk. Then page is reloaded or redirected. This function can only be invoked for pages whose submitted data is converted to xml as it is, i.e., no additional transformation or manipulation needs to be done.
      * @param string $type Type class
      * @param array $subNodeNames names of the sub nodes starting from the root node to the top node of the page
@@ -1920,8 +1921,9 @@ abstract class ControllerAbstract extends AbstractController
         $isMajor3 = $major==='3';
         $isMinorSmaller3 = $minor<'3';
         $isMajorSmaller3 = $major<'3';
+        $isMajorSmaller4 = $major<'4';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $major<'4';
+        $isSmallerCurrent = $isMajorSmaller4 || $minor<'1';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
@@ -1974,8 +1976,9 @@ abstract class ControllerAbstract extends AbstractController
             }
             // updates for versions before 3.2.0
             $contributorsNode = $xml->{self::contributorsNodeName};
+            $applicantNode = $coreDataNode->{self::applicant};
             if ($isSmaller320) {
-                $this->addDepartment($coreDataNode->{self::applicant});
+                $this->addDepartment($applicantNode);
                 $this->removeElement('supervisor',$coreDataNode); // remove supervisor
                 foreach ($contributorsNode->{self::contributorNode} as $index => $contributor) {
                     $this->addDepartment($contributor->{self::infosNode});
@@ -1992,7 +1995,6 @@ abstract class ControllerAbstract extends AbstractController
             $isMultiple = $this->getMultiStudyGroupMeasure($xml);
             $addSupervisor = (!$isMultiple || $isShortNoDocs) && $supervisorTasks!=='' && array_key_exists(self::taskSupervision,$supervisorTasks);
             $session = $request->getSession();
-            $session->set(self::contributorsSessionName,[0 => $contributorsArray]);
             $projectdetailsNode = $xml->{self::projectdetailsNodeName};
             $allStudyNodes = $projectdetailsNode->{self::studyNode};
             // updates for versions before 3.3.0
@@ -2008,6 +2010,15 @@ abstract class ControllerAbstract extends AbstractController
                     $projectStartNode->{self::projectStartBegunConfirm} = '1';
                 }
             }
+            // updates for versions before 4.1.0
+            if ($committeeType==='PHT') { // remove professorship
+                $this->removeElement(self::professorship,$applicantNode);
+                foreach ($contributorsArray as $index => &$contributor) {
+                    $this->removeElement(self::professorship,$contributorsNode->{self::contributorNode}[$index]->{self::infosNode});
+                    unset($contributor[self::infosNode][self::professorship]);
+                }
+            }
+            $session->set(self::contributorsSessionName,[0 => $contributorsArray]); // may be updated if version is smaller 3.2.0 or 4.1.0
             foreach ($allStudyNodes as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
                     foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
@@ -2375,7 +2386,7 @@ abstract class ControllerAbstract extends AbstractController
                             }
                         }
                         // updates for versions before 4.0.0
-                        if (count($burdensRisksNode->children())>0) { // update only if new data are collected
+                        if ($isMajorSmaller4 && count($burdensRisksNode->children())>0) { // update only if new data are collected
                             $burdensTypesNodeCloned = $this->cloneNode($burdensNode->{self::burdensTypesNode});
                             $risksNode = $burdensRisksNode->{self::risksNode};
                             $risksTypesNodeCloned = $this->cloneNode($risksNode->{self::risksTypesNode});

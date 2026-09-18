@@ -60,7 +60,9 @@ export default class extends Controller {
         let isOther = value===other;
         setElementVisibility(other,isOther);
         if (id==='position') {
-            setElementVisibility(this.professorshipHintTarget,[this.studentValue,'phd'].includes(value));
+            if (this.hasProfessorshipHintTarget) {
+                setElementVisibility(this.professorshipHintTarget,[this.studentValue,'phd'].includes(value));
+            }
             if (this.hasStudentConfirmTarget) {
                 setElementVisibility(this.studentConfirmTarget,this.positionTarget.value===this.studentValue);
             }

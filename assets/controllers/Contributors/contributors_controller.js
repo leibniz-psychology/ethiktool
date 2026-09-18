@@ -157,7 +157,9 @@ export default class extends Controller {
         this.taskHintTarget.innerHTML = this.tasksHintsValue[disabled ? 0 : 1];
         this.taskHintTarget.style.fontStyle = disabled ? 'italic' : 'normal';
         this.taskHintTarget.style.fontWeight = disabled ? 'normal' : 'bold';
-        setElementVisibility(this.professorshipIconTarget,isStudent || isPhd,1);
+        if (this.hasProfessorshipIconTarget) {
+            setElementVisibility(this.professorshipIconTarget,isStudent || isPhd,1);
+        }
         setElementVisibility(this.positionOtherTarget,position===this.positionOtherValue,1);
         this.setSubmitButton();
     }

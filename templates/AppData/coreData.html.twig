@@ -155,7 +155,7 @@
                         {% set name, value = vars.name, vars.value %}
                         {% set isOther = value is same as (info~'Other')  %}
                         <div class="justify-content-end">
-                            {{ form_label(widget,(info is same as 'phone' ? 'multiple.optional'|trans~' ')~(infoPrefix~info)|trans~':',addLabelAttributes(addClass('align-self-center')|merge({'id': name~'Label', 'style': 'text-align: end'}))|merge({'id': name})) }}
+                            {{ form_label(widget,(info is same as 'phone' ? 'multiple.optional'|trans~' ')~(infoPrefix~info)|trans(committeeParams)~':',addLabelAttributes(addClass('align-self-center')|merge({'id': name~'Label', 'style': 'text-align: end'}))|merge({'id': name})) }}
                             {% if info is same as 'department' or isInstitutionProfessorship %}
                                 <div {% if isInstitutionProfessorship %} {{ stimulus_target(coreDataController,info~'Hint')}} style="{{ boolToDisplay(isProfessorship ? content['position'].vars.value in ['student','phd'] : isOther) }}" {% endif %}>
                                     {{ formRender.addIcon((infoPrefix~'hints.'~info)|trans(committeeParams)) }}

@@ -32,6 +32,7 @@ class ContributorsController extends ControllerAbstract
         $isSupervisorOld = $this->checkSupervisor($committeeType,$positionOld);
         $tasks = $this->getTasks($request);
         $possibleTasks = $tasks[0];
+        $contributorsInfos = $this->getApplicantContributorsInfos($committeeType);
 
         $contributors = $this->createFormAndHandleRequest(ContributorsType::class,null,$request,[self::dummyParams => [self::taskNode => $possibleTasks]]);
         if ($contributors->isSubmitted()) {
@@ -47,7 +48,7 @@ class ContributorsController extends ControllerAbstract
                 if (!$isRemoved) { // contributor was added or edited
                     $tempArray = [];
                     // infos
-                    foreach (self::infosMandatory as $info) {
+                    foreach ($this->getApplicantContributorsInfos($committeeType,false) as $info) {
                         $tempArray[$info] = $dataContributors[$info];
                     }
                     foreach (self::institutionPosition as $info) {
@@ -78,7 +79,7 @@ class ContributorsController extends ControllerAbstract
                         if (!array_key_exists(self::phoneNode,$infos)) {
                             $infos[self::phoneNode] = '';
                         }
-                        foreach (self::applicantContributorsInfosTypes as $info) { // update infos in core data
+                        foreach ($contributorsInfos as $info) { // update infos in core data
                             $applicantNode->{$info} = $infos[$info];
                         }
                         $position = $dataContributors[self::position];
@@ -95,7 +96,7 @@ class ContributorsController extends ControllerAbstract
                 $session->set(self::contributorsSessionName, array_merge($allContributorsArrays,[$contributorsArray]));
                 // update xml
                 $this->updateProjectdetailsContributor($request,$appNode,$id,$tasks,$isRemoved); // update contributor in projectdetails
-                $this->addAllContributorsNodes($appNode,$contributorsArray); // update contributor in contributors
+                $this->addAllContributorsNodes($appNode,$contributorsArray,$committeeType); // update contributor in contributors
             }
             return $this->saveDocumentAndRedirect($request,$appNode);
         } // if ($contributors->isSubmitted())
@@ -103,7 +104,7 @@ class ContributorsController extends ControllerAbstract
         $isQualification = $this->getQualification($this->xmlToArray($coreDataNode));
         return $this->render('Contributors/contributors.html.twig', $this->setRenderParameters($request,$contributors,
             ['isQualification' => $isQualification,
-             'infos' => self::applicantContributorsInfosTypes,
+             'infos' => $contributorsInfos,
              'tasks' => $possibleTasks,
              'tasksMandatory' => $tasks[1],
              'addSupervisionIcon' => !$isQualification && $isSupervisorOld,

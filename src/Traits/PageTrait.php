@@ -14,7 +14,7 @@ trait PageTrait
     use ReviewProcessTrait;
 
     protected const toolVersionAttr = 'toolVersion';
-    protected const toolVersion = '4.0.2';
+    protected const toolVersion = '4.1.0';
     public static TranslatorInterface $translator;
     /** @var string session key for the committee type */
     protected const committeeType = 'committeeType';
@@ -25,8 +25,8 @@ trait PageTrait
     /** @var string name of parameter indicating if current committee type is in beta status. */
     protected const isCommitteeBeta = 'isCommitteeBeta';
     /** @var array committee translation keys and values. Keys: headings for optgroups. values: key-value pairs of committees. keys: translation keys. values: either the value or an array if two or more institutions share the same committee. Each element in this array is again a key-value pair. */
-    protected const committeeTypes = ['newForm.committee.headings.use' => ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.UPB' => 'UPB'], 'newForm.committee.headings.beta' => ['newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.TUD' => 'TUD', 'newForm.committee.types.UH1' => 'UH1', 'newForm.committee.types.PHHDSRH' => ['newForm.committee.types.PHHD' => 'PHHD', 'newForm.committee.types.SRH' => 'SRH'], 'newForm.committee.types.BICC' => 'BICC', 'newForm.committee.types.PHT' => 'PHT', 'newForm.committee.types.BTU' => 'BTU', 'newForm.committee.types.HTW' => 'HTW', 'newForm.committee.types.OL' => ['newForm.committee.types.UOL' => 'UOL', 'newForm.committee.types.JHS' => 'JHS', 'newForm.committee.types.HZO' => 'HZO', 'newForm.committee.types.OFFIS' => 'OFFIS', 'newForm.committee.types.HIFMB' => 'HIFMB', 'newForm.committee.types.DLRO' => 'DLRO', 'newForm.committee.types.IDMT' => 'IDMT', 'newForm.committee.types.DFKIO' => 'DFKIO']], 'newForm.committee.headings.test' => ['newForm.committee.types.testCommittee' => 'testCommittee']];
-    protected const committeeTypesBeta = ['JGU','DLR','TUD','UH1','PHHD','SRH','BICC','PHT','BTU','HTW','UOL','JHS','HZO','OFFIS','HIFMB','DLRO','IDMT','DFKIO']; // committees that are currently in beta status. Values must equal the values of $committeeTypes
+    protected const committeeTypes = ['newForm.committee.headings.use' => ['newForm.committee.types.TUC' => 'TUC', 'newForm.committee.types.EUB' => 'EUB', 'newForm.committee.types.UPB' => 'UPB', 'newForm.committee.types.UH1' => 'UH1'], 'newForm.committee.headings.beta' => ['newForm.committee.types.JGU' => 'JGU', 'newForm.committee.types.DLR' => 'DLR', 'newForm.committee.types.TUD' => 'TUD', 'newForm.committee.types.PHHDSRH' => ['newForm.committee.types.PHHD' => 'PHHD', 'newForm.committee.types.SRH' => 'SRH'], 'newForm.committee.types.BICC' => 'BICC', 'newForm.committee.types.PHT' => 'PHT', 'newForm.committee.types.BTU' => 'BTU', 'newForm.committee.types.HTW' => 'HTW', 'newForm.committee.types.OL' => ['newForm.committee.types.UOL' => 'UOL', 'newForm.committee.types.JHS' => 'JHS', 'newForm.committee.types.HZO' => 'HZO', 'newForm.committee.types.OFFIS' => 'OFFIS', 'newForm.committee.types.HIFMB' => 'HIFMB', 'newForm.committee.types.DLRO' => 'DLRO', 'newForm.committee.types.IDMT' => 'IDMT', 'newForm.committee.types.DFKIO' => 'DFKIO']], 'newForm.committee.headings.test' => ['newForm.committee.types.testCommittee' => 'testCommittee']];
+    protected const committeeTypesBeta = ['JGU','DLR','TUD','PHHD','SRH','BICC','PHT','BTU','HTW','UOL','JHS','HZO','OFFIS','HIFMB','DLRO','IDMT','DFKIO']; // committees that are currently in beta status. Values must equal the values of $committeeTypes
     protected const committeeNoMedicine = ['BICC','PHT']; // committees with disabled medicine. Values must equal the values of $committeeTypes
 
     // constant variables
@@ -59,8 +59,10 @@ trait PageTrait
     protected const positionOther = 'positionOther'; // must equal one of the keys in $positions
     protected const positionsTypes = ['professorship' => 'multiple.position.professorship', 'scientific' => 'multiple.position.scientific', 'phd' => 'multiple.position.phd', 'student' => 'multiple.position.student', 'positionOther' => 'multiple.position.positionOther'];
     protected const applicantContributorsInfosTypes = ['name', 'institution', 'department', 'professorship', 'eMail', 'position', 'phone'];
+    protected const committeeNoProfessorship = ['PHT']; // committees where no professorship is asked
     protected const institutionInfo = 'institution'; // must equal one value in $applicantContributorsInfosTypes
     protected const department = 'department'; // must equal one value in $applicantContributorsInfosTypes
+    protected const professorship = 'professorship'; // must equal one value in $applicantContributorsInfosTypes
     protected const institutionPosition = ['institution','position']; // values must equals the values in $applicantContributorsInfosTypes
     protected const institutionTypes = ['institutionSame' => 'multiple.infos.institutionTypes.institutionSame', 'institutionOther' => 'multiple.infos.institutionTypes.institutionOther'];
     protected const institutionSameOption = 'multiple.infos.institutionTypes.institutionSame'; // must equal one value in $institutionTypes
@@ -78,6 +80,16 @@ trait PageTrait
     protected const pdfParticipationCustom = 'pdfParticipationCustom'; // array with one sub-array for each study, group, and time point. Value for each time point is an array containing all values for which a custom pdf will be added
 
     // functions
+
+    /** Gets the information keys for the contributors, i.e., eventually without professorship
+     * @param string $committeeType current committee
+     * @param bool $returnInfos if true, all information keys will be returned, otherwise only the mandatory ones
+     * @return array information keys for the contributors
+     */
+    protected function getApplicantContributorsInfos(string $committeeType, bool $returnInfos = true): array
+    {
+        return array_values(array_diff($returnInfos ? self::applicantContributorsInfosTypes : ['name', 'institution', 'department', 'professorship', 'eMail'],in_array($committeeType,self::committeeNoProfessorship) ? [self::professorship] : [])); // mandatory infos must equal values from ContributorsTrait->$applicantContributorsInfosTypes and in the translation file (multiple->infos)
+    }
 
     /** Gets the committee type.
      * @param Session $session current session

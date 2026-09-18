@@ -123,8 +123,19 @@ multiple:
   infos:
     name: 'First and last name'
     institution: 'Institution'
-    department: 'Department'
-    professorship: 'Research group/professorship'
+    department: >-
+      {committeeType, select,
+        TUC   {Faculty / Central facility}
+        EUB   {Faculty / Central facility}
+        PHT   {Institution / Administrative department}
+        BTU   {Faculty / Section}
+        other {Department}}
+    professorship: >-
+      {committeeType, select,
+        TUC   {Professorship / Group}
+        EUB   {Professorship / Group}
+        BTU   {Department / Division}
+        other {Group/Professorship}}
     eMail: 'E-mail address'
     position: 'Position'
     phone: 'Work phone'
@@ -132,7 +143,12 @@ multiple:
       name: 'If individual contributors are not known by name yet, they can be listed as “N. N.“ (including space).'
       institution: 'Please check if you are eligible to submit a proposal to {committeeDat} although you do not belong to {committeeLocationDat}.'
       department: 'Please provide the full name, e.g., “Faculty of ...“'
-      professorship: '<i>research group/professorship of the primary supervisor</i>'
+      professorship: >-
+        <i>{committeeType, select,
+              TUC   {professorship / group}
+              EUB   {professorship / group}
+              BTU   {department / division}
+              other {group/professorship}} of the primary supervisor</i>
     institutionTypes:
       institutionSame: '{committeeLocationPure}'
       institutionOther: 'other institution'
@@ -3183,6 +3199,8 @@ checkDoc:
           risksExhaustion: 'If “exhaustion/fatigue resulting from physical strain“ is selected as a risk, “bodily/physical strain“ must be selected in the list of burdens as well.'
           risksMotion: 'If participants are exposed to <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">virtual reality</a>, “simulator/motion sickness“ must be selected in the list of risks.'
           risksStimuli: 'If “overstimulation or impairment of the senses“ is selected as a risk, stimulus presentation must be selected in the list of <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">measures/interventions</a>.'
+          risksIncidental: 'If “(f)MRI“ is selected as a <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measures" data-base-route-i-ds-param="{routeIDs}">data collection method</a>, “incidental findings“ must be selected in the list of risks.'
+          risksSuspicion: 'If a <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#screening" data-base-route-i-ds-param="{routeIDs}">normed screening questionnaire</a> is applied, “suspicions regarding mental or physical illness“ must be selected in the list of risks.'
           risksSocial: 'if social, economic or political risks can occur, intimate contents must be selected in the list of burdens.'
         finding:
           description: 'incidental findings/suspicions' # 'Description of [] is missing.'
@@ -3570,7 +3588,7 @@ completeForm:
     hint: 'If a detail in the automatically generated documents is incorrect because a specific aspect of your research project is not covered by the templates, please contact the <a href="mailto:ethiktool@tu-chemnitz.de">Ethiktool support</a>. E-mails to this address are processed via a ticket system; please note the <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">privacy statement</a> (in German).'
     notes: 'If further notifications to {committeeAcc} are necessary, please enter them here. Please do *not* write any further accompanying text apart from this application form.'
   bias:
-    title: >-
+    title: >- # TODO: add links for TUD, PHHD, PHT
       Please check the {committeeType, select,
                           TUC   {<a href="https://www.tu-chemnitz.de/tu/ethik/mitglieder.php" target="_blank">current composition of {committeeGen}</a>}
                           EUB   {<a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/personen/index.xml" target="_blank">current composition of {committeeGen}</a>}

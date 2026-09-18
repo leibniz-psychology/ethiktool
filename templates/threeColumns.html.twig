@@ -44,16 +44,16 @@
             </div>
             {% if isPreview %}
                 <div style="width: 35%">
-                    {% set classes = classes~' scrollbar scrollbar-thumb-gray-400 scrollbar-thin scrollbar-track-gray-100 overflow-y-auto' %}
-                    <div class="sticky top-0" style="min-width: 390px;; max-width: 211mm">
+                    {% set classes, hasCheckDoc = classes~' scrollbar scrollbar-thumb-gray-400 scrollbar-thin scrollbar-track-gray-100 overflow-y-auto', not ('completeForm' in pageTitle or 'checkDoc' in pageTitle) %}
+                    <div class="sticky top-0" style="min-width: 390px;; max-width: 211mm; height: 99vh; min-height: 355px">
                         {# error messages #}
-                        {% if not ('completeForm' in pageTitle or 'checkDoc' in pageTitle) %} {# complete form is the only page with preview, but without error messages #}
+                        {% if hasCheckDoc %} {# complete form and checkDoc are the only pages with preview, but without error messages #}
                             <div class="{{ classes }} mb-2" id="checkDoc" style="height: min-content; max-height: 150px; word-break: break-word" {{ stimulus_target('base','checkDoc') }}>
                                 <div style="margin-left: 0.6rem; margin-right: 0.6rem">{{ (pageErrors)|raw|nl2br }}</div>
                             </div>
                         {% endif %}
                         {# help/preview #}
-                        <div class="{{ classes }} overflow-hidden bg-white max-h-[calc(100vh)]" id="preview" {{ stimulus_target('base','preview') }}>
+                        <div class="{{ classes }} overflow-hidden bg-white" id="preview" style="min-height: {{ hasCheckDoc ? '250px' : '355px' }}" {{ stimulus_target('base','preview') }}>
                             {% block preview %}
                             {% endblock %}
                         </div>

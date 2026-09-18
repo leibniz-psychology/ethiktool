@@ -426,10 +426,9 @@ class ParticipationController extends PDFAbstract
                                 $isCurContact = $isContact[$index];
                                 $contInfos = $contributors[$index][self::infosNode];
                                 $curInfos = $this->addContributorInfo($contInfos);
-                                $hasFurtherTasks = $tasks!==[]; // true if contributor has further tasks except leader and contact
-                                if (($hasFurtherTasks || $isCurContact) && !in_array($index, $leaderIndices)) { // contributor has further tasks, but not leader, in current variant. No 'strict' for in_array because $index may be an int or a string
+                                if (($tasks!==[] || $isCurContact) && !in_array($index, $leaderIndices)) { // contributor has further tasks, but not leader, in current variant. No 'strict' for in_array because $index may be an int or a string
                                     $tempVal = $contInfos[self::institutionInfo];
-                                    $furtherArray[$tempVal!==self::institutionSame ? $this->addMarkInput($tempVal,self::$markInput) : $tempVal][$this->addMarkInput($contInfos[self::department],self::$markInput)][] = $this->addMarkInput($contInfos[self::nameNode],self::$markInput).($hasFurtherTasks ? ' ('.implode(', ',$tasks).')' : '');
+                                    $furtherArray[$tempVal!==self::institutionSame ? $this->addMarkInput($tempVal,self::$markInput) : $tempVal][$this->addMarkInput($contInfos[self::department],self::$markInput)][] = $this->addMarkInput($contInfos[self::nameNode],self::$markInput);
                                     if ($isCurContact) {
                                         $contributorsFurther[] = $curInfos;
                                     }
@@ -447,15 +446,6 @@ class ParticipationController extends PDFAbstract
                                 if (array_key_exists(self::institutionSame,$contributorsList)) {
                                     $contributorsList = array_merge([$this->translateString('committee.committeeLocationPure',[self::committee => $committeeType]) => $contributorsList[self::institutionSame]],$contributorsList); // translate institution and set as first one
                                     unset($contributorsList[self::institutionSame]); // remove untranslated key
-                                }
-                                if (count($contributorsList)===1) {
-                                    $departments = array_values($contributorsList)[0];
-                                    if (count($departments)===1) {
-                                        $curContributors = array_values($departments)[0];
-                                        if (count($curContributors)===1) { // only one contributor
-                                            $contributorsList = array_keys($contributorsList)[0].', '.array_keys($departments)[0].': '.$curContributors[0];
-                                        }
-                                    }
                                 }
                                 $contributorsIntro[$heading] = $contributorsList;
                             }

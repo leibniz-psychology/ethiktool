@@ -13,11 +13,15 @@ class CoreDataType extends TypeAbstract
 {
     use AppDataTrait;
 
+    private array $applicantInfos; // applicant infos, i.e., eventually without professorship
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationPrefix = 'coreData.';
         $committeeType = $options[self::committeeType];
+        $this->applicantInfos = $this->getApplicantContributorsInfos($committeeType);
         $isEUB = $committeeType===self::committeeEUB;
+        $dummyParams = $options[self::dummyParams];
         // project title
         $this->addFormElement($builder, self::projectTitle, 'textarea', $translationPrefix.'projectTitle');
         $this->addRadioGroup($builder,self::projectTitleParticipation,self::projectTitleTypes,$translationPrefix.self::projectTitleParticipation.'.title',self::projectTitleParticipation.self::descriptionCap);
@@ -48,9 +52,8 @@ class CoreDataType extends TypeAbstract
         }
         $this->addFormElement($builder,self::requestedConfirm,'checkbox',$fundingPrefix.self::requestedConfirm.'.confirm');
         // applicant info
-        $dummyParams = $options[self::dummyParams];
         $committeeParams = $options[self::committeeParams];
-        foreach (self::applicantContributorsInfosTypes as $info) {
+        foreach ($this->applicantInfos as $info) {
             if (!in_array($info,self::institutionPosition,true)) {
                 $this->addFormElement($builder, $info, 'text');
             } else {
@@ -145,7 +148,7 @@ class CoreDataType extends TypeAbstract
         }
         // applicant infos
         $tempArray = $viewData[self::applicant];
-        foreach (self::applicantContributorsInfosTypes as $info) {
+        foreach ($this->applicantInfos as $info) {
             $forms[$info]->setData($tempArray[$info]);
         }
         // student confirm
@@ -252,7 +255,7 @@ class CoreDataType extends TypeAbstract
         $isQualification = $isQualification && $qualification===0; // true if question exists and was answered with yes
         // applicant info
         $tempArray = [];
-        foreach (self::applicantContributorsInfosTypes as $info) {
+        foreach ($this->applicantInfos as $info) {
             $tempArray[$info] = $forms[$info]->getData();
         }
         // institution and position

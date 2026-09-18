@@ -123,8 +123,19 @@ multiple:
   infos:
     name: 'Vor- und Nachname'
     institution: 'Institution'
-    department: 'Fachbereich/Abteilung'
-    professorship: 'Arbeitsgruppe/Professur'
+    department: >-
+      {committeeType, select,
+        TUC   {Fakultät / Zentrale Einrichtung}
+        EUB   {Fakultät / Zentrale Einrichtung}
+        PHT   {Institut / Stabsstelle}
+        BTU   {Fakultät / Abteilung}
+        other {Fachbereich/Abteilung}}
+    professorship: >-
+      {committeeType, select,
+        TUC   {Professur / Arbeitsgruppe}
+        EUB   {Professur / Arbeitsgruppe}
+        BTU   {Fachgebiet / Bereich}
+        other {Arbeitsgruppe/Professur}}
     eMail: 'E-Mail-Adresse'
     position: 'Position'
     phone: 'berufliche Telefonnummer'
@@ -132,7 +143,12 @@ multiple:
       name: 'Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) hinzugefügt werden.'
       institution: 'Bitte prüfen Sie, ob Sie berechtigt sind, bei {committeeDat} einen Ethikantrag einzureichen, obwohl Sie nicht {committeeLocationDat} angehören.'
       department: 'Bitte schreiben Sie die volle Bezeichnung, z.B. „Fakultät für ...“'
-      professorship: '<i>Arbeitsgruppe/Professur der Erstbetreuung</i>'
+      professorship: >-
+        <i>{committeeType, select,
+              TUC   {Professur / Arbeitsgruppe}
+              EUB   {Professur / Arbeitsgruppe}
+              BTU   {Fachgebiet / Bereich}
+              other {Arbeitsgruppe/Professur}} der Erstbetreuung</i>
     institutionTypes:
       institutionSame: '{committeeLocationPure}'
       institutionOther: 'andere Institution'
@@ -3183,6 +3199,8 @@ checkDoc:
           risksExhaustion: 'Wenn „Erschöpfung/Ermüdung infolge körperlicher Belastung“ als Risiko ausgewählt wurde, muss „körperliche Belastung“ unter Belastungen ebenfalls ausgewählt werden.'
           risksMotion: 'Wenn die Teilnehmenden <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">virtueller Realität</a> ausgesetzt werden, muss „Simulator-/Bewegungs-Übelkeit“ als Risiko ausgewählt werden.'
           risksStimuli: 'Wenn „Überreizung oder Beeinträchtigung der Sinne“ als Risiko ausgewählt wurde, müssen Stimuli als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> präsentiert werden.'
+          risksIncidental: 'Wenn „(f)MRT“ als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measures" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> ausgewählt wurde, muss „Zufallsbefunde“ als Risiko ausgewählt werden.'
+          risksSuspicion: 'Wenn ein <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#screening" data-base-route-i-ds-param="{routeIDs}">normierter Screening-Fragebogen</a> verwendet wird, muss „Verdachtsmomente“ als Risiko ausgewählt werden.'
           risksSocial: 'Wenn soziale, ökonomische oder politische Risiken auftreten können, müssen intime Inhalte als Belastung ausgewählt werden.' # 1:1 until here
         finding:
           description: 'Zufallsbefunde/Verdachtsmomente' # 'Beschreibung der [] fehlt.'
@@ -3570,7 +3588,7 @@ completeForm:
     hint: 'Wenn eine Angabe in den automatisch erstellten Dokumenten fehlerhaft sein sollte, weil sich ein spezieller Umstand Ihres Forschungsprojekts von den Vorlagen nicht abdecken lässt, wenden Sie sich bitte an den <a href="mailto:ethiktool@tu-chemnitz.de">Ethiktool-Support</a>. E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.'
     notes: 'Falls weitere Mitteilungen an {committeeAcc} erforderlich sind, tragen Sie diese bitte hier ein. Bitte schreiben Sie *keinen* weiteren Begleittext außerhalb dieses Antragsformulars.'
   bias:
-    title: >- # TODO: add PHHD link
+    title: >- # TODO: add links for TUD, PHHD, PHT
       Bitte prüfen Sie die {committeeType, select,
           TUC   {<a href="https://www.tu-chemnitz.de/tu/ethik/mitglieder.php" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
           EUB   {<a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/personen/index.xml" target="_blank">aktuelle Zusammensetzung {committeeGen}</a>}
