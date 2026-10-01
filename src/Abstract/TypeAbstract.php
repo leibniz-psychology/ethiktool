@@ -263,7 +263,7 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      * @param string $class Object of the element
      * @param string|bool $label label of the element
      * @param array<string, mixed> $options additional options for the element depending on the type
-     * @param string $hint hint that is placed above a text field (will be passed as the placeholder to the template) or the placeholder a radio button group
+     * @param string $hint hint that is placed above a text field (will be passed as the placeholder to the template) or the placeholder of a radio button group
      */
     protected function addFormElement(FormBuilderInterface $builder, string $name, string $class, string|bool $label = false, array $options = [], string $hint = ''): void
     {

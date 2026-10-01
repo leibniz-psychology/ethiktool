@@ -77,7 +77,7 @@ trait ContributorsTrait
         $this->removeAllChildNodes($contributorsNode);
         $infosMandatory = $this->getApplicantContributorsInfos($committeeType,false);
         foreach ($contributorArray as $contributor) {
-            $this->addContributor($contributorsNode, $contributor,$infosMandatory);
+            $this->addContributor($contributorsNode, $contributor, $infosMandatory);
         }
     }
 

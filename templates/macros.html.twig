@@ -226,12 +226,12 @@
         {% endif %}
         {# confirm buttons #}
         <div id="confirmDiv" {{ stimulus_target('base','confirmDiv')|stimulus_action('base','setCommitteeButton','input') }} style="grid-column: span 3">
+            <div class="MetaData-Label mt-3 font-bold" style="grid-column: span 3">{{ 'newForm.finalHint'|trans(committeeParams)|raw }}</div>
             {% for confirm, text in {'requirements': 'main.textRequirements'}|merge(isNewForm ? {'technicalHint': 'technicalHints.text'} : {}) %}
                 <div class="MetaData-Label mt-3 text-decoration-underline">{{ ('newForm.'~confirm~'.text')|trans }}</div>
                 <div class="MetaData-Widget borderLight mx-4">{{ (text)|trans(committeeParams)|raw|nl2br }}</div>
                 <div class="MetaData-Widget">{{ _self.addCheckbox(forms[confirm],{'style': 'font-weight: bold', 'target': ['base',confirm], 'labelParams': committeeParams}) }}</div>
             {% endfor %}
-            <div class="MetaData-Label mt-3 font-bold">{{ 'newForm.finalHint'|trans(committeeParams)|raw }}</div>
         </div>
         <div class="grid mt-8 mb-2" style="grid-column: 2 / span 2; grid-template-columns: repeat(2,minmax(min-content,max-content))">
             <button class="{{ buttonClasses }}" type="submit" name="{{ isNewForm ? 'newFormSubmit' : 'committeeChange' }}" {{ stimulus_target('base','save') }}>{{ (isNewForm ? 'newForm.buttons.save' : changePrefix~'button')|trans }}</button>
@@ -354,7 +354,7 @@
         Input arguments in the 'arguments' array:
         params:    if provided, parameters for the translation
         target:    if provided, an array of two elements: name of stimulus controller and target name
-        id:        if provided, if of the surrounding div
+        id:        if provided, id of the surrounding div
         visible:   if provided, visibility of the surounding div
         hintStyle: if provided, the hint will be displayed in normal font style and size, otherwise in 'smaller' and italic
         remove:    if provided, the hint will be surrounded by a red border

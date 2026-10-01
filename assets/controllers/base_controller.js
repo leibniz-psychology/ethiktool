@@ -422,7 +422,8 @@ export default class extends Controller {
             if (this.hasPreviewTarget) { // update preview scrollbar only if preview exists
                 this.previewValue = this.previewTarget.scrollTop;
                 this.previewTarget.parentNode.replaceChild(html.querySelector('#preview'),this.previewTarget);
-                this.previewTarget.scrollTop = this.previewValue;
+                this.setPreviewHeight(); // set height of preview
+                this.previewTarget.scrollTop = this.previewValue; // must be set after setPreviewHeight()
                 this.setPreviewTabsVisibility();
             }
             let url = response.url;
@@ -638,7 +639,6 @@ export default class extends Controller {
         let parent = this.previewTarget.parentElement;  // div surrounding checkDoc and preview
         parent.style.height = newHeight+'px';
         parent.style.maxHeight = maxHeight+'px';
-        console.log(parseFloat(getComputedStyle(this.sidebarTarget).height),parseFloat(getComputedStyle(this.contentTarget).height),maxHeight);
         this.previewTarget.style.height = (newHeight-checkDocHeight)+'px';
         this.previewTarget.style.minHeight = (355-checkDocHeight)+'px'; // set minHeight in case total height is greater than browser height
         this.previewTarget.style.maxHeight = (maxHeight-checkDocHeight)+'px';

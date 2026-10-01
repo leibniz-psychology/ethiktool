@@ -402,7 +402,7 @@ class ApplicationController extends PDFAbstract
                 }
                 $contributorTasks = $contributor[self::taskNode] ?: [];
                 $tasks = [];
-                foreach (self::tasksNodes as $task) {
+                foreach (array_diff(self::tasksNodes,!in_array($committeeType,self::committeeSupervisor) ? [self::taskSupervision] : []) as $task) {
                     $tasks[$task] = $task===self::otherTask ? $contributorTasks[self::otherTask] ?? '' : array_key_exists($task, $contributorTasks);
                 }
                 $nameTasks[$index] = [self::nameNode => $contributor[self::infosNode][self::nameNode], 'hasTasks' => in_array(true, $tasks) || $tasks[self::otherTask]!=='', self::taskNode => $tasks];
@@ -738,9 +738,13 @@ class ApplicationController extends PDFAbstract
                                         $risksAfter = $typeArray[self::risksAfterNode] ?? '';
                                         if ($selections!=='') {
                                             $content = '';
-                                            foreach (['occurrenceBefore','occurrenceAfter'] as $risksOccurrence) {
-                                                if (array_key_exists($risksOccurrence,$selections)) {
-                                                    $content .= "• ".$this->translateString($burdensRisksPrefixTool.'typesMain.'.$risksOccurrence).":</li>\n".$this->addDivPadding($this->getSelectedCheckboxesMulti($selections[$risksOccurrence],self::risksOccurrenceNode,$burdensRisksPrefixTool),false);
+                                            if (array_key_exists(self::noRisksOccurrence,$selections)) {
+                                                $content .= $this->translateString($burdensRisksPrefixTool.self::risksOccurrenceNode.'.types.'.self::noRisksOccurrence);
+                                            } else {
+                                                foreach (['occurrenceBefore','occurrenceAfter'] as $risksOccurrence) {
+                                                    if (array_key_exists($risksOccurrence,$selections)) {
+                                                        $content .= "• ".$this->translateString($burdensRisksPrefixTool.'typesMain.'.$risksOccurrence).":</li>\n".$this->addDivPadding($this->getSelectedCheckboxesMulti($selections[$risksOccurrence],self::risksOccurrenceNode,$burdensRisksPrefixTool),false);
+                                                    }
                                                 }
                                             }
                                             if ($risksAfter!=='') {

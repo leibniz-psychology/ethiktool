@@ -63,7 +63,6 @@ class DataSourceController extends ControllerAbstract
                 $includeNode = $groupsNode->addChild(self::criteriaIncludeNode);
                 $this->addChildNodes($includeNode,[self::noCriteriaNode,self::criteriaNode]);
                 $includeNode->{self::criteriaNode}->addChild(self::criteriaIncludeNode.'0',str_replace('0','X',$this->translateString($projectdetailsPrefix.self::groupsNode.'.criteria.include.addressee',[self::addressee => 'other', 'limits' => 'sameLimit', 'minAge' => '0'])));
-                $this->addChildNodesChosen($groupsNode,[self::closedNode]);
                 $this->addChildNodes($groupsNode->addChild(self::criteriaExcludeNode),[self::noCriteriaNode,self::criteriaNode]);
                 $this->addChildNodes($groupsNode->addChild(self::sampleSizeNode),[self::sampleSizeTotalNode,self::sampleSizeFurtherNode,self::sampleSizePlanNode]);
                 $this->addChildNodes($groupsNode,[self::recruitment,self::recruitmentFurther]);

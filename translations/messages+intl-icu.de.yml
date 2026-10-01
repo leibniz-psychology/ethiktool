@@ -415,10 +415,32 @@ newForm: # placed immediately after 'committee' to have the committee names all 
   technicalHint:
     text: 'Technische Hinweise'
     confirm: 'Ich habe die technischen Hinweise zur Nutzung des Ethiktools zur Kenntnis genommen.'
-  finalHint: >-
+  finalHint: >- # TODO: add links for TUD, PHHD/SRH, PHT
     {committeeType, select,
-      EUB   {Bei Fragen oder Problemen können Sie sich gerne an die Geschäftsstelle wenden: <a href="mailto:ethikkommission@uni-bielefeld.de">ethikkommission@uni-bielefeld.de</a> oder 0521/106-4468.}
-      other {}}
+      testCommittee {}
+      other         {Bei Fragen oder Beratungsbedarf zu Ihrem Ethikantrag können Sie sich gerne an die <a href="{committeeType, select,
+        TUC   {mailto:ethik@tu-chemnitz.de">Geschäftsstelle</a>}
+        EUB   {mailto:ethikkommission@uni-bielefeld.de">Geschäftsstelle</a> (alternativ auch per Telefon unter 0521/106-4468)}
+        JGU   {mailto:ethikkommission-psychologie@uni-mainz.de">Geschäftsstelle</a>}
+        DLR   {mailto:ethik@dlr.de">Geschäftsstelle</a>}
+        TUD   {mailto:">Geschäftsstelle</a>}
+        UH1   {mailto:ethikfb1@uni-hildesheim.de">Geschäftsstelle</a>}
+        UPB   {mailto:ethik-kommission@zv.uni-paderborn.de">Geschäftsstelle</a>}
+        PHHD  {">Geschäftsstelle</a>}
+        SRH   {">Geschäftsstelle</a>}
+        BICC  {mailto:ethics@bicc.de">Geschäftsstelle</a>}
+        PHT   {mailto:ethikkommission@ph-tirol.ac.at">Geschäftsstelle</a>}
+        BTU   {mailto:ethik@b-tu.de">Geschäftsstelle</a>}
+        HTW   {mailto:ethikkommission-antrag@htw-berlin.de">Geschäftsstelle</a>}
+        UOL   {mailto:antraege.ethikkommissionen@uol.de">Geschäftsstelle</a>}
+        JHS   {mailto:antraege.ethikkommissionen@uol.de">Geschäftsstelle</a>}
+        HZO   {mailto:antraege.ethikkommissionen@uol.de">Geschäftsstelle</a>}
+        OFFIS {mailto:antraege.ethikkommissionen@uol.de">Geschäftsstelle</a>}
+        HIFMB {mailto:antraege.ethikkommissionen@uol.de">Geschäftsstelle</a>}
+        DLRO  {mailto:antraege.ethikkommissionen@uol.de">Geschäftsstelle</a>}
+        IDMT  {mailto:antraege.ethikkommissionen@uol.de">Geschäftsstelle</a>}
+        DFKIO {mailto:antraege.ethikkommissionen@uol.de">Geschäftsstelle</a>}
+        other {}} wenden.}} Bei technischen Fragen zum Ethiktool können Sie sich gerne an den <a href="mailto:ethiktool@leibniz-psychology.org">Ethiktool-Support</a> wenden.
   buttons:
     save: 'Antrag anlegen'
     cancel: 'Abbrechen'
@@ -502,10 +524,10 @@ main:
     Weitere Informationen finden Sie in den Abschnitten „Über uns“ und „Über das Ethiktool“. Bitte beachten Sie die technischen Hinweise und die Nutzungsbedingungen des Ethiktools.
     Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
 
-    <i>Bitte beachten Sie: In der aktuellen Projektphase ist das Ethiktool auf eine Antragserstellung an der Technischen Universität Chemnitz, an der Universität Bielefeld oder an der Universität Paderborn ausgerichtet. Alternativ können Sie über „Test-Ethikkommission“ die Funktionsweise des Ethiktools testen. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet{numCommitteesBeta, select,
+    <i>Bitte beachten Sie: Momentan können mit dem Ethiktool erstellte Anträge bei {numCommittees} Kommissionen eingereicht werden. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet{numCommitteesBeta, select,
                   null  {.}
                   eins  { und befindet sich für eine weitere Ethikkommission im Beta-Stadium.}
-                  other { und befindet sich für {numCommitteesBeta} weitere Ethikkommissionen im Beta-Stadium.}}
+                  other { und befindet sich für {numCommitteesBeta} weitere Ethikkommissionen im Beta-Stadium.}} Bei Interesse können Sie die Funktionsweise des Ethiktools über die „Test-Ethikkommission“ testen. 
 
     Über „Neuer Antrag“ können Sie die Antragserstellung für die entsprechende Kommission beginnen.
     Über „Antrag laden“ können Sie eine vorhandene XML-Datei eines zuvor im Ethiktool erstellten Antrags laden und weiter bearbeiten. </i>
@@ -3185,7 +3207,6 @@ checkDoc:
           physical: 'Wenn die Teilnehmenden einer <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">körperlichen Aufgabenanforderung oder Intervention</a> ausgesetzt werden, muss „körperliche Belastung“ ausgewählt werden.'
           physicalNo: 'Wenn „körperliche Belastung“ als Belastung ausgewählt wurde, muss unter <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">Maßnahmen</a> eine dazu passende Auswahl getroffen werden.'
           integrity: 'Wenn die Teilnehmenden <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">invasiven Eingriffen</a> ausgesetzt sind, muss „Eingriff in die körperliche Integrität“ als Belastung ausgewählt werden.'
-          health: 'Wenn „(f)MRT“ als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measures" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> ausgewählt wurde, muss „intime Inhalte: Gesundheit“ als Belastung ausgewählt werden.'
           genetic: 'Wenn entnommenes Material zur <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#gene" data-base-route-i-ds-param="{routeIDs}">Analyse von Gendaten</a> verwendet wird, muss „genetische/biometrische Daten“ als Belastung ausgewählt werden.' # 1:1 until here
         burdensEveryday: 'Antwort auf Frage, ob die Belastungen das alltagsübliche Maß übersteigen,'
         risks:
@@ -3200,8 +3221,7 @@ checkDoc:
           risksMotion: 'Wenn die Teilnehmenden <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">virtueller Realität</a> ausgesetzt werden, muss „Simulator-/Bewegungs-Übelkeit“ als Risiko ausgewählt werden.'
           risksStimuli: 'Wenn „Überreizung oder Beeinträchtigung der Sinne“ als Risiko ausgewählt wurde, müssen Stimuli als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#interventions" data-base-route-i-ds-param="{routeIDs}">Maßnahme</a> präsentiert werden.'
           risksIncidental: 'Wenn „(f)MRT“ als <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#measures" data-base-route-i-ds-param="{routeIDs}">Erhebungsmethode</a> ausgewählt wurde, muss „Zufallsbefunde“ als Risiko ausgewählt werden.'
-          risksSuspicion: 'Wenn ein <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#screening" data-base-route-i-ds-param="{routeIDs}">normierter Screening-Fragebogen</a> verwendet wird, muss „Verdachtsmomente“ als Risiko ausgewählt werden.'
-          risksSocial: 'Wenn soziale, ökonomische oder politische Risiken auftreten können, müssen intime Inhalte als Belastung ausgewählt werden.' # 1:1 until here
+          risksSuspicion: 'Wenn ein <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#screening" data-base-route-i-ds-param="{routeIDs}">normierter Screening-Fragebogen</a> verwendet wird, muss „Verdachtsmomente“ als Risiko ausgewählt werden.' # 1:1 until here
         finding:
           description: 'Zufallsbefunde/Verdachtsmomente' # 'Beschreibung der [] fehlt.'
           informing:

@@ -117,7 +117,7 @@ class BurdensRisksType extends TypeAbstract
                         $risksOccurrenceArray = [self::risksOccurrenceNode.'Type' => $risksOccurrences];
                         // risks no measure
                         $hasRisksOccurrence = $risksOccurrences!==[];
-                        $isNoRisksOccurrence = $hasRisksOccurrence && array_key_exists('noRisksOccurrence',$risksOccurrences);
+                        $isNoRisksOccurrence = $hasRisksOccurrence && array_key_exists(self::noRisksOccurrence,$risksOccurrences);
                         if ($isNoRisksOccurrence) {
                             $risksOccurrenceArray[self::risksNoMeasureNode] = $this->getSelectedCheckboxes($forms,self::risksNoMeasureTypes,[self::risksNoMeasureOther => self::risksNoMeasureNode.self::descriptionCap]);
                         }

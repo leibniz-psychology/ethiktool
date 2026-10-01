@@ -230,6 +230,7 @@ class MainController extends ControllerAbstract
         }
         $isMajor = $sessionValue['isMajor'] ?? false;
         $isMajorOrShort = $isMajor || ($sessionValue['isShort'] ?? false);
+        $numberFormatter = new \NumberFormatter($request->getLocale(), \NumberFormatter::SPELLOUT);
         return $this->render('Main/main.html.twig',$this->setRenderParameters($request,$main,
             ['error' => $errorModal,
              'isRedirectModal' => $isMajorOrShort || ($sessionValue['isInstUpdate'] ?? false),
@@ -238,7 +239,8 @@ class MainController extends ControllerAbstract
              'wrongPassword' => $wrongPassword,
              'committeeTypes' => $this->getCommitteeArray($currentCommittee),
              'selected' => $committeeTemp,
-             'numCommitteesBeta' => (new \NumberFormatter($request->getLocale(),\NumberFormatter::SPELLOUT))->format(count(self::committeeTypes['newForm.committee.headings.beta'])),
+             'numCommittees' => $numberFormatter->format(count(self::committeeTypes['newForm.committee.headings.use'])),
+             'numCommitteesBeta' => $numberFormatter->format(count(self::committeeTypes['newForm.committee.headings.beta'])),
              'redirectParams' => array_merge([
                  'params' => ['isMain' => $sessionValue['isMain'] ?? '', 'isMajor' => $this->getStringFromBool($isMajor)],
                  'modalID' => $errorModal,

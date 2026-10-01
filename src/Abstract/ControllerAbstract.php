@@ -1923,7 +1923,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajorSmaller3 = $major<'3';
         $isMajorSmaller4 = $major<'4';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajorSmaller4 || $minor<'1';
+        $isSmallerCurrent = $isMajorSmaller4;
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
@@ -1976,9 +1976,8 @@ abstract class ControllerAbstract extends AbstractController
             }
             // updates for versions before 3.2.0
             $contributorsNode = $xml->{self::contributorsNodeName};
-            $applicantNode = $coreDataNode->{self::applicant};
             if ($isSmaller320) {
-                $this->addDepartment($applicantNode);
+                $this->addDepartment($coreDataNode->{self::applicant});
                 $this->removeElement('supervisor',$coreDataNode); // remove supervisor
                 foreach ($contributorsNode->{self::contributorNode} as $index => $contributor) {
                     $this->addDepartment($contributor->{self::infosNode});
@@ -1994,7 +1993,7 @@ abstract class ControllerAbstract extends AbstractController
             $supervisorTasks = $contributorsArray[1][self::taskNode] ?? '';
             $isMultiple = $this->getMultiStudyGroupMeasure($xml);
             $addSupervisor = (!$isMultiple || $isShortNoDocs) && $supervisorTasks!=='' && array_key_exists(self::taskSupervision,$supervisorTasks);
-            $session = $request->getSession();
+            $request->getSession()->set(self::contributorsSessionName,[0 => $contributorsArray]);
             $projectdetailsNode = $xml->{self::projectdetailsNodeName};
             $allStudyNodes = $projectdetailsNode->{self::studyNode};
             // updates for versions before 3.3.0
@@ -2010,15 +2009,6 @@ abstract class ControllerAbstract extends AbstractController
                     $projectStartNode->{self::projectStartBegunConfirm} = '1';
                 }
             }
-            // updates for versions before 4.1.0
-            if ($committeeType==='PHT') { // remove professorship
-                $this->removeElement(self::professorship,$applicantNode);
-                foreach ($contributorsArray as $index => &$contributor) {
-                    $this->removeElement(self::professorship,$contributorsNode->{self::contributorNode}[$index]->{self::infosNode});
-                    unset($contributor[self::infosNode][self::professorship]);
-                }
-            }
-            $session->set(self::contributorsSessionName,[0 => $contributorsArray]); // may be updated if version is smaller 3.2.0 or 4.1.0
             foreach ($allStudyNodes as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
                     foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {
@@ -2440,7 +2430,7 @@ abstract class ControllerAbstract extends AbstractController
                                             $risksOccurrenceTypeNode->addChild('occurrenceBefore')->addChild('occurrenceBeforeOther',$compensationDescription);
                                             $risksOccurrenceTypeNode->addChild('occurrenceAfter')->addChild('occurrenceAfterOther');
                                         } elseif ($risksCompensation==='1') { // select 'no risks occurrences' and add description to risksNoMeasure 'other'
-                                            $risksOccurrenceTypeNode->addChild('noRisksOccurrence');
+                                            $risksOccurrenceTypeNode->addChild(self::noRisksOccurrence);
                                             $risksOccurrenceNode->addChild(self::risksNoMeasureNode)->addChild(self::risksNoMeasureOther,$compensationDescription);
                                         }
                                     }

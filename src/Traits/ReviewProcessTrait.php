@@ -1351,10 +1351,6 @@ trait ReviewProcessTrait
             // nodes that exist if any information is given
             if ($isPre || $this->checkElement(self::post, $informationNode) && ((string) $informationNode->{self::post}->{self::chosen})==='0') {
                 $consentNode = $measureTimePointNode->{self::consentNode};
-                // document translation
-                if (((string) $consentNode->{self::consent}->{self::chosen})===self::consentOral) {
-                    $this->removeElement(self::documentTranslationNode, $informationNode);
-                }
                 // finding text
                 if (((string) $measureTimePointNode->{self::burdensRisksNode}->{self::findingNode}->{self::chosen})!=='0') {
                     $this->removeElement(self::findingTextNode, $measureTimePointNode->{self::textsNode});

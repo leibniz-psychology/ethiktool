@@ -1220,7 +1220,6 @@ class CheckDocClass extends ControllerAbstract
                     $isNotNo = !in_array('no'.ucfirst($type),$selections);
                     $measures = $measuresArray[self::measuresNode] ?: [];
                     $measuresFurtherArray = $measuresArray[self::measuresFurtherNode] ?? [];
-                    $hasFMRI = array_key_exists('measuresMRT',$measures['measuresInstrumental']['measuresBrain'] ?? []);
                     if ($type===self::burdensNode) {
                         $tempPrefix = $translationPage.self::burdensNode.'.';
                         if ($hasInterventions && !in_array(self::noIntervention,$interventions)) {
@@ -1237,13 +1236,8 @@ class CheckDocClass extends ControllerAbstract
                         } elseif ($hasBurdensPhysical && !$hasInterventionPhysical && $hasInterventions && count(array_diff(['everyday','interventionsOther'],$interventions))===2) { // 'physical' in burdens -> 'physical', 'sport', 'everyday' or 'other interventions' in interventions
                             $this->addCheckLabelString($tempPrefix.'physicalNo',parameters: $this->paramsAddressee);
                         }
-                        if ($measures!==[]) {
-                            if ($hasFMRI && !in_array('health',$selections)) { // '(f)MRI' in measures -> 'health' in burdens
-                                $this->addCheckLabelString($tempPrefix.'health',parameters: $this->paramsAddressee);
-                            }
-                            if (($measuresFurtherArray[self::geneNode] ?? '')==='0' && !in_array('genetic',$selections)) { // data is used for gene analysis -> 'genetic' in burdens
-                                $this->addCheckLabelString($tempPrefix.'genetic',parameters: $this->paramsAddressee);
-                            }
+                        if (($measuresFurtherArray[self::geneNode] ?? '')==='0' && !in_array('genetic',$selections)) { // data is used for gene analysis -> 'genetic' in burdens
+                            $this->addCheckLabelString($tempPrefix.'genetic',parameters: $this->paramsAddressee);
                         }
                         // burdens everyday
                         if ($isNotNo) {
@@ -1253,7 +1247,7 @@ class CheckDocClass extends ControllerAbstract
                         $tempPrefix = $translationPage.self::risksNode.'.';
                         $burdens = $this->flattenArray($pageArray[self::burdensNode][self::burdensTypesNode]);
                         if ($burdens!==[]) {
-                            foreach (['mental' => 'risksMental','physical' => 'risksExhaustion','burdensSensitive' => 'risksSocial'] as $burden => $risk) {
+                            foreach (['mental' => 'risksMental','physical' => 'risksExhaustion'] as $burden => $risk) {
                                 if (!in_array($burden,$burdens) && in_array($risk,$selections)) { // risk selected -> burden must also be selected
                                     $this->addCheckLabelString($tempPrefix.$risk,parameters: $this->paramsAddressee);
                                 }
@@ -1266,7 +1260,7 @@ class CheckDocClass extends ControllerAbstract
                             if (in_array('vr',$interventions) && !in_array('risksMotion',$selections)) { // 'vr' in interventions -> 'simulator/motion sickness' in risks
                                 $this->addCheckLabelString($tempPrefix.'risksMotion',parameters: $this->paramsAddressee);
                             }
-                            if ($hasFMRI && !in_array('risksIncidental',$selections)) { // '(f)MRI' in measures -> 'incidental findings' in risks
+                            if (array_key_exists('measuresMRT',$measures['measuresInstrumental']['measuresBrain'] ?? []) && !in_array('risksIncidental',$selections)) { // '(f)MRI' in measures -> 'incidental findings' in risks
                                 $this->addCheckLabelString($tempPrefix.'risksIncidental',parameters: $this->paramsAddressee);
                             }
                             if (($measuresFurtherArray[self::screeningNode] ?? '')==='0' && !in_array('risksSuspicion',$selections)) { // screening questionnaire in measures -> 'suspicion' in risks
