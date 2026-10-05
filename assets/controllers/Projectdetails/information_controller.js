@@ -3,7 +3,7 @@ import {setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['preNo','preText','preComplete','preCompleteType','preCompleteText','preAbort','postYes','postText','documentTranslation'];
+    static targets = ['preNo','preText','preComplete','preCompleteType','preCompleteText','preAbort','postYes','easy','translationOther','pdf'];
 
     static values = {
         pre: String,
@@ -59,18 +59,17 @@ export default class extends Controller {
         }
     }
 
+    /** Sets the pdf hit and  checkbox of the translationOther option. */
+    setTranslationOther() {
+        if (this.hasPdfTarget && this.translationOtherTarget.checked) {
+            setElementVisibility(this.pdfTarget,!this.easyTarget.checked);
+        }
+    }
+
     // methods that called from the template or from within this class
 
-    /** Sets the visibility of the pdf-icon for preText. Additionally, sets the visibility of the document translation question.
-     * @param event widget that invoked the method
-     * */
-    setPreTextPDF(event) {
-        if (event!==undefined) {
-            let target = event.target;
-            if (target.id.includes('pre')) {
-                this.preValue = target.value;
-            }
-        }
+    /** Sets the visibility of the pdf-icon for preText and the font color of the text field. */
+    setPreTextPDF() {
         let pdf = this.preTextTarget.nextElementSibling;
         if (pdf!==null) {
             let isPost = this.getPost();
@@ -81,14 +80,6 @@ export default class extends Controller {
             } else if (!isPost && hasMarkInput) {
                 this.preTextTarget.classList.remove('markInput');
             }
-        }
-        this.setDocumentTranslation();
-    }
-
-    /** Sets the visibility of the document translation question. */
-    setDocumentTranslation() {
-        if (this.hasDocumentTranslationTarget) {
-            setElementVisibility(this.documentTranslationTarget,this.preValue==='0' || this.getPost());
         }
     }
 

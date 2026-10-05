@@ -20,11 +20,9 @@ class GroupsType extends TypeAbstract
         $this->addFormElement($builder,self::maxAge,'spinner',$tempPrefix.self::maxAge,options: $this->setMinMax(1,100));
         $this->addFormElement($builder,self::unlimited,'checkbox',$tempPrefix.'unlimited');
         // examined
-        $this->addCheckboxGroup($builder,self::examinedTypes,$translationPrefix.'examined.types.',textareaName: self::peopleDescription);
-        // closed group
-        $tempPrefix = $translationPrefix.'closed.';
-        $this->addBinaryRadio($builder,self::closedNode,$tempPrefix.'title');
-        $this->addCheckboxGroup($builder,self::closedTypes,$tempPrefix.'types.',self::closedOtherText,$tempPrefix.'types.placeholder');
+        $tempPrefix = $translationPrefix.'examined.';
+        $this->addCheckboxGroup($builder,self::examinedTypes,$tempPrefix.'types.',$this->createPrefixArray(self::examinedTypesOther),array_fill_keys(self::examinedTypesOther,$tempPrefix.'placeholder'),textareaName: self::peopleDescription);
+        $this->addBinaryRadio($builder,self::diseaseNode,$translationPrefix.self::diseaseNode.'.title');
         // criteria
         if ($options[self::dummyParams]['hasCriteria']) { // criteria may not be asked even if the review process says so
             foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
@@ -50,13 +48,11 @@ class GroupsType extends TypeAbstract
         $this->setSpinner($forms,$viewData,[self::minAge,self::maxAge],exclude: '-1');
         $forms[self::unlimited]->setData($viewData[self::maxAge]==='-1');
         // examined
-        $this->setSelectedCheckboxes($forms,$viewData[self::examinedPeopleNode]);
+        $this->setSelectedCheckboxesMultiLevel($forms,$viewData[self::examinedPeopleNode]);
+        // disease
+        $forms[self::diseaseNode]->setData($this->getArrayValue($viewData,self::diseaseNode));
         // people description
         $forms[self::peopleDescription]->setData($this->getArrayValue($viewData,self::peopleDescription));
-        // closed group
-        $tempArray = $viewData[self::closedNode];
-        $forms[self::closedNode]->setData($tempArray[self::chosen]);
-        $this->setSelectedCheckboxes($forms,$tempArray[self::closedTypesNode] ?? '',[self::closedOther => self::closedOtherText]);
         // criteria
         if (array_key_exists(self::criteriaIncludeNode,$forms)) { // either both include and exclude or neither exist
             foreach ([self::criteriaIncludeNode,self::criteriaExcludeNode] as $type) {
@@ -80,7 +76,7 @@ class GroupsType extends TypeAbstract
             $forms[self::sampleSizePlanNode]->setData($tempArray[self::sampleSizePlanNode]);
         }
         // recruitment
-        $this->setSelectedCheckboxes($forms,$viewData[self::recruitment],$this->combinePrefixArray(self::recruitmentTypesOther));
+        $this->setSelectedCheckboxesMultiLevel($forms,$viewData[self::recruitment]);
         if (array_key_exists(self::recruitmentFurther,$forms)) {
             $forms[self::recruitmentFurther]->setData($viewData[self::recruitmentFurther]);
         }
@@ -93,19 +89,20 @@ class GroupsType extends TypeAbstract
         $minAge = $forms[self::minAge]->getData();
         $newData = [self::minAge => $minAge];
         $newData[self::maxAge] = $forms[self::unlimited]->getData() ? '-1' : $forms[self::maxAge]->getData();
-        $tempArray = $this->getSelectedCheckboxes($forms,self::examinedTypes);
+        $tempArray = $this->getSelectedCheckboxesMultiLevel($forms,self::examinedTypesAll,self::examinedTypesOther);
         if ($minAge!==null && $minAge<14) { // if min age is smaller than 14, wards is selected, but disabled, i.e., is not submitted
             $tempArray = array_merge($tempArray,[self::wardsExaminedNode => '']);
         }
         $newData[self::examinedPeopleNode] = $tempArray;
+        // disease
+        if (array_key_exists(self::physicalExaminedNode,$tempArray)) {
+            $newData[self::diseaseNode] = $forms[self::diseaseNode]->getData();
+        }
         // people description
         $numSelected = count($tempArray);
         if ($minAge!==null && $minAge<18 || $numSelected>1 || $numSelected===1 && !array_key_exists(self::healthyExaminedNode,$tempArray)) {
             $newData[self::peopleDescription] = $forms[self::peopleDescription]->getData();
         }
-        // closed group
-        $chosen = $forms[self::closedNode]->getData();
-        $newData[self::closedNode] = array_merge([self::chosen => $chosen],$chosen===0 ? [self::closedTypesNode => $this->getSelectedCheckboxes($forms,self::closedTypes,[self::closedOther => self::closedOtherText])] : []);
         // criteria
         if (array_key_exists(self::criteriaIncludeNode,$forms)) { // either both include and exclude or neither exist
             // if checked, text area is disabled, i.e., not submitted
@@ -131,7 +128,7 @@ class GroupsType extends TypeAbstract
                                               self::sampleSizePlanNode => $forms[self::sampleSizePlanNode]->getData()];
         }
         // recruitment
-        $newData[self::recruitment] = $this->getSelectedCheckboxes($forms,self::recruitmentTypes,$this->combinePrefixArray(self::recruitmentTypesOther));
+        $newData[self::recruitment] = $this->getSelectedCheckboxesMultiLevel($forms,self::recruitmentTypesAll,self::recruitmentTypesOther);
         if (array_key_exists(self::recruitmentFurther,$forms)) {
             $newData[self::recruitmentFurther] = $forms[self::recruitmentFurther]->getData();
         }

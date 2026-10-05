@@ -5,7 +5,7 @@
     {% set translationPrefix, burdensRisks = 'projectdetails.pages.texts.', isBurdens or isRisks %}
     {% set introTemplate, introHint, isTransfer, transferResizeArray = 'introTemplateText', 'introHint', transferInfo is not same as [], {'transfer': [transferInfo,addresseeType]} %}
     <div>
-        {{ formRender.addHint(translationPrefix~'hint') }}
+        <div class="borderHint">{{ (translationPrefix~'hint')|trans|raw }}</div>
         {# intro and goals #}
         {% for type in ['intro', 'goals'] %}
             {% set isIntro, widget = type is same as 'intro', content[type] %}

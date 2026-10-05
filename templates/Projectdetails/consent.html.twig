@@ -43,7 +43,7 @@
                 {% if isClosedDependent %}
                     {% set tempPrefix = translationPrefix~'voluntary.voluntaryEnsure.' %}
                     <div class="mt-8" id="{{ ensureDiv }}" style="{{ boolToDisplay(anyYes) }}">
-                        {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
+                        {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint',routeIDsParam]]}) }}
                         {{ formRender.addCheckboxGroup(content,ensureTypes,{'other': ensureTypesOther, 'icons': {'relatable': tempPrefix~'hint'}, 'addDiv': ['','','mt-2']}) }}
                     </div>
                 {% endif %}

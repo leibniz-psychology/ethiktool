@@ -196,26 +196,28 @@
             {% endif %}
         </div>
         {# support #}
-        {% set tempPrefix = translationPrefix~'support.' %}
-        <div class="mt-8" id="support">
-            {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
-            {% set supportKeys, noSupport = support|keys, 'noSupport' %}
-            {% set selection = getAnySelected(content,supportKeys,noSupport) %}
-            {% set noSelected, anySelected = selection[0], selection[1] %}
-            <div class="MetaData-Widget" style="{{ style }}" {{ stimulus_action('base','setMultiCheckbox','change',{'single': 'noSupport', 'multiCheck': supportKeys|slice(1)}) }}>
-                {% for widget in supportKeys %}
-                    {% set curWidget, isSupport = content[widget], widget is not same as noSupport %}
-                    {% set vars = curWidget.vars %}
-                    {% set name = vars.name %}
-                    <div class="mt-2 {% if loop.index>1 %} topMarginButtons {% endif %}" {% if isSupport %} {{ stimulus_action('base','setVisibility','change',{'multi': [[name,name~'TextDiv']]}) }} {% endif %}>
-                        {{ formRender.addCheckbox(curWidget, {'disable': not isSupport and anySelected or isSupport and noSelected}) }}
-                    </div>
-                    {% if isSupport %}
-                        {{ formRender.addTextfield(content[name~'Text'],fontNormal|merge(addStyle('margin-bottom: 1.5rem',true))|merge({'visibility': vars.checked})) }}
-                    {% endif %}
-                {% endfor %}
+        {% if content.noSupport is defined %}
+            {% set tempPrefix = translationPrefix~'support.' %}
+            <div class="mt-8" id="support">
+                {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
+                {% set supportKeys, noSupport = support|keys, 'noSupport' %}
+                {% set selection = getAnySelected(content,supportKeys,noSupport) %}
+                {% set noSelected, anySelected = selection[0], selection[1] %}
+                <div class="MetaData-Widget" style="{{ style }}" {{ stimulus_action('base','setMultiCheckbox','change',{'single': 'noSupport', 'multiCheck': supportKeys|slice(1)}) }}>
+                    {% for widget in supportKeys %}
+                        {% set curWidget, isSupport = content[widget], widget is not same as noSupport %}
+                        {% set vars = curWidget.vars %}
+                        {% set name = vars.name %}
+                        <div class="mt-2 {% if loop.index>1 %} topMarginButtons {% endif %}" {% if isSupport %} {{ stimulus_action('base','setVisibility','change',{'multi': [[name,name~'TextDiv']]}) }} {% endif %}>
+                            {{ formRender.addCheckbox(curWidget, {'disable': not isSupport and anySelected or isSupport and noSelected}) }}
+                        </div>
+                        {% if isSupport %}
+                            {{ formRender.addTextfield(content[name~'Text'],fontNormal|merge(addStyle('margin-bottom: 1.5rem',true))|merge({'visibility': vars.checked})) }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+        {% endif %}
         {# guidelines #}
         {% if isEUB %}
             {% set guidelines, description, tempPrefix = content.guidelines, content.guidelinesText, translationPrefix~'guidelines.' %}

@@ -165,7 +165,6 @@ class ParticipationController extends PDFAbstract
                         $preType = $informationArray[self::preType] ?? '';
                         $postArray = $informationArray[self::post] ?? [];
                         $preCompleteArray = $informationArray[self::preComplete] ?? [];
-                        $isOral = ($isNotPost ? $preType : ($postArray[self::chosen] ?? ''))===self::consentOral;
                         $isLoanReceipt = false; // loan receipt is only possible if pre information
                         [$loanReceiptParameters, $consent] = [[], []]; // $loanReceiptParameters: parameters for the view of the loan receipt
                         $parameters = array_merge($translationParams, [self::studyID => $multipleStudies ? $studyIDincreased : 0, self::groupID => $multipleGroups ? $groupIDincreased : 0, self::measureID => $multipleMeasures ? $measureID : 0, 'singleDocsHint' => $singleDocsHint]);
@@ -177,7 +176,8 @@ class ParticipationController extends PDFAbstract
                         $isConsent = false; // gets true if any consent is given
                         $isToolPersonal = false; // gets true if document should be created by the tool and personal data are collected
                         $hasCustomPDF['begun'] = $isBegun;
-                        $hasCustomPDF[self::informationNode] = array_key_exists(self::documentTranslationPDF, $informationArray);
+                        $hasCustomPDF[self::informationNode] = $this->getDocumentTranslation($informationArray);
+                        $translationParams[self::documentTranslationNode] = $this->getTranslatedDocuments($informationArray);
                         $informationIIArray = $measureTimePoint[self::informationIINode];
                         $risksArray = $measureTimePoint[self::burdensRisksNode][self::risksNode];
                         $informingArray = $risksArray[self::findingNode][self::informingNode] ?? [];
@@ -268,7 +268,7 @@ class ParticipationController extends PDFAbstract
                         $chosen2 = $voluntaryArray[self::chosen2Node] ?? '';
                         $terminateConsParam = [self::terminateConsNode => $this->getStringFromBool($consentArray[self::terminateConsNode][self::chosen]!=='1')];
                         $voluntaryParams = array_merge($addresseeParam, $terminateConsParam, ['isVoluntary' => $this->getStringFromBool(in_array((!array_key_exists(self::chosen2Node, $voluntaryArray) || $chosen2===self::voluntaryConsentNotApplicable) ? $voluntaryArray[self::chosen] : $chosen2, ['', 'yes']))]);
-                        $compensationTerminateParams = array_merge($voluntaryParams, [self::compensationNode => $compensationTerminateChosen, 'isDuration' => $this->getStringFromBool($this->getDuration($durationsArray)>30)]);
+                        $compensationTerminateParams = array_merge($voluntaryParams, [self::compensationNode => $compensationTerminateChosen, 'isDuration' => $this->getStringFromBool($this->getDuration($durationsArray))]);
                         $compensationTerminateTrans = $compensationPrefixPDF.self::terminateNode;
                         if ($compensationTypes!=='') { // at least one compensation type was chosen
                             $laterPrefix = $compensationPrefixPDF.'laterEnd.';
@@ -1168,7 +1168,7 @@ class ParticipationController extends PDFAbstract
                                     'intro' => $intro,
                                     'contributorsIntro' => $contributorsIntro,
                                     'levelNames' => $levelIDs!==[] ? implode(', ', $levelIDs) : '',
-                                    'isOral' => $isOral,
+                                    'isOral' => ($isNotPost ? $preType : ($postArray[self::chosen] ?? ''))===self::consentOral,
                                     'content' => $this->content,
                                     self::consentNode => $consent,
                                     'consentType' => $consentType,
@@ -1263,9 +1263,10 @@ class ParticipationController extends PDFAbstract
                                 $customBegun[] = $customIntermediateComplete;
                             }
                             if ($hasDocs) {
+                                $isPreviewNotComplete = self::$markInput || !self::$isCompleteForm; // only false if single documents as part of complete proposal
                                 if ($isConsent) { // consent is given
                                     self::$linkedPage = self::consentNode;
-                                    $curHtml .= $this->renderView('PDF/_participationConsent.html.twig', array_merge($parameters, [], $isOral ? ['isSeparate' => true] : []));
+                                    $curHtml .= $this->renderView('PDF/_participationConsent.html.twig', array_merge($parameters, ['hint' => $isPreviewNotComplete ? $this->translateStringPDF($consentPrefix.'hint',$committeeParam) : '']));
                                 } elseif ($consentType===self::voluntaryConsentNo) {
                                     $curHtml .= $this->renderView(self::intermediateDocument, array_merge($parameters, [self::content => $this->translateStringPDF($consentPrefix.'noConsent', array_merge($translationParams, $noConsentParams, $isFullParam))]));
                                 }
@@ -1273,7 +1274,7 @@ class ParticipationController extends PDFAbstract
                                 if (!$isMissingInformation) {
                                     if ($isToolPersonal) {
                                         self::$linkedPage = self::privacyNode;
-                                        $curHtml .= $this->renderView('PDF/_dataPrivacy.html.twig', array_merge($parameters,['hint' => self::$markInput || !self::$isCompleteForm ? $this->translateStringPDF($privacyPrefix.'hint',$committeeParam) : '']));
+                                        $curHtml .= $this->renderView('PDF/_dataPrivacy.html.twig', array_merge($parameters,['hint' => $isPreviewNotComplete ? $this->translateStringPDF($privacyPrefix.'hint',$committeeParam) : '']));
                                     } elseif ($personal==='anonymous' && (!self::$isCompleteForm || self::$markInput) || $isSeparateLater) {
                                         $curHtml .= $this->renderView(self::intermediateDocument, array_merge($parameters, [self::content => $this->translateStringPDF($customPrefix.self::privacyNode, $translationParams)]));
                                     }

@@ -123,6 +123,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     recruitment: 'How are participants recruited?'
     recruitmentSub: 'Further details on recruitment:'
     information: 'Is information about participating in a study given in advance?'
+    informationSub: 'Measures to ensure comprehension:'
     preContent: 'How complete is the information regarding the aims, content and methods of the study?'
     preComplete: 'Will there be a debriefing (i.e., will full information be provided later)?'
     preCompleteSub: 'Justification of choice and indication which information will be given when:'
@@ -130,12 +131,13 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     preAbortSub: >-
       {anyAbortOther, select,
         true  {Description of debriefing}
-        other {}} {anyAbortNot, select,
+        other {}} {anyAbortNo, select,
                     true  {{anyAbortOther, select,
                               true  {or explanation}
                               other {Explanation}} why no debriefing is given}
                     other {}} in case of withdrawal:
     post: 'Will information about participating in a study be given after-the-fact?'
+    postSub: 'Measures to ensure comprehension:'
     attendance: 'Are the legal guardians present during data collection?'
     # added empty lines to have same line numbers in all translation files
 
@@ -171,7 +173,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                                                                   true  {or}
                                                                   other {}} assent}
                                                         other {}}:}
-        other {Measures to ensure voluntariness despite the special circumstances (closed group / dependent relationship):}}
+        other {Measures to ensure voluntariness despite the special circumstances (see field 13):}}
     terminateCons: 'Is withdrawal from participation possible at any time and without disadvantages?'
     terminateConsSub: 'Justification and, if applicable, description of disadvantages in case of withdrawal from participation:'
     terminateCriteria: 'Under which circumstances is data collection terminated early by the project contributors?'
@@ -402,7 +404,7 @@ projectdetails:
       The following page(s) contain(s) the translated participant documents{addressee, select,
                                                                               children { for the legal guardians}
                                                                               wards    { for the legal guardians}
-                                                                              other    {}}{levelNamesString}.
+                                                                              other    {}}{levelNamesString}. These are translated into the following language(s): {documentTranslation}
     informationII: >- # other addressee is wards
       The wording of the participant documents for the {addressee, select,
                                                             children  {children}
@@ -463,7 +465,7 @@ projectdetails:
                    true  {Individuals}
                    other {}}}
           =1    {}
-          other {; each}} {limits, select,
+          other {each}} {limits, select,
                             noUpperLimit {of at least {minAge, plural,
                                                         =1    {1 year}
                                                         =-2   {X years}
@@ -478,32 +480,11 @@ projectdetails:
                                                                   other {# years}}}}{isWardsAge, select,
                                                                                         true  { (thus incapable of giving consent)}
                                                                                         other {}}.
-      types:
-        healthy: 'healthy individuals'
-        physical: 'individuals with physical illnesses or impairments'
-        mental: 'individuals with mental illnesses or impairments'
-        medical: 'individuals in medical or psychotherapeutic treatment'
-        institutional: 'institutionalised individuals'
-        wards: 'individuals incapable of giving consent'
-        vulnerable: 'individuals in particularly vulnerable (life) situations'
-        dependent: 'individuals in a dependent relationship to project contributors'
-        otherPeople: 'other groups'
-    closed:
-      closedLecture: 'as part of a university course'
-      school: 'in class (at school)'
-      closedOther: 'other group ({description})'
-    recruitment:
-      mailing: 'university mailing lists'
-      flyer: 'posters and flyers'
-      lecture: 'invitations in own university courses'
-      lectureOther: 'invitations in university courses led by non-project contributors'
-      recruitmentPrivate: 'personal invitation of family, friends, or acquaintances of the project contributors'
-      media: 'social media'
-      news: 'newspaper announcements'
-      database: 'database(s) ({description})'
-      external: 'external recruiting service(s) ({description})'
-      multiplier: 'dissemination via multipliers'
-      recruitmentOther: 'the following ways of recruitment: {description}'
+      disease: >-
+        
+        According to the applicants' judgment, the individuals with physical/mental illness/impairments are {disease, select,
+              0     {}
+              other {not}} considered vulnerable in the context of this study.
   information:
     type: >-
       {chosen, select,
@@ -518,7 +499,7 @@ projectdetails:
       The wording of the participant documents {addressee, select,
                                                   children {for the legal guardians}
                                                   wards    {for the legal guardians}
-                                                  other    {}} is translated into easy or simple language and/or into a foreign language, namely: {description}.'
+                                                  other    {}} is translated into the following language(s): {description}.'
     preContent: >-
       {chosen, select,
         complete {The {addressee} are fully informed.}
@@ -536,12 +517,13 @@ projectdetails:
       voluntaryEnsure:
         title: >-
           {isReviewFull, select,
-            true  {Measures to ensure voluntariness despite the special circumstances (closed group / dependent relationship):<br/>}
+            true  {Measures to ensure voluntariness despite the special circumstances (see field 16):<br/>}
             other {}}
         types:
           relatable: 'Nobody can retrace who actually participated.'
-          absence: 'Participation takes place in the absence of the person with whom the dependent relationship exists.'
-          discuss: 'Voluntariness is specifically discussed; this includes explicit confirmation that no (dis)advantages result from deciding for/against the study, despite the dependent relation.'
+          absence: 'Participation takes place in the absence of the person with whom the dependent relationship or role conflict exists.'
+          discuss: 'Voluntariness is transparently addressed; this includes explicit confirmation that, despite the special circumstances, no (dis)advantages result from deciding for/against the study.'
+          roleConflict: 'Dual roles of the project contributors are made transparent during study information.'
           onetime: 'The study is advertised only once and with at most one brief reminder.'
           substitute: 'Non-participating group members are offered an adequate alternative activity, namely: {description}'
           independent: 'The decision of each group member for/against the study is not affected by the decision of other group members.'
@@ -571,23 +553,26 @@ projectdetails:
   measures:
     measures:
       measuresFurther:
-        measuresObservation: "documentation of observation of participants: {description}"
-        measuresInterview: "documentation of individual interviews: {description}"
-        measuresInterviewGroups: "documentation of group interviews: {description}"
+        measuresObservation: 'documentation of observation of participants: {description}'
+        measuresInterview: 'documentation of individual interviews: {description}'
+        measuresInterviewGroups: 'documentation of group interviews: {description}'
+        measuresTest: 'documentation of results from tests/performance assessments: {description}'
         surveyConduct: >-
           questionnaire administration: {description, select,
                                           written {written}
                                           oral    {oral}
                                           mixed   {written/oral mixed}
                                           other   {}}
-        screening: "Is a normed screening questionnaire with standardized values applied? {description}"
-        gene: "Is the collected material used for genetic analyses? {description}"
+        screening: 'Is a normed screening questionnaire with standardized values applied? {description}'
+        gene: 'Is the collected material used for genetic analyses? {description}'
       documentation:
         documentationNotes: 'free notes'
         documentationReport: 'pre-structured protocol'
         documentationPhoto: 'photos'
         documentationVideo: 'video recordings'
         documentationAudio: 'audio recordings'
+        documentationPaper: 'on paper'
+        documentationDigital: 'in digital form'
         documentationOther: 'in the following way: {description}'
     interventions:
       interventionsQuestionnaire: ' (see data collection methods: {dummy})'
@@ -748,12 +733,12 @@ participation:
                                                 other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">informed in advance</a>}} that {addressee, select,
                                                                                     children {their children}
                                                                                     wards    {the individuals under their supervision}
-                                                                                    other    {they}} are participating in a study (see field 21 of the application form), nor are they {savePDF, select,
+                                                                                    other    {they}} are participating in a study (see field 20 of the application form), nor are they {savePDF, select,
                         true  {informed after-the-fact}
                         other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preNo" data-base-route-i-ds-param="{routeIDs}">informed after-the-fact</a>}} that {addressee, select,
             children {their children}
             wards    {the supervised individuals}
-            other    {they}} participated in a study (see field 25 of the application form)
+            other    {they}} participated in a study (see field 24 of the application form)
     informationII:
       start: >- # other addressee is wards
         No participants documents for the {addressee, select,
@@ -762,7 +747,7 @@ participation:
       noPost: >- # also used for {informationSentence} in the following key
         the {addressee, select,
               children {children}
-              other    {supervised individuals}} are not informed in advance that they are participating in a study (see field 21 of the application form), nor are they informed after-the-fact that they participated in a study (see field 25 of the application form)
+              other    {supervised individuals}} are not informed in advance that they are participating in a study (see field 20 of the application form), nor are they informed after-the-fact that they participated in a study (see field 24 of the application form)
     funding: >-
       {information, select,
         noPost { {informationSentence} and because the research project is still in the stage of applying for funding}
@@ -1288,7 +1273,8 @@ dataPrivacy:
   hint: >-
     {committeeType, select,
       PHT   {The review of this proposal by the ethics committee is based exclusively on ethical aspects according to the current regulations and rules of procedure. A review of compliance with data protection regulations (especially of conformance with EU-GDPR and DSG) is <span style="font-weight: bold">not</span> part of the review process; data protection is not covered by the Ethics Committee's vote. Compliance with data protection regulations lies in the sole responsibility of the project contributors and must be independently secured.}
-      UH1   {Compliance with data protection regulations lies in the responsibility of the project contributors and must be independently secured. The data protection team of Hildesheim University is not responsible for the validity of the information.}
+      UH1   {Compliance with data protection regulations lies in the responsibility of the project contributors and must be independently secured. The data protection team of University of Hildesheim is not responsible for the validity of the information.}
+      UHS   {Compliance with data protection regulations lies in the responsibility of the project contributors and must be independently secured. The data protection team of University of Hildesheim is not responsible for the validity of the information.}
       other {}}
   intro:
     Information on processing personal data within the {numStudies, plural,
@@ -1383,6 +1369,10 @@ dataPrivacy:
           DFKIO {Deutsches Forschungszentrum für Künstliche Intelligenz GmbH (DFKI)
                  Marie-Curie-Straße 1
                  26129 Oldenburg}
+          UHS   {Universität Hildesheim
+                 Universitätsplatz 1
+                 31141 Hildesheim
+                 Web: https://www.uni-hildesheim.de}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1468,6 +1458,9 @@ dataPrivacy:
                  67663 Kaiserslautern
                  Phone: 0631 / 20575-0
                  E-Mail: datenschutz@dfki.de}
+          UHS   {The data protection officer can be reached via regular mail at the address of the responsible institution.
+                 Phone: +49 (0)5121-883-10922
+                 E-Mail: datenschutz@uni-hildesheim.de}
           other {Phone: +49 (0)1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1480,7 +1473,7 @@ dataPrivacy:
                                                                       other {}}.
   processing:
     title: 'Processed personal data and purposes'
-    start: "Within the study, personal data are processed for the following purposes:"
+    start: 'Within the study, personal data are processed for the following purposes:'
     purposeStart: 'For '
     dataResearch:
       types: # same as in messages, but without the examples and without the two 'other' types
@@ -1811,6 +1804,11 @@ dataPrivacy:
                55116 Mainz
                Phone: +49 (0) 6131 8920-0
                E-Mail: poststelle@datenschutz.rlp.de}
+        UHS   {Landesbeauftragter für den Datenschutz Niedersachsen
+               Prinzenstraße 5
+               30159 Hannover
+               Phone: +49 (0)511 120-4500
+               E-Mail: poststelle@lfd.niedersachsen.de}
         other {}}
 
 
@@ -1855,13 +1853,17 @@ completePost:
 
 # consent for participation
 consent:
+  hint: >-
+    {committeeType, select,
+      PHT   {If the research project is conducted within the scope of the <a href="https://cms.ph-tirol.ac.at/documents/INN_230526_Rahmenvereinbarung_EmpUnt_BDT-UIBK-PHT-FHK_final-1.pdf" target="_blank">framework agreement for conducting empirical studies with pupils</a>, the templates for informed consent on the <a href="https://ph-tirol.ac.at/ethikkommission" target="_blank">website of the ethics committee</a> have to be used instead.}
+      other {}}
   noConsent: >-
     The Ethiktool did not generate a consent form for the {addressee, select,
                                                             children {legal guardians}
                                                             wards    {legal guardians}
                                                             other    {participants}} {levelNamesString} because {savePDF, select,
                   true  {no consent}
-                  other {<a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">no consent</a>}} is given (see field 28 of the application form). This is justified as follows: {description}
+                  other {<a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">no consent</a>}} is given (see field 27 of the application form). This is justified as follows: {description}
   title: >-
     {information, select,
       post  {After-the-fact declaration of consent to data processing}
@@ -2029,28 +2031,28 @@ completeForm:
       information: >-
         {answer, select,
           no    { (see field {isNotPre, select,
-                                true  {21}
+                                true  {20}
                                 other {}}{isIncomplete, select,
                                             true  {{isNotPre, select,
                                                       true  {/}
-                                                      other {}}22}
+                                                      other {}}21}
                                             other {}})}
           other {}}
       voluntary: >-
         {isFull, select,
           true  {{answer, select,
                     unclear    { (see field {isVoluntary, select,
-                                              true  {27}
+                                              true  {26}
                                               other {}}{isConsent, select,
                                                           true  {{isVoluntary, select,
                                                                     true  {/}
-                                                                    other {}}28}
+                                                                    other {}}27}
                                                           other {}})}
-                    restricted { (see field 43)}
-                    no         { (see field 27)}
+                    restricted { (see field 42)}
+                    no         { (see field 26)}
                     other      {}}}
           other {{answer, select,
-                    unclear { (see field 16)}
+                    unclear { (see field 15)}
                     other   {}}}}
       terminateCons: >-
         {answer, select,
@@ -2058,7 +2060,7 @@ completeForm:
                          shortDocs { (see study information sheet)}
                          fullDocs  { (see {information, select,
                                              noPost {{isTerminateCons, select,
-                                                       true  {field 29}
+                                                       true  {field 28}
                                                        other {}}{isDuration, select,
                                                                    true  {{isTerminateCons, select,
                                                                              true  { /}
@@ -2069,7 +2071,7 @@ completeForm:
           restricted { (see {information, select,
                               noPost {page “Participant documents“}
                               other  {study information sheet}}}
-          no         { (see field 29)}
+          no         { (see field 27)}
           other      {}}
       examinedPeople: >-
         {isFull, select,
@@ -2092,37 +2094,37 @@ completeForm:
       preContent: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (see field 22{isCompletePost, select,
-                                              true  {-24}
-                                              other {/23}})}
-                    unclear { (see field 21/25)}
+                    yes     { (see field 21{isCompletePost, select,
+                                              true  {-23}
+                                              other {/22}})}
+                    unclear { (see field 20/24)}
                     other   {}}}
           other {}}
       burdens: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (see field 35)}
-                    unclear { (see field 35)}
+                    yes     { (see field 34)}
+                    unclear { (see field 34)}
                     other   {}}}
           other {{answer, select,
-                   unclear { (see field 19)}
+                   unclear { (see field 18)}
                    other   {}}}}
       risks: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (see field 36/37)}
-                    unclear { (see field 36/37)}
+                    yes     { (see field 35/36)}
+                    unclear { (see field 35/36)}
                     other   {}}}
           other {{answer, select,
-                    unclear { (see field 21//22)}
+                    unclear { (see field 19/20)}
                     other   {}}}}
       burdensRisksContributors: >-
         {answer, select,
-          yes   { (see field 38/39)}
+          yes   { (see field 37/38)}
           other {}}
       burdensRisksUninvolved: >-
         {answer, select,
-          yes   { (see field 40/41)}
+          yes   { (see field 39/40)}
           other {}}
       conflict: >-
         {isFull, select,
@@ -2145,42 +2147,42 @@ completeForm:
       dataPrivacy: >-
         {answer, select,
           yes     { (see annex on data processing)}
-          unclear { (see field 44)}
+          unclear { (see field 43)}
           other   {}}
       dataSourceVotes: >-
         {answer, select,
           yes   {}
           other { (see field {isFull, select,
-                                true  {47}
-                                other {23}})}}
+                                true  {46}
+                                other {22}})}}
       legitimization: >-
         {answer, select,
           unclear { (see field {isFull, select,
-                                  true  {52}
-                                  other {28}})}
-          no      { (see field 46)}
+                                  true  {51}
+                                  other {27}})}
+          no      { (see field 45)}
           other   {}}
       restriction: >-
         {isFull, select,
           true  {{answer, select,
-                    yes   { (see field 50/54)}
+                    yes   { (see field 49/53)}
                     other {}}}
           other {}}
       dataSourceIdentification: >-
         {isFull, select,
           true  {{answer, select,
-                    yes   { (see field 53)}
+                    yes   { (see field 52)}
                     other {}}}
           other {}}
       dataSourceBurdensRisks: >-
         {isFull, select,
           true  {{answer, select,
                     yes   { (see field {isDataSourceBurdensRisks, select,
-                                          true  {55}
+                                          true  {54}
                                           other {}}{isDataSourceBurdensRisksContributors, select,
                                                       true  {{isDataSourceBurdensRisks, select,
                                                                 true  {/}
-                                                                other {}}56}
+                                                                other {}}55}
                                                       other {}})}
                     other {}}}
           other {}}
@@ -2248,7 +2250,7 @@ logo:
   JGU: 'Logo of Johannes Gutenberg University Mainz'
   DLR: 'Logo of the German Aerospace Center'
   TUD: 'Logo of Dresden University of Technology'
-  UH1: 'Logo of Hildesheim University'
+  UH1: 'Logo of University of Hildesheim'
   UPB: 'Logo of Paderborn University'
   PHHD: 'Logo of Heidelberg University of Education'
   SRH: 'Logo of SRH University'
@@ -2264,3 +2266,4 @@ logo:
   DLRO: 'Logo of Carl von Ossietzky University Oldenburg'
   IDMT: 'Logo of Carl von Ossietzky University Oldenburg'
   DFKIO: 'Logo of Carl von Ossietzky University Oldenburg'
+  UHS: 'Logo of University of Hildesheim'

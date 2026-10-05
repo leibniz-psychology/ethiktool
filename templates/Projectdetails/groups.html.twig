@@ -3,16 +3,17 @@
 
 {% block content %}
     {% set translationPrefix, groupsController = 'projectdetails.pages.groups.', 'Projectdetails--groups' %}
-    {% set examinedPrefix = translationPrefix~'examined.' %}
+    {% set examinedPrefix, hasTextInput = translationPrefix~'examined.', textInput is not same as [] %}
     <div {{ stimulus_controller(groupsController,{
             'examined': examined,
+            'hasTextInput': hasTextInput,
             'criteriaHint': criteriaHint,
             'includeStart': includeStart,
             'firstInclude': firstInclude,
             'firstIncludeSentence': (content.includeText.vars.value ?? '')|trim|split("\n")[0]
     }) }}>
         <div id="examinedPeopleDiv">
-            {{ formRender.addHeading(examinedPrefix~'title',{'headingHint': [[examinedPrefix~'headingHint']]}) }}
+            {{ formRender.addHeading(examinedPrefix~'title',{'headingHint': [[examinedPrefix~'headingHint',routeIDsParam]]}) }}
             {# age #}
             {% set unlimited = content.unlimited %}
             <div {{ stimulus_action(groupsController,'setExamined','change') }}>
@@ -30,31 +31,29 @@
                 </div>
             <div class="mt-4 mb-4">{{ formRender.addHint(translationPrefix~'wardsHint',{'target': [groupsController,'wardsHint']}) }}</div>
             {# examined people #}
-            {% set wardsName, isTextInputVoluntary = content.wards.vars.name, textInputVoluntary is not same as '' %}
-            {% set iconTemp, heightString = {(wardsName): ''}, textHeight %}
-            {{ formRender.addCheckboxGroup(content,examined,{
-                'addDiv': ['examinedPeople','','mt-2'],
-                'icons': {'healthy': examinedPrefix~'healthyIcon'},
-                'contTargets': {'healthy': [groupsController,'healthy'], (wardsName): [groupsController,wardsName]}|
-                    merge(isTextInputVoluntary ? {(content.dependent.vars.name): [groupsController,'dependent']} : {})}) }}
+            {% set isTextInputVoluntary = textInputVoluntary is not same as '' %}
+            {% set heightString, targets = textHeight, {} %}
+            {% for type, target in {'healthy': 'healthy', 'wards': 'wards', 'physical': 'physical', 'examinedConsent': 'examinedConsent'}|merge(isTextInputVoluntary ? dependentTypes : {}) %}
+                {% set targets = targets|merge({(type): [groupsController,target]}) %}
+            {% endfor %}
+            <div class="MetaData-Widget mt-2" id="examinedPeople">
+                {{ formRender.addMultilevelCheckboxGroup(content,'groups.examined',examinedAll,examinedOther,examinedIcons,[],false,targets) }}
             </div>
-            {% if textInput is not same as '' %}
-                {{ formRender.addHint(textInput,removeHint|merge({'target': [groupsController,'removeHint']})) }}
+        </div>
+            {% if hasTextInput %}
+                {% for type, hint in textInput %}
+                    {{ formRender.addHint(hint,removeHint|merge({'target': [groupsController,type]})) }}
+                {% endfor %}
             {% endif %}
+            {# disease #}
+            <div class="mt-8" id="disease" style="{{ boolToDisplay(content.physical.vars.checked) }}" {{ stimulus_target(groupsController,'disease') }}>
+                {{ formRender.renderButtons(content.disease,{'hint': [translationPrefix~'disease.']}) }}
+            </div>
             {# people description #}
             {% set styleHeight, voluntaryHintParams = addStyle(heightString,true), removeHint|merge({'target': [groupsController,'voluntaryHint']}) %}
             <div {{ stimulus_target(groupsController,'examinedDescription') }}>
                 {{ formRender.addTextfield(content.peopleDescription,styleHeight|merge(fontNormal)|merge({'hint': examinedPrefix~'description'})) }}
             </div>
-            {% if isTextInputVoluntary %}
-                {{ formRender.addHint(textInputVoluntary,voluntaryHintParams) }}
-            {% endif %}
-        </div>
-        {# closed group #}
-        {% set closed, closedDiv = content.closed, 'closedTypes' %}
-        <div class="mt-8" id="closed" {% if isTextInputVoluntary %} {{ stimulus_action(groupsController,'setVoluntaryHint','change') }} {% endif %}>
-            {{ formRender.renderButtons(closed, {'stimVisible': {'values': [['0',closedDiv]]}, 'contTarget': ['closed1',groupsController,'closedNo'], 'hint': [translationPrefix~'closed.']}) }}
-            {{ formRender.addCheckboxGroup(content,closedTypes,{'other': ['closedOther'], 'addDiv': [closedDiv, boolToDisplay(closed.vars.value is same as '0'),'mt-4 fitWidth']}) }}
             {% if isTextInputVoluntary %}
                 {{ formRender.addHint(textInputVoluntary,voluntaryHintParams) }}
             {% endif %}
@@ -96,16 +95,14 @@
         {% set hints, hasFurther = [(recruitmentFurtherPrefix~'missing')|trans,'multiple.optional'|trans~' '~((recruitmentFurtherPrefix~'description')|trans)], recruitmentFurther is not same as '' %}
         <div class="mt-8" id="recruitment" {% if hasFurther %} {{ stimulus_action('base','setCheckboxTextfield','change',{'checkboxes': [recruitmentTypes,'recruitmentFurtherDiv',hints]}) }} {% endif %}>
             {{ formRender.addHeading(recruitmentPrefix~'title') }}
-            {{ formRender.addCheckboxGroup(content,recruitmentTypes,{
-                'addDiv': ['','','fitWidth'],
-                'other': recruitmentTypesOther}) }}
-            {% if hasFurther %}
-                {{ formRender.addTextfield(recruitmentFurther,
-                    {'hint': hints[notAnySelected ? 0 : 1],
-                     'contTarget': [groupsController,'recruitmentDescription']}|
-                    merge(notAnySelected ? {'target': recruitmentFurther.vars.name} : {})) }}
-            {% endif %}
+            <div class="MetaData-Widget">{{ formRender.addMultiLevelCheckboxGroup(content,'groups.recruitment',recruitmentTypesAll,recruitmentTypesOther,recruitmentIcons,[],false) }}</div>
         </div>
+        {% if hasFurther %}
+            {{ formRender.addTextfield(recruitmentFurther,
+                {'hint': hints[notAnySelected ? 0 : 1],
+                 'contTarget': [groupsController,'recruitmentDescription']}|
+                merge(notAnySelected ? {'target': recruitmentFurther.vars.name} : {})) }}
+        {% endif %}
         {{ formRender.addSubmitButtons() }}
     </div> {# entire form including stimulus controller #}
 {% endblock %}

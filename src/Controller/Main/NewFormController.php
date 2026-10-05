@@ -88,7 +88,9 @@ class NewFormController extends ControllerAbstract
                     $coreDataNode->addChild(self::projectStart)->addChild(self::chosen);
                     $this->addChildNodes($coreDataNode,[self::projectEnd,self::funding]);
                     $this->addChosenNode($coreDataNode,self::conflictNode);
-                    $coreDataNode->addChild(self::supportNode);
+                    if (in_array($committeeType,self::committeeSupport)) {
+                        $coreDataNode->addChild(self::supportNode);
+                    }
                     if ($isEUB) {
                         $coreDataNode->addChild(self::guidelinesNode);
                     }

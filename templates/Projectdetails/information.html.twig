@@ -2,9 +2,12 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set pre, translationPrefix, informationController, isNotRequested = content.pre, 'projectdetails.pages.information.', 'Projectdetails--information', reviewProcess is not same as 'fullRequested' %}
-    {% set preValue, isFull, isInformationIIhint, preAbortPrefix, routeIDs = pre.vars.value, isInformation and 'full' in reviewProcess, not isInformation and isNotRequested, translationPrefix~'preAbort.textHints.', isInformation and isNotRequested ? routeIDsParam['routeIDs'] %}
+    {% set pre, translationPrefix, informationController, isNotRequested, docTransString = content.pre, 'projectdetails.pages.information.', 'Projectdetails--information', reviewProcess is not same as 'fullRequested', 'documentTranslation' %}
+    {% set preValue, isInformationIIhint, preAbortPrefix, routeIDs = pre.vars.value, not isInformation and isNotRequested, translationPrefix~'preAbort.textHints.', isInformation and isNotRequested ? routeIDsParam['routeIDs'] %}
     {% set choiceTextHintTrans, informationHintName, addresseeStringParam, preAbortHints = choiceTextHint|trans, 'informationIIIhint', {'addressee': isInformation ? addresseeString : participantsString}, {'abortOther': (preAbortPrefix~'abortOther')|trans, 'abortNo': (preAbortPrefix~'abortNo')|trans} %}
+    {% set hasDocTrans, hasInfoMeasures = content[docTransString] is defined, content['informationMeasures'] is defined %}
+    {% set hasAdditional, additional, hasDocs = hasDocTrans or hasInfoMeasures, 'additionalDiv', isInformation and reviewProcess in reviewDocs %}
+    {% set additionalArray = hasAdditional ? [additional] : [] %}
     <div {{ stimulus_controller(informationController,{
             'pre': preValue,
             'informationHintName': informationHintName
@@ -12,11 +15,11 @@
         {# pre #}
         {% set styleHeight, preHintDiv, preYes, preNo, hasTextInputPre = addStyle(textHeight), 'preHintDiv', 'preYes', 'preNo', textInputPre is not same as '' %}
         {% set isPreNo, textParams = preValue is same as '1', fontNormal|merge({'attributes': styleHeight, 'textHintParams': addresseeStringParam|merge({'participant': isInformation ? participantsString : participantsStringpost})}) %}
-        <div id="pre" {% if isFull %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
+        <div id="pre" {% if hasDocs %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
             {{ formRender.renderButtons(pre,{
                 'text': [content.preText,textParams|merge({'visibility': isPreNo})|
-                    merge(isFull ? {'contTarget': [informationController,'preText']}|merge(reviewProcess is same as 'fullDocs' ? {'transfer': [['info','post'],addresseeType]} : {}) : {})],
-                'stimVisible': {'values': [['0',[preYes]],['1',['preTextDiv',preNo]|
+                    merge(hasDocs ? {'contTarget': [informationController,'preText']}|merge(hasDocs ? {'transfer': [['info','post'],addresseeType]} : {}) : {})],
+                'stimVisible': {'values': [['0',[preYes]|merge(additionalArray)],['1',['preTextDiv',preNo]|
                     merge(isInformation and hasTextInputPre ? [preHintDiv] : [])]]}}|
                 merge(isInformation ? {'contTarget': ['pre1',informationController,'preNo']}|
                     merge(hasTextInputPre ? {'removeHint': [[textInputPre],preHintDiv,isPreNo]} : {}): {})) }}
@@ -62,11 +65,10 @@
         {% set post, postType = content.post, 'postType' %}
         {% set postValue = post.vars.value %}
         {% set postHint, postText, isPostNo = 'postHint', content.postText, postValue is same as '1' %}
-        <div id="{{ preNo }}" class="mt-8" style="{{ boolToDisplay(isPreNo) }}" {% if isFull %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
+        <div id="{{ preNo }}" class="mt-8" style="{{ boolToDisplay(isPreNo) }}" {% if hasDocs %} {{ stimulus_action(informationController,'setPreTextPDF','change') }} {% endif %}>
             {{ formRender.renderButtons(post,{'text': [postText,textParams|
-                    merge({'visibility': isPreNo and isPostNo})|
-                    merge(isInformation ? {'contTarget': [informationController,'postText']} : {})],
-                'stimVisible': {'values': [['0',postType],['1',[postText.vars.name~'Div']|
+                    merge({'visibility': isPreNo and isPostNo})],
+                'stimVisible': {'values': [['0',[postType]|merge(additionalArray)],['1',[postText.vars.name~'Div']|
                     merge(textInputPost is not same as '' ? [postHint] : [])]]},
                 'removeHint': [[textInputPost],postHint,isPostNo]}|
                 merge(isInformation ? {'contTarget': ['post0',informationController,'postYes']} : {})) }}
@@ -76,23 +78,47 @@
         {% if content.attendance is defined %}
             {{ formRender.renderButtons(content.attendance,{'addDiv': ['attendance']}) }}
         {% endif %}
-        {# document translation #}
-        {% set docTransString, pdfDiv = 'documentTranslation', 'translationPDFdiv' %}
-        {% if content[docTransString] is defined %}
-            {% set docTrans, description, pdfString = content[docTransString], docTransString~'Description', docTransString~'PDF' %}
-            {% set isDocTrans = docTrans.vars.value is same as '0' %}
-            <div class="mt-8" id="documentTranslation" {{ stimulus_target(informationController,docTransString) }}>
-                {{ formRender.renderButtons(docTrans,{
-                    'text': [content[description],fontNormal|merge({'visibility': isDocTrans})],
-                    'stimVisible': {'values': [['0',[description~'Div',pdfDiv]]]}}) }}
-                <div class="mt-4" id="{{ pdfDiv }}" style="{{ boolToDisplay(isDocTrans) }}">
-                    {% if content[pdfString] is defined %}
-                        {{ formRender.addHint(translationPrefix~docTransString~'.pdf.hint') }}
-                        <div class="MetaData-Widget">
-                            {{ formRender.addCheckbox(content[pdfString]) }}
+        {% if hasAdditional %}
+            <div id="{{ additional }}" style="{{ boolToDisplay('0' in [preValue,postValue]) }}">
+                {# document translation #}
+                {% set hintsPrefix, languageDiv = translationPrefix~docTransString~'.hints.', 'languageDiv' %}
+                {% if hasDocTrans %}
+                    {% set docTrans, pdfString = content[docTransString], docTransString~'PDF' %}
+                    {% set hasPDF = content[pdfString] is defined %}
+                    <div class="mt-8" id="documentTranslation">
+                        {{ formRender.renderButtons(docTrans,{
+                            'hint': [hintsPrefix],
+                            'stimVisible': {'values': [['0',languageDiv]]}}) }}
+                        <div class="MetaData-Widget mt-4" id="{{ languageDiv }}" style="{{ boolToDisplay(docTrans.vars.value is same as '0') }}" {{ stimulus_target(informationController,'translationYesDiv') }}>
+                            {% for widget in ['easy','translationOther'] %}
+                                {% set curWidget, hintDiv, isOther, hint = content[widget], widget~'Hint', widget is same as 'translationOther', hintsPrefix~widget %}
+                                <div {{ stimulus_action('base','setVisibility','change',{'multi': [[widget,hintDiv]]})|stimulus_action(informationController,'setTranslationOther','change') }}>
+                                    {{ formRender.addCheckbox(curWidget, {'target': [informationController,widget]}|merge(isOther ? {'checkIcon': [(hintsPrefix~'otherHint')|trans]} : {})) }}
+                                </div>
+                                <div {% if isOther or hasPDF %} class="mb-4" {% endif %} id="{{ hintDiv }}" style="{{ boolToDisplay(curWidget.vars.checked) }}">
+                                    {% if isOther %}
+                                        {{ formRender.addTextfield(content[docTransString~'Description'],fontNormal|merge({'noTopMargin': true})) }}
+                                        {% if hasPDF %}
+                                            <div class="mt-4" style="{{ boolToDisplay(not content.easy.vars.checked) }}" {{ stimulus_target(informationController,'pdf') }}>
+                                                {{ formRender.addHint(hint) }}
+                                                {{ formRender.addCheckbox(content[pdfString]) }}
+                                            </div>
+                                        {% endif %}
+                                    {% elseif hasPDF %}
+                                        {{ formRender.addHint(hint,{'id': 'easyHint'}) }}
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
                         </div>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
+                {# information measures #}
+                {% if hasInfoMeasures %}
+                    <div class="mt-8" id="informationMeasures">
+                        {{ formRender.addHeading(translationPrefix~'informationMeasures.title',{'params': {'addressee': addresseeType}}) }}
+                        {{ formRender.addTextfield(content['informationMeasures']) }}
+                    </div>
+                {% endif %}
             </div>
         {% endif %}
         {{ formRender.addSubmitButtons() }}
@@ -120,8 +146,7 @@
         {% endif %}
         <div class="MetaData-Label mt-4">{{ form_label(form,null,labelDummy) }}</div>
         {{ formRender.renderButtons(form, noHeading|
-            merge({'icons': {(name~'written'): translationPrefix~'type.hintWritten'}})|
-            merge(name is not same as 'preCompleteType' ? {'stim': [stimCont,'setDocumentTranslation']} : {})) }}
+            merge({'icons': {(name~'written'): translationPrefix~'type.hintWritten'}})) }}
         {% if addPDF %}
             {% set prefix = 'projectdetails.addressee.' %}
             <div>{{ formRender.addHint(translationPrefix~'pdf',{'params': {'addressee': (prefix~'thirdParties.'~addresseeType)|trans, 'participant': (prefix~'participants.'~addresseeType)|trans}}) }}</div>

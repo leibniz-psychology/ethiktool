@@ -32,11 +32,18 @@ class InformationType extends TypeAbstract
         }
         // document translation
         $reviewProcess = $dummyParams[self::reviewProcess];
-        if ($isInformation && str_contains($reviewProcess,self::reviewProcessFull)) {
-            $tempPrefix = $pagePrefix.self::documentTranslationNode.'.';
-            $this->addBinaryRadio($builder,self::documentTranslationNode,$tempPrefix.'title',textName: self::documentTranslationNode.self::descriptionCap,textHint: $tempPrefix.self::textHint,options: [self::labelParams => [self::addressee => $options[self::addresseeType]]]);
-            if ($reviewProcess===self::reviewFullDocs) {
-                $this->addFormElement($builder,self::documentTranslationPDF,'checkbox',$tempPrefix.'pdf.title');
+        if ($isInformation) {
+            if (str_contains($reviewProcess,self::reviewProcessFull)) {
+                $tempPrefix = $pagePrefix.self::documentTranslationNode.'.';
+                $this->addBinaryRadio($builder,self::documentTranslationNode,$tempPrefix.'title',options: [self::labelParams => [self::addressee => $options[self::addresseeType]]]);
+                $this->addCheckboxGroup($builder,self::documentTranslationTypes,$tempPrefix.'types.',[self::documentTranslationNode.self::descriptionCap],[$tempPrefix.'hints.'.self::textHint]);
+                if ($reviewProcess===self::reviewFullDocs) {
+                    $this->addFormElement($builder,self::documentTranslationPDF,'checkbox',$tempPrefix.'pdf');
+                }
+            }
+            // information measures
+            if ($dummyParams['isExaminedConsent']) {
+                $this->addFormElement($builder,self::informationMeasuresNode,'textarea',hint: $pagePrefix.self::informationMeasuresNode.'.'.self::textHint);
             }
         }
         // dummy forms
@@ -79,9 +86,20 @@ class InformationType extends TypeAbstract
             $forms[self::attendanceNode]->setData($viewData[self::attendanceNode]);
         }
         // document translation
-        $this->setChosenArray($forms,$viewData,self::documentTranslationNode,[self::descriptionNode => self::documentTranslationNode.self::descriptionCap]);
-        if (array_key_exists(self::documentTranslationPDF,$forms)) {
-            $forms[self::documentTranslationPDF]->setData(array_key_exists(self::documentTranslationPDF,$viewData));
+        if (array_key_exists(self::documentTranslationNode,$viewData)) {
+            $tempArray = $viewData[self::documentTranslationNode];
+            $chosen = $tempArray[self::chosen];
+            $forms[self::documentTranslationNode]->setData($chosen);
+            if ($chosen==='0') {
+                $this->setSelectedCheckboxes($forms,$tempArray[self::descriptionNode],[self::documentTranslationOther => self::documentTranslationNode.self::descriptionCap]);
+                if (array_key_exists(self::documentTranslationPDF,$forms)) {
+                    $forms[self::documentTranslationPDF]->setData(array_key_exists(self::documentTranslationPDF,$viewData));
+                }
+            }
+        }
+        // information measures
+        if (array_key_exists(self::informationMeasuresNode,$viewData)) {
+            $forms[self::informationMeasuresNode]->setData($viewData[self::informationMeasuresNode]);
         }
     }
 
@@ -126,11 +144,23 @@ class InformationType extends TypeAbstract
             $newData[self::attendanceNode] = $forms[self::attendanceNode]->getData();
         }
         // document translation
-        if (array_key_exists(self::documentTranslationNode,$forms) && ($isPre || $isPost)) {
-            $newData[self::documentTranslationNode] = $this->getChosenArray($forms,self::documentTranslationNode,0,[self::descriptionNode => self::documentTranslationNode.self::descriptionCap]);
-            if ($newData[self::documentTranslationNode][self::chosen]===0 && array_key_exists(self::documentTranslationPDF,$forms) && $forms[self::documentTranslationPDF]->getData()) {
+        $isPrePost = $isPre || $isPost;
+        if (array_key_exists(self::documentTranslationNode,$forms) && $isPrePost) {
+            $tempVal = $forms[self::documentTranslationNode]->getData();
+            $tempArray = [self::chosen => $tempVal];
+            $selections = [];
+            if ($tempVal===0) {
+                $selections = $this->getSelectedCheckboxes($forms,self::documentTranslationTypes,[self::documentTranslationOther => self::documentTranslationNode.self::descriptionCap]);
+                $tempArray[self::descriptionNode] = $selections;
+            }
+            $newData[self::documentTranslationNode] = $tempArray;
+            if (array_key_exists(self::documentTranslationPDF,$forms) && array_key_exists(self::documentTranslationOther,$selections) && !array_key_exists(self::documentTranslationEasy,$selections) && $forms[self::documentTranslationPDF]->getData()) {
                 $newData[self::documentTranslationPDF] = '';
             }
+        }
+        // information measures
+        if (array_key_exists(self::informationMeasuresNode,$forms) && $isPrePost) {
+            $newData[self::informationMeasuresNode] = $forms[self::informationMeasuresNode]->getData();
         }
         $viewData = $newData;
     }

@@ -24,7 +24,7 @@
                                       merge(isBurdens ? [everydayDiv] : (isRisks ? ['risksOccurrence'] : [compensationDiv]))]]|
                     merge(isRisks ? [[['risksIncidental','risksSuspicion'],'finding']] : [])})|
                     stimulus_action(burdensRisksController,'setTextInputHint','change',textHintParams)}}>
-                    {{ _self.addMultilevelCheckboxGroup(content,burdensRisksTypesAll[type],burdensRisksOther[type],burdensRisksIcons[type],parameter,false,selections[0] ? checkboxesWoNo : (anySelected ? [noKey] : []),[],transferArrayValue) }}
+                    {{ formRender.addMultilevelCheckboxGroup(content,'burdensRisks.'~type,burdensRisksTypesAll[type],burdensRisksOther[type],burdensRisksIcons[type],parameter,false,[],selections[0] ? checkboxesWoNo : (anySelected ? [noKey] : []),[],transferArrayValue) }}
                 </div>
             </div>
             {{ formRender.addTextfield(content[description],fontNormal|merge({'visibility': anySelected})) }}
@@ -89,7 +89,7 @@
                 <div class="mt-8" id="risksOccurrence" style="{{ boolToDisplay(isAnyRisk) }}">
                     {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'hints.headingHint']]}) }}
                     <div class="MetaData-Widget" {{ stimulus_action('base','setMultiCheckbox','change',{'single': 'noRisksOccurrence', 'multiCheck': checkboxesWoNo})|stimulus_action('base','setVisibility','change',{'multi': [['noRisksOccurrence','risksNoMeasure'],['trigger','risksTrigger'],[checkboxesWoNo,'risksAfter']]}) }}>
-                        {{ _self.addMultilevelCheckboxGroup(content,burdensRisksTypesAll['risksOccurrence'],burdensRisksOther['risksOccurrence'],burdensRisksIcons['risksOccurrence'],parameter,true,selections[0] ? checkboxesWoNo : (selections[1] ? ['noRisksOccurrence'] : []),['contactInfo','contactOther','burdensome','triggerOther'],transferArrayValue) }}
+                        {{ formRender.addMultilevelCheckboxGroup(content,'burdensRisks.risksOccurrence',burdensRisksTypesAll['risksOccurrence'],burdensRisksOther['risksOccurrence'],burdensRisksIcons['risksOccurrence'],parameter,true,[],selections[0] ? checkboxesWoNo : (selections[1] ? ['noRisksOccurrence'] : []),['contactInfo','contactOther','burdensome','triggerOther'],transferArrayValue) }}
                     </div>
                     {# explanation why no measures are taken #}
                     <div class="mt-4" id="risksNoMeasure" style="{{ boolToDisplay(content.noRisksOccurrence.vars.checked) }}">
@@ -106,7 +106,7 @@
                                 {% set widget, templateDiv, otherText = content[trigger], trigger~'Template', trigger~'Text' %}
                                 {% set visibility, isOther, isNotTriggerOther = boolToDisplay(widget.vars.checked,1), trigger in triggerOther, trigger is not same as 'triggerOther' %}
                                 <div class="grid topMarginButtons" {{ stimulus_action('base','setVisibility','change',{'multi': [[trigger, (isOther ? [otherText] : [])|merge(isNotTriggerOther ? [templateDiv] : [])]], 'isGrid': true}) }}>
-                                    {{ formRender.addCheckbox(widget,(trigger in triggerIcons ? {'checkIcon': [(translationPrefix~'icons.'~trigger)|trans(parameter)]} : {})) }}
+                                    {{ formRender.addCheckbox(widget,(trigger in triggerIcons ? {'checkIcon': [(translationPrefix~'risksTrigger.icons.'~trigger)|trans(parameter)]} : {})) }}
                                     {% if isNotTriggerOther %}
                                         <div class="mt-2 mb-2 template" id="{{ templateDiv }}" style="{{ visibility }}">
                                             {{ (tempPrefix~'templates.'~trigger)|trans }}
@@ -147,48 +147,6 @@
         {{ formRender.addSubmitButtons() }}
     </div> {# entire form #}
 {% endblock %}
-
-{% macro addMultilevelCheckboxGroup(content, names, otherTypes, iconTypes, parameter, isBold, disable = [], otherPDF = [], transfer = []) %}
-    {# Creates a group of checkboxes that may have several subcategories. Input arguments:
-        content:    form element with the checkboxes
-        names:      array of names of checkboxes. Each element may be a key-value pair
-        otherTypes: array with IDs of elements for which a text field is added
-        iconTypes:  array with IDs of elements or names of subcategories for which an icon is added
-        parameter:  parameter for the translations
-        isBold:     if true, then the subheading will be displayed in bold, otherwise underlined. Only the first level of subheadings may be bold
-        disable:    IDs of elements which get disabled
-        otherPDF:   arry with IDs of elements for which a pdf symbol is added next to the text field
-        transfer:   array for the pdf-icon call. 0: transfer elements, 1: addressee
-    #}
-    {% set translationPrefix = 'projectdetails.pages.burdensRisks.' %}
-    {% set iconPrefix = translationPrefix~'icons.' %}
-    {% for key, value in names %}
-        {% if value is iterable %} {# subheading #}
-            <div class="topMarginButtons ms-1">
-                <div class="{{ isBold ? 'font-bold' : 'text-decoration-underline' }}">{{ (translationPrefix~'typesMain.'~key)|trans }}{% if key in iconTypes %}{{ formRender.addIcon((iconPrefix~key)|trans(parameter)) }}{% endif %}</div>
-                <div class="ms-3">
-                    {{ _self.addMultilevelCheckboxGroup(content,value,otherTypes,iconTypes,parameter,false,disable,otherPDF,transfer) }}
-                </div>
-            </div>
-        {% else %} {# selectable option #}
-            {% set widget, isOther = content[value], value in otherTypes %}
-            <div class="grid topMarginButtons" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[value, [value~'Text']]], 'isGrid': true}) }} {% endif %}>
-                {{ formRender.addCheckbox(widget,
-                    (value in iconTypes ? {'checkIcon': [(iconPrefix~value)|trans(parameter)]} : {})|
-                    merge(value in disable ? {'disable': true} : {})) }}
-                {% if isOther %}
-                    {% set other, isTransfer = content[value~'Text'], value in otherPDF and transfer is not same as [] %}
-                    <div class="MetaData-Widget mb-1 grid" id="{{ other.vars.name }}" style="{{ boolToDisplay(widget.vars.checked,1) }}; {% if isTransfer %} grid-template-columns: auto min-content; {% endif %}">
-                        {{ form_widget(other) }}
-                        {% if isTransfer %}
-                            {{ formRender.addPDFhint(transfer[0],transfer[1]) }}
-                        {% endif %}
-                    </div>
-                {% endif %}
-            </div>
-        {% endif %}
-    {% endfor %}
-{% endmacro %}
 
 {% block preview %}
     {{ formRender.addPreview([studyID,groupID,measureID]) }}

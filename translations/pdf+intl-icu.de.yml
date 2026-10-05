@@ -123,6 +123,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     recruitment: 'Wie werden die Teilnehmenden rekrutiert?'
     recruitmentSub: 'Weitere Angaben zur Rekrutierung:'
     information: 'Wird vorab darüber aufgeklärt, dass eine Studienteilnahme erfolgt?'
+    informationSub: 'Maßnahmen zur Sicherstellung der Verständlichkeit:'
     preContent: 'Wie umfassend ist die Vorab-Aufklärung hinsichtlich der Ziele, Inhalte und Methoden der Studie?'
     preComplete: 'Wird die vollständige Aufklärung später nachgeholt (d.h. werden die Vorab-Informationen ergänzt bzw. richtiggestellt)?'
     preCompleteSub: 'Begründung des Vorgehens und Angabe, wann welche Informationen mitgeteilt werden:'
@@ -136,6 +137,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                               other {}} Begründung, warum bei vorzeitigem Abbruch keine vollständige Aufklärung erfolgt}
                     other {}}:
     post: 'Wird nachträglich darüber aufgeklärt, dass an einer Studie teilgenommen wurde?'
+    postSub: 'Maßnahmen zur Sicherstellung der Verständlichkeit:'
     attendance: >-
       Sind die {children, select,
                   true  {Erziehungsberechtigten}
@@ -171,7 +173,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
                                                                 true  {bzw.}
                                                                 other {}} Zustimmung}
                                                       other {}}:}
-        other {Maßnahmen zur Sicherstellung der Freiwilligkeit trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis):}}
+        other {Maßnahmen zur Sicherstellung der Freiwilligkeit trotz der besonderen Umstände (siehe Feld 13):}}
     terminateCons: 'Kann die Teilnahme jederzeit und ohne Nachteile beendet werden?'
     terminateConsSub: 'Begründung und ggf. Beschreibung der Nachteile im Falle eines vorzeitigen Abbruchs:'
     terminateCriteria: 'Unter welchen Umständen wird die Datenerhebung durch die Projektbeteiligten vorzeitig abgebrochen?'
@@ -402,7 +404,7 @@ projectdetails:
       Auf der/den nächsten Seite(n) finden sich die übersetzten Teilnahmedokumente{addressee, select,
                                                                                     children { für die Erziehungsberechtigten}
                                                                                     wards    { für die gesetzlichen Vertretungspersonen}
-                                                                                    other    {}}{levelNamesString}.
+                                                                                    other    {}}{levelNamesString}. Diese sind in folgende Sprache(n) übersetzt: {documentTranslation}.
     informationII: >- # other addressee is wards
       Die Teilnahmedokumente für die {addressee, select,
                                         children {Kinder}
@@ -463,7 +465,7 @@ projectdetails:
                    true  {Personen}
                    other {}}}
           =1    {}
-          other {; jeweils}} im Alter von {limits, select,
+          other {jeweils}} im Alter von {limits, select,
                                             noUpperLimit {mindestens {minAge, plural,
                                                                         =1    {1 Jahr}
                                                                         =-2   {X Jahren}
@@ -478,32 +480,11 @@ projectdetails:
                                                                                   other {# Jahren}}}}{isWardsAge, select,
                                                                                                         true  { (daher nicht einwilligungsfähig)}
                                                                                                         other {}}.
-      types:
-        healthy: 'gesunde Personen'
-        physical: 'Personen mit körperlichen Erkrankungen oder Einschränkungen'
-        mental: 'Personen mit psychischen oder kognitiven Erkrankungen oder Einschränkungen'
-        medical: 'Personen in medizinischer oder psychotherapeutischer Behandlung'
-        institutional: 'institutionalisierte Personen'
-        wards: 'nicht einwilligungsfähige Personen'
-        vulnerable: 'Personen in besonders vulnerablen (Lebens-)Situationen'
-        dependent: 'Personen in einem Abhängigkeitsverhältnis zu den Projektbeteiligten'
-        otherPeople: 'andere Personengruppen'
-    closed:
-      closedLecture: 'im Rahmen einer Lehrveranstaltung'
-      school: 'im Klassenverband (an einer Schule)'
-      closedOther: 'sonstige Gruppe ({description})'
-    recruitment:
-      mailing: 'universitäre Mailinglisten'
-      flyer: 'Aushänge und Flyer'
-      lecture: 'Aufrufe in eigenen Lehrveranstaltungen'
-      lectureOther: 'Aufrufe in Lehrveranstaltungen nicht-projektbeteiligter Personen'
-      recruitmentPrivate: 'Aufrufe/Ansprache im privaten Umfeld der Projektbeteiligten'
-      media: 'Social Media'
-      news: 'Zeitungsannoncen'
-      database: 'Datenbank(en) ({description})'
-      external: 'externe Rekrutierungsplattform(en) ({description})'
-      multiplier: 'Weiterleitung über Multiplikatoren'
-      recruitmentOther: 'folgende Rekrutierungswege: {description}'
+      disease: >-
+        
+        Nach Einschätzung der Antragstellenden sind die Teilnehmenden mit körperlichen/psychischen Erkrankungen/Einschränkungen im Kontext dieser Studie {disease, select,
+              0     {}
+              other {nicht}} als vulnerabel anzusehen.
   information:
     type: >-
       {chosen, select,
@@ -518,7 +499,7 @@ projectdetails:
       Der Wortlaut der Teilnahmedokumente {addressee, select,
                                             children {für die Erziehungsberechtigten}
                                             wards    {für die gesetzlichen Vertretungspersonen}
-                                            other    {}} wird in leichte bzw. einfache Sprache und/oder eine Fremdsprache übersetzt, und zwar: {description}.
+                                            other    {}} wird in folgende Sprache(n) übersetzt: {description}.
     preContent: >-
       {chosen, select,
         complete {Die {addressee} werden vollständig aufgeklärt.}
@@ -536,12 +517,13 @@ projectdetails:
       voluntaryEnsure:
         title: >-
           {isReviewFull, select,
-            true  {Maßnahmen zur Sicherstellung der Freiwilligkeit trotz der besonderen Umstände (geschlossene Gruppe / Abhängigkeitsverhältnis):<br/>}
+            true  {Maßnahmen zur Sicherstellung der Freiwilligkeit trotz der besonderen Umstände (siehe Feld 16):<br/>}
             other {}}
         types:
           relatable: 'Niemand kann nachvollziehen, wer tatsächlich teilgenommen hat.'
-          absence: 'Die Teilnahme erfolgt in Abwesenheit der Person, zu der das Abhängigkeitsverhältnis besteht.'
-          discuss: 'Die Freiwilligkeit wird gesondert besprochen; dabei wird ausdrücklich betont, dass trotz des Abhängigkeitsverhältnisses keine Vor- oder Nachteile mit der Entscheidung für oder gegen die Studie verbunden sind.'
+          absence: 'Die Teilnahme erfolgt in Abwesenheit der Person, zu der das Abhängigkeitsverhältnis bzw. der Rollenkonflikt besteht.'
+          discuss: 'Die Freiwilligkeit wird explizit besprochen; dabei wird ausdrücklich betont, dass trotz der besonderen Umstände keine Vor- oder Nachteile mit der Entscheidung für oder gegen die Studie verbunden sind.'
+          roleConflict: 'Im Rahmen der Aufklärung werden Doppelrollen der Projektbeteiligten transparent gemacht.'
           onetime: 'Es wird nur einmal für die Studie geworben und höchstens einmal kurz erinnert.'
           substitute: 'Für nicht-teilnehmende Gruppenmitglieder gibt es eine adäquate Ersatzbeschäftigung, und zwar: {description}'
           independent: 'Die Entscheidung eines Gruppenmitglieds für oder gegen die Studie ist nicht von den Entscheidungen anderer Gruppenmitglieder abhängig.'
@@ -562,7 +544,7 @@ projectdetails:
       regulation: 'bei Nicht-Einhaltung von vorab kommunizierten Sicherheitsbestimmungen seitens der teilnehmenden Person: {description}'
       time: 'bei erheblicher Überschreitung der veranschlagten Zeitdauer der Erhebung'
       attention: 'bei falscher Beantwortung mehrerer Items zur Aufmerksamkeitskontrolle'
-      criteria: 'wenn sich während der Erhebung herausstellt, dss ein Einschlusskriterium nicht erfüllt ist oder ein Ausschlusskriterium zutrifft'
+      criteria: 'wenn sich während der Erhebung herausstellt, dass ein Einschlusskriterium nicht erfüllt ist oder ein Ausschlusskriterium zutrifft'
       malfunction: 'bei technischer Fehlfunktion der verwendeten Geräte'
       behaviour: 'bei unangemessenem Verhalten der teilnehmenden Person im Rahmen der Datenerhebung'
       terminateCriteriaOther: 'unter folgenden Bedingungen: {description}'
@@ -571,23 +553,26 @@ projectdetails:
   measures:
     measures:
       measuresFurther:
-        measuresObservation: "Dokumentation der Beobachtung der Teilnehmenden: {description}"
-        measuresInterview: "Dokumentation der Einzelinterviews: {description}"
-        measuresInterviewGroups: "Dokumentation der Gruppeninterviews: {description}"
+        measuresObservation: 'Dokumentation der Beobachtung der Teilnehmenden: {description}'
+        measuresInterview: 'Dokumentation der Einzelinterviews: {description}'
+        measuresInterviewGroups: 'Dokumentation der Gruppeninterviews: {description}'
+        measuresTest: 'Dokumentation der Ergebnisse aus Tests/Leistungserhebungen: {description}'
         surveyConduct: >-
           Durchführung des Fragebogens: {description, select,
                                           written {schriftlich}
                                           oral    {mündlich}
                                           mixed   {schriftlich/mündlich gemischt}
                                           other   {}}
-        screening: "Kommt ein normierter Screening-Fragebogen zum Einsatz? {description}"
-        gene: "Werden die entnommenen Körpermaterialien zur Analyse von Gendaten genutzt? {description}"
+        screening: 'Kommt ein normierter Screening-Fragebogen zum Einsatz? {description}'
+        gene: 'Werden die entnommenen Körpermaterialien zur Analyse von Gendaten genutzt? {description}'
       documentation:
         documentationNotes: 'freie Notizen'
         documentationReport: 'vorstrukturiertes Protokoll'
         documentationPhoto: 'Fotos'
         documentationVideo: 'Videoaufnahmen'
         documentationAudio: 'Tonaufnahmen'
+        documentationPaper: 'auf Papier'
+        documentationDigital: 'digital'
         documentationOther: 'in folgender Form: {description}'
     interventions:
       interventionsQuestionnaire: ' (siehe Erhebungsmethoden: {dummy})'
@@ -748,12 +733,12 @@ participation:
                                               other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#pre" data-base-route-i-ds-param="{routeIDs}">vorab darüber aufgeklärt</a>}} werden, dass {addressee, select,
                                                                                     children {ihre Kinder}
                                                                                     wards    {die von ihnen betreuten Personen}
-                                                                                    other    {sie}} an einer Studie teilnehmen (vgl. Feld 21 des Antragsformulars), und auch nicht {savePDF, select,
+                                                                                    other    {sie}} an einer Studie teilnehmen (vgl. Feld 20 des Antragsformulars), und auch nicht {savePDF, select,
                         true  {nachträglich darüber aufgeklärt}
                         other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#preNo" data-base-route-i-ds-param="{routeIDs}">nachträglich darüber aufgeklärt</a>}} werden, dass {addressee, select,
             children {ihre Kinder}
             wards    {die betreuten Personen}
-            other    {sie}} an einer Studie teilgenommen haben (vgl. Feld 25 des Antragsformulars)
+            other    {sie}} an einer Studie teilgenommen haben (vgl. Feld 24 des Antragsformulars)
     informationII:
       start: >- # other addressee is wards
         Für die {addressee, select,
@@ -762,7 +747,7 @@ participation:
       noPost: >- # also used for {informationSentence} in the following key
         die {addressee, select,
               children {Kinder}
-              other    {betreuten Personen}} nicht vorab darüber aufgeklärt werden, dass sie an einer Studie teilnehmen (vgl. Feld 21 des Antragsformulars), und auch nicht nachträglich darüber aufgeklärt werden, dass sie an einer Studie teilgenommen haben (vgl. Feld 25 des Antragsformulars)
+              other    {betreuten Personen}} nicht vorab darüber aufgeklärt werden, dass sie an einer Studie teilnehmen (vgl. Feld 20 des Antragsformulars), und auch nicht nachträglich darüber aufgeklärt werden, dass sie an einer Studie teilgenommen haben (vgl. Feld 24 des Antragsformulars)
     funding: >-
       {information, select,
         noPost { {informationSentence} und weil sich das Forschungsvorhaben noch im Stadium der Beantragung von Fördermitteln befindet}
@@ -1289,6 +1274,7 @@ dataPrivacy:
     {committeeType, select,
       PHT   {Die Prüfung dieses Antrags durch die Ethikkommission erfolgt ausschließlich auf Grundlage ethischer Gesichtspunkte gemäß der geltenden Geschäftsordnung. Eine datenschutzrechtliche Prüfung (insbesondere im Hinblick auf die Einhaltung der DSGVO und des DSG) ist <span style="font-weight: bold">nicht</span> Gegenstand des Verfahrens und wird durch das Votum der Ethikkommission nicht ersetzt. Die datenschutzrechtliche Konformität des Vorhabens liegt in der alleinigen Verantwortung der Projektbeteiligten und ist eigenständig sicherzustellen.}
       UH1   {Die datenschutzrechtliche Konformität des Vorhabens liegt in der Verantwortung der Projektbeteiligten und ist eigenständig sicherzustellen. Das Team Datenschutz der Universität Hildesheim übernimmt keine Verantwortung für die Richtigkeit der Angaben.}
+      UHS   {Die datenschutzrechtliche Konformität des Vorhabens liegt in der Verantwortung der Projektbeteiligten und ist eigenständig sicherzustellen. Das Team Datenschutz der Universität Hildesheim übernimmt keine Verantwortung für die Richtigkeit der Angaben.}
       other {}}
   intro: >-
     Informationen zur Verarbeitung personenbezogener Daten im Rahmen {numStudies, plural,
@@ -1382,6 +1368,10 @@ dataPrivacy:
           DFKIO {Deutsches Forschungszentrum für Künstliche Intelligenz GmbH (DFKI)
                  Marie-Curie-Straße 1
                  26129 Oldenburg}
+          UHS   {Universität Hildesheim
+                 Universitätsplatz 1
+                 31141 Hildesheim
+                 Web: https://www.uni-hildesheim.de}
           other {Testinstitution
                  Teststraße 123
                  D-12345 Teststadt
@@ -1468,6 +1458,9 @@ dataPrivacy:
                  67663 Kaiserslautern
                  Tel.: 0631 / 20575-0
                  E-Mail: datenschutz@dfki.de}
+          UHS   {Die datenschutzbeauftragte Person erreichen Sie postalisch unter der Anschrift der verantwortlichen Institution.
+                 Tel.: 05121-883-10922
+                 E-Mail: datenschutz@uni-hildesheim.de}
           other {Tel.: 1234 56789
                  E-Mail: datenschutz@test-institution.de}}
   basis:
@@ -1480,7 +1473,7 @@ dataPrivacy:
                                                                       other {}}.
   processing:
     title: 'Verarbeitete personenbezogene Daten und Zwecke'
-    start: "Im Rahmen der Studie werden personenbezogene Daten zu folgenden Zwecken verarbeitet:"
+    start: 'Im Rahmen der Studie werden personenbezogene Daten zu folgenden Zwecken verarbeitet:'
     purposeStart: 'Für '
     dataResearch:
       types: # same as in messages, but without the examples and without the two 'other' types
@@ -1811,6 +1804,11 @@ dataPrivacy:
                55116 Mainz
                Tel.: +49 (0) 6131 8920-0
                E-Mail: poststelle@datenschutz.rlp.de}
+        UHS   {Landesbeauftragter für den Datenschutz Niedersachsen
+               Prinzenstraße 5
+               30159 Hannover
+               Telefon: +49 (0)511 120-4500
+               E-Mail: poststelle@lfd.niedersachsen.de}
         other {}}
 
 
@@ -1855,13 +1853,17 @@ completePost:
 
 # consent for participation
 consent:
+  hint: >-
+    {committeeType, select,
+      PHT   {Fällt das Forschungsprojekt in den Anwendungsbereich der <a href="https://cms.ph-tirol.ac.at/documents/INN_230526_Rahmenvereinbarung_EmpUnt_BDT-UIBK-PHT-FHK_final-1.pdf" target="_blank">Rahmenvereinbarung für die Durchführung von empirischen Untersuchungen mit Schüler*innen</a>, sind anstelle dieser Vorlage die auf der <a href="https://ph-tirol.ac.at/ethikkommission" target="_blank">Webseite der Ethikkommission</a> aufrufbaren Muster für Einwilligungserklärungen heranzuziehen.}
+      other {}}
   noConsent: >-
     Das Ethiktool hat {levelNamesString} keinen Einwilligungstext für {addressee, select,
                                                                                 children {die Erziehungsberechtigen}
                                                                                 wards    {die gesetzlichen Vertretungspersonen}
                                                                                 other    {Teilnehmenden}} erstellt, da {savePDF, select,
                   true  {keine Einwilligung}
-                  other {<a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">keine Einwilligung</a>}} erfolgt (vgl. Feld 28 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}
+                  other {<a class="linkInternal" href="consent" data-action="base#setDummySubmit" data-base-url-param="app_consent#consent" data-base-route-i-ds-param="{routeIDs}">keine Einwilligung</a>}} erfolgt (vgl. Feld 27 des Antragsformulars). Die Begründung hierfür lautet wie folgt: {description}
   title: >-
     {information, select,
       post  {Nachträgliche Einwilligung in die Datenverarbeitung}
@@ -1988,8 +1990,8 @@ signature:
                     wards    {der gesetzlichen Vertretungsperson}
                     other    {}}
   loanReceipt:
-    receipt: 'Entleiher/in'
-    return: 'Mitarbeiter/in'
+    receipt: 'Entleiher*in'
+    return: 'Mitarbeiter*in'
 
 # loan receipt
 loanReceipt:
@@ -2029,28 +2031,28 @@ completeForm:
       information: >-
         {answer, select,
           no    { (siehe Feld {isNotPre, select,
-                                true  {21}
+                                true  {20}
                                 other {}}{isIncomplete, select,
                                             true  {{isNotPre, select,
                                                       true  {/}
-                                                      other {}}22}
+                                                      other {}}21}
                                             other {}})}
           other {}}
       voluntary: >-
         {isFull, select,
           true  {{answer, select,
                     unclear    { (siehe Feld {isVoluntary, select,
-                                                true  {27}
+                                                true  {26}
                                                 other {}}{isConsent, select,
                                                             true  {{isVoluntary, select,
                                                                       true  {/}
-                                                                      other {}}28}
+                                                                      other {}}27}
                                                             other {}})}
-                    restricted { (siehe Feld 43)}
-                    no         { (siehe Feld 27)}
+                    restricted { (siehe Feld 42)}
+                    no         { (siehe Feld 26)}
                     other      {}}}
           other {{answer, select,
-                    unclear { (siehe Feld 16)}
+                    unclear { (siehe Feld 15)}
                     other   {}}}}
       terminateCons: >-
         {answer, select,
@@ -2058,7 +2060,7 @@ completeForm:
                          shortDocs { (siehe Studieninformation)}
                          fullDocs  { (siehe {information, select,
                                                noPost {{isTerminateCons, select,
-                                                         true  {Feld 28}
+                                                         true  {Feld 27}
                                                          other {}}{isDuration, select,
                                                                      true  {{isTerminateCons, select,
                                                                                true  { /}
@@ -2069,7 +2071,7 @@ completeForm:
           restricted { (siehe {isFullInformation, select,
                                 true  {Studieninformation}
                                 other {Seite „Teilnahmedokumente“}})}
-          no         { (siehe Feld 29)}
+          no         { (siehe Feld 28)}
           other      {}}
       examinedPeople: >-
         {isFull, select,
@@ -2092,37 +2094,37 @@ completeForm:
       preContent: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (siehe Feld 22{isCompletePost,select,
-                                              true  {-24}
-                                              other {/23}})}
-                    unclear { (siehe Feld 21/25)}
+                    yes     { (siehe Feld 21{isCompletePost,select,
+                                              true  {-23}
+                                              other {/22}})}
+                    unclear { (siehe Feld 20/24)}
                     other   {}}}
           other {}}
       burdens: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (siehe Feld 35)}
-                    unclear { (siehe Feld 35)}
+                    yes     { (siehe Feld 34)}
+                    unclear { (siehe Feld 34)}
                     other   {}}}
           other {{answer, select,
-                    unclear { (siehe Feld 19)}
+                    unclear { (siehe Feld 18)}
                     other   {}}}}
       risks: >-
         {isFull, select,
           true  {{answer, select,
-                    yes     { (siehe Feld 36/37)}
-                    unclear { (siehe Feld 36/37)}
+                    yes     { (siehe Feld 35/36)}
+                    unclear { (siehe Feld 35/36)}
                     other   {}}}
           other {{answer, select,
-                    unclear { (siehe Feld 21/22)}
+                    unclear { (siehe Feld 19/20)}
                     other   {}}}}
       burdensRisksContributors: >-
         {answer, select,
-          yes   { (siehe Feld 38/39)}
+          yes   { (siehe Feld 37/38)}
           other {}}
       burdensRisksUninvolved: >-
         {answer, select,
-          yes   { (siehe Feld 40/41)}
+          yes   { (siehe Feld 39/40)}
           other {}}
       conflict: >-
         {isFull, select,
@@ -2145,42 +2147,42 @@ completeForm:
       dataPrivacy: >-
         {answer, select,
           yes     { (siehe Anlage zur Datenverarbeitung)}
-          unclear { (siehe Feld 44)}
+          unclear { (siehe Feld 43)}
           other   {}}
       dataSourceVotes: >-
         {answer, select,
           yes   {}
           other { (siehe Feld {isFull, select,
-                                true  {47}
-                                other {23}})}}
+                                true  {46}
+                                other {22}})}}
       legitimization: >-
         {answer, select,
           unclear { (siehe Feld {isFull, select,
-                                  true  {52}
-                                  other {28}})}
-          no      { (siehe Feld 46)}
+                                  true  {51}
+                                  other {27}})}
+          no      { (siehe Feld 45)}
           other   {}}
       restriction: >-
         {isFull, select,
           true  {{answer, select,
-                    yes   { (siehe Feld 50/54)}
+                    yes   { (siehe Feld 49/53)}
                     other {}}}
           other {}}
       dataSourceIdentification: >-
         {isFull, select,
           true  {{answer, select,
-                    yes   { (siehe Feld 53)}
+                    yes   { (siehe Feld 52)}
                     other {}}}
           other {}}
       dataSourceBurdensRisks: >-
         {isFull, select,
           true  {{answer, select,
                     yes   { (siehe Feld {isDataSourceBurdensRisks, select,
-                                          true  {55}
+                                          true  {54}
                                           other {}}{isDataSourceBurdensRisksContributors, select,
                                                       true  {{isDataSourceBurdensRisks, select,
                                                                 true  {/}
-                                                                other {}}56}
+                                                                other {}}55}
                                                       other {}})}
                     other {}}}
           other {}}
@@ -2264,3 +2266,4 @@ logo:
   DLRO: 'Logo der Carl von Ossietzky Universität Oldenburg'
   IDMT: 'Logo der Carl von Ossietzky Universität Oldenburg'
   DFKIO: 'Logo der Carl von Ossietzky Universität Oldenburg'
+  UHS: 'Logo der Universität Hildesheim'

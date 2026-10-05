@@ -82,7 +82,7 @@ class CompleteFormController extends ControllerAbstract
                             $isInformationII) { // information of participants if third party
                             $anyDoc = 'true';
                         }
-                        if (array_key_exists(self::documentTranslationPDF, $informationArray)) {
+                        if ($this->getDocumentTranslation($informationArray)) {
                             $pdfArray[self::informationNode] = [];
                         }
                         if ($isInformationII) {

@@ -26,31 +26,40 @@ class GroupsController extends ControllerAbstract
         $measureArray = $this->xmlToArray($measureNode);
         $groupsNode = $measureNode->{self::groupsNode};
         $hasCriteria = $this->checkElement(self::criteriaIncludeNode,$groupsNode);
-        $addresseeLoad = $this->getAddressee($this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true)->{self::groupsNode})); // addressee on page load
+        $groupsNodeLoad = $this->getMeasureTimePointNode($request,getFirst: true)->{self::groupsNode};
+        $addresseeLoad = $this->getAddressee($this->xmlToArray($groupsNodeLoad)); // addressee on page load
         $isWards = $addresseeLoad!==self::addresseeParticipants;
         $consentArray = $measureArray[self::consentNode];
         $voluntaryArray = $consentArray[self::voluntaryNode];
-        $isClosedDependentLoad = array_key_exists(self::voluntaryEnsureNode,$voluntaryArray);
-        $textInput = '';
+        $isVoluntaryEnsureLoad = array_key_exists(self::voluntaryEnsureNode,$voluntaryArray);
+        $textInput = [];
         $addresseePrefix = 'projectdetails.addressee.';
         $thirdPartiesPrefix = $addresseePrefix.'thirdParties.';
         $translationPrefix = 'pages.projectdetails.';
-        if ($isWards) { // check if any page whose input may be deleted has input
-            $inputArray = $this->setInputArray();
+        $informationArray = $measureArray[self::informationNode];
+        if ($isWards || array_key_exists(self::informationMeasuresNode,$informationArray)) { // check if any page whose input may be deleted has input
             // information
-            if ($this->getInformation($appNode,$routeParams)===self::pre && $this->checkInput($measureArray[self::informationNode],[self::attendanceNode => '2'])) {
-                $this->addInputPage($translationPrefix,self::informationNode,$inputArray,[self::addressee => $this->translateString($thirdPartiesPrefix.$addresseeLoad)]);
-            }
+            $isAttendanceInput = $this->checkInput($informationArray,[self::attendanceNode => '2']);
+            $isInformationMeasuresInput = $this->checkInput($informationArray,[self::informationMeasuresNode => '']);
             $participants = [self::addressee => $this->translateString($addresseePrefix.'participants.'.$addresseeLoad)];
-            // informationII
-            if ($this->checkInput($measureArray[self::informationIINode],[self::pre => ''])) {
-                $this->addInputPage($translationPrefix,self::informationIINode,$inputArray,$participants);
+            $hasInformationIIinput = $this->checkInput($measureArray[self::informationIINode],[self::pre => '']);
+            $hasConsentInput = $this->checkInput($voluntaryArray,[self::chosen2Node => '']) || $this->checkInput($consentArray[self::consentNode],[self::chosen2Node => '']);
+            $addresseeParam = [self::addressee => $this->translateString($thirdPartiesPrefix.$addresseeLoad)];
+            foreach (array_merge($isAttendanceInput ? [self::attendanceNode => ['isAttendance' => 'true', 'isInformationMeasures' => 'false']] : [],$isInformationMeasuresInput ? [self::informationMeasuresNode => ['isAttendance' => 'false', 'isInformationMeasures' => 'true']] : [], $isAttendanceInput && $isInformationMeasuresInput ? ['attendanceMeasures' => ['isAttendance' => 'true', 'isInformationMeasures' => 'true']] : []) as $removeHint => $params) {
+                $inputArray = $this->setInputArray();
+                $this->addInputPage($translationPrefix,self::informationNode,$inputArray,array_merge($addresseeParam,$params));
+                if ($isWards && $removeHint!==self::informationMeasuresNode) {
+                    // informationII
+                    if ($hasInformationIIinput) {
+                        $this->addInputPage($translationPrefix,self::informationIINode,$inputArray,$participants);
+                    }
+                    // consent
+                    if ($hasConsentInput) {
+                        $this->addInputPage($translationPrefix,'consentGroups',$inputArray,$participants);
+                    }
+                }
+                $textInput[$removeHint] = $this->setInputHint($inputArray);
             }
-            // consent
-            if ($this->checkInput($voluntaryArray,[self::chosen2Node => '']) || $this->checkInput($consentArray[self::consentNode],[self::chosen2Node => ''])) {
-                $this->addInputPage($translationPrefix,'consentGroups',$inputArray,$participants);
-            }
-            $textInput = $this->setInputHint($inputArray);
         }
         $inputArray = $this->setInputArray();
         if (($voluntaryArray[self::voluntaryEnsureNode] ?? '')!=='') {
@@ -125,12 +134,21 @@ class GroupsController extends ControllerAbstract
                     }
                 }
             }
+            // information measures
+            if (in_array($this->getInformation($appNode,$routeParams),self::prePostArray)) {
+                $isExaminedConsentOld = $this->checkElement(self::examinedConsentNode,$groupsNodeLoad->{self::examinedPeopleNode});
+                $isExaminedConsent = array_key_exists(self::examinedConsentNode,$data[self::examinedPeopleNode] ?: []);
+                if (!$isExaminedConsentOld && $isExaminedConsent) {
+                    $informationNode->addChild(self::informationMeasuresNode);
+                } elseif ($isExaminedConsentOld && !$isExaminedConsent) {
+                    $this->removeElement(self::informationMeasuresNode,$informationNode);
+                }
+            }
             // voluntary yes description in consent
-            $examined = $data[self::examinedPeopleNode];
-            $isClosedDependent = $examined!=='' && array_key_exists(self::dependentExaminedNode,$examined) || $data[self::closedNode][self::chosen]===0;
-            if (!in_array('yes',[$voluntaryArray[self::chosen],$voluntaryArray[self::chosen2Node] ?? '']) || $isClosedDependentLoad && !$isClosedDependent) { // remove node -> if 'wards' group was deselected, $voluntaryArray may not contain 'yes' anymore
+            $isVoluntaryEnsure = $this->getVoluntaryEnsure($data);
+            if (!in_array('yes',[$voluntaryArray[self::chosen],$voluntaryArray[self::chosen2Node] ?? '']) || $isVoluntaryEnsureLoad && !$isVoluntaryEnsure) { // remove node -> if 'wards' group was deselected, $voluntaryArray may not contain 'yes' anymore. May also be true if voluntary is not yet answered or answered with no/not applicable
                 $this->removeElement(self::voluntaryEnsureNode,$voluntaryNode);
-            } elseif (!$isClosedDependentLoad && $isClosedDependent) { // add node
+            } elseif (!$isVoluntaryEnsureLoad && $isVoluntaryEnsure) { // add node
                 $voluntaryNode->addChild(self::voluntaryEnsureNode);
             }
             $isNotLeave = !$this->getLeavePage($groups,$session,self::groupsNode);
@@ -139,13 +157,18 @@ class GroupsController extends ControllerAbstract
         return $this->render('Projectdetails/groups.html.twig',
             $this->setRenderParameters($request,$groups,
             ['examined' => self::examinedTypes,
-             self::closedTypesNode => self::closedTypes,
+             'examinedAll' => self::examinedTypesAll,
+             'examinedIcons' => self::examinedIcons,
+             'dependentTypes' => array_combine(self::dependentTypes,array_fill(0,count(self::dependentTypes),self::dependentExaminedNode)),
+             'examinedOther' => self::examinedTypesOther,
              'criteriaHint' => $criteriaHint,
              'includeStart' => $includeStart,
              'firstInclude' => $firstInclude,
              'textInput' => $textInput,
              'textInputVoluntary' => $textInputVoluntary,
              'recruitmentTypes' => self::recruitmentTypes,
-             'recruitmentTypesOther' => self::recruitmentTypesOther],'projectdetails.groups',true));
+             'recruitmentTypesAll' => self::recruitmentTypesAll,
+             'recruitmentTypesOther' => self::recruitmentTypesOther,
+             'recruitmentIcons' => self::recruitmentIcons],'projectdetails.groups',true));
     }
 }

@@ -77,7 +77,7 @@ class MeasuresController extends ControllerAbstract
         $textInputCompensation = '';
         $terminateArray = $measureArrayOld[self::compensationNode][self::terminateNode] ?? [];
         $isTerminateNothing = ($terminateArray[self::chosen] ?? '')===self::terminateNothing;
-        $isDurationOld = $this->getDuration($measuresArrayOld[self::durationNode])>30;
+        $isDurationOld = $this->getDuration($measuresArrayOld[self::durationNode]);
         if ($isDurationOld && $isTerminateNothing && ($terminateArray[self::descriptionNode] ?? '')!=='') {
             $inputArray = $this->setInputArray();
             $this->addInputPage('pages.projectdetails.',self::compensationNode,$inputArray);
@@ -125,7 +125,7 @@ class MeasuresController extends ControllerAbstract
             }
             // update compensation
             if ($isTerminateNothing) {
-                $isDurationNew = $this->getDuration($data[self::durationNode])>30;
+                $isDurationNew = $this->getDuration($data[self::durationNode]);
                 $terminateNode = $measureNodeNew->{self::compensationNode}->{self::terminateNode};
                 if ($isDurationOld && !$isDurationNew) { // duration was longer than 30 minutes, but now is not -> remove node
                     $this->removeElement(self::descriptionNode,$terminateNode);

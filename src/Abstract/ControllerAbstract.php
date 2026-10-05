@@ -216,7 +216,7 @@ abstract class ControllerAbstract extends AbstractController
         try { // set times for maintenance messages
             $date = $this->getCurrentTime();
             $timeString = strtotime($date->format('H:i:s'));
-            return $date->format('l')==='Thursday' ? ($timeString>=strtotime('7:30:00') ? ($timeString<strtotime('8:00:00') ? 'before' : ($timeString<strtotime('8:30:00') ? 'during' : '')) : '') : '';
+            return $date->format('l')==='Monday' ? ($timeString>=strtotime('7:30:00') ? ($timeString<strtotime('8:00:00') ? 'before' : ($timeString<strtotime('8:30:00') ? 'during' : '')) : '') : '';
         } catch (\Throwable) {
             return '';
         }
@@ -1357,12 +1357,12 @@ abstract class ControllerAbstract extends AbstractController
                                 ? self::answerNo
                                 : (count(array_diff_key(['amount' => '', 'inequality' => '','income' => '',self::compensationVoluntaryOther => ''],$compensationVoluntaryArray))<4 // compensation may compromise voluntariness
                                     ? self::answerRestricted
-                                    : ($isVoluntary || // voluntariness not applicable, closed group or dependent
+                                    : ($isVoluntary || // voluntariness not applicable or any examined is selected such that voluntary ensure is asked
                                     $isConsentOther // consent is 'other'
                                         ? self::answerUnclear : self::answerYes)), $parameters, $getReviewError, [self::answerRestricted, self::answerNo]);
                             // terminate cons
                             $measuresArray = $measureTimePoint[self::measuresNode];
-                            $isLonger30 = $this->getDuration($measuresArray[self::durationNode])>30;
+                            $isLonger30 = $this->getDuration($measuresArray[self::durationNode]);
                             $compensationTerminate = $compensationArray[self::terminateNode][self::chosen] ?? '';
                             $isNoCompensationTerminate = $compensationTerminate===self::terminateNothing;
                             $terminateCons = $consentArray[self::terminateConsNode][self::chosen];
@@ -1380,19 +1380,20 @@ abstract class ControllerAbstract extends AbstractController
                                         ? self::answerUnclear : self::answerYes)), $parameters, $getReviewError, [self::answerRestricted, self::answerNo]);
                             // examined
                             $groupsArray = $measureTimePoint[self::groupsNode];
-                            $examinedArray = $groupsArray[self::examinedPeopleNode];
-                            $examinedArray = is_array($examinedArray) ? $examinedArray : []; // if not an array, then is must be an empty string, i.e., nothing chosen yet
+                            $examinedArray = $groupsArray[self::examinedPeopleNode] ?: []; // if not an array, then is must be an empty string, i.e., nothing chosen yet
                             $minAge = $groupsArray[self::minAge];
                             $isMinAge = $minAge!=='';
                             $isUnder18 = $isMinAge && $minAge<18;
-                            $isOnlyHealthyDependentOther = array_diff_key($examinedArray, [self::healthyExaminedNode => '', self::dependentExaminedNode => '', 'otherPeople' => ''])===[];
-                            $isOther = array_key_exists('otherPeople', $examinedArray);
-                            $allShort = $allShort && $isMinAge && !$isUnder18 && $isOnlyHealthyDependentOther && (!$isOther || count($examinedArray)>1);
-                            $briefReport[$this->getBriefReportHeading(self::examinedPeopleNode)] = $this->getBriefReportAnswer(self::examinedPeopleNode, $isOnlyHealthyDependentOther // people other than healthy, dependent, and other are examined
-                                ? ($isOther || // only other is selected
+                            $disease = $groupsArray[self::diseaseNode] ?? '';
+                            $allShort = $allShort && $isMinAge && !$isUnder18 && $examinedArray!==[] && array_diff_key($examinedArray,[self::healthyExaminedNode => '', self::dependentExaminedNode => '', self::closedNode => ''])===[];
+                            $briefReport[$this->getBriefReportHeading(self::examinedPeopleNode)] = $this->getBriefReportAnswer(self::examinedPeopleNode,
+                              array_intersect_key($examinedArray,[self::wardsExaminedNode => '', self::examinedConsentNode => '', 'medical' => '', 'institutional' => '', 'vulnerable' => '', 'otherVulnerable' => ''])!==[] || // any type where a full review process is required is selected
+                                $disease==='0' // 'physical' is selected and disease is answered with yes
+                                ? self::answerYes
+                                : (array_key_exists('otherPeople',$examinedArray) || // 'other' is selected
+                                   $disease==='1' || // 'physical' is selected and disease is answered with no
                                    $isUnder18 // underage
-                                    ? self::answerUnclear : self::answerNo)
-                                : self::answerYes, $parameters, $getReviewError);
+                                    ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
                             // wards -> no need to set $allShort because checks for wards are implicitly included in checks for examined
                             $briefReport[$this->getBriefReportHeading(self::wardsExaminedNode)] = $this->getBriefReportAnswer(self::wardsExaminedNode, array_key_exists(self::wardsExaminedNode, $examinedArray) ? self::answerNo : ($isUnder18 ? self::answerUnclear : self::answerYes), $parameters, $getReviewError, [self::answerNo]);
                             // pre content -> no need to set $allShort because checks for pre content are implicitly included in checks for information
@@ -1637,6 +1638,26 @@ abstract class ControllerAbstract extends AbstractController
             }
         }
         ksort($returnArray); // sort alphabetically by translated keys
+        return $returnArray;
+    }
+
+    /** Merges all keys and values of a multidimensional array in one array dimension.
+     * @param array|string $array $array array to be flattened
+     * @param bool $onlyValues if true, only the values will be merged, otherwise also the keys
+     * @return array flattened array
+     */
+    protected function flattenArray(array|string $array, bool $onlyValues = false): array {
+        if (!is_array($array)) {
+            return [];
+        }
+        $returnArray = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $returnArray = array_merge($returnArray,$onlyValues ? [] : [$key],$this->flattenArray($value));
+            } else {
+                $returnArray[] = $key;
+            }
+        }
         return $returnArray;
     }
 
@@ -1923,7 +1944,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajorSmaller3 = $major<'3';
         $isMajorSmaller4 = $major<'4';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajorSmaller4;
+        $isSmallerCurrent = $isMajorSmaller4 || $minor<'3';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
@@ -2008,6 +2029,15 @@ abstract class ControllerAbstract extends AbstractController
                     $this->insertElementBefore(self::projectStartBegunConfirm,$projectStartNode->{self::descriptionNode});
                     $projectStartNode->{self::projectStartBegunConfirm} = '1';
                 }
+            }
+            // updates for versions before 4.3.0
+            $isPHTshort = $committeeType==='PHT' && str_contains($reviewProcess,self::reviewProcessShort);
+            if ($isPHTshort) { // participant documents are now reviewed in short proposals
+                $this->removeElement(self::shortDocsNode,$coreDataNode->{self::applicationProcessNode});
+                $reviewProcess = self::shortDocsNode;
+            }
+            if (!in_array($committeeType,self::committeeSupport)) { // remove support question
+                $this->removeElement(self::supportNode,$coreDataNode);
             }
             foreach ($allStudyNodes as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
@@ -2190,7 +2220,7 @@ abstract class ControllerAbstract extends AbstractController
                             $this->removeElement(self::procedureNode, $textsNode);
                             // total duration at most 30 minutes -> remove terminate description
                             $terminateNode = $compensationNode->{self::terminateNode};
-                            if ($terminateNode->getName()!=='' && $this->xmlToArray($terminateNode)[self::chosen]===self::terminateNothing && $this->getDuration($this->xmlToArray($measuresNode->{self::durationNode}))<=30) {
+                            if ($terminateNode->getName()!=='' && $this->xmlToArray($terminateNode)[self::chosen]===self::terminateNothing && !$this->getDuration($this->xmlToArray($measuresNode->{self::durationNode}))) {
                                 $this->removeElement(self::descriptionNode, $terminateNode);
                             }
                             // texts
@@ -2320,7 +2350,7 @@ abstract class ControllerAbstract extends AbstractController
                             if ($this->checkElement('voluntaryYesDescription',$voluntaryNode)) { // replace voluntaryYesDescription by voluntaryEnsure
                                 $voluntaryYesNode = $voluntaryNode->{'voluntaryYesDescription'};
                                 $this->insertElementBefore(self::voluntaryEnsureNode,$voluntaryYesNode);
-                                $tempVal = (string) $voluntaryYesNode;
+                                $tempVal = htmlspecialchars((string) $voluntaryYesNode);
                                 if ($tempVal!=='') {
                                     $voluntaryNode->{self::voluntaryEnsureNode}->addChild(self::voluntaryEnsureOther,$tempVal); // add description as 'other' answer
                                 }
@@ -2330,7 +2360,7 @@ abstract class ControllerAbstract extends AbstractController
                                 $compensationVoluntaryNode = $compensationNode->{self::compensationVoluntaryNode};
                                 $chosen = (string) $compensationVoluntaryNode->{self::chosen};
                                 $isVoluntary = $chosen==='0';
-                                $description = $isVoluntary ? ((string) $compensationVoluntaryNode->{self::descriptionNode}) : '';
+                                $description = $isVoluntary ? htmlspecialchars((string) $compensationVoluntaryNode->{self::descriptionNode}) : '';
                                 $this->removeAllChildNodes($compensationVoluntaryNode);
                                 if ($chosen!=='') {
                                     $compensationVoluntaryNode->addChild($isVoluntary ? self::compensationVoluntaryOther : self::compensationVoluntaryNo,$description); // 'no' stays 'no', 'yes' changes to 'yes, other'
@@ -2368,7 +2398,7 @@ abstract class ControllerAbstract extends AbstractController
                             $this->updateMultiSelectionOrder($measuresNode->{self::interventionsNode},['tasks' => ['physical'], 'intervention' => ['stimulation','psychological','therapy'], 'invasive' => ['medical']]); // move interventions in sub-categories
                             $terminateCriteriaNode = $consentNode->{self::terminateCriteriaNode} ?? '';
                             if ($terminateCriteriaNode!=='' && count($terminateCriteriaNode->children())===0) { // replace text field by multi-selection
-                                $terminateCriteria = (string) $terminateCriteriaNode;
+                                $terminateCriteria = htmlspecialchars((string) $terminateCriteriaNode);
                                 $consentNode->{self::terminateCriteriaNode} = '';
                                 if ($terminateCriteria!=='') { // set entered text as 'other'
                                     $terminateCriteriaNode->addChild(self::terminateCriteriaOther,$terminateCriteria);
@@ -2387,7 +2417,7 @@ abstract class ControllerAbstract extends AbstractController
                                 $isBurdens = $type===self::burdensNode;
                                 $hasCompensation = $this->checkElement(self::burdensRisksCompensationNode,$curNode);
                                 $compensationNode = $hasCompensation ? $curNode->{self::burdensRisksCompensationNode} : null;
-                                $compensationDescription = $hasCompensation ? trim((string)$compensationNode->{self::descriptionNode}) : '';
+                                $compensationDescription = $hasCompensation ? trim(htmlspecialchars((string)$compensationNode->{self::descriptionNode})) : '';
                                 if ($isBurdens) {
                                     if ($hasCompensation) {
                                         $curNode->{self::descriptionNode} = trim(((string)$curNode->{self::descriptionNode})."\n".$compensationDescription); // move compensation description to burdens description
@@ -2404,7 +2434,7 @@ abstract class ControllerAbstract extends AbstractController
                                         }
                                         $this->addChildNodes($typeNode->addChild('risksFinding'), ['risksIncidental']); // finding are now sub-options of risks
                                         $findingNode = $risksNode->addChild(self::findingNode); // keep description and informing in separate node
-                                        $findingNode->addChild(self::descriptionNode, (string)$findingNodeOld->{self::descriptionNode});
+                                        $findingNode->addChild(self::descriptionNode, htmlspecialchars((string)$findingNodeOld->{self::descriptionNode}));
                                         $informingNode = $this->addChosenNode($findingNode, self::informingNode);
                                         $tempVal = (string)$findingNodeOld->{self::informingNode};
                                         $informingNode->{self::chosen} = $tempVal;
@@ -2413,7 +2443,7 @@ abstract class ControllerAbstract extends AbstractController
                                         if ($tempVal!=='') {
                                             $hasTemplate = $hasFindingText && !$this->checkElement(self::descriptionNode, $findingTextNode); // if template is chosen, no description node exists
                                             $informingNode->addChild(self::informingTemplate, $hasTemplate ? '1' : '');
-                                            $informingNode->addChild(self::descriptionNode, $hasTemplate || $hasFindingText ? '' : (string)$findingTextNode->{self::descriptionNode});
+                                            $informingNode->addChild(self::descriptionNode, $hasTemplate || $hasFindingText ? '' : htmlspecialchars((string)$findingTextNode->{self::descriptionNode}));
                                         }
                                         $this->removeElement(self::findingTextNode, $textsNode); // remove finding node from texts
                                     }
@@ -2469,6 +2499,56 @@ abstract class ControllerAbstract extends AbstractController
                                 $groupsNode->{self::criteriaIncludeNode}->{self::criteriaNode}->addChild(self::criteriaIncludeNode.'0');
                                 $this->setFirstInclusion($groupsNode,$request->getLocale()); // set first inclusion criterion
                             }
+                        }
+                        // updates for versions before 4.3.0
+                        if (count($measuresNode->children())>0) { // update only if new data are collected
+                            // examined
+                            $examinedNode = $groupsNode->{self::examinedPeopleNode};
+                            $hasMental = $this->checkElement('mental',$examinedNode);
+                            $this->updateMultiSelection($examinedNode,self::examinedTypes,'');
+                            if ($hasMental && !$this->checkElement(self::physicalExaminedNode,$examinedNode)) { // 'mental' was selected -> select 'physical' if not already selected
+                                $examinedNode->addChild(self::physicalExaminedNode);
+                            }
+                            $closedNode = $groupsNode->{'closed'};
+                            if ($this->checkElement(self::physicalExaminedNode,$examinedNode)) { // add sub-question for physical
+                                $this->insertElementBefore(self::diseaseNode,$closedNode);
+                            }
+                            $closedArray = $this->xmlToArray($closedNode);
+                            if ($closedArray[self::chosen]==='0') {
+                                $closedTypesNode = $examinedNode->addChild('closed');
+                                $closedTypes = $closedArray['closedTypes'];
+                                if ($closedTypes!=='') { // closed types are now sub-options of examined people
+                                    foreach ($closedTypes as $type => $description) {
+                                        $closedTypesNode->addChild($type,$description);
+                                    }
+                                } else { // question was answered with yes, but no type was selected -> select 'other'
+                                    $closedTypesNode->addChild('closedOther');
+                                }
+                                if (!$this->checkElement(self::peopleDescription,$groupsNode)) { // add description if no other option where a description is needed was selected before
+                                    $this->insertElementBefore(self::peopleDescription,$closedNode);
+                                }
+                            }
+                            $this->removeElement('closed',$groupsNode);
+                            // recruitment
+                            $recruitmentNode = $groupsNode->{self::recruitment}[0];
+                            if (array_intersect_key($this->xmlToArray($recruitmentNode),['mailing' => '', 'flyer' => '', 'media' => '', 'news' => ''])!==[]) { // options are now combined into one option
+                                $recruitmentNode->addChild('spread');
+                            }
+                            $this->updateMultiSelection($recruitmentNode,self::recruitmentTypes,'');
+                            $this->updateMultiSelectionOrder($recruitmentNode,['recruitmentSelf' => ['spread','lecture','recruitmentPrivate','database'], 'contributorsOther' => ['multiplier','lectureOther']]);
+                            // translation documentation
+                            if ($this->checkElement(self::documentTranslationNode,$informationNode)) {
+                                $documentTranslationNode = $informationNode->{self::documentTranslationNode};
+                                if ($this->checkElement(self::descriptionNode,$documentTranslationNode)) { // replace description by 'translationOther' option
+                                    $descriptionNode = $documentTranslationNode->{self::descriptionNode};
+                                    $description = (string) $descriptionNode;
+                                    $documentTranslationNode->{self::descriptionNode} = '';
+                                    $descriptionNode->addChild(self::documentTranslationOther,$description);
+                                }
+                            }
+                        }
+                        if ($isPHTshort) { // participant documents are now reviewed in short proposals -> add nodes
+                            $this->updateNodesByReviewProcess($request,$measureTimePointNode,$reviewProcess);
                         }
                     } // foreach measure time point
                 } // foreach group
@@ -2590,15 +2670,15 @@ abstract class ControllerAbstract extends AbstractController
         return $this->addZeroIndex($xmlArray[self::contributorsNodeName][self::contributorNode]);
     }
 
-    /** Creates a string indicating the duration or an int indicating the total time.
+    /** Creates a string indicating the duration or a bool indicating if the total time exceeds 30 minutes.
      * @param array<string, mixed> $durations array containing the durations
      * @param bool $returnTotal if true, the total time is returned
      * @param array $addresseeInformation array with two keys 'addressee' and 'information'. May only be provided if $returnTotal is false
      * @param bool $addSpan true if the description (if applicable) should be marked, false otherwise. May only be provided if $returnTotal is false
      * @param bool $isMultiple true if multiple measure time points exist. May only be provided if $returnTotal is false
-     * @return string|int duration string if $returnTotal ist false, the total time otherwise
+     * @return string|bool duration string if $returnTotal ist false, otherwise: true if total time exceeds 30 minutes, false otherwise
      */
-    protected function getDuration(array $durations, bool $returnTotal = true, array $addresseeInformation = [], bool $addSpan = true, bool $isMultiple = true): string|int
+    protected function getDuration(array $durations, bool $returnTotal = true, array $addresseeInformation = [], bool $addSpan = true, bool $isMultiple = true): string|bool
     {
         $measureTime = 0;
         $measureTimeArray = []; // translated time for (net) data collection
@@ -2606,7 +2686,7 @@ abstract class ControllerAbstract extends AbstractController
         $tempPrefix = 'participation.durationContent.';
         if (array_key_exists(self::descriptionNode,$durations)) { // days>0
             $days = $durations[self::durationMeasureTimeDays];
-            return $returnTotal ? $this->getIntFromString($days) : $this->translateStringPDF($tempPrefix.self::durationMeasureTimeDays,array_merge($addresseeInformation,['time' => $days])).' '.$this->addMarkInput($durations[self::descriptionNode],$addSpan);
+            return $returnTotal ?: $this->translateStringPDF($tempPrefix.self::durationMeasureTimeDays,array_merge($addresseeInformation,['time' => $days])).' '.$this->addMarkInput($durations[self::descriptionNode],$addSpan);
         }
         foreach ([self::durationMeasureTimeHours,self::durationMeasureTimeMinutes] as $duration) {
             $curDur = $this->getIntFromString($durations[$duration],0);
@@ -2619,7 +2699,7 @@ abstract class ControllerAbstract extends AbstractController
         $breaks = $this->getIntFromString($durations[self::durationBreaks],0);
         $totalArray = $measureTimeArray; // total time
         if ($returnTotal) {
-            return $breaks+$measureTime;
+            return ($breaks+$measureTime)>30;
         }
         $hoursTrans = $tempPrefix.self::durationMeasureTimeHours;
         $minutesTrans = $tempPrefix.self::durationMeasureTimeMinutes;

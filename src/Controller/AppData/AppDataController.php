@@ -115,8 +115,8 @@ class AppDataController extends ControllerAbstract
         // hint for requestedConfirm
         $committeeParams = $session->get(self::committeeParams);
         $requestedConfirmArray = [];
-        foreach (['true','false'] as $bool) {
-            $requestedConfirmArray[] = $this->translateString(self::coreDataNode.'.'.self::funding.'.'.self::requestedConfirm.'.headingHint',array_merge($committeeParams,['isFull' => $bool]));
+        foreach (['true',$this->getStringFromBool(!in_array($committeeType,self::reviewShortChoose))] as $index => $bool) {
+            $requestedConfirmArray[] = $this->translateString(self::coreDataNode.'.'.self::funding.'.'.self::requestedConfirm.'.headingHint',array_merge($committeeParams,['isFullNoChoose' => $bool, 'isFull' => $this->getStringFromBool($index===0)]));
         }
         $applicantInfos = $this->getApplicantContributorsInfos($committeeType);
 

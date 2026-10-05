@@ -1,4 +1,3 @@
-{% set isSeparate = isSeparate is defined %}
 {% extends 'PDF/basePDF.html.twig' %}
 {% import 'PDF/pdfMacros.html.twig' as pdfMacros %}
 {% trans_default_domain 'pdf' %}
@@ -6,8 +5,11 @@
     {% set textPreview = not savePDF ? 'previewSmall' %}
     {% set justify = 'textJustify '~textPreview %}
     {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
-    <div class="noPageBreak {% if not isSeparate %} pdfMargin {% endif %}">  {# avoid page break between heading and first paragraph #}
+    <div class="noPageBreak">  {# avoid page break between heading and first paragraph #}
         <div>{{ pdfMacros.addHeading(consentHeading,savePDF) }}</div>
+        {% if hint is not same as '' %}
+            <div class="{{ textPreview }} fontRed">{{ hint|raw }}</div>
+        {% endif %}
         <div class="{{ justify }}">{{ consent[0]|raw|nl2br }}</div>
     </div>
     {% for paragraph in consent|slice(1) %}

@@ -3,10 +3,11 @@ import {setElementVisibility, getSelected, checkTextareaInput} from "../multiFun
 
 export default class extends Controller {
 
-    static targets = ['minAge','maxAge','unlimited','healthy','wards','examinedDescription','wardsHint','removeHint','physical','mental','dependent','closedNo','voluntaryHint','criteriaHint','includeStart','include'];
+    static targets = ['minAge','maxAge','unlimited','healthy','wards','physical','dependent','examinedConsent','examinedDescription','wardsHint','attendance','informationMeasures','attendanceMeasures','voluntaryHint','disease','criteriaHint','includeStart','include'];
 
     static values = {
         examined: Array,
+        hasTextInput: Boolean, // true if any input may be removed if wards or examinedConsent is deselected
         criteriaHint: Array, // 0: participants, 1: children, 2: wards
         includeStart: Array, // 0: participants, 1: children, 2: wards
         firstInclude: Array, // 0: min age equals 1, 1: min age unequal to 1. In each array: 0: max age equals 1, 1: max age unequal 1. In each array: 0: participants, 1: children, 2: wards. In each array: 0: no upper limit, 1: same limit, 2: different limits
@@ -18,13 +19,18 @@ export default class extends Controller {
         this.setExamined();
         if (this.hasVoluntaryHintTarget) {
             this.setVoluntaryHint();
-            this.dependentTarget.addEventListener('change', () => {
-                this.setVoluntaryHint();
-            });
+            for (let target of this.dependentTargets) {
+                target.addEventListener('change', () => {
+                    this.setVoluntaryHint();
+                });
+            }
         }
         if (this.hasCriteriaHintTarget) {
             this.setCriteria();
         }
+        this.physicalTarget.addEventListener('change', () => { // set visibility of disease question
+           setElementVisibility(this.diseaseTarget,this.physicalTarget.checked);
+        });
         // prevent automatic selection of wards if arrows are pressed/clicked if no min age was entered before
         this.minAgeTarget.addEventListener('keydown', (event) => { // allow number inputs by key press
             if (!this.allowMinChange) {
@@ -105,9 +111,18 @@ export default class extends Controller {
         let [, numSelected] = getSelected(this.examinedValue);
         setElementVisibility(this.examinedDescriptionTarget,isMinAge && minAge<18 || numSelected>1 || numSelected===1 && !isHealthy);
         setElementVisibility(this.wardsHintTarget,isWards); // hint between age and examined
-        // wards icon
-        if (this.hasRemoveHintTarget) {
-            setElementVisibility(this.removeHintTarget,!isWards);
+        // remove hint
+        if (this.hasTextInputValue) {
+            let isExaminedConsent = this.examinedConsentTarget.checked;
+            if (this.hasAttendanceTarget) { // only attendance in information may be removed
+                setElementVisibility(this.attendanceTarget,!isWards && (!this.hasInformationMeasuresTarget || isExaminedConsent));
+            }
+            if (this.hasInformationMeasuresTarget) { // only information measures in information may be removed
+                setElementVisibility(this.informationMeasuresTarget,!isExaminedConsent && (!this.hasAttendanceTarget || isWards));
+            }
+            if (this.hasAttendanceMeasuresTarget) { // attendance and information measures in information may be removed
+                setElementVisibility(this.attendanceMeasuresTarget,!isWards && !isExaminedConsent);
+            }
         }
         // criteria
         if (this.hasCriteriaHintTarget) {
@@ -131,14 +146,6 @@ export default class extends Controller {
         }
     }
 
-    /** Sets the hints that voluntary inputs on the consent page are about to be deleted. */
-    setVoluntaryHint() {
-        let isVisible = !this.dependentTarget.checked && this.closedNoTarget.checked;
-        for (let hint of this.voluntaryHintTargets) {
-            setElementVisibility(hint,isVisible);
-        }
-    }
-
     /** Enables/Disables the criteria widgets. */
     setCriteria() {
         for (let criterion of ['include','exclude']) {
@@ -151,6 +158,15 @@ export default class extends Controller {
     }
 
     // methods that are called from within this class
+
+    /** Sets the hint that voluntary inputs on the consent page are about to be deleted. */
+    setVoluntaryHint() {
+        let isVisible = true;
+        for (let target of this.dependentTargets) {
+            isVisible = isVisible && !target.checked;
+        }
+        setElementVisibility(this.voluntaryHintTarget,isVisible);
+    }
 
     /** Prevents the event from being executed.
      * @param event widget that invoked the method

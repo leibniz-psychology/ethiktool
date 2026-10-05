@@ -68,6 +68,20 @@ class PDFAbstract extends ControllerAbstract
         return implode("\n",$explodedClean);
     }
 
+    /** Creates a string containing all languages the participant documents are translated into.
+     * @param array $informationArray array containing the information of the information page
+     * @return string all languages the participant documents are translated into
+     */
+    protected function getTranslatedDocuments(array $informationArray): string
+    {
+        $tempArray = ($informationArray[self::documentTranslationNode][self::descriptionNode] ?? '') ?: [];
+        $returnString = '';
+        foreach ($tempArray as $selection => $description) {
+            $returnString .= ', '.($description==='' ? $this->translateString('projectdetails.pages.information.documentTranslation.types.'.$selection) : $description);
+        }
+        return $returnString==='' ? '' : substr($returnString,2);
+    }
+
     // methods
 
     /** Creates a pdf in the temporary folder with the session ID added to the filename.

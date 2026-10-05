@@ -128,6 +128,51 @@
     {% endif %}
 {% endmacro %}
 
+{% macro addMultilevelCheckboxGroup(content, prefix, names, otherTypes, iconTypes, parameter, isBold, contTargets = [], disable = [], otherPDF = [], transfer = []) %}
+    {# Creates a group of checkboxes that may have several subcategories. Input arguments:
+        content:     form element with the checkboxes
+        prefix:      prefix for the translations. Will be prefixed by 'projectdetails.pages.' and suffixed by '.'
+        names:       array of names of checkboxes. Each element may be a key-value pair
+        otherTypes:  array with IDs of elements for which a text field is added
+        iconTypes:   array with IDs of elements or names of subcategories for which an icon is added
+        parameter:   parameter for the translations
+        isBold:      if true, then the subheading will be displayed in bold, otherwise underlined. Only the first level of subheadings may be bold
+        contTargets: if provided, an associative array. Keys: IDs of buttons, values: arrays of two elements: stimulus controller and target name
+        disable:     IDs of elements which get disabled
+        otherPDF:    arry with IDs of elements for which a pdf symbol is added next to the text field
+        transfer:    array for the pdf-icon call. 0: transfer elements, 1: addressee
+    #}
+    {% set translationPrefix = 'projectdetails.pages.'~prefix~'.' %}
+    {% set iconPrefix = translationPrefix~'icons.' %}
+    {% for key, value in names %}
+        {% if value is iterable %} {# subheading #}
+            <div class="topMarginButtons ms-1">
+                <div class="{{ isBold ? 'font-bold' : 'text-decoration-underline' }}">{{ (translationPrefix~'typesMain.'~key)|trans }}{% if key in iconTypes %}{{ _self.addIcon((iconPrefix~key)|trans(parameter)) }}{% endif %}</div>
+                <div class="ms-3">
+                    {{ _self.addMultilevelCheckboxGroup(content,prefix,value,otherTypes,iconTypes,parameter,false,contTargets,disable,otherPDF,transfer) }}
+                </div>
+            </div>
+        {% else %} {# selectable option #}
+            {% set widget, isOther = content[value], value in otherTypes %}
+            <div class="grid topMarginButtons" {% if isOther %} {{ stimulus_action('base','setVisibility','change',{'multi': [[value, [value~'Text']]], 'isGrid': true}) }} {% endif %}>
+                {{ _self.addCheckbox(widget,
+                    (value in iconTypes ? {'checkIcon': [(iconPrefix~value)|trans(parameter)]} : {})|
+                merge(value in disable ? {'disable': true} : {})|
+                merge({'target': contTargets[value] ?? []})) }}
+                {% if isOther %}
+                    {% set other, isTransfer = content[value~'Text'], value in otherPDF and transfer is not same as [] %}
+                    <div class="MetaData-Widget mb-1 grid" id="{{ other.vars.name }}" style="{{ boolToDisplay(widget.vars.checked,1) }}; {% if isTransfer %} grid-template-columns: auto min-content; {% endif %}">
+                        {{ form_widget(other) }}
+                        {% if isTransfer %}
+                            {{ _self.addPDFhint(transfer[0],transfer[1]) }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
 {% macro addCountableTextfield(form, maxChars, arguments = {}) %}
     {# Creates a textarea including a hint above and a character count next to the textarea. The macro must be called within a div with class grid container. The textarea and the div showing the character count are passed as targets to the base controller. Below the textarea a div is added for highlighting the text if it exceeds maxChars. Input arguments:
         form:      textarea

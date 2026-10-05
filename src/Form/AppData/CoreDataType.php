@@ -88,10 +88,12 @@ class CoreDataType extends TypeAbstract
         // conflict
         $this->addBinaryRadio($builder,self::conflictNode,$translationPrefix.'conflict.'.'title',self::conflictNode.self::descriptionCap);
         // support
-        foreach (array_diff_key(self::supportTypes,$isEUB ? [] : [self::supportCenter => '']) as $key => $value) {
-            $this->addFormElement($builder,$key,'checkbox',$value);
-            if ($key!==self::noSupport) {
-                $this->addFormElement($builder,$this->appendText($key),'textarea',hint: $translationPrefix.'support.'.self::textHint);
+        if (in_array($committeeType,self::committeeSupport)) {
+            foreach (array_diff_key(self::supportTypes,$isEUB ? [] : [self::supportCenter => '']) as $key => $value) {
+                $this->addFormElement($builder,$key,'checkbox',$value);
+                if ($key!==self::noSupport) {
+                    $this->addFormElement($builder,$this->appendText($key),'textarea',hint: $translationPrefix.'support.'.self::textHint);
+                }
             }
         }
         // dummy
@@ -167,10 +169,12 @@ class CoreDataType extends TypeAbstract
         // conflict
         $this->setChosenArray($forms,$viewData,self::conflictNode,[self::descriptionNode => self::conflictNode.self::descriptionCap]);
         // support
-        foreach ($viewData[self::supportNode] ?: [] as $key => $value) {
-            $forms[$key]->setData(true);
-            if ($key!==self::noSupport) {
-                $forms[$this->appendText($key)]->setData($value);
+        if (array_key_exists(self::supportNode,$forms)) {
+            foreach ($viewData[self::supportNode] ?: [] as $key => $value) {
+                $forms[$key]->setData(true);
+                if ($key!==self::noSupport) {
+                    $forms[$this->appendText($key)]->setData($value);
+                }
             }
         }
         // guidelines
@@ -282,17 +286,19 @@ class CoreDataType extends TypeAbstract
         }
         $newData[self::conflictNode] = $tempArray;
         // support
-        $tempArray = [];
-        foreach (array_keys(self::supportTypes) as $support) {
-            if (array_key_exists($support,$forms) && $forms[$support]->getData()) { // support type exists and was selected
-                $isNoSupport = $support===self::noSupport;
-                $tempArray[$support] = $isNoSupport ?  '' : $forms[$this->appendText($support)]->getData();
-                if ($isNoSupport) { // if noSupport is checked immediately before/after any of the other checkboxes is checked (i.e., the second of these two is checked before the page was reloaded after submission), keep only the noSupport key
-                    break;
+        if (array_key_exists(self::supportNode,$forms)) {
+            $tempArray = [];
+            foreach (array_keys(self::supportTypes) as $support) {
+                if (array_key_exists($support,$forms) && $forms[$support]->getData()) { // support type exists and was selected
+                    $isNoSupport = $support===self::noSupport;
+                    $tempArray[$support] = $isNoSupport ?  '' : $forms[$this->appendText($support)]->getData();
+                    if ($isNoSupport) { // if noSupport is checked immediately before/after any of the other checkboxes is checked (i.e., the second of these two is checked before the page was reloaded after submission), keep only the noSupport key
+                        break;
+                    }
                 }
             }
+            $newData[self::supportNode] = $tempArray;
         }
-        $newData[self::supportNode] = $tempArray;
         // guidelines
         if (array_key_exists(self::guidelinesNode,$forms)) { // guidelines question exists
             $newData[self::guidelinesNode] = $forms[self::guidelinesNode]->getData() ? [self::descriptionNode => $forms[$this->appendText(self::guidelinesNode)]->getData()] : '';

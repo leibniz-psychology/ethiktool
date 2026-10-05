@@ -16,7 +16,7 @@
         'copyNames': copyTrans,
         'remove': removeTrans
     }) }}>
-        <div class="MetaData-Label mb-2">{{ (overviewPrefix~'start')|trans({'isOverview': boolToString(isProjectdetailsLanding)})|raw }}</div>
+        <div class="MetaData-Label mb-2">{{ (overviewPrefix~'start')|trans(committeeParams|merge({'isOverview': boolToString(isProjectdetailsLanding)}))|raw }}</div>
         {% if isProjectdetailsLanding %}
             {% for expandable in ['info','hint'] %}
                 {% set tempPrefix = expandablePrefix~expandable~'.' %}

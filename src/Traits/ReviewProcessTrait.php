@@ -21,7 +21,7 @@ trait ReviewProcessTrait
     protected const reviewFullBegun = 'fullBegun'; // without participant documents because data collection has already started
     protected const reviewFullDocs = 'fullDocs'; // with participant documents
     protected const reviewDocs = ['shortDocs','shortService','fullDocs']; // types of review processes for which participant documents are created. Must equal some of the preceding variables
-    protected const reviewShortChoose = ['EUB','TUD','PHHD','SRH','BICC','PHT','testCommittee']; // committees where, for short applications, it can be chosen whether participant documents should be created
+    protected const reviewShortChoose = ['EUB','TUD','PHHD','SRH','BICC','testCommittee']; // committees where, for short applications, it can be chosen whether participant documents should be created
 
     /** Each element is one projectdetails page. The structure of each page-element is equivalent to the structure of the xml-file. Each sub-element is one sub-element of the respective xml node. Each of these elements contains all application types for which the question is asked. If the question is a sub-question (i.e., a child of another question in the xml file), the application types are the same as for the parent question. Used if the review process changes to add/remove nodes in the xml file.
      */
@@ -46,8 +46,8 @@ trait ReviewProcessTrait
             'minAge' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'maxAge' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'examinedPeople' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'disease' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'peopleDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'closed' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'include' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'exclude' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'sampleSize' => ['fullBegun','fullRequested','fullDocs'],
@@ -64,7 +64,8 @@ trait ReviewProcessTrait
             'post' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'attendance' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'documentTranslation' => ['fullBegun','fullRequested','fullDocs'],
-            'documentTranslationPDF' => ['fullDocs']
+            'documentTranslationPDF' => ['fullDocs'],
+            'informationMeasures' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
         ], // information
         // consent
         'consent' => [
@@ -289,21 +290,24 @@ trait ReviewProcessTrait
             'minAge' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'maxAge' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'unlimited' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'healthy' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'physical' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'mental' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'medical' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'institutional' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'wards' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'vulnerable' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'examinedConsent' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'dependent' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'otherPeople' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'peopleDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'closed' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'closedLecture' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'school' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'closedOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'closedOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'physical' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'medical' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'institutional' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'vulnerable' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'otherVulnerable' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'otherVulnerableText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'otherPeople' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'otherPeopleText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'healthy' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'disease' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'peopleDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'includeText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'include' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'excludeText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -311,18 +315,19 @@ trait ReviewProcessTrait
             'total' => ['fullBegun','fullRequested','fullDocs'],
             'furtherParticulars' => ['fullBegun','fullRequested','fullDocs'],
             'sampleSizePlan' => ['fullBegun','fullRequested','fullDocs'],
-            'mailing' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'flyer' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'spread' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'lecture' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'lectureOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'recruitmentPrivate' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'media' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'news' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'occupation' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'database' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'databaseText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'multiplier' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'multiplierText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'gatekeeper' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'gatekeeperText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'lectureOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'external' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'externalText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'multiplier' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'recruitmentOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'recruitmentOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'recruitmentFurther' => ['fullBegun','fullRequested','fullDocs']
@@ -343,8 +348,11 @@ trait ReviewProcessTrait
             'postText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'attendance' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'documentTranslation' => ['fullBegun','fullRequested','fullDocs'],
+            'easy' => ['fullBegun','fullRequested','fullDocs'],
+            'translationOther' => ['fullBegun','fullRequested','fullDocs'],
             'documentTranslationDescription' => ['fullBegun','fullRequested','fullDocs'],
-            'documentTranslationPDF' => ['fullDocs']
+            'documentTranslationPDF' => ['fullDocs'],
+            'informationMeasures' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
         ], // information
         // consent
         'consent' => [
@@ -353,6 +361,7 @@ trait ReviewProcessTrait
             'relatable' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'absence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'discuss' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'roleConflict' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'onetime' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'substitute' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'substituteText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -395,6 +404,8 @@ trait ReviewProcessTrait
             'measuresInterviewGroupsText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresQuestionnaire' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresQuestionnaireText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measuresTest' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measuresTestText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresDecision' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresRT' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresEyetracking' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -436,6 +447,12 @@ trait ReviewProcessTrait
             'measuresInterviewGroupsdocumentationAudio' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresInterviewGroupsdocumentationOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresInterviewGroupsdocumentationOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measuresTestdocumentationPaper' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measuresTestdocumentationDigital' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measuresTestdocumentationVideo' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measuresTestdocumentationAudio' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measuresTestdocumentationOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'measuresTestdocumentationOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'surveyConduct' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'screening' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'gene' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -1099,7 +1116,8 @@ trait ReviewProcessTrait
         ],
         // groups
         'groups' => [
-            'peopleDescription' => [[['groups','examinedPeople','physical'],['groups','examinedPeople','mental'],['groups','examinedPeople','medical'],['groups','examinedPeople','institutional'],['groups','examinedPeople','wards'],['groups','examinedPeople','vulnerable'],['groups','examinedPeople','dependent'],['groups','examinedPeople','otherPeople']],['','','','','','','',''],[],true],
+            'disease' => [['groups','examinedPeople','physical'],''],
+            'peopleDescription' => [[['groups','examinedPeople','wards'],['groups','examinedPeople','examinedConsent'],['groups','examinedPeople','dependent'],['groups','examinedPeople','closedLecture'],['groups','examinedPeople','school'],['groups','examinedPeople','closedOther'],['groups','examinedPeople','physical'],['groups','examinedPeople','medical'],['groups','examinedPeople','institutional'],['groups','examinedPeople','vulnerable'],['groups','examinedPeople','otherVulnerable'],['groups','examinedPeople','otherPeople']],['','','','','','','','','','','',''],[],true],
             'include' => [[],[],['noCriteria','criteria']],
             'exclude' => [[],[],['noCriteria','criteria']],
             'sampleSize' => [[],[],['total','furtherParticulars','sampleSizePlan']]
@@ -1114,6 +1132,7 @@ trait ReviewProcessTrait
             'attendance' => [['groups','examinedPeople','wards'],''],
             'documentTranslation' => [[['information','pre'],['information','post','chosen']],['0','0'],'chosen',true],
             'documentTranslationPDF' => [['dummy'],''], // dummy node name to avoid creating the node (gets only created if checkbox is checked)
+            'informationMeasures' => [[['information','pre'],['information','post','chosen']],['0','0'],'',true] // may be removed again if examined group 'examinedConsent' is not selected
         ], // information
         // consent
         'consent' => [
@@ -1359,6 +1378,9 @@ trait ReviewProcessTrait
                 if (((string) $consentNode->{self::terminateConsNode}->{self::chosen})!=='1') {
                     $this->removeElement(self::terminateConsParticipationNode, $consentNode);
                 }
+            }
+            if (!$this->checkElement(self::examinedConsentNode,$groupsNode->{self::examinedPeopleNode})) {
+                $this->removeElement(self::informationMeasuresNode,$informationNode);
             }
             // data privacy
             $privacyNode = $measureTimePointNode->{self::privacyNode}[0];

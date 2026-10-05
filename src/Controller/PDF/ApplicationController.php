@@ -308,7 +308,7 @@ class ApplicationController extends PDFAbstract
                 $tempPrefix = $fundingPrefix.'.';
                 foreach ($tempArray as $type => $source) {
                     $fundingState = $source[self::fundingStateNode] ?? '';
-                    $tempVal .= "\n- ".$this->translateString($tempPrefix.$type).($type!==self::fundingQuali ? ": ".'<div style="margin-left: 0.6em">'.$source[self::descriptionNode].'</div>'.($fundingState!=='' ? "\n".$this->translateString($tempPrefix.self::fundingStateNode.'.'.$fundingState) : '') : '');
+                    $tempVal .= "\n- ".$this->translateString($tempPrefix.$type).($type!==self::fundingQuali ? ": ".'<div style="margin-left: 0.6em">'.$source[self::descriptionNode].'</div>'.($fundingState!=='' ? $this->translateString($tempPrefix.self::fundingStateNode.'.'.$fundingState)."\n" : '') : '');
                 }
                 if (($coreDataArray[self::requestedConfirm] ?? '')==='1') { // confirmation for requested funding
                     $tempVal .= $this->translateStringPDF($fundingPrefix);
@@ -324,7 +324,8 @@ class ApplicationController extends PDFAbstract
             // support
             self::$linkedPage = self::coreDataNode;
             $tempPrefix = $pagePrefix.self::supportNode;
-            $this->addBox($tempPrefix, $this->getSelectedCheckboxes($coreDataArray[self::supportNode],$tempPrefix.'.',implodeLines: true),fragment: self::supportNode);
+            $hasSupport = array_key_exists(self::supportNode,$coreDataArray);
+            $this->addBox($tempPrefix, $hasSupport ? $this->getSelectedCheckboxes($coreDataArray[self::supportNode],$tempPrefix.'.',implodeLines: true) : $this->noBoxTrans, inputPage: $hasSupport ? '' : self::coreDataNode,fragment: $hasSupport ? self::supportNode : self::dummyString, inputPrefix: $hasSupport ? '' : 'appData');
 
             // votes and medicine
             $isOtherVote = false; // gets true if the other vote question is answered with yes
@@ -510,12 +511,10 @@ class ApplicationController extends PDFAbstract
                             if ($isSmaller14) {
                                 unset($examinedArray[self::wardsExaminedNode]); // if min age is below 14, wards is selected automatically
                             }
-                            $tempArray = $this->getSelectedCheckboxes($examinedArray, $examinedPrefix.'types.', false);
-                            $numSelected = count($tempArray);
-                            $this->addBoxContent(self::examinedPeopleNode, $numSelected>0 || $isSmaller14 ? implode(', ', $tempArray).$this->translateStringPDF($examinedPrefix.'title', ['number' => $numSelected, 'limits' => $maxAge==='-1' ? 'noUpperLimit' : ($minAge===$maxAge || array_diff([''],[$minAge,$maxAge])===[] ? 'sameLimit' : 'other'), self::minAge => $isMinAge ? $minAge : ($maxAge ?: -2), self::maxAge => $maxAge ?: -2, 'isWardsAge' => $this->getStringFromBool($isSmaller14)]) : '', $groupsArray[self::peopleDescription] ?? '', paragraph: self::examinedPeopleNode, fragment: $this->addDiv(self::examinedPeopleNode), paragraphTop: true);
-                            // closed (groups)
-                            $tempArray = $groupsArray[self::closedNode] ?? [];
-                            $this->addBoxContent(self::closedNode,$this->translateBinaryAnswer($tempArray[self::chosen] ?? '',addHyphenYes: true).$this->getSelectedCheckboxes($tempArray[self::closedTypesNode] ?? '',$groupsPrefix.self::closedNode.'.'));
+                            $numSelected = count($this->flattenArray($examinedArray,true));
+                            $disease = $groupsArray[self::diseaseNode] ?? '';
+                            $groupsPrefixTool = $projectdetailsPagesPrefix.self::groupsNode.'.';
+                            $this->addBoxContent(self::examinedPeopleNode, $numSelected>0 || $isSmaller14 ? $this->getSelectedCheckboxesMulti($examinedArray,'examined',$groupsPrefixTool).$this->translateStringPDF($examinedPrefix.'title', ['number' => $numSelected, 'limits' => $maxAge==='-1' ? 'noUpperLimit' : ($minAge===$maxAge || array_diff([''],[$minAge,$maxAge])===[] ? 'sameLimit' : 'other'), self::minAge => $isMinAge ? $minAge : ($maxAge ?: -2), self::maxAge => $maxAge ?: -2, 'isWardsAge' => $this->getStringFromBool($isSmaller14)]).($disease!=='' ? $this->translateStringPDF($examinedPrefix.self::diseaseNode,[self::diseaseNode => $disease]) : '') : '', $groupsArray[self::peopleDescription] ?? '', paragraph: self::examinedPeopleNode, fragment: $this->addDiv(self::examinedPeopleNode), paragraphTop: true);
                             // sample size (groups)
                             $tempArray = $groupsArray[self::sampleSizeNode] ?? [];
                             $tempVal = $tempArray[self::sampleSizeTotalNode] ?? '';
@@ -528,7 +527,7 @@ class ApplicationController extends PDFAbstract
                             $this->addBoxContent(self::sampleSizeNode, $tempArray[self::sampleSizeTotalNode] ?? '', $tempArray[self::sampleSizeFurtherNode] ?? '', fragment: self::sampleSizeTotalNode);
                             $this->addBoxContent(self::sampleSizePlanNode, $tempArray[self::sampleSizePlanNode] ?? '');
                             // recruitment (groups)
-                            $this->addBoxContent(self::recruitment, $this->getSelectedCheckboxes($groupsArray[self::recruitment] ?? '',$groupsPrefix.self::recruitment.'.'), $groupsArray[self::recruitmentFurther] ?? '', fragment: self::recruitment);
+                            $this->addBoxContent(self::recruitment, $this->getSelectedCheckboxesMulti($groupsArray[self::recruitment] ?? '',self::recruitment,$groupsPrefixTool), $groupsArray[self::recruitmentFurther] ?? '', fragment: self::recruitment);
 
                             // translated addressees
                             $tempPrefix = $projectdetailsPrefix.self::addressee.'.';
@@ -546,15 +545,16 @@ class ApplicationController extends PDFAbstract
                             $informationIIArray = $informationIIArray ?: [];
                             $informationPrefix = $projectdetailsPrefix.self::informationNode.'.';
                             $preTranslation = $informationPrefix.'type';
-                            $tempVal = $informationArray[self::documentTranslationNode][self::descriptionNode] ?? '';
-                            $documentTranslation = $tempVal!=='' ? "\n".$this->translateStringPDF($informationPrefix.self::documentTranslationNode, array_merge($addresseeParam,[self::descriptionNode => $tempVal])) : '';
+                            $tempVal = $this->getTranslatedDocuments($informationArray);
+                            $documentTranslation = $tempVal!=='' ? "\n".$this->translateStringPDF($informationPrefix.self::documentTranslationNode,array_merge($addresseeParam,[self::descriptionNode => $tempVal])) : '';
+                            $informationMeasures = $informationArray[self::informationMeasuresNode] ?? '';
                             $pre = $informationArray[self::pre] ?? '';
                             $preParticipants = $isNotParticipants ? ($informationIIArray[self::pre] ?? '') : '';
                             // is pre information
                             $isPre = $pre==='0';
                             $isPreParticipants = $preParticipants==='0';
                             $tempVal = $addresseeHeading.$this->translateStringPDF($preTranslation, [self::chosen => $pre, self::descriptionNode => $informationArray[$isPre ? self::preType : self::preText] ?? '']).($isNotParticipants ? $participantsHeading.$this->translateStringPDF($preTranslation, [self::chosen => $preParticipants, self::descriptionNode => $informationIIArray[$isPreParticipants ? self::preType : self::preText] ?? '']) : '').($isPre ? $documentTranslation : '');
-                            $this->addBoxContent(self::informationNode, $tempVal, subHeading: $isAnyPost ? $this->documentHint : '', paragraph: self::informationNode, fragment: $informationIIArray===[] ? self::pre : self::dummyString);
+                            $this->addBoxContent(self::informationNode, $tempVal, $isPre ? $informationMeasures : '', $isAnyPost ? $this->documentHint : '', self::informationNode, $informationIIArray===[] ? self::pre : self::dummyString);
 
                             // pre content (information/II)
                             $content = $isAnyPre ? self::dummyBox : self::noBox;
@@ -614,7 +614,7 @@ class ApplicationController extends PDFAbstract
                                 $post = $postArray[self::chosen] ?? '';
                                 $content = ($isNotPre ? $addresseeHeading.$this->translateStringPDF($preTranslation, [self::chosen => $post, self::descriptionNode => $postArray[self::descriptionNode] ?? '']) : '').($isNotPreParticipants ? ($isNotPre ? $participantsHeading : $participantsHeadingShort).$this->translateStringPDF($preTranslation, [self::chosen => $postArrayParticipants[self::chosen] ?? '', self::descriptionNode => $postArrayParticipants[self::descriptionNode] ?? '']) : '').($isNotPre && $post==='0' ? $documentTranslation : '');
                             }
-                            $this->addBoxContent(self::post, $content, fragment: !$isNotPre || !$isNotPreParticipants ? $preNo : self::dummyString);
+                            $this->addBoxContent(self::post, $content, $isNotPre ? $informationMeasures : '', fragment: !$isNotPre || !$isNotPreParticipants ? $preNo : self::dummyString);
 
                             // attendance (information)
                             self::$linkedPage = self::informationNode;
@@ -743,7 +743,7 @@ class ApplicationController extends PDFAbstract
                                             } else {
                                                 foreach (['occurrenceBefore','occurrenceAfter'] as $risksOccurrence) {
                                                     if (array_key_exists($risksOccurrence,$selections)) {
-                                                        $content .= "• ".$this->translateString($burdensRisksPrefixTool.'typesMain.'.$risksOccurrence).":</li>\n".$this->addDivPadding($this->getSelectedCheckboxesMulti($selections[$risksOccurrence],self::risksOccurrenceNode,$burdensRisksPrefixTool),false);
+                                                        $content .= "• ".$this->translateString($burdensRisksPrefixTool.self::risksOccurrenceNode.'.typesMain.'.$risksOccurrence).":</li>\n".$this->addDivPadding($this->getSelectedCheckboxesMulti($selections[$risksOccurrence],self::risksOccurrenceNode,$burdensRisksPrefixTool),false);
                                                     }
                                                 }
                                             }

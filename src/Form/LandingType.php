@@ -13,7 +13,7 @@ class LandingType extends TypeAbstract
     {
         $dummyParams = $options[self::dummyParams];
         if ($dummyParams[self::isProjectdetails] && !$dummyParams[self::isMeasure]) {
-            $placeholderArray = $this->getPlaceholder($this->translateString('multiple.optional')); // placeholder
+            $placeholderArray = $this->getPlaceholder('multiple.optional'); // placeholder
             $allStudies = $dummyParams['allStudies'];
             $isMultiple = count($allStudies)>1;
             foreach ($allStudies as $studyIndex => $study) {

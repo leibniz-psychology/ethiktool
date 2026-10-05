@@ -81,16 +81,19 @@ trait ProjectdetailsTrait
     protected const maxAge = 'maxAge';
     protected const unlimited = 'unlimited';
     protected const examinedPeopleNode = 'examinedPeople';
-    protected const healthyExaminedNode = 'healthy'; // must equal one value in $examinedPeople
-    protected const wardsExaminedNode = 'wards'; // must equal one value in $examinedPeople
-    protected const dependentExaminedNode = 'dependent'; // must equal one value in $examinedPeople
-    protected const examinedTypes = ['healthy', 'physical', 'mental', 'medical', 'institutional','wards','vulnerable','dependent','otherPeople'];
+    protected const healthyExaminedNode = 'healthy'; // must equal one value in $examinedTypes
+    protected const wardsExaminedNode = 'wards'; // must equal one value in $examinedTypes
+    protected const dependentExaminedNode = 'dependent'; // must equal one value in $examinedTypes
+    protected const physicalExaminedNode = 'physical'; // must equal one value in $examinedTypes
+    protected const examinedConsentNode = 'examinedConsent'; // must equal one value in $examinedTypes
+    protected const examinedTypes = ['wards','examinedConsent','dependent','closedLecture','school','closedOther','physical','medical','institutional','vulnerable','otherVulnerable','otherPeople','healthy']; // selectable options
+    protected const examinedTypesAll = ['wards','examinedConsent','dependent','closed' => ['closedLecture','school','closedOther'],'physical','medical','institutional','vulnerable','otherVulnerable','otherPeople','healthy']; // selectable options by category
+    protected const examinedTypesOther = ['closedOther','otherVulnerable','otherPeople']; // values must equal the values in $examinedTypes
+    protected const examinedIcons = ['wards','examinedConsent','dependent','closed','closedOther','institutional','vulnerable','otherPeople','healthy'];
+    protected const dependentTypes = ['dependent','closedLecture','school','closedOther','medical','institutional']; // types for which additional info in consent must be given. Values must equal the values in $examinedTypes
     protected const peopleDescription = 'peopleDescription';
+    protected const diseaseNode = 'disease';
     protected const closedNode = 'closed';
-    protected const closedTypesNode = 'closedTypes';
-    protected const closedTypes = ['closedLecture','school','closedOther'];
-    protected const closedOther = 'closedOther'; // must equal one value in $closedTypes
-    protected const closedOtherText = 'closedOtherText';
     protected const criteriaNode = 'criteria';
     protected const noCriteriaNode=  'noCriteria';
     protected const criteriaIncludeNode = 'include';
@@ -100,8 +103,12 @@ trait ProjectdetailsTrait
     protected const sampleSizeFurtherNode = 'furtherParticulars';
     protected const sampleSizePlanNode = 'sampleSizePlan';
     protected const recruitment = 'recruitment';
-    protected const recruitmentTypes = ['mailing','flyer','lecture','lectureOther','recruitmentPrivate','media','news','database','external','multiplier','recruitmentOther'];
-    protected const recruitmentTypesOther = ['database','external','recruitmentOther']; // values must equal the values in $recruitmentTypes
+    protected const recruitmentTypes = ['spread','lecture','recruitmentPrivate','occupation','database','multiplier','gatekeeper','lectureOther','external','recruitmentOther']; // selectable options
+    protected const recruitmentTypesAll = ['recruitmentSelf' => ['spread','lecture','recruitmentPrivate','occupation','database'], 'contributorsOther' => ['multiplier','gatekeeper','lectureOther'],'external','recruitmentOther']; // selectable options by category
+    protected const recruitmentTypesOther = ['database','multiplier','gatekeeper','external','recruitmentOther']; // values must equal the values in $recruitmentTypes
+    protected const recruitmentIcons = ['spread','private','occupation','contributorsOther','multiplier','gatekeeper'];
+    protected const recruitmentTherapy = 'recruitmentTherapy'; // value must equal one value in $recruitmentTypes
+    protected const recruitmentContributors = 'recruitmentContributors'; // value must equal one value in $recruitmentTypes
     protected const recruitmentFurther = 'recruitmentFurther';
     // information(II)
     protected const informationNode = 'information';
@@ -135,7 +142,11 @@ trait ProjectdetailsTrait
     // other widgets
     protected const attendanceNode = 'attendance';
     protected const documentTranslationNode = 'documentTranslation';
+    protected const documentTranslationTypes = ['easy','translationOther'];
+    protected const documentTranslationEasy = 'easy'; // must equal one value in $documentTranslationTypes
+    protected const documentTranslationOther = 'translationOther'; // must equal one value in $documentTranslationTypes
     protected const documentTranslationPDF = 'documentTranslationPDF';
+    protected const informationMeasuresNode = 'informationMeasures';
     // informationIII
     protected const informationIIINode = 'informationIII';
     protected const informationIIIInputsTypes = ['goals','infoBefore','infoAfter','explain'];
@@ -145,11 +156,10 @@ trait ProjectdetailsTrait
     protected const voluntaryConsentNo = 'no'; // must equal one value in $voluntaryTypes and one in $consentTypes
     protected const voluntaryTypes = ['projectdetails.pages.consent.voluntary.types.yes' => 'yes', 'projectdetails.pages.consent.voluntary.types.no' => 'no', 'projectdetails.pages.consent.voluntary.types.notApplicable' => 'notApplicable'];
     protected const voluntaryEnsureNode = 'voluntaryEnsure';
-    protected const voluntaryEnsureTypes = ['relatable','absence','discuss','onetime','independent','substitute','voluntaryEnsureOther'];
+    protected const voluntaryEnsureTypes = ['relatable','absence','discuss','roleConflict','onetime','independent','substitute','voluntaryEnsureOther'];
     protected const voluntaryEnsureTypesOther = ['substitute','voluntaryEnsureOther']; // values must equal the values in $voluntaryEnsureTypes
     protected const voluntaryEnsureAbsence = 'absence'; // value must equal one value in $voluntaryEnsureTypes
     protected const voluntaryEnsureOther = 'voluntaryEnsureOther'; // value must equal one value in $voluntaryEnsureTypes
-    protected const voluntaryEnsureDependent = ['absence','discuss']; // values must equal the values in $voluntaryTypes
     protected const voluntaryEnsureClosed = ['substitute','independent']; // values must equal the values in $voluntaryEnsureTypes
     protected const voluntaryConsentNotApplicable = 'notApplicable'; // must equal one value in $voluntaryTypes and one in $consentTypes
     protected const consentWritten = 'written'; // must equal one of the values in $consentTypes
@@ -176,15 +186,15 @@ trait ProjectdetailsTrait
     protected const measuresVideo = 'measuresVideo'; // must equal one key in $measuresInterventionsTypesAll[measures]
     protected const measuresPhotoVideoAudio = ['photo','video','audio']; // values must equal values in $measuresDocumentationTypes
     protected const measuresQuestionnaire = 'measuresQuestionnaire'; // must equal one key in $measuresInterventionsTypesAll[measures]
-    protected const interviewQuestionnaire = ['measuresInterview','measuresInterviewGroups','measuresQuestionnaire']; // values must equal the values of measuresInterventionTypes[measures]
+    protected const interviewQuestionnaire = ['measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresTest']; // values must equal the values of measuresInterventionTypes[measures]
     protected const measuresBodyTypes = ['measuresBlood' => '', 'measuresSaliva' => '', 'measuresHair' => '', 'measuresSkin' => '', 'measuresBodyOther' => '']; // keys must equal the values of measuresInterventionsTypesAll[measures][measuresBody]
-    protected const measuresInterventionsTypes = ['measures' => ['measuresObservation','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresDecision','measuresRT','measuresEyetracking','measuresMotion','measuresBreathe','measuresEKG','measuresPulse','measuresEEG','measuresMEG','measuresMRT','measuresBrainOther','measuresInstrumentalOther','measuresBlood','measuresSaliva','measuresHair','measuresSkin','measuresBodyOther','measuresOther'], 'interventions' => ['noIntervention','interventionsQuestionnaire','everyday','vr','textmaterial','visual','auditive','tactile','olfactory','gustatory','stimuliOther','mental','physical','creative','tasksOther','feedback','stress','educational','psychological','psychotherapy','sport','therapy','stimulation','interventionOther','medical','invasiveExtract','interventionsOther']]; // selectable options
-    protected const measuresInterventionsTypesAll = ['measures' => ['measuresObservation','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresInstrumental' => ['measuresDecision','measuresRT','measuresEyetracking','measuresMotion','measuresBreathe','measuresHeart' => ['measuresEKG','measuresPulse'],'measuresBrain' => ['measuresEEG','measuresMEG','measuresMRT','measuresBrainOther'],'measuresInstrumentalOther'],'measuresBody' => ['measuresBlood','measuresSaliva','measuresHair','measuresSkin','measuresBodyOther'],'measuresOther'], 'interventions' => ['noIntervention','interventionsQuestionnaire','everyday','vr','stimuli' => ['textmaterial','visual','auditive','tactile','olfactory','gustatory','stimuliOther'],'tasks' => ['mental','physical','creative','tasksOther'],'feedback','stress','intervention' => ['educational','psychological','psychotherapy','sport','therapy','stimulation','interventionOther'],'invasive' => ['medical','invasiveExtract'],'interventionsOther']]; // selectable options by category
-    protected const measuresInterventionsOther = ['measures' => ['measuresObservation','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresBrainOther','measuresInstrumentalOther','measuresBodyOther','measuresOther'], 'interventions' => ['everyday','vr','textmaterial','visual','auditive','tactile','olfactory','gustatory','stimuliOther','stress','mental','physical','creative','tasksOther','feedback','educational','psychological','psychotherapy','sport','therapy','stimulation','interventionOther','medical','interventionsOther']];
+    protected const measuresInterventionsTypes = ['measures' => ['measuresObservation','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresTest','measuresDecision','measuresRT','measuresEyetracking','measuresMotion','measuresBreathe','measuresEKG','measuresPulse','measuresEEG','measuresMEG','measuresMRT','measuresBrainOther','measuresInstrumentalOther','measuresBlood','measuresSaliva','measuresHair','measuresSkin','measuresBodyOther','measuresOther'], 'interventions' => ['noIntervention','interventionsQuestionnaire','everyday','vr','textmaterial','visual','auditive','tactile','olfactory','gustatory','stimuliOther','mental','physical','creative','tasksOther','feedback','stress','educational','psychological','psychotherapy','sport','therapy','stimulation','interventionOther','medical','invasiveExtract','interventionsOther']]; // selectable options
+    protected const measuresInterventionsTypesAll = ['measures' => ['measuresObservation','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresTest','measuresInstrumental' => ['measuresDecision','measuresRT','measuresEyetracking','measuresMotion','measuresBreathe','measuresHeart' => ['measuresEKG','measuresPulse'],'measuresBrain' => ['measuresEEG','measuresMEG','measuresMRT','measuresBrainOther'],'measuresInstrumentalOther'],'measuresBody' => ['measuresBlood','measuresSaliva','measuresHair','measuresSkin','measuresBodyOther'],'measuresOther'], 'interventions' => ['noIntervention','interventionsQuestionnaire','everyday','vr','stimuli' => ['textmaterial','visual','auditive','tactile','olfactory','gustatory','stimuliOther'],'tasks' => ['mental','physical','creative','tasksOther'],'feedback','stress','intervention' => ['educational','psychological','psychotherapy','sport','therapy','stimulation','interventionOther'],'invasive' => ['medical','invasiveExtract'],'interventionsOther']]; // selectable options by category
+    protected const measuresInterventionsOther = ['measures' => ['measuresObservation','measuresInterview','measuresInterviewGroups','measuresQuestionnaire','measuresTest','measuresBrainOther','measuresInstrumentalOther','measuresBodyOther','measuresOther'], 'interventions' => ['everyday','vr','textmaterial','visual','auditive','tactile','olfactory','gustatory','stimuliOther','stress','mental','physical','creative','tasksOther','feedback','educational','psychological','psychotherapy','sport','therapy','stimulation','interventionOther','medical','interventionsOther']];
     protected const measuresInterventionsIcons = ['measures' => ['measuresObservation','measuresInterview','measuresQuestionnaire','measuresDecision','measuresEyetracking','measuresPulse'], 'interventions' => ['noIntervention','everyday','visual','mental','physical','feedback','stimulation','medical']];
     protected const measuresFurtherNode = 'measuresFurther'; // node name for documentation, survey conduct and screening nodes
     protected const measuresDocumentation = 'documentation';
-    protected const measuresDocumentationTypes = ['measuresObservation' => ['measuresObservationdocumentationNotes','measuresObservationdocumentationReport','measuresObservationdocumentationPhoto','measuresObservationdocumentationVideo','measuresObservationdocumentationAudio','measuresObservationdocumentationOther'], 'measuresInterview' => ['measuresInterviewdocumentationNotes','measuresInterviewdocumentationReport','measuresInterviewdocumentationVideo','measuresInterviewdocumentationAudio','measuresInterviewdocumentationOther'], 'measuresInterviewGroups' => ['measuresInterviewGroupsdocumentationNotes','measuresInterviewGroupsdocumentationReport','measuresInterviewGroupsdocumentationVideo','measuresInterviewGroupsdocumentationAudio','measuresInterviewGroupsdocumentationOther']]; // keys must equal the values from $measuresInterventionTypes[measures]
+    protected const measuresDocumentationTypes = ['measuresObservation' => ['measuresObservationdocumentationNotes','measuresObservationdocumentationReport','measuresObservationdocumentationPhoto','measuresObservationdocumentationVideo','measuresObservationdocumentationAudio','measuresObservationdocumentationOther'], 'measuresInterview' => ['measuresInterviewdocumentationNotes','measuresInterviewdocumentationReport','measuresInterviewdocumentationVideo','measuresInterviewdocumentationAudio','measuresInterviewdocumentationOther'], 'measuresInterviewGroups' => ['measuresInterviewGroupsdocumentationNotes','measuresInterviewGroupsdocumentationReport','measuresInterviewGroupsdocumentationVideo','measuresInterviewGroupsdocumentationAudio','measuresInterviewGroupsdocumentationOther'], 'measuresTest' => ['measuresTestdocumentationPaper', 'measuresTestdocumentationDigital','measuresTestdocumentationVideo','measuresTestdocumentationAudio', 'measuresTestdocumentationOther']]; // keys must equal the values from $measuresInterventionTypes[measures]
     protected const documentationOther = 'documentationOther';
     protected const surveyConductNode = 'surveyConduct';
     protected const surveyConductTypes = ['projectdetails.pages.measures.measuresInterventions.measures.surveyConduct.types.written' => 'written', 'projectdetails.pages.measures.measuresInterventions.measures.surveyConduct.types.oral' => 'oral', 'projectdetails.pages.measures.measuresInterventions.measures.surveyConduct.types.mixed' => 'mixed'];
@@ -498,6 +508,26 @@ trait ProjectdetailsTrait
             return in_array($preContent,self::preContentIncomplete) && $information[self::preComplete][self::chosen]=='0';
         }
         return false;
+    }
+
+    /** Checks whether any option is selected such that voluntary ensure may be asked.
+     * @param array $groups array containing the information of the groups page
+     * @return bool true if voluntary ensure may be asked, false otherwise
+     */
+    protected function getVoluntaryEnsure(array $groups): bool
+    {
+        $examined = $groups[self::examinedPeopleNode];
+        $recruitment = $groups[self::recruitment];
+        return $examined!=='' && array_intersect($this->flattenArray($examined),self::dependentTypes)!==[] || $recruitment!=='' && array_key_exists(self::recruitmentTherapy,$recruitment);
+    }
+
+    /** Checks whether a custom pdf for document translation needs to be added.
+     * @param array $informationArray array containing the information of the information page
+     * @return bool true if a custom pdf needs to be added, false otherwise
+     */
+    protected function getDocumentTranslation(array $informationArray): bool
+    {
+        return array_key_exists(self::documentTranslationPDF, $informationArray) || array_key_exists(self::documentTranslationEasy,($informationArray[self::documentTranslationNode][self::descriptionNode] ?? '') ?: []);
     }
 
     // methods

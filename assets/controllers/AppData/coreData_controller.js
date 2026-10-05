@@ -192,7 +192,7 @@ export default class extends Controller {
         }
         // set visibility of requested confirm and text of hint
         setElementVisibility(this.requestedConfirmTarget,isRequested);
-        this.requestedConfirmHintTarget.textContent = this.requestedConfirmHintValue[isFull ? 0 : 1];
+        this.requestedConfirmHintTarget.innerHTML = this.requestedConfirmHintValue[isFull ? 0 : 1];
     }
 
     /** Sets the visibility of the conflict description div. */

@@ -125,7 +125,7 @@ class DataPrivacyController extends ControllerAbstract
             $routeParam = ['routeIDs' => $this->createRouteIDs([self::studyNode => $routeParams[self::studyID], self::groupNode => $routeParams[self::groupID], self::measureTimePointNode => $routeParams[self::measureID]])];
             // groups
             $pageArray = $measureTimePoint[self::groupsNode];
-            if ($pageArray[self::closedNode][self::chosen]==='0') { // closed group
+            if (array_key_exists(self::closedNode,$pageArray[self::examinedPeopleNode] ?: [])) { // closed group
                 $maybeString .= $this->translateString($translationPrefix.self::closedNode, $routeParam)."\n";
             }
             $tempArray = $pageArray[self::recruitment];

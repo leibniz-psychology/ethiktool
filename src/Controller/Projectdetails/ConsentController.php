@@ -26,8 +26,6 @@ class ConsentController extends ControllerAbstract
         $information = $this->getInformation($appNode,$routeParams);
         $measureArray = $this->xmlToArray($measureNode);
         $consentNode = $measureNode->{self::consentNode};
-        $groupsArray = $measureArray[self::groupsNode];
-        $examined = $groupsArray[self::examinedPeopleNode];
         $addressee = $this->getAddresseeFromRequest($request);
         $hasInformationII = $addressee!==self::addresseeParticipants;
         $isPreEmpty = in_array($information,self::emptyPre,true);
@@ -46,7 +44,7 @@ class ConsentController extends ControllerAbstract
             $textInput = $this->setInputHint($inputArray);
         }
 
-        $consent = $this->createFormAndHandleRequest(ConsentType::class,$this->xmlToArray($consentNode),$request,[self::informationNode => $information, self::addresseeType => $this->getAddresseeFromRequest($request), self::dummyParams => ['isAttendance' => ($measureArray[self::informationNode][self::attendanceNode] ?? '')==='0', 'isClosedDependent' => $examined!=='' && array_key_exists(self::dependentExaminedNode,$examined) || $groupsArray[self::closedNode][self::chosen]==='0', 'hasTerminateParticipants' => array_key_exists(self::terminateParticipantsNode,$measureArray[self::consentNode])]]);
+        $consent = $this->createFormAndHandleRequest(ConsentType::class,$this->xmlToArray($consentNode),$request,[self::informationNode => $information, self::addresseeType => $this->getAddresseeFromRequest($request), self::dummyParams => ['isAttendance' => ($measureArray[self::informationNode][self::attendanceNode] ?? '')==='0', 'isClosedDependent' => $this->getVoluntaryEnsure($measureArray[self::groupsNode]), 'hasTerminateParticipants' => array_key_exists(self::terminateParticipantsNode,$measureArray[self::consentNode])]]);
         if ($consent->isSubmitted()) {
             $consentNew = $this->getDataAndConvert($consent,$consentNode)[self::consentNode][self::chosen];
             $isPrePost = $information===self::pre && $this->getReviewDocs($session) || $information===self::post;

@@ -28,7 +28,8 @@ class InformationController extends ControllerAbstract
         }
         $informationNode = $measureNode->{$route}[0];
         $measureArray = $this->xmlToArray($measureNode);
-        $addressee = $this->getAddressee($measureArray[self::groupsNode]);
+        $groupsArray = $measureArray[self::groupsNode];
+        $addressee = $this->getAddressee($groupsArray);
         $addresseeString = $this->getAddresseeString($addressee,!$isInformationII);
         $translationPrefix = 'pages.projectdetails.';
         $inputPrefix = 'multiple.inputs.';
@@ -94,7 +95,7 @@ class InformationController extends ControllerAbstract
         }
 
         $information = $this->createFormAndHandleRequest(InformationType::class,$this->xmlToArray($informationNode),$request,
-            [self::addresseeType => $addressee, self::dummyParams => ['isAttendance' => !$isInformationII && $addressee!==self::addresseeParticipants, 'isInformation' => !$isInformationII, self::reviewProcess => $this->getCurrentReviewProcess($appNode)],
+            [self::addresseeType => $addressee, self::dummyParams => ['isAttendance' => !$isInformationII && $addressee!==self::addresseeParticipants, 'isInformation' => !$isInformationII, self::reviewProcess => $this->getCurrentReviewProcess($appNode), 'isExaminedConsent' => array_key_exists(self::examinedConsentNode,$groupsArray[self::examinedPeopleNode] ?: [])],
              self::addresseeString => $addresseeString,
              self::participantsString => $this->getAddresseeString($addressee,!$isInformationII,true, $isInformationII || $addressee===self::addresseeParticipants)]);
         if ($information->isSubmitted()) {
@@ -149,6 +150,7 @@ class InformationController extends ControllerAbstract
             $this->setRenderParameters($request,$information,
                 array_merge(
                 ['isInformation' => !$isInformationII,
+                 'reviewDocs' => self::reviewDocs,
                  'informationIIIinput' => $informationIIIinputText,
                  'textInputPre' => $textInputPre,
                  'textInputPost' => $textInputPost],
