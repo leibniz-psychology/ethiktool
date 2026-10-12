@@ -1253,7 +1253,7 @@ projectdetails:
           medical: 'e.g., medical, psychological, or speech therapy'
           institutional: 'e.g., prisoners, psychiatric in-patients'
           vulnerable: 'e.g., persons from a conflict/war zone, refugees'
-          otherPeople: 'persons with specific skills/experiences/characteristics'
+          otherPeople: 'persons with specific skills/experiences/characteristics that are not related to vulnerability'
           healthy: 'persons without the above-mentioned targeted recruitment aspects'
         description: 'Exact description of the group(s). If applicable, you can also describe which information/instruments are used to check or ensure that individuals belong to the target group(s), or mention further inclusion/exclusion criteria that are not disclosed in the study information sheet.'
       disease:
@@ -1731,13 +1731,62 @@ projectdetails:
           hint: 'You may enter a duration of ''0''.'
     burdensRisks:
       placeholder: 'please specify'
+      typesMain:
+        burdensSensitive: 'intimate contents' # from here: burdens
+        risksCognitive: 'cognitive effects' # from here: risks
+        risksEmotional: 'psychological/emotional effects'
+        risksPhysical: 'bodily/physical effects'
+        risksFinding: 'identification of incidental findings or suspicions of mental or physical illness'
+        risksSocial: 'social, economic or political risks arising from knowledge of views, tendencies or behaviours'
+        occurrenceBefore: 'measures to reduce the likelihood of occurrence' # from here: risks occurrence
+        exclusion: 'specific groups are excluded from participation for safety reasons'
+        unitSide: 'the likelihood of occurrence is minimised at the device level'
+        occurrenceAfter: 'measures to mitigate the consequences in case of occurrence'
+        contact: 'contacts for further support are given'
+        condition: 'the project contributors ascertain that the participant is well, and take appropriate measures if needed'
+        ethical: 'moral/ethical responsibility through getting to know certain information about participants' # from here: burdens risks contributors
+      icons:
+        noBurdens: 'This does not refer to the consideration that the burdens are part of everyday life, but rather that there is in fact <b>no</b> noteworthy burden.' # from here: burdens
+        mental: 'e.g., through concentration requirements, the mere duration of the activity'
+        emotional: 'e.g., due to aversive stimuli, short-term induction of negative feelings, short-term deception with personal relevance'
+        physical: 'e.g., due to physical exertion, duration of the activity'
+        burdensSensitive: 'content that invades privacy'
+        touch: 'e.g., when attaching electrodes or markers'
+        integrity: 'e.g., through the collection of bodily material, administration of substances'
+        risksMisinformation: 'e.g., in studies involving fictional information whose validity holds significance beyond the study itself' # from here: risks
+        risksEmotionalEmotional: 'e.g., triggering of negative mood, deception with lasting personal relevance'
+        risksExhaustion: 'e.g., muscle soreness, pain, cardiovascular/circulatory problems'
+        risksFinding: 'Please bear in mind that the identification of findings or suspicions entails ethical responsibilities and practical consequences. You should therefore consider the potential consequences of identifying possible findings or suspicions already while planning the study and explore alternatives.</br> Measures to reduce the likelihood of occurrence and to mitigate the consequences do not need to be specified here; the handling of any findings or suspicions is covered in a separate question.'
+        risksIncidental: 'nearly certain diagnostic findings, e.g. discovery of a tumor during imaging procedures, mental health diagnosis in a clinical-diagnostic interview'
+        risksSuspicion: 'e.g., abnormalities in a screening questionnaire, in a non-calibrated laboratory test for sensory impairments'
+        risksSocial: 'This category should also be selected if, based on your data protection measures, you consider it unlikely that, for example, statements will actually be revealed and become public; the primary focus here is on the risk in principle.'
+        risksLegal: 'e.g., for residency status, jurisdiction'
+        exclusion: 'Please list all criteria as <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#excludeStart" data-base-route-i-ds-param={routeIDs}>exclusion criteria</a>.' # from here: risks occurrence
+        risksOccurrenceContent: 'e.g., individuals with traumatic experiences'
+        disease: 'e.g., epilepsy, depression'
+        implant: 'e.g., pacemakers, medication pumps, screws following a bone fracture, dental stabilisers, permanent make-up'
+        trigger: 'The wording is covered in a separate question.'
+        limit: 'hardware- or software-based'
+        contactContributors: 'This contact offer explicitly refers to support in mitigating potential consequences, and is therefore different from general contact options for questions on the study; please consider that a prompt response must be guaranteed and that the project contributors must have the relevant expertise in dealing with potential requests for support.'
+        simple: 'e.g., water, glucose tablets, fresh air, the option to sit or lie down'
+        encourage: 'This does not refer to the general note regarding the voluntary nature of participation and the individual''s right to withdraw.'
+        rectification: >-
+          The wording of the correction must be described in more detail {isDebriefing, select,
+                                true  {in the <a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII#infoAfterinformationIII" data-base-route-i-ds-param={routeIDs}>Debriefing</a> section}
+                                other {in the debriefing}}.
+        burdensRisksContributorsEmotional: 'e.g., through exposure to distressing content, public hostility due to the research objective' # from here: burdens risks contributors
+        burdensRisksContributorsPhysical: 'e.g., through field work in war zones, areas of conflict/crisis, in areas posing a security risk, or due to the potential for confrontation with participants'
+        ethical: 'information that is already known to the participants themselves or is new to them, such as incidental findings/suspicions or aspects of legal relevance'
+        ethicalLegal: 'e.g., violent offences committed against or by participants (Note: Please also refer to the further <a href="https://www.konsortswd.de/wp-content/uploads/RatSWD_Output1.7_Kenntnissnahme-Straftaten_2023.pdf" target="_blank">information from RatSWD</a> (in German) on dealing with knowledge of criminal offences).'
+        observation: 'e.g., in case of audio/video recordings in public spaces. This is to be distinguished from intentional observations as part of the study, such as within ethnographic research.' # from here: burdens risks uninvolved
+        burdensRisksUninvolvedPhysical: 'e.g., collisions during studies in public space'
+        represent: 'e.g., through socio-political conclusions drawn from the research findings'
+        institution: 'e.g., damage to reputation, security-related aspects'
       burdens:
         title: 'Which demanding, inconvenient or otherwise significant aspects (hereinafter: “burdens“) does participation inevitably entail?'
         hints:
           headingHint: 'This refers to burdens that inevitably arise as a result of participation, as they are an integral part of the study design (i.e., without the burden, the research objective could not be reached). Usually, all participants (or, in multi-group designs, at least one entire group) are affected by the burden. These may also be mild burdens (“inconveniences“) to which participants would expose themselves without hesitation in their everyday lives. The comparison of the burdens with everyday experience of the target group is covered in a separate question.'
           textHint: 'Please describe the selected burdens in more detail and classify their extent with regard to the target group. The ethics committee must be able to determine how common these burdens are; that is, whether participants would also be exposed to such burdens in their everyday lives. Please note that this explicitly concerns burdens arising from participation in the study. If, for example, you are evaluating a training in which the target group would participate anyway, then only the evaluation is relevant, not the training itself.'
-        typesMain:
-          burdensSensitive: 'intimate contents'
         types:
           noBurdens: 'no burdens'
           mental: 'cognitive strain'
@@ -1755,26 +1804,12 @@ projectdetails:
           touch: 'physical contact with project contributors'
           integrity: 'interference with physical integrity'
           otherBurdens: 'other stress/burden factors'
-        icons:
-          noBurdens: 'This does not refer to the consideration that the burdens are part of everyday life, but rather that there is in fact <b>no</b> noteworthy burden.'
-          mental: 'e.g., through concentration requirements, the mere duration of the activity'
-          emotional: 'e.g., due to aversive stimuli, short-term induction of negative feelings, short-term deception with personal relevance'
-          physical: 'e.g., due to physical exertion, duration of the activity'
-          burdensSensitive: 'content that invades privacy'
-          touch: 'e.g., when attaching electrodes or markers'
-          integrity: 'e.g., through the collection of bodily material, administration of substances'
         burdensEveryday: 'Does at least one of the burdens mentioned above exceed the level commonly encountered in the participant''s everyday life?'
       risks:
         title: 'Which unintended consequences (risks, hazards) might participation entail?'
         hints:
           headingHint: 'This refers to undesirable consequences that are not intended within the context of the study, but may occur as a result of participation. Often, only individual participants are affected by such consequences. Please first list any possible consequences that could occur <b>without</b> safety measures being taken – including risks that you can easily manage through standard safety measures. The likelihood of occurrence, the severity of the consequences and, where applicable, measures to mitigate them are covered in a separate question below.'
           textHint: 'Please describe the selected risks in more detail. Discuss how likely they are to occur and how serious the potential consequences would be. Please justify your assessments. For example, you can estimate the likelihood of occurrence based on practical experience or current research. To assess the severity, you may, amongst other things, consider whether the consequences would subside on their own without treatment. Please also indicate how the likelihood of occurrence and the severity of the consequences are affected by the measures taken.'
-        typesMain:
-          risksCognitive: 'cognitive effects '
-          risksEmotional: 'psychological/emotional effects'
-          risksPhysical: 'bodily/physical effects '
-          risksFinding: 'identification of incidental findings or suspicions of mental or physical illness'
-          risksSocial: 'social, economic or political risks arising from knowledge of views, tendencies or behaviours'
         types:
           noRisks: 'no risks'
           risksMental: 'exhaustion resulting from cognitive strain'
@@ -1795,26 +1830,10 @@ projectdetails:
           risksLegal: 'negative legal consequences'
           risksSocialOther: 'other social, economic or political risks'
           otherRisks: 'other risks'
-        icons:
-          risksMisinformation: 'e.g., in studies involving fictional information whose validity holds significance beyond the study itself'
-          risksEmotionalEmotional: 'e.g., triggering of negative mood, deception with lasting personal relevance'
-          risksExhaustion: 'e.g., muscle soreness, pain, cardiovascular/circulatory problems'
-          risksFinding: 'Please bear in mind that the identification of findings or suspicions entails ethical responsibilities and practical consequences. You should therefore consider the potential consequences of identifying possible findings or suspicions already while planning the study and explore alternatives.</br> Measures to reduce the likelihood of occurrence and to mitigate the consequences do not need to be specified here; the handling of any findings or suspicions is covered in a separate question.'
-          risksIncidental: 'nearly certain diagnostic findings, e.g. discovery of a tumor during imaging procedures, mental health diagnosis in a clinical-diagnostic interview'
-          risksSuspicion: 'e.g., abnormalities in a screening questionnaire, in a non-calibrated laboratory test for sensory impairments'
-          risksSocial: 'This category should also be selected if, based on your data protection measures, you consider it unlikely that, for example, statements will actually be revealed and become public; the primary focus here is on the risk in principle.'
-          risksLegal: 'e.g., for residency status, jurisdiction'
       risksOccurrence:
         title: 'Which measures are planned to reduce the likelihood of risk occurrence and/or the severity of the consequences?'
         hints:
           headingHint: 'Consider both precautionary measures to reduce the likelihood of occurrence and compensatory measures to mitigate the severity of the consequences. If it is not obvious from the selected risks, please state in the previous field which measure relates to which risk. The voluntary nature of participation or the right to withdraw from participation without disadvantages do not constitute suitable mitigation measures; these principles also apply to studies that are free from burdens or risks.'
-        typesMain:
-          occurrenceBefore: 'measures to reduce the likelihood of occurrence'
-          exclusion: 'specific groups are excluded from participation for safety reasons'
-          unitSide: 'the likelihood of occurrence is minimised at the device level'
-          occurrenceAfter: 'measures to mitigate the consequences in case of occurrence'
-          contact: 'contacts for further support are given'
-          condition: 'the project contributors ascertain that the participant is well, and take appropriate measures if needed'
         types:
           noRisksOccurrence: 'no measures'
           risksOccurrenceContent: 'individuals who would feel severely distressed by the content or requirements of the study'
@@ -1840,20 +1859,6 @@ projectdetails:
           breaks: 'in addition to the scheduled breaks, further breaks tailored to individual needs are offered'
           rectification: 'misinformation is rectified after-the-fact'
           occurrenceAfterOther: 'other measures to mitigate the consequences'
-        icons:
-          exclusion: 'Please list all criteria as <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#excludeStart" data-base-route-i-ds-param={routeIDs}>exclusion criteria</a>.'
-          risksOccurrenceContent: 'e.g., individuals with traumatic experiences'
-          disease: 'e.g., epilepsy, depression'
-          implant: 'e.g., pacemakers, medication pumps, screws following a bone fracture, dental stabilisers, permanent make-up'
-          trigger: 'The wording is covered in a separate question.'
-          limit: 'hardware- or software-based'
-          contactContributors: 'This contact offer explicitly refers to support in mitigating potential consequences, and is therefore different from general contact options for questions on the study; please consider that a prompt response must be guaranteed and that the project contributors must have the relevant expertise in dealing with potential requests for support.'
-          simple: 'e.g., water, glucose tablets, fresh air, the option to sit or lie down'
-          encourage: 'This does not refer to the general note regarding the voluntary nature of participation and the individual''s right to withdraw.'
-          rectification: >-
-            The wording of the correction must be described in more detail {isDebriefing, select,
-                                  true  {in the <a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII#infoAfterinformationIII" data-base-route-i-ds-param={routeIDs}>Debriefing</a> section}
-                                  other {in the debriefing}}.
       risksTrigger:
         title: 'Which trigger warning(s) shall the study information sheet contain?'
         types:
@@ -1882,8 +1887,6 @@ projectdetails:
         hints:
           headingHint: '' # needed for technical reasons
           textHint: 'Please describe the burdens/risks in detail.'
-        typesMain:
-          ethical: 'moral/ethical responsibility through getting to know certain information about participants'
         types:
           noBurdensRisksContributors: 'no burdens or risks'
           burdensRisksContributorsEmotional: 'psychological or emotional burdens for project contributors'
@@ -1892,11 +1895,6 @@ projectdetails:
           ethicalLegal: 'confrontation with facts that have legal relevance'
           ethicalOther: 'other'
           burdensRisksContributorsOther: 'other burdens/risks for project contributors'
-        icons:
-          burdensRisksContributorsEmotional: 'e.g., through exposure to distressing content, public hostility due to the research objective'
-          burdensRisksContributorsPhysical: 'e.g., through field work in war zones, areas of conflict/crisis, in areas posing a security risk, or due to the potential for confrontation with participants'
-          ethical: 'information that is already known to the participants themselves or is new to them, such as incidental findings/suspicions or aspects of legal relevance'
-          ethicalLegal: 'e.g., violent offences committed against or by participants (Note: Please also refer to the further <a href="https://www.konsortswd.de/wp-content/uploads/RatSWD_Output1.7_Kenntnissnahme-Straftaten_2023.pdf" target="_blank">information from RatSWD</a> (in German) on dealing with knowledge of criminal offences).'
       burdensRisksUninvolved:
         title: 'Which burdens or risks are uninvolved third parties be exposed to?'
         hints:
@@ -1909,11 +1907,6 @@ projectdetails:
           represent: 'risks to the groups/communities represented by the participants'
           institution: 'risks to the institution'
           burdensRisksUninvolvedOther: 'other burdens/risks for uninvolved third parties'
-        icons:
-          observation: 'e.g., in case of audio/video recordings in public spaces. This is to be distinguished from intentional observations as part of the study, such as within ethnographic research.'
-          burdensRisksUninvolvedPhysical: 'e.g., collisions during studies in public space'
-          represent: 'e.g., through socio-political conclusions drawn from the research findings'
-          institution: 'e.g., damage to reputation, security-related aspects'
       compensation:
         title: 'Are any precautionary measures or compensations planned for the burdens/risks?'
         textHints:

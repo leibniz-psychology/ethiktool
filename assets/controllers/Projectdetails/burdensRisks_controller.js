@@ -52,11 +52,15 @@ export default class extends Controller {
             let hintValue = isNo ? 'informingNo' : (isTemplate ? 'cloze' : 'noTemplate');
             this.informingHintTarget.textContent = this.informingHintsValue[hintValue]; // hint above text field
             if (isNo) {
-                this.informingDescriptionTarget.classList.remove('markInput');
+                if (this.hasInformingPDFTarget) {
+                    this.informingDescriptionTarget.classList.remove('markInput');
+                }
                 this.descriptionDivTarget.classList.remove('pe-0');
             } else {
                 this.descriptionDivTarget.classList.add('pe-0');
-                this.informingDescriptionTarget.classList.add('markInput');
+                if (this.hasInformingPDFTarget) {
+                    this.informingDescriptionTarget.classList.add('markInput');
+                }
             }
             setElementVisibility(this.informingTemplateDivTarget,!isNo); // checkbox
             if (this.hasInformingPDFTarget) { // pdf symbol

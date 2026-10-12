@@ -1385,13 +1385,12 @@ abstract class ControllerAbstract extends AbstractController
                             $isMinAge = $minAge!=='';
                             $isUnder18 = $isMinAge && $minAge<18;
                             $disease = $groupsArray[self::diseaseNode] ?? '';
-                            $allShort = $allShort && $isMinAge && !$isUnder18 && $examinedArray!==[] && array_diff_key($examinedArray,[self::healthyExaminedNode => '', self::dependentExaminedNode => '', self::closedNode => ''])===[];
+                            $allShort = $allShort && $isMinAge && !$isUnder18 && $examinedArray!==[] && array_diff_key($examinedArray,[self::healthyExaminedNode => '', self::dependentExaminedNode => '', self::closedNode => '', 'otherPeople' => ''])===[];
                             $briefReport[$this->getBriefReportHeading(self::examinedPeopleNode)] = $this->getBriefReportAnswer(self::examinedPeopleNode,
                               array_intersect_key($examinedArray,[self::wardsExaminedNode => '', self::examinedConsentNode => '', 'medical' => '', 'institutional' => '', 'vulnerable' => '', 'otherVulnerable' => ''])!==[] || // any type where a full review process is required is selected
                                 $disease==='0' // 'physical' is selected and disease is answered with yes
                                 ? self::answerYes
-                                : (array_key_exists('otherPeople',$examinedArray) || // 'other' is selected
-                                   $disease==='1' || // 'physical' is selected and disease is answered with no
+                                : ($disease==='1' || // 'physical' is selected and disease is answered with no
                                    $isUnder18 // underage
                                     ? self::answerUnclear : self::answerNo), $parameters, $getReviewError);
                             // wards -> no need to set $allShort because checks for wards are implicitly included in checks for examined
@@ -1944,7 +1943,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajorSmaller3 = $major<'3';
         $isMajorSmaller4 = $major<'4';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajorSmaller4 || $minor<'3';
+        $isSmallerCurrent = $isMajorSmaller4 || $minor<'4';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
@@ -1956,6 +1955,7 @@ abstract class ControllerAbstract extends AbstractController
         $isSmaller320 = $isMajorSmaller3 || $isMajor3 && $minor<'2';
         $isSmaller330 = $isMajorSmaller3 || $isMajor3 && $minor<'3';
         $isSmaller340 = $isMajorSmaller3 || $isMajor3 && $minor<'4';
+        $isSmaller430 = $isMajorSmaller4 || $minor<'3';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2030,14 +2030,13 @@ abstract class ControllerAbstract extends AbstractController
                     $projectStartNode->{self::projectStartBegunConfirm} = '1';
                 }
             }
-            // updates for versions before 4.3.0
-            $isPHTshort = $committeeType==='PHT' && str_contains($reviewProcess,self::reviewProcessShort);
-            if ($isPHTshort) { // participant documents are now reviewed in short proposals
-                $this->removeElement(self::shortDocsNode,$coreDataNode->{self::applicationProcessNode});
-                $reviewProcess = self::shortDocsNode;
-            }
-            if (!in_array($committeeType,self::committeeSupport)) { // remove support question
-                $this->removeElement(self::supportNode,$coreDataNode);
+            // updates for versions before 4.4.0
+            if (in_array($committeeType,self::committeeSupport) && !$this->checkElement(self::supportNode,$coreDataNode)) { // support question may have been removed accidentally in 4.3.0
+                if ($this->checkElement(self::guidelinesNode,$coreDataNode)) {
+                    $this->insertElementBefore(self::supportNode,$coreDataNode->{self::guidelinesNode});
+                } else {
+                    $coreDataNode->addChild(self::supportNode);
+                }
             }
             foreach ($allStudyNodes as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
@@ -2501,7 +2500,7 @@ abstract class ControllerAbstract extends AbstractController
                             }
                         }
                         // updates for versions before 4.3.0
-                        if (count($measuresNode->children())>0) { // update only if new data are collected
+                        if ($isSmaller430 && count($measuresNode->children())>0) { // update only if new data are collected
                             // examined
                             $examinedNode = $groupsNode->{self::examinedPeopleNode};
                             $hasMental = $this->checkElement('mental',$examinedNode);
@@ -2546,9 +2545,6 @@ abstract class ControllerAbstract extends AbstractController
                                     $descriptionNode->addChild(self::documentTranslationOther,$description);
                                 }
                             }
-                        }
-                        if ($isPHTshort) { // participant documents are now reviewed in short proposals -> add nodes
-                            $this->updateNodesByReviewProcess($request,$measureTimePointNode,$reviewProcess);
                         }
                     } // foreach measure time point
                 } // foreach group

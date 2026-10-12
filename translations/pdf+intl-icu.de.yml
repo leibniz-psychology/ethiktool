@@ -696,7 +696,12 @@ participation:
     Schwarze Schriftfarbe kennzeichnet vom Ethiktool automatisch erzeugten Text. Grüne Schriftfarbe kennzeichnet selbst formulierten Text. {savePDF, select,
       true  {Für die tatsächliche Verwendung der Teilnahmedokumente stehen die PDF-Dateien ohne farbliche Markierung im Ordner „{singleDocsName}“ zur Verfügung.}
       other {}}
-  oral: 'Die Aufklärung zur Studienteilnahme erfolgt mündlich. Sie orientiert sich an den hier verschriftlichten Informationen.'
+  oral: >-
+    Die Aufklärung zur Studienteilnahme erfolgt {savePDF, select,
+          true  {mündlich}
+          other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#{information, select,
+                    post  {post}
+                    other {pre}}Type" data-base-route-i-ds-param="{routeIDs}">mündlich</a>}}. Sie orientiert sich an den hier verschriftlichten Informationen.
   headings:
     goals: 'Hintergrund und Zielsetzung der Studie'
     conflict: 'Mögliche Interessenkonflikte der Projektbeteiligten'
@@ -969,7 +974,12 @@ participation:
       triggerOther: "\n{description}"
     risksContact:
       contactContributors: "\nSie haben die Möglichkeit, sich bei Unterstützungsbedarf an die Projektbeteiligten zu wenden."
-      contactInfo: "\nSie können folgende projektunabhängige Anlaufstellen zur Beratung bzw. Unterstützung kontaktieren: {description}"
+      contactInfo: >-
+        
+        Sie können folgende projektunabhängige Anlaufstellen zur Beratung bzw. Unterstützung {savePDF, select,
+              true  {kontaktieren}
+              other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#contactInfo" data-base-route-i-ds-param="{routeIDs}">kontaktieren</a>}}:
+        {description}
       contactOther: "\n{description}"
   criteria:
     include: >- # other is participant
@@ -1817,7 +1827,10 @@ dataPrivacy:
 # complete post information
 completePost:
   title: 'Nachträgliche Ergänzung zur Studieninformation'
-  oral: 'Die nachträgliche vollständige Aufklärung erfolgt mündlich. Sie orientiert sich an den hier verschriftlichen Informationen.'
+  oral: >-
+    Die nachträgliche vollständige Aufklärung erfolgt {savePDF, select,
+          true  {mündlich}
+          other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#completePostType" data-base-route-i-ds-param="{routeIDs}">mündlich</a>}}. Sie orientiert sich an den hier verschriftlichen Informationen.
   intro: >-
     Vielen Dank für {addressee, select,
                       children {die Teilnahme Ihres Kindes}

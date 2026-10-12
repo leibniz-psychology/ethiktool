@@ -696,7 +696,12 @@ participation:
     Black font color indicates text generated automatically by the Ethiktool. Green font color indicates self-formulated text. {savePDF, select,
       true  {For the actual use of the participant documents, the PDF files are available without coloring in the “{singleDocsName}“ folder.}
       other {}}
-  oral: 'The information on the study will be given orally. It is in line with the written information provided here.'
+  oral: >-
+    The information on the study will be given {savePDF, select,
+          true  {orally}
+          other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#{information, select,
+                    post  {post}
+                    other {pre}}Type" data-base-route-i-ds-param="{routeIDs}">orally</a>}}. It is in line with the written information provided here.
   headings:
     goals: 'Introduction and aims of the study'
     conflict: 'Potential conflicts of interest by the project contributors'
@@ -969,7 +974,12 @@ participation:
       triggerOther: "\n{description}"
     risksContact:
       contactContributors: "\nFor individual support, you may contact the project contributors."
-      contactInfo: "\nYou may contact the following project-independent resources for advice or support: {description}"
+      contactInfo: >-
+        
+        You may {savePDF, select,
+                  true  {contact}
+                  other {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#contactInfo" data-base-route-i-ds-param="{routeIDs}">contact</a>}} the following project-independent resources for advice or support:
+        {description}
       contactOther: "\n{description}"
   criteria:
     include: >- # other is participant
@@ -1817,7 +1827,10 @@ dataPrivacy:
 # complete post information
 completePost:
   title: 'Debriefing supplement'
-  oral: 'The debriefing is given orally. It is in line with the written information provided here.'
+  oral: >-
+    The debriefing is given {savePDF, select,
+          true  {orally}
+          other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#completePostType" data-base-route-i-ds-param="{routeIDs}">orally</a>}}. It is in line with the written information provided here.
   intro: >-
     Thank you for {addressee, select,
                     children {your child''s participation}

@@ -1253,7 +1253,7 @@ projectdetails:
           medical: 'z.B. medizinisch, psychologisch oder sprachtherapeutisch'
           institutional: 'z.B. Strafgefangene, stationäre Psychiatriepatient*innen'
           vulnerable: 'z.B. Personen aus einer Konflikt-/Kriegszone, Geflüchtete'
-          otherPeople: 'Personen mit bestimmten Fähigkeiten/Erfahrungen/Eigenschaften'
+          otherPeople: 'Personen mit bestimmten Fähigkeiten/Erfahrungen/Eigenschaften, die nicht mit Vulnerabilität verbunden sind'
           healthy: 'Personen ohne die o.g. gezielten Rekrutierungsaspekte'
         description: 'Genaue Beschreibung der Personengruppe(n). Sie können hier ggf. auch beschreiben, anhand welcher Angaben/Instrumente die Zugehörigkeit zur Zielgruppe überprüft bzw. sichergestellt wird, oder zusätzliche Ein-/Ausschlusskriterien benennen, die nicht in der Studieninformation offengelegt werden.'
       disease:
@@ -1731,13 +1731,62 @@ projectdetails:
           hint: 'Sie können als Zeitwert auch ''0'' eintragen.'
     burdensRisks:
       placeholder: 'bitte spezifizieren'
+      typesMain:
+        burdensSensitive: 'intime Inhalte' # from here: burdens
+        risksCognitive: 'kognitive Auswirkungen' # from here: risks
+        risksEmotional: 'psychisch-emotionale Auswirkungen'
+        risksPhysical: 'körperliche Auswirkungen'
+        risksFinding: 'Aufdeckung von Befunden oder Verdachtsmomenten hinsichtlich psychischer oder körperlicher Erkrankungen'
+        risksSocial: 'soziale, ökonomische oder politische Risiken bei Kenntnis von Ansichten, Neigungen oder Verhaltensweisen'
+        occurrenceBefore: 'Maßnahmen zur Reduktion der Auftretenswahrscheinlichkeit' # from here: risks occurrence
+        exclusion: 'bestimmte Gruppen werden aus Sicherheitsgründen von der Teilnahme ausgeschlossen'
+        unitSide: 'die Auftretenswahrscheinlichkeit wird geräteseitig minimiert'
+        occurrenceAfter: 'Maßnahmen zur Linderung der Folgen im Falle des Auftretens'
+        contact: 'es werden Kontakte zur weiteren Unterstützung benannt'
+        condition: 'die Projektbeteiligten vergewissern sich, ob es der teilnehmenden Person gut geht, und ergreifen bei Bedarf adäquate Maßnahmen'
+        ethical: 'moralisch-ethische Verantwortung durch Kenntnis von Informationen über die Teilnehmenden' # from here: burdens risks contributors
+      icons:
+        noBurdens: 'Hiermit ist nicht gemeint, dass Sie die Belastungen für alltagsüblich halten, sondern dass es tatsächlich <b>keine</b> nennenswerten Belastungen gibt.' # from here: burdens
+        mental: 'z.B. durch Konzentrationsanforderung, Tätigkeitsdauer'
+        emotional: 'z.B. aversive Reize, kurzfristige Auslösung negativer Gefühle, kurzfristige Täuschung mit persönlicher Relevanz'
+        physical: 'z.B. durch physische Anstrengung, Tätigkeitsdauer'
+        burdensSensitive: 'Erhebungsinhalte, die in die Privatsphäre eindringen'
+        touch: 'z.B. beim Anbringen von Elektroden oder Markern'
+        integrity: 'z.B. durch Entnahme von Körpermaterial, Verabreichung von Substanzen'
+        risksMisinformation: 'z.B. bei Studien mit fiktiven Informationen, deren Wahrheitsgehalt über die Studie hinaus Bedeutung hat' # from here: risks
+        risksEmotionalEmotional: 'z.B. längerfristige negative Stimmungsänderung, nachhaltige Täuschung mit persönlicher Relevanz'
+        risksExhaustion: 'z.B. Muskelkater, Schmerzen, Kreislaufprobleme'
+        risksFinding: 'Bitte beachten Sie, dass die Aufdeckung von Befunden oder Verdachtsmomenten ethische Verantwortung und praktische Konsequenzen mit sich bringt. Bitte reflektieren Sie daher die möglichen Konsequenzen der Aufdeckung etwaiger Befunde/Verdachtsmomente bereits bei der Planung des Studiendesigns und prüfen Sie Alternativen.</br> Maßnahmen zur Minderung der Auftretenswahrscheinlichkeit und der Folgen müssen hier nicht angegeben werden; der Umgang mit etwaigen Befunden/Verdachtsmomenten wird separat erfragt.'
+        risksIncidental: 'nahezu sichere diagnostische Befunde, z.B. Entdeckung eines Tumors beim Einsatz von bildgebenden Verfahren, psychische Diagnose in einem klinisch-diagnostischen Interview'
+        risksSuspicion: 'z.B. Auffälligkeit in einem Screening-Fragebogen, in einem nicht-geeichten Laborverfahren zum Screening auf sensorische Einbußen'
+        risksSocial: 'Diese Kategorie ist auch zu wählen, wenn Sie es aufgrund Ihrer Datenschutzmaßnahmen für unwahrscheinlich halten, dass z.B. Aussagen tatsächlich bekannt werden; es geht zunächst um das prinzipielle Risiko.'
+        risksLegal: 'z.B. für Aufenthaltsstatus, Gerichtsbarkeit'
+        exclusion: 'Bitte listen Sie unter <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#excludeStart" data-base-route-i-ds-param={routeIDs}>Ausschlusskriterien</a> alle Kriterien auf' # from here: risks occurrence
+        risksOccurrenceContent: 'z.B. Personen mit traumatischen Erfahrungen'
+        disease: 'z.B. Epilepsie, Depression'
+        implant: 'z.B. Herzschrittmacher, Medikamentenpumpen, Schrauben nach Knochenbruch, Zahn-Stabilisatoren, Permanent Make-Up'
+        trigger: 'Der genaue Wortlaut wird separat erfragt.'
+        limit: 'hardware- oder softwareseitig'
+        contactContributors: 'Das Kontaktangebot bezieht sich hier explizit auf Unterstützung zur Linderung möglicher Folgen und unterscheidet sich dadurch von der allgemeinen Kontaktmöglichkeit für Fragen zur Studie; bitte bedenken Sie, dass eine zeitnahe Antwort gewährleistet sein muss und die Projektbeteiligten über fachliche Kompetenz im Umgang mit etwaigen Unterstützungsgesuchen verfügen müssen.'
+        simple: 'z.B. Wasser, Traubenzucker, Frischluftzufuhr, Sitz-/Liege-Möglichkeit'
+        encourage: 'Hiermit ist nicht der allgemeine Hinweis auf die Freiwilligkeit der Teilnahme und das individuelle Rücktrittsrecht gemeint.'
+        rectification: >-
+          Der Wortlaut der Richtigstellung ist {isDebriefing, select,
+                          true  {unter <a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII#infoAfterinformationIII" data-base-route-i-ds-param={routeIDs}>Debriefing</a>}
+                          other {im Debriefing}} näher zu beschreiben.
+        burdensRisksContributorsEmotional: 'z.B. durch Konfrontation mit unangenehmen Inhalten, durch öffentliche Anfeindung aufgrund des Forschungsziels' # from here: burdens risks contributors
+        burdensRisksContributorsPhysical: 'z.B. durch Erhebungen in Kriegs- und Krisengebieten, in Konfliktzonen, in sicherheitsgefährdeten Bereichen, durch Konfrontationspotential mit Teilnehmenden'
+        ethical: 'Informationen, die den Teilnehmenden selbst bereits bekannt oder auch für diese neu sind, wie Zufallsbefunde, Verdachtsmomente oder Aspekte mit rechtlicher Relevanz'
+        ethicalLegal: 'z.B. an den Teilnehmenden verübte oder seitens der Teilnehmenden begangene Gewaltdelikte (Hinweis: Bitte beachten Sie auch die weiterführenden <a href="https://www.konsortswd.de/wp-content/uploads/RatSWD_Output1.7_Kenntnissnahme-Straftaten_2023.pdf" target="_blank">Handreichung des RatSWD</a> zum Umgang mit der Kenntnisnahme von Straftaten.'
+        observation: 'z.B. bei Ton-/Bildaufnahmen im öffentlichen Raum. Davon abzugrenzen sind absichtliche Beobachtungen als Teil der Studie, etwa im Rahmen ethnografischer Forschung.' # from here: burdens risks uninvolved
+        burdensRisksUninvolvedPhysical: 'z.B. Zusammenstöße bei Studien im öffentlichen Raum'
+        represent: 'z.B. durch gesellschaftspolitische Schlussfolgerungen aus den Forschungsergebnissen'
+        institution: 'z.B. durch Reputationsschaden, sicherheitsrelevante Aspekte'
       burdens:
         title: 'Welche beanspruchenden, belastenden oder anderweitig nennenswerten Aspekte (nachfolgend: „Belastungen“) bringt die Teilnahme zwangsläufig mit sich?'
         hints:
           headingHint: 'Hier geht es um Belastungen, die durch die Teilnahme in jedem Fall entstehen, da sie unabdingbar mit dem Untersuchungsdesign einhergehen (d.h. ohne die Belastung wäre das Forschungsziel nicht erreichbar). Üblicherweise sind alle Teilnehmenden (bzw. bei Mehrgruppen-Designs zumindest eine gesamte Gruppe) von der Belastung betroffen. Es kann sich dabei auch um milde Belastungen („Unannehmlichkeiten“) handeln, denen sich die Teilnehmenden auch in ihrem Alltag bedenkenlos aussetzen würden. Die Alltagsüblichkeit wird separat erfragt.'
           textHint: 'Bitte beschreiben Sie die ausgewählten Belastungen genauer und ordnen Sie deren Ausmaß mit Bezug auf die Zielgruppe ein. Für die Ethikkommission muss nachvollziehbar sein, ob die Belastungen alltagsüblich sind, d.h. ob die Teilnehmenden sich in ihrem Alltag einer solchen Belastung ebenfalls aussetzen würden. Bitte beachten Sie, dass es explizit um Belastungen durch die Studienteilnahme geht. Wenn Sie bspw. ein Training evaluieren, an dem die Zielgruppe ohnehin teilnehmen würde, dann ist nur die Evaluation relevant und nicht das Training selbst.'
-        typesMain:
-          burdensSensitive: 'intime Inhalte'
         types:
           noBurdens: 'keine Belastungen'
           mental: 'kognitive Belastung'
@@ -1755,26 +1804,12 @@ projectdetails:
           touch: 'Berührungen durch Projektbeteiligte'
           integrity: 'Eingriff in die körperliche Integrität'
           otherBurdens: 'andere Belastungsfaktoren'
-        icons:
-          noBurdens: 'Hiermit ist nicht gemeint, dass Sie die Belastungen für alltagsüblich halten, sondern dass es tatsächlich <b>keine</b> nennenswerten Belastungen gibt.'
-          mental: 'z.B. durch Konzentrationsanforderung, Tätigkeitsdauer'
-          emotional: 'z.B. aversive Reize, kurzfristige Auslösung negativer Gefühle, kurzfristige Täuschung mit persönlicher Relevanz'
-          physical: 'z.B. durch physische Anstrengung, Tätigkeitsdauer'
-          burdensSensitive: 'Erhebungsinhalte, die in die Privatsphäre eindringen'
-          touch: 'z.B. beim Anbringen von Elektroden oder Markern'
-          integrity: 'z.B. durch Entnahme von Körpermaterial, Verabreichung von Substanzen'
         burdensEveryday: 'Geht mindestens eine der o.g. Belastungen über das im Alltag der Teilnehmenden zu erwartende Maß hinaus?'
       risks:
         title: 'Welche unbeabsichtigten Folgen (Risiken, Gefährdungen) kann die Teilnahme mit sich bringen?'
         hints:
           headingHint: 'Hier geht es um unerwünschte Folgen, die im Rahmen der Studie nicht beabsichtigt sind, aber als Konsequenz der Teilnahme eintreten können. Oft sind von solchen Folgen nur einzelne Teilnehmende betroffen. Bitte geben Sie zunächst mögliche Folgen an, die <b>ohne</b> Ergreifen von Sicherheitsmaßnahmen auftreten könnten – auch solche Risiken, die Sie durch Standard-Sicherheitsmaßnahmen problemlos in den Griff bekommen. Die Auftretenswahrscheinlichkeit, Folgenschwere und ggf. Maßnahmen zur Abhilfe werden unten separat erfragt.'
           textHint: 'Bitte beschreiben Sie die ausgewählten Risiken genauer. Gehen Sie darauf ein, wie wahrscheinlich deren Auftreten ist und wie schwerwiegend die potenziellen Folgen wären. Bitte begründen Sie Ihre Einschätzungen, z.B. können Sie die Auftretenswahrscheinlichkeit auf Basis praktischer Erfahrungen oder aktueller Studienlage abzuschätzen. Zur Einschätzung des Schweregrads können Sie u.a. reflektieren, ob die Folgen ohne Behandlung von allein wieder abklingen würden. Bitte ordnen Sie auch ein, wie sich die Auftretenswahrscheinlichkeit und die Schwere der Folgen durch die ergriffenen Maßnahmen ändern.'
-        typesMain:
-          risksCognitive: 'kognitive Auswirkungen'
-          risksEmotional: 'psychisch-emotionale Auswirkungen'
-          risksPhysical: 'körperliche Auswirkungen'
-          risksFinding: 'Aufdeckung von Befunden oder Verdachtsmomenten hinsichtlich psychischer oder körperlicher Erkrankungen'
-          risksSocial: 'soziale, ökonomische oder politische Risiken bei Kenntnis von Ansichten, Neigungen oder Verhaltensweisen'
         types:
           noRisks: 'keine Risiken'
           risksMental: 'Erschöpfung infolge von Beanspruchung'
@@ -1795,26 +1830,10 @@ projectdetails:
           risksLegal: 'negative rechtliche Konsequenzen'
           risksSocialOther: 'sonstige soziale, ökonomische oder politische Risiken'
           otherRisks: 'sonstige Risiken'
-        icons:
-          risksMisinformation: 'z.B. bei Studien mit fiktiven Informationen, deren Wahrheitsgehalt über die Studie hinaus Bedeutung hat'
-          risksEmotionalEmotional: 'z.B. längerfristige negative Stimmungsänderung, nachhaltige Täuschung mit persönlicher Relevanz'
-          risksExhaustion: 'z.B. Muskelkater, Schmerzen, Kreislaufprobleme'
-          risksFinding: 'Bitte beachten Sie, dass die Aufdeckung von Befunden oder Verdachtsmomenten ethische Verantwortung und praktische Konsequenzen mit sich bringt. Bitte reflektieren Sie daher die möglichen Konsequenzen der Aufdeckung etwaiger Befunde/Verdachtsmomente bereits bei der Planung des Studiendesigns und prüfen Sie Alternativen.</br> Maßnahmen zur Minderung der Auftretenswahrscheinlichkeit und der Folgen müssen hier nicht angegeben werden; der Umgang mit etwaigen Befunden/Verdachtsmomenten wird separat erfragt.'
-          risksIncidental: 'nahezu sichere diagnostische Befunde, z.B. Entdeckung eines Tumors beim Einsatz von bildgebenden Verfahren, psychische Diagnose in einem klinisch-diagnostischen Interview'
-          risksSuspicion: 'z.B. Auffälligkeit in einem Screening-Fragebogen, in einem nicht-geeichten Laborverfahren zum Screening auf sensorische Einbußen'
-          risksSocial: 'Diese Kategorie ist auch zu wählen, wenn Sie es aufgrund Ihrer Datenschutzmaßnahmen für unwahrscheinlich halten, dass z.B. Aussagen tatsächlich bekannt werden; es geht zunächst um das prinzipielle Risiko.'
-          risksLegal: 'z.B. für Aufenthaltsstatus, Gerichtsbarkeit'
       risksOccurrence:
         title: 'Durch welche Maßnahmen sollen die Auftretenswahrscheinlichkeit der Risiken und/oder die Schwere von deren Folgen minimiert werden?'
         hints:
           headingHint: 'Bedenken Sie sowohl Vorsichtsmaßnahmen, um die Auftretenswahrscheinlichkeit möglicher Folgen zu reduzieren, als auch Kompensationsmaßnahmen, um die Schwere der Folgen zu mildern. Sofern es anhand der ausgewählten Risiken nicht offensichtlich ist, erläutern Sie bitte im vorherigen Feld, welche Maßnahme sich auf welches Risiko bezieht.</br> Die grundsätzliche Freiwilligkeit der Teilnahme und das individuelle Rücktrittsrecht stellen keine geeigneten Kompensationsmaßnahmen dar; sie gelten auch für belastungs- und risikofreie Erhebungen.'
-        typesMain:
-          occurrenceBefore: 'Maßnahmen zur Reduktion der Auftretenswahrscheinlichkeit'
-          exclusion: 'bestimmte Gruppen werden aus Sicherheitsgründen von der Teilnahme ausgeschlossen'
-          unitSide: 'die Auftretenswahrscheinlichkeit wird geräteseitig minimiert'
-          occurrenceAfter: 'Maßnahmen zur Linderung der Folgen im Falle des Auftretens'
-          contact: 'es werden Kontakte zur weiteren Unterstützung benannt'
-          condition: 'die Projektbeteiligten vergewissern sich, ob es der teilnehmenden Person gut geht, und ergreifen bei Bedarf adäquate Maßnahmen'
         types:
           noRisksOccurrence: 'keine Maßnahmen'
           risksOccurrenceContent: 'Personen, die sich durch die Inhalte/Anforderungen der Erhebung stark belastet fühlen würden'
@@ -1839,21 +1858,7 @@ projectdetails:
           encourage: 'die Teilnehmenden werden explizit ermutigt, sich im Falle von psychischem oder physischem Unwohlsein bemerkbar zu machen bzw. die Studie abzubrechen'
           breaks: 'über die geplanten Pausen hinaus sind weitere, an individuelle Bedarfe angepasste Pausen möglich'
           rectification: 'Fehlinformationen werden im Nachhinein richtiggestellt'
-          occurrenceAfterOther: 'andere Maßnahmen zur Linderung der Folgen'
-        icons:
-          exclusion: 'Bitte listen Sie unter <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#excludeStart" data-base-route-i-ds-param={routeIDs}>Ausschlusskriterien</a> alle Kriterien auf'
-          risksOccurrenceContent: 'z.B. Personen mit traumatischen Erfahrungen'
-          disease: 'z.B. Epilepsie, Depression'
-          implant: 'z.B. Herzschrittmacher, Medikamentenpumpen, Schrauben nach Knochenbruch, Zahn-Stabilisatoren, Permanent Make-Up'
-          trigger: 'Der genaue Wortlaut wird separat erfragt.'
-          limit: 'hardware- oder softwareseitig'
-          contactContributors: 'Das Kontaktangebot bezieht sich hier explizit auf Unterstützung zur Linderung möglicher Folgen und unterscheidet sich dadurch von der allgemeinen Kontaktmöglichkeit für Fragen zur Studie; bitte bedenken Sie, dass eine zeitnahe Antwort gewährleistet sein muss und die Projektbeteiligten über fachliche Kompetenz im Umgang mit etwaigen Unterstützungsgesuchen verfügen müssen.'
-          simple: 'z.B. Wasser, Traubenzucker, Frischluftzufuhr, Sitz-/Liege-Möglichkeit'
-          encourage: 'Hiermit ist nicht der allgemeine Hinweis auf die Freiwilligkeit der Teilnahme und das individuelle Rücktrittsrecht gemeint.'
-          rectification: >-
-            Der Wortlaut der Richtigstellung ist {isDebriefing, select,
-                            true  {unter <a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII#infoAfterinformationIII" data-base-route-i-ds-param={routeIDs}>Debriefing</a>}
-                            other {im Debriefing}} näher zu beschreiben.
+          occurrenceAfterOther: 'sonstige Maßnahmen zur Linderung der Folgen'
       risksTrigger:
         title: 'Welche Triggerwarnung(en) soll die Studieninformation enthalten?'
         types:
@@ -1882,8 +1887,6 @@ projectdetails:
         hints:
           headingHint: '' # needed for technical reasons
           textHint: 'Bitte beschreiben Sie die Belastungen bzw. Risiken genauer.'
-        typesMain:
-          ethical: 'moralisch-ethische Verantwortung durch Kenntnis von Informationen über die Teilnehmenden'
         types:
           noBurdensRisksContributors: 'keine Belastungen bzw. Risiken'
           burdensRisksContributorsEmotional: 'psychisch-emotionale Belastungen für Projektbeteiligte'
@@ -1892,11 +1895,6 @@ projectdetails:
           ethicalLegal: 'Konfrontation mit Tatsachen, die rechtliche Relevanz haben'
           ethicalOther: 'Sonstiges'
           burdensRisksContributorsOther: 'Sonstige Belastungen/Risiken für Projektbeteiligte'
-        icons:
-          burdensRisksContributorsEmotional: 'z.B. durch Konfrontation mit unangenehmen Inhalten, durch öffentliche Anfeindung aufgrund des Forschungsziels'
-          burdensRisksContributorsPhysical: 'z.B. durch Erhebungen in Kriegs- und Krisengebieten, in Konfliktzonen, in sicherheitsgefährdeten Bereichen, durch Konfrontationspotential mit Teilnehmenden'
-          ethical: 'Informationen, die den Teilnehmenden selbst bereits bekannt oder auch für diese neu sind, wie Zufallsbefunde, Verdachtsmomente oder Aspekte mit rechtlicher Relevanz'
-          ethicalLegal: 'z.B. an den Teilnehmenden verübte oder seitens der Teilnehmenden begangene Gewaltdelikte (Hinweis: Bitte beachten Sie auch die weiterführenden <a href="https://www.konsortswd.de/wp-content/uploads/RatSWD_Output1.7_Kenntnissnahme-Straftaten_2023.pdf" target="_blank">Handreichung des RatSWD</a> zum Umgang mit der Kenntnisnahme von Straftaten.'
       burdensRisksUninvolved:
         title: 'Welchen Belastungen bzw. Risiken sind unbeteiligte Dritte ausgesetzt?'
         hints:
@@ -1909,11 +1907,6 @@ projectdetails:
           represent: 'Risiken für die Personengruppen/Communities, die die Teilnehmenden repräsentieren'
           institution: 'Risiken für die Institution'
           burdensRisksUninvolvedOther: 'Sonstige Belastungen/Risiken für unbeteiligte Dritte'
-        icons:
-          observation: 'z.B. bei Ton-/Bildaufnahmen im öffentlichen Raum. Davon abzugrenzen sind absichtliche Beobachtungen als Teil der Studie, etwa im Rahmen ethnografischer Forschung.'
-          burdensRisksUninvolvedPhysical: 'z.B. Zusammenstöße bei Studien im öffentlichen Raum'
-          represent: 'z.B. durch gesellschaftspolitische Schlussfolgerungen aus den Forschungsergebnissen'
-          institution: 'z.B. durch Reputationsschaden, sicherheitsrelevante Aspekte'
       compensation:
         title: 'Sind bezogen auf die o.g. Belastungen bzw. Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
         textHints:

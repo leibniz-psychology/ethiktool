@@ -743,7 +743,7 @@ class ApplicationController extends PDFAbstract
                                             } else {
                                                 foreach (['occurrenceBefore','occurrenceAfter'] as $risksOccurrence) {
                                                     if (array_key_exists($risksOccurrence,$selections)) {
-                                                        $content .= "• ".$this->translateString($burdensRisksPrefixTool.self::risksOccurrenceNode.'.typesMain.'.$risksOccurrence).":</li>\n".$this->addDivPadding($this->getSelectedCheckboxesMulti($selections[$risksOccurrence],self::risksOccurrenceNode,$burdensRisksPrefixTool),false);
+                                                        $content .= "• ".$this->translateString($burdensRisksPrefixTool.'typesMain.'.$risksOccurrence).":</li>\n".$this->addDivPadding($this->getSelectedCheckboxesMulti($selections[$risksOccurrence],self::risksOccurrenceNode,$burdensRisksPrefixTool),false);
                                                     }
                                                 }
                                             }

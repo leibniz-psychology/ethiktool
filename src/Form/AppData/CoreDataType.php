@@ -169,7 +169,7 @@ class CoreDataType extends TypeAbstract
         // conflict
         $this->setChosenArray($forms,$viewData,self::conflictNode,[self::descriptionNode => self::conflictNode.self::descriptionCap]);
         // support
-        if (array_key_exists(self::supportNode,$forms)) {
+        if (array_key_exists(self::noSupport,$forms)) {
             foreach ($viewData[self::supportNode] ?: [] as $key => $value) {
                 $forms[$key]->setData(true);
                 if ($key!==self::noSupport) {
@@ -286,7 +286,7 @@ class CoreDataType extends TypeAbstract
         }
         $newData[self::conflictNode] = $tempArray;
         // support
-        if (array_key_exists(self::supportNode,$forms)) {
+        if (array_key_exists(self::noSupport,$forms)) {
             $tempArray = [];
             foreach (array_keys(self::supportTypes) as $support) {
                 if (array_key_exists($support,$forms) && $forms[$support]->getData()) { // support type exists and was selected

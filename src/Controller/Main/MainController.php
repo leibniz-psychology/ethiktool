@@ -177,6 +177,18 @@ class MainController extends ControllerAbstract
                     $this->removeElement(self::qualification,$coreDataNode);
                     $this->removeElement(self::guidelinesNode,$coreDataNode);
                 }
+                // add/remove support node
+                $isSupport = in_array($committee,self::committeeSupport);
+                $hasSupport = $this->checkElement(self::supportNode,$coreDataNode);
+                if ($isSupport && !$hasSupport) {
+                    if ($this->checkElement(self::guidelinesNode,$coreDataNode)) {
+                        $this->insertElementBefore(self::supportNode,$coreDataNode->{self::guidelinesNode});
+                    } else {
+                        $coreDataNode->addChild(self::supportNode);
+                    }
+                } elseif (!$isSupport && $hasSupport) {
+                    $this->removeElement(self::supportNode,$coreDataNode);
+                }
                 // add/remove medicine nodes
                 $hasMedicineOld = !in_array($oldCommittee,self::committeeNoMedicine,true);
                 $hasMedicine = !in_array($committee,self::committeeNoMedicine);

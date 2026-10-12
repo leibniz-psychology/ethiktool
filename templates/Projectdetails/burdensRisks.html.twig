@@ -4,7 +4,7 @@
 {% block content %}
     {% set translationPrefix, burdensRisksController, everydayDiv = 'projectdetails.pages.burdensRisks.','Projectdetails--burdensRisks', 'burdensEverydayDiv' %}
     {% set parameter, everyday, burdensWoNo, risksWoNo = routeIDsParam|merge({'isDebriefing': isDebriefing}), content.burdensEveryday, burdensRisksTypes['burdens']|slice(1), burdensRisksTypes['risks']|slice(1) %}
-    {% set informing, isTransfer, isTextInput = content.informing, transferInfo is not same as [], textInputCon is not same as '' %}
+    {% set informing, isTransfer, isTextInput = content.informing, (transferInfo[0] ?? '') is not same as '', textInputCon is not same as '' %}
     {% set informingValue, transferArrayValue, textInputVisible, textHintParams = informing.vars.value, isTransfer ? [transferInfo,addresseeType] : [], isTextInput and (not (getAnySelected(content,burdensWoNo)[1] and everyday.vars.value is same as '0' or getAnySelected(content,risksWoNo)[1])), {'burdens': burdensWoNo, 'risks': risksWoNo} %}
     <div {{ stimulus_controller(burdensRisksController,{
             'informing': informingValue,
@@ -24,7 +24,7 @@
                                       merge(isBurdens ? [everydayDiv] : (isRisks ? ['risksOccurrence'] : [compensationDiv]))]]|
                     merge(isRisks ? [[['risksIncidental','risksSuspicion'],'finding']] : [])})|
                     stimulus_action(burdensRisksController,'setTextInputHint','change',textHintParams)}}>
-                    {{ formRender.addMultilevelCheckboxGroup(content,'burdensRisks.'~type,burdensRisksTypesAll[type],burdensRisksOther[type],burdensRisksIcons[type],parameter,false,[],selections[0] ? checkboxesWoNo : (anySelected ? [noKey] : []),[],transferArrayValue) }}
+                    {{ formRender.addMultilevelCheckboxGroup(content,'burdensRisks',burdensRisksTypesAll[type],burdensRisksOther[type],burdensRisksIcons[type],parameter,false,[],selections[0] ? checkboxesWoNo : (anySelected ? [noKey] : []),[],transferArrayValue) }}
                 </div>
             </div>
             {{ formRender.addTextfield(content[description],fontNormal|merge({'visibility': anySelected})) }}
@@ -89,7 +89,7 @@
                 <div class="mt-8" id="risksOccurrence" style="{{ boolToDisplay(isAnyRisk) }}">
                     {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'hints.headingHint']]}) }}
                     <div class="MetaData-Widget" {{ stimulus_action('base','setMultiCheckbox','change',{'single': 'noRisksOccurrence', 'multiCheck': checkboxesWoNo})|stimulus_action('base','setVisibility','change',{'multi': [['noRisksOccurrence','risksNoMeasure'],['trigger','risksTrigger'],[checkboxesWoNo,'risksAfter']]}) }}>
-                        {{ formRender.addMultilevelCheckboxGroup(content,'burdensRisks.risksOccurrence',burdensRisksTypesAll['risksOccurrence'],burdensRisksOther['risksOccurrence'],burdensRisksIcons['risksOccurrence'],parameter,true,[],selections[0] ? checkboxesWoNo : (selections[1] ? ['noRisksOccurrence'] : []),['contactInfo','contactOther','burdensome','triggerOther'],transferArrayValue) }}
+                        {{ formRender.addMultilevelCheckboxGroup(content,'burdensRisks',burdensRisksTypesAll['risksOccurrence'],burdensRisksOther['risksOccurrence'],burdensRisksIcons['risksOccurrence'],parameter,true,[],selections[0] ? checkboxesWoNo : (selections[1] ? ['noRisksOccurrence'] : []),['contactInfo','contactOther','burdensome','triggerOther'],transferArrayValue) }}
                     </div>
                     {# explanation why no measures are taken #}
                     <div class="mt-4" id="risksNoMeasure" style="{{ boolToDisplay(content.noRisksOccurrence.vars.checked) }}">
@@ -98,7 +98,7 @@
                         {{ formRender.addTextfield(content.risksNoMeasureDescription,fontNormal|merge({'visibility': content.risksNoMeasureOther.vars.checked})) }}
                     </div>
                     {# trigger #}
-                    {% set triggerOther, triggerIcons, isTransfer, tempPrefix = burdensRisksOther['risksTrigger'], burdensRisksIcons['risksTrigger'], transferArrayValue is not same as [], translationPrefix~'risksTrigger.' %}
+                    {% set triggerOther, triggerIcons, tempPrefix = burdensRisksOther['risksTrigger'], burdensRisksIcons['risksTrigger'], translationPrefix~'risksTrigger.' %}
                     <div class="mt-8" id="risksTrigger" style="{{ boolToDisplay(isAnyRisk and content.trigger.vars.checked) }}">
                         {{ formRender.addHeading(tempPrefix~'title') }}
                         <div class="MetaData-Widget">
@@ -113,9 +113,9 @@
                                         </div>
                                     {% endif %}
                                     {% if isOther %}
-                                        {% set other, isTransfer = content[otherText], transferArrayValue is not same as [] %}
+                                        {% set other = content[otherText] %}
                                         <div class="MetaData-Widget mb-1 grid" id="{{ other.vars.name }}" style="{{ visibility }}; {% if isTransfer %} grid-template-columns: auto min-content; {% endif %}">
-                                            {{ form_widget(other) }}
+                                            {{ form_widget(other,isTransfer ? {'attr': addClass('markInput')} : {}) }}
                                             {% if isTransfer %}
                                                 {{ formRender.addPDFhint(transferArrayValue[0],transferArrayValue[1]) }}
                                             {% endif %}

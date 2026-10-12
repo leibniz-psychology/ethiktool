@@ -160,9 +160,9 @@
                 merge(value in disable ? {'disable': true} : {})|
                 merge({'target': contTargets[value] ?? []})) }}
                 {% if isOther %}
-                    {% set other, isTransfer = content[value~'Text'], value in otherPDF and transfer is not same as [] %}
+                    {% set other, isTransfer = content[value~'Text'], value in otherPDF and (transfer[0][0] ?? '') is not same as '' %}
                     <div class="MetaData-Widget mb-1 grid" id="{{ other.vars.name }}" style="{{ boolToDisplay(widget.vars.checked,1) }}; {% if isTransfer %} grid-template-columns: auto min-content; {% endif %}">
-                        {{ form_widget(other) }}
+                        {{ form_widget(other, isTransfer ? {'attr': addClass('markInput')} : {}) }}
                         {% if isTransfer %}
                             {{ _self.addPDFhint(transfer[0],transfer[1]) }}
                         {% endif %}

@@ -15,10 +15,17 @@ class BurdensRisksType extends TypeAbstract
     {
       $translationPrefix = 'projectdetails.pages.burdensRisks.';
       // burdens, risks, risks occurrence, risks trigger, burdens risks contributors and burdens risks uninvolved
+      $placeholder = $translationPrefix.'placeholder';
       foreach (self::burdensRisksTypes as $type => $selections) {
         $typePrefix = $translationPrefix.$type.'.';
         $otherTypes = self::burdensRisksOther[$type];
-        $this->addCheckboxGroup($builder,$selections,$typePrefix.'types.',$this->createPrefixArray($otherTypes),array_fill_keys($otherTypes,$translationPrefix.'placeholder'),$type.self::descriptionCap,$typePrefix.'hints.'.self::textHint);
+        if ($type===self::risksOccurrenceNode) {
+            foreach (['occurrenceBeforeOther','occurrenceAfterOther'] as $other) {
+                unset($otherTypes[array_search($other,$otherTypes)]);
+                $this->addFormElement($builder,$this->appendText($other),'textarea',hint: $placeholder);
+            }
+        }
+        $this->addCheckboxGroup($builder,$selections,$typePrefix.'types.',$this->createPrefixArray($otherTypes),array_fill_keys($otherTypes,$placeholder),$type.self::descriptionCap,$typePrefix.'hints.'.self::textHint);
       }
       $this->addBinaryRadio($builder,self::burdensEveryday,$translationPrefix.self::burdensNode.'.'.self::burdensEveryday); // burdens everyday
       $tempPrefix = $translationPrefix.self::risksNoMeasureNode.'.';

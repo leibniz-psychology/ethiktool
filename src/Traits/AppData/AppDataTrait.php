@@ -47,7 +47,7 @@ trait AppDataTrait
     protected const committeeSupervisorPhD = ['EUB','PHHD','SRH']; // committees where a supervisor must be added if the position is PhD
     protected const committeePhDnoLeaderData = ['PHHD','SRH']; // committee where tasks 'leader' or 'data' can not be selected if the position is PhD
     protected const committeeNoStudent = ['PHHD','SRH']; // committees where the position can be student, but students cannot submit an application, i.e., 'complete form' is always disabled
-    protected const committeeSupport = ['TUC','EUB','JGU','DLR','TUD','UH1','UPB','PHHD','SRH','BICC','BTU','HTW','UOL','JHS','HZO','OFFIS','HIFMB','DLRO','IDMT','DFKIO','testCommittee']; // committees where the support question is asked
+    protected const committeeSupport = ['TUC','EUB','JGU','DLR','TUD','UH1','UPB','PHHD','SRH','BICC','BTU','HTW','UOL','JHS','HZO','OFFIS','HIFMB','DLRO','IDMT','DFKIO','UHS','testCommittee']; // committees where the support question is asked
     protected const fundingQuali = 'fundingQuali'; // must equal one of the keys in $fundingChoices
     protected const fundingResearchExternal = ['fundingResearch','fundingExternal']; // must equal two keys in $fundingChoices
     protected const fundingTypes = ['fundingQuali' => 'coreData.funding.fundingQuali', 'fundingBudget' => 'coreData.funding.fundingBudget', 'fundingResearch' => 'coreData.funding.fundingResearch', 'fundingExternal' => 'coreData.funding.fundingExternal', 'fundingOther' => 'coreData.funding.fundingOther'];
