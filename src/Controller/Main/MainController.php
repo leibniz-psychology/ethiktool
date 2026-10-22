@@ -168,14 +168,12 @@ class MainController extends ControllerAbstract
                 if ($updateApplicant) {
                     $this->updateProjectdetailsContributor($request,$appNode,0,[],false); // needs to be called after addAllContributorsNodes()
                 }
-                // add/remove qualification and guidelines node
+                // add/remove qualification node
                 $isEUB = $committee===self::committeeEUB;
                 if (!$isEUBold && $isEUB) {
                     $this->insertElementBefore(self::qualification,$applicantNode);
-                    $coreDataNode->addChild(self::guidelinesNode);
                 } elseif ($isEUBold && !$isEUB) {
                     $this->removeElement(self::qualification,$coreDataNode);
-                    $this->removeElement(self::guidelinesNode,$coreDataNode);
                 }
                 // add/remove support node
                 $isSupport = in_array($committee,self::committeeSupport);
@@ -188,6 +186,14 @@ class MainController extends ControllerAbstract
                     }
                 } elseif (!$isSupport && $hasSupport) {
                     $this->removeElement(self::supportNode,$coreDataNode);
+                }
+                // add/remove guidelines node
+                $hasGuidelinesOld = in_array($oldCommittee,self::committeeGuidelines);
+                $hasGuidelines = in_array($committee,self::committeeGuidelines);
+                if (!$hasGuidelinesOld && $hasGuidelines) {
+                    $coreDataNode->addChild(self::guidelinesNode);
+                } elseif ($hasGuidelinesOld && !$hasGuidelines) {
+                    $this->removeElement(self::guidelinesNode,$coreDataNode);
                 }
                 // add/remove medicine nodes
                 $hasMedicineOld = !in_array($oldCommittee,self::committeeNoMedicine,true);
@@ -211,22 +217,24 @@ class MainController extends ControllerAbstract
                             $this->updateNodesByReviewProcess($request,$measureTimePointNode,$reviewProcess);
                             // update compensation if change from/to BICC
                             $compensationNode = $measureTimePointNode->{self::compensationNode};
-                            if (!$isBICCold && $isBICC && $this->checkElement(self::compensationTypeNode,$compensationNode)) { // select 'no compensation' if page is active
-                                $this->removeAllChildNodes($compensationNode);
-                                $compensationNode->addChild(self::compensationTypeNode)->addChild(self::compensationNo);
-                            } elseif ($isBICCold && !$isBICC && !$this->checkElement(self::terminateNode,$compensationNode)) { // deselect 'no compensation' in case it was selected
-                                $this->removeAllChildNodes($compensationNode->{self::compensationTypeNode});
-                            }
-                            // update data privacy access
-                            $dataPrivacyNode = $measureTimePointNode->{self::privacyNode};
-                            if ($this->checkElement(self::accessNode,$dataPrivacyNode)) {
-                                $this->updateAccess($dataPrivacyNode->{self::accessNode});
-                            }
-                            foreach ([self::purposeResearchNode,self::purposeFurtherNode] as $type) {
-                                if ($this->checkElement($type,$dataPrivacyNode)) {
-                                    foreach ($dataPrivacyNode->{$type}->children() as $child) {
-                                        if ($this->checkElement(self::accessNode,$child)) {
-                                            $this->updateAccess($child->{self::accessNode});
+                            if ($this->checkElement(self::compensationTypeNode,$compensationNode)) { // update only if new data are collected
+                                if (!$isBICCold && $isBICC && $this->checkElement(self::compensationTypeNode,$compensationNode)) { // select 'no compensation' if page is active
+                                    $this->removeAllChildNodes($compensationNode);
+                                    $compensationNode->addChild(self::compensationTypeNode)->addChild(self::compensationNo);
+                                } elseif ($isBICCold && !$isBICC && !$this->checkElement(self::terminateNode,$compensationNode)) { // deselect 'no compensation' in case it was selected
+                                    $this->removeAllChildNodes($compensationNode->{self::compensationTypeNode});
+                                }
+                                // update data privacy access
+                                $dataPrivacyNode = $measureTimePointNode->{self::privacyNode};
+                                if ($this->checkElement(self::accessNode,$dataPrivacyNode)) {
+                                    $this->updateAccess($dataPrivacyNode->{self::accessNode});
+                                }
+                                foreach ([self::purposeResearchNode,self::purposeFurtherNode] as $type) {
+                                    if ($this->checkElement($type,$dataPrivacyNode)) {
+                                        foreach ($dataPrivacyNode->{$type}->children() as $child) {
+                                            if ($this->checkElement(self::accessNode,$child)) {
+                                                $this->updateAccess($child->{self::accessNode});
+                                            }
                                         }
                                     }
                                 }

@@ -209,7 +209,7 @@
                         {% set vars = curWidget.vars %}
                         {% set name = vars.name %}
                         <div class="mt-2 {% if loop.index>1 %} topMarginButtons {% endif %}" {% if isSupport %} {{ stimulus_action('base','setVisibility','change',{'multi': [[name,name~'TextDiv']]}) }} {% endif %}>
-                            {{ formRender.addCheckbox(curWidget, {'disable': not isSupport and anySelected or isSupport and noSelected}) }}
+                            {{ formRender.addCheckbox(curWidget, {'disable': not isSupport and anySelected or isSupport and noSelected}|merge(widget is same as 'supportOther' ? {'checkIcon': [(tempPrefix~'otherIcon')|trans]} : {})) }}
                         </div>
                         {% if isSupport %}
                             {{ formRender.addTextfield(content[name~'Text'],fontNormal|merge(addStyle('margin-bottom: 1.5rem',true))|merge({'visibility': vars.checked})) }}
@@ -219,15 +219,13 @@
             </div>
         {% endif %}
         {# guidelines #}
-        {% if isEUB %}
+        {% if content.guidelines is defined %}
             {% set guidelines, description, tempPrefix = content.guidelines, content.guidelinesText, translationPrefix~'guidelines.' %}
             {% set vars = guidelines.vars %}
-            {% set name = vars.name %}
             <div class="mt-8" id="guidelinesDiv">
-                {{ formRender.addHeading(tempPrefix~'title') }}
-                <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [[name,description.vars.name~'Div']]}) }}>
-                    {{ form_widget(guidelines,{'id': name, 'attr': checkInput}) }}
-                    <label class="CheckBox-Label minAutoGrid" for="{{ name }}"><span>{{ (tempPrefix~'choice')|trans|raw }}</span></label>
+                {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint',committeeParams]], 'params': committeeParams}) }}
+                <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,description.vars.name~'Div']]}) }}>
+                    {{ formRender.addCheckbox(content.guidelines,{'labelParams': committeeParams}) }}
                     {{ formRender.addTextfield(description,{'visibility': vars.checked}) }}
                 </div>
             </div>

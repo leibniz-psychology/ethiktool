@@ -85,6 +85,7 @@ class BurdensRisksType extends TypeAbstract
         }
         // risks occurrence further questions
         if (array_key_exists(self::risksOccurrenceNode,$risksArray)) {
+            // risks no measure
             $this->setSelectedCheckboxes($forms,$risksArray[self::risksOccurrenceNode][self::risksNoMeasureNode] ?? [],[self::risksNoMeasureOther => self::risksNoMeasureNode.self::descriptionCap]); // risks no measure
             // risks after
             $forms[self::risksAfterNode]->setData($this->getArrayValue($risksArray,self::risksAfterNode));
@@ -102,11 +103,15 @@ class BurdensRisksType extends TypeAbstract
             if (!in_array($type,[self::risksOccurrenceNode,self::risksTriggerNode])) {
                 $selections = $this->getSelectedCheckboxesMultiLevel($forms,$options,self::burdensRisksOther[$type]);
                 $tempArray = [$type.'Type' => $selections];
+                $isRisks = $type===self::risksNode;
                 if ($selections!==[] && !array_key_exists('no'.ucfirst($type),$selections)) { // at least one option except "no" was selected
-                    $tempArray[self::descriptionNode] = $forms[$type.self::descriptionCap]->getData(); // description
+                    $isNotOnlyFinding = !$isRisks || !(count($selections)===1 && array_key_exists('risksFinding',$selections));
+                    if ($isNotOnlyFinding) {
+                        $tempArray[self::descriptionNode] = $forms[$type.self::descriptionCap]->getData(); // description
+                    }
                     if ($type===self::burdensNode) {
                         $tempArray[self::burdensEveryday] = $forms[self::burdensEveryday]->getData(); // burdens everyday
-                    } elseif ($type===self::risksNode) {
+                    } elseif ($isRisks) {
                         // finding
                         if (array_key_exists('risksFinding',$selections)) { // at least one of the finding options was selected
                             $findingArray = [self::descriptionNode => $forms[self::descriptionNode]->getData()]; // finding description
@@ -120,22 +125,24 @@ class BurdensRisksType extends TypeAbstract
                             $tempArray[self::findingNode] = $findingArray;
                         }
                         // risks occurrence
-                        $risksOccurrences = $this->getSelectedCheckboxesMultiLevel($forms,self::burdensRisksTypesAll[self::risksOccurrenceNode],self::burdensRisksOther[self::risksOccurrenceNode]);
-                        $risksOccurrenceArray = [self::risksOccurrenceNode.'Type' => $risksOccurrences];
-                        // risks no measure
-                        $hasRisksOccurrence = $risksOccurrences!==[];
-                        $isNoRisksOccurrence = $hasRisksOccurrence && array_key_exists(self::noRisksOccurrence,$risksOccurrences);
-                        if ($isNoRisksOccurrence) {
-                            $risksOccurrenceArray[self::risksNoMeasureNode] = $this->getSelectedCheckboxes($forms,self::risksNoMeasureTypes,[self::risksNoMeasureOther => self::risksNoMeasureNode.self::descriptionCap]);
-                        }
-                        $tempArray[self::risksOccurrenceNode] = $risksOccurrenceArray;
-                        // risks trigger
-                        if (array_key_exists('trigger',$risksOccurrences['occurrenceBefore'] ?? [])) {
-                            $tempArray[self::risksTriggerNode][self::risksTriggerNode.'Type'] = $this->getSelectedCheckboxesMultiLevel($forms,self::burdensRisksTypesAll[self::risksTriggerNode],self::burdensRisksOther[self::risksTriggerNode]);
-                        }
-                        // risks after
-                        if ($hasRisksOccurrence && !$isNoRisksOccurrence) {
-                            $tempArray[self::risksAfterNode] = $forms[self::risksAfterNode]->getData();
+                        if ($isNotOnlyFinding) {
+                            $risksOccurrences = $this->getSelectedCheckboxesMultiLevel($forms,self::burdensRisksTypesAll[self::risksOccurrenceNode],self::burdensRisksOther[self::risksOccurrenceNode]);
+                            $risksOccurrenceArray = [self::risksOccurrenceNode.'Type' => $risksOccurrences];
+                            // risks no measure
+                            $hasRisksOccurrence = $risksOccurrences!==[];
+                            $isNoRisksOccurrence = $hasRisksOccurrence && array_key_exists(self::noRisksOccurrence,$risksOccurrences);
+                            if ($isNoRisksOccurrence) {
+                                $risksOccurrenceArray[self::risksNoMeasureNode] = $this->getSelectedCheckboxes($forms,self::risksNoMeasureTypes,[self::risksNoMeasureOther => self::risksNoMeasureNode.self::descriptionCap]);
+                            }
+                            $tempArray[self::risksOccurrenceNode] = $risksOccurrenceArray;
+                            // risks trigger
+                            if (array_key_exists('trigger',$risksOccurrences['occurrenceBefore'] ?? [])) {
+                                $tempArray[self::risksTriggerNode][self::risksTriggerNode.'Type'] = $this->getSelectedCheckboxesMultiLevel($forms,self::burdensRisksTypesAll[self::risksTriggerNode],self::burdensRisksOther[self::risksTriggerNode]);
+                            }
+                            // risks after
+                            if ($hasRisksOccurrence && !$isNoRisksOccurrence) {
+                                $tempArray[self::risksAfterNode] = $forms[self::risksAfterNode]->getData();
+                            }
                         }
                     } else { // burdens risks contributors and uninvolved
                         // compensation

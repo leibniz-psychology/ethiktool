@@ -52,7 +52,11 @@ paragraphHeadings:
 boxHeadings: # key: heading of the box. keySub: sub heading inside the box if additional inputs may be necessary
   coreData:
     appType: 'Antragstyp'
-    appTypeSub: 'Das Votum soll sich auf eine Begutachtung nach folgenden Richtlinien beziehen:'
+    appTypeSub: >-
+      {committeeType, select,
+        EUB   {Die Planung des Forschungsprojekts beruht auf folgenden Ethik-Richtlinien:}
+        BICC  {Die Planung des Forschungsprojekts beruht auf folgenden Ethik-Richtlinien:}
+        other {}}
     projectTitle: 'Titel des Forschungsprojekts'
     applicant: 'Antragstellende Person'
     projectDates: 'Geplante Projektlaufzeit'
@@ -183,7 +187,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     interventionsSub: 'Beschreibung der Maßnahmen:'
     otherSources: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
     presence: 'Sind Projektbeteiligte bei der Erhebung anwesend?'
-    presenceSub: 'Beschreibung der zeitweisen Anwesenheit:'
+#    presenceSub: 'In welchem Land werden die Daten erhoben?'
     burdens: 'Welche beanspruchenden, belastenden oder anderweitig nennenswerten Aspekte bringt die Teilnahme zwangsläufig mit sich?'
     burdensSub: 'Beschreibung der Belastungen:'
     risks: 'Welche unbeabsichtigten Folgen (Risiken, Gefährdungen) kann die Teilnahme mit sich bringen?'
@@ -194,7 +198,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     burdensRisksContributors: 'Welchen Belastungen bzw. Risiken sind die Projektbeteiligten ausgesetzt?'
     burdensRisksContributorsSub: 'Beschreibung der Belastungen bzw. Risiken'
     burdensRisksContributorsCompensation: 'Sind bezogen auf die in dem vorherigen Feld genannten Belastungen/Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
-    burdensRisksUninvolved: 'Welchen Belastungen bzw. Risiken sind unbeteiligte Dritte ausgesetzt?'
+    burdensRisksUninvolved: 'Welche Belastungen bzw. Risiken ergeben sich für unbeteiligte Dritte?'
     burdensRisksUninvolvedSub: 'Beschreibung der Belastungen bzw. Risiken'
     burdensRisksUninvolvedCompensation: 'Sind bezogen auf die in dem vorherigen Feld genannten Belastungen/Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
     feedback: 'Erhalten Teilnehmende Rückmeldungen zu ihren individuellen Testergebnissen?'
@@ -435,7 +439,7 @@ projectdetails:
         separate      {Die Datenschutzerklärung {levelNamesString} wurde selbst erstellt. {verification, select,
                                                                         verified   {Sie ist durch die zuständige Datenschutzstelle geprüft und genehmigt worden.}
                                                                         unverified {Sie ist bislang nicht durch die zuständige Datenschutzstelle genehmigt worden.}
-                                                                        other      {}} Die Datenschutzerklärung findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite/n.}
+                                                                        other      {}} Die Datenschutzerklärung findet sich (ggf. inkl. Einwilligungserklärung) auf der/den nächsten Seite(n).}
         anonymous     {In der Studie werden - {savePDF, select,
                                     true  {nach Einschätzung der zuständigen Datenschutzstelle}
                                     other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#create" data-base-route-i-ds-param="{routeIDs}">nach Einschätzung der zuständigen Datenschutzstelle</a>}} - nur anonyme Daten verarbeitet. Die Erstellung einer Datenschutzerklärung {levelNamesString} ist daher nicht notwendig.}
@@ -522,11 +526,11 @@ projectdetails:
         types:
           relatable: 'Niemand kann nachvollziehen, wer tatsächlich teilgenommen hat.'
           absence: 'Die Teilnahme erfolgt in Abwesenheit der Person, zu der das Abhängigkeitsverhältnis bzw. der Rollenkonflikt besteht.'
-          discuss: 'Die Freiwilligkeit wird explizit besprochen; dabei wird ausdrücklich betont, dass trotz der besonderen Umstände keine Vor- oder Nachteile mit der Entscheidung für oder gegen die Studie verbunden sind.'
+          discuss: 'Die Freiwilligkeit wird explizit besprochen; dabei wird ausdrücklich betont, dass trotz der besonderen Umstände keine Vor- oder Nachteile mit der Entscheidung für oder gegen die Teilnahme verbunden sind.'
           roleConflict: 'Im Rahmen der Aufklärung werden Doppelrollen der Projektbeteiligten transparent gemacht.'
           onetime: 'Es wird nur einmal für die Studie geworben und höchstens einmal kurz erinnert.'
           substitute: 'Für nicht-teilnehmende Gruppenmitglieder gibt es eine adäquate Ersatzbeschäftigung, und zwar: {description}'
-          independent: 'Die Entscheidung eines Gruppenmitglieds für oder gegen die Studie ist nicht von den Entscheidungen anderer Gruppenmitglieder abhängig.'
+          independent: 'Die Entscheidung eines Gruppenmitglieds für oder gegen die Teilnahme ist nicht von den Entscheidungen anderer Gruppenmitglieder abhängig.'
           voluntaryEnsureOther: 'Folgende Maßnahmen: {description}'
       no: "Begründung, inwiefern die Freiwilligkeit nicht garantiert ist:\n"
     consent: >-
@@ -582,6 +586,9 @@ projectdetails:
         measures {Beschreibung der Erhebungsmethoden:
                                                        }
         other    {}}{description}
+#    country:
+#      domestic: 'Inland'
+#      foreign: 'Ausland: {description}'
   burdensRisks:
     burdens:
       burdensEveryday: >-
@@ -711,7 +718,7 @@ participation:
     pro: 'Vor- und Nachteile der Teilnahme'
     criteria: 'Ein- und Ausschlusskriterien für die Teilnahme'
     risksOccurrence: 'Maßnahmen zur Risikominimierung' # only needed for intermediate page
-    voluntary: 'Freiwilligkeit und Rücktrittsrecht'
+    voluntary: 'Freiwilligkeit und Recht auf Abbruch'
     legal: 'Rechtliche Hinweise'
     dataPrivacy: 'Datenschutz und Datennutzung'
     contact: 'Ansprechpersonen für Rückfragen'
@@ -967,6 +974,7 @@ participation:
                   true  {/Risiken}
                   other {}}
     risksTrigger:
+      title: "\nBitte beachten Sie:"
       triggerIntimate: "\nDie Studie enthält teilweise persönliche bzw. intime Fragen. Die Studie sollte daher in einem ungestörten Umfeld bearbeitet werden. Bitte achten Sie darauf, dass die Privatsphäre während der Teilnahme gewahrt bleibt und keine unbefugten Personen Einblick in die Antworten nehmen können."
       burdensome: "\nDie Erhebung umfasst folgendes Thema, das als belastend wahrgenommen werden kann: {description}"
       threat: "\nWir behandeln alle Angaben und erhobenen Daten vertraulich. Die Projektbeteiligten sind zur Verschwiegenheit verpflichtet. Die Auswertung erfolgt anonymisiert bzw. ohne Nennung von Namen. Die Schweigepflicht bzw. Vertraulichkeit gilt jedoch nicht, wenn konkrete Anzeichen für eine akute Selbstgefährdung oder die Gefährdung anderer Personen vorliegen. Die Projektbeteiligten behalten sich vor, in solchen Fällen unverzüglich geeignete Stellen (z.B. medizinisches Personal, Notdienste oder zuständige Behörden) zu informieren, um Schaden abzuwenden."
@@ -1001,45 +1009,57 @@ participation:
     pre: >-
       {terminateCons, select,
         true  {{addressee, select,
-                  children {Die Teilnahme Ihres Kindes ist {isVoluntary, select,
+                  children {Die Teilnahme Ihres Kindes an der Studie ist {isVoluntary, select,
                                                               false {nicht}
-                                                              other {}} freiwillig. {attendance, select,
-                                                                                      true  {Sie und Ihr Kind können}
-                                                                                      other {Ihr Kind kann}} die Teilnahme {isVoluntary, select,
-                                      false {allerdings}
-                                      other {}} jederzeit ohne Angabe von Gründen und ohne, dass daraus ein Nachteil entsteht, abbrechen.}
-                  wards    {Die Teilnahme der von Ihnen betreuten Person ist {isVoluntary, select,
+                                                              other {}} freiwillig. {isDiscuss, select,
+                                true  {Die Entscheidung für oder gegen die Teilnahme hat keine Auswirkungen auf {discuss}.}
+                                other {}} {attendance, select,
+                                            true  {Sie und Ihr Kind können}
+                                            other {Ihr Kind kann}} die Teilnahme {isVoluntary, select,
+                                                          false {allerdings}
+                                                          other {}} jederzeit ohne Angabe von Gründen und ohne, dass daraus ein Nachteil entsteht, abbrechen.}
+                  wards    {Die Teilnahme der von Ihnen betreuten Person an der Studie ist {isVoluntary, select,
                                                                                 false {nicht}
-                                                                                other {}} freiwillig. {attendance, select,
-                                                                                                        true  {Sie und die von Ihnen betreute Person können}
-                                                                                                        other {Sie kann}} die Teilnahme {isVoluntary, select,
-                                      false {allerdings}
-                                      other {}} jederzeit ohne Angabe von Gründen und ohne, dass daraus ein Nachteil entsteht, abbrechen.}
-                  other    {Ihre Teilnahme ist {isVoluntary, select,
+                                                                                other {}} freiwillig. {isDiscuss, select,
+                                true  {Die Entscheidung für oder gegen die Teilnahme hat keine Auswirkungen auf {discuss}.}
+                                other {}} {attendance, select,
+                                            true  {Sie und die von Ihnen betreute Person können}
+                                            other {Sie kann}} die Teilnahme {isVoluntary, select,
+                                                          false {allerdings}
+                                                          other {}} jederzeit ohne Angabe von Gründen und ohne, dass daraus ein Nachteil entsteht, abbrechen.}
+                  other    {Ihre Teilnahme an der Studie ist {isVoluntary, select,
                                                   false {nicht}
-                                                  other {}} freiwillig. Sie können die Teilnahme {isVoluntary, select,
-                                      false {allerdings}
-                                      other {}} jederzeit ohne Angabe von Gründen und ohne, dass ein Nachteil für Sie entsteht, abbrechen.}}}
+                                                  other {}} freiwillig. {isDiscuss, select,
+                                true  {Die Entscheidung für oder gegen die Teilnahme hat keine Auswirkungen auf {discuss}.}
+                                other {}} Sie können die Teilnahme {isVoluntary, select,
+                                                          false {allerdings}
+                                                          other {}} jederzeit ohne Angabe von Gründen und ohne, dass ein Nachteil für Sie entsteht, abbrechen.}}}
         other {{addressee, select,
-                  children {Die Teilnahme Ihres Kindes ist {isVoluntary, select,
+                  children {Die Teilnahme Ihres Kindes an der Studie ist {isVoluntary, select,
                                                               false {nicht}
-                                                              other {}} freiwillig. {attendance, select,
-                                                                                      true  {Sie und Ihr Kind können}
-                                                                                      other {Ihr Kind kann}} die Teilnahme {isVoluntary, select,
-                                              false {auch}
-                                              other {allerdings}} nicht nachteilsfrei abbrechen, wenn sie einmal begonnen hat.}
-                  wards    {Die Teilnahme der von Ihnen betreuten Person ist {isVoluntary, select,
+                                                              other {}} freiwillig. {isDiscuss, select,
+                                true  {Die Entscheidung für oder gegen die Teilnahme hat keine Auswirkungen auf {discuss}.}
+                                other {}} {attendance, select,
+                                            true  {Sie und Ihr Kind können}
+                                            other {Ihr Kind kann}} die Teilnahme {isVoluntary, select,
+                                                          false {auch}
+                                                          other {allerdings}} nicht nachteilsfrei abbrechen, wenn sie einmal begonnen hat.}
+                  wards    {Die Teilnahme der von Ihnen betreuten Person an der Studie ist {isVoluntary, select,
                                                                                 false {nicht}
-                                                                                other {}} freiwillig. {attendance, select,
-                                                                                                        true  {Sie und die von Ihnen betreute Person können}
-                                                                                                        other {Sie kann}} die Teilnahme {isVoluntary, select,
-                                              false {auch}
-                                              other {allerdings}} nicht nachteilsfrei abbrechen, wenn sie einmal begonnen hat.}
-                  other    {Ihre Teilnahme ist {isVoluntary, select,
+                                                                                other {}} freiwillig. {isDiscuss, select,
+                                true  {Die Entscheidung für oder gegen die Teilnahme hat keine Auswirkungen auf {discuss}.}
+                                other {}} {attendance, select,
+                                            true  {Sie und die von Ihnen betreute Person können}
+                                            other {Sie kann}} die Teilnahme {isVoluntary, select,
+                                                          false {auch}
+                                                          other {allerdings}} nicht nachteilsfrei abbrechen, wenn sie einmal begonnen hat.}
+                  other    {Ihre Teilnahme an der Studie ist {isVoluntary, select,
                                                   false {nicht}
-                                                  other {}} freiwillig. Sie können die Teilnahme {isVoluntary, select,
-                                              false {auch}
-                                              other {allerdings}} nicht nachteilsfrei abbrechen, wenn Sie einmal begonnen haben.}} {description}}}
+                                                  other {}} freiwillig. {isDiscuss, select,
+                                true  {Die Entscheidung für oder gegen die Teilnahme hat keine Auswirkungen auf {discuss}.}
+                                other {}} Sie können die Teilnahme {isVoluntary, select,
+                                                          false {auch}
+                                                          other {allerdings}} nicht nachteilsfrei abbrechen, wenn Sie einmal begonnen haben.}} {description}}}
     # added empty lines to have same line numbers in all translation files.
 
 
@@ -1074,7 +1094,9 @@ participation:
                                 other {}}}
         other    {vorab nicht darüber aufgeklärt, dass Sie an einer Studie teilnehmen. Dies begründet sich wie folgt: {description}. Wir konnten Sie deshalb nicht im Vorhinein um Ihre freiwillige Einwilligung in die Studienteilnahme bitten. {isConsent, select,
                                 true  {Sie haben aber die Möglichkeit frei zu entscheiden, ob wir die von Ihnen erhobenen Daten verwenden dürfen.}
-                                other {}}}}
+                                other {}}}} {isDiscuss, select,
+                                              true  {Die Entscheidung für oder gegen die Verwendung der Daten hat keine Auswirkungen auf {discuss}.}
+                                              other {}}
     terminateParticipants: >-
       {information, select,
         post  {Wenn die Studienteilnahme vorzeitig abgebrochen wurde,}
@@ -1086,7 +1108,10 @@ participation:
                                            other         {wird mit den erhobenen Daten wie folgt verfahren: {description}}}
   dataPrivacy:
     otherSources: 'Zudem werden folgende Daten von anderen Stellen hinzugezogen: '
-    personal: 'Im Rahmen dieser Studie werden personenbezogene Daten erhoben und verarbeitet. {otherSources} Der Umgang mit den personenbezogenen Daten wird ausführlich in der beigefügten Anlage zur Datenverarbeitung erläutert.'
+    personal: >-
+      {isOnlyFurther, select,
+        true  {Für die Projektbeteiligten sind die Forschungsdaten anonym. Im Rahmen dieser Studie werden personenbezogene Daten ausschließlich zu anderen Zwecken erhoben und verarbeitet. Die Forschungsdaten sind nicht mit diesen weiteren Daten verknüpft.}
+        other {Im Rahmen dieser Studie werden personenbezogene Daten erhoben und verarbeitet.}} {otherSources} Der Umgang mit den personenbezogenen Daten wird ausführlich in der beigefügten Anlage zur Datenverarbeitung erläutert.
     personalMaybe: 'Im Rahmen dieser Studie ist die Verarbeitung personenbezogener Daten nicht beabsichtigt, es lässt sich aber nicht vollkommen ausschließen, dass durch Kombination der erhobenen Daten mit Zusatzwissen einzelne Personen identifiziert werden können. {otherSources} Darum erklären wir den Umgang mit den eventuell personenbezogenen Daten ausführlich in der beigefügten Anlage zur Datenverarbeitung.'
     noTool: 'Im Rahmen dieser Studie werden Daten erhoben und verarbeitet. {otherSources} Der Umgang mit den Daten wird ausführlich in der beigefügten Anlage zur Datenverarbeitung erläutert.'
     marking: # types-keys are copied from messages. Examples are removed and addressee is added where applicable
@@ -1186,7 +1211,9 @@ participation:
         no: >-
           {savePDF, select,
             true  {}
-            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">}}{isPurposeFurther, select,
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{create, select,
+                    anonymous {create}
+                    other     {dataPersonal}}" data-base-route-i-ds-param="{routeIDs}">}}{isPurposeFurther, select,
                         true  {Für die Nutzung im Rahmen dieser Studie sind die Forschungsdaten anonym.}
                         other {Dabei bleiben {addressee, select,
                                                 children {Ihr Kind bzw.}

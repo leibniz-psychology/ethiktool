@@ -137,6 +137,7 @@ multiple:
         PHT   {Institut / Stabsstelle}
         BTU   {Fakultät / Abteilung}
         UH1   {Institut}
+        UHS   {Fachbereich}
         other {Fachbereich/Abteilung}}
     professorship: >-
       {committeeType, select,
@@ -144,6 +145,7 @@ multiple:
         EUB   {Professur / Arbeitsgruppe}
         BTU   {Fachgebiet / Bereich}
         UH1   {Professur / Arbeitsgruppe}
+        UHS   {Institut}
         other {Arbeitsgruppe/Professur}}
     eMail: 'E-Mail-Adresse'
     position: 'Position'
@@ -158,6 +160,7 @@ multiple:
               EUB   {Professur / Arbeitsgruppe}
               BTU   {Fachgebiet / Bereich}
               UH1   {Professur / Arbeitsgruppe}
+              UHS   {Institut}
               other {Arbeitsgruppe/Professur}} der Erstbetreuung</i>
     institutionTypes:
       institutionSame: '{committeeLocationPure}'
@@ -634,42 +637,42 @@ main:
              Die Ethik-Kommission nimmt nicht die Aufgaben anderer Kommissionen wahr, deren Zuständigkeit durch Europa-, Bundes- oder Landesrecht geregelt ist (z.B. nach Arzneimittelgesetz, Medizinproduktegesetz).}
       UOL   {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
     
-             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+             Der Ethikantrag ist vor Beginn des Forschungsprojekts zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
     
              Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
       JHS   {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
     
-             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+             Der Ethikantrag ist vor Beginn des Forschungsprojekts zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
     
              Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
       HZO   {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
     
-             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+             Der Ethikantrag ist vor Beginn des Forschungsprojekts zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
     
              Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
       OFFIS {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
     
-             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+             Der Ethikantrag ist vor Beginn des Forschungsprojekts zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
     
              Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
       HIFMB {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
     
-             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+             Der Ethikantrag ist vor Beginn des Forschungsprojekts zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
     
              Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
       DLRO  {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
     
-             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+             Der Ethikantrag ist vor Beginn des Forschungsprojekts zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
     
              Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
       IDMT  {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
     
-             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+             Der Ethikantrag ist vor Beginn des Forschungsprojekts zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
     
              Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
       DFKIO {Antragsberechtigt sind Wissenschaftlerinnen und Wissenschaftler der Carl von Ossietzky Universität Oldenburg sowie von Hochschulen und Einrichtungen, die über Kooperationsvereinbarungen mit der Universität verbunden sind. Bei Abschlussarbeiten und Projekten im Rahmen des Studiums liegt die Verantwortung für die Antragstellung gegenüber der Kommission bei der oder dem Prüfungsverantwortlichen.
     
-             Der Ethikantrag ist vor Beginn des Forschungsvorhabens zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
+             Der Ethikantrag ist vor Beginn des Forschungsprojekts zu stellen; das Votum der Kommission muss vor Beginn der Datenerhebung vorliegen. Eine rückwirkende Begutachtung ist nicht möglich.
     
              Forschungsvorhaben, bei denen medizinische oder pharmazeutische Forschung durchgeführt wird oder die unter gesetzliche Regelungen wie das Arzneimittelgesetz (AMG), das Medizinprodukterecht (MPG/MPDG), das Transfusionsgesetz (TFG), das Strahlenschutzgesetz oder § 15 der Berufsordnung der Ärztekammer Niedersachsen fallen, werden von der Medizinischen Ethikkommission der Fakultät VI begutachtet. Das gilt in der Regel auch, wenn Ärztinnen oder Ärzte am Vorhaben beteiligt sind, wenn Patientinnen und Patienten untersucht werden, die im Rahmen der Studie ambulant oder stationär behandelt werden, oder wenn Medikamente verabreicht bzw. invasive Prozeduren durchgeführt werden. Über die Zuordnung eines Antrags zu einer der beiden Kommissionen entscheidet die Geschäftsstelle in Absprache mit den Vorsitzenden beider Kommissionen. Weitere Informationen finden Sie unter <a href="https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen" target="_blank">https://uol.de/senat/forschungsfolgenabschaetzung-und-ethik/wichtige-hinweise-zur-zuordnung-von-antraegen</a>.}
       UHS   {Antragsberechtigt sind gemäß § 3(2) der Ordnung der Ethikkommission des Senats der Universität Hildesheim alle Mitglieder der Universität. Anträge zur Begutachtung von Abschluss- und Qualifizierungsarbeiten von Studierenden und Promovierenden nimmt die Kommission nur an, wenn der Antrag durch die Betreuerin oder den Betreuer gestellt wird. Antragstellende aus dem Fachbereich 1 Erziehungs- und Sozialwissenschaften sollen ihren Antrag bei der Ethikkommission des Fachbereichs 1 stellen.
@@ -728,7 +731,7 @@ landing:
         info:
           title: 'Informationen zur Notwendigkeit separater Studien/Gruppen/Zeitpunkte'
           text: >-
-            <li>Eine weitere <span class="font-bold">Studie</span> müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere (Teil-)Studien untergliedert, die sich in Ziel oder Methodik unterscheiden, z.B. bei einer Serie von Experimenten.</li>
+            <li>Eine weitere <span class="font-bold">Studie</span> müssen Sie nur anlegen, wenn sich Ihr Forschungsprojekt in mehrere Teile untergliedert, die sich hinsichtlich der Vorgehensweise unterscheiden, z.B. bei einer Serie von Experimenten, bei verschiedenen Facetten ethnografischer Forschung.</li>
             <li>Eine weitere <span class="font-bold">Gruppe</span> müssen Sie nur anlegen, wenn sich beispielsweise die Aufklärung oder die Formulareingaben (insbes. Fragen ohne Mehrfachauswahl) für die Gruppen (z.B. Minderjährige/Erwachsene, Erkrankte/Gesunde) substanziell unterscheiden. Wenn die Aufklärungsdokumente in wesentlichen Punkten gleich sind bzw. sich im Rahmen einer gemeinsamen Aufklärung darstellen lassen (z.B. bei Between-Subject-Designs mit Gruppenzuordnung erst nach der Aufklärung, im Fall einzelner zusätzlicher Einschlusskriterien oder Tests für eine Teilgruppe), ist die Anlage separater Gruppen im Ethiktool i.d.R. nicht sinnvoll. Details zu Gruppenzuordnungen, Rekrutierungsstrategien u.a. lassen sich meist im Rahmen einer Gruppe darstellen.</li>
             <li>Der Begriff <span class="font-bold">Zeitpunkt</span> bezieht sich auf eine Datenerhebung, für die eine neue Studieninformation und eine zusätzliche Einwilligung benötigt wird, bspw. ein Vortest zu einer späteren Studie, in dem noch nicht im Detail über die weiteren Phasen des Forschungsprojekts aufgeklärt werden kann bzw. bei dem nur ein Teil der Personen des Vortests für die Hauptstudie eingeladen wird (Screening). Wenn im Rahmen der Vorab-Aufklärung für den ersten Zeitpunkt bereits über die weiteren Erhebungszeitpunkte aufgeklärt wird, ist die Anlage separater Zeitpunkte im Ethiktool i.d.R. nicht sinnvoll.</li>
         hint:
@@ -769,7 +772,7 @@ coreData:
     types:
       same: 'identisch zum Projekttitel'
       different: 'unterscheidet sich vom Projekttitel'
-      notApplicable: 'nicht zutreffend: Es werden keine Teilnahmedokumente erstellt.'
+      notApplicable: 'nicht zutreffend: Vom Ethiktool werden keine Teilnahmedokumente erstellt.'
     hint: 'z.B. weil vorhandene Daten nachgenutzt werden oder weil es im Rahmen der eigenen Datenerhebung weder eine Vorab- noch eine nachträgliche Aufklärung gibt'
   appType:
     title: 'Antragstyp'
@@ -836,7 +839,7 @@ coreData:
           UHS   {(geplanter)}
           other {geplanter}} Projektbeginn
       hints:
-        headingHint: 'Beginn der Datenerhebung; wenn Daten nicht neu erhoben, sondern vorhandene Daten nachgenutzt werden sollen: Beginn der Reanalyse'
+        headingHint: 'Mit dem Projektbeginn ist i.d.R. der Beginn der Datenerhebung bzw. der Rekrutierung gemeint; wenn Daten nicht neu erhoben, sondern vorhandene Daten nachgenutzt werden sollen, entspricht der Projektbeginn dem Beginn der Reanalyse.'
         begun: >-
           {committeeType, select,
             EUB   {Ethikanträge sind grundsätzlich vor Projektbeginn zu stellen. Die Erteilung eines Ethikvotums bei einem bereits laufenden Forschungsprojekt ist nur in besonders begründeten Ausnahmefällen und nach erteilter Genehmigung per E-Mail möglich. Bitte beachten Sie, dass bei etwaigen Auflagen der Ethikkommission das Ethikvotum sich nicht auf den Teil des Forschungsprojekts erstreckt, in dem die Auflagen noch nicht erfüllt waren.</br> Bitte fahren Sie nur fort, wenn eine Genehmigung zur nachträglichen Begutachtung erteilt wurde.}
@@ -931,10 +934,20 @@ coreData:
       supportCenter: 'Forschungsdatenmanagement-Servicestelle'
       supportData: 'Datenschutz- und/oder Informationssicherheitsbeauftragte/r'
       supportOther: 'andere Angebote (bitte benennen)'
+    otherIcon: 'z.B. Rechtsberatung, Reisevorkehrungen'
     textHint: 'Bitte geben Sie an, von welcher Ansprechperson Sie zu welchen Aspekten beraten wurden.'
   guidelines:
-    title: 'Sofern unten nicht anders gewünscht, wird im Ethikvotum bescheinigt, dass die Begutachtung nach den Ethischen Richtlinien der Deutschen Gesellschaft für Psychologie (DGPs) und des Berufsverbandes Deutscher Psychologinnen und Psychologen (BDP) erfolgte.'
-    choice: 'Ich benötige ein Votum, das sich auf andere ethische Richtlinien bezieht (<a href="https://www.konsortswd.de/ratswd/best-practice-forschungsethik/ethikleitlinien-kodices/" target="_blank">eine Übersicht finden Sie hier</a>), nämlich:'
+    title: 'Ethik-Richtlinien'
+    headingHint: >-
+      {committeeType, select,
+        EUB   {Sofern unten nicht anders angegeben, wird im Begutachtungsprozess davon ausgegangen, dass zur Planung des Forschungsprojekts die Ethischen Richtlinien der Deutschen Gesellschaft für Psychologie (DGPs) und des Berufsverbandes Deutscher Psychologinnen und Psychologen (BDP) herangezogen wurden.}
+        BICC  {(optional) Sofern es für die Begutachtung relevant ist, können Sie hier die ethischen Richtlinien angeben, auf denen die Planung Ihres Forschungsprojekts beruht.}
+        other {}}
+    choice: >-
+      {committeeType, select,
+        EUB   {Die Planung des Forschungsprojekts beruht auf anderen ethischen Richtlinien (<a href="https://www.konsortswd.de/ratswd/best-practice-forschungsethik/ethikleitlinien-kodices/" target="_blank">eine Übersicht finden Sie hier</a>), und zwar:}
+        BICC  {Die Planung des Forschungsprojekts beruht auf folgenden ethischen Richtlinien (<a href="https://www.konsortswd.de/ratswd/best-practice-forschungsethik/ethikleitlinien-kodices/" target="_blank">eine Übersicht finden Sie hier</a>):}
+        other {}}
 
 votes:
   hint: 'Die beiden nachfolgenden Fragen beziehen sich auf die im Rahmen dieses Ethikantrags geplanten Erhebungen bzw. Analysen. Ethikvoten für die ursprüngliche Gewinnung von Forschungsdaten, die hier nachgenutzt bzw. reanalysiert werden sollen, werden an anderer Stelle abgefragt.'
@@ -1425,7 +1438,7 @@ projectdetails:
         title: >- 
           Bitte erläutern Sie, welche Maßnahmen im Rahmen des Aufklärungsprozesses zur Sicherstellung der Verständlichkeit der Aufklärung und der informierten Einwilligung ergriffen werden.
         textHint: >-
-          Gemeint sind hier über den Wortlaut der Aufklärung hinausgehende Maßnahmen. Bitte erläutern Sie beispielsweise, wann/von wem die Aufklärung vorgenommen wird, welche Maßnahmen zur Absicherung des Verständnisses getroffen werden und wie die Urteils- bzw. Handlungsfähigkeit der Zielgruppe unterstützt bzw. gesichert wird.
+          Gemeint sind hier über den Wortlaut der Aufklärung hinausgehende Maßnahmen. Bitte erläutern Sie beispielsweise, wann/von wem die Aufklärung vorgenommen wird, welche Erfahrung im Umgang mit der Zielgruppe vorliegt, welche Maßnahmen zur Absicherung des Verständnisses getroffen werden und wie die Urteils- bzw. Handlungsfähigkeit der Zielgruppe unterstützt bzw. gesichert wird.
     consent:
       addressee:
         children: 'Erziehungsberechtigte:'
@@ -1448,14 +1461,19 @@ projectdetails:
           types:
             relatable: 'Niemand kann nachvollziehen, wer tatsächlich teilgenommen hat.'
             absence: 'Die Teilnahme erfolgt in Abwesenheit der Person, zu der das Abhängigkeitsverhältnis bzw. der Rollenkonflikt besteht.'
-            discuss: 'Die Freiwilligkeit wird explizit besprochen; dabei wird ausdrücklich betont, dass trotz der besonderen Umstände keine Vor- oder Nachteile mit der Entscheidung für oder gegen die Studie (z.B. für Prüfungen, den Behandlungsverlauf) verbunden sind.'
+            discuss: 'Die Freiwilligkeit wird explizit besprochen; dabei wird ausdrücklich betont, dass trotz der besonderen Umstände keine Vor- oder Nachteile mit der Entscheidung für oder gegen die Teilnahme (z.B. für Prüfungen, den Behandlungsverlauf) verbunden sind.'
             roleConflict: 'Im Rahmen der Aufklärung werden Doppelrollen der Projektbeteiligten transparent gemacht.'
             onetime: 'Es wird nur einmal für die Studie geworben und höchstens einmal kurz erinnert.'
             substitute: 'Für nicht-teilnehmende Gruppenmitglieder gibt es eine adäquate Ersatzbeschäftigung.'
-            independent: 'Die Entscheidung eines Gruppenmitglieds für oder gegen die Studie ist nicht von den Entscheidungen anderer Gruppenmitglieder abhängig.'
+            independent: 'Die Entscheidung eines Gruppenmitglieds für oder gegen die Teilnahme ist nicht von den Entscheidungen anderer Gruppenmitglieder abhängig.'
             voluntaryEnsureOther: 'Sonstige Maßnahmen'
           placeholder: 'bitte spezifizieren'
-          hint: 'z.B. anonyme online-Befragung, unauffällige (Nicht-)Teilnahme vor Ort' # for relatable
+          hints:
+            relatable: 'z.B. anonyme online-Befragung, unauffällige (Nicht-)Teilnahme vor Ort' # icon
+            discuss: >- # hint above text field
+              Die Entscheidung für oder gegen die {information, select,
+                                                    post  {Verwendung der Daten}
+                                                    other {Teilnahme}} hat keine Auswirkungen auf
         textHint: 'Bitte beschreiben und begründen Sie, inwiefern die Freiwilligkeit nicht garantiert ist.'
       consent:
         title: >-
@@ -1538,12 +1556,6 @@ projectdetails:
             behaviour: 'z.B. Beleidigungen, Bedrohungen, unangebrachte Berührungen'
             terminateCriteriaOther: 'Abbruch auf Wunsch der Teilnehmenden wird an anderer Stelle erfragt und ist hier nicht zu nennen'
     measures:
-      procedure:
-        title: 'Ablauf'
-        headingHint: >-
-          Beschreiben Sie hier kurz den Erhebungsablauf und die Aufgabe(n), die von den Teilnehmenden absolviert werden soll(en). {multiple, select,
-              true  {Wenn zwischen den Erhebungszeitpunkten Maßnahmen (z.B. Trainings) stattfinden, bei denen keine Daten erhoben werden, beschreiben Sie auch deren Inhalt und Dauer. Benennen Sie außerdem die Dauern der nachfolgenden Erhebungszeitpunkte.}
-              other {}}
       measuresInterventions: # other is interventions in title, hints, pdf
         title: >-
           {type, select,
@@ -1641,7 +1653,7 @@ projectdetails:
           headingHint: 'Geben Sie bitte alle Erhebungsmethoden an, mittels derer zum Zweck der Studie Daten von den Teilnehmenden erfasst werden. Denken Sie dabei auch an Erhebungsmethoden zur Überprüfung der <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#criteria" data-base-route-i-ds-param={routeIDs}>Ein- und Ausschlusskriterien</a>. </br>Die spätere Überführung der Daten in andere Formen (z.B. die Anfertigung eines Transkripts aus Basis einer Tonaufnahme) ist hier nicht gemeint; dies ist ggf. unter „<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy" data-base-route-i-ds-param={routeIDs}>Datenschutz</a>“ näher zu beschreiben. Wenn für die Studie erfasste Daten durch bereits vorliegende personenbezogene Daten von anderen Stellen ergänzt werden sollen, sind diese Daten unter „Daten anderer Stellen“ näher zu beschreiben.'
           textHints:
             noSelection: 'Bitte wählen Sie mindestens eine Erhebungsmethode aus.'
-            description: 'Bitte beschreiben Sie die jeweilige(n) Erhebungsmethode(n) genauer.'
+            description: 'Bitte beschreiben Sie die jeweilige(n) Erhebungsmethode(n) genauer. Beschreiben Sie auch den Ablauf der Datenerhebung für die Teilnehmenden, sofern dies nicht ohnehin aus der Studieninformation ersichtlich wird.'
             interventionsQuestionnaire: ' Im Falle eines Fragebogens beschreiben Sie bitte kurz dessen Inhalt und benennen Sie eine Beispiel-Frage sowie die Gesamtanzahl der Fragen.'
         interventions:
           types:
@@ -1713,6 +1725,13 @@ projectdetails:
           no: 'Nein'
         headingHint: 'Die Kenntnis über die Anwesenheit von Projektbeteiligten ist u.a. relevant für die Beurteilung von Reaktionsmöglichkeiten im Falle von Belastungen/Risiken und für den Umgang mit bestimmten Interessenkonflikten.'
         textHint: 'Bitte erläutern Sie, für welche Teile der Erhebung Projektbeteiligte an- oder abwesend sind.'
+#      country:
+#        title: 'In welchem Land werden die Daten erhoben?'
+#        headingHint: 'Bei Online-Studien ist maßgeblich, wo Teilnehmende explizit rekrutiert werden.'
+#        types:
+#          domestic: 'Inland'
+#          foreign: 'Ausland'
+#        textHint: 'Bitte spezifizieren Sie das Land und erläutern Sie den Erhebungskontext genauer. Beschreiben Sie dabei insbesondere relevante gesellschaftliche, rechtliche, kulturelle bzw. geopolitische Gegebenheiten, wie beispielsweise Rollen/Relevanz von Ortsvorstehenden, Konflikte, Rechtslage, Datenschutz, Schulsystem, etwaige Machtasymmetrien oder Aspekte von Positionalität. Die Risiken, die daraus eventuell ergeben, werden separat erfragt.'
       duration:
         title: >-
           Dauer {multiple, select,
@@ -1769,7 +1788,7 @@ projectdetails:
         limit: 'hardware- oder softwareseitig'
         contactContributors: 'Das Kontaktangebot bezieht sich hier explizit auf Unterstützung zur Linderung möglicher Folgen und unterscheidet sich dadurch von der allgemeinen Kontaktmöglichkeit für Fragen zur Studie; bitte bedenken Sie, dass eine zeitnahe Antwort gewährleistet sein muss und die Projektbeteiligten über fachliche Kompetenz im Umgang mit etwaigen Unterstützungsgesuchen verfügen müssen.'
         simple: 'z.B. Wasser, Traubenzucker, Frischluftzufuhr, Sitz-/Liege-Möglichkeit'
-        encourage: 'Hiermit ist nicht der allgemeine Hinweis auf die Freiwilligkeit der Teilnahme und das individuelle Rücktrittsrecht gemeint.'
+        encourage: 'Hiermit ist nicht der allgemeine Hinweis auf die Freiwilligkeit der Teilnahme und das individuelle Recht auf Abbruch gemeint.'
         rectification: >-
           Der Wortlaut der Richtigstellung ist {isDebriefing, select,
                           true  {unter <a class="linkInternal" href="informationIII" data-action="base#setDummySubmit" data-base-url-param="app_informationIII#infoAfterinformationIII" data-base-route-i-ds-param={routeIDs}>Debriefing</a>}
@@ -1782,6 +1801,7 @@ projectdetails:
         burdensRisksUninvolvedPhysical: 'z.B. Zusammenstöße bei Studien im öffentlichen Raum'
         represent: 'z.B. durch gesellschaftspolitische Schlussfolgerungen aus den Forschungsergebnissen'
         institution: 'z.B. durch Reputationsschaden, sicherheitsrelevante Aspekte'
+        social: 'z.B. durch missbräuchliche Verwendung der Forschungsergebnisse'
       burdens:
         title: 'Welche beanspruchenden, belastenden oder anderweitig nennenswerten Aspekte (nachfolgend: „Belastungen“) bringt die Teilnahme zwangsläufig mit sich?'
         hints:
@@ -1833,7 +1853,7 @@ projectdetails:
       risksOccurrence:
         title: 'Durch welche Maßnahmen sollen die Auftretenswahrscheinlichkeit der Risiken und/oder die Schwere von deren Folgen minimiert werden?'
         hints:
-          headingHint: 'Bedenken Sie sowohl Vorsichtsmaßnahmen, um die Auftretenswahrscheinlichkeit möglicher Folgen zu reduzieren, als auch Kompensationsmaßnahmen, um die Schwere der Folgen zu mildern. Sofern es anhand der ausgewählten Risiken nicht offensichtlich ist, erläutern Sie bitte im vorherigen Feld, welche Maßnahme sich auf welches Risiko bezieht.</br> Die grundsätzliche Freiwilligkeit der Teilnahme und das individuelle Rücktrittsrecht stellen keine geeigneten Kompensationsmaßnahmen dar; sie gelten auch für belastungs- und risikofreie Erhebungen.'
+          headingHint: 'Bedenken Sie sowohl Vorsichtsmaßnahmen, um die Auftretenswahrscheinlichkeit möglicher Folgen zu reduzieren, als auch Kompensationsmaßnahmen, um die Schwere der Folgen zu mildern. Sofern es anhand der ausgewählten Risiken nicht offensichtlich ist, erläutern Sie bitte im vorherigen Feld, welche Maßnahme sich auf welches Risiko bezieht.</br> Die grundsätzliche Freiwilligkeit der Teilnahme und das individuelle Recht auf Abbruch stellen keine geeigneten Kompensationsmaßnahmen dar; sie gelten auch für belastungs- und risikofreie Erhebungen.'
         types:
           noRisksOccurrence: 'keine Maßnahmen'
           risksOccurrenceContent: 'Personen, die sich durch die Inhalte/Anforderungen der Erhebung stark belastet fühlen würden'
@@ -1868,7 +1888,7 @@ projectdetails:
           crime: 'Vorlage zur Kenntnis schwerer Straftaten'
           triggerOther: 'selbst formulierte Triggerwarnung'
         icons:
-          triggerOther: 'z.B. „Die Beantwortung von Fragen zum Thema ... kann ...“'
+          triggerOther: 'z.B. „Die Beantwortung von Fragen zum Thema ... kann ... Bitte nehmen Sie nicht teil, wenn Sie sich dadurch belastet fühlen.“'
         templates:
           triggerIntimate: 'Die Studie enthält teilweise persönliche bzw. intime Fragen. Die Studie sollte daher in einem ungestörten Umfeld bearbeitet werden. Bitte achten Sie darauf, dass die Privatsphäre während der Teilnahme gewahrt bleibt und keine unbefugten Personen Einblick in die Antworten nehmen können.'
           burdensome: 'Die Erhebung umfasst folgendes Thema, das als belastend wahrgenommen werden kann:'
@@ -1896,7 +1916,7 @@ projectdetails:
           ethicalOther: 'Sonstiges'
           burdensRisksContributorsOther: 'Sonstige Belastungen/Risiken für Projektbeteiligte'
       burdensRisksUninvolved:
-        title: 'Welchen Belastungen bzw. Risiken sind unbeteiligte Dritte ausgesetzt?'
+        title: 'Welche Belastungen bzw. Risiken ergeben sich für unbeteiligte Dritte?'
         hints:
           headingHint: '' # needed for technical reasons
           textHint: 'Bitte beschreiben Sie die Belastungen bzw. Risiken genauer.'
@@ -1906,6 +1926,7 @@ projectdetails:
           burdensRisksUninvolvedPhysical: 'körperliche Risiken'
           represent: 'Risiken für die Personengruppen/Communities, die die Teilnehmenden repräsentieren'
           institution: 'Risiken für die Institution'
+          social: 'gesellschaftliche Risiken'
           burdensRisksUninvolvedOther: 'Sonstige Belastungen/Risiken für unbeteiligte Dritte'
       compensation:
         title: 'Sind bezogen auf die o.g. Belastungen bzw. Risiken Vorsichtsmaßnahmen bzw. Kompensationen geplant?'
@@ -1972,7 +1993,7 @@ projectdetails:
           compensationOther: 'Bitte geben Sie die Art der Aufwandsentschädigung an.'
       hint: >-
         {committeeType, select,
-          BICC  {Bitte beachten Sie, dass bei Forschungsvorhaben an {committeeLocationDat} üblicherweise keine Aufwandsentschädigung vorgesehen ist. Nehmen Sie bei Bedarf Kontakt zur Ethikkommission auf, um abzuklären, ob eine Aufwandsentschädigung in Ihrem Fall angemessen ist.}
+          BICC  {Bitte beachten Sie, dass bei Forschungsprojekten an {committeeLocationDat} üblicherweise keine Aufwandsentschädigung vorgesehen ist. Nehmen Sie bei Bedarf Kontakt zur Ethikkommission auf, um abzuklären, ob eine Aufwandsentschädigung in Ihrem Fall angemessen ist.}
           other {}}
       amount:
         real: 'tatsächliche Dauer'
@@ -2103,6 +2124,12 @@ projectdetails:
       conflictText:
         title: 'Aufklärung über Interessenkonflikte'
         headingHint: 'Bitte legen Sie den Teilnehmenden die etwaigen Interessenkonflikte offen.'
+      procedure:
+        title: 'Ablauf'
+        headingHint: >-
+          Beschreiben Sie hier kurz den Erhebungsablauf und die Aufgabe(n), die von den Teilnehmenden absolviert werden soll(en). {multiple, select,
+              true  {Wenn zwischen den Erhebungszeitpunkten Maßnahmen (z.B. Trainings) stattfinden, bei denen keine Daten erhoben werden, beschreiben Sie auch deren Inhalt und Dauer. Benennen Sie außerdem die Dauern der nachfolgenden Erhebungszeitpunkte.}
+              other {}}
       pro:
         title: 'Vorteile:'
         template: # other is participant in all cases
@@ -2130,7 +2157,7 @@ projectdetails:
           Sie haben {type, select,
                       burdens {Belastungen}
                       risks   {Risiken}
-                      other   {Belastungen und Risiken}} ausgewählt. Die {addressee} müssen darüber aufgeklärt werden. Nutzen Sie dafür das Textfeld.
+                      other   {Belastungen und Risiken}} ausgewählt. Die {addressee} müssen darüber aufgeklärt werden. Nutzen Sie dafür das Textfeld. Wenn Sie unter <a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">Belastungen/Risiken</a> bereits eine Triggerwarnung formuliert haben, wird diese automatisch übernommen und muss hier nicht wiederholt werden.
         template:
           risks: >-
             Mit der Teilnahme {information, select,
@@ -2190,7 +2217,11 @@ projectdetails:
         title: 'Bitte beschreiben Sie kurz - zur Einordnung für die Ethikkommission - die Verarbeitung der Daten für den ausgewählten Teil (Studie/Gruppe/Zeitpunkt). Orientieren Sie sich dabei an den verschiedenen Phasen im Projekt (z.B. Kontaktierung, Datenerhebung, Auswertung, Veröffentlichung, Teilung und Nachnutzung der Daten).'
         textHint: 'Bitte beschreiben Sie die Datenverarbeitung so, dass eine fachlich unkundige Person die Verarbeitung im Wesentlichen verstehen kann. Bitte berücksichtigen Sie insbesondere folgende Aspekte: Welche personenbezogenen bzw. anonymen Daten werden ggf. warum verarbeitet? Bitte beachten Sie dabei sowohl organisatorische Aspekte der Studie (z.B. Rekrutierung von Teilnehmenden, Aufwandsentschädigung) als auch die Forschungsdaten selbst. Ziehen Sie alle Daten in Betracht, die konkret von einzelnen Personen im Verlauf des Forschungsprojekts zumindest kurz dokumentiert werden.'
       create:
-        title: 'Wie soll die Datenschutzerklärung für die Studie erstellt werden?'
+        title: >-
+          Wie soll die Datenschutzerklärung für die {addressee, select,
+                                                      children {Erziehungsberechtigten}
+                                                      wards    {gesetzlichen Vertretungspersonen}
+                                                      other    {Teilnehmenden}} erstellt werden?
         types:
           tool: 'Ich möchte die Datenverarbeitung mit Hilfe des Ethiktools abbilden und - falls nötig - eine Datenschutzerklärung gemäß DS-GVO („Anlage zur Datenverarbeitung“) mit Hilfe des Ethiktools erstellen.'
           separate: >-
@@ -2890,7 +2921,7 @@ checkDoc:
           supportCenter: 'Beschreibung der Beratung durch Forschungsdatenmanagement-Servicestelle'
           supportData: 'Beschreibung der Beratung durch Datenschutz-/Informationssicherheitsbeauftragte'
           supportOther: 'Beschreibung anderer Beratungsangebote'
-      guidelines: 'gewünschten Begutachtungsrichtlinien'
+      guidelines: 'verwendeten Ethik-Richtlinien'
     votes:
       otherVote: 'anderem Ethikvotum'
       otherVoteCommittee: 'Damalige Ethikkommission'
@@ -3088,6 +3119,7 @@ checkDoc:
           voluntaryEnsure:
             missing: 'Maßnahmen zur Gewährleistung der Freiwilligkeit' # '[] fehlen.'
             description:
+              discuss: 'Freiwilligkeitsbetonung trotz besonderer Umstände' # 'Beschreibung der [] fehlt.'
               substitute: 'Ersatzbeschäftigung' # 'Beschreibung der [] fehlt.'
               voluntaryEnsureOther: 'sonstigen Maßnahmen' # 'Beschreibung der [] fehlt.'
             further:
@@ -3157,10 +3189,13 @@ checkDoc:
                 wards    {gesetzlichen Vertretungspersonen}
                 other    {Teilnehmenden}} müssen über die Verwendung entscheiden können.
           noInformation: >-
-            Sie haben ausgewählt, dass es <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a> gibt. Das passt nicht dazu, dass die {addressee, select,
-                  children {Erziehungsberechtigten}
-                  wards    {gesetzlichen Vertretungspersonen}
-                  other    {Teilnehmenden}} bei vorzeitigem Abbruch über die Verwendung der Daten entscheiden können.
+            Sie haben ausgewählt, dass es {addressee, select,
+                children {sowohl für die <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">Erziehungsberechtigten</a> als auch für die <a class="linkInternal" href="informationII" data-action="base#setDummySubmit" data-base-url-param="app_informationII" data-base-route-i-ds-param="{routeIDs}">Kinder</a> weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung}
+                wards    {sowohl für die <a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">gesetzlichen Vertretungspersonen</a> als auch für die <a class="linkInternal" href="informationII" data-action="base#setDummySubmit" data-base-url-param="app_informationII" data-base-route-i-ds-param="{routeIDs}">betreuten Personen</a> weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung}
+                other    {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information" data-base-route-i-ds-param="{routeIDs}">weder eine Vorab-Aufklärung noch eine nachträgliche Aufklärung</a>}} gibt. Das passt nicht dazu, dass die {addressee, select,
+                    children {Kinder bzw. Erziehungsberechtigten}
+                    wards    {betreuten Personen bzw. gesetzlichen Vertretungspersonen}
+                    other    {Teilnehmenden}} bei vorzeitigem Abbruch über die Verwendung der Daten entscheiden können.
         terminateCriteria:
           missing: 'Abbruchkriterien'
           description:
@@ -3168,7 +3203,6 @@ checkDoc:
             regulation: 'Sicherheitsbestimmungen'
             terminateCriteriaOther: 'sonstigen Abbruchbedingungen'
       measures:
-        procedure: 'Ablauf'
         measures: # ('[] fehlt.', wo nicht anders angegeben)
           missing: 'Arten von Erhebungsmethoden'
           otherTypes:
@@ -3258,6 +3292,9 @@ checkDoc:
                                         thirdParty {gesetzlichen Vertretungspersonen}
                                         other      {betreuten Personen}}}
                     other    {}} die <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#preAbort" data-base-route-i-ds-param="{routeIDs}">nachträgliche vollständige Aufklärung</a> im persönlichen Kontakt stattfindet, müssen Projektbeteiligte bei der Erhebung anwesend sein.
+#        country:
+#          missing: 'Land, in dem die Daten erhoben werden,' # '[] fehlen.'
+#          foreign: 'Nähere Angaben zur Datenerhebung im Ausland' # '[] fehlt.'
         duration:
           measureTimeDays: 'Anzahl Tage der reinen Erhebungszeit'
           measureTimeHours: 'Anzahl Stunden der reinen Erhebungszeit'
@@ -3429,6 +3466,7 @@ checkDoc:
         pro: 'Vorteile'
         con: 'Nachteile'
         conflictText: 'Aufklärung über Interessenkonflikte'
+        procedure: 'Ablauf'
       informationIII:
         goals: 'Ziele der Studie'
         infoBefore: 'Vorab-Aufklärung'

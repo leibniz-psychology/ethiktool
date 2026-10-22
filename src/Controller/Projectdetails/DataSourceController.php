@@ -81,6 +81,7 @@ class DataSourceController extends ControllerAbstract
                 $this->addChosenNode($measuresNode,self::loanNode);
                 $this->addChosenNode($measuresNode,self::locationNode)->addChild(self::descriptionNode);
                 $this->addChosenNode($measuresNode,self::presenceNode);
+//                $measuresNode->addChild(self::countryNode);
                 $this->addChildNodes($measuresNode->addChild(self::durationNode),self::durationTypes);
                 // burdens/risks
                 $burdensRisksNode = $measureNodeNew->{self::burdensRisksNode};

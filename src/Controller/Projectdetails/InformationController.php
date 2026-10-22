@@ -127,7 +127,7 @@ class InformationController extends ControllerAbstract
                     $this->removeAllChildNodes($textsNode);
                 } elseif (!$isPreOld) {
                     if (!$isPostOld && $isInformation) { // no information at all and now any information -> add intro, goals, pro and con
-                        $this->addChildNodes($textsNode,[self::introNode,self::goalsNode,self::proNode,self::conNode]);
+                        $this->addChildNodes($textsNode,[self::introNode,self::goalsNode,self::procedureNode,self::proNode,self::conNode]);
                         $this->addChildNodes($textsNode->{self::introNode},[self::introTemplate,self::descriptionNode]);
                         $this->addChildNodes($textsNode->{self::proNode},[self::proTemplate,self::descriptionNode]);
                         $this->addChildNodes($textsNode->{self::conNode},[self::conTemplate,self::descriptionNode]);

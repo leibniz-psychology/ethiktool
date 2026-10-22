@@ -42,12 +42,13 @@ trait AppDataTrait
     protected const shortDocsYes = 'yes'; // must equal one value in $shortDocsTypes
     protected const shortDocsNotApplicable = 'notApplicable'; // must equal one value in $shortDocsTypes
     protected const supervisor = 'supervisor';
-    protected const committeeStudent = ['EUB','JGU','DLR','UH1','PHHD','SRH','BICC','UHS']; // committees where position can be 'student'
-    protected const committeeSupervisor = ['EUB','JGU','UH1','PHHD','SRH','BICC','UHS']; // committees where a supervisor must be added if the position is student. Values must equal the values of $committeeStudent
+    protected const committeeStudent = ['EUB','JGU','DLR','UH1','PHHD','SRH','BICC']; // committees where position can be 'student'
+    protected const committeeSupervisor = ['EUB','JGU','UH1','PHHD','SRH','BICC']; // committees where a supervisor must be added if the position is student. Values must equal the values of $committeeStudent
     protected const committeeSupervisorPhD = ['EUB','PHHD','SRH']; // committees where a supervisor must be added if the position is PhD
     protected const committeePhDnoLeaderData = ['PHHD','SRH']; // committee where tasks 'leader' or 'data' can not be selected if the position is PhD
     protected const committeeNoStudent = ['PHHD','SRH']; // committees where the position can be student, but students cannot submit an application, i.e., 'complete form' is always disabled
     protected const committeeSupport = ['TUC','EUB','JGU','DLR','TUD','UH1','UPB','PHHD','SRH','BICC','BTU','HTW','UOL','JHS','HZO','OFFIS','HIFMB','DLRO','IDMT','DFKIO','UHS','testCommittee']; // committees where the support question is asked
+    protected const committeeGuidelines = ['EUB','BICC']; // committees where the guidelines question is asked
     protected const fundingQuali = 'fundingQuali'; // must equal one of the keys in $fundingChoices
     protected const fundingResearchExternal = ['fundingResearch','fundingExternal']; // must equal two keys in $fundingChoices
     protected const fundingTypes = ['fundingQuali' => 'coreData.funding.fundingQuali', 'fundingBudget' => 'coreData.funding.fundingBudget', 'fundingResearch' => 'coreData.funding.fundingResearch', 'fundingExternal' => 'coreData.funding.fundingExternal', 'fundingOther' => 'coreData.funding.fundingOther'];

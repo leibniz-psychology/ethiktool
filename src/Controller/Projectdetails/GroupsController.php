@@ -45,7 +45,21 @@ class GroupsController extends ControllerAbstract
             $hasInformationIIinput = $this->checkInput($measureArray[self::informationIINode],[self::pre => '']);
             $hasConsentInput = $this->checkInput($voluntaryArray,[self::chosen2Node => '']) || $this->checkInput($consentArray[self::consentNode],[self::chosen2Node => '']);
             $addresseeParam = [self::addressee => $this->translateString($thirdPartiesPrefix.$addresseeLoad)];
-            foreach (array_merge($isAttendanceInput ? [self::attendanceNode => ['isAttendance' => 'true', 'isInformationMeasures' => 'false']] : [],$isInformationMeasuresInput ? [self::informationMeasuresNode => ['isAttendance' => 'false', 'isInformationMeasures' => 'true']] : [], $isAttendanceInput && $isInformationMeasuresInput ? ['attendanceMeasures' => ['isAttendance' => 'true', 'isInformationMeasures' => 'true']] : []) as $removeHint => $params) {
+            if (!$isAttendanceInput && ($hasInformationIIinput || $hasConsentInput)) {
+                $inputArray = $this->setInputArray();
+                if ($hasInformationIIinput) {
+                    $this->addInputPage($translationPrefix,self::informationIINode,$inputArray,$participants);
+                }
+                if ($hasConsentInput) {
+                    $this->addInputPage($translationPrefix,'consentGroups',$inputArray,$participants);
+                }
+                $textInput[self::informationIINode] = $this->setInputHint($inputArray);
+            }
+            foreach (array_merge(
+              $isAttendanceInput ? [self::attendanceNode => ['isAttendance' => 'true', 'isInformationMeasures' => 'false']] : [],
+              $isInformationMeasuresInput ? [self::informationMeasuresNode => ['isAttendance' => 'false', 'isInformationMeasures' => 'true']] : [],
+              $isAttendanceInput && $isInformationMeasuresInput ? ['attendanceMeasures' => ['isAttendance' => 'true', 'isInformationMeasures' => 'true']] : [],
+              $isInformationMeasuresInput && $isWards ? ['informationIIMeasures' => ['isAttendance' => 'false', 'isInformationMeasures' => 'true']] : []) as $removeHint => $params) {
                 $inputArray = $this->setInputArray();
                 $this->addInputPage($translationPrefix,self::informationNode,$inputArray,array_merge($addresseeParam,$params));
                 if ($isWards && $removeHint!==self::informationMeasuresNode) {

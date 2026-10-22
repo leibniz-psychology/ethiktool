@@ -24,21 +24,24 @@ class ConsentType extends TypeAbstract
                 $this->addRadioGroup($builder,$type.$curAddressee,$types,$translationPrefix.self::addressee.'.'.($isThirdParty ? $addressee : 'participants'),$isThirdParty ? $type.self::descriptionCap : '', $isThirdParty ? $translationPrefix.$type.'.'.self::textHint : '',self::consentOtherDescription.$curAddressee,options: $this->getPlaceholder($translationPrefix.self::consentNode.'.types.'.self::consentOtherDescription));
             }
         }
+        $information = $options[self::informationNode];
+        $informationParam = [self::informationNode => $information];
         if ($dummyParams['isClosedDependent']) {
             $tempPrefix = $translationPrefix.self::voluntaryNode.'.'.self::voluntaryEnsureNode.'.';
-            $this->addCheckboxGroup($builder,self::voluntaryEnsureTypes,$tempPrefix.'types.',$this->createPrefixArray(self::voluntaryEnsureTypesOther),array_fill_keys(self::voluntaryEnsureTypesOther,$tempPrefix.'placeholder'));
+            $other = array_values(array_diff(self::voluntaryEnsureTypesOther,[self::discuss]));
+            $this->addCheckboxGroup($builder,self::voluntaryEnsureTypes,$tempPrefix.'types.',$this->createPrefixArray($other),array_fill_keys($other,$tempPrefix.'placeholder'));
+            $this->addFormElement($builder,$this->appendText(self::discuss),'text',$this->translateString($tempPrefix.'hints.discuss',$informationParam).' ...');
         }
         // terminate with disadvantages
         $tempPrefix = $translationPrefix.self::terminateConsNode.'.';
         $this->addBinaryRadio($builder,self::terminateConsNode,$tempPrefix.'title',self::terminateConsNode.self::descriptionCap,$tempPrefix.self::textHint,options: [self::labelParams => [self::addressee => $this->translateString('projectdetails.addressee.'.($isNotParticipants ? ($dummyParams['isAttendance'] ? 'both' : 'participants') : 'thirdParties').'.'.$addressee)]]);
-        $information = $options[self::informationNode];
         if ($information===self::pre) {
             $this->addFormElement($builder,self::terminateConsParticipationNode,'textarea',hint: $translationPrefix.self::terminateConsNode.'.participation');
         }
         // termination by participants
         if ($dummyParams['hasTerminateParticipants']) { // terminate by participants may not be asked even if the review process says so
             $tempPrefix = $translationPrefix.self::terminateParticipantsNode.'.';
-            $this->addRadioGroup($builder,self::terminateParticipantsNode,self::terminateParticipantsTypes,$tempPrefix.'title',$this->appendText(self::terminateParticipantsNode),$tempPrefix.self::textHint,options: [self::labelParams => [self::informationNode => $information]]);
+            $this->addRadioGroup($builder,self::terminateParticipantsNode,self::terminateParticipantsTypes,$tempPrefix.'title',$this->appendText(self::terminateParticipantsNode),$tempPrefix.self::textHint,options: [self::labelParams => $informationParam]);
         }
         // termination criteria
         $tempPrefix = $translationPrefix.self::terminateCriteriaNode.'.';

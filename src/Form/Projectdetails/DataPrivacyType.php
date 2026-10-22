@@ -20,7 +20,7 @@ class DataPrivacyType extends TypeAbstract
         $this->addFormElement($builder,self::processingNode,'textarea',$tempPrefix.'title',hint: $tempPrefix.self::textHint);
         // create
         $tempPrefix = $translationPrefix.self::createNode.'.';
-        $this->addRadioGroup($builder,self::createNode,self::createTypes,$tempPrefix.'title');
+        $this->addRadioGroup($builder,self::createNode,self::createTypes,$tempPrefix.'title',options: [self::labelParams => [self::addressee => $options[self::addresseeType]]]);
         $this->addBinaryRadio($builder,self::addOwnNode,$translationPrefix.self::addOwnNode);
         $this->addRadioGroup($builder,self::createVerificationNode,self::verificationTypes,$tempPrefix.self::createVerificationNode.'.title');
         // confirm

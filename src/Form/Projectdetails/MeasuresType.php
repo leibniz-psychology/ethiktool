@@ -14,8 +14,6 @@ class MeasuresType extends TypeAbstract
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $translationPrefix = 'projectdetails.pages.measures.';
-        // procedure
-        $this->addFormElement($builder,self::procedureNode,'textarea',$translationPrefix.self::procedureNode.'.title');
         $measuresInterventionsPrefix = $translationPrefix.'measuresInterventions.';
         $placeholderPrefix = $measuresInterventionsPrefix.'placeholder.';
         $documentationPrefix = $measuresInterventionsPrefix.self::measuresNode.'.'.self::measuresDocumentation.'.';
@@ -51,6 +49,9 @@ class MeasuresType extends TypeAbstract
         // presence
         $tempPrefix = $translationPrefix.self::presenceNode.'.';
         $this->addRadioGroup($builder,self::presenceNode,self::presenceTypes,$tempPrefix.'title',self::presenceNode.self::descriptionCap,$tempPrefix.self::textHint);
+//        // country
+//        $tempPrefix = $translationPrefix.self::countryNode.'.';
+//        $this->addCheckboxGroup($builder,self::countryTypes,$tempPrefix.'types.',textareaName: self::countryForeign.self::descriptionCap,textareaTextHint: $tempPrefix.self::textHint);
         // durations
         foreach (self::durationTypes as $duration) {
             $this->addFormElement($builder,$duration,'spinner',options: $this->setMinMax(0,self::durationMax[$duration]));
@@ -64,10 +65,6 @@ class MeasuresType extends TypeAbstract
     public function mapDataToForms(mixed $viewData, Traversable $forms): void
     {
         $forms = iterator_to_array($forms);
-        // procedure
-        if (array_key_exists(self::procedureNode,$forms)) {
-            $forms[self::procedureNode]->setData($viewData[self::procedureNode]);
-        }
         // measures and interventions
         foreach ([self::measuresNode,self::interventionsNode] as $type) {
             $this->setSelectedCheckboxesMultiLevel($forms,$viewData[$type]);
@@ -102,9 +99,11 @@ class MeasuresType extends TypeAbstract
         // location
         $this->setChosenArray($forms,$viewData,self::locationNode,[self::descriptionNode => self::locationNode.self::descriptionCap]);
         // presence
-        if (array_key_exists(self::presenceNode,$forms)) {
-            $this->setChosenArray($forms,$viewData,self::presenceNode,[self::descriptionNode => self::presenceNode.self::descriptionCap]);
-        }
+        $this->setChosenArray($forms,$viewData,self::presenceNode,[self::descriptionNode => self::presenceNode.self::descriptionCap]);
+//        // country
+//        if (array_key_exists(self::countryForeign,$forms)) {
+//            $this->setSelectedCheckboxes($forms,$viewData[self::countryNode],[self::countryForeign => self::countryForeign.self::descriptionCap]);
+//        }
         // durations
         $tempArray = $viewData[self::durationNode];
         $this->setSpinner($forms,$tempArray,self::durationTypes);
@@ -114,14 +113,9 @@ class MeasuresType extends TypeAbstract
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
     {
         $forms = iterator_to_array($forms);
-        $newData = [];
-        // procedure
-        if (array_key_exists(self::procedureNode,$forms)) {
-            $newData[self::procedureNode] = $forms[self::procedureNode]->getData();
-        }
         // measures
         $measures = $this->getSelectedCheckboxesMultiLevel($forms,self::measuresInterventionsTypesAll[self::measuresNode],self::measuresInterventionsOther[self::measuresNode]);
-        $newData[self::measuresNode] = $measures;
+        $newData = [self::measuresNode => $measures];
         $tempArray = [];
         foreach (self::measuresDocumentationTypes as $documentation => $options) { // documentation
             if (array_key_exists($documentation,$measures)) {
@@ -178,9 +172,11 @@ class MeasuresType extends TypeAbstract
             $newData[self::locationNode] = $this->getChosenArray($forms,self::locationNode,self::locationTypes,[self::descriptionNode => self::locationNode.self::descriptionCap]);
         }
         // presence
-        if (array_key_exists(self::presenceNode,$forms)) {
-            $newData[self::presenceNode] = $this->getChosenArray($forms,self::presenceNode,self::presencePartly,[self::descriptionNode => self::presenceNode.self::descriptionCap]);
-        }
+        $newData[self::presenceNode] = $this->getChosenArray($forms,self::presenceNode,self::presencePartly,[self::descriptionNode => self::presenceNode.self::descriptionCap]);
+//        // country
+//        if (array_key_exists(self::countryForeign,$forms)) {
+//            $newData[self::countryNode] = $this->getSelectedCheckboxes($forms,self::countryTypes,[self::countryForeign => self::countryForeign.self::descriptionCap]);
+//        }
         // durations
         $tempArray = [];
         $days = $forms[self::durationMeasureTimeDays]->getData();

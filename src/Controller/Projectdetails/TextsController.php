@@ -32,7 +32,8 @@ class TextsController extends ControllerAbstract
         $isNotInformationNoConsent = !in_array($information,self::prePostArray,true) || $measureArray[self::consentNode][self::consentNode][self::chosen]!==self::voluntaryConsentNo;
 
         return $this->createFormAndHandleSubmit(TextsType::class,$request,[self::textsNode],
-            ['maxCharsIntroGoals' => 800,
+            ['maxCharsProcedure' => 1000,
+             'maxCharsIntroGoals' => 800,
              'maxCharsProCon' => 500,
              'maxCharsConflict' => 500,
              'introTemplateText' => $this->translateString('projectdetails.pages.'.self::textsNode.'.'.self::introNode.($isNotInformationNoConsent ? '.template' : '.noTemplate'),array_merge($addresseeParam,[self::informationNode => $information, self::projectTitle => $this->getProjectTitleParticipants($request->getSession()), self::routeIDs => $this->createRouteIDs([self::studyNode => $routeParams[self::studyID], self::groupNode => $routeParams[self::groupID], self::measureTimePointNode => $routeParams[self::measureID]])])),

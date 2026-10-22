@@ -2,8 +2,8 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set translationPrefix, burdensRisks = 'projectdetails.pages.texts.', isBurdens or isRisks %}
-    {% set introTemplate, introHint, isTransfer, transferResizeArray = 'introTemplateText', 'introHint', transferInfo is not same as [], {'transfer': [transferInfo,addresseeType]} %}
+    {% set translationPrefix, burdensRisks, multipleParam = 'projectdetails.pages.texts.', isBurdens or isRisks, {'multiple': boolToString(multipleStudyGroupMeasure)} %}
+    {% set introTemplate, introHint, isTransfer, transferArray = 'introTemplateText', 'introHint', transferInfo is not same as [], {'transfer': [transferInfo,addresseeType]} %}
     <div>
         <div class="borderHint">{{ (translationPrefix~'hint')|trans|raw }}</div>
         {# intro and goals #}
@@ -21,15 +21,19 @@
                         <div class="template mb-1">{{ introTemplateText|raw }}</div>
                     </div> {# intro template containts project title #}
                 {% endif %}
-                {{ formRender.addCountableTextfield(widget,maxCharsIntroGoals,transferResizeArray|merge(not isIntro ? {'hint': [[translationPrefix~type~'.'~headingHint,{'multiple': boolToString(multipleStudyGroupMeasure)}]]} : {'template': template, 'templateClass' : true, 'visible': not isIntroTemplatePre, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,introTemplate,isNotInformationNoConsent ? [name~'Div',name~'Count',introHint]|merge(isTransfer ? [name~'PDF'] : []) : []]], 'isGrid': true}]})) }}
+                {{ formRender.addCountableTextfield(widget,maxCharsIntroGoals,transferArray|merge(not isIntro ? {'hint': [[translationPrefix~type~'.'~headingHint,multipleParam]]} : {'template': template, 'templateClass' : true, 'visible': not isIntroTemplatePre, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,introTemplate,isNotInformationNoConsent ? [name~'Div',name~'Count',introHint]|merge(isTransfer ? [name~'PDF'] : []) : []]], 'isGrid': true}]})) }}
             </div>
         {% endfor %}
         {# conflict text #}
         {% if content.conflictText is defined %}
             <div class="mt-8" id="conflict">
-                {{ formRender.addCountableTextfield(content.conflictText,maxCharsConflict,transferResizeArray|merge({'hint': [[translationPrefix~'conflictText.headingHint']]})) }}
+                {{ formRender.addCountableTextfield(content.conflictText,maxCharsConflict,transferArray|merge({'hint': [[translationPrefix~'conflictText.headingHint']]})) }}
             </div>
         {% endif %}
+        {# procedure #}
+        <div class="mt-8" id="procedure">
+            {{ formRender.addCountableTextfield(content.procedure,maxCharsProcedure,transferArray|merge({'hint': [[(translationPrefix~'procedure.'~headingHint)|trans(multipleParam)]]})) }}
+        </div>
         {# pro and con #}
         {% set templatePrefix = translationPrefix~'pro.template.' %}
         {% for type in ['pro', 'con'] %}
@@ -55,7 +59,7 @@
                         <div class="template mb-1">{{ conTemplateText|raw }}</div>
                     {% endif %}
                 </div>
-                {{ formRender.addCountableTextfield(widget,maxCharsProCon,transferResizeArray|merge({'visible': isProBurdensRisks or not isTemplate, 'template': content[type~'Template'], 'templateClass': true, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,[templateDiv]|merge(isPro ? [proEnd] : []), not isProBurdensRisks ? [name~'Div',name~'Count']|merge(isTransfer ? [name~'PDF'] : []) : []]], 'isGrid': true}]})) }}
+                {{ formRender.addCountableTextfield(widget,maxCharsProCon,transferArray|merge({'visible': isProBurdensRisks or not isTemplate, 'template': content[type~'Template'], 'templateClass': true, 'stim': ['base','setVisibility',{'multi': [[templateVars.name,[templateDiv]|merge(isPro ? [proEnd] : []), not isProBurdensRisks ? [name~'Div',name~'Count']|merge(isTransfer ? [name~'PDF'] : []) : []]], 'isGrid': true}]})) }}
                 {% if isPro %}
                     <div id="{{ proEnd }}" class="template" style="{{ visible }}">{{ proTemplateEnd }}</div>
                 {% endif %}

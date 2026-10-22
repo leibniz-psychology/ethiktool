@@ -39,7 +39,8 @@ class DataPrivacyController extends ControllerAbstract
             // marking question
             $tempPrefix = $translationPrefix.'hints.';
             $tempArray = [];
-            $addresseeTypeParam = [self::addressee => $this->getAddresseeFromRequest($request)];
+            $addresseeType = $this->getAddresseeFromRequest($request);
+            $addresseeTypeParam = [self::addressee => $addresseeType];
             foreach ([self::markingConsecutive, self::markingExternal, self::markingInternal, self::markingNo] as $type) { // external
                 $tempArray[$type] = $this->translateString($tempPrefix.$type, $addresseeTypeParam);
             }
@@ -213,7 +214,7 @@ class DataPrivacyController extends ControllerAbstract
             }
         } // if create node exists
 
-        $dataPrivacy = $this->createFormAndHandleRequest(DataPrivacyType::class,$this->xmlToArray($privacyNode),$request, $hasCreate ? [self::dummyParams => ['isCompensationCode' => $this->checkCompensationAwarding($compensationArray), 'isOnline' => $isOnline]] : []);
+        $dataPrivacy = $this->createFormAndHandleRequest(DataPrivacyType::class,$this->xmlToArray($privacyNode),$request, $hasCreate ? [self::addresseeType => $addresseeType, self::dummyParams => ['isCompensationCode' => $this->checkCompensationAwarding($compensationArray), 'isOnline' => $isOnline]] : []);
         if ($dataPrivacy->isSubmitted()) {
             $privacy = $this->getPrivacyReuse($this->getDataAndConvert($dataPrivacy, $privacyNode));
             if ($hasCreate) {

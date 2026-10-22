@@ -1086,7 +1086,7 @@ class CheckDocClass extends ControllerAbstract
           if (!in_array($terminate,['','remove','choose'],true) && $this->noPre && in_array($this->consentAddressee,self::consentTypesAll,true)) { // no pre information and consent is given -> data must either be deleted or participants must choose whether to delete or keep
               $this->addCheckLabelString($tempPrefix.self::informationNode,parameters: array_merge($this->paramsAddressee,$this->routeIDs));
           }
-          if ($this->noPost && $terminate==='choose') { // neither pre nor post information -> participants can not choose whether to delete or keep the data
+          if ($this->noPost && (!$this->isInformationII || $this->noPostParticipants) && $terminate==='choose') { // neither pre nor post information -> participants (and legal guardians) can not choose whether to delete or keep the data
             $this->addCheckLabelString($tempPrefix.'noInformation',parameters: $addresseeRouteParams);
           }
         }
@@ -1106,10 +1106,6 @@ class CheckDocClass extends ControllerAbstract
         $this->addProjectdetailsTitle(self::measuresNode,$setTitle);
         $pageArray = $this->measure[self::measuresNode];
         $translationPage = self::projectdetailsPrefix.self::measuresNode.'.';
-        // procedure
-        if (array_key_exists(self::procedureNode,$pageArray)) {
-            $this->checkMissingContent($pageArray,[self::procedureNode => $translationPage.self::procedureNode]);
-        }
         // measures and interventions
         foreach ([self::measuresNode,self::interventionsNode] as $type) {
             $typePrefix = $translationPage.$type.'.';
@@ -1171,23 +1167,26 @@ class CheckDocClass extends ControllerAbstract
             }
         }
         // presence
-        if (array_key_exists(self::presenceNode,$pageArray)) {
-            $tempPrefix = $translationPage.self::presenceNode.'.';
-            $terminateCriteria = $this->measure[self::consentNode][self::terminateCriteriaNode] ?? '';
-            $presence = $this->checkMissingTextfield($pageArray[self::presenceNode],null,self::presencePartly,$tempPrefix.'missing',self::presenceNode,$tempPrefix.self::descriptionNode,addDescription: true);
-            if ($presence===self::presenceNo) {
-                if (($this->isTwoAddressees ? $this->measure[self::consentNode][self::consentNode][self::chosen2Node] : $this->consentAddressee)===self::consentOral) { // oral consent -> contributors must be present
-                    $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->routeIDs);
-                }
-                foreach ($preAbortArray as $type => $chosen) {
-                    if ($chosen==='abortContact') { // pre abort in person -> contributors must be present
-                        $this->addCheckLabelString($tempPrefix.self::preAbort, parameters: $type===self::informationNode ? $this->paramsAddressee : $this->paramsParticipants);
-                    }
-                }
-            } elseif ($presence==='yes' && $terminateCriteria!=='' && array_key_exists(self::presenceNode,$terminateCriteria)) { // termination by project contributors not possible because not or only temporarily present -> presence must not be 'yes'
-                $this->addCheckLabelString($tempPrefix.self::terminateCriteriaNode,parameters: $this->paramsAddressee);
+        $tempPrefix = $translationPage.self::presenceNode.'.';
+        $terminateCriteria = $this->measure[self::consentNode][self::terminateCriteriaNode] ?? '';
+        $presence = $this->checkMissingTextfield($pageArray[self::presenceNode],null,self::presencePartly,$tempPrefix.'missing',self::presenceNode,$tempPrefix.self::descriptionNode,addDescription: true);
+        if ($presence===self::presenceNo) {
+            if (($this->isTwoAddressees ? $this->measure[self::consentNode][self::consentNode][self::chosen2Node] : $this->consentAddressee)===self::consentOral) { // oral consent -> contributors must be present
+                $this->addCheckLabelString($tempPrefix.self::consentNode,parameters: $this->routeIDs);
             }
+            foreach ($preAbortArray as $type => $chosen) {
+                if ($chosen==='abortContact') { // pre abort in person -> contributors must be present
+                    $this->addCheckLabelString($tempPrefix.self::preAbort, parameters: $type===self::informationNode ? $this->paramsAddressee : $this->paramsParticipants);
+                }
+            }
+        } elseif ($presence==='yes' && $terminateCriteria!=='' && array_key_exists(self::presenceNode,$terminateCriteria)) { // termination by project contributors not possible because not or only temporarily present -> presence must not be 'yes'
+            $this->addCheckLabelString($tempPrefix.self::terminateCriteriaNode,parameters: $this->paramsAddressee);
         }
+//        // country
+//        if (array_key_exists(self::countryNode,$pageArray)) {
+//            $tempPrefix = $translationPage.self::countryNode.'.';
+//            $this->checkMissingChildrenOther($pageArray,self::countryNode,$tempPrefix.'missing',[self::countryForeign => $tempPrefix.self::countryForeign], addDescription: false);
+//        }
         // durations
         $tempPrefix = $translationPage.self::durationNode.'.';
         $tempArray = $pageArray[self::durationNode];
@@ -1279,8 +1278,8 @@ class CheckDocClass extends ControllerAbstract
                             if (in_array('vr',$interventions) && !in_array('risksMotion',$selections)) { // 'vr' in interventions -> 'simulator/motion sickness' in risks
                                 $this->addCheckLabelString($tempPrefix.'risksMotion',parameters: $this->paramsAddressee);
                             }
-                            if (array_key_exists('measuresMRT',$measures['measuresInstrumental']['measuresBrain'] ?? []) && !in_array('risksIncidental',$selections)) { // '(f)MRI' in measures -> 'incidental findings' in risks
-                                $this->addCheckLabelString($tempPrefix.'risksIncidental',parameters: $this->paramsAddressee);
+                            if (array_key_exists('measuresMRT',$measures['measuresInstrumental']['measuresBrain'] ?? []) && !in_array(self::risksIncidental,$selections)) { // '(f)MRI' in measures -> 'incidental findings' in risks
+                                $this->addCheckLabelString($tempPrefix.self::risksIncidental,parameters: $this->paramsAddressee);
                             }
                             if (($measuresFurtherArray[self::screeningNode] ?? '')==='0' && !in_array('risksSuspicion',$selections)) { // screening questionnaire in measures -> 'suspicion' in risks
                                 $this->addCheckLabelString($tempPrefix.'risksSuspicion',parameters: $this->paramsAddressee);
@@ -1306,7 +1305,7 @@ class CheckDocClass extends ControllerAbstract
                                 }
                             }
                         }
-                        if ($isNotNo) {
+                        if (array_key_exists(self::risksOccurrenceNode,$typeArray)) {
                             // risks occurrence
                             $tempArray = $typeArray[self::risksOccurrenceNode];
                             $risksOccurrence = $tempArray[self::risksOccurrenceNode.'Type'];
@@ -1506,6 +1505,8 @@ class CheckDocClass extends ControllerAbstract
             if (array_key_exists(self::conflictTextNode,$pageArray)) {
                 $this->checkMissingContent($pageArray,[self::conflictTextNode => $translationPage.self::conflictTextNode],hash: self::conflictNode);
             }
+            // procedure
+            $this->checkMissingContent($pageArray,[self::procedureNode => $translationPage.self::procedureNode]);
             // pro
             $tempArray = $pageArray[self::proNode];
             $this->checkMissingContent($tempArray,[$this->getBoolFromString($tempArray[self::proTemplate]) ? self::proTemplateText : self::descriptionNode => $translationPage.'pro'],true,hash: self::proNode);

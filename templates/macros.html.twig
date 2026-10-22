@@ -88,6 +88,8 @@
        Input arguments in the 'arguments' array:
        other:         if provided, IDs of buttons whose selection sets the visibility of a text field. The IDs of the text fields must be the IDs of the buttons suffixed by 'Text'.
        transferOther: if provided, an array of two elements: the array for adding the symbol for showing that the input is transferred to some automatically created PDFs and the addressee
+       otherExclude:  if 'other' and 'transferOther' are not empty, IDs of buttons whose text fields will not get a pdf symbol
+       otherLabel:    if 'other' is provided, IDs of buttons whose text hint is placed above the text field. The text hint must be specified as the label of the corresponding checkbox
        icons:         if provided, an array for icons that are added to individual buttons. keys: IDs of buttons where the icons are added, values: translation keys for the icons.
        targets:       if provided, an array of IDs. Each widget in this array will be passed as a 'disableLoad' target to the base controller.
        contTargets:   if provided, an associative array. Keys: IDs of buttons, values: arrays of two elements: stimulus controller and target name
@@ -97,7 +99,7 @@
                         2: classes for the div. The class 'MetaData-Widget' is additionally added
        labelParams:   if provided, parameters for the label translations. May also be used for translating icons
     #}
-    {% set other, transferOther, icons, targets, contTargets, addDiv, labelParams = arguments.other ?? [], arguments.transferOther ?? [''], arguments.icons ?? {}, arguments.targets ?? [], arguments.contTargets ?? {}, arguments.addDiv ?? [], arguments.labelParams ?? {} %}
+    {% set other, transferOther, otherExclude, otherLabel, icons, targets, contTargets, addDiv, labelParams = arguments.other ?? [], arguments.transferOther ?? [''], arguments.otherExclude ?? [], arguments.otherLabel ?? [], arguments.icons ?? {}, arguments.targets ?? [], arguments.contTargets ?? {}, arguments.addDiv ?? [], arguments.labelParams ?? {} %}
     {% set iconIDs, isAddDiv, isTransferOther = icons|keys, addDiv is not same as [], transferOther[0] is not same as '' %}
     {% set divID, divStyle = addDiv[0] ?? '', addDiv[1] ?? '' %}
     {% if isAddDiv %}
@@ -115,9 +117,13 @@
                 merge(isIcon ? {'checkIcon': [icons[id]|trans(labelParams)]} : {})) }}
         </div>
         {% if isOther %}
-            <div class="MetaData-Widget mb-1 grid" id="{{ form[id~'Text'].vars.name }}" style="grid-template-columns: auto {% if isTransferOther %} min-content {% endif %}; {{ boolToDisplay(form[id].vars.checked,1) }}">
-                {{ form_widget(form[id~'Text'],addClass(isTransferOther ? 'markInput',true)) }}
-                {% if isTransferOther %}
+            {% set isPDF = isTransferOther and id not in otherExclude %}
+            <div class="MetaData-Widget mb-1 grid" id="{{ form[id~'Text'].vars.name }}" style="grid-template-columns: auto {% if isPDF %} min-content {% endif %}; {{ boolToDisplay(form[id].vars.checked,1) }}">
+                {% if id in otherLabel %}
+                    {{ form_label(form[id~'Text'],null,addLabelAttributes(addClass('hint',false,isTransferOther ? 'grid-column: span 2'))) }}
+                {% endif %}
+                {{ form_widget(form[id~'Text'],addClass(isPDF ? 'markInput',true)) }}
+                {% if isPDF %}
                     {{ _self.addPDFhint(transferOther[0],transferOther[1] ?? '') }}
                 {% endif %}
             </div>
@@ -325,7 +331,7 @@
             merge((arguments.checked ?? false) ? {'checked': true} : {})}))) }}
     <label class="CheckBox-Label d-inline-flex" style="flex-wrap: nowrap; {{ arguments.style ?? '' }}" for="{{ widgetName }}">
         <span class="flex">
-            {{ vars.label|trans(arguments.labelParams ?? {}) }}
+            {{ vars.label|trans(arguments.labelParams ?? {})|raw }}
             {% if checkIcon is not same as [] %}
                 {{ _self.addIcon(checkIcon[0], checkIcon[1] ?? []) }}
             {% endif %}

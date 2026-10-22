@@ -78,7 +78,6 @@ trait ReviewProcessTrait
         ], // consent
         // measures
         'measures' => [
-            'procedure' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'measures' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresFurther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresDescription' => ['fullBegun','fullRequested','fullDocs'],
@@ -90,6 +89,7 @@ trait ReviewProcessTrait
             'loan' => ['shortDocs','shortService','fullDocs'],
             'location' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'presence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+//            'country' => ['fullBegun','fullRequested','fullDocs'],
             'duration' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
         ], // measures
         // burdensRisks
@@ -124,6 +124,7 @@ trait ReviewProcessTrait
             'intro' => ['shortDocs','shortService','fullDocs'],
             'goals' => ['shortDocs','shortService','fullDocs'],
             'conflictText' => ['shortDocs','shortService','fullDocs'],
+            'procedure' => ['shortDocs','shortService','fullDocs'],
             'pro' => ['shortDocs','shortService','fullDocs'],
             'con' => ['shortDocs','shortService','fullDocs'],
             'findingText' => ['shortDocs','shortService','fullDocs']
@@ -361,6 +362,7 @@ trait ReviewProcessTrait
             'relatable' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'absence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'discuss' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'discussText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'roleConflict' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'onetime' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'substitute' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -395,7 +397,6 @@ trait ReviewProcessTrait
         ], // consent
         // measures
         'measures' => [
-            'procedure' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'measuresObservation' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresObservationText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measuresInterview' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -522,6 +523,9 @@ trait ReviewProcessTrait
             'locationDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'presence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'presenceDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+//            'domestic' => ['fullBegun','fullRequested','fullDocs'],
+//            'foreign' => ['fullBegun','fullRequested','fullDocs'],
+//            'foreignDescription' => ['fullBegun','fullRequested','fullDocs'],
             'measureTimeDays' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measureTimeHours' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measureTimeMinutes' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -648,6 +652,7 @@ trait ReviewProcessTrait
             'burdensRisksUninvolvedPhysical' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'represent' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'institution' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'social' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'burdensRisksUninvolvedOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'burdensRisksUninvolvedOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'burdensRisksUninvolvedDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -722,6 +727,7 @@ trait ReviewProcessTrait
             'goals' => ['shortDocs','shortService','fullDocs'],
             'conflictText' => ['shortDocs','shortService','fullDocs'],
             'conflictTextTemplate' => ['shortDocs','shortService','fullDocs'],
+            'procedure' => ['shortDocs','shortService','fullDocs'],
             'pro' => ['shortDocs','shortService','fullDocs'],
             'proTemplate' => ['shortDocs','shortService','fullDocs'],
             'proTemplateText' => ['shortDocs','shortService','fullDocs'],
@@ -1174,6 +1180,7 @@ trait ReviewProcessTrait
             'intro' => [[['information','pre'],['information','post','chosen']],['0','0'],['introTemplate','description'],true],
             'goals' => [[['information','pre'],['information','post','chosen']],['0','0'],[],true],
             'conflictText' => [['dummy'],''], // dummy to avoid creating the node
+            'procedure' => [[['information','pre'],['information','post','chosen']],['0','0'],[],true],
             'pro' => [[['information','pre'],['information','post','chosen']],['0','0'],['proTemplate','description'],true],
             'con' => [[['information','pre'],['information','post','chosen']],['0','0'],['conTemplate','description'],true],
             'findingText' => [[['information','pre'],['information','post','chosen']],['0','0'],['findingTextTemplate','description'],true] // may be removed again if finding is not answered with 'yes'

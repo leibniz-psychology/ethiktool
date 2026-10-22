@@ -5,7 +5,7 @@
     {% set translationPrefix, measuresController, location = 'projectdetails.pages.measures.', 'Projectdetails--measures', content.location ?? '' %}
     {% set measuresInterventionsPrefix, interventionsTypes, locationPrefix, locationValue = translationPrefix~'measuresInterventions.', measuresInterventionsTypes['interventions'], translationPrefix~'location.', location.vars.value ?? '' %}
     {% set measuresHintPrefix, hintsPrefix, isInformation = measuresInterventionsPrefix~'measures.textHints.', measuresInterventionsPrefix~'hints.', information in ['pre','post',''] %}
-    {% set measuresSentence, anyIntervention, multipleParam, transferParam = (measuresHintPrefix~'description')|trans, getAnySelected(content,interventionsTypes,'noIntervention'), {'multiple': boolToString(multipleStudyGroupMeasure)}, {'transfer': [transferInfo,addresseeType]} %}
+    {% set measuresSentence, anyIntervention, transferParam = (measuresHintPrefix~'description')|trans, getAnySelected(content,interventionsTypes,'noIntervention'), {'transfer': [transferInfo,addresseeType]} %}
     <div {{ stimulus_controller(measuresController,{
             'measuresTypes': measuresInterventionsTypes['measures'],
             'measuresBodyTypes': measuresBodyTypes,
@@ -14,16 +14,10 @@
             'location': locationValue,
             'locationInput': textInputs|slice(1)
     }) }}>
-        {# procedure #}
-        {% if content.procedure is defined %}
-            <div id="procedure">
-                {{ formRender.addCountableTextfield(content.procedure,maxCharsProcedure,{'hint': [[(translationPrefix~'procedure.'~headingHint)|trans(multipleParam)~(isInformation ? ' '~('multiple.wording')|trans({'addressee': addresseeString, 'isBold': 'true'}))]]}|merge(isInformation ? {'transfer': [isInformation ? transferInfo : [''],'']} : {})) }}
-            </div>
-        {% endif %}
         {# measures and interventions #}
         {% for type in ['measures','interventions'] %}
             {% set typePrefix, isInterventions, description, params, pdf = measuresInterventionsPrefix~type~'.', type is same as 'interventions', type~'Description', {'type': type}, content[type~'PDF'] ?? '' %}
-            <div class="mt-8" id="{{ type }}">
+            <div {% if isInterventions %} class="mt-8" {% endif %} id="{{ type }}">
                 {{ formRender.addHeading(measuresInterventionsPrefix~'title',{'params': params, 'headingHint': [[typePrefix~'headingHint',routeIDsParam]]}) }}
                 <div class="MetaData-Widget" {{ stimulus_action(measuresController,'setMeasuresInterventions','change',params) }}>
                     {{ _self.addMeasuresInterventions(content,measuresInterventionsTypesAll[type],measuresInterventionsOther[type],measuresInterventionsIcons[type],documentationTypes,measuresController,isInterventions and anyIntervention[0], isInterventions and anyIntervention[1]) }}
@@ -103,18 +97,27 @@
             </div>
         {% endif %}
         {# presence #}
-        {% if content.presence is defined %}
-            {% set presence = content.presence %}
-            {{ formRender.renderButtons(presence,{
-                'hint': [translationPrefix~'presence.'],
-                'stimVisible': {'values': [['partly','presenceDescriptionDiv']]},
-                'text': [content.presenceDescription,fontNormal|merge({'visibility': presence.vars.value is same as 'partly'})],
-                'addDiv': ['presence']}) }}
-        {% endif %}
+        {% set presence = content.presence %}
+        {{ formRender.renderButtons(presence,{
+            'hint': [translationPrefix~'presence.'],
+            'stimVisible': {'values': [['partly','presenceDescriptionDiv']]},
+            'text': [content.presenceDescription,fontNormal|merge({'visibility': presence.vars.value is same as 'partly'})],
+            'addDiv': ['presence']}) }}
+        {# country #}
+{#        {% if content.foreign is defined %}#}
+{#            {% set tempPrefix = translationPrefix~'country.' %}#}
+{#            <div class="mt-8" id="country">#}
+{#                {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}#}
+{#                <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [['foreign','foreignDescriptionDiv']]}) }}>#}
+{#                    {{ formRender.addCheckboxGroup(content,countryTypes) }}#}
+{#                </div>#}
+{#                {{ formRender.addTextfield(content.foreignDescription,fontNormal|merge({'visibility': content.foreign.vars.checked})) }}#}
+{#            </div>#}
+{#        {% endif %}#}
         {# duration #}
         {% set durationPrefix, hasInput = translationPrefix~'duration.', textInputCompensation is not same as '' %}
         <div class="mt-8" id="duration" {{ stimulus_action(measuresController,'setDuration','change') }}>
-            {{ formRender.addHeading(durationPrefix~'title',{'params': multipleParam}) }}
+            {{ formRender.addHeading(durationPrefix~'title',{'params': {'multiple': boolToString(multipleStudyGroupMeasure)}}) }}
             {% for duration in ['measureTime','breaks'] %}
                 {% set isBreaks = duration is same as 'breaks' %}
                 <span {% if isBreaks %} {{ stimulus_target(measuresController,'duration') }} {% endif %}>

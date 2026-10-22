@@ -52,7 +52,11 @@ paragraphHeadings:
 boxHeadings: # key: heading of the box. keySub: sub heading inside the box if additional inputs may be necessary
   coreData:
     appType: 'Type of proposal'
-    appTypeSub: 'The vote shall refer to an ethics assessment according to the following guidelines:'
+    appTypeSub: >-
+      {committeeType, select,
+        EUB   {The planning of the research project is based on the following ethics guidelines:}
+        BICC  {The planning of the research project is based on the following ethics guidelines:}
+        other {}}
     projectTitle: 'Title of the research project'
     applicant: 'Applicant'
     projectDates: 'Planned duration of the project'
@@ -183,7 +187,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     interventionsSub: 'Description of the measures/interventions:'
     otherSources: 'Will individually traceable data from other sources be added?'
     presence: 'Are project contributors present during data collection?'
-    presenceSub: 'Description of temporary presence:'
+#    presenceSub: 'In which country will the data be collected?'
     burdens: 'Which demanding, inconvenient or otherwise significant aspects does participation inevitably entail?'
     burdensSub: 'Description of the burdens:'
     risks: 'Which unintended consequences (risks, hazards) might participation entail?'
@@ -194,7 +198,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     burdensRisksContributors: 'Which burdens or risks are project contributors exposed to?'
     burdensRisksContributorsSub: 'Description of burdens/risks:'
     burdensRisksContributorsCompensation: 'Are precautionary measures or compensations planned for the burdens/risks mentioned above?'
-    burdensRisksUninvolved: 'Which burdens or risks are uninvolved third parties exposed to?'
+    burdensRisksUninvolved: 'Which burdens or risks may result for uninvolved third parties?'
     burdensRisksUninvolvedSub: 'Description of burdens/risks:'
     burdensRisksUninvolvedCompensation: 'Are precautionary measures or compensations planned for the burdens/risks mentioned above?'
     feedback: 'Do participants receive feedback on their individual test results?'
@@ -522,11 +526,11 @@ projectdetails:
         types:
           relatable: 'Nobody can retrace who actually participated.'
           absence: 'Participation takes place in the absence of the person with whom the dependent relationship or role conflict exists.'
-          discuss: 'Voluntariness is transparently addressed; this includes explicit confirmation that, despite the special circumstances, no (dis)advantages result from deciding for/against the study.'
+          discuss: 'Voluntariness is transparently addressed; this includes explicit confirmation that, despite the special circumstances, no (dis)advantages result from deciding for or against study participation.'
           roleConflict: 'Dual roles of the project contributors are made transparent during study information.'
           onetime: 'The study is advertised only once and with at most one brief reminder.'
           substitute: 'Non-participating group members are offered an adequate alternative activity, namely: {description}'
-          independent: 'The decision of each group member for/against the study is not affected by the decision of other group members.'
+          independent: 'The decision of each group member for or against study participation is not affected by the decision of other group members.'
           voluntaryEnsureOther: 'the following measures: {description}'
       no: "Justification on how and why voluntariness is not guaranteed:\n"
     consent: >-
@@ -582,6 +586,9 @@ projectdetails:
         measures {Description of the methods:
                                                        }
         other    {}}{description}
+#    country:
+#      domestic: 'domestic'
+#      foreign: 'abroad: {description}'
   burdensRisks:
     burdens:
       burdensEveryday: >-
@@ -967,6 +974,7 @@ participation:
                   true  {/risks}
                   other {}}
     risksTrigger:
+      title: "\nPlease note:"
       triggerIntimate: "\nThe study contains partly personal or intimate questions. The study should therefore be completed in an undisturbed environment. Please ensure that privacy is maintained during participation and that no unauthorised persons can view the responses."
       burdensome: "\nThe data collection covers the following topic that can be perceived as distressing: {description}"
       threat: "\nWe treat all information and collected data as confidential. The project contributors are required to maintain confidentiality. The analysis is carried out anonymously, without mentioning any names. However, the duty of confidentiality does not apply if there are concrete indications of an acute risk of self-harm or harm to others. In such cases, the project contributors reserve the right to immediately notify appropriate entities (e.g., medical personnel, emergency services, or the relevant authorities) in order to prevent harm."
@@ -1001,49 +1009,61 @@ participation:
     pre: >-
       {terminateCons, select,
         true  {{addressee, select,
-                  children {Your child''s participation is {isVoluntary, select,
+                  children {Your child's participation in the study is {isVoluntary, select,
                                                               false {not}
-                                                              other {}} voluntary. {attendance, select,
-                                                                                      true  {{isVoluntary, select,
-                                                                                                false {However, you}
-                                                                                                other {You}} and your child}
-                                                                                      other {{isVoluntary, select,
-                                                                                                false {However, your}
-                                                                                                other {Your}} child}} can withdraw from participation in this study at any time without giving any reason and without disadvantages.}
-                  wards    {Participation of the individual under your supervision is {isVoluntary, select,
+                                                              other {}} voluntary. {isDiscuss, select,
+                                true  {The decision for or against participation has no impact on {discuss}.}
+                                other {}} {attendance, select,
+                                            true  {{isVoluntary, select,
+                                                      false {However, you}
+                                                      other {You}} and your child}
+                                            other {{isVoluntary, select,
+                                                      false {However, your}
+                                                      other {Your}} child}} can withdraw from participation in this study at any time without giving any reason and without disadvantages.}
+                  wards    {Study participation of the individual under your supervision is {isVoluntary, select,
                                                                                         false {not}
-                                                                                        other {}} voluntary. {attendance, select,
-                                                                                                  true  {{isVoluntary, select,
-                                                                                                            false {However, you}
-                                                                                                            other {You}} and the individual under your supervision}
-                                                                                                  other {{isVoluntary, select,
-                                                                                                            false {However, the}
-                                                                                                            other {The}} individual under your supervision}} can withdraw from participation in this study at any time without giving any reason and without disadvantages.}
-                  other    {Your participation is {isVoluntary, select,
+                                                                                        other {}} voluntary. {isDiscuss, select,
+                                true  {The decision for or against participation has no impact on {discuss}.}
+                                other {}} {attendance, select,
+                                            true  {{isVoluntary, select,
+                                                      false {However, you}
+                                                      other {You}} and the individual under your supervision}
+                                            other {{isVoluntary, select,
+                                                      false {However, the}
+                                                      other {The}} individual under your supervision}} can withdraw from participation in this study at any time without giving any reason and without disadvantages.}
+                  other    {Your participation in the study is {isVoluntary, select,
                                                     false {not}
-                                                    other {}} voluntary. {isVoluntary, select,
-                                                                            false {However, you}
-                                                                            other {You}} can withdraw from participation in this study at any time without giving any reason and without disadvantages.}}}
+                                                    other {}} voluntary. {isDiscuss, select,
+                                true  {The decision for or against participation has no impact on {discuss}.}
+                                other {}} {isVoluntary, select,
+                                                    false {However, you}
+                                                    other {You}} can withdraw from participation in this study at any time without giving any reason and without disadvantages.}}}
         other {{addressee, select,
-                  children {Your child's participation is {isVoluntary, select,
+                  children {Your child's participation in the study is {isVoluntary, select,
                                                             false {not}
-                                                            other {}} voluntary. {isVoluntary, select,
-                                                                                    false {Moreover}
-                                                                                    other {However}}, once the investigation started, {attendance, select,
+                                                            other {}} voluntary. {isDiscuss, select,
+                                true  {The decision for or against participation has no impact on {discuss}.}
+                                other {}} {isVoluntary, select,
+                                            false {Moreover}
+                                            other {However}}, once the investigation started, {attendance, select,
                                                                           true  {you and your child}
                                                                           other {your child}} cannot withdraw from participation without any disadvantages.}
-                  wards    {Participation of the individual under your supervision is {isVoluntary, select,
+                  wards    {Study participation of the individual under your supervision is {isVoluntary, select,
                                                                                         false {not}
-                                                                                        other {}} voluntary. {isVoluntary, select,
-                                                                                                        false {Moreover}
-                                                                                                        other {However}}, once the investigation started, {attendance, select,
+                                                                                        other {}} voluntary. {isDiscuss, select,
+                                true  {The decision for or against participation has no impact on {discuss}.}
+                                other {}} {isVoluntary, select,
+                                            false {Moreover}
+                                            other {However}}, once the investigation started, {attendance, select,
                                                                           true  {you and the individual under your supervision}
                                                                           other {the individual under your supervision}} cannot withdraw from participation without any disadvantages.}
-                  other    {Your participation is {isVoluntary, select,
+                  other    {Your participation in the study is {isVoluntary, select,
                                                     false {not}
-                                                    other {}} voluntary. {isVoluntary, select,
-                                                                            false {Moreover}
-                                                                            other {However}}, once the investigation started, you cannot withdraw from participation without any disadvantages.}} {description}}}
+                                                    other {}} voluntary. {isDiscuss, select,
+                                true  {The decision for or against participation has no impact on {discuss}.}
+                                other {}} {isVoluntary, select,
+                                            false {Moreover}
+                                            other {However}}, once the investigation started, you cannot withdraw from participation without any disadvantages.}} {description}}}
     preAbort: >-
       {terminateCons, select,
         true  {{addressee, select,
@@ -1074,7 +1094,9 @@ participation:
                                 other {}}}
         other    {in advance that you are participating in a study. The reasons for this are as follows: {description}. Therefore, we were unable to ask you for voluntary consent to study participation in advance. {isConsent, select,
                                 true  {However, you have the opportunity to freely decide whether we may use the data collected from you.}
-                                other {}}}}
+                                other {}}}} {isDiscuss, select,
+                                              true  {The decision for or against data use has no impact on {discuss}.}
+                                              other {}}
     terminateParticipants: >-
       {information, select,
         post  {If the participation has been aborted,}
@@ -1086,7 +1108,10 @@ participation:
                                             other         {the collected data will be handled as follows: {description}}}
   dataPrivacy:
     otherSources: 'Moreover, the following data from other sources will be added: '
-    personal: 'As part of this study, personal data will be collected and processed. {otherSources} Handling of the personal data is described in detail in the attached annex on data processing.'
+    personal: >-
+      {isOnlyFurther, select,
+        true  {For the project contributors, the research data are anonymous. As part of this study, personal data will be collected and processed exclusively for other purposes. The research data are not linked with these additional data.}
+        other {As part of this study, personal data will be collected and processed.}} {otherSources} Handling of the personal data is described in detail in the attached annex on data processing.
     personalMaybe: 'Processing of personal data is not intended in this study, but it cannot be entirely ruled out that the combination of collected data with additional knowledge might allow for identifying individual persons. {otherSources} Therefore, handling of the potentially person-related data is described in detail in the attached annex on data processing.'
     noTool: 'As part of this study, data will be collected and processed. {otherSources} Handling of the data is described in detail in the attached annex on data processing.'
     marking: # types-keys are copied from messages. Examples are removed and addressee is added where applicable
@@ -1186,7 +1211,9 @@ participation:
         no: >-
           {savePDF, select,
             true  {}
-            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#dataPersonal" data-base-route-i-ds-param="{routeIDs}">}}{isPurposeFurther, select,
+            other {<a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#{create, select,
+                    anonymous {create}
+                    other     {dataPersonal}}" data-base-route-i-ds-param="{routeIDs}">}}{isPurposeFurther, select,
                         true  {For use within this study, the research data are anonymous.}
                         other {In that process, {addressee, select,
                                                   children {your child and}
@@ -1833,7 +1860,7 @@ completePost:
           other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#completePostType" data-base-route-i-ds-param="{routeIDs}">orally</a>}}. It is in line with the written information provided here.
   intro: >-
     Thank you for {addressee, select,
-                    children {your child''s participation}
+                    children {your child's participation}
                     wards    {participation of the individual under your supervision}
                     other    {participating}} in our study within the research project entitled “{projectTitle}“. We would like to give you some more information about our study now.
   goals: 'As you already know, the study investigates '
@@ -1868,7 +1895,7 @@ completePost:
 consent:
   hint: >-
     {committeeType, select,
-      PHT   {If the research project is conducted within the scope of the <a href="https://cms.ph-tirol.ac.at/documents/INN_230526_Rahmenvereinbarung_EmpUnt_BDT-UIBK-PHT-FHK_final-1.pdf" target="_blank">framework agreement for conducting empirical studies with pupils</a>, the templates for informed consent on the <a href="https://ph-tirol.ac.at/ethikkommission" target="_blank">website of the ethics committee</a> have to be used instead.}
+      PHT   {If the research project falls within the scope of the <a href="https://cms.ph-tirol.ac.at/documents/INN_230526_Rahmenvereinbarung_EmpUnt_BDT-UIBK-PHT-FHK_final-1.pdf" target="_blank">framework agreement for conducting empirical studies with pupils</a>, the templates for informed consent provided on the <a href="https://ph-tirol.ac.at/ethikkommission" target="_blank">website of the ethics committee</a> must be used instead.}
       other {}}
   noConsent: >-
     The Ethiktool did not generate a consent form for the {addressee, select,
@@ -1892,7 +1919,7 @@ consent:
 
     I am aware that {information, select,
                       post  {the consent on the use {addressee, select,
-                                                   children {of my child''s data is voluntary and that my child and I will not experience any disadvantages if I do not give my consent.}
+                                                   children {of my child's data is voluntary and that my child and I will not experience any disadvantages if I do not give my consent.}
                                                    wards    {of the data from the individual under my supervision is voluntary and that the individual under my supervision and I will not experience any disadvantages if I do not give my consent.}
                                                    other    {of my data is voluntary and that I will not experience any disadvantages if I do not give my consent.}}}
                       other {{addressee, select,

@@ -36,8 +36,8 @@ export default class extends Controller {
             this.checkDocTarget.scrollTop = this.checkDocValue;
         }
         if (this.hasPreviewTarget) {
-            this.previewTarget.scrollTop = this.previewValue;
             this.setPreviewHeight();
+            this.previewTarget.scrollTop = this.previewValue;
         }
         // set text of hints
         this.setAllHints();

@@ -3,7 +3,7 @@ import {getSelected, setElementVisibility, setHint} from "../multiFunction";
 
 export default class extends Controller {
 
-    static targets = ['burdensEverydayYes','textInput','descriptionDiv','alwaysTemplateText','consentTemplateText','informingDescription','informingTemplate','informingTemplateDiv','informingPDF','informingHint','findingHint'];
+    static targets = ['burdensEverydayYes','textInput','descriptionDiv','alwaysTemplateText','consentTemplateText','informingDescription','informingTemplate','informingTemplateDiv','informingPDF','informingHint','findingHint','risksIncidental','risksSuspicion','risksOccurrence'];
 
     static values = {
         informing: String,
@@ -24,17 +24,33 @@ export default class extends Controller {
         this.setInforming();
     }
 
-    /** Sets the visibility of the hint that inputs get removed.
+    /** Sets the visibility of risks description and risks occurrence as well as the hint that inputs get removed.
      * @param event widget that invoked the method
      * */
-    setTextInputHint(event) {
+    setRisksTextInputHint(event) {
         let params = event.params;
-        if (this.hasTextInputTarget) {
-            let visibility = (!getSelected(params['burdens'])[0] || !this.burdensEverydayYesTarget.checked) && !getSelected(params['risks'])[0];
-            for (let target of this.textInputTargets) {
-                setElementVisibility(target,visibility);
+        let type = params.type;
+        let isRisks = type==='risks';
+        if (type==='burdens' || isRisks) {
+            let risksSelected = getSelected(params['risks']);
+            let isAnyRisk = risksSelected[0];
+            // risks
+            if (isRisks) {
+                let isNotOnlyFinding = isAnyRisk && !(risksSelected[1]===(2-(this.risksIncidentalTarget.checked ? 0 : 1)-(this.risksSuspicionTarget.checked ? 0 : 1)));
+                setElementVisibility('risksDescriptionDiv',isNotOnlyFinding);
+                setElementVisibility(this.risksOccurrenceTarget,isNotOnlyFinding);
+            }
+            // remove hint
+            if (this.hasTextInputTarget) {
+                let visibility = (!getSelected(params['burdens'])[0] || !this.burdensEverydayYesTarget.checked) && !isAnyRisk;
+                for (let target of this.textInputTargets) {
+                    setElementVisibility(target,visibility);
+                }
             }
         }
+
+
+
     }
 
     // methods that are called from the template and from within this class

@@ -12,27 +12,26 @@
     }) }}>
         {# burdens and risks #}
         {% for type in ['burdens','risks','burdensRisksContributors','burdensRisksUninvolved'] %}
-            {% set isBurdens, isRisks, typePrefix, checkboxes, compensationDiv = type is same as 'burdens', type is same as 'risks', translationPrefix~type~'.', burdensRisksTypes[type], type~'CompensationDiv' %}
-            {% set checkboxesWoNo, description, noKey = checkboxes|slice(1), type~'Description', 'no'~(type[:1]|upper~type[1:]) %}
-            {% set selections = getAnySelected(content,checkboxes,noKey) %}
-            {% set anySelected = selections[1] %}
-            {% set visibility = boolToDisplay(anySelected) %}
+            {% set isBurdens, isRisks, typePrefix, checkboxes, compensationDiv, noKey = type is same as 'burdens', type is same as 'risks', translationPrefix~type~'.', burdensRisksTypes[type], type~'CompensationDiv', 'no'~(type[:1]|upper~type[1:]) %}
+            {% set checkboxesWoNo, description, selections = checkboxes|slice(1), type~'Description', getAnySelected(content,checkboxes,noKey) %}
+            {% set anySelected, isIncidental, isSuspicion = selections[1], content.risksIncidental.vars.checked, content.risksSuspicion.vars.checked %}
+            {% set visibility, isNotOnlyFinding = boolToDisplay(anySelected), anySelected and (not isRisks or not (selections[2] is same as (2-(isIncidental ? 0 : 1)-(isSuspicion ? 0 : 1))))  %}
             <div {% if not isBurdens %} class="mt-8" {% endif %} id="{{ type }}">
                 {{ formRender.addHeading(typePrefix~'title',{'headingHint': [[typePrefix~'hints.headingHint']]}) }}
                 <div class="MetaData-Widget" {{ stimulus_action('base','setMultiCheckbox','change',{'single': noKey, 'multiCheck': checkboxesWoNo})|stimulus_action('base','setVisibility','change',{'multi':
                     [[checkboxesWoNo,[description~'Div']|
                                       merge(isBurdens ? [everydayDiv] : (isRisks ? ['risksOccurrence'] : [compensationDiv]))]]|
                     merge(isRisks ? [[['risksIncidental','risksSuspicion'],'finding']] : [])})|
-                    stimulus_action(burdensRisksController,'setTextInputHint','change',textHintParams)}}>
-                    {{ formRender.addMultilevelCheckboxGroup(content,'burdensRisks',burdensRisksTypesAll[type],burdensRisksOther[type],burdensRisksIcons[type],parameter,false,[],selections[0] ? checkboxesWoNo : (anySelected ? [noKey] : []),[],transferArrayValue) }}
+                    stimulus_action(burdensRisksController,'setRisksTextInputHint','change',textHintParams|merge({'type': type}))}}>
+                    {{ formRender.addMultilevelCheckboxGroup(content,'burdensRisks',burdensRisksTypesAll[type],burdensRisksOther[type],burdensRisksIcons[type],parameter,false,isRisks ? {'risksIncidental': [burdensRisksController,'risksIncidental'], 'risksSuspicion': [burdensRisksController,'risksSuspicion']} : {},selections[0] ? checkboxesWoNo : (anySelected ? [noKey] : []),[],transferArrayValue) }}
                 </div>
             </div>
-            {{ formRender.addTextfield(content[description],fontNormal|merge({'visibility': anySelected})) }}
+            {{ formRender.addTextfield(content[description],fontNormal|merge({'visibility': isNotOnlyFinding})) }}
             {% if isBurdens %}
                 {# burdens everyday #}
                 <div class="mt-8" id="{{ everydayDiv }}" style="{{ visibility }}">
                     {{ formRender.renderButtons(everyday, {
-                        'stim': [burdensRisksController,'setTextInputHint',textHintParams],
+                        'stim': [burdensRisksController,'setRisksTextInputHint',textHintParams],
                         'contTarget': ['burdensEveryday0',burdensRisksController,'burdensEverydayYes']}) }}
                 </div>
             {% endif %}
@@ -48,7 +47,7 @@
                 {# finding #}
                 {% set tempPrefix = translationPrefix~'finding.'%}
                 {% set addresseeStringParam = {'addressee': addresseeString} %}
-                <div class="mt-8" id="finding" style="{{ boolToDisplay(content.risksIncidental.vars.checked or content.risksSuspicion.vars.checked) }}">
+                <div class="mt-8" id="finding" style="{{ boolToDisplay(isIncidental or isSuspicion) }}">
                     {{ formRender.addHeading(tempPrefix~'title') }}
                     {{ formRender.addTextfield(content.description) }}
                     {# informing #}
@@ -84,9 +83,9 @@
                     </div>
                 </div>
                 {# risks occurrence #}
-                {% set tempPrefix, isAnyRisk, checkboxes = translationPrefix~'risksOccurrence.', getAnySelected(content,burdensRisksTypes['risks'],'noRisks')[1], burdensRisksTypes['risksOccurrence'] %}
+                {% set tempPrefix, checkboxes = translationPrefix~'risksOccurrence.', burdensRisksTypes['risksOccurrence'] %}
                 {% set checkboxesWoNo, selections = checkboxes|slice(1), getAnySelected(content,checkboxes,'noRisksOccurrence') %}
-                <div class="mt-8" id="risksOccurrence" style="{{ boolToDisplay(isAnyRisk) }}">
+                <div class="mt-8" id="risksOccurrence" style="{{ boolToDisplay(isNotOnlyFinding) }}" {{ stimulus_target(burdensRisksController,'risksOccurrence') }}>
                     {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'hints.headingHint']]}) }}
                     <div class="MetaData-Widget" {{ stimulus_action('base','setMultiCheckbox','change',{'single': 'noRisksOccurrence', 'multiCheck': checkboxesWoNo})|stimulus_action('base','setVisibility','change',{'multi': [['noRisksOccurrence','risksNoMeasure'],['trigger','risksTrigger'],[checkboxesWoNo,'risksAfter']]}) }}>
                         {{ formRender.addMultilevelCheckboxGroup(content,'burdensRisks',burdensRisksTypesAll['risksOccurrence'],burdensRisksOther['risksOccurrence'],burdensRisksIcons['risksOccurrence'],parameter,true,[],selections[0] ? checkboxesWoNo : (selections[1] ? ['noRisksOccurrence'] : []),['contactInfo','contactOther','burdensome','triggerOther'],transferArrayValue) }}
@@ -99,7 +98,7 @@
                     </div>
                     {# trigger #}
                     {% set triggerOther, triggerIcons, tempPrefix = burdensRisksOther['risksTrigger'], burdensRisksIcons['risksTrigger'], translationPrefix~'risksTrigger.' %}
-                    <div class="mt-8" id="risksTrigger" style="{{ boolToDisplay(isAnyRisk and content.trigger.vars.checked) }}">
+                    <div class="mt-8" id="risksTrigger" style="{{ boolToDisplay(anySelected and content.trigger.vars.checked) }}">
                         {{ formRender.addHeading(tempPrefix~'title') }}
                         <div class="MetaData-Widget">
                             {% for trigger in burdensRisksTypes['risksTrigger'] %}

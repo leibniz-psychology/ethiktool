@@ -1943,7 +1943,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajorSmaller3 = $major<'3';
         $isMajorSmaller4 = $major<'4';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajorSmaller4 || $minor<'4';
+        $isSmallerCurrent = $isMajorSmaller4 || $minor<'5';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
@@ -1956,6 +1956,7 @@ abstract class ControllerAbstract extends AbstractController
         $isSmaller330 = $isMajorSmaller3 || $isMajor3 && $minor<'3';
         $isSmaller340 = $isMajorSmaller3 || $isMajor3 && $minor<'4';
         $isSmaller430 = $isMajorSmaller4 || $minor<'3';
+        $isSmaller440 = $isMajorSmaller4 || $minor<'4';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2031,12 +2032,16 @@ abstract class ControllerAbstract extends AbstractController
                 }
             }
             // updates for versions before 4.4.0
-            if (in_array($committeeType,self::committeeSupport) && !$this->checkElement(self::supportNode,$coreDataNode)) { // support question may have been removed accidentally in 4.3.0
+            if ($isSmaller440 && in_array($committeeType,self::committeeSupport) && !$this->checkElement(self::supportNode,$coreDataNode)) { // support question may have been removed accidentally in 4.3.0
                 if ($this->checkElement(self::guidelinesNode,$coreDataNode)) {
                     $this->insertElementBefore(self::supportNode,$coreDataNode->{self::guidelinesNode});
                 } else {
                     $coreDataNode->addChild(self::supportNode);
                 }
+            }
+            // updates for versions before 4.5.0
+            if (!$this->checkElement(self::guidelinesNode,$coreDataNode) && in_array($committeeType,self::committeeGuidelines)) { // TODO: remove
+                $coreDataNode->addChild(self::guidelinesNode);
             }
             foreach ($allStudyNodes as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
@@ -2404,10 +2409,10 @@ abstract class ControllerAbstract extends AbstractController
                                 }
                             }
                         }
+                        $risksNode = $burdensRisksNode->{self::risksNode};
                         // updates for versions before 4.0.0
                         if ($isMajorSmaller4 && count($burdensRisksNode->children())>0) { // update only if new data are collected
                             $burdensTypesNodeCloned = $this->cloneNode($burdensNode->{self::burdensTypesNode});
-                            $risksNode = $burdensRisksNode->{self::risksNode};
                             $risksTypesNodeCloned = $this->cloneNode($risksNode->{self::risksTypesNode});
                             foreach ([self::burdensNode, self::risksNode] as $type) {
                                 $curNode = $burdensRisksNode->{$type};
@@ -2431,7 +2436,7 @@ abstract class ControllerAbstract extends AbstractController
                                             $this->removeElement('noRisks',$typeNode);
                                             $curNode->addChild(self::descriptionNode);
                                         }
-                                        $this->addChildNodes($typeNode->addChild('risksFinding'), ['risksIncidental']); // finding are now sub-options of risks
+                                        $this->addChildNodes($typeNode->addChild('risksFinding'), [self::risksIncidental]); // finding are now sub-options of risks
                                         $findingNode = $risksNode->addChild(self::findingNode); // keep description and informing in separate node
                                         $findingNode->addChild(self::descriptionNode, htmlspecialchars((string)$findingNodeOld->{self::descriptionNode}));
                                         $informingNode = $this->addChosenNode($findingNode, self::informingNode);
@@ -2546,6 +2551,19 @@ abstract class ControllerAbstract extends AbstractController
                                 }
                             }
                         }
+                        // updates for versions before 4.5.0
+                        $risksTypes = $this->xmlToArray($risksNode->{self::risksTypesNode});
+                        if (count($risksTypes)===1 && array_key_exists('risksFinding',$risksTypes)) { // only risks incidental was selected -> remove description, risks occurrence, and eventually also risks no measure, risks trigger, and risks after
+                            foreach ([self::descriptionNode,self::risksOccurrenceNode,self::risksNoMeasureNode,self::risksTriggerNode,self::risksAfterNode] as $furtherNode) {
+                                $this->removeElement($furtherNode,$risksNode);
+                            }
+                        }
+                        if ($this->checkElement(self::procedureNode,$measuresNode) && $this->checkElement(self::introNode,$textsNode)) { // move procedure (back) to texts
+                            $this->insertElementBefore(self::procedureNode,$textsNode->{self::proNode});
+                            $textsNode->{self::procedureNode} = (string) $measuresNode->{self::procedureNode};
+                            $this->removeElement(self::procedureNode,$measuresNode);
+                        }
+//                        $this->insertElementBefore(self::countryNode,$measuresNode->{self::durationNode});
                     } // foreach measure time point
                 } // foreach group
             } // foreach study

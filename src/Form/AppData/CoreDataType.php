@@ -82,8 +82,6 @@ class CoreDataType extends TypeAbstract
         if ($isEUB) {
             // qualification
             $this->addBinaryRadio($builder,self::qualification,$translationPrefix.self::qualification.'.title',);
-            // guidelines
-            $this->addCheckboxTextfield($builder,self::guidelinesNode, $translationPrefix.self::guidelinesNode.'.choice');
         }
         // conflict
         $this->addBinaryRadio($builder,self::conflictNode,$translationPrefix.'conflict.'.'title',self::conflictNode.self::descriptionCap);
@@ -95,6 +93,10 @@ class CoreDataType extends TypeAbstract
                     $this->addFormElement($builder,$this->appendText($key),'textarea',hint: $translationPrefix.'support.'.self::textHint);
                 }
             }
+        }
+        // guidelines
+        if (in_array($committeeType,self::committeeGuidelines)) {
+            $this->addCheckboxTextfield($builder,self::guidelinesNode, $translationPrefix.self::guidelinesNode.'.choice');
         }
         // dummy
         $this->addDummyForms($builder);

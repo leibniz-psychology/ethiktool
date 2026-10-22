@@ -44,7 +44,7 @@
                     {% set tempPrefix = translationPrefix~'voluntary.voluntaryEnsure.' %}
                     <div class="mt-8" id="{{ ensureDiv }}" style="{{ boolToDisplay(anyYes) }}">
                         {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint',routeIDsParam]]}) }}
-                        {{ formRender.addCheckboxGroup(content,ensureTypes,{'other': ensureTypesOther, 'icons': {'relatable': tempPrefix~'hint'}, 'addDiv': ['','','mt-2']}) }}
+                        {{ formRender.addCheckboxGroup(content,ensureTypes,{'other': ensureTypesOther, 'otherLabel': ['discuss'], 'icons': {'relatable': tempPrefix~'hints.relatable'}, 'addDiv': ['','','mt-2'], 'transferOther': [transferInfo,addresseeType], 'otherExclude': ['substitute','voluntaryEnsureOther']}) }}
                     </div>
                 {% endif %}
             </div>

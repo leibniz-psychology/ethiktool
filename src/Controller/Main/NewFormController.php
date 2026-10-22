@@ -58,7 +58,6 @@ class NewFormController extends ControllerAbstract
                         return $this->redirectToRoute('app_newForm');
                     }
                     $this->setCommittee($session,$committeeType,$session->get(self::language));
-                    $isEUB = $committeeType===self::committeeEUB;
                     // create xml-document
                     $doc = $this->createDOM();
 
@@ -77,7 +76,7 @@ class NewFormController extends ControllerAbstract
                     $this->addChosenNode($coreDataNode,self::projectTitleParticipation);
                     $this->addChosenNode($coreDataNode,self::applicationType);
                     $this->addChosenNode($coreDataNode,self::applicationProcessNode);
-                    if ($isEUB) {
+                    if ($committeeType===self::committeeEUB) {
                         $coreDataNode->addChild(self::qualification);
                     }
                     $applicantNode = $coreDataNode->addChild(self::applicant);
@@ -91,7 +90,7 @@ class NewFormController extends ControllerAbstract
                     if (in_array($committeeType,self::committeeSupport)) {
                         $coreDataNode->addChild(self::supportNode);
                     }
-                    if ($isEUB) {
+                    if (in_array($committeeType,self::committeeGuidelines)) {
                         $coreDataNode->addChild(self::guidelinesNode);
                     }
 

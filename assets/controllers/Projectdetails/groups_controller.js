@@ -3,7 +3,7 @@ import {setElementVisibility, getSelected, checkTextareaInput} from "../multiFun
 
 export default class extends Controller {
 
-    static targets = ['minAge','maxAge','unlimited','healthy','wards','physical','dependent','examinedConsent','examinedDescription','wardsHint','attendance','informationMeasures','attendanceMeasures','voluntaryHint','disease','criteriaHint','includeStart','include'];
+    static targets = ['minAge','maxAge','unlimited','healthy','wards','physical','dependent','examinedConsent','examinedDescription','wardsHint','informationII','attendance','informationMeasures','attendanceMeasures','informationIIMeasures','voluntaryHint','disease','criteriaHint','includeStart','include'];
 
     static values = {
         examined: Array,
@@ -114,14 +114,21 @@ export default class extends Controller {
         // remove hint
         if (this.hasTextInputValue) {
             let isExaminedConsent = this.examinedConsentTarget.checked;
-            if (this.hasAttendanceTarget) { // only attendance in information may be removed
-                setElementVisibility(this.attendanceTarget,!isWards && (!this.hasInformationMeasuresTarget || isExaminedConsent));
+            let isNeitherWardsNorExamined = !isWards && !isExaminedConsent;
+            if (this.hasInformationIITarget) { // only wards input may be removed
+                setElementVisibility(this.informationIITarget,!isWards && !this.hasAttendanceTarget && (!this.hasInformationMeasuresTarget && !this.hasAttendanceMeasuresTarget || isExaminedConsent));
+            }
+            if (this.hasAttendanceTarget) { // only attendance in information and eventually any further wards input may be removed
+                setElementVisibility(this.attendanceTarget,!isWards && !this.hasInformationIITarget && (!this.hasInformationMeasuresTarget || isExaminedConsent));
             }
             if (this.hasInformationMeasuresTarget) { // only information measures in information may be removed
                 setElementVisibility(this.informationMeasuresTarget,!isExaminedConsent && (!this.hasAttendanceTarget || isWards));
             }
-            if (this.hasAttendanceMeasuresTarget) { // attendance and information measures in information may be removed
-                setElementVisibility(this.attendanceMeasuresTarget,!isWards && !isExaminedConsent);
+            if (this.hasAttendanceMeasuresTarget) { // attendance and information measures in information and eventually any further wards input may be removed
+                setElementVisibility(this.attendanceMeasuresTarget,isNeitherWardsNorExamined);
+            }
+            if (this.hasInformationIIMeasuresTarget) { // information measures in information and any wards input may be removed
+                setElementVisibility(this.informationIIMeasuresTarget,isNeitherWardsNorExamined && !this.hasAttendanceMeasuresTarget);
             }
         }
         // criteria

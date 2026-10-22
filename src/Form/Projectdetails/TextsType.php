@@ -20,7 +20,7 @@ class TextsType extends TypeAbstract
         $this->isNotInformationNoConsent = $dummyParams['isNotInformationNoConsent'];
         $translationPrefix = 'projectdetails.pages.texts.';
         $templateArray = [self::introNode,self::proNode,self::conNode];
-        foreach (array_merge([self::introNode,self::goalsNode,self::proNode,self::conNode],$dummyParams['isConflict'] ? [self::conflictTextNode] : []) as  $type) {
+        foreach (array_merge([self::introNode,self::goalsNode,self::procedureNode,self::proNode,self::conNode],$dummyParams['isConflict'] ? [self::conflictTextNode] : []) as  $type) {
             $this->addFormElement($builder,$type,'textarea',$translationPrefix.$type.'.title');
             if (in_array($type,$templateArray)) {
                 $this->addFormElement($builder,$type.'Template','checkbox',$translationPrefix.'useTemplate');
@@ -46,6 +46,8 @@ class TextsType extends TypeAbstract
         if (array_key_exists(self::conflictTextNode,$viewData)) {
             $forms[self::conflictTextNode]->setData($viewData[self::conflictTextNode]);
         }
+        // procedure
+        $forms[self::procedureNode]->setData($viewData[self::procedureNode]);
         // pro
         $tempArray = $viewData[self::proNode];
         $forms[self::proTemplate]->setData($this->getBoolFromString($tempArray[self::proTemplate]));
@@ -71,6 +73,8 @@ class TextsType extends TypeAbstract
         if (array_key_exists(self::conflictTextNode,$forms)) {
             $newData[self::conflictTextNode] = $forms[self::conflictTextNode]->getData();
         }
+        // procedure
+        $newData[self::procedureNode] = $forms[self::procedureNode]->getData();
         // pro
         $tempVal = $forms[self::proTemplate]->getData();
         $tempArray = [self::proTemplate => $tempVal];
