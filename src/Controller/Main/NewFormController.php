@@ -90,8 +90,12 @@ class NewFormController extends ControllerAbstract
                     if (in_array($committeeType,self::committeeSupport)) {
                         $coreDataNode->addChild(self::supportNode);
                     }
+                    $coreDataNode->addChild(self::permissionNode)->addChild(self::chosen);
                     if (in_array($committeeType,self::committeeGuidelines)) {
                         $coreDataNode->addChild(self::guidelinesNode);
+                    }
+                    if ($committeeType===self::committeeBICC) {
+                        $coreDataNode->addChild(self::settleNode)->addChild('types');
                     }
 
                     // votes

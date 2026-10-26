@@ -104,16 +104,16 @@
             'text': [content.presenceDescription,fontNormal|merge({'visibility': presence.vars.value is same as 'partly'})],
             'addDiv': ['presence']}) }}
         {# country #}
-{#        {% if content.foreign is defined %}#}
-{#            {% set tempPrefix = translationPrefix~'country.' %}#}
-{#            <div class="mt-8" id="country">#}
-{#                {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}#}
-{#                <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [['foreign','foreignDescriptionDiv']]}) }}>#}
-{#                    {{ formRender.addCheckboxGroup(content,countryTypes) }}#}
-{#                </div>#}
-{#                {{ formRender.addTextfield(content.foreignDescription,fontNormal|merge({'visibility': content.foreign.vars.checked})) }}#}
-{#            </div>#}
-{#        {% endif %}#}
+        {% if content.foreign is defined %}
+            {% set tempPrefix = translationPrefix~'country.' %}
+            <div class="mt-8" id="country">
+                {{ formRender.addHeading(tempPrefix~'title',{'headingHint': [[tempPrefix~'headingHint']]}) }}
+                <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [['foreign','foreignDescriptionDiv']]}) }}>
+                    {{ formRender.addCheckboxGroup(content,countryTypes) }}
+                </div>
+                {{ formRender.addTextfield(content.foreignDescription,fontNormal|merge({'visibility': content.foreign.vars.checked})) }}
+            </div>
+        {% endif %}
         {# duration #}
         {% set durationPrefix, hasInput = translationPrefix~'duration.', textInputCompensation is not same as '' %}
         <div class="mt-8" id="duration" {{ stimulus_action(measuresController,'setDuration','change') }}>

@@ -145,7 +145,7 @@ class MeasuresController extends ControllerAbstract
                  'measuresInterventionsOther' => self::measuresInterventionsOther,
                  'measuresInterventionsIcons' => self::measuresInterventionsIcons,
                  'documentationTypes' => self::measuresDocumentationTypes,
-//                 'countryTypes' => self::countryTypes,
+                 'countryTypes' => self::countryTypes,
                  'measureTimeTypes' => self::durationMeasureTimeTypes,
                  'textInputs' => $textInputs,
                  'textInputOnline' => $textInputOnline,

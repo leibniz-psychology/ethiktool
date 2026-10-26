@@ -37,7 +37,8 @@ class DataReuseController extends ControllerAbstract
         $dataReuseHowTitle = $dataReuseHowPrefix.'title';
         $personalParamKeep = ['personal' => 'keep'];
         return $this->createFormAndHandleSubmit(DataReuseType::class, $request,[self::dataReuseNode],
-            ['dataReuseHowHeading' => ['' => $this->translateString($dataReuseHowTitle,$parameters), self::personalKeepReuse => $this->translateString($dataReuseHowTitle,$personalParamKeep)],
+            ['disseminationTypes' => self::disseminationTypes,
+             'dataReuseHowHeading' => ['' => $this->translateString($dataReuseHowTitle,$parameters), self::personalKeepReuse => $this->translateString($dataReuseHowTitle,$personalParamKeep)],
              'dataReuseHint' => $this->translateString($translationPrefix.($isPurposeReuse ? self::dataReuseHowNode.'.hint' : self::dataReuseNode.'.hint.'.$parameters['personal']),['routeIDs' => $this->createRouteIDs([self::studyNode => $routeParams[self::studyID], self::groupNode => $routeParams[self::groupID], self::measureTimePointNode => $routeParams[self::measureID]])]),
              'dataReuseHowIconArray' => $dataReuseHowIconArray,
              'isPurposeReuse' => $isPurposeReuse,

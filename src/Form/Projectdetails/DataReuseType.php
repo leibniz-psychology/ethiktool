@@ -16,6 +16,9 @@ class DataReuseType extends TypeAbstract
         $dummyParams = $options[self::dummyParams];
         $personal = $dummyParams['personal'];
         $personalParam = ['personal' => $personal];
+        // dissemination
+        $tempPrefix = $translationPrefix.self::disseminationNode.'.';
+        $this->addCheckboxGroup($builder,self::disseminationTypes,$tempPrefix.'types.',[$this->appendText(self::disseminationOther)],[$tempPrefix.self::textHint]);
         // confirm
         $this->addFormElement($builder,self::confirmIntroNode,'checkbox',$translationPrefix.self::introNode.'.confirm');
         $isDataReuseHowTwice = $personal==='purpose' && $dummyParams['isAnonymized'];
@@ -41,6 +44,8 @@ class DataReuseType extends TypeAbstract
     public function mapDataToForms(mixed $viewData, \Traversable $forms): void
     {
         $forms = iterator_to_array($forms);
+        // dissemination
+        $this->setSelectedCheckboxes($forms,$viewData[self::disseminationNode],[self::disseminationOther => $this->appendText(self::disseminationOther)]);
         // confirm
         $forms[self::confirmIntroNode]->setData($viewData[self::confirmIntroNode]==='1');
         // data reuse
@@ -59,9 +64,11 @@ class DataReuseType extends TypeAbstract
     public function mapFormsToData(\Traversable $forms, mixed &$viewData): void
     {
         $forms = iterator_to_array($forms);
+        // dissemination
+        $newData = [self::disseminationNode => $this->getSelectedCheckboxes($forms,self::disseminationTypes,[self::disseminationOther => $this->appendText(self::disseminationOther)])];
         // confirm
         $tempVal = $forms[self::confirmIntroNode]->getData();
-        $newData = [self::confirmIntroNode => $tempVal];
+        $newData[self::confirmIntroNode] = $tempVal;
         if ($tempVal) {
             // data reuse
             $dataReuse = '';

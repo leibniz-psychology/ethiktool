@@ -594,9 +594,23 @@ class CheckDocClass extends ControllerAbstract
             $tempPrefix = $translationPrefix.self::supportNode.'.';
             $this->checkMissingChildrenOther($this->coreDataArray,self::supportNode,$tempPrefix.'title',$this->combinePrefixArray(array_diff(array_keys(self::supportTypes),[self::noSupport]),$tempPrefix.'types.'),addDescription: false);
         }
+        // permission
+        $tempArray = $this->coreDataArray[self::permissionNode];
+        $tempPrefix = $translationPrefix.self::permissionNode.'.';
+        $this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::permissionNode,true);
+        if (array_key_exists(self::descriptionNode,$tempArray)) {
+            $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.self::descriptionNode],true, hash: $this->addDiv(self::permissionNode,true,false));
+        }
         // guidelines
         if (array_key_exists(self::guidelinesNode,$this->coreDataArray) && $this->coreDataArray[self::guidelinesNode]!=='') {
             $this->checkMissingContent($this->coreDataArray[self::guidelinesNode],[self::descriptionNode => $translationPrefix.self::guidelinesNode],true,hash: $this->addDiv(self::guidelinesNode,true));
+        }
+        // settle
+        if (array_key_exists(self::settleNode,$this->coreDataArray)) {
+            $tempArray = $this->coreDataArray[self::settleNode];
+            if (array_key_exists(self::descriptionNode,$tempArray)) {
+                $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPrefix.self::settleNode],true,hash: $this->addDiv(self::settleNode,true,false));
+            }
         }
         $this->setAppDataTitle($setTitle);
     }
@@ -1182,11 +1196,11 @@ class CheckDocClass extends ControllerAbstract
         } elseif ($presence==='yes' && $terminateCriteria!=='' && array_key_exists(self::presenceNode,$terminateCriteria)) { // termination by project contributors not possible because not or only temporarily present -> presence must not be 'yes'
             $this->addCheckLabelString($tempPrefix.self::terminateCriteriaNode,parameters: $this->paramsAddressee);
         }
-//        // country
-//        if (array_key_exists(self::countryNode,$pageArray)) {
-//            $tempPrefix = $translationPage.self::countryNode.'.';
-//            $this->checkMissingChildrenOther($pageArray,self::countryNode,$tempPrefix.'missing',[self::countryForeign => $tempPrefix.self::countryForeign], addDescription: false);
-//        }
+        // country
+        if (array_key_exists(self::countryNode,$pageArray)) {
+            $tempPrefix = $translationPage.self::countryNode.'.';
+            $this->checkMissingChildrenOther($pageArray,self::countryNode,$tempPrefix.'missing',[self::countryForeign => $tempPrefix.self::countryForeign], addDescription: false);
+        }
         // durations
         $tempPrefix = $translationPage.self::durationNode.'.';
         $tempArray = $pageArray[self::durationNode];
@@ -2050,6 +2064,9 @@ class CheckDocClass extends ControllerAbstract
         if ($pageArray!=='') {
             $translationPage = self::projectdetailsPrefix.self::dataReuseNode.'.';
             $this->addProjectdetailsTitle(self::dataReuseNode, $setTitle);
+            // dissemination
+            $tempPrefix = $translationPage.self::disseminationNode.'.';
+            $this->checkMissingChildrenOther($pageArray,self::disseminationNode,$tempPrefix.'missing',[self::disseminationOther => $tempPrefix.self::descriptionNode]);
             if ($this->checkMissingChosen($pageArray, $translationPage.self::confirmIntroNode, null, $this->addDiv(self::confirmIntroNode), name: self::confirmIntroNode)==='1') {
                 $dataReuseHowPrefix = $translationPage.self::dataReuseHowNode.'.';
                 $lineTitlePrefix = $dataReuseHowPrefix.'lineTitle.';

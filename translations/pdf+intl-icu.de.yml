@@ -68,6 +68,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
         1     {Begründung, wodurch sich Interessenkonflikte ausschließen lassen:}
         other {}}
     support: 'Für das Forschungsprojekt in Anspruch genommene Beratungs- und Unterstützungsangebote'
+    supportSub: 'Die folgenden Punkte wurden bereits geklärt:'
   contributors: 'Weitere Projektbeteiligte'
   contributorsTasks: 'Funktion der Projektbeteiligten im Projekt'
   votes:
@@ -83,11 +84,13 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
       {type, select,
          resubmission {Im Vergleich zum ursprünglichen Antrag gibt es folgende Änderungen:}
          other        {Die zentralen Gemeinsamkeiten sowie Unterschiede zum damaligen Antrag sind wie folgt:}}
-  medicine:
-    medicine: 'Kann aus dem Projekt zukünftig medizinische, pharmazeutische Forschung oder anderweitige Forschung entstehen, die nach Arzneimittelgesetz (AMG), Medizinproduktegesetz (MPG/MPDG) oder anderen gesetzlichen Vorgaben bewertet werden muss?'
-    medicineSub: 'Beschreibung:'
-    physician: 'Sind Ärztinnen oder Ärzte unter den Projektbeteiligten?'
-    physicianSub: 'Warum ist aus Ihrer Sicht trotz der ärztlichen Beteiligung {committeeNom} zuständig?'
+  medicine: 'Angaben zum Medizin-Bezug'
+  medicineSub: 'Sind Ärztinnen oder Ärzte unter den Projektbeteiligten?'
+  permission: 'Sind Genehmigungen/Freigaben externer Stellen relevant?'
+  permissionSub: >-
+    Beschreibung der relevanten Genehmigungen/Freigaben{isRelevant, select,
+                                                          true  { und Begründung, warum trotz der Relevanz keine Genehmigung/Freigabe eingeholt wird}
+                                                          other {}}:
   summary: 'Zusammenfassung des Forschungsprojekts'
 
   projectdetails:
@@ -186,8 +189,8 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     interventions: 'Welchen gezielten Maßnahmen werden die Teilnehmenden im Rahmen der Studiendurchführung ausgesetzt?'
     interventionsSub: 'Beschreibung der Maßnahmen:'
     otherSources: 'Werden individuell zuordenbare Daten von anderen Stellen hinzugezogen?'
-    presence: 'Sind Projektbeteiligte bei der Erhebung anwesend?'
-#    presenceSub: 'In welchem Land werden die Daten erhoben?'
+    presence: 'Angaben zum Erhebungskontext'
+    presenceSub: 'In welchem Land werden die Daten erhoben?'
     burdens: 'Welche beanspruchenden, belastenden oder anderweitig nennenswerten Aspekte bringt die Teilnahme zwangsläufig mit sich?'
     burdensSub: 'Beschreibung der Belastungen:'
     risks: 'Welche unbeabsichtigten Folgen (Risiken, Gefährdungen) kann die Teilnahme mit sich bringen?'
@@ -206,7 +209,8 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     compensation: 'Aufwandsentschädigung'
     compensationSub: 'Ergänzende Angaben zur Aufwandsentschädigung:'
     processing: 'Beschreibung der Datenverarbeitung'
-    dataReuse: 'Werden die Forschungsdaten nachgenutzt?'
+    dataReuse: 'Dissemination'
+    dataReuseSub: 'Werden die Forschungsdaten nachgenutzt?'
     dataReuseBoxSub: >-
       Die Felder {isReviewFull, select,
                     true  {46-56}
@@ -319,6 +323,13 @@ coreData:
     supportCenter: 'Forschungsdatenmanagement-Servicestelle: {description}'
     supportData: 'Datenschutz- und/oder Informationssicherheitsbeauftragte/r: {description}'
     supportOther: 'andere Angebote: {description}'
+  settle:
+    types:
+      cooperation: 'formale Kooperationsvereinbarung'
+      intellectual: 'Regelungen zu geistigen Eigentumsrechten'
+      dataManagement: 'Daten-Managementplan'
+      dataProtection: 'Datenschutzvorkehrungen'
+    description: "Beschreibung der geklärten Punkte:\n {description}"
 
 votes:
   otherVote:
@@ -337,7 +348,7 @@ medicine:
   physician: >-
     {result, select,
       0     {Die beteiligten Ärztinnen bzw. Ärzte können von einer Ausnahmeregelung zur berufsrechtlichen und berufsethischen Beratungspflicht durch eine medizinische Ethikkommission Gebrauch machen: }
-      other {}}
+      other {}}{description}
 
 summary: 'Zusammenfassung des Forschungsprojekts'
 
@@ -366,7 +377,7 @@ projectdetails:
       ein Zeitpunkt {isMeasureTimePointName, select,
                       true  {({measureTimePointName})}
                       other {}}{origin}
-    hint: 'Diese Übersicht bezieht sich auf die im Ethiktool angelegte Projektstruktur. Zur Erleichterung der Begutachtung können im Ethiktool in Einzelfällen Studien/Gruppen/Zeitpunkte gemeinsam dargestellt werden, wenn es zwischen ihnen nur wenige Unterschiede gibt und sich diese leicht gemeinsam abbilden lassen.'
+    hint: 'Diese Übersicht bezieht sich auf die im Ethiktool angelegte Projektstruktur. Zur Erleichterung der Begutachtung können Antragstellende im Ethiktool in Einzelfällen Studien/Gruppen/Zeitpunkte gemeinsam darstellen, wenn es zwischen ihnen nur wenige Unterschiede gibt und sich diese leicht gemeinsam abbilden lassen.'
     structureDescription: "Erläuterung der Projektstruktur:\n"
     origin:
       new: 'Eigene Datenerhebung'
@@ -586,9 +597,9 @@ projectdetails:
         measures {Beschreibung der Erhebungsmethoden:
                                                        }
         other    {}}{description}
-#    country:
-#      domestic: 'Inland'
-#      foreign: 'Ausland: {description}'
+    country:
+      domestic: 'Inland'
+      foreign: 'Ausland: {description}'
   burdensRisks:
     burdens:
       burdensEveryday: >-
@@ -656,6 +667,14 @@ projectdetails:
                             other  {anderen zur Nachnutzung zur Verfügung gestellt.}}
     dataReuseSelf: 'Ja, aber nur für die eigene Nachnutzung. Anderen werden die Forschungsdaten nicht zugänglich gemacht.'
     no: 'Nein, die Daten werden weder selbst nachgenutzt noch anderen für die Nachnutzung zugänglich gemacht.'
+    dissemination:
+      journal: 'Veröffentlichung in Fachzeitschrift'
+      conference: 'Präsentation auf Fachtagung'
+      scientific: 'populärwissenschaftliche Veröffentlichung/Präsentation'
+      report: 'allgemeiner Ergebnisbericht an Teilnehmende bzw. unterstützende Organisationen/Gatekeeper'
+      meeting: 'Treffen zur Erörterung der Ergebnisse mit Teilnehmenden bzw. deren Communities'
+      thesis: 'Ergebnisse werden ausschließlich für eine Abschlussarbeit genutzt (Bachelor/Master/Promotion)'
+      disseminationOther: 'folgende Art der Dissemination: {description}'
   dataSource:
     origin:
       new: 'Es werden Daten explizit für das Forschungsprojekt neu erhoben.'

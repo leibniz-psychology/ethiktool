@@ -62,7 +62,11 @@ trait AppDataTrait
     protected const supportCenter = 'supportCenter'; // must equal one of the keys in $supportChoices
     protected const supportCommittee = 'supportCommittee'; // must equal one of the keys in $supportChoices
     protected const supportTypes = ['noSupport' => 'coreData.support.type.noSupport', 'supportCommittee' => 'coreData.support.type.supportCommittee', 'supportCenter' => 'coreData.support.type.supportCenter', 'supportData' => 'coreData.support.type.supportData', 'supportOther' => 'coreData.support.type.supportOther'];
+    protected const permissionNode = 'permission';
+    protected const permissionTypes = ['coreData.permission.types.available' => 'available', 'coreData.permission.types.progress' => 'progress', 'coreData.permission.types.later' => 'later', 'coreData.permission.types.relevant' => 'relevant', 'coreData.permission.types.no' => 'no'];
     protected const guidelinesNode = 'guidelines';
+    protected const settleNode = 'settle';
+    protected const settleTypes = ['cooperation','intellectual','dataManagement','dataProtection'];
     // votes
     protected const voteNode = 'votes';
     protected const otherVote = 'otherVote';

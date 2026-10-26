@@ -49,9 +49,9 @@ class MeasuresType extends TypeAbstract
         // presence
         $tempPrefix = $translationPrefix.self::presenceNode.'.';
         $this->addRadioGroup($builder,self::presenceNode,self::presenceTypes,$tempPrefix.'title',self::presenceNode.self::descriptionCap,$tempPrefix.self::textHint);
-//        // country
-//        $tempPrefix = $translationPrefix.self::countryNode.'.';
-//        $this->addCheckboxGroup($builder,self::countryTypes,$tempPrefix.'types.',textareaName: self::countryForeign.self::descriptionCap,textareaTextHint: $tempPrefix.self::textHint);
+        // country
+        $tempPrefix = $translationPrefix.self::countryNode.'.';
+        $this->addCheckboxGroup($builder,self::countryTypes,$tempPrefix.'types.',textareaName: self::countryForeign.self::descriptionCap,textareaTextHint: $tempPrefix.self::textHint);
         // durations
         foreach (self::durationTypes as $duration) {
             $this->addFormElement($builder,$duration,'spinner',options: $this->setMinMax(0,self::durationMax[$duration]));
@@ -100,10 +100,10 @@ class MeasuresType extends TypeAbstract
         $this->setChosenArray($forms,$viewData,self::locationNode,[self::descriptionNode => self::locationNode.self::descriptionCap]);
         // presence
         $this->setChosenArray($forms,$viewData,self::presenceNode,[self::descriptionNode => self::presenceNode.self::descriptionCap]);
-//        // country
-//        if (array_key_exists(self::countryForeign,$forms)) {
-//            $this->setSelectedCheckboxes($forms,$viewData[self::countryNode],[self::countryForeign => self::countryForeign.self::descriptionCap]);
-//        }
+        // country
+        if (array_key_exists(self::countryForeign,$forms)) {
+            $this->setSelectedCheckboxes($forms,$viewData[self::countryNode],[self::countryForeign => self::countryForeign.self::descriptionCap]);
+        }
         // durations
         $tempArray = $viewData[self::durationNode];
         $this->setSpinner($forms,$tempArray,self::durationTypes);
@@ -173,10 +173,10 @@ class MeasuresType extends TypeAbstract
         }
         // presence
         $newData[self::presenceNode] = $this->getChosenArray($forms,self::presenceNode,self::presencePartly,[self::descriptionNode => self::presenceNode.self::descriptionCap]);
-//        // country
-//        if (array_key_exists(self::countryForeign,$forms)) {
-//            $newData[self::countryNode] = $this->getSelectedCheckboxes($forms,self::countryTypes,[self::countryForeign => self::countryForeign.self::descriptionCap]);
-//        }
+        // country
+        if (array_key_exists(self::countryForeign,$forms)) {
+            $newData[self::countryNode] = $this->getSelectedCheckboxes($forms,self::countryTypes,[self::countryForeign => self::countryForeign.self::descriptionCap]);
+        }
         // durations
         $tempArray = [];
         $days = $forms[self::durationMeasureTimeDays]->getData();

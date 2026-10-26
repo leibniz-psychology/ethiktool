@@ -328,60 +328,72 @@ class ApplicationController extends PDFAbstract
             self::$linkedPage = self::coreDataNode;
             $tempPrefix = $pagePrefix.self::supportNode;
             $hasSupport = array_key_exists(self::supportNode,$coreDataArray);
-            $this->addBox($tempPrefix, $hasSupport ? $this->getSelectedCheckboxes($coreDataArray[self::supportNode],$tempPrefix.'.',implodeLines: true) : $this->noBoxTrans, inputPage: $hasSupport ? '' : self::coreDataNode,fragment: $hasSupport ? self::supportNode : self::dummyString, inputPrefix: $hasSupport ? '' : 'appData');
+            $settleArray = $coreDataArray[self::settleNode] ?? [];
+            $selections = $settleArray['types'] ?? '';
+            $tempVal = $settleArray[self::descriptionNode] ?? '';
+            $settlePrefix = $pagePrefix.self::settleNode.'.';
+            $this->addBox($tempPrefix, $hasSupport ? $this->getSelectedCheckboxes($coreDataArray[self::supportNode],$tempPrefix.'.',implodeLines: true) : $this->noBoxTrans, $selections!=='' ? $this->getSelectedCheckboxes($selections,$settlePrefix.'types.',implodeLines: true).($tempVal!=='' ? $this->translateStringPDF($settlePrefix.self::descriptionNode,[self::descriptionNode => $tempVal]) : '') : '', inputPage: $hasSupport ? '' : self::coreDataNode,fragment: $hasSupport ? self::supportNode : self::dummyString, inputPrefix: $hasSupport ? '' : 'appData');
 
             // votes and medicine
             $isOtherVote = false; // gets true if the other vote question is answered with yes
-            foreach ([self::voteNode => [self::otherVote, self::instVote], self::medicine => [self::medicine, self::physicianNode]] as $page => $subPages) {
-                self::$linkedPage = $page;
-                $pagePrefix = $page.'.';
-                $pageArray = $appDataArray[$page];
-                $hasPage = $pageArray!=='';
-                foreach ($subPages as $subPage) {
-                    $content = $this->noBoxTrans;
-                    $subContent = '';
-                    $translationParams = [];
-                    if ($hasPage) {
-                        $tempPrefix = $pagePrefix.$subPage.'.';
-                        $tempArray = $pageArray[$subPage];
-                        $tempVal = $tempArray[self::chosen];
-                        $content = $this->translateBinaryAnswer($tempVal);
-                        $tempVal = $tempVal==='0';
-                        if ($tempVal || $subPage===self::instVote && $isExtendedResubmission) { // if application type is changed, it may not yet be updated on votes
-                            switch ($subPage) {
-                                case self::otherVote:
-                                    $isOtherVote = true;
-                                    $resultParam = ['result' => $tempArray[self::otherVoteResult]];
-                                    $content .= $this->translateStringPDF($tempPrefix.'committee').' '.$tempArray[self::descriptionNode];
-                                    $content .= "\n".$this->translateStringPDF($tempPrefix.'result', $resultParam);
-                                    $subContent = $tempArray[self::otherVoteResultDescription]."\n\n".$this->translateStringPDF($tempPrefix.'pdf');
-                                    $translationParams = $resultParam;
-                                    break;
-                                case self::instVote:
-                                    if ($isExtendedResubmission) {
-                                        $content = $this->translateBinaryAnswer('0');
-                                    }
-                                    if ($tempVal) {
-                                        $content .= $this->translateStringPDF($tempPrefix.self::instReference).' '.$tempArray[self::instReference];
-                                        $subContent = $tempArray[self::instVoteText];
-                                        $translationParams = ['type' => $applicationType];
-                                    }
-                                    break;
-                                case self::medicine:
-                                    $subContent = $tempArray[self::descriptionNode];
-                                    break;
-                                case self::physicianNode:
-                                    $tempArray = $tempArray[self::descriptionNode];
-                                    $subContent = $this->translateStringPDF($pagePrefix.self::physicianNode, array_merge($committeeParam, ['result' => $tempArray[self::chosen]])).$tempArray[self::descriptionNode];
-                                    break;
-                                default:
-                                    break;
-                            }
+            self::$linkedPage = self::voteNode;
+            $pagePrefix = self::voteNode.'.';
+            $pageArray = $appDataArray[self::voteNode];
+            foreach ([self::otherVote, self::instVote] as $subPage) {
+                $subContent = '';
+                $translationParams = [];
+                $tempPrefix = $pagePrefix.$subPage.'.';
+                $tempArray = $pageArray[$subPage];
+                $tempVal = $tempArray[self::chosen];
+                $content = $this->translateBinaryAnswer($tempVal);
+                $tempVal = $tempVal==='0';
+                $isInstVote = $subPage===self::instVote;
+                if ($tempVal || $isInstVote && $isExtendedResubmission) { // if application type is changed, it may not yet be updated on votes
+                    if (!$isInstVote) {
+                        $isOtherVote = true;
+                        $resultParam = ['result' => $tempArray[self::otherVoteResult]];
+                        $content .= $this->translateStringPDF($tempPrefix.'committee').' '.$tempArray[self::descriptionNode];
+                        $content .= "\n".$this->translateStringPDF($tempPrefix.'result', $resultParam);
+                        $subContent = $tempArray[self::otherVoteResultDescription]."\n\n".$this->translateStringPDF($tempPrefix.'pdf');
+                        $translationParams = $resultParam;
+                    } else {
+                        if ($isExtendedResubmission) {
+                            $content = $this->translateBinaryAnswer('0');
+                        }
+                        if ($tempVal) {
+                            $content .= $this->translateStringPDF($tempPrefix.self::instReference).' '.$tempArray[self::instReference];
+                            $subContent = $tempArray[self::instVoteText];
+                            $translationParams = ['type' => $applicationType];
                         }
                     }
-                    $this->addBox($pagePrefix.$subPage, $content, $subContent, parameters: array_merge($committeeParam,$translationParams), inputPage: $hasPage ? '' : self::medicine, fragment: $hasPage ? $subPage : self::dummyString, inputPrefix: $hasPage ? '' : 'appData');
                 }
+                $this->addBox($pagePrefix.$subPage, $content, $subContent, parameters: array_merge($committeeParam,$translationParams), fragment: $subPage);
             }
+
+            // medicine
+            self::$linkedPage = self::medicine;
+            $pageArray = $appDataArray[self::medicine];
+            $content = $this->noBoxTrans;
+            $subContent = '';
+            $hasPage = $pageArray!=='';
+            if ($hasPage) {
+                $tempArray = $pageArray[self::medicine];
+                $tempVal = $tempArray[self::chosen];
+                $medicinePrefix = self::medicine.'.';
+                $content = $tempVal!=='' ? $this->translateString($medicinePrefix.self::medicine.'.heading')."\n".$this->translateBinaryAnswer($tempVal,true).($tempArray[self::descriptionNode] ?? '') : ''; // medicine
+                $physicianArray = $pageArray[self::physicianNode];
+                $tempVal = $physicianArray[self::chosen];
+                $tempArray = $physicianArray[self::descriptionNode] ?? '';
+                $tempPrefix = $medicinePrefix.self::physicianNode;
+                $subContent = $tempVal!=='' ? $this->translateBinaryAnswer($tempVal).($tempVal==='0' ? "\n".$this->translateString($tempPrefix.'.'.self::descriptionNode.'.title',$committeeParam)."\n".$this->translateStringPDF($tempPrefix,['result' => $tempArray[self::chosen], self::descriptionNode => $tempArray[self::descriptionNode]]) : '') : ''; // physician
+            }
+            $this->addBox(self::medicine,$content,$subContent,inputPage: $hasPage ? '' : self::medicine, fragment: $hasPage ? '' : self::dummyString, inputPrefix: $hasPage ? '' : 'appData');
+
+            // permission
+            self::$linkedPage = self::coreDataNode;
+            $tempArray = $coreDataArray[self::permissionNode];
+            $tempVal = $tempArray[self::chosen];
+            $this->addBox(self::permissionNode,$tempVal!=='' ? $this->translateString(self::coreDataNode.'.'.self::permissionNode.'.types.'.$tempVal) : '',$tempArray[self::descriptionNode] ?? '',parameters: ['isRelevant' => $this->getStringFromBool($tempVal==='relevant')], fragment: self::permissionNode);
 
             // summary
             self::$linkedPage = self::summary;
@@ -701,7 +713,8 @@ class ApplicationController extends PDFAbstract
                             $tempArray = $measuresArray[self::presenceNode] ?? [];
                             $tempVal = $tempArray[self::chosen] ?? '';
                             $description = $tempArray[self::descriptionNode] ?? '';
-                            $this->addBoxContent(self::presenceNode, $tempVal!=='' ? $this->translateString($measuresPrefixTool.self::presenceNode.'.types.'.$tempVal).($description!=='' ? ' - '.$description : '') : '');
+                            $tempPrefix = $measuresPrefixTool.self::presenceNode.'.';
+                            $this->addBoxContent(self::presenceNode, $this->translateString($tempPrefix.'title').($tempVal!=='' ? "\n".$this->translateString($tempPrefix.'types.'.$tempVal).($description!=='' ? ' - '.$description : '') : ''), array_key_exists(self::countryNode,$measuresArray) ? $this->getSelectedCheckboxes($measuresArray[self::countryNode],$measuresPagePrefix.self::countryNode.'.',implodeLines: true) : '');
 
                             // burdens and risks (burdens/risks)
                             self::$linkedPage = self::burdensRisksNode;
@@ -804,15 +817,15 @@ class ApplicationController extends PDFAbstract
                             $isDataReuse = in_array($dataReuse, self::dataReuseTypesYes);
                             $isDataReuseSelf = $dataReuseSelf==='0';
                             $tempPrefix = $projectdetailsPrefix.self::dataReuseNode.'.';
-                            $content = '';
+                            $subContent = '';
                             if (array_diff([$dataReuse, $dataReuseHow, $dataReuseSelf], [''])!==[]) { // any reuse question is answered
                                 if ($hasDocs && in_array($information, [self::pre, self::post],true)) { // refer to participation document if any reuse
-                                    $content = $this->translateStringPDF((in_array(true, [$isDataReuse, $dataReuseHowArray!==[], $isDataReuseSelf]) ? $tempPrefix.'yes' : $this->translateBinaryAnswer('1')));
+                                    $subContent = $this->translateStringPDF((in_array(true, [$isDataReuse, $dataReuseHowArray!==[], $isDataReuseSelf]) ? $tempPrefix.'yes' : $this->translateBinaryAnswer('1')));
                                 } else {
-                                    $content = $this->translateStringPDF($tempPrefix.($isDataReuse ? self::dataReuseNode : ($isDataReuseSelf ? self::dataReuseSelfNode : 'no')), ['selection' => $dataReuse, 'reuseType' => $isDataReuseSelf ? 'own' : (array_key_exists(self::dataReuseHowNode, $pageArray) ? $dataReuseHow : 'other'), self::descriptionNode => $dataReuseHowArray[self::descriptionNode] ?? '']);
+                                    $subContent = $this->translateStringPDF($tempPrefix.($isDataReuse ? self::dataReuseNode : ($isDataReuseSelf ? self::dataReuseSelfNode : 'no')), ['selection' => $dataReuse, 'reuseType' => $isDataReuseSelf ? 'own' : (array_key_exists(self::dataReuseHowNode, $pageArray) ? $dataReuseHow : 'other'), self::descriptionNode => $dataReuseHowArray[self::descriptionNode] ?? '']);
                                 }
                             }
-                            $this->addBoxContent(self::dataReuseNode, $content, fragment: ' ', boxSub: !$isAnyOriginExisting);
+                            $this->addBoxContent(self::dataReuseNode, $pageArray!=='' && array_key_exists(self::disseminationNode,$pageArray) ? $this->translateString($projectdetailsPagesPrefix.self::dataReuseNode.'.'.self::disseminationNode.'.title')."\n".$this->getSelectedCheckboxes($pageArray[self::disseminationNode],$tempPrefix.self::disseminationNode.'.', implodeLines: true) : '', $subContent, fragment: ' ', boxSub: !$isAnyOriginExisting);
                         } // any origin new
 
                         if ($isAnyOriginExisting) {
@@ -1048,7 +1061,8 @@ class ApplicationController extends PDFAbstract
                 $this->forward(ParticipationController::class.'::createPDF', ['routeIDs' => $routeIDs, 'markInput' => true]);
             }
             return new Response($html);
-        } catch (\Throwable) {
+        } catch (\Throwable $throwable) {
+            dd($throwable);
             return $this->setErrorAndRedirect($session);
         }
     }

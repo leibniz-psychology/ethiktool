@@ -824,7 +824,7 @@ class ParticipationController extends PDFAbstract
                             // add legal paragraph
                             if ($isPre) {
                                 $isNotLocation = in_array($location, [self::locationOnline, '']); // for insuranceWay
-                                $legalArray = $measureTimePoint[self::legalNode];
+                                $legalArray = $measureTimePoint[self::legalNode] ?? '';
                                 $legalArray = $legalArray ?: [];
                                 $legalContent = [];
                                 foreach (self::legalTypes as $type) {

@@ -195,6 +195,14 @@ class MainController extends ControllerAbstract
                 } elseif ($hasGuidelinesOld && !$hasGuidelines) {
                     $this->removeElement(self::guidelinesNode,$coreDataNode);
                 }
+                // add/remove settle node
+                $isBICC = $committee===self::committeeBICC;
+                $isBICCold = $oldCommittee===self::committeeBICC;
+                if (!$isBICCold && $isBICC) { // add node
+                    $coreDataNode->addChild(self::settleNode)->addChild('types');
+                } elseif ($isBICCold && !$isBICC) { // remove node
+                    $this->removeElement(self::settleNode,$coreDataNode);
+                }
                 // add/remove medicine nodes
                 $hasMedicineOld = !in_array($oldCommittee,self::committeeNoMedicine,true);
                 $hasMedicine = !in_array($committee,self::committeeNoMedicine);
@@ -209,8 +217,6 @@ class MainController extends ControllerAbstract
                 // update nodes by review process
                 $reviewProcess = $reviewProcess==='' ? $this->getCurrentReviewProcess($appNode) : $reviewProcess;
                 $session->set(self::reviewProcess,$reviewProcess);
-                $isBICC = $committee===self::committeeBICC;
-                $isBICCold = $oldCommittee===self::committeeBICC;
                 foreach ($appNode->{self::projectdetailsNodeName}->{self::studyNode} as $studyNode) {
                     foreach ($studyNode->{self::groupNode} as $groupNode) {
                         foreach ($groupNode->{self::measureTimePointNode} as $measureTimePointNode) {

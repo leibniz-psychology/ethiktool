@@ -204,6 +204,7 @@ class AppDataController extends ControllerAbstract
              'applicantInfo' => $applicantInfos,
              'textInputConflict' => $textInput,
              'textInputRequested' => $textInputRequested,
+             'settleTypes' => self::settleTypes,
              'modals' => $modals],'appData.coreData'));
     }
 

@@ -3,10 +3,16 @@
 
 {% block content %}
     {% set translationPrefix = 'projectdetails.pages.dataReuse.' %}
+    {# dissemination #}
+    <div id="dissemination">
+        {{ formRender.addHeading(translationPrefix~'dissemination.title') }}
+        {{ formRender.addCheckboxGroup(content,disseminationTypes,{'other': ['disseminationOther'], 'addDiv': ['']}) }}
+    </div>
     {# confirm #}
     {% set confirm, confirmDiv = content.confirmIntro, 'confirmDiv' %}
     {% set vars = confirm.vars %}
-    <div class="borderHint">{{ (translationPrefix~'intro.text')|trans(routeIDsParam)|raw|nl2br }}</div>
+    <div class="mt-8 MetaData-Title"></div>
+    <div class="borderHint mt-0">{{ (translationPrefix~'intro.text')|trans(routeIDsParam)|raw|nl2br }}</div>
     <div class="MetaData-Widget" id="confirmIntroDiv" {{ stimulus_action('base','setVisibility','change',{'multi': [[vars.name,confirmDiv]]}) }}>{{ formRender.addCheckbox(confirm, addStyle('margin-top: 1rem')) }}</div>
     <div class="mt-8" id="{{ confirmDiv }}" style="{{ boolToDisplay(vars.checked) }}">
         <div class="MetaData-Label">

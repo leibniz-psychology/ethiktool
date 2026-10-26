@@ -68,6 +68,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
         1     {Explanation how conflicts of interest are ruled out:}
         other {}}
     support: 'Consulting and support services used for this research project'
+    supportSub: 'The following issues are already settled:'
   contributors: 'Further contributors'
   contributorsTasks: 'Project role of contributors'
   votes:
@@ -83,11 +84,13 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
       {type, select,
          resubmission {Relative to the original proposal, the following changes were made:}
          other        {The main similarities and differences compared to the previous proposal are as follows:}}
-  medicine:
-    medicine: 'In the long run, could the project head towards medical, pharmaceutical or other research that would have to be assessed in accordance with the German Medicinal Products Act (AMG), Medical Device Law Implementation Act (MPDG), or other legal requirements?'
-    medicineSub: 'Description:'
-    physician: 'Are physicians amongst the project contributors?'
-    physicianSub: 'In your opinion, why is {committeeNom} responsible despite the involvement of physicians?'
+  medicine: 'Medical aspects or implications'
+  medicineSub: 'Are physicians amongst the project contributors?'
+  permission: 'Is any type of authorisation/approval by external bodies relevant?'
+  permissionSub: >-
+    Description of relevant authorisation/approval{isRelevant, select,
+                                                    true  { and justification why no authorisation/approval will be obtained despite its relevance}
+                                                    other {}}:
   summary: 'Summary of the research project'
 
   projectdetails:
@@ -186,8 +189,8 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     interventions: 'Which specific measures/interventions are participants exposed to as part of the study?'
     interventionsSub: 'Description of the measures/interventions:'
     otherSources: 'Will individually traceable data from other sources be added?'
-    presence: 'Are project contributors present during data collection?'
-#    presenceSub: 'In which country will the data be collected?'
+    presence: 'Context of data collection'
+    presenceSub: 'In which country will the data be collected?'
     burdens: 'Which demanding, inconvenient or otherwise significant aspects does participation inevitably entail?'
     burdensSub: 'Description of the burdens:'
     risks: 'Which unintended consequences (risks, hazards) might participation entail?'
@@ -206,7 +209,8 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     compensation: 'Compensation'
     compensationSub: 'Additional details regarding the compensation:'
     processing: 'Description of data processing'
-    dataReuse: 'Will the research data be re-used?'
+    dataReuse: 'Dissemination'
+    dataReuseSub: 'Will the research data be re-used?'
     dataReuseBoxSub: >-
       The fields {isReviewFull, select,
                     true  {46-56}
@@ -319,6 +323,13 @@ coreData:
     supportCenter: 'research data management support center: {description}'
     supportData: 'data protection officer or Data Protection and Information Security Coordinator (DISK): {description}'
     supportOther: 'other services: {description}'
+  settle:
+    types:
+      cooperation: 'formal collaboration agreement'
+      intellectual: 'agreements on intellectual property'
+      dataManagement: 'data management plan'
+      dataProtection: 'data protection measures'
+    description: "Description of already settled issues:\n {description}"
 
 votes:
   otherVote:
@@ -337,7 +348,7 @@ medicine:
   physician: >-
     {result, select,
       0     {The involved physicians can make use of an exception to the compulsory professional and ethical counselling by a medical ethics committee: }
-      other {}}
+      other {}}{description}
 
 summary: 'Summary of the research project'
 
@@ -366,7 +377,7 @@ projectdetails:
       one time point {isMeasureTimePointName, select,
                         true  {({measureTimePointName})}
                         other {}}{origin}
-    hint: 'This overview refers to the project structure created in the Ethiktool. To facilitate review, studies/groups/time points may be laid out jointly in the Ethiktool in some cases, if there are only few differences between them and these differences can easily be presented in a joint manner.'
+    hint: 'This overview refers to the project structure created in the Ethiktool. To facilitate review, applicants may lay out studies/groups/time jointly in the Ethiktool in some cases, if there are only few differences between them and these differences can easily be presented in a joint manner.'
     structureDescription: "Description of project structure:\n"
     origin:
       new: 'New data collection'
@@ -586,9 +597,9 @@ projectdetails:
         measures {Description of the methods:
                                                        }
         other    {}}{description}
-#    country:
-#      domestic: 'domestic'
-#      foreign: 'abroad: {description}'
+    country:
+      domestic: 'domestic'
+      foreign: 'abroad: {description}'
   burdensRisks:
     burdens:
       burdensEveryday: >-
@@ -656,6 +667,14 @@ projectdetails:
                             other  {shared with others for re-use.}}
     dataReuseSelf: 'Yes, but only for own re-use. The research data are not made available to others.'
     no: 'No, the data are neither used for own re-use nor made available to others.'
+    dissemination:
+      journal: 'publication in a scientific journal'
+      conference: 'presentation at a scientific conference'
+      scientific: 'non-specialist publication/presentation'
+      report: 'general result report for participants or supporting organisations/gatekeepers'
+      meeting: 'meeting for joint discussion of results with participants or their communities'
+      thesis: 'results are exclusively used for a qualification thesis (Bachelor/Master/PhD)'
+      disseminationOther: 'following way of dissemination: {description}'
   dataSource:
     origin:
       new: 'New data are collected explicitly for this research project.'
@@ -1895,7 +1914,7 @@ completePost:
 consent:
   hint: >-
     {committeeType, select,
-      PHT   {If the research project falls within the scope of the <a href="https://cms.ph-tirol.ac.at/documents/INN_230526_Rahmenvereinbarung_EmpUnt_BDT-UIBK-PHT-FHK_final-1.pdf" target="_blank">framework agreement for conducting empirical studies with pupils</a>, the templates for informed consent provided on the <a href="https://ph-tirol.ac.at/ethikkommission" target="_blank">website of the ethics committee</a> must be used instead.}
+      PHT   {If the research project falls within the scope of the <a href="https://cms.ph-tirol.ac.at/documents/INN_230526_Rahmenvereinbarung_EmpUnt_BDT-UIBK-PHT-FHK_final-1.pdf" target="_blank">framework agreement for conducting empirical studies with pupils</a>, the templates for informed consent provided on the <a href="https://ph-tirol.ac.at/ethikkommission" target="_blank">webpage of the ethics committee</a> must be used instead.}
       other {}}
   noConsent: >-
     The Ethiktool did not generate a consent form for the {addressee, select,

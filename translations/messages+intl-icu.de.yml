@@ -36,7 +36,7 @@ multiple:
       text: >-
         {filename, select,
           sizeExceed  {Mindestens eine der hinzugefügten PDF-Dateien ist zu groß, oder die Gesamtgröße aller PDF-Dateien überschreitet das Maximum.}
-          other       {Die PDF-Datei „{filename}“ konnte nicht hinzugefügt werden.}} Bitte fügen Sie nur PDF-Dateien hinzu, die in Summe eine maximale Größe von 7 MB haben, und erstellen Sie den Gesamtantrag erneut. {filename, select,
+          other       {Die PDF-Datei „{filename}“ konnte nicht hinzugefügt werden.}} Bitte fügen Sie nur PDF-Dateien hinzu, die jeweils eine maximale Größe von 2 MB und in Summe eine maximale Größe von 7 MB haben, und erstellen Sie den Gesamtantrag erneut. {filename, select,
                 sizeExceed {}
                 other      {</br></br>Sollten weitere selbst formulierte PDF-Dateien erforderlich sein, müssen diese ebenfalls neu hinzugefügt werden. Die Fehlermeldung bezieht sich nur auf die oben genannte Datei.}}
     errorMessage: # info modal if an error occurred
@@ -153,7 +153,11 @@ multiple:
     hints:
       name: 'Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) hinzugefügt werden.'
       institution: 'Bitte prüfen Sie, ob Sie berechtigt sind, bei {committeeDat} einen Ethikantrag einzureichen, obwohl Sie nicht {committeeLocationDat} angehören.'
-      department: 'Bitte schreiben Sie die volle Bezeichnung, z.B. „Fakultät für ...“, „Institut für ...“'
+      department: >-
+        Bitte schreiben Sie die volle Bezeichnung, z.B. {committeeType, select,
+                                                          UH1   {„Institut für ...“}
+                                                          UHS   {„Fachbereich 2 ...“}
+                                                          other {„Fakultät für ...“, „Institut für ...“}}
       professorship: >-
         <i>{committeeType, select,
               TUC   {Professur / Arbeitsgruppe}
@@ -181,8 +185,8 @@ dateFormat: >-
          other { H:i:s}}
 
 header: # alternative texts for logos
-  ZPID: 'zur Webseite des ZPID'
-  TUC: 'zur Webseite der TU Chemnitz'
+  ZPID: 'zur Website des ZPID'
+  TUC: 'zur Website der TU Chemnitz'
   update:
     before: 'In wenigen Minuten (montags gegen 8 Uhr) beginnt die wöchentliche Wartung des Ethiktools. Bitte speichern Sie Ihren Ethikantrag und setzen Sie ihn später fort.'
     during: 'Momentan findet die wöchentliche Wartung des Ethiktools statt. Bitte arbeiten Sie ab 8:30 Uhr an Ihrem Ethikantrag weiter.'
@@ -505,7 +509,7 @@ pages:
     informationIIISidebar: 'Debriefing'
     legal: 'Rechtliches'
     dataPrivacy: 'Datenschutz'
-    dataReuse: 'Nachnutzung'
+    dataReuse: 'Dissemination'
     contributor: 'Beteiligte'
   checkDoc:
     title: 'Dokumentüberprüfung'
@@ -545,7 +549,7 @@ main:
     Das Ethiktool erzeugt am Ende alle Dokumente, die durch die Ethikkommission begutachtet werden: das Antragsformular und die Teilnahmedokumente (Informations- und Einwilligungstexte), die sich an die teilnahmeinteressierten Personen richten (sofern diese selbst einwilligungsfähig sind - andernfalls erzeugt das Ethiktool die Dokumente für die Bezugspersonen).
 
     Weitere Informationen finden Sie in den Abschnitten „Über uns“ und „Über das Ethiktool“. Bitte beachten Sie die technischen Hinweise und die Nutzungsbedingungen des Ethiktools.
-    Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
+    Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Webseite</a> informieren.
 
     <i>Bitte beachten Sie: Momentan können mit dem Ethiktool erstellte Anträge bei {numCommittees} Kommissionen eingereicht werden. Das Ethiktool wird derzeit für den Einsatz an weiteren Standorten vorbereitet{numCommitteesBeta, select,
                   null  {.}
@@ -895,7 +899,7 @@ coreData:
     removeHint: >-
       Durch die Änderung, die Sie gerade vorgenommen haben, sind auf den „Projektstruktur“-Seiten „Einwilligung“{reviewProcess, select,
         shortBegun { bzw. „Aufwandsentschädigung“}
-        other      {, „Aufwandsentschädigung“ bzw. „Nachnutzung“}} keine Eingaben mehr zu der Frage nach dem Umgang mit den Daten bei individuellem Abbruch{reviewProcess, select,
+        other      {, „Aufwandsentschädigung“ bzw. „Dissemination“}} keine Eingaben mehr zu der Frage nach dem Umgang mit den Daten bei individuellem Abbruch{reviewProcess, select,
           shortBegun { bzw. der Abwicklung der Aufwandsentschädigung}
           other      {, der Abwicklung der Aufwandsentschädigung bzw. der Frage, wie bzw. wem die Forschungsdaten zur Nachnutzung zur Verfügung gestellt werden,}} erforderlich. Die dort getätigten Eingaben werden gelöscht, sobald Sie diese Seite verlassen.
     requestedConfirm:
@@ -936,6 +940,19 @@ coreData:
       supportOther: 'andere Angebote (bitte benennen)'
     otherIcon: 'z.B. Rechtsberatung, Reisevorkehrungen'
     textHint: 'Bitte geben Sie an, von welcher Ansprechperson Sie zu welchen Aspekten beraten wurden.'
+  permission:
+    title: 'Sind Genehmigungen/Freigaben externer Stellen relevant?'
+    headingHint: 'Gemeint sind beispielsweise die Genehmigung der Schulaufsichtsbehörde bei Forschung in Schulen, lokale Anforderungen oder Genehmigungen bei Erhebungen im Ausland, ggf. auch Forschungs-/Arbeitsvisum. Eine Genehmigung der intern zuständigen Datenschutzstelle ist hier nicht gemeint. Bereits eingeholte Ethikvoten anderer Stellen werden ebenfalls separat erfragt.'
+    types:
+      available: 'Ja, Genehmigung/Freigabe liegt vor'
+      progress: 'Ja, Genehmigungsprozess läuft derzeit'
+      later: 'Ja, Genehmigung wird zu einem späteren Zeitpunkt eingeholt'
+      relevant: 'Wäre prinzipiell relevant, wird aber nicht eingeholt'
+      no: 'Nein'
+    textHint: >-
+      Bitte geben Sie an, welche Genehmigungen/Freigaben für das Forschungsvorhaben relevant sind. {isRelevant, select,
+            true  {Bitte begründen Sie, warum trotz der Relevanz keine Genehmigung/Freigabe eingeholt wird (z.B. Ausnahmeregelung, möglicher Einfluss des Genehmigungsprozesses auf die Forschung).}
+            other {}}
   guidelines:
     title: 'Ethik-Richtlinien'
     headingHint: >-
@@ -948,6 +965,14 @@ coreData:
         EUB   {Die Planung des Forschungsprojekts beruht auf anderen ethischen Richtlinien (<a href="https://www.konsortswd.de/ratswd/best-practice-forschungsethik/ethikleitlinien-kodices/" target="_blank">eine Übersicht finden Sie hier</a>), und zwar:}
         BICC  {Die Planung des Forschungsprojekts beruht auf folgenden ethischen Richtlinien (<a href="https://www.konsortswd.de/ratswd/best-practice-forschungsethik/ethikleitlinien-kodices/" target="_blank">eine Übersicht finden Sie hier</a>):}
         other {}}
+  settle:
+    title: 'Welche der folgenden Punkte haben Sie bereits geklärt?'
+    types:
+      cooperation: 'formale Kooperationsvereinbarung'
+      intellectual: 'Regelungen zu geistigen Eigentumsrechten'
+      dataManagement: 'Daten-Managementplan'
+      dataProtection: 'Datenschutzvorkehrungen'
+    textHint: 'Bitte beschreiben Sie die ausgewählten Punkte genauer.'
 
 votes:
   hint: 'Die beiden nachfolgenden Fragen beziehen sich auf die im Rahmen dieses Ethikantrags geplanten Erhebungen bzw. Analysen. Ethikvoten für die ursprüngliche Gewinnung von Forschungsdaten, die hier nachgenutzt bzw. reanalysiert werden sollen, werden an anderer Stelle abgefragt.'
@@ -1058,7 +1083,7 @@ contributors:
       Daten einer bereits angelegten Person wieder löschen. Die antragstellende Person (erste projektbeteiligte Person) kann nicht gelöscht werden.
   hint: >-
     Bitte beachten Sie folgende Hinweise:</br>Die Funktionen „Projektleitung“ und „Verantwortlichkeit für die Verarbeitung der Daten“ werden üblicherweise von derselben Person übernommen. {committeeType, select,
-        EUB   {Beide Funktionen können bei universitären Projekten nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht. Bei Vorhaben, die ausschließlich im Rahmen der eigenen Qualifikationsarbeit durchgeführt werden, liegt die formelle Projektleitung bei der Erstbetreuung; die Datenverantwortung kann unterschiedlich geregelt sein, bitte halten Sie hierzu Rücksprache.}
+        EUB   {Beide Funktionen können bei universitären Projekten nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht. Bei Vorhaben, die ausschließlich im Rahmen der eigenen Qualifikationsarbeit (außer Promotionen) durchgeführt werden, liegt die formelle Projektleitung bei der Erstbetreuung; die Datenverantwortung kann unterschiedlich geregelt sein, bitte halten Sie hierzu Rücksprache.}
         other {Beide Funktionen können nicht bei den studentischen Projektbeteiligten liegen, da es um die Verantwortungsübernahme für das Vorgehen aller Projektbeteiligten geht. }}</br> Bitte nehmen Sie frühzeitig Kontakt zu den zuständigen Datenschutzstellen auf, wenn mehr als eine Person verantwortlich für die Verarbeitung der Daten (im Sinne der DS-GVO) ist und insbesondere wenn die Verantwortlichkeiten über verschiedene Institutionen verteilt sind. Bitte beachten Sie auch, dass die DS-GVO-konforme Aufklärung über die Verarbeitung personenbezogener Daten in diesem Fall nicht mit dem Ethiktool erstellt werden kann.</br></br>Wenn Personen noch nicht namentlich feststehen, können sie hier als „N. N.“ (inkl. Leerzeichen) mit ihren geplanten Funktionen im Projekt hinzugefügt werden. Eine nachträgliche Ergänzung von Projektbeteiligten nach Erhalt eines positiven Ethikvotums ist möglich; falls dies allerdings die ethische Einschätzung berührt (z.B. durch einen neuen Interessenkonflikt), ist eine Nachbegutachtung erforderlich.
   errors:
     name: 'Achtung: Name nicht vollständig'
@@ -1356,6 +1381,7 @@ projectdetails:
           spread: 'z.B. Zeitungsannoncen, Aushänge und Flyer, Mailinglisten, Social-Media-Post'
           recruitmentPrivate: 'z.B. im Familien-/Freundeskreis, im Verein, in der Schulklasse der eigenen Kinder'
           occupation: 'bei einer Doppelrolle als Forscher*in und Kolleg*in/Lehrkraft/Therapeut*in reflektieren Sie bitte auch, ob es dadurch zu <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#conflict">Interessenkonflikten</a> kommen kann und wie sich diese ggf. verhindern lassen'
+          database: 'z.B. SONA, selbst betriebene Datenbank'
           contributorsOther: 'Personen mit Zugang zur Zielgruppe, z.B. durch Tätigkeit in Schule, Verein, Behandlungseinrichtung, Jugendhilfeeinrichtung'
           multiplier: 'z.B. Mailingliste, Social-Media-Aufruf, Auslage von Flyern in der Einrichtung'
           gatekeeper: 'z.B. Aushändigung eines Studienflyers an konkrete Personen'
@@ -1661,7 +1687,7 @@ projectdetails:
             interventionsQuestionnaire: 'Es werden Fragen gestellt.'
             everyday: 'gezielte Herbeiführung von Alltagssituationen'
             vr: 'virtuelle Realität'
-            textmaterial: 'Textmaterial, Vignetten'
+            textmaterial: 'Textmaterial/Vignetten'
             visual: 'visuelle Reize'
             auditive: 'auditive Reize'
             tactile: 'taktile Reize'
@@ -1725,13 +1751,13 @@ projectdetails:
           no: 'Nein'
         headingHint: 'Die Kenntnis über die Anwesenheit von Projektbeteiligten ist u.a. relevant für die Beurteilung von Reaktionsmöglichkeiten im Falle von Belastungen/Risiken und für den Umgang mit bestimmten Interessenkonflikten.'
         textHint: 'Bitte erläutern Sie, für welche Teile der Erhebung Projektbeteiligte an- oder abwesend sind.'
-#      country:
-#        title: 'In welchem Land werden die Daten erhoben?'
-#        headingHint: 'Bei Online-Studien ist maßgeblich, wo Teilnehmende explizit rekrutiert werden.'
-#        types:
-#          domestic: 'Inland'
-#          foreign: 'Ausland'
-#        textHint: 'Bitte spezifizieren Sie das Land und erläutern Sie den Erhebungskontext genauer. Beschreiben Sie dabei insbesondere relevante gesellschaftliche, rechtliche, kulturelle bzw. geopolitische Gegebenheiten, wie beispielsweise Rollen/Relevanz von Ortsvorstehenden, Konflikte, Rechtslage, Datenschutz, Schulsystem, etwaige Machtasymmetrien oder Aspekte von Positionalität. Die Risiken, die daraus eventuell ergeben, werden separat erfragt.'
+      country:
+        title: 'In welchem Land werden die Daten erhoben?'
+        headingHint: 'Bei Online-Studien ist maßgeblich, wo Teilnehmende explizit rekrutiert werden.'
+        types:
+          domestic: 'Inland'
+          foreign: 'Ausland'
+        textHint: 'Bitte spezifizieren Sie das Land und erläutern Sie den Erhebungskontext genauer. Beschreiben Sie dabei insbesondere relevante gesellschaftliche, rechtliche, kulturelle bzw. geopolitische Gegebenheiten, wie beispielsweise Rollen/Relevanz von Ortsvorstehenden, Konflikte, Rechtslage, Datenschutz, Schulsystem, etwaige Machtasymmetrien oder Aspekte von Positionalität. Die Risiken, die daraus eventuell ergeben, werden separat erfragt.'
       duration:
         title: >-
           Dauer {multiple, select,
@@ -2828,6 +2854,17 @@ projectdetails:
           class2: 'Zugriffsklasse 2 gemäß DGPs-Kommission Open Science'
           class3: 'Zugriffsklasse 3 gemäß DGPs-Kommission Open Science'
           hint: 'Bitte prüfen Sie, ob das gewählte Datenarchiv die gewählte Form der Nachnutzung unterstützt (z.B. lässt sich nicht jede Zugriffsklasse in jedem Datenarchiv umsetzen, nicht jedes Datenarchiv erlaubt die Bereitstellung personenbezogener Daten). Wenn nur ein Teil der Forschungsdaten zur Nachnutzung zur Verfügung gestellt werden soll, kann dies hier spezifiziert werden, z.B. „PsychArchives. Davon ausgenommen sind die soziodemographischen Angaben“.' # hint below text field
+      dissemination:
+        title: 'Wie werden die Ergebnisse des Forschungsprojekts mit einem größeren Personenkreis geteilt?'
+        types:
+          journal: 'Veröffentlichung in Fachzeitschrift'
+          conference: 'Präsentation auf Fachtagung'
+          scientific: 'populärwissenschaftliche Veröffentlichung/Präsentation'
+          report: 'allgemeiner Ergebnisbericht an Teilnehmende bzw. unterstützende Organisationen/Gatekeeper'
+          meeting: 'Treffen zur Erörterung der Ergebnisse mit Teilnehmenden bzw. deren Communities'
+          thesis: 'Ergebnisse werden ausschließlich für eine Abschlussarbeit genutzt (Bachelor/Master/Promotion)'
+          disseminationOther: 'sonstige Art der Dissemination'
+        textHint: 'bitte spezifizieren'
     contributor:
       title: 'Welche Projektbeteiligten übernehmen welche Funktionen in der Studie?'
       selected: 'Diese Funktion wurde bei keiner projektbeteiligten Person ausgewählt.'
@@ -2921,7 +2958,11 @@ checkDoc:
           supportCenter: 'Beschreibung der Beratung durch Forschungsdatenmanagement-Servicestelle'
           supportData: 'Beschreibung der Beratung durch Datenschutz-/Informationssicherheitsbeauftragte'
           supportOther: 'Beschreibung anderer Beratungsangebote'
+      permission:
+        missing: 'externen Genehmigungen/Freigaben' # 'Antwort auf Frage nach [] fehlt.'
+        description: 'Genehmigungen/Freigaben' # 'Beschreibung der [] fehlt.'
       guidelines: 'verwendeten Ethik-Richtlinien'
+      settle: 'bereits geklärten Punkte'
     votes:
       otherVote: 'anderem Ethikvotum'
       otherVoteCommittee: 'Damalige Ethikkommission'
@@ -3292,9 +3333,9 @@ checkDoc:
                                         thirdParty {gesetzlichen Vertretungspersonen}
                                         other      {betreuten Personen}}}
                     other    {}} die <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#preAbort" data-base-route-i-ds-param="{routeIDs}">nachträgliche vollständige Aufklärung</a> im persönlichen Kontakt stattfindet, müssen Projektbeteiligte bei der Erhebung anwesend sein.
-#        country:
-#          missing: 'Land, in dem die Daten erhoben werden,' # '[] fehlen.'
-#          foreign: 'Nähere Angaben zur Datenerhebung im Ausland' # '[] fehlt.'
+        country:
+          missing: 'Land, in dem die Daten erhoben werden,' # '[] fehlen.'
+          foreign: 'Nähere Angaben zur Datenerhebung im Ausland' # '[] fehlt.'
         duration:
           measureTimeDays: 'Anzahl Tage der reinen Erhebungszeit'
           measureTimeHours: 'Anzahl Stunden der reinen Erhebungszeit'
@@ -3684,6 +3725,9 @@ checkDoc:
           description: 'Benennung des Datenarchivs bzw. der Plattform zur Datenbereitstellung'
           public: 'Sie haben ausgewählt, dass personenbezogene Forschungsdaten öffentlich zugänglich gemacht werden. Das passt nicht dazu, dass keine personenbezogenen Daten <a class="linkInternal" href="dataPrivacy" data-action="base#setDummySubmit" data-base-url-param="app_dataPrivacy#transferOutside" data-base-route-i-ds-param="{routeIDs}">außerhalb des EWR weitergegeben</a> werden.'
         dataReuseSelf: 'Antwort auf Frage, ob die Forschungsdaten zur eigenen Nachnutzung/Reanalyse verwendet werden,' # '[] fehlt.'
+        dissemination:
+          missing: 'Wege zur Dissemination der Forschungsergebnisse' # '[] fehlen.'
+          description: 'sonstigen Art der Dissemination' # 'Beschreibung der [] fehlt.'
       contributor:
         mandatory: >-
           Es wurde keine {type, select,
@@ -3721,7 +3765,7 @@ completeForm:
 
       Ferner versichere ich, dass ich die für das Forschungsprojekt einschlägigen gesetzlichen Bestimmungen und Richtlinien (einschließlich der Regelungen zum Datenschutz) in den aktuell gültigen Fassungen kenne und bei der Planung sowie der Antragstellung nach bestem Wissen berücksichtigt habe.
     confirm: 'Ich bestätige die Korrektheit der Ethikantragsdokumente und die Berücksichtigung der einschlägigen Bestimmungen.'
-    hint: 'Wenn eine Angabe in den automatisch erstellten Dokumenten fehlerhaft sein sollte, weil sich ein spezieller Umstand Ihres Forschungsprojekts von den Vorlagen nicht abdecken lässt, wenden Sie sich bitte an den <a href="mailto:ethiktool@tu-chemnitz.de">Ethiktool-Support</a>. E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.'
+    hint: 'Wenn eine Angabe in den automatisch erstellten Dokumenten fehlerhaft sein sollte, weil sich ein spezieller Umstand Ihres Forschungsprojekts von den Vorlagen nicht abdecken lässt, wenden Sie sich bitte an den <a href="mailto:ethiktool@leibniz-psychology.org">Ethiktool-Support</a>.'
     notes: 'Falls weitere Mitteilungen an {committeeAcc} erforderlich sind, tragen Sie diese bitte hier ein. Bitte schreiben Sie *keinen* weiteren Begleittext außerhalb dieses Antragsformulars.'
   bias:
     title: >- # TODO: add links for TUD, PHHD
@@ -3758,7 +3802,7 @@ completeForm:
     text: >- # TODO: check PHHD link, add links for BICC, TUD, PHT
       Grundlage für die Begutachtung sind die Regelungen bzw. die Geschäftsordnung für {committeeAcc} in der aktuell gültigen Fassung{committeeType, select,
         TUC   {, abrufbar unter <a href="https://www.tu-chemnitz.de/tu/ethik/ordnung.php" target="_blank">https://www.tu-chemnitz.de/tu/ethik/ordnung.php</a>}
-        EUB   {, abrufbar unter "Regelungen" bzw. "Geschäftsordnung" auf der <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">Website {committeeGen}</a>}
+        EUB   {, abrufbar unter "Regelungen" bzw. "Geschäftsordnung" auf der <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">Webseite {committeeGen}</a>}
         JGU   {, abrufbar unter <a href="https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/" target="_blank">https://www.psychologie.uni-mainz.de/ethikkommission-des-instituts/antragstellung-ethikkommission/</a>}
         DLR   {, abrufbar <a href="https://intranet.dlr.de/Seiten/ImUeberblick.aspx?vTerms=AtAGlance&termId=3934fbe8-cc12-401a-ab48-0381fcbb4186" target="_blank">im Intranet des DLR</a>}
         TUD   {. Diese Regelungen sind mit der offiziellen Beschlussfassung hier abrufbar}
@@ -3806,7 +3850,7 @@ completeForm:
                                                 other {den ursprünglichen Anträgen mit den}} Aktenzeichen {reference}.}}}}
     consent: 'Die obigen Hinweise zur Bearbeitung meines Ethikantrags habe ich zur Kenntnis genommen.'
   pdf:
-    text: 'Aufgrund Ihrer Eingaben im Ethiktool ist es erforderlich, Ihrem Antrag zusätzliche PDF-Dateien beizufügen. Bitte wählen Sie diese hier aus. Die maximale Dateigröße beträgt 7 MB.</br> Wenn Sie mehrere Dokumente für denselben Aspekt beifügen möchten, fügen Sie diese bitte außerhalb des Ethiktools zu einer PDF-Datei zusammen und wählen diese Datei dann hier aus.'
+    text: 'Aufgrund Ihrer Eingaben im Ethiktool ist es erforderlich, Ihrem Antrag zusätzliche PDF-Dateien beizufügen. Bitte wählen Sie diese hier aus. Die maximale Dateigröße einer Datei beträgt 2 MB. Die Gesamtgröße aller PDF-Dateien beträgt 7 MB.</br> Wenn Sie mehrere Dokumente für denselben Aspekt beifügen möchten, fügen Sie diese bitte außerhalb des Ethiktools zu einer PDF-Datei zusammen und wählen diese Datei dann hier aus.'
     votes: 'Ergebnisschreiben der anderen Ethikkommission'
     projectdetails:
       dataSet: 'Aufklärungs- und Einwilligungsschreiben für den ursprünglichen Forschungsdatensatz'
@@ -3895,13 +3939,10 @@ quit: |
 
   Wir möchten Sie einladen, an einer <a href="https://bildungsportal.sachsen.de/umfragen/limesurvey/index.php/544972?lang=de" target="_blank">kurzen anonymen Befragung</a> zur Nutzung des Ethiktools teilzunehmen - vielen Dank schon vorab!
 
-  Das Ethiktool wird permanent weiterentwickelt. Daher sind Fehlermitteilungen, Fragen und Anmerkungen stets willkommen; bitte senden Sie dazu eine E-Mail an <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. Bei technischen Problemen mit der aktuellen Version wenden Sie sich bitte an <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
+  Das Ethiktool ist eine gemeinsame Entwicklung eines Projektteams unter Leitung von Prof. Dr. Alexandra Bendixen (Technische Universität Chemnitz) mit Team-Mitgliedern der TU Chemnitz, des Leibniz-Instituts für Psychologie (ZPID) und der Universität Bielefeld. Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Webseite</a> informieren.
+  Wir entwickeln das Ethiktool permanent weiter. Daher sind Fehlermitteilungen, Fragen und Anmerkungen stets willkommen - nehmen Sie gern Kontakt mit uns auf. Bei technischen Problemen mit der aktuellen Version wenden Sie sich bitte an den <a href="mailto:ethiktool@leibniz-psychology.org">Ethiktool-Support</a>.
 
   Sie möchten das Ethiktool unterstützen? Wenn Sie das Ethiktool für Ihre Forschung verwenden, zitieren Sie gern unsere <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html#publications" target="_blank">Arbeiten</a>.
-
-  Das Ethiktool ist eine gemeinsame Entwicklung eines Projektteams unter Leitung von Prof. Dr. Alexandra Bendixen (Technische Universität Chemnitz) mit Team-Mitgliedern der TU Chemnitz, des Leibniz-Instituts für Psychologie (ZPID) und der Universität Bielefeld. Gern können Sie sich ausführlicher auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a> informieren.
-
-  *E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.
 
 # header modals
 aboutUs:
@@ -3911,14 +3952,15 @@ aboutUs:
     Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/SFKS/alexandrabendixen.html" target="_blank">Alexandra Bendixen</a> (TU Chemnitz, Projektleitung und Ansprechperson für inhaltliche Fragen)
     Dr. <a class="linkExternal" href="https://leibniz-psychology.org/profil-thomas-wegner" target="_blank">Thomas Wegner</a> (Leibniz-Institut für Psychologie (ZPID), Haupt-Softwareentwickler und Ansprechperson für technische Fragen)
     Dr. <a href="https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=22797466" target="_blank">Eva-Maria Berens</a> (Universität Bielefeld)
-    Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/wolfgang.html" target="_blank">Wolfgang Einhäuser-Treyer</a> (TU Chemnitz)
-    M.Sc. <a href="https://www.tu-chemnitz.de/physik/SFKS/tinafrenzel.html" target="_blank">Tina Frenzel</a> (TU Chemnitz)
     Dr. <a class="linkExternal" href="https://leibniz-psychology.org/profil-katarina-blask" target="_blank">Katarina Blask</a> (Leibniz-Institut für Psychologie (ZPID))
+    Prof. Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/wolfgang.html" target="_blank">Wolfgang Einhäuser-Treyer</a> (TU Chemnitz)
+
+    M.Sc. <a href="https://www.tu-chemnitz.de/physik/SFKS/tinafrenzel.html" target="_blank">Tina Frenzel</a> (ehemaliges Mitglied)
     Dr. <a href="https://www.tu-chemnitz.de/physik/PHKP/inka/index.html" target="_blank">Inka Schmitz</a> (ehemaliges Mitglied)
 
-    Unser Ziel ist es, die Erstellung und Begutachtung von Ethikanträgen zu erleichtern. Hierfür stellen wir das Ethiktool allen interessierten Ethikkommissionen kostenfrei zur Verfügung. Die Ethiktool-Entwicklung basiert auf unserer langjährigen Ethikkommissionsarbeit und auf unseren Erfahrungen mit der Vorgängersoftware, die unter der Leitung von Alexandra Bendixen für die Ethikkommission der TU Chemnitz entwickelt und dort 2021 eingeführt wurde. Die Entwicklung der aktuellen Ethiktool-Version wird seit 2023 und noch bis 2026 von der VolkswagenStiftung finanziell unterstützt.
+    Unser Ziel ist es, die Erstellung und Begutachtung von Ethikanträgen zu erleichtern. Hierfür stellen wir das Ethiktool allen interessierten Ethikkommissionen kostenfrei zur Verfügung. Die Ethiktool-Entwicklung basiert auf unserer langjährigen Ethikkommissionsarbeit und auf unseren Erfahrungen mit der Vorgängersoftware, die unter der Leitung von Alexandra Bendixen für die Ethikkommission der TU Chemnitz entwickelt und dort 2021 eingeführt wurde. Die Entwicklung der aktuellen Ethiktool-Version wurde von 2023 bis 2026 von der VolkswagenStiftung finanziell unterstützt.
 
-    Mehr Informationen über uns finden Sie auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Website</a>.
+    Mehr Informationen über uns finden Sie auf unserer <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html" target="_blank">Projekt-Webseite</a>.
 
 aboutTool:
   title: 'Über das Ethiktool'
@@ -3926,14 +3968,11 @@ aboutTool:
     Sie verwenden Version {toolVersion} des browserbasierten Ethiktools. Eine Liste der Änderungen gegenüber vorherigen Versionen finden Sie <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html" target="_blank">hier</a>.
 
     Das Ethiktool dient der Vereinfachung der Antragstellung und Begutachtung von Ethikanträgen zu Forschung am Menschen und mit Menschen, insbesondere im nicht-medizinischen Bereich. Aus Ihren Antworten auf Fragen, die sich dynamisch an Ihre Eingaben anpassen, erstellt das Ethiktool sowohl die Antragsdokumente als auch die Informations-, Einwilligungs- und Datenschutzdokumente für die Studienteilnehmenden (sofern diese selbst einwilligungsfähig sind - andernfalls erzeugt das Ethiktool die Dokumente für die Bezugspersonen). Das Ethiktool ist eine gemeinsame Entwicklung eines Projektteams unter Leitung von Prof. Dr. Alexandra Bendixen (Technische Universität Chemnitz) mit Team-Mitgliedern der TU Chemnitz, des Leibniz-Instituts für Psychologie (ZPID) und der Universität Bielefeld. Es basiert auf den Erfahrungen mit einer Vorgängersoftware an der TU Chemnitz.
-
-    Sie möchten das Ethiktool unterstützen? Das Ethiktool wird permanent weiterentwickelt. Daher sind Fehlermitteilungen, Fragen und Anmerkungen stets willkommen; bitte senden Sie dazu eine E-Mail an <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*. Bei technischen Problemen mit der aktuellen Version wenden Sie sich bitte an <a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>.
-
-    Sie sind Mitglied einer Ethikkommission oder anderweitig für die Bearbeitung oder Prüfung von Ethikanträgen zuständig und wollen das Ethiktool auch an Ihrem Standort nutzen? Kontaktieren Sie uns ebenfalls gern unter <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*.
-
+    
+    Sie möchten das Ethiktool auch an Ihrem Standort nutzen? Nehmen Sie gern <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html#team" target="_blank">Kontakt mit uns</a> auf.
+    Auch Fehlermitteilungen, Fragen und Anmerkungen sind stets willkommen. Wir entwickeln das Ethiktool permanent weiter und freuen uns auf Ihr Feedback.
+    
     Wenn Sie das Ethiktool für Ihre Forschung verwenden, zitieren Sie gern unsere <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html#publications" target="_blank">Arbeiten</a>.
-
-    *E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.
 
 technicalHints:
   title: 'Technische Hinweise'
@@ -3962,7 +4001,7 @@ technicalHints:
 
     Sie haben jederzeit die Möglichkeit, sich über den Button „Einzeldokumente“ die XML-Datei sowie die Einzeldokumente der verschiedenen Antragsteile im PDF-Format herunterzuladen. Bitte beachten Sie, dass die Einzeldokumente <b>nicht</b> zur Einreichung bei der Ethikkommission vorgesehen sind.
 
-    Das Ethiktool wird regelmäßig automatisch aktualisiert. Sie verwenden Version {toolVersion}; eine Versionsgeschichte finden Sie <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html" target="_blank">hier</a>.
+    Das Ethiktool wird regelmäßig aktualisiert. Sie verwenden Version {toolVersion}; eine Versionsgeschichte finden Sie <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/updates.html" target="_blank">hier</a>.
 
 termsOfUse:
   title: 'Nutzungsbedingungen'
@@ -3973,15 +4012,11 @@ termsOfUse:
 
     Das Ethiktool, alle seine Texte, Inhalte, Verknüpfungen (einschließlich der Texte, Inhalte und Verknüpfungen auf allen seinen Unterseiten) sowie sein Quellcode unterliegen der Open-Source-Lizenz für die Europäische Union in Version 1.2 vom 19. Mai 2017 (<a href="https://interoperable-europe.ec.europa.eu/collection/eupl/eupl-text-eupl-12" target="_blank">EUPL v. 1.2</a>) und sind das „Werk“ im Sinne dieser Lizenz. Insbesondere sind jegliche Bearbeitungen (z.B. Erweiterungen, Veränderungen) ebenfalls Teil des Werks, und jegliche Verbreitung oder Zugänglichmachung des Werks ist nur unter dieser Lizenz zulässig und ebenfalls unter diese Lizenz zu stellen („CopyLeft“). Der Quellcode ist <a href="https://github.com/leibniz-psychology/ethiktool" target="_blank">hier</a> zugänglich.
 
-    Gern unterstützen wir Sie bei der Einführung des Ethiktools an Ihrem Standort und fügen die für Ihren Standort angepasste Fassung in die von uns hier bereitgestellte Software ein. Wenden Sie sich hierfür bitte an <a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*.
-
-    *E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.
+    Gern unterstützen wir Sie bei der Einführung des Ethiktools an Ihrem Standort und fügen die für Ihren Standort angepasste Fassung in die von uns hier bereitgestellte Software ein. Nehmen Sie hierfür gern <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html#team" target="_blank">Kontakt mit uns</a> auf.
 
 # added empty lines to have same line numbers in all translation files.
 
 contactModal:
   title: 'Kontakt'
   text: |
-    Wir freuen uns, wenn Sie mit uns Kontakt aufnehmen. Für inhaltliche Fragen und Anregungen wenden Sie sich bitte an die Ethiktool-Projektbeteiligten an der TU Chemnitz (<a href="mailto:ethiktool@tu-chemnitz.de">ethiktool@tu-chemnitz.de</a>*). Für technische Fragen wenden Sie sich bitte an die Ethiktool-Projektbeteiligten am Leibniz-Institut für Psychologie (ZPID) (<a href="mailto:ethiktool@leibniz-psychology.org">ethiktool@leibniz-psychology.org</a>).
-
-    *E-Mails an diese Adresse werden über ein Ticketsystem verarbeitet; bitte beachten Sie die <a href="https://www.tu-chemnitz.de/urz/apps/otrs/datenschutz.html" target="_blank">Datenschutzhinweise</a>.
+    Wir freuen uns, wenn Sie mit uns Kontakt aufnehmen. Für inhaltliche Fragen und Anregungen wenden Sie sich bitte an die <a data-lang="de" href="https://www.tu-chemnitz.de/physik/SFKS/ethiktool/index.html#team" target="_blank">Ethiktool-Projektbeteiligten</a> an der TU Chemnitz. Für technische Fragen wenden Sie sich bitte an den <a href="mailto:ethiktool@leibniz-psychology.org">Ethiktool-Support</a> am Leibniz-Institut für Psychologie (ZPID).

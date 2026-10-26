@@ -2,10 +2,10 @@
 {% import 'macros.html.twig' as formRender %}
 
 {% block content %}
-    {% set appType, extended, committeeType, appProcess = content.appType, content.appTypeExtended, committeeParams['committeeType'], content.applicationProcess %}
-    {% set style, projectLength, translationPrefix, coreDataController = 'max-width: 60rem', {'maxLength': 200}, 'coreData.', 'AppData--coreData' %}
-    {% set isEUB, appTypePrefix, conflictPrefix, conflictHint = committeeType is same as 'EUB', translationPrefix~'appType.', translationPrefix~'conflict.', 'conflictHintDiv' %}
-    {% set conflictYesDescription, projectTitle, extendedPrefix = (conflictPrefix~'yes')|trans, content.projectTitle, translationPrefix~'appTypeExtended.' %}
+    {% set appType, extended, committeeType, appProcess, translationPrefix = content.appType, content.appTypeExtended, committeeParams['committeeType'], content.applicationProcess, 'coreData.' %}
+    {% set style, projectLength, coreDataController, permissionPrefix, permission = 'max-width: 60rem', {'maxLength': 300}, 'AppData--coreData', translationPrefix~'permission.', content.permission %}
+    {% set isEUB, appTypePrefix, conflictPrefix, conflictHint, permissionHint, permissionValue = committeeType is same as 'EUB', translationPrefix~'appType.', translationPrefix~'conflict.', 'conflictHintDiv', permissionPrefix~'textHint', permission.vars.value %}
+    {% set conflictYesDescription, projectTitle, extendedPrefix, permissionHintRelevant, permissionHintName = (conflictPrefix~'yes')|trans, content.projectTitle, translationPrefix~'appTypeExtended.', (permissionHint)|trans({'isRelevant': 'true'}), 'permissionHintDiv' %}
     <div {{ stimulus_controller(coreDataController, {
             'appType': appType.vars.value,
             'extended': extended.vars.value,
@@ -16,7 +16,10 @@
             'positions': positions,
             'noChoice': 'multiple.choiceTextHint'|trans,
             'conflictHint': [conflictYesDescription,(conflictPrefix~'no')|trans],
-            'conflictHintName': conflictHint}) }}>
+            'conflictHintName': conflictHint,
+            'permission': permissionValue,
+            'permissionHint': [permissionHintRelevant, (permissionHint)|trans({'isRelevant': 'false'})],
+            'permissionHintName': permissionHintName}) }}>
         {# project title #}
         <div id="projectTitle">
             {{ form_label(projectTitle,null,addLabelAttributes(addClass('MetaData-Title'))) }}
@@ -218,6 +221,16 @@
                 </div>
             </div>
         {% endif %}
+        {# permission #}
+        {{ formRender.renderButtons(permission,{
+            'hint': [permissionPrefix],
+            'text': [content.permissionDescription,
+                fontNormal|merge({
+                    'hint': permissionHintRelevant,
+                    'visibility': permissionValue not in ['','no'],
+                    'textHintID': permissionHintName})],
+            'stim': [coreDataController,'setPermission'],
+            'addDiv': ['permission']}) }} {# correct hint is set in controller, but must not be empty here #}
         {# guidelines #}
         {% if content.guidelines is defined %}
             {% set guidelines, description, tempPrefix = content.guidelines, content.guidelinesText, translationPrefix~'guidelines.' %}
@@ -228,6 +241,16 @@
                     {{ formRender.addCheckbox(content.guidelines,{'labelParams': committeeParams}) }}
                     {{ formRender.addTextfield(description,{'visibility': vars.checked}) }}
                 </div>
+            </div>
+        {% endif %}
+        {# settle #}
+        {% if content.cooperation is defined %}
+            <div id="settle" class="mt-8">
+                {{ formRender.addHeading(translationPrefix~'settle.title') }}
+                <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [[settleTypes,'settleDescriptionDiv']]}) }}>
+                    {{ formRender.addCheckboxGroup(content,settleTypes) }}
+                </div>
+                {{ formRender.addTextfield(content.settleDescription,fontNormal|merge({'visibility': getAnySelected(content,settleTypes)[1]})) }}
             </div>
         {% endif %}
     {# modals if review process changes #}

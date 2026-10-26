@@ -106,7 +106,7 @@ trait ProjectdetailsTrait
     protected const recruitmentTypes = ['spread','lecture','recruitmentPrivate','occupation','database','multiplier','gatekeeper','lectureOther','external','recruitmentOther']; // selectable options
     protected const recruitmentTypesAll = ['recruitmentSelf' => ['spread','lecture','recruitmentPrivate','occupation','database'], 'contributorsOther' => ['multiplier','gatekeeper','lectureOther'],'external','recruitmentOther']; // selectable options by category
     protected const recruitmentTypesOther = ['database','multiplier','gatekeeper','external','recruitmentOther']; // values must equal the values in $recruitmentTypes
-    protected const recruitmentIcons = ['spread','private','occupation','contributorsOther','multiplier','gatekeeper'];
+    protected const recruitmentIcons = ['spread','private','occupation','database','contributorsOther','multiplier','gatekeeper'];
     protected const recruitmentTherapy = 'recruitmentTherapy'; // value must equal one value in $recruitmentTypes
     protected const recruitmentContributors = 'recruitmentContributors'; // value must equal one value in $recruitmentTypes
     protected const recruitmentFurther = 'recruitmentFurther';
@@ -216,9 +216,9 @@ trait ProjectdetailsTrait
     protected const presenceTypes = ['projectdetails.pages.measures.presence.types.yes' => 'yes', 'projectdetails.pages.measures.presence.types.partly' => 'partly', 'projectdetails.pages.measures.presence.types.no' => 'no'];
     protected const presencePartly = 'partly'; // must equal one value in $presenceTypes
     protected const presenceNo = 'no'; // must equal one value in $presenceTypes
-//    protected const countryNode = 'country';
-//    protected const countryTypes = ['domestic','foreign'];
-//    protected const countryForeign = 'foreign'; // value must equal one value in $countryTypes
+    protected const countryNode = 'country';
+    protected const countryTypes = ['domestic','foreign'];
+    protected const countryForeign = 'foreign'; // value must equal one value in $countryTypes
     protected const durationNode = 'duration';
     protected const durationTypes = ['measureTimeDays','measureTimeHours','measureTimeMinutes','breaksMinutes']; // must equal the values of the following variables
     protected const durationMeasureTimeTypes = ['measureTimeDays','measureTimeHours','measureTimeMinutes']; // must equal the values of the following variables
@@ -448,6 +448,9 @@ trait ProjectdetailsTrait
     protected const purposeNode = 'purpose';
     // data reuse
     protected const dataReuseNode = 'dataReuse'; // used for page and for question on page
+    protected const disseminationNode = 'dissemination';
+    protected const disseminationTypes = ['journal','conference','scientific','report','meeting','thesis','disseminationOther'];
+    protected const disseminationOther = 'disseminationOther'; // must equal one value in $disseminationTypes
     protected const dataReuseTypes = ['tool' => ['projectdetails.pages.dataReuse.dataReuse.types.yes' => 'yes', 'projectdetails.pages.dataReuse.dataReuse.types.no' => 'no'], 'noTool' => ['projectdetails.pages.dataReuse.dataReuse.types.anonymous' => 'anonymous', 'projectdetails.pages.dataReuse.dataReuse.types.anonymized' => 'anonymized', 'projectdetails.pages.dataReuse.dataReuse.types.personal' => 'personal', 'projectdetails.pages.dataReuse.dataReuse.types.no' => 'no']]; // one element if privacy document should/can be created by the tool and one if not
     protected const dataReuseTypesYes = ['yes','anonymous','anonymized','personal']; // all 'yes' options for data reuse. Values must equal the values of sub-arrays of $dataReuseTypes
     protected const dataReuseHowNode = 'dataReuseHow';

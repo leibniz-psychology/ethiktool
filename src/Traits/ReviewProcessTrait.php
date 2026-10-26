@@ -89,7 +89,7 @@ trait ReviewProcessTrait
             'loan' => ['shortDocs','shortService','fullDocs'],
             'location' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'presence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-//            'country' => ['fullBegun','fullRequested','fullDocs'],
+            'country' => ['fullBegun','fullRequested','fullDocs'],
             'duration' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs']
         ], // measures
         // burdensRisks
@@ -169,6 +169,7 @@ trait ReviewProcessTrait
         ], // data privacy
         // data reuse
         'dataReuse' => [
+            'dissemination' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'confirmIntro' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'dataReuse' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'dataReuseHow' => ['shortDocs','shortService','fullBegun','fullDocs'],
@@ -523,9 +524,9 @@ trait ReviewProcessTrait
             'locationDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'presence' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'presenceDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-//            'domestic' => ['fullBegun','fullRequested','fullDocs'],
-//            'foreign' => ['fullBegun','fullRequested','fullDocs'],
-//            'foreignDescription' => ['fullBegun','fullRequested','fullDocs'],
+            'domestic' => ['fullBegun','fullRequested','fullDocs'],
+            'foreign' => ['fullBegun','fullRequested','fullDocs'],
+            'foreignDescription' => ['fullBegun','fullRequested','fullDocs'],
             'measureTimeDays' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measureTimeHours' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'measureTimeMinutes' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
@@ -1050,6 +1051,14 @@ trait ReviewProcessTrait
         ], // data privacy
         // data reuse
         'dataReuse' => [
+            'journal' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'conference' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'scientific' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'report' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'meeting' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'thesis' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'disseminationOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'disseminationOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'confirmIntro' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'dataReuse' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'dataReuseHow' => ['shortDocs','shortService','fullBegun','fullDocs'],

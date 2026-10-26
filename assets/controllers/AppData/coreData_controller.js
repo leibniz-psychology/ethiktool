@@ -16,6 +16,9 @@ export default class extends Controller {
         reviewProcess: String, // current review process
         reviewProcessLoad: String, // review process on page load
         requestedConfirmHint: Array, // 0: review process full, 1: review process short
+        permission: String,
+        permissionHint: Array, // 0: with relevance, 1: without relevance
+        permissionHintName: String, // if of the hint div
     }
 
     connect() {
@@ -29,6 +32,7 @@ export default class extends Controller {
         }
         this.setProjectStart(false);
         this.setConflict();
+        this.setPermission();
     }
 
     // methods that are called from the template
@@ -129,6 +133,20 @@ export default class extends Controller {
         setHint(this.conflictHintNameValue,this.conflictHintValue[isConflict ? 0 : 1]);
         if (this.hasConflictInputTarget) {
             setElementVisibility(this.conflictInputTarget,!isConflict);
+        }
+    }
+
+    /** Sets the visibility and text hint of the permission description.
+     * @param event widget that invoked the method
+     */
+    setPermission(event = null) {
+        if (event!==null) {
+            this.permissionValue = event.target.value;
+        }
+        let isYes = !['','no'].includes(this.permissionValue);
+        setElementVisibility('permissionDescriptionDiv',isYes);
+        if (isYes) {
+            setHint(this.permissionHintNameValue,this.permissionHintValue[this.permissionValue==='relevant' ? 0 : 1]);
         }
     }
 

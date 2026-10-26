@@ -94,9 +94,16 @@ class CoreDataType extends TypeAbstract
                 }
             }
         }
+        // permission
+        $this->addRadioGroup($builder,self::permissionNode,self::permissionTypes,$translationPrefix.self::permissionNode.'.title',self::permissionNode.self::descriptionCap);
         // guidelines
         if (in_array($committeeType,self::committeeGuidelines)) {
             $this->addCheckboxTextfield($builder,self::guidelinesNode, $translationPrefix.self::guidelinesNode.'.choice');
+        }
+        // settle
+        if ($committeeType===self::committeeBICC) {
+            $tempPrefix = $translationPrefix.self::settleNode.'.';
+            $this->addCheckboxGroup($builder,self::settleTypes,$tempPrefix.'types.',textareaName: self::settleNode.self::descriptionCap, textareaTextHint: $tempPrefix.self::textHint);
         }
         // dummy
         $this->addDummyForms($builder);
@@ -179,12 +186,20 @@ class CoreDataType extends TypeAbstract
                 }
             }
         }
+        // permission
+        $this->setChosenArray($forms,$viewData,self::permissionNode,[self::descriptionNode => self::permissionNode.self::descriptionCap]);
         // guidelines
         if (array_key_exists(self::guidelinesNode,$forms)) {
             $tempArray = $viewData[self::guidelinesNode];
             $isSelected = $tempArray!=='';
             $forms[self::guidelinesNode]->setData($isSelected);
             $forms[$this->appendText(self::guidelinesNode)]->setData($tempArray[self::descriptionNode] ?? ''); // if nothing is chosen yet, tempArray is a string
+        }
+        // settle
+        if (array_key_exists('cooperation',$forms)) {
+            $tempArray = $viewData[self::settleNode];
+            $this->setSelectedCheckboxes($forms,$tempArray['types']);
+            $forms[self::settleNode.self::descriptionCap]->setData($this->getArrayValue($tempArray,self::descriptionNode));
         }
     }
 
@@ -301,9 +316,17 @@ class CoreDataType extends TypeAbstract
             }
             $newData[self::supportNode] = $tempArray;
         }
+        // permission
+        $newData[self::permissionNode] = $this->getChosenArray($forms,self::permissionNode,array_diff(array_values(self::permissionTypes),['no']),[self::descriptionNode => self::permissionNode.self::descriptionCap]);
         // guidelines
         if (array_key_exists(self::guidelinesNode,$forms)) { // guidelines question exists
             $newData[self::guidelinesNode] = $forms[self::guidelinesNode]->getData() ? [self::descriptionNode => $forms[$this->appendText(self::guidelinesNode)]->getData()] : '';
+        }
+        // settle
+        if (array_key_exists('cooperation',$forms)) {
+            $selections = $this->getSelectedCheckboxes($forms,self::settleTypes);
+            $newData[self::settleNode] = array_merge(['types' => $selections], $selections!==[] ? [self::descriptionNode => $forms[self::settleNode.self::descriptionCap]->getData()] : []);
+
         }
         $viewData = $newData;
     }
