@@ -26,6 +26,7 @@ class TextsController extends ControllerAbstract
         $burdensRisksArray = $measureArray[self::burdensRisksNode];
         $isBurdens = $this->getBurdensOrRisks($burdensRisksArray,self::burdensNode)[0];
         $isRisks = $this->getBurdensOrRisks($burdensRisksArray,self::risksNode)[0];
+        $hasTrigger = $isRisks && array_key_exists(self::risksTriggerNode,$burdensRisksArray[self::risksNode]);
         $addresseeParam = [self::addressee => $this->getAddresseeFromRequest($request)];
         $compensation = $measureArray[self::compensationNode][self::compensationTypeNode];
         $information = $this->getInformationString($measureArray[self::informationNode]);
@@ -40,11 +41,13 @@ class TextsController extends ControllerAbstract
              'isNotInformationNoConsent' => $isNotInformationNoConsent,
              'isBurdens' => $isBurdens,
              'isRisks' => $isRisks,
+             'hasTrigger' => $hasTrigger,
              'proTemplateEnd' => $this->translateString('projectdetails.pages.texts.pro.template.end',array_merge($addresseeParam,['compensation' => $this->getStringFromBool($compensation!=='' && count($compensation)>0 && !array_key_exists(self::compensationNo,$compensation))])),
              'conTemplateText' => $this->getConTemplateText($measureArray,false,true,$routeParams,true)],
             [self::dummyParams => [
                 'isNotInformationNoConsent' => $isNotInformationNoConsent,
-                'isBurdensRisks' => $isBurdens || $isRisks,
+                'isBurdensRisks' => ($isBurdens || $isRisks) && !$hasTrigger,
+                'hasTrigger' => $hasTrigger,
                 'isConflict' => $this->xmlToArray($appNode->{self::appDataNodeName}->{self::coreDataNode})[self::conflictNode][self::chosen]==='0']]);
     }
 }

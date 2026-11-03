@@ -162,8 +162,9 @@ class ParticipationController extends PDFAbstract
                         if ($information!=='') {
                             $customBegun[] = $this->translateStringPDF($customIntermediateInformation,$informationParam);
                         }
-                        $preType = $informationArray[self::preType] ?? '';
-                        $postArray = $informationArray[self::post] ?? [];
+                        $preTypeArray = $informationArray[self::preType] ?? [];
+                        $postTypeArray = $informationArray[self::post][self::postType] ?? [];
+                        $informationType = $isPre ? ($preTypeArray[self::chosen] ?? '') : ($postTypeArray[self::chosen] ?? '');
                         $preCompleteArray = $informationArray[self::preComplete] ?? [];
                         $isLoanReceipt = false; // loan receipt is only possible if pre information
                         [$loanReceiptParameters, $consent] = [[], []]; // $loanReceiptParameters: parameters for the view of the loan receipt
@@ -346,7 +347,7 @@ class ParticipationController extends PDFAbstract
                         foreach (($risksArray[self::risksTriggerNode][self::risksTriggerNode.'Type'] ?? '') ?: [] as $type => $description) {
                             $risksTrigger .= $this->translateStringPDF($risksTriggerPrefix.$type,[self::descriptionNode => $this->addMarkInput($description,self::$markInput)]);
                         }
-                        if ($risksTrigger!=='') {
+                        if ($risksTrigger!=='' && ($textsArray[self::conNode][self::conTemplate] ?? '')!=='1') {
                             self::$linkedPage = self::burdensRisksNode;
                             $risksTrigger = $this->addHeadingLink($risksTriggerPrefix.'title',fragment: self::risksTriggerNode).$risksTrigger;
                         }
@@ -355,7 +356,7 @@ class ParticipationController extends PDFAbstract
                         }
                         $risksTriggerContact = $risksTrigger.$risksContact;
                         if ($risksTriggerContact!=='') {
-                            $paragraphsAll[self::risksOccurrenceNode] = [$linkedString => self::burdensRisksNode, self::content => trim($risksTriggerContact), $subHeadingsString => [], $parametersString => [], $subColonString => true];
+                            $paragraphsAll[self::risksOccurrenceNode] = [$linkedString => self::burdensRisksNode, self::content => $risksTriggerContact, $subHeadingsString => [], $parametersString => [], $subColonString => true];
                         }
                         // voluntary
                         $consentQuestionArray = $consentArray[self::consentNode];
@@ -529,7 +530,7 @@ class ParticipationController extends PDFAbstract
                             $tempVal = $tempArray[self::descriptionNode] ?? '';
                             $tempPrefix = $textsPrefix.'pro.template.';
                             $content = [$this->mergeContent(($tempArray[self::proTemplate] ?? '')==='1' ? [$this->translateString($tempPrefix.'start', $translationParams).' ', $tempArray[self::proTemplateText], ' '.$this->translateString($tempPrefix.'middle').' ', $tempVal, "\n".$this->translateString($tempPrefix.'end', $addresseeParam)] : ['', $tempVal])];
-                            $content[] = trim($this->getConTemplateText($measureTimePoint, markInput: self::$markInput)).$risksTriggerContact;
+                            $content[] = trim($this->getConTemplateText($measureTimePoint, markInput: self::$markInput).$risksTriggerContact);
                             $paragraphs[self::proNode] = [$linkedString => self::textsNode, self::content => $content, $subHeadingsString => [$proConPrefix.self::proNode, $proConPrefix.self::conNode], $parametersString => ['isBurdensRisks' => $this->getStringFromBool($this->getBurdensRisks($measureTimePoint[self::burdensRisksNode]))], $subColonString => true];
 
                             // criteria
@@ -864,7 +865,7 @@ class ParticipationController extends PDFAbstract
                             if ($isConsent) { // consent is given
                                 self::$linkedPage = self::consentNode;
                                 $consentHeading = $this->addHeadingLink($consentPrefix.'title', $translationParams, self::consentNode);
-                                $translationParams['informationType'] = $isPre ? $preType : $postArray[self::descriptionNode];
+                                $translationParams['informationType'] = $informationType;
                                 $consent = [$this->translateStringPDF($consentPrefix.'start', array_merge($translationParams, $terminateConsParam, $voluntaryParams))];
                                 $consent[] = $this->translateStringPDF($consentPrefix.'personal', array_merge($translationParams, $dataSpecialParam, ['dataSpecial' => $this->replaceDummyString($dataResearchSpecialTrans), 'contributors' => $this->replaceDummyString($contributorsData, replace: 'or')]));
                                 $consent[] = $this->translateStringPDF($consentPrefix.'copy', $translationParams);
@@ -1175,7 +1176,7 @@ class ParticipationController extends PDFAbstract
                                     'intro' => $intro,
                                     'contributorsIntro' => $contributorsIntro,
                                     'levelNames' => $levelIDs!==[] ? implode(', ', $levelIDs) : '',
-                                    'isOral' => ($isNotPost ? $preType : ($postArray[self::descriptionNode] ?? ''))===self::consentOral,
+                                    'isOralOther' => in_array($informationType,[self::informationOral,self::informationOther]),
                                     'content' => $this->content,
                                     self::consentNode => $consent,
                                     'consentType' => $consentType,
@@ -1185,7 +1186,7 @@ class ParticipationController extends PDFAbstract
                                     'noTrans' => $this->translateString('buttons.no'), // for optional consent
                                     'optionalConsent' => $optionalConsent,
                                     'obligatoryConsent' => $obligatoryConsent!==[] ? $this->translateStringPDF($obligatoryPrefix.'start').$this->replaceDummyString($obligatoryConsent,replace: $obligatoryPrefix.'lastSplit').'.' : '',
-                                    'oralHint' => $this->translateStringPDF($participationPrefix.self::informationOral,array_merge($translationSaveParam,$informationParam)),
+                                    'oralOtherHint' => $this->translateStringPDF($participationPrefix.'oralOther',array_merge($translationSaveParam,$informationParam,['type' => $informationType, 'otherDescription' => $isPre ? ($preTypeArray[self::descriptionNode] ?? '') : ($postTypeArray[self::descriptionNode] ?? '')])),
                                     self::isPersonal => $this->getStringFromBool($isPersonal || $isMarkingOtherPersonal),
                                     'privacyParameters' => $privacyParameters]);
                         } else { // no documents are created
@@ -1303,14 +1304,16 @@ class ParticipationController extends PDFAbstract
                                         $content['risksContact'] = [trim($risksContact),''];
                                     }
                                     $contributorsLeader[0] = $this->translateStringPDF($translationPrefix.'contributors').($contributorsLeader[0] ?? '');
+                                    $preCompleteTypeArray = $preCompleteArray[self::preCompleteType];
+                                    $preCompleteType = $preCompleteTypeArray[self::chosen];
 
                                     $curHtml .= $this->renderView('PDF/_completePost.html.twig', array_merge($parameters, [
                                         'content' => $content,
                                         'completePostHeading' => $completePostHeading,
-                                        'isOral' => $preCompleteArray[self::preCompleteType]===self::informationOral,
+                                        'isOralOther' => in_array($preCompleteType,[self::informationOral,self::informationOther]),
                                         'isCompensation' => $isCompensationTerminate,
                                         'contributors' => array_merge($contributorsLeader, $contributorsFurther ?? []), // $contributorsFurther is defined if information is pre or post
-                                        'oralHint' => $this->translateStringPDF($translationPrefix.self::informationOral,$translationSaveParam)]));
+                                        'oralOtherHint' => $this->translateStringPDF($translationPrefix.'oralOther',array_merge($translationSaveParam,['type' => $preCompleteType, 'otherDescription' => $preCompleteTypeArray[self::descriptionNode] ?? '']))]));
                                 }
                                 // loan receipt
                                 if ($isLoanReceipt) {

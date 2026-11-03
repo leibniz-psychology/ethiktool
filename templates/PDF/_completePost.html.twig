@@ -5,8 +5,8 @@
     {% set textPreview = not savePDF ? 'previewSmall' %}
     {{ pdfMacros.addHeader(committeeType,projectTitle,levelNames,savePDF,isComplete) }}
     <div class="pdfHeadingCenter pdfHeadingMain pdfBorderMain {% if not savePDF %}previewXLarge{% endif %}">{{ completePostHeading|raw }}</div>
-    {% if isOral %}
-        <div class="fontRed {{ textPreview }}">{{ oralHint|raw }}</div>
+    {% if isOralOther %}
+        <div class="fontRed {{ textPreview }}">{{ oralOtherHint|raw }}</div>
     {% endif %}
     {% set classes = 'textJustify '~textPreview %}
     {% for paragraph in content %}

@@ -19,8 +19,8 @@
         {% else %}
             {{ pdfMacros.addSingleDocsHint(singleDocsHint) }}
         {% endif %}
-        {% if isOral %}
-            <div class="{{ redClasses }}">{{ oralHint|raw }}</div>
+        {% if isOralOther %}
+            <div class="{{ redClasses }}">{{ oralOtherHint|raw }}</div>
         {% endif %}
         {# introduction #}
         <div style="margin-bottom: 0.5em;">

@@ -13,10 +13,13 @@ class ContributorType extends TypeAbstract
     use ContributorsTrait;
 
     private array $tasks;
+    private string $committeeType;
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $tasks = $options[self::dummyParams][self::taskNode];
+        $dummyParams = $options[self::dummyParams];
+        $this->committeeType = $options[self::committeeType];
+        $tasks = $dummyParams[self::taskNode];
         $this->tasks = array_keys($tasks);
         foreach ($tasks as $task) {
             foreach ($task as $key => $value) {
@@ -43,7 +46,7 @@ class ContributorType extends TypeAbstract
     public function mapFormsToData(Traversable $forms, mixed &$viewData): void
     {
         $forms = iterator_to_array($forms);
-        $viewData = array_fill_keys(self::tasksNodes,'');
+        $viewData = array_fill_keys(array_diff(self::tasksNodes,!in_array($this->committeeType,self::committeeSupervisor) ? [self::taskSupervision] : []),'');
         $noForms = [self::language,ControllerAbstract::submitDummy,ControllerAbstract::loadInput];
         foreach ($forms as $key => $element) {
             if (!in_array($key,$noForms,true) && $element->getData()) {

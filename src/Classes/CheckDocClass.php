@@ -608,8 +608,9 @@ class CheckDocClass extends ControllerAbstract
         // settle
         if (array_key_exists(self::settleNode,$this->coreDataArray)) {
             $tempArray = $this->coreDataArray[self::settleNode];
-            if (array_key_exists(self::descriptionNode,$tempArray)) {
-                $this->checkMissingContent($tempArray,[self::descriptionNode => $translationPrefix.self::settleNode],true,hash: $this->addDiv(self::settleNode,true,false));
+            $tempPrefix = $translationPrefix.self::settleNode.'.';
+            if ($this->checkMissingChildren($tempArray,'types',$tempPrefix.'missing',hash: self::settleNode) && array_key_exists(self::descriptionNode,$tempArray)) {
+                $this->checkMissingContent($tempArray,[self::descriptionNode => $tempPrefix.self::descriptionNode],true,hash: $this->addDiv(self::settleNode,true,false));
             }
         }
         $this->setAppDataTitle($setTitle);
@@ -951,14 +952,14 @@ class CheckDocClass extends ControllerAbstract
             if ($pre<2) {
                 if ($pre===0) { // answer was yes
                     if (array_key_exists(self::preType,$pageArray)) {
-                        $this->checkMissingChosen($pageArray,$translationStart.'typePre',null,self::preType,name: self::preType); // type of information
+                        $this->checkMissingTextfield($pageArray[self::preType],null,self::informationOther,$translationStart.'typePre',self::preType,$translationStart.'typePreDescription',addDescription: true); // type of information
                     }
                     // pre content
                     if (in_array($this->checkMissingChosen($pageArray,$translationStart.self::preContent,null,self::preContent,true,self::preContent),self::preContentIncomplete,true)) { // partial or deceit
                         $tempArray = $pageArray[self::preComplete];
                         $this->checkMissingTextfieldEmpty($tempArray,$translationStart.self::deceit,$translationStart.'deceitDescription',self::preComplete,false,hashDescription: $this->addDiv(self::preComplete,true)); // complete post-information and description of information given
                         if (array_key_exists(self::preCompleteType,$tempArray)) {
-                            $this->checkMissingChosen($tempArray,$translationStart.'deceitType',null,'completePostType',true,self::preCompleteType);
+                            $this->checkMissingTextfield($tempArray[self::preCompleteType],null,self::informationOther,$translationStart.'deceitType','completePostType',$translationStart.'deceitTypeDescription', hashDescription: $this->addDiv(self::preCompleteType,true,false),addDescription: true);
                             $tempPrefix = $translationStart.self::preAbort.'.';
                             $tempArray = $tempArray[self::preAbort];
                             if (in_array($this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::preAbort,true),self::preAbortDescriptions,true)) {
@@ -970,7 +971,7 @@ class CheckDocClass extends ControllerAbstract
                     $this->checkMissingContent($pageArray,[self::preText => $translationStart.'descriptionPre'],hash: $this->addDiv(self::pre,true));
                     $tempArray = $pageArray[self::post];
                     if ($this->checkMissingTextfield($tempArray,2,1,$translationStart.'missingPost','preNo',$translationStart.'descriptionPost',$this->addDiv(self::post,true))===0) { // post-information
-                        $this->checkMissingContent($tempArray,[self::descriptionNode => $translationStart.'typePost'],hash: 'postType');
+                        $this->checkMissingTextfield($tempArray[self::postType],null,self::informationOther,$translationStart.'typePost',self::postType,$translationStart.'typePostDescription',addDescription: true);
                     }
                 }
             }
@@ -1199,7 +1200,13 @@ class CheckDocClass extends ControllerAbstract
         // country
         if (array_key_exists(self::countryNode,$pageArray)) {
             $tempPrefix = $translationPage.self::countryNode.'.';
-            $this->checkMissingChildrenOther($pageArray,self::countryNode,$tempPrefix.'missing',[self::countryForeign => $tempPrefix.self::countryForeign], addDescription: false);
+            $tempArray = $pageArray[self::countryNode];
+            if ($tempArray==='') {
+                $this->errorMessage = $tempPrefix.'missing';
+                $this->addCheckLabelString(self::missingSingle,self::countryNode,$this->routeIDs,false);
+            } elseif (array_key_exists(self::countryForeign,$tempArray) && $tempArray[self::countryForeign]==='') {
+                $this->addCheckLabelString($tempPrefix.self::countryForeign,parameters: $this->routeIDs,colorRed: false);
+            }
         }
         // durations
         $tempPrefix = $translationPage.self::durationNode.'.';
@@ -2065,8 +2072,10 @@ class CheckDocClass extends ControllerAbstract
             $translationPage = self::projectdetailsPrefix.self::dataReuseNode.'.';
             $this->addProjectdetailsTitle(self::dataReuseNode, $setTitle);
             // dissemination
-            $tempPrefix = $translationPage.self::disseminationNode.'.';
-            $this->checkMissingChildrenOther($pageArray,self::disseminationNode,$tempPrefix.'missing',[self::disseminationOther => $tempPrefix.self::descriptionNode]);
+            if (array_key_exists(self::disseminationNode,$pageArray)) {
+                $tempPrefix = $translationPage.self::disseminationNode.'.';
+                $this->checkMissingChildrenOther($pageArray,self::disseminationNode,$tempPrefix.'missing',[self::disseminationOther => $tempPrefix.self::descriptionNode]);
+            }
             if ($this->checkMissingChosen($pageArray, $translationPage.self::confirmIntroNode, null, $this->addDiv(self::confirmIntroNode), name: self::confirmIntroNode)==='1') {
                 $dataReuseHowPrefix = $translationPage.self::dataReuseHowNode.'.';
                 $lineTitlePrefix = $dataReuseHowPrefix.'lineTitle.';

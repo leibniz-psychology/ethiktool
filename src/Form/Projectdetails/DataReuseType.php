@@ -45,7 +45,9 @@ class DataReuseType extends TypeAbstract
     {
         $forms = iterator_to_array($forms);
         // dissemination
-        $this->setSelectedCheckboxes($forms,$viewData[self::disseminationNode],[self::disseminationOther => $this->appendText(self::disseminationOther)]);
+        if (array_key_exists(self::disseminationOther,$forms)) {
+            $this->setSelectedCheckboxes($forms,$viewData[self::disseminationNode],[self::disseminationOther => $this->appendText(self::disseminationOther)]);
+        }
         // confirm
         $forms[self::confirmIntroNode]->setData($viewData[self::confirmIntroNode]==='1');
         // data reuse
@@ -65,7 +67,10 @@ class DataReuseType extends TypeAbstract
     {
         $forms = iterator_to_array($forms);
         // dissemination
-        $newData = [self::disseminationNode => $this->getSelectedCheckboxes($forms,self::disseminationTypes,[self::disseminationOther => $this->appendText(self::disseminationOther)])];
+        $newData = [];
+        if (array_key_exists(self::disseminationOther,$forms)) {
+            $newData = [self::disseminationNode => $this->getSelectedCheckboxes($forms,self::disseminationTypes,[self::disseminationOther => $this->appendText(self::disseminationOther)])];
+        }
         // confirm
         $tempVal = $forms[self::confirmIntroNode]->getData();
         $newData[self::confirmIntroNode] = $tempVal;

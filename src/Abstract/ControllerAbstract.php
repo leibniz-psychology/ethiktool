@@ -1943,7 +1943,7 @@ abstract class ControllerAbstract extends AbstractController
         $isMajorSmaller3 = $major<'3';
         $isMajorSmaller4 = $major<'4';
         $is200 = $isMajor2 && $minor==='0' && $patch==='0';
-        $isSmallerCurrent = $isMajorSmaller4 || $minor<'6';
+        $isSmallerCurrent = $isMajorSmaller4 || $minor<'7';
         $isSmaller221 = $isMajor1 || $isMajor2 && $minor<='2' && $patch<'1';
         $isSmaller240 = $isMajor1 || $isMajor2 && $minor<'4';
         $isSmaller250 = $isMajor1 || $isMajor2 && $minor<'5';
@@ -1958,6 +1958,7 @@ abstract class ControllerAbstract extends AbstractController
         $isSmaller430 = $isMajorSmaller4 || $minor<'3';
         $isSmaller440 = $isMajorSmaller4 || $minor<'4';
         $isSmaller450 = $isMajorSmaller4 || $minor<'5';
+        $isSmaller460 = $isMajorSmaller4 || $minor<'6';
         $coreDataNode = $xml->{self::appDataNodeName}->{self::coreDataNode};
         $isConflict = false;
         $conflictDescription = '';
@@ -2046,13 +2047,15 @@ abstract class ControllerAbstract extends AbstractController
                 $coreDataNode->addChild(self::guidelinesNode);
             }
             // updates for versions before 4.6.0
-            if ($hasGuidelines) {
-                $this->insertElementBefore(self::permissionNode,$coreDataNode->{self::guidelinesNode},[self::chosen]);
-            } else {
-                $coreDataNode->addChild(self::permissionNode)->addChild(self::chosen);
-            }
-            if ($committeeType===self::committeeBICC) { // add settle
-                $coreDataNode->addChild(self::settleNode)->addChild('types');
+            if ($isSmaller460) {
+                if ($hasGuidelines) {
+                    $this->insertElementBefore(self::permissionNode,$coreDataNode->{self::guidelinesNode},[self::chosen]);
+                } else {
+                    $coreDataNode->addChild(self::permissionNode)->addChild(self::chosen);
+                }
+                if ($committeeType===self::committeeBICC) { // add settle
+                    $coreDataNode->addChild(self::settleNode)->addChild('types');
+                }
             }
             foreach ($allStudyNodes as $studyNode) {
                 foreach ($studyNode->{self::groupNode} as $groupNode) {
@@ -2336,7 +2339,7 @@ abstract class ControllerAbstract extends AbstractController
                         // updates for versions before 2.8.1
                         $consent = (string) $consentNode->{self::consent}->{self::chosen};
                         if ($isSmaller281) {
-                            $introNode = $measureTimePointNode->{self::textsNode}->{self::introNode};
+                            $introNode = $textsNode->{self::introNode};
                             if ($consent===self::voluntaryConsentNo && ((string) $introNode->{self::introTemplate})==='1') { // no consent and template for intro should be used -> add description node
                                 $introNode->addChild(self::descriptionNode);
                             }
@@ -2578,8 +2581,50 @@ abstract class ControllerAbstract extends AbstractController
                                 }
                             }
                             // updates for versions before 4.6.0
-                            $this->insertElementBefore(self::countryNode, $measuresNode->{self::durationNode});
-                            $this->insertElementBefore(self::disseminationNode,$measureTimePointNode->{self::dataReuseNode}->{self::confirmIntroNode});
+                            $isFull = str_contains($reviewProcess,self::reviewProcessFull);
+                            $dataReuseNode = $measureTimePointNode->{self::dataReuseNode};
+                            if ($isSmaller460) {
+                                if ($isFull) {
+                                    $this->insertElementBefore(self::countryNode, $measuresNode->{self::durationNode});
+                                    if ($this->checkElement(self::confirmIntroNode,$dataReuseNode)) {
+                                        $this->insertElementBefore(self::disseminationNode,$dataReuseNode->{self::confirmIntroNode});
+                                    } else {
+                                        $dataReuseNode->addChild(self::disseminationNode);
+                                    }
+                                }
+                            }
+                            // updates for versions before 4.7.0
+                            foreach ([self::informationNode,self::informationIINode] as $type) { // update pre, post, and preComplete type because a new option 'other' with a description was added
+                                $curInformationNode = $measureTimePointNode->{$type};
+                                if ($this->checkElement(self::pre,$curInformationNode)) { // information is active
+                                    // pre type
+                                    if ($this->checkElement(self::preType,$curInformationNode)) {
+                                        $this->updateInformationType($curInformationNode,self::preType);
+                                        // pre complete type
+                                        if ($this->checkElement(self::preComplete,$curInformationNode)) {
+                                            $preCompleteNode = $curInformationNode->{self::preComplete};
+                                            if ($this->checkElement(self::preCompleteType,$preCompleteNode)) {
+                                                $this->updateInformationType($preCompleteNode,self::preCompleteType);
+                                            }
+                                        }
+                                    }
+                                    // post type
+                                    if ($this->checkElement(self::post,$curInformationNode)) {
+                                        $postNode = $curInformationNode->{self::post};
+                                        if (((string) $postNode->{self::chosen})==='0') {
+                                            $chosen = (string) $postNode->{self::descriptionNode};
+                                            $this->removeElement(self::descriptionNode,$postNode);
+                                            $postNode->addChild(self::postType)->addChild(self::chosen,$chosen);
+                                        }
+                                    }
+                                }
+                            }
+                            if ($this->checkElement('risksTrigger',$measureTimePointNode->{self::burdensRisksNode}->{self::risksNode})) {
+                                $this->removeConTemplate($textsNode->{self::conNode});
+                            }
+                            if (!$isFull) { // node was mistakenly not removed if review process was short
+                                $this->removeElement(self::disseminationNode,$dataReuseNode);
+                            }
                         } // if new data is collected
                     } // foreach measure time point
                 } // foreach group
@@ -2595,6 +2640,19 @@ abstract class ControllerAbstract extends AbstractController
         $this->insertElementBefore(self::department,$infosNode->{'professorship'});
         $infosNode->{self::department} = (string) $infosNode->{self::institutionInfo};
         $infosNode->{self::institutionInfo} = '';
+    }
+
+    /** Updates the type of pre or preComplete information.
+     * @param SimpleXMLElement $informationNode parent node of the node to be updated
+     * @param string $type name of the node to be updated
+     * @return void
+     */
+    private function updateInformationType(SimpleXMLElement $informationNode, string $type): void
+    {
+        $typeNode = $informationNode->{$type};
+        $chosen = (string) $typeNode;
+        $informationNode->{$type} = '';
+        $typeNode->addChild(self::chosen,$chosen);
     }
 
     /** Updates a multi selection by removing all children from $typeNode that have no equivalent in $types.
@@ -2666,6 +2724,18 @@ abstract class ControllerAbstract extends AbstractController
                     $newNode->addChild($value)->addChild($other);
                 }
             }
+        }
+    }
+
+    /** Removes the template selection for con and eventually adds a description node.
+     * @param SimpleXMLElement $conNode node containing the information about the cons
+     * @return void
+     */
+    protected function removeConTemplate(SimpleXMLElement $conNode): void
+    {
+        $conNode->{self::conTemplate} = '';
+        if (!$this->checkElement(self::descriptionNode,$conNode)) {
+            $conNode->addChild(self::descriptionNode);
         }
     }
 

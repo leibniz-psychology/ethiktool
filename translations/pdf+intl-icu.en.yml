@@ -209,7 +209,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     compensation: 'Compensation'
     compensationSub: 'Additional details regarding the compensation:'
     processing: 'Description of data processing'
-    dataReuse: 'Dissemination'
+    dataReuse: 'Sharing and re-use of results/data'
     dataReuseSub: 'Will the research data be re-used?'
     dataReuseBoxSub: >-
       The fields {isReviewFull, select,
@@ -506,15 +506,16 @@ projectdetails:
         0     {Yes - }
         1     {No - }
         other {}} {description, select,
-                    written     {in writing}
-                    writtenOral {in writing with oral explanation}
-                    oral        {orally}
-                    other       {{description}}}
+                    written          {in writing}
+                    writtenOral      {in writing with oral explanation}
+                    oral             {orally}
+                    informationOther {in the following way: {otherDescription}}
+                    other            {{description}}}
     documentTranslation: >-
       The wording of the participant documents {addressee, select,
                                                   children {for the legal guardians}
                                                   wards    {for the legal guardians}
-                                                  other    {}} is translated into the following language(s): {description}.'
+                                                  other    {}} is translated into the following language(s): {description}.
     preContent: >-
       {chosen, select,
         complete {The {addressee} are fully informed.}
@@ -722,12 +723,16 @@ participation:
     Black font color indicates text generated automatically by the Ethiktool. Green font color indicates self-formulated text. {savePDF, select,
       true  {For the actual use of the participant documents, the PDF files are available without coloring in the “{singleDocsName}“ folder.}
       other {}}
-  oral: >-
+  oralOther: >-
     The information on the study will be given {savePDF, select,
-          true  {orally}
+          true  {{type, select,
+                    oral  {orally}
+                    other {in the following way: {otherDescription}}}}
           other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#{information, select,
                     post  {post}
-                    other {pre}}Type" data-base-route-i-ds-param="{routeIDs}">orally</a>}}. It is in line with the written information provided here.
+                    other {pre}}Type" data-base-route-i-ds-param="{routeIDs}">{type, select,
+                            oral  {orally}
+                            other {in the following way: }}</a> {otherDescription}}}. It is in line with the written information provided here.
   headings:
     goals: 'Introduction and aims of the study'
     conflict: 'Potential conflicts of interest by the project contributors'
@@ -1875,8 +1880,12 @@ completePost:
   title: 'Debriefing supplement'
   oral: >-
     The debriefing is given {savePDF, select,
-          true  {orally}
-          other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#completePostType" data-base-route-i-ds-param="{routeIDs}">orally</a>}}. It is in line with the written information provided here.
+          true  {{type, select,
+                    oral  {orally}
+                    other {in the following way: {otherDescription}}}}
+          other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#completePostType" data-base-route-i-ds-param="{routeIDs}">{type, select,
+                    oral  {orally}
+                    other {in the following way: }}</a> {otherDescription}}}. It is in line with the written information provided here.
   intro: >-
     Thank you for {addressee, select,
                     children {your child's participation}

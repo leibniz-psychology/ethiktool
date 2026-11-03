@@ -229,10 +229,15 @@ class DataPrivacyController extends ControllerAbstract
                 }
                 if ($anyDiff) { // changes that affect data reuse were made
                     $dataReuseNode = $measureNodeNew->{self::dataReuseNode};
-                    $disseminationArray = $this->xmlToArray($dataReuseNode->{self::disseminationNode}[0]);
+                    $hasDissemination = $this->checkElement(self::disseminationNode,$dataReuseNode);
+                    if ($hasDissemination) {
+                        $disseminationArray = $this->xmlToArray($dataReuseNode->{self::disseminationNode}[0]);
+                    }
                     $this->removeAllChildNodes($dataReuseNode);
-                    $dataReuseNode->addChild(self::disseminationNode);
-                    $this->arrayToXml($disseminationArray,$dataReuseNode->{self::disseminationNode}); // keep dissemination
+                    if ($hasDissemination) {
+                        $dataReuseNode->addChild(self::disseminationNode);
+                        $this->arrayToXml($disseminationArray,$dataReuseNode->{self::disseminationNode}); // keep dissemination
+                    }
                     $dataReuseNode->addChild(self::confirmIntroNode);
                 }
             }

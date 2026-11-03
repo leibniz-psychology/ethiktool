@@ -22,6 +22,8 @@ trait ReviewProcessTrait
     protected const reviewFullDocs = 'fullDocs'; // with participant documents
     protected const reviewDocs = ['shortDocs','shortService','fullDocs']; // types of review processes for which participant documents are created. Must equal some of the preceding variables
     protected const reviewShortChoose = ['EUB','TUD','PHHD','SRH','BICC','testCommittee']; // committees where, for short applications, it can be chosen whether participant documents should be created
+    protected const committeeSupervisor = ['EUB','JGU','UH1','PHHD','SRH','BICC']; // committees where a supervisor must be added if the position is student. Values must equal the values of AppDataTrait->$committeeStudent
+    protected const taskSupervision = 'supervision'; // must equal one value in ContributorsTrait->$taskNodes
 
     /** Each element is one projectdetails page. The structure of each page-element is equivalent to the structure of the xml-file. Each sub-element is one sub-element of the respective xml node. Each of these elements contains all application types for which the question is asked. If the question is a sub-question (i.e., a child of another question in the xml file), the application types are the same as for the parent question. Used if the review process changes to add/remove nodes in the xml file.
      */
@@ -169,7 +171,7 @@ trait ReviewProcessTrait
         ], // data privacy
         // data reuse
         'dataReuse' => [
-            'dissemination' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'dissemination' => ['fullBegun','fullRequested','fullDocs'],
             'confirmIntro' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'dataReuse' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'dataReuseHow' => ['shortDocs','shortService','fullBegun','fullDocs'],
@@ -338,15 +340,18 @@ trait ReviewProcessTrait
         'information' => [
             'pre' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preType' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
+            'preTypeDescription' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'preContent' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preComplete' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preCompleteText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preCompleteType' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'preCompleteTypeDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preAbort' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preAbortDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'preText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'post' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'postType' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'postTypeDescription' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'postText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'attendance' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
             'documentTranslation' => ['fullBegun','fullRequested','fullDocs'],
@@ -1051,14 +1056,14 @@ trait ReviewProcessTrait
         ], // data privacy
         // data reuse
         'dataReuse' => [
-            'journal' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'conference' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'scientific' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'report' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'meeting' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'thesis' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'disseminationOther' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
-            'disseminationOtherText' => ['shortNoDocs','shortDocs','shortService','shortBegun','shortRequested','fullBegun','fullRequested','fullDocs'],
+            'journal' => ['fullBegun','fullRequested','fullDocs'],
+            'conference' => ['fullBegun','fullRequested','fullDocs'],
+            'scientific' => ['fullBegun','fullRequested','fullDocs'],
+            'report' => ['fullBegun','fullRequested','fullDocs'],
+            'meeting' => ['fullBegun','fullRequested','fullDocs'],
+            'thesis' => ['fullBegun','fullRequested','fullDocs'],
+            'disseminationOther' => ['fullBegun','fullRequested','fullDocs'],
+            'disseminationOtherText' => ['fullBegun','fullRequested','fullDocs'],
             'confirmIntro' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'dataReuse' => ['shortDocs','shortService','fullBegun','fullRequested','fullDocs'],
             'dataReuseHow' => ['shortDocs','shortService','fullBegun','fullDocs'],
@@ -1139,7 +1144,7 @@ trait ReviewProcessTrait
         ], // groups
         // information
         'information' => [
-            'preType' => [['information','pre'],'0'],
+            'preType' => [['information','pre'],'0','chosen'],
             'preContent' => [['information','pre'],'0'],
             'preComplete' => [['information','preContent'],['partial','deceit'],'chosen'],
             'preText' => [['information','pre'],'1'],
@@ -1302,6 +1307,7 @@ trait ReviewProcessTrait
      */
     protected function updateNodesByReviewProcess(Request $request, SimpleXMLElement $measureTimePointNode, string $reviewProcess): void
     {
+        $committeeType = $this->getCommitteeType($request->getSession());
         if (count($measureTimePointNode->{'groups'}->children())>0) { // update of nodes is only necessary if new data is collected, i.e., groups etc. are active
             foreach (self::reviewQuestions as $page => $pageNodes) { // keys: page names, values: array of questions with review types
                 $pageNode = $measureTimePointNode->{$page};
@@ -1430,10 +1436,14 @@ trait ReviewProcessTrait
             if (!$isPersonalPurpose || !$isAnonymized) {
                 $this->removeElement(self::dataReuseHowNode.'reuse', $dataReuseNode);
             }
+            // contributor
+            if (!in_array($committeeType,self::committeeSupervisor)) {
+                $this->removeElement(self::taskSupervision,$measureTimePointNode->{self::contributorNode});
+            }
         }
         $dataSourceNode = $measureTimePointNode->{self::dataSourceNode};
         $votesNode = $dataSourceNode->{self::dataSourceVotesNode} ?? null;
-        if (in_array($this->getCommitteeType($request->getSession()), self::begunCommittees) && $votesNode!==null && $this->checkElement(self::voteContributorsNode, $votesNode) && ((string) $votesNode->{self::voteContributorsNode}->{self::chosen})==='0') { // reanalysis without vote, but involvement of contributors and review process begun is possible -> no further questions
+        if (in_array($committeeType, self::begunCommittees) && $votesNode!==null && $this->checkElement(self::voteContributorsNode, $votesNode) && ((string) $votesNode->{self::voteContributorsNode}->{self::chosen})==='0') { // reanalysis without vote, but involvement of contributors and review process begun is possible -> no further questions
             $this->removeElement(self::dataSetNode, $dataSourceNode);
             $this->removeElement(self::dataSetPDF, $dataSourceNode);
         } elseif (str_contains($reviewProcess,'Requested')) {

@@ -17,7 +17,6 @@ trait ContributorsTrait
     protected const tasksNodes = ['leader', 'research', 'experiment', 'contact', 'data', 'supervision', 'other'];
     protected const taskLeader = 'leader'; // must equal one value in $taskNodes
     protected const taskData = 'data'; // must equal one value in $taskNodes
-    protected const taskSupervision = 'supervision'; // must equal one value in $taskNodes
     // other variables
     protected const otherDescription = 'otherDescription';
     protected const otherTask = 'other'; // must be the same value as the key in "tasks"
@@ -44,7 +43,7 @@ trait ContributorsTrait
                         if ($contributorProjectdetailsArray!=='') {
                             $newIndices = [];
                             foreach (self::tasksNodes as $task) {
-                                $indices = explode(',', $contributorProjectdetailsArray[$task]);
+                                $indices = explode(',', $contributorProjectdetailsArray[$task] ?? '');
                                 if ($indices[0]!='') { // at least one contributor was selected for the current task
                                     foreach ($indices as $curIndex => $contributorIndex) {
                                         if ($contributorIndex==$id && ($isRemoved || !array_key_exists($task, $tasks))) { // contributor or tasks was removed

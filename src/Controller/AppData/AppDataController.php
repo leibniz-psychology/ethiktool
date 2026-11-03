@@ -142,6 +142,7 @@ class AppDataController extends ControllerAbstract
             }
             // update applicant in contributors
             $contributorsArray = $this->getContributors($session,true);
+            $old = $contributorsArray;
             $dataApplicant = $data[self::applicant];
             $tempArray = [];
             foreach ($applicantInfos as $info) {

@@ -245,12 +245,13 @@
         {% endif %}
         {# settle #}
         {% if content.cooperation is defined %}
+            {% set checkboxesWoNo = settleTypes|slice(0,(settleTypes|length)-1) %}
             <div id="settle" class="mt-8">
                 {{ formRender.addHeading(translationPrefix~'settle.title') }}
-                <div class="MetaData-Widget" {{ stimulus_action('base','setVisibility','change',{'multi': [[settleTypes,'settleDescriptionDiv']]}) }}>
+                <div class="MetaData-Widget" {{ stimulus_action('base','setMultiCheckbox','change',{'single': 'settleNone', 'multiCheck': checkboxesWoNo})|stimulus_action('base','setVisibility','change',{'multi': [[checkboxesWoNo,'settleDescriptionDiv']]}) }}>
                     {{ formRender.addCheckboxGroup(content,settleTypes) }}
                 </div>
-                {{ formRender.addTextfield(content.settleDescription,fontNormal|merge({'visibility': getAnySelected(content,settleTypes)[1]})) }}
+                {{ formRender.addTextfield(content.settleDescription,fontNormal|merge({'visibility': getAnySelected(content,settleTypes,'settleNone')[1]})) }}
             </div>
         {% endif %}
     {# modals if review process changes #}

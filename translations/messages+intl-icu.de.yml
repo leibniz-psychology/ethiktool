@@ -502,7 +502,7 @@ pages:
     measures: 'Datenerhebung'
     burdensRisks: 'Belastungen/Risiken'
     consentGroups: 'Einwilligung' # for checking inputs on consent page that depend on inputs on groups page
-    voluntary: 'Einwilligung' # description of voluntary yes text field
+    voluntary: 'Einwilligung' # voluntary ensure
     compensation: 'Aufwandsentschädigung'
     texts: 'Studieninformation'
     informationIII: 'Debriefing'
@@ -972,6 +972,7 @@ coreData:
       intellectual: 'Regelungen zu geistigen Eigentumsrechten'
       dataManagement: 'Daten-Managementplan'
       dataProtection: 'Datenschutzvorkehrungen'
+      settleNone: 'keinen der genannten Punkte'
     textHint: 'Bitte beschreiben Sie die ausgewählten Punkte genauer.'
 
 votes:
@@ -1402,7 +1403,11 @@ projectdetails:
         written: 'in Textform'
         writtenOral: 'in Textform mit mündlicher Erläuterung'
         oral: 'mündlich'
-        hintWritten: 'schriftlich oder elektronisch'
+        informationOther: 'sonstige Form der Aufklärung'
+        icons:
+          written: 'schriftlich oder elektronisch'
+          informationOther: 'z.B. vorproduziertes Video'
+        textHint: 'bitte spezifizieren'
       pre:
         title: 'Werden die {addressee} vorab darüber aufgeklärt, dass {participant} an einer Studie teilnehmen?'
         content:
@@ -1757,7 +1762,7 @@ projectdetails:
         types:
           domestic: 'Inland'
           foreign: 'Ausland'
-        textHint: 'Bitte spezifizieren Sie das Land und erläutern Sie den Erhebungskontext genauer. Beschreiben Sie dabei insbesondere relevante gesellschaftliche, rechtliche, kulturelle bzw. geopolitische Gegebenheiten, wie beispielsweise Rollen/Relevanz von Ortsvorstehenden, Konflikte, Rechtslage, Datenschutz, Schulsystem, etwaige Machtasymmetrien oder Aspekte von Positionalität. Die Risiken, die daraus eventuell ergeben, werden separat erfragt.'
+        textHint: 'Bitte spezifizieren Sie das Land und erläutern Sie den Erhebungskontext genauer. Beschreiben Sie dabei insbesondere relevante gesellschaftliche, rechtliche, kulturelle bzw. geopolitische Gegebenheiten, wie beispielsweise Rollen/Relevanz von Ortsvorstehenden, Konflikte, Rechtslage, Datenschutz, Schulsystem, etwaige Machtasymmetrien oder Aspekte von Positionalität. Die Risiken, die sich daraus eventuell ergeben, werden separat erfragt.'
       duration:
         title: >-
           Dauer {multiple, select,
@@ -2183,8 +2188,11 @@ projectdetails:
           Sie haben {type, select,
                       burdens {Belastungen}
                       risks   {Risiken}
-                      other   {Belastungen und Risiken}} ausgewählt. Die {addressee} müssen darüber aufgeklärt werden. Nutzen Sie dafür das Textfeld. Wenn Sie unter <a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">Belastungen/Risiken</a> bereits eine Triggerwarnung formuliert haben, wird diese automatisch übernommen und muss hier nicht wiederholt werden.
+                      other   {Belastungen und Risiken}} ausgewählt. Die {addressee} müssen darüber aufgeklärt werden. Nutzen Sie dafür das Textfeld. {hasTrigger, select,
+                true  {Unter „Belastungen/Risiken" ausgewählte <a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#risksTrigger" data-base-route-i-ds-param="{routeIDs}">Triggerwarnungen</a> werden automatisch übernommen und müssen hier nicht wiederholt werden.}
+                other {}}
         template:
+          useTemplate: 'nur Triggerwarnung'
           risks: >-
             Mit der Teilnahme {information, select,
                                 post  {waren}
@@ -2962,7 +2970,9 @@ checkDoc:
         missing: 'externen Genehmigungen/Freigaben' # 'Antwort auf Frage nach [] fehlt.'
         description: 'Genehmigungen/Freigaben' # 'Beschreibung der [] fehlt.'
       guidelines: 'verwendeten Ethik-Richtlinien'
-      settle: 'bereits geklärten Punkte'
+      settle:
+        missing: 'Bereits geklärte Punkte' # ('[] fehlen.')
+        description: 'bereits geklärten Punkte'
     votes:
       otherVote: 'anderem Ethikvotum'
       otherVoteCommittee: 'Damalige Ethikkommission'
@@ -3103,9 +3113,11 @@ checkDoc:
       information:
         missingPre: 'Aufklärung über Studienteilnahme'
         typePre: 'Art der Vorab-Aufklärung'
+        typePreDescription: 'sonstigen Art der Vorab-Aufklärung'
         preContent: 'Vollständigkeit der Vorab-Aufklärung'
         deceit: 'Antwort auf Frage nach nachträglicher vollständiger Aufklärung'
         deceitType: 'Art der nachträglichen vollständigen Aufklärung'
+        deceitTypeDescription: 'sonstigen Art der nachträglichen vollständigen Aufklärung'
         deceitDescription: 'Begründung und Angabe, wann welche Informationen mitgeteilt werden,'
         preAbort:
           missing: 'nachträglicher vollständiger Aufklärung bei Abbruch'
@@ -3117,6 +3129,7 @@ checkDoc:
         missingPost: 'nachträglicher Aufklärung'
         descriptionPost: 'Begründung für fehlende nachträgliche Aufklärung'
         typePost: 'Art der nachträglichen Aufklärung'
+        typePostDescription: 'sonstigen Art der nachträglichen Aufklärung'
         attendance: >- # other is wards
           Anwesenheit der {addressee, select,
                             children {Erziehungsberechtigen}
@@ -3334,8 +3347,8 @@ checkDoc:
                                         other      {betreuten Personen}}}
                     other    {}} die <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#preAbort" data-base-route-i-ds-param="{routeIDs}">nachträgliche vollständige Aufklärung</a> im persönlichen Kontakt stattfindet, müssen Projektbeteiligte bei der Erhebung anwesend sein.
         country:
-          missing: 'Land, in dem die Daten erhoben werden,' # '[] fehlen.'
-          foreign: 'Nähere Angaben zur Datenerhebung im Ausland' # '[] fehlt.'
+          missing: 'Land, in dem die Daten erhoben werden,' # '[] fehlt.'
+          foreign: 'Nähere Angaben zur Datenerhebung im Ausland <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#foreignDescriptionDiv" data-base-route-i-ds-param="{routeIDs}">fehlen</a>.' # 1:1
         duration:
           measureTimeDays: 'Anzahl Tage der reinen Erhebungszeit'
           measureTimeHours: 'Anzahl Stunden der reinen Erhebungszeit'

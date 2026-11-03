@@ -325,7 +325,7 @@ class CoreDataType extends TypeAbstract
         // settle
         if (array_key_exists('cooperation',$forms)) {
             $selections = $this->getSelectedCheckboxes($forms,self::settleTypes);
-            $newData[self::settleNode] = array_merge(['types' => $selections], $selections!==[] ? [self::descriptionNode => $forms[self::settleNode.self::descriptionCap]->getData()] : []);
+            $newData[self::settleNode] = array_merge(['types' => $selections], $selections!==[] && !array_key_exists(self::settleNone,$selections) ? [self::descriptionNode => $forms[self::settleNode.self::descriptionCap]->getData()] : []);
 
         }
         $viewData = $newData;

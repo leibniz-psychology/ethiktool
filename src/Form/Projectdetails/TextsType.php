@@ -13,17 +13,20 @@ class TextsType extends TypeAbstract
 
     private bool $isBurdensRisks;
     private bool $isNotInformationNoConsent;
+    private bool $hasTrigger;
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $dummyParams = $options[self::dummyParams];
         $this->isBurdensRisks = $dummyParams['isBurdensRisks'];
         $this->isNotInformationNoConsent = $dummyParams['isNotInformationNoConsent'];
+        $this->hasTrigger = $dummyParams['hasTrigger'];
         $translationPrefix = 'projectdetails.pages.texts.';
         $templateArray = [self::introNode,self::proNode,self::conNode];
-        foreach (array_merge([self::introNode,self::goalsNode,self::procedureNode,self::proNode,self::conNode],$dummyParams['isConflict'] ? [self::conflictTextNode] : []) as  $type) {
-            $this->addFormElement($builder,$type,'textarea',$translationPrefix.$type.'.title');
+        foreach (array_merge([self::introNode,self::goalsNode,self::procedureNode,self::proNode,self::conNode],$dummyParams['isConflict'] ? [self::conflictTextNode] : []) as $type) {
+            $typePrefix = $translationPrefix.$type.'.';
+            $this->addFormElement($builder,$type,'textarea',$typePrefix.'title');
             if (in_array($type,$templateArray)) {
-                $this->addFormElement($builder,$type.'Template','checkbox',$translationPrefix.'useTemplate');
+                $this->addFormElement($builder,$type.'Template','checkbox', $type!==self::conNode || !$this->hasTrigger? $translationPrefix.'useTemplate' : $typePrefix.'template.useTemplate');
             }
         }
         // additional pro text field
@@ -86,7 +89,7 @@ class TextsType extends TypeAbstract
         // con
         $tempVal = $forms[self::conTemplate]->getData();
         $tempArray = [self::conTemplate => $tempVal];
-        if (!$tempVal || $this->isBurdensRisks) {
+        if (!$tempVal || $this->isBurdensRisks && !$this->hasTrigger) {
             $tempArray[self::descriptionNode] = $forms[self::conNode]->getData();
         }
         $newData[self::conNode] = $tempArray;

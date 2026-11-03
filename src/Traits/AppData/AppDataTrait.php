@@ -43,7 +43,6 @@ trait AppDataTrait
     protected const shortDocsNotApplicable = 'notApplicable'; // must equal one value in $shortDocsTypes
     protected const supervisor = 'supervisor';
     protected const committeeStudent = ['EUB','JGU','DLR','UH1','PHHD','SRH','BICC']; // committees where position can be 'student'
-    protected const committeeSupervisor = ['EUB','JGU','UH1','PHHD','SRH','BICC']; // committees where a supervisor must be added if the position is student. Values must equal the values of $committeeStudent
     protected const committeeSupervisorPhD = ['EUB','PHHD','SRH']; // committees where a supervisor must be added if the position is PhD
     protected const committeePhDnoLeaderData = ['PHHD','SRH']; // committee where tasks 'leader' or 'data' can not be selected if the position is PhD
     protected const committeeNoStudent = ['PHHD','SRH']; // committees where the position can be student, but students cannot submit an application, i.e., 'complete form' is always disabled
@@ -66,7 +65,8 @@ trait AppDataTrait
     protected const permissionTypes = ['coreData.permission.types.available' => 'available', 'coreData.permission.types.progress' => 'progress', 'coreData.permission.types.later' => 'later', 'coreData.permission.types.relevant' => 'relevant', 'coreData.permission.types.no' => 'no'];
     protected const guidelinesNode = 'guidelines';
     protected const settleNode = 'settle';
-    protected const settleTypes = ['cooperation','intellectual','dataManagement','dataProtection'];
+    protected const settleTypes = ['cooperation','intellectual','dataManagement','dataProtection','settleNone'];
+    protected const settleNone = 'settleNone'; // must equal one value in $settleTypes
     // votes
     protected const voteNode = 'votes';
     protected const otherVote = 'otherVote';

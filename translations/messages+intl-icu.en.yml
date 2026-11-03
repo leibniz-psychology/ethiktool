@@ -502,7 +502,7 @@ pages:
     measures: 'Data collection'
     burdensRisks: 'Burdens/risks'
     consentGroups: 'Consent' # for checking inputs on consent page that depend on inputs on groups page
-    voluntary: 'Einwilligung' # description of voluntary yes text field
+    voluntary: 'Einwilligung' # voluntary ensure
     compensation: 'Compensation'
     texts: 'Study information'
     informationIII: 'Debriefing'
@@ -972,6 +972,7 @@ coreData:
       intellectual: 'agreements on intellectual property'
       dataManagement: 'data management plan'
       dataProtection: 'data protection measures'
+      settleNone: 'none of these issues'
     textHint: 'Please describe the selected issues in more detail.'
 
 votes:
@@ -1402,7 +1403,11 @@ projectdetails:
         written: 'in writing'
         writtenOral: 'in writing with oral explanation'
         oral: 'orally'
-        hintWritten: 'in printed or electronic form'
+        informationOther: 'other type of information'
+        icons:
+          written: 'in printed or electronic form'
+          informationOther: 'e.g., pre-recorded video'
+        textHint: 'please specify'
       pre:
         title: 'Are the {addressee} informed in advance that {participant} are participating in a study?'
         content:
@@ -2183,8 +2188,11 @@ projectdetails:
           You selected {type, select,
                           burdens {burdens}
                           risks   {risks}
-                          other   {burdens and risks}}. The {addressee} must be informed about this. Please use the text box for this purpose.  If you chose a trigger warning in the <a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks" data-base-route-i-ds-param="{routeIDs}">burdens/risks</a> section, this will be transferred automatically and should not be repeated here.
+                          other   {burdens and risks}}. The {addressee} must be informed about this. Please use the text box for this purpose. {hasTrigger, select,
+                true  {Selected <a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#risksTrigger" data-base-route-i-ds-param="{routeIDs}">trigger warnings</a> in the burdens/risks section will be transferred automatically and should not be repeated here.}
+                other {}}
         template:
+          useTemplate: 'only trigger warning'
           risks: >-
             No foreseeable disadvantages or risks {information, select,
                                                     post  {were}
@@ -2962,7 +2970,9 @@ checkDoc:
         missing: 'external authorisation/approval' # 'Answer to question about [] is missing.'
         description: 'authorisations/approvals' # 'Description of [] is missing.'
       guidelines: 'applied ethics guidelines'
-    settle: 'already settled issues'
+      settle:
+        missing: 'Already settled issues' # ('[] are missing.')
+        description: 'already settled issues'
     votes:
       otherVote: 'other ethics vote'
       otherVoteCommittee: 'ethics committee at the time'
@@ -3103,9 +3113,11 @@ checkDoc:
       information:
         missingPre: 'information about participation in study'
         typePre: 'type of prior information'
+        typePreDescription: 'other type of prior information'
         preContent: 'completeness of prior information'
         deceit: 'Answer to question about debriefing'
         deceitType: 'type of debriefing'
+        deceitTypeDescription: 'other type of debriefing'
         deceitDescription: 'Justification and description of given information'
         preAbort:
           missing: 'debriefing in case of withdrawal from participation'
@@ -3117,6 +3129,7 @@ checkDoc:
         missingPost: 'after-the-fact information'
         descriptionPost: 'Justification for not providing after-the-fact information'
         typePost: 'type of after-the-fact information'
+        typePostDescription: 'other type of after-the-fact information'
         attendance: >- # other is wards
           presence of {addressee, select,
                         children {legal guardians}
@@ -3334,8 +3347,8 @@ checkDoc:
                                       other      {supervised individuals}}}
                 other    {}} <a class="linkInternal" href="{page}" data-action="base#setDummySubmit" data-base-url-param="app_{page}#preAbort" data-base-route-i-ds-param="{routeIDs}">debriefing</a> is given in person, project contributors must be present during data collection.
         country:
-          missing: 'Country for data collection' # '[] are missing.'
-          foreign: 'Specification of abroad data collection' # '[] is missing.'
+          missing: 'Country for data collection' # '[] is missing.'
+          foreign: 'Specification of abroad data collection <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-url-param="app_measures#foreignDescriptionDiv" data-base-route-i-ds-param="{routeIDs}">is missing</a>.' # 1:1
         duration:
           measureTimeDays: 'Amount of days for (net) data collection time'
           measureTimeHours: 'Amount of hours for (net) data collection time'

@@ -19,9 +19,11 @@ class InformationType extends TypeAbstract
         $isInformation = $dummyParams['isInformation'];
         $addresseeParam = [self::addressee => $options[self::addresseeString]];
         $parameters = [self::labelParams => array_merge($addresseeParam,[self::addresseeType => $options[self::addresseeType], self::participant => $options[self::participantsString], 'isInformation' => $this->getStringFromBool($isInformation)])];
+        $tempPrefix = $pagePrefix.'type.';
         foreach ([self::pre,self::post,self::preComplete] as $type) {
             $this->addBinaryRadio($builder,$type,$pagePrefix.$type.'.title',$this->appendText($type),$type!==self::preComplete ? $pagePrefix.self::textHintPlural.'.'.$type : '',options: $parameters); // text hint for preCompleteType is set in template
-            $this->addRadioGroup($builder,$type.'Type',self::informationTypes,$pagePrefix.'type.title',options: [self::labelParams => ['type' => $type]]);
+            $tempVal = $type.'Type';
+            $this->addRadioGroup($builder,$tempVal,self::informationTypes,$tempPrefix.'title',textName: $tempVal.self::descriptionCap,options: array_merge($this->getPlaceholder($tempPrefix.self::textHint),[self::labelParams => ['type' => $type]]));
         }
         // additional widgets for yes
         $this->addRadioGroup($builder,self::preContent,$this->translateArray($translationPrefix.'content.type.',array_merge([self::complete],self::preContentIncomplete)),$translationPrefix.'content.title',options: $parameters);
@@ -59,25 +61,27 @@ class InformationType extends TypeAbstract
         if ($pre!=='') {
             if ($pre==='0') {
                 if (array_key_exists(self::preType,$forms)) {
-                    $forms[self::preType]->setData($viewData[self::preType]); // type of pre information
+                    $this->setChosenArray($forms,$viewData,self::preType,[self::descriptionNode => self::preType.self::descriptionCap]); // type of pre information
                 }
                 // pre content
                 $tempVal = $viewData[self::preContent];
                 $forms[self::preContent]->setData($tempVal);
                 if (in_array($tempVal,self::preContentIncomplete)) { // partial or deceit
-                    $this->setChosenArray($forms,$viewData,self::preComplete,[self::preCompleteType => self::preCompleteType,self::descriptionNode => self::preCompleteText]); // complete post
+                    $this->setChosenArray($forms,$viewData,self::preComplete,[self::descriptionNode => self::preCompleteText]); // complete post
                     $tempArray = $viewData[self::preComplete];
-                    if (array_key_exists(self::preAbort,$tempArray)) {
-                        $this->setChosenArray($forms,$tempArray,self::preAbort,[self::descriptionNode => self::preAbort.self::descriptionCap]);
+                    if (array_key_exists(self::preCompleteType,$tempArray)) {
+                        $this->setChosenArray($forms,$tempArray,self::preCompleteType,[self::descriptionNode => self::preCompleteType.self::descriptionCap]); // type of complete post
+                        $this->setChosenArray($forms,$tempArray,self::preAbort,[self::descriptionNode => self::preAbort.self::descriptionCap]); // pre abort
                     }
                 }
             } elseif ($pre==='1') {
                 $forms[self::preText]->setData($viewData[self::preText]); // description
                 $tempArray = $viewData[self::post];
-                $tempVal = $tempArray[self::chosen];
-                $forms[self::post]->setData($tempVal);
-                if ($tempVal!=='') {
-                    $forms[$tempVal==='0' ? self::postType : self::postText]->setData($tempArray[self::descriptionNode]);
+                $forms[self::post]->setData($tempArray[self::chosen]);
+                if (array_key_exists(self::postType,$tempArray)) {
+                    $this->setChosenArray($forms,$tempArray,self::postType,[self::descriptionNode => self::postType.self::descriptionCap]);
+                } elseif (array_key_exists(self::descriptionNode,$tempArray)) {
+                    $forms[self::postText]->setData($tempArray[self::descriptionNode]);
                 }
             }
         }
@@ -112,7 +116,7 @@ class InformationType extends TypeAbstract
         $newData = [self::pre => $pre];
         if ($isPre) { // pre information
             if (array_key_exists(self::preType,$forms)) {
-                $newData[self::preType] = $forms[self::preType]->getData(); // type of pre information
+                $newData[self::preType] = $this->getChosenArray($forms,self::preType,self::informationOther,[self::descriptionNode => self::preType.self::descriptionCap]); // type of pre information
             }
             // pre content
             $tempVal = $forms[self::preContent]->getData();
@@ -122,7 +126,7 @@ class InformationType extends TypeAbstract
                 $tempArray = [self::chosen => $tempVal];
                 if ($tempVal!==null) {
                     if ($tempVal===0) {
-                        $tempArray[self::preCompleteType] = $forms[self::preCompleteType]->getData(); // type of complete post
+                        $tempArray[self::preCompleteType] = $this->getChosenArray($forms,self::preCompleteType,self::informationOther,[self::descriptionNode => self::preCompleteType.self::descriptionCap]); // type of complete post
                         $tempArray[self::preAbort] = $this->getChosenArray($forms,self::preAbort,self::preAbortDescriptions,[self::descriptionNode => self::preAbort.self::descriptionCap]); // debriefing if withdrawal
                     }
                     $tempArray[self::descriptionNode] = $forms[self::preCompleteText]->getData(); // description of which information is given when
@@ -135,7 +139,7 @@ class InformationType extends TypeAbstract
             $tempArray = [self::chosen => $tempVal];
             $isPost = $tempVal===0;
             if ($tempVal!==null) {
-                $tempArray[self::descriptionNode] = $forms[$isPost ? self::postType : self::postText]->getData(); // type of post information or description
+                $tempArray[$isPost ? self::postType : self::descriptionNode] = $isPost ? $this->getChosenArray($forms,self::postType,self::informationOther,[self::descriptionNode => self::postType.self::descriptionCap]) : $forms[self::postText]->getData(); // type of post information or description
             }
             $newData[self::post] = $tempArray;
         }

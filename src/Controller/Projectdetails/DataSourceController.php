@@ -104,7 +104,7 @@ class DataSourceController extends ControllerAbstract
                 // contributor
                 $contributorNode = $measureNodeNew->{self::contributorNode};
                 if (count($contributorNode->children())===0) {
-                    foreach (self::tasksNodes as $task) {
+                    foreach (array_diff(self::tasksNodes,!in_array($committeeType, self::committeeSupervisor) ? [self::taskSupervision] : []) as $task) {
                         $contributorNode->addChild($task);
                     }
                 }

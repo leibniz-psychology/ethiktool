@@ -209,7 +209,7 @@ boxHeadings: # key: heading of the box. keySub: sub heading inside the box if ad
     compensation: 'Aufwandsentschädigung'
     compensationSub: 'Ergänzende Angaben zur Aufwandsentschädigung:'
     processing: 'Beschreibung der Datenverarbeitung'
-    dataReuse: 'Dissemination'
+    dataReuse: 'Verbreitung und Nachnutzung der Ergebnisse/Daten'
     dataReuseSub: 'Werden die Forschungsdaten nachgenutzt?'
     dataReuseBoxSub: >-
       Die Felder {isReviewFull, select,
@@ -506,10 +506,11 @@ projectdetails:
         0     {Ja - }
         1     {Nein - }
         other {}} {description, select,
-                    written     {schriftlich}
-                    writtenOral {schriftlich mit mündlicher Erläuterung}
-                    oral        {mündlich}
-                    other       {{description}}}
+                    written          {schriftlich}
+                    writtenOral      {schriftlich mit mündlicher Erläuterung}
+                    oral             {mündlich}
+                    informationOther {auf folgende Art: {otherDescription}}
+                    other            {{description}}}
     documentTranslation: >-
       Der Wortlaut der Teilnahmedokumente {addressee, select,
                                             children {für die Erziehungsberechtigten}
@@ -722,12 +723,16 @@ participation:
     Schwarze Schriftfarbe kennzeichnet vom Ethiktool automatisch erzeugten Text. Grüne Schriftfarbe kennzeichnet selbst formulierten Text. {savePDF, select,
       true  {Für die tatsächliche Verwendung der Teilnahmedokumente stehen die PDF-Dateien ohne farbliche Markierung im Ordner „{singleDocsName}“ zur Verfügung.}
       other {}}
-  oral: >-
+  oralOther: >-
     Die Aufklärung zur Studienteilnahme erfolgt {savePDF, select,
-          true  {mündlich}
+          true  {{type, select,
+                    oral  {mündlich}
+                    other {auf folgende Art: {otherDescription}}}}
           other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#{information, select,
                     post  {post}
-                    other {pre}}Type" data-base-route-i-ds-param="{routeIDs}">mündlich</a>}}. Sie orientiert sich an den hier verschriftlichten Informationen.
+                    other {pre}}Type" data-base-route-i-ds-param="{routeIDs}">{type, select,
+                            oral  {mündlich}
+                            other {auf folgende Art: }}</a> {otherDescription}}}. Sie orientiert sich an den hier verschriftlichten Informationen.
   headings:
     goals: 'Hintergrund und Zielsetzung der Studie'
     conflict: 'Mögliche Interessenkonflikte der Projektbeteiligten'
@@ -1873,10 +1878,14 @@ dataPrivacy:
 # complete post information
 completePost:
   title: 'Nachträgliche Ergänzung zur Studieninformation'
-  oral: >-
+  oralOther: >-
     Die nachträgliche vollständige Aufklärung erfolgt {savePDF, select,
-          true  {mündlich}
-          other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#completePostType" data-base-route-i-ds-param="{routeIDs}">mündlich</a>}}. Sie orientiert sich an den hier verschriftlichen Informationen.
+          true  {{type, select, 
+                    oral  {mündlich}
+                    other {auf folgende Art: {otherDescription}}}}
+          other {<a class="linkInternal" href="information" data-action="base#setDummySubmit" data-base-url-param="app_information#completePostType" data-base-route-i-ds-param="{routeIDs}">{type, select,
+                    oral  {mündlich}
+                    other {auf folgende Art: }}</a> {otherDescription}}}. Sie orientiert sich an den hier verschriftlichen Informationen.
   intro: >-
     Vielen Dank für {addressee, select,
                       children {die Teilnahme Ihres Kindes}

@@ -30,10 +30,12 @@ class BurdensRisksController extends ControllerAbstract
         }
         $burdensRisksNode = $measureNode->{self::burdensRisksNode};
         $textInputCon = '';
+        $hasTriggerLoad = false;
         if ($isTexts) { // check if texts page has input that may be deleted
             $conArray = $textsArray[self::conNode];
             $inputArray = $this->setInputArray();
             $burdensRisksArrayLoad = $this->xmlToArray($this->getMeasureTimePointNode($request,getFirst: true)->{self::burdensRisksNode});
+            $hasTriggerLoad = array_key_exists('risksTrigger',$burdensRisksArrayLoad[self::risksNode]);
             // con
             if (($this->getBurdensOrRisks($burdensRisksArrayLoad,self::burdensNode)[0] || $this->getBurdensOrRisks($burdensRisksArrayLoad,self::risksNode)[0]) && $conArray[self::conTemplate]==='1' && $this->checkInput($conArray,[self::descriptionNode => ''])) {
                 $this->addInputPage('multiple.inputs.pages.','textsCon',$inputArray);
@@ -54,15 +56,18 @@ class BurdensRisksController extends ControllerAbstract
             $isBurdensRisks =  $this->getBurdensOrRisks($data,self::burdensNode)[0] || $this->getBurdensOrRisks($data,self::risksNode)[0];
             if ($isTexts) {
                 [$appNodeNew,$measureNodeNew] = $this->getClonedMeasureTimePoint($appNode,$routeParams);
-
                 // update con description
-                $textsNode = $measureNodeNew->{self::textsNode};
-                $conNode = $textsNode->{self::conNode};
-                $isDescription = array_key_exists(self::descriptionNode,$conArray);
-                if ($isBurdensRisks && !$isDescription) {
-                    $conNode->addChild(self::descriptionNode);
-                } elseif (!$isBurdensRisks && $conArray[self::conTemplate]==='1' && $isDescription) {
-                    $this->removeElement(self::descriptionNode,$conNode);
+                $conNode = $measureNodeNew->{self::textsNode}->{self::conNode};
+                $hasTrigger = array_key_exists('risksTrigger',$data[self::risksNode]);
+                if ($hasTriggerLoad!==$hasTrigger) { // trigger was (de)selected
+                    $this->removeConTemplate($conNode); // eventually remove selection of template as the meaning has changed
+                } elseif (!$hasTrigger) {
+                    $isDescription = array_key_exists(self::descriptionNode,$conArray);
+                    if ($isBurdensRisks && !$isDescription) {
+                        $conNode->addChild(self::descriptionNode);
+                    } elseif (!$isBurdensRisks && $conArray[self::conTemplate]==='1' && $isDescription) {
+                        $this->removeElement(self::descriptionNode,$conNode);
+                    }
                 }
             }
             $isNotLeave = !$this->getLeavePage($burdensRisks,$session,self::burdensRisksNode);

@@ -26,7 +26,7 @@
         </div>
         <div id="{{ preYes }}" class="mt-8" style="{{ boolToDisplay(preValue is same as '0') }}" {{ stimulus_target(informationController,'preContent') }}>
             {% if content.preType is defined %}
-                {{ _self.addType(true,content.preType,isInformationIIhint,addresseeType,'preType',[informationController],routeIDs) }}
+                {{ _self.addType('pre',true,content,isInformationIIhint,addresseeType,'preType',[informationController],routeIDs) }}
             {% endif %}
             {# pre content #}
             {% set preContent = content.preContent %}
@@ -47,7 +47,7 @@
                         merge({'contTarget': [informationController,'preCompleteText'], 'attributes': styleHeight|merge({'disabled': not anyComplete}), 'hint': anyComplete ? preCompleteTextHint : choiceTextHint, 'textHintParams': addresseeStringParam, 'textHintID': 'preCompleteTextHint'})],
                     'stim': [informationController,'setPreComplete',{'hint': [choiceTextHintTrans,preCompleteTextHint]}]}|
                     merge(isInformation ? {'removeHint': [[informationIIIinput],informationHintName,not isPreComplete]} : {})) }}
-                {{ _self.addType(isPreComplete,content.preCompleteType,false,addresseeType,'completePostType',[informationController,'preCompleteType']) }}
+                {{ _self.addType('preComplete',isPreComplete,content,false,addresseeType,'completePostType',[informationController,'preCompleteType']) }}
                 {# debriefing if withdrawal from participation #}
                 {% set preAbort, tempPrefix = content.preAbort, translationPrefix~'preAbort.hints.' %}
                 {% set preAbortValue = preAbort.vars.value %}
@@ -72,7 +72,7 @@
                     merge(textInputPost is not same as '' ? [postHint] : [])]]},
                 'removeHint': [[textInputPost],postHint,isPostNo]}|
                 merge(isInformation ? {'contTarget': ['post0',informationController,'postYes']} : {})) }}
-            {{ _self.addType(isPreNo and postValue is same as '0',content.postType,isInformationIIhint,addresseeType,postType,[informationController],routeIDs) }}
+            {{ _self.addType('post',isPreNo and postValue is same as '0',content,isInformationIIhint,addresseeType,postType,[informationController],routeIDs) }}
         </div>
         {# attendance #}
         {% if content.attendance is defined %}
@@ -129,24 +129,32 @@
     {{ formRender.addPreview([studyID,groupID,measureID]) }}
 {% endblock %}
 
-{% macro addType(visible, form, addPDF, addresseeType, id, target, routeIDs = '')  %}
+{% macro addType(type, visible, content, addPDF, addresseeType, id, target, routeIDs = '')  %}
     {# Adds a grid with a label asking for the type of information. Next it a group of radio buttons with the types are rendered. If pdf is not null, a button for selecting a pdf file is rendered, together with a div displaying the filename and an icon. Input arguments:
+      type:          type of information. Must equal 'pre', 'post', or 'preComplete'
       visible:       true if the div should be visible, false otherwise
-      form:          form with the types
+      content:       form elements
       addPDF:        if true, a hint is added that, when completing the application, a pdf must be uploaded
       addresseeType: addressee
       id:            id of the surrounding div
       target:        an array of two elements: stimulus controller and target name. If only one element is provided, it will be added to the renderButtons() call.
       routeIDs:      if not an empty string and addresseeType does not equal 'participants', route IDs for a hint that will be placed above the question
     #}
-    {% set name, stimCont, translationPrefix = form.vars.name, target[0], 'projectdetails.pages.information.' %}
-    <div id="{{ id }}" style="{{ boolToDisplay(visible) }}" {% if target[1] is defined %} {{ stimulus_target(stimCont,target[1]) }} {% endif %}>
+    {% set typeName, translationPrefix = type~'Type', 'projectdetails.pages.information.' %}
+    {% set form, iconPrefix = content[typeName], translationPrefix~'type.icons.' %}
+    {% set vars, descriptionName = form.vars, typeName~'Description' %}
+    {% set name, descriptionDiv = vars.name, descriptionName~'Div' %}
+    <div id="{{ id }}" style="{{ boolToDisplay(visible) }}" {% if target[1] is defined %} {{ stimulus_target(target[0],target[1]) }} {% endif %}>
         {% if routeIDs is not same as ''  and addresseeType is not same as 'participants' %}
             <div class="MetaData-Label borderHint" style="margin-top: 2rem">{{ (translationPrefix~'hint')|trans({'addressee': addresseeType, 'routeIDs': routeIDs})|raw }}</div>
         {% endif %}
         <div class="MetaData-Label mt-4">{{ form_label(form,null,labelDummy) }}</div>
         {{ formRender.renderButtons(form, noHeading|
-            merge({'icons': {(name~'written'): translationPrefix~'type.hintWritten'}})) }}
+            merge({'icons': {(name~'written'): iconPrefix~'written', (name~'informationOther'): iconPrefix~'informationOther'},
+                   'stimVisible': {'values': [['informationOther',descriptionDiv]]}})) }}
+        <div id="{{ descriptionDiv }}" class="MetaData-Widget" style="{{ boolToDisplay(vars.value is same as 'informationOther') }}; width: 20rem; margin-left: 2rem">
+            {{ form_widget(content[descriptionName]) }}
+        </div>
         {% if addPDF %}
             {% set prefix = 'projectdetails.addressee.' %}
             <div>{{ formRender.addHint(translationPrefix~'pdf',{'params': {'addressee': (prefix~'thirdParties.'~addresseeType)|trans, 'participant': (prefix~'participants.'~addresseeType)|trans}}) }}</div>

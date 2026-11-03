@@ -113,12 +113,13 @@ trait ProjectdetailsTrait
     // information(II)
     protected const informationNode = 'information';
     protected const informationIINode = 'informationII';
-    protected const informationTypes = ['projectdetails.pages.information.type.written' => 'written', 'projectdetails.pages.information.type.writtenOral' => 'writtenOral', 'projectdetails.pages.information.type.oral' => 'oral'];
+    protected const informationTypes = ['projectdetails.pages.information.type.written' => 'written', 'projectdetails.pages.information.type.writtenOral' => 'writtenOral', 'projectdetails.pages.information.type.oral' => 'oral', 'projectdetails.pages.information.type.informationOther' => 'informationOther'];
     protected const pre = 'pre'; // pre information
     protected const emptyPre = ['','pre'];
     // widget names for yes
     protected const preType = 'preType'; // type of pre information
     protected const informationOral = 'oral';
+    protected const informationOther = 'informationOther';
     protected const preContent = 'preContent'; // extent of pre information
     protected const complete = 'complete';
     protected const preContentIncomplete = ['partial','deceit'];
