@@ -147,7 +147,6 @@ class NewFormController extends ControllerAbstract
         return $this->render('Main/newForm.html.twig', $this->setRenderParameters($request,$general,
             [self::wrongPassword => $wrongPassword,
              'committeeTypes' => $this->getCommitteeArray(),
-             'committeeBeta' => self::committeeTypesBeta,
              'selected' => $committeeType,
              self::committeeParams.self::newForm => $this->setCommittee($session,$committeeType,$language,false)])); // committee params only for the page, not for the header
     }

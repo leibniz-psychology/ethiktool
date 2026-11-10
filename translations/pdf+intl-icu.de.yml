@@ -43,7 +43,12 @@ paragraphHeadings:
   information: 'Aufklärung'
   voluntary: 'Einwilligung und Abbruch'
   measures: 'Datenerhebung'
-  measuresSub: 'Informationen zu Ablauf, Ort und Dauer der Datenerhebung finden sich {informationHint}.'
+  measuresSub: >-
+    Informationen {hasLocation, select,
+                    true  {zu {anyDocs, select,
+                                true  {Ablauf, }
+                                other {}} Ort und}
+                    other {zur}} Dauer der Datenerhebung finden sich {informationHint}.
   burdens: 'Belastungen/Risiken und Aufwandsentschädigung'
   processing: 'Verarbeitung und Nachnutzung der hier erhobenen Daten'
   origin: ''
@@ -751,7 +756,7 @@ participation:
     title: 'Teilnahmedokumente'
     start: >-
       Das Ethiktool hat {levelNamesString} {isService, select,
-                                              true  {für die Antragstellenden Teilnahmedokumente erstellt. Diese sind der zu begutachtenden Version jedoch nicht beigefügt, weil die Begutachtung der Teilnahmedokumente bei {committeeDat} für das gewählte Antragsverfahren nicht vorgesehen ist. Folgende Informationen aus den Teilnahmedokumenten sind für die Begutachtung zu berücksichtigen:}
+                                              true  {für die Antragstellenden Teilnahmedokumente erstellt. Diese sind der zu begutachtenden Version jedoch nicht beigefügt, weil bei {committeeDat} für die Begutachtung von Kurzanträgen keine Vorlage von Teilnahmedokumenten vorgesehen ist. Folgende Informationen aus den Teilnahmedokumenten sind für die Begutachtung zu berücksichtigen:}
                                               other {keine Studieninformation für die {addressee, select,
                                                                                         children {Erziehungsberechtigen}
                                                                                         wards    {gesetzlichen Vertretungspersonen}
@@ -808,10 +813,7 @@ participation:
               true  {Folgende Informationen, die sonst in die Teilnahmedokumente übernommen worden wären, sind für die Begutachtung zu berücksichtigen:}
               other {}}
   projectTitle:
-  title: >-
-    {information, select,
-      post  {Studieninformation}
-      other {Studieninformation}}
+  title: 'Studieninformation'
   intro:
     contributors:
       leader: >-

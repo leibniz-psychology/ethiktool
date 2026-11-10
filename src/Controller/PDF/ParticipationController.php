@@ -191,31 +191,6 @@ class ParticipationController extends PDFAbstract
                         $hasCustomPDF[self::interventionsNode] = array_key_exists(self::interventionsPDF, $measuresArray);
                         [$linkedString, $subHeadingsString, $parametersString, $subColonString] = ['linked', 'subHeadings', 'parameters', 'subColon'];
                         // create paragraphs which are added even if no information is given
-                        $paragraphsAll = [];
-                        // informing
-                        $isInformingTemplate = in_array($informing,self::informingTypesTemplate);
-                        if ($isInformingTemplate) {
-                            $description = $this->addMarkInput($informingArray[self::descriptionNode],self::$markInput);
-                            $paragraphsAll[self::informingNode] = [$linkedString => self::burdensRisksNode, self::content => $informingArray[self::informingTemplate]==='1' ? $this->translateStringPDF($participationPrefix.self::informingNode.'.'.$informing,[self::descriptionNode => $description]) : $description, $subHeadingsString => [], $parametersString => [], $subColonString => true];
-                        }
-                        // criteria
-                        $content = [];
-                        $tempPrefix = $participationPrefix.self::criteriaNode.'.';
-                        foreach ([self::criteriaIncludeNode, self::criteriaExcludeNode] as $type) {
-                            $tempArray = $groupsArray[$type][self::criteriaNode];
-                            if ($tempArray!=='') { // at least one criterion
-                                $isInclude = $type===self::criteriaIncludeNode;
-                                $criteria = $isInclude ? '• '.$tempArray['include0']."\n" : '';
-                                if ($isInclude) {
-                                    if ($isInformingAlways) {
-                                        $criteria .= "• ".$this->translateStringPDF($tempPrefix.'finding')."\n";
-                                    }
-                                    $tempArray = array_slice($tempArray, 1);
-                                }
-                                $content[] = $criteria.($tempArray!==[] ? "• ".$this->addMarkInput(implode("\n• ", $tempArray), self::$markInput) : '');
-                            }
-                        }
-                        $paragraphsAll[self::criteriaNode] = [$linkedString => self::groupsNode, self::content => $content, $subHeadingsString => array_merge([$tempPrefix.self::criteriaIncludeNode], count($content)===2 ? [$tempPrefix.self::criteriaExcludeNode] : []), $parametersString => $translationParams, $subColonString => false];
                         // location
                         $tempArray = [];
                         $location = '';
@@ -240,17 +215,12 @@ class ParticipationController extends PDFAbstract
                         $tempArray[] = $this->getDuration($durationsArray, false, $translationParams, self::$markInput, $multipleMeasures);
                         $linkedSubHeadings[] = self::measuresNode;
                         $subHeadings[] = self::durationNode;
-                        $paragraphsAll[self::procedureNode] = [self::content => $tempArray, $this->linkedSubHeadingsString => $linkedSubHeadings, $subHeadingsString => $this->prefixArray($subHeadings, $participationPrefix)];
-                        // terminate participants
-                        $consentArray = $measureTimePoint[self::consentNode];
-                        $terminateParticipants = '';
-                        $terminateParticipantsDescription = '';
-                        $hasTerminateParticipants = array_key_exists(self::terminateParticipantsNode,$consentArray);
-                        if ($hasTerminateParticipants) {
-                            $terminateParticipantsArray = $consentArray[self::terminateParticipantsNode];
-                            $terminateParticipants = $terminateParticipantsArray[self::chosen];
-                            $terminateParticipantsDescription = $terminateParticipantsArray[self::descriptionNode] ?? '';
-                            $paragraphsAll[self::terminateParticipantsNode] = [$linkedString => self::consentNode, self::content => $terminateParticipantsDescription!=='' ? $terminateParticipantsDescription : ($terminateParticipants!=='' ? $this->translateString($projectdetailsPrefix.self::consentNode.'.'.self::terminateParticipantsNode.'.types.'.$terminateParticipants, $informationParam) : '')];
+                        $paragraphsAll = [self::procedureNode => [self::content => $tempArray, $this->linkedSubHeadingsString => $linkedSubHeadings, $subHeadingsString => $this->prefixArray($subHeadings, $participationPrefix)]];
+                        // informing
+                        $isInformingTemplate = in_array($informing,self::informingTypesTemplate);
+                        if ($isInformingTemplate) {
+                            $description = $this->addMarkInput($informingArray[self::descriptionNode],self::$markInput);
+                            $paragraphsAll[self::informingNode] = [$linkedString => self::burdensRisksNode, self::content => $informingArray[self::informingTemplate]==='1' ? $this->translateStringPDF($participationPrefix.self::informingNode.'.'.$informing,[self::descriptionNode => $description]) : $description, $subHeadingsString => [], $parametersString => [], $subColonString => true];
                         }
                         // compensation
                         $isNotShortServiceSingleDocs = !($isShortService && self::$isCompleteForm && self::$savePDF && self::$markInput); // gets false if review process is 'shortService' and single documents are created
@@ -264,6 +234,7 @@ class ParticipationController extends PDFAbstract
                         $numCompensation = 0;
                         $compensationPrefix = $projectdetailsPrefix.self::compensationNode.'.';
                         $compensationPrefixPDF = $participationPrefix.self::compensationNode.'.';
+                        $consentArray = $measureTimePoint[self::consentNode];
                         $voluntaryArray = $consentArray[self::voluntaryNode];
                         $chosen2 = $voluntaryArray[self::chosen2Node] ?? '';
                         $terminateConsParam = [self::terminateConsNode => $this->getStringFromBool($consentArray[self::terminateConsNode][self::chosen]!=='1')];
@@ -357,6 +328,34 @@ class ParticipationController extends PDFAbstract
                         $risksTriggerContact = $risksTrigger.$risksContact;
                         if ($risksTriggerContact!=='') {
                             $paragraphsAll[self::risksOccurrenceNode] = [$linkedString => self::burdensRisksNode, self::content => $risksTriggerContact, $subHeadingsString => [], $parametersString => [], $subColonString => true];
+                        }
+                        // criteria
+                        $content = [];
+                        $tempPrefix = $participationPrefix.self::criteriaNode.'.';
+                        foreach ([self::criteriaIncludeNode, self::criteriaExcludeNode] as $type) {
+                            $tempArray = $groupsArray[$type][self::criteriaNode];
+                            if ($tempArray!=='') { // at least one criterion
+                                $isInclude = $type===self::criteriaIncludeNode;
+                                $criteria = $isInclude ? '• '.$tempArray['include0']."\n" : '';
+                                if ($isInclude) {
+                                    if ($isInformingAlways) {
+                                        $criteria .= "• ".$this->translateStringPDF($tempPrefix.'finding')."\n";
+                                    }
+                                    $tempArray = array_slice($tempArray, 1);
+                                }
+                                $content[] = $criteria.($tempArray!==[] ? "• ".$this->addMarkInput(implode("\n• ", $tempArray), self::$markInput) : '');
+                            }
+                        }
+                        $paragraphsAll[self::criteriaNode] = [$linkedString => self::groupsNode, self::content => $content, $subHeadingsString => array_merge([$tempPrefix.self::criteriaIncludeNode], count($content)===2 ? [$tempPrefix.self::criteriaExcludeNode] : []), $parametersString => $translationParams, $subColonString => false];
+                        // terminate participants
+                        $terminateParticipants = '';
+                        $terminateParticipantsDescription = '';
+                        $hasTerminateParticipants = array_key_exists(self::terminateParticipantsNode,$consentArray);
+                        if ($hasTerminateParticipants) {
+                            $terminateParticipantsArray = $consentArray[self::terminateParticipantsNode];
+                            $terminateParticipants = $terminateParticipantsArray[self::chosen];
+                            $terminateParticipantsDescription = $terminateParticipantsArray[self::descriptionNode] ?? '';
+                            $paragraphsAll[self::terminateParticipantsNode] = [$linkedString => self::consentNode, self::content => $terminateParticipantsDescription!=='' ? $terminateParticipantsDescription : ($terminateParticipants!=='' ? $this->translateString($projectdetailsPrefix.self::consentNode.'.'.self::terminateParticipantsNode.'.types.'.$terminateParticipants, $informationParam) : '')];
                         }
                         // voluntary
                         $consentQuestionArray = $consentArray[self::consentNode];
@@ -1144,6 +1143,7 @@ class ParticipationController extends PDFAbstract
                                 $this->addParagraph($tempPrefix.'title',$this->translateStringPDF($tempPrefix.'text'),isPrivacy: true); // revocation
                                 $tempPrefix = $privacyPrefix.'rights.';
                                 $this->addParagraph($tempPrefix.'title',$this->translateStringPDF($tempPrefix.'text',$translationParams),isPrivacy: true); // rights
+                                self::$isPageLink = true;
                             }
                             $privacyParameters = array_merge($committeeParam,[
                                 'privacyIntro' => $this->translateStringPDF($privacyPrefix.'intro',array_merge($translationParams,$numStudiesParam,[self::studyID => $studyIDincreased])),
@@ -1161,7 +1161,7 @@ class ParticipationController extends PDFAbstract
                                 $obligatoryConsent[] = $this->translateStringPDF($obligatoryTypesPrefix.self::findingNode,$translationSaveParam);
                             }
                             self::$linkedPage = self::informationNode;
-                            $participationHeading = $this->addHeadingLink($participationPrefix.'title', $informationParam);
+                            $participationHeading = $this->addHeadingLink($participationPrefix.'title');
                             // create string for header containing the project title and eventually the level IDs
                             $levelIDs = [];
                             $tempPrefix = 'projectdetails.headings.';

@@ -43,7 +43,12 @@ paragraphHeadings:
   information: 'Information'
   voluntary: 'Consent and withdrawal'
   measures: 'Data collection'
-  measuresSub: 'Information about procedure, location and duration of the investigation can be found {informationHint}.'
+  measuresSub: >-
+    Information about {hasLocation, select,
+                        true  {{anyDocs, select,
+                                  true  {procedure, }
+                                  other {}} location and}
+                        other {the}} duration of the investigation can be found {informationHint}.
   burdens: 'Burdens/risks and compensation'
   processing: 'Processing and re-use of data collected here'
   origin: ''
@@ -751,7 +756,7 @@ participation:
     title: 'Participant documents'
     start: >-
       The Ethiktool {isService, select,
-                      true  {generated participant documents {levelNamesString} for the applicants. However, these are not included in the review version of the proposal because participant documents are not part of the selected review process in {committeeDat}. The following information from the participant documents needs to be taken into account for review:}
+                      true  {generated participant documents {levelNamesString} for the applicants. However, these are not included in the review version of the proposal because {committeeDat} does not include participant documents in their review of short proposals. The following information from the participant documents needs to be taken into account for review:}
                       other {did not generate a study information sheet {levelNamesString} for the {addressee, select,
                                                                                                       children {legal guardians}
                                                                                                       wards    {legal guardians}
@@ -808,10 +813,7 @@ participation:
               true  {The following information, which otherwise would have been transferred to the participant documents, needs to be taken into account for review:}
               other {}}
   projectTitle:
-  title: >-
-    {information, select,
-      post  {Study information sheet}
-      other {Study information sheet}}
+  title: 'Study information sheet'
   intro:
     contributors:
       leader: >-

@@ -84,9 +84,9 @@ multiple:
     informationIII: 'the after-the-fact information' # in information (same for following)
     consent: 'the disadvantages of withdrawal for the {addressee}'
     texts: >-
-      the introduction, the aims, the procedure{isConflict, select,
-                                                 true  {, the advantages/disadvantages and the information about conflict of interest}
-                                                 other { and the advantages/disadvantages}}
+      the introduction, the aims, the {isConflict, select,
+                                        true  {information about conflict of interest, the procedure}
+                                        other {procedure}}  and the advantages/disadvantages
     textsIntro: 'the text on study introduction'
     textsCon: 'the text on disadvantages'
     textsConflict: 'the information about conflicts of interest'
@@ -3682,7 +3682,7 @@ checkDoc:
             ipResearch: 'If IP addresses are registered for answering the research question, “IP address“ must be selected in the list of person-related data for answering the research question.'
             ipTechnical: 'If IP addresses are registered for technical support purposes only, “IP address“ must not be selected in the list of person-related data for answering the research question.'
             linkedMarking: 'If IP addresses can be linked with the research data, the research data must be labelled with an allocation list, and “IP address“ must be chosen amongst the personal data contained in the allocation list.'
-          closed: 'Identifying individual persons from the structure of the code is plausible only with <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#examinedPeople" data-base-route-i-ds-param="{routeIDs}">data collection in a closed group</a>.'
+          closed: 'Identifying individual persons from the structure of the code is plausible only with data collection in a <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#examinedPeople" data-base-route-i-ds-param="{routeIDs}">closed group</a>.'
           measuresToPersonal: >-
             If you use {measure, select,
                           photo {photos}
@@ -3779,7 +3779,7 @@ completeForm:
       I further confirm that I am aware of all legal regulations applicable to the research project (including regulations on data protection) in their current versions and that I have respected them to the best of my knowledge in planning the research project and in compiling this application.
     confirm: 'I confirm the correctness of the ethics application documents and the compliance with all applicable regulations.'
     hint: 'If a detail in the automatically generated documents is incorrect because a specific aspect of your research project is not covered by the templates, please contact the <a href="mailto:ethiktool@leibniz-psychology.org">Ethiktool support</a>.'
-    notes: 'If further notifications to {committeeAcc} are necessary, please enter them here. Please do *not* write any further accompanying text apart from this application form.'
+    notes: 'If further notifications to {committeeAcc} are necessary, please enter them here. Please do <span class="font-bold">not</span> write any further accompanying text apart from this application form.'
   bias:
     title: >- # TODO: add links for TUD, PHHD, PHT
       Please check the {committeeType, select,

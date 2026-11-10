@@ -60,8 +60,7 @@ class ApplicationController extends PDFAbstract
 
             // projectdetails information
             $supplementTypes = [self::measuresNode,self::interventionsNode,self::otherSourcesNode,self::informationNode,self::post,self::dataSetNode,self::legitimizationNode];
-            $projectdetailsNode = $appNode->{self::projectdetailsNodeName};
-            $projectdetailsArray = $this->xmlToArray($projectdetailsNode);
+            $projectdetailsArray = $this->xmlToArray($appNode->{self::projectdetailsNodeName});
             $studyArray = $this->addZeroIndex($projectdetailsArray[self::studyNode]);
             /*
              * $allAddressees: all possible addressees with a value true if the addressee occurs, false otherwise. Only addressees where either pre or post information for the third parties (or participants if no third parties) happens are considered.
@@ -248,7 +247,9 @@ class ApplicationController extends PDFAbstract
             $isChildren = $this->getStringFromBool($allAddressees[self::addresseeChildren]); // 'true' if any addressee is children
             $childrenWardsParams = [self::addresseeChildren => $isChildren, self::addresseeWards => $this->getStringFromBool($allAddressees[self::addresseeWards])];
             $this->documentHint = $isAnyDocInformation && $reviewProcess===self::reviewFullDocs ? trim($this->translateStringPDF('documentHint', array_merge($childrenWardsParams, [self::addresseeParticipants => $isParticipants, 'isParticipantsChildren' => $this->getStringFromBool(in_array('true', [$isParticipants, $isChildren]))]))) : ''; // currently only description of no pre information and other sources contain document hint, i.e., only if review process is "fullDocs"
-            $docsParam = ['anyDocs' => $this->getStringFromBool($hasDocs && $isAnyInformation), 'anyNoDocs' => $this->getStringFromBool(!$hasDocs || $isAnyNoPost)];
+            $hasDocsInformation = $hasDocs && $isAnyInformation;
+            $isNotShortService = $reviewProcess!==self::reviewShortService;
+            $docsParam = ['anyDocs' => $this->getStringFromBool($hasDocsInformation && $isNotShortService), 'anyNoDocs' => $this->getStringFromBool(!$hasDocs || $isAnyNoPost || !$isNotShortService)];
             $informationHintParam = array_merge($docsParam,['informationHint' => $this->translateStringPDF('informationHint',$docsParam)]);
 
             // application data
@@ -482,8 +483,6 @@ class ApplicationController extends PDFAbstract
             $this->levelTrans[self::measureTimePointNode] = $this->translateStringPDF($projectdetailsHeadingPrefix.self::measureTimePointNode);
             $measureAllTrans = $this->translateStringPDF($projectdetailsHeadingPrefix.'measureTimePointAll');
             $multipleStudies = count($studyArray)>1;
-            $isNotShortService = $reviewProcess!==self::reviewShortService;
-            $hasCriteria = $isNotShortService && $this->checkElement(self::criteriaIncludeNode,$projectdetailsNode->{self::studyNode}[0]->{self::groupNode}[0]->{self::measureTimePointNode}[0]->{self::groupsNode}); // criteria nodes exist either for all time points or for none
             $this->isMixed = $isAnyOriginNew && $isAnyOriginExisting;
             $tempPrefix = $projectdetailsPrefix.'overview.'.self::originNode.'.';
             $this->originNewTrans = $this->translateStringPDF($tempPrefix.self::originNew);
@@ -631,9 +630,11 @@ class ApplicationController extends PDFAbstract
                                 $postArray = $informationArray[self::post] ?? [];
                                 $postArrayParticipants = $informationIIArray[self::post] ?? [];
                                 $post = $postArray[self::chosen] ?? '';
+                                $isPost = $post==='0';
+                                $postParticipants = $postArrayParticipants[self::chosen] ?? '';
                                 $postTypeArray = $postArray[self::postType] ?? [];
                                 $postTypeArrayParticipants = $postArrayParticipants[self::postType] ?? [];
-                                $content = ($isNotPre ? $addresseeHeading.$this->translateStringPDF($preTranslation, [self::chosen => $post, self::descriptionNode => $postTypeArray[self::chosen] ?? '', 'otherDescription' => $postTypeArray[self::descriptionNode] ?? '']) : '').($isNotPreParticipants ? ($isNotPre ? $participantsHeading : $participantsHeadingShort).$this->translateStringPDF($preTranslation, [self::chosen => $postArrayParticipants[self::chosen] ?? '', self::descriptionNode => $postTypeArrayParticipants[self::chosen] ?? '', 'otherDescription' => $postTypeArrayParticipants[self::descriptionNode] ?? '']) : '').($isNotPre && $post==='0' ? $documentTranslation : '');
+                                $content = ($isNotPre ? $addresseeHeading.$this->translateStringPDF($preTranslation, [self::chosen => $post, self::descriptionNode => $isPost ? ($postTypeArray[self::chosen] ?? '') : ($postArray[self::descriptionNode] ?? ''), 'otherDescription' => $postTypeArray[self::descriptionNode] ?? '']) : '').($isNotPreParticipants ? ($isNotPre ? $participantsHeading : $participantsHeadingShort).$this->translateStringPDF($preTranslation, [self::chosen => $postParticipants, self::descriptionNode => $postParticipants==='0' ? ($postTypeArrayParticipants[self::chosen] ?? '') : ($postArrayParticipants[self::descriptionNode] ?? ''), 'otherDescription' => $postTypeArrayParticipants[self::descriptionNode] ?? '']) : '').($isNotPre && $isPost ? $documentTranslation : '');
                             }
                             $this->addBoxContent(self::post, $content, $isNotPre ? $informationMeasures : '', fragment: !$isNotPre || !$isNotPreParticipants ? $preNo : self::dummyString);
 
@@ -942,7 +943,8 @@ class ApplicationController extends PDFAbstract
                 'anyConsentNo' => $this->getStringFromBool($anyConsent[0]),
                 'anyAssentNo' => $this->getStringFromBool($anyConsent[1]),
                 'isOrigin' => $this->getStringFromBool(!$isAnyOriginMissing),
-                'anyOriginExisting' => $this->getStringFromBool($isAnyOriginExisting)]); // all parameters for all translations of headings and subContent headings
+                'anyOriginExisting' => $this->getStringFromBool($isAnyOriginExisting),
+                'hasLocation' => $this->getStringFromBool($this->isReviewFull || $hasDocsInformation && $isNotShortService)]); // all parameters for all translations of headings and subContent headings
             // box with names of levels
             self::$linkedPage = self::landing;
             self::$isPageLink = true;
@@ -1016,7 +1018,7 @@ class ApplicationController extends PDFAbstract
                     self::$isPageLink = false;
                 }
                 $sub = trim($curContent[self::sub]);
-                if (in_array($title, $additionalContent) && (($isAnySupplement[$title] ?? false) || $isAnyInformation && in_array($title,$informationContent,true) && (!in_array($title,[self::burdensNode,self::risksNode],true) || $hasDocs && $isNotShortService && ($title===self::burdensNode && $isAnyBurdensEveryday || $title===self::risksNode && $isAnyBurdensRisks[self::risksNode])) || $title===self::examinedPeopleNode && ($isAnyInformation || $isAnyNoPost) && ($this->isReviewFull || $hasCriteria) || $title===self::processingNode) || $title==self::dataReuseNode) {
+                if (in_array($title, $additionalContent) && (($isAnySupplement[$title] ?? false) || $isAnyInformation && in_array($title,$informationContent,true) && (!in_array($title,[self::burdensNode,self::risksNode],true) || $hasDocs && $isNotShortService && ($title===self::burdensNode && $isAnyBurdensEveryday || $title===self::risksNode && $isAnyBurdensRisks[self::risksNode])) || in_array($title,[self::examinedPeopleNode,self::processingNode])) || $title==self::dataReuseNode) {
                     if ($title!==self::dataReuseNode) {
                         $isMain = $sub==='';
                         $content = $isMain ? $main : $sub;

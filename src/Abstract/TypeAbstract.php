@@ -236,8 +236,9 @@ abstract class TypeAbstract extends AbstractType implements DataMapperInterface
      */
     protected function addCommitteeForms(FormBuilderInterface $builder, bool $isNewForm = true, string $committee = ''): void
     {
-        $numBeta = count(self::committeeTypesBeta);
-        if ($numBeta>1 || $numBeta===1 && self::committeeTypesBeta[0]!==$committee) { // at least one beta committee that is not currently active exists
+        $committeeTypesBeta = $this->getCommitteeTypesBeta();
+        $numBeta = count($committeeTypesBeta);
+        if ($numBeta>1 || $numBeta===1 && $committeeTypesBeta[0]!==$committee) { // at least one beta committee that is not currently active exists
             $this->addFormElement($builder,self::passwordInput,'text','newForm.password.title');
         }
         foreach (array_merge([self::requirements],$isNewForm ? [self::technicalHint] : []) as $confirm) {

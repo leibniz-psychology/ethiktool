@@ -180,7 +180,7 @@ abstract class ControllerAbstract extends AbstractController
             [self::content => $form,
              'isUpdateTime' => $this->getUpdateTimeString(),
              self::committeeParams => $committeeParams,
-             'committeeBeta' => self::committeeTypesBeta]);
+             'committeeBeta' => $this->getCommitteeTypesBeta()]);
         if ($pageTitle!=='') {
             $returnArray[self::pageTitle] = $pageTitle;
             $returnArray[self::preview] = (int) ($session->get(self::preview) ?? 0);
@@ -230,7 +230,7 @@ abstract class ControllerAbstract extends AbstractController
     protected function checkPassword(Session $session, array $data): bool
     {
         $committeeType = $data[self::committee];
-        if (in_array($committeeType,self::committeeTypesBeta) && $data[self::passwordInput]!==self::betaPasswords[$committeeType]) {
+        if (in_array($committeeType,$this->getCommitteeTypesBeta()) && $data[self::passwordInput]!==self::betaPasswords[$committeeType]) {
             $session->set(self::wrongPassword,'');
             $this->setTemp($session,$data);
             return false;
@@ -1090,13 +1090,13 @@ abstract class ControllerAbstract extends AbstractController
             $folderPrefix = $tempFolder.'participation';
             $filename = $folderPrefix.($isCompleteForm ? 'Marked' : '').$idSuffix.$sessionIDExt;
             if ($isCompleteForm) {
-                $this->addPDF($filename); // only date
+                $this->addPDF($filename);
                 $curCustomPDFs = $customPDFs[$ids[0]][$ids[1]][$ids[2]] ?? [];
                 foreach (self::customPDForder as $custom) {
                     if (in_array($custom,$curCustomPDFs)) {
                         $this->addPDF($folderPrefix.$idSuffix.$custom.$sessionIDExt);
+                        $this->addCustomPDF($custom.$idSuffix,$files);
                     }
-                    $this->addCustomPDF($custom.$idSuffix,$files);
                 }
             } else {
                 $numPages = $this->fpdi->setSourceFile($filename);
@@ -1168,7 +1168,7 @@ abstract class ControllerAbstract extends AbstractController
      */
     protected function setCommittee(Session $session, string $committeeType, string $locale, bool $setSession = true): array
     {
-        $tempArray = ['committeeType' => $committeeType, self::toolVersionAttr => self::toolVersion, self::isCommitteeBeta => in_array($committeeType,self::committeeTypesBeta,true)];
+        $tempArray = ['committeeType' => $committeeType, self::toolVersionAttr => self::toolVersion, self::isCommitteeBeta => in_array($committeeType,$this->getCommitteeTypesBeta(),true)];
         foreach (['committeeNom','committeeGen','committeeDat','committeeAcc','committeeLocation','committeeLocationPure','committeeLocationDat','committeeLocationGen'] as $type) {
             $tempArray[$type] = self::$translator->trans('committee.'.$type,['committee' => $committeeType],'messages',$locale);
         }

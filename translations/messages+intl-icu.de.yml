@@ -84,9 +84,9 @@ multiple:
     informationIII: 'der nachträglichen Aufklärung' # in information (same for following)
     consent: 'den Nachteilen des vorzeitigen Abbruchs für die {addressee}'
     texts: >-
-      der Einleitung, den Zielen, dem Ablauf{isConflict, select,
-                                               true  {, den Vor-/Nachteilen und der Aufklärung über Interessenkonflikte}
-                                               other { und den Vor-/Nachteilen}}
+      der Einleitung, den Zielen, {isConflict, select,
+                                    true  {der Aufklärung über Interessenkonflikte, dem Ablauf}
+                                    other {dem Ablauf}} und den Vor-/Nachteilen
     textsIntro: 'dem Freitext der Studien-Einleitung'
     textsCon: 'dem Freitext der Nachteile'
     textsConflict: 'der Aufklärung über Interessenkonflikte'
@@ -3682,7 +3682,7 @@ checkDoc:
             ipResearch: 'Wenn IP-Adressen zur Beantwortung der Forschungsfrage erfasst werden, muss „IP-Adressen“ in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
             ipTechnical: 'Wenn die IP-Adressen nur zur technischen Unterstützung erfasst werden, darf „IP-Adressen“ nicht in der Auflistung der personenbezogenen Daten zur Beantwortung der Forschungsfrage ausgewählt werden.'
             linkedMarking: 'Wenn die IP-Adressen mit den Forschungsdaten verknüpft sind, müssen die Forschungsdaten mit einer Schlüsselliste gekennzeichnet sein, und „IP-Adresse“ muss in der Auflistung der personenbezogenen Daten der Schlüsselliste ausgewählt werden.'
-          closed: 'Dass die Art der Codebildung eine Identifikation einzelner Personen zulassen könnte, ist nur plausibel, wenn die <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#examinedPeople" data-base-route-i-ds-param="{routeIDs}">Erhebung in einer geschlossenen Gruppe</a> stattfindet.'
+          closed: 'Dass die Art der Codebildung eine Identifikation einzelner Personen zulassen könnte, ist nur plausibel, wenn die Erhebung in einer <a class="linkInternal" href="groups" data-action="base#setDummySubmit" data-base-url-param="app_groups#examinedPeople" data-base-route-i-ds-param="{routeIDs}">geschlossenen Gruppe</a> stattfindet.'
           measuresToPersonal: >-
             Wenn Sie zur Dokumentation der <a class="linkInternal" href="measures" data-action="base#setDummySubmit" data-base-route-i-ds-param="{routeIDs}" data-base-url-param="app_measures#measures{type, select,
                                               measuresObservation     {Observation">Beobachtung der Teilnehmenden}
@@ -3779,7 +3779,7 @@ completeForm:
       Ferner versichere ich, dass ich die für das Forschungsprojekt einschlägigen gesetzlichen Bestimmungen und Richtlinien (einschließlich der Regelungen zum Datenschutz) in den aktuell gültigen Fassungen kenne und bei der Planung sowie der Antragstellung nach bestem Wissen berücksichtigt habe.
     confirm: 'Ich bestätige die Korrektheit der Ethikantragsdokumente und die Berücksichtigung der einschlägigen Bestimmungen.'
     hint: 'Wenn eine Angabe in den automatisch erstellten Dokumenten fehlerhaft sein sollte, weil sich ein spezieller Umstand Ihres Forschungsprojekts von den Vorlagen nicht abdecken lässt, wenden Sie sich bitte an den <a href="mailto:ethiktool@leibniz-psychology.org">Ethiktool-Support</a>.'
-    notes: 'Falls weitere Mitteilungen an {committeeAcc} erforderlich sind, tragen Sie diese bitte hier ein. Bitte schreiben Sie *keinen* weiteren Begleittext außerhalb dieses Antragsformulars.'
+    notes: 'Falls weitere Mitteilungen an {committeeAcc} erforderlich sind, tragen Sie diese bitte hier ein. Bitte schreiben Sie <span class="font-bold">keinen</span> weiteren Begleittext außerhalb dieses Antragsformulars.'
   bias:
     title: >- # TODO: add links for TUD, PHHD
       Bitte prüfen Sie die {committeeType, select,
