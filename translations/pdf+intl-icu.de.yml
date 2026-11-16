@@ -628,7 +628,6 @@ projectdetails:
                                                     other   {werden nicht über aufgetretene Zufallsbefunde/Verdachtsmomente informiert. Die Begründung lautet wie folgt:
                                                               {description}}}
     risksOccurrence: >-
-      
       Nach Einschätzung der Antragstellenden bleibt nach Durchführung aller Maßnahmen {risksAfter, select,
                   0     {eine Auftretenswahrscheinlichkeit von nennenswerter Höhe und/oder eine}
                   other {keine Auftretenswahrscheinlichkeit von nennenswerter Höhe und keine}} Schwere der Folgen, die über bloßes Unbehagen hinausgeht.

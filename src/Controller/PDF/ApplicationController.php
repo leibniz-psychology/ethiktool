@@ -999,7 +999,7 @@ class ApplicationController extends PDFAbstract
                                         $anyMultipleMeasureTimePoint |= $anyMultipleMeasure;
                                         $curCombination .= $isMultiple ? ($isAllSameMeasure!==0 ? '; '.($multipleStudies ? $studyTrans.($studyIndex + 1) : '').($multipleGroups ? ($multipleStudies ? ', ' : '').$groupAllTrans : '').($anyMultipleMeasure ? ($multipleStudiesGroups ? ', ' : '').$measureAllTrans : '') : $curGroupCombination) : '';
                                     } // foreach $studies
-                                    $curContent[$type] .= ($isMultiple ? "\n> ".($isAllSameGroups && $numStudies===count($studies) && $multipleStudies ? $studyAllTrans.($anyMultipleGroup ? ', '.$groupAllTrans : '').($anyMultipleMeasureTimePoint ? ', '.$measureAllTrans : '') : substr($curCombination, 2)).":\n" : '').$answer;
+                                    $curContent[$type] .= ($isMultiple ? "\n> ".($isAllSameGroups && $numStudies===count($studies) && $multipleStudies ? $studyAllTrans.($anyMultipleGroup ? ', '.$groupAllTrans : '').($anyMultipleMeasureTimePoint ? ', '.$measureAllTrans : '') : substr($curCombination, 2)).":\n" : '').$answer.$this->addLineBreak($answer);
                                 }
                             } // foreach $answers
                         } else { // no content for this box
@@ -1022,7 +1022,7 @@ class ApplicationController extends PDFAbstract
                     if ($title!==self::dataReuseNode) {
                         $isMain = $sub==='';
                         $content = $isMain ? $main : $sub;
-                        $content .= ($content!=='' ? (!str_ends_with($content,'</div>') && !str_ends_with($content,'</br>') ? "\n" : '')."\n".$this->translateStringPDF($projectdetailsPrefix.'pdf.'.$title,$informationHintParam) : '');
+                        $content .= ($content!=='' ? $this->addLineBreak($content)."\n".$this->translateStringPDF($projectdetailsPrefix.'pdf.'.$title,$informationHintParam) : '');
                         if ($isMain) {
                             $main = $content;
                         } else {
@@ -1228,6 +1228,14 @@ class ApplicationController extends PDFAbstract
     private function addDivPadding(string $string, bool $addLineBreak = true): string
     {
         return '<div style="padding-left: 0.6em; text-align: left">'.$string.'</div>'.($addLineBreak ? '</br>' : '');
+    }
+
+    /** If the input string does not end with a closing div-tag or closing br-tag, a line break is returned
+     * @param string $input input string
+     * @return string line break or empty string
+     */
+    private function addLineBreak(string $input): string {
+        return !str_ends_with($input,'</div>') && !str_ends_with($input,'</br>') ? "\n" : '';
     }
 
     /** Creates a string '- ' inside a span with negative left margin.

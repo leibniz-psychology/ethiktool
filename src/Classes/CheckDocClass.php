@@ -51,13 +51,13 @@ class CheckDocClass extends ControllerAbstract
     private array $isMandatory = []; // for each mandatory task, indicates if at least one contributor has this task
     private bool $isDataCollection = false; // gets true if for any time point data are collected
     private bool $allOriginSelected = true; // gets false if any origin question is not answered
+    private bool $anyOriginNew = false; // gets true if any origin is answered with 'new'
     private array $measure = []; // contains all data of the current time point that is checked
     private array $routeIDs = []; // route IDs of the current time point that is checked
     private string $addressee = ''; // addressee of the current time point that is checked
     private bool $addPageHash = false; // if true, the page will be prepended to the hash linking to the question
     private string $linkedPage = ''; // page to be linked to. Is used only if $addPageHash is true
     // variables that are needed on at least on other page than the one where the question is asked, for the current time point
-    private bool $isPre = false; // gets true if information is 'pre'
     private bool $noPre = false; // gets true if pre-information question is answered with 'no'
     private bool $noPreParticipants = false; // same as $noPre, but for participants, if third parties
     private bool $noPost = false; // gets  true if post-information is answered with 'no'
@@ -68,6 +68,8 @@ class CheckDocClass extends ControllerAbstract
     private array $informationII = [2,2];
     private bool $isInformationII = false; // gets true if informationII is active
     private string $consentAddressee = ''; // consent of participants or (if third parties are involved) of third parties
+    private bool $allInformationSelected = true; // gets false if any pre or post information is not answered
+    private bool $anyInformation = false; // gets true if any information is pre or post
     // prefixes
     private const appDataPrefix = 'checkDoc.appData.';
     private const contributorsPrefix = 'checkDoc.contributors.';
@@ -125,7 +127,13 @@ class CheckDocClass extends ControllerAbstract
                     $chosen = $measure[self::dataSourceNode][self::originNode][self::chosen];
                     $checkDoc->allOriginSelected = $checkDoc->allOriginSelected && $chosen!=='';
                     if ($chosen===self::originNew) {
+                        $checkDoc->anyOriginNew = true;
                         $checkDoc->isDataCollection = true;
+                        $tempArray = $measure[self::informationNode];
+                        $pre = $tempArray[self::pre];
+                        $post = $tempArray[self::post][self::chosen] ?? '';
+                        $checkDoc->allInformationSelected = $checkDoc->allInformationSelected && ($pre==='0' || $pre==='1' && $post!=='');
+                        $checkDoc->anyInformation = $checkDoc->anyInformation || in_array('0',[$pre,$post]);
                     }
                 }
             }
@@ -323,10 +331,7 @@ class CheckDocClass extends ControllerAbstract
             $this->addTitle('pages.projectdetails.title');
             $windowArray = $this->addZeroIndex($this->appArray[self::projectdetailsNodeName][self::studyNode]); // all studies
             $this->isOne[self::studyNode] = count($windowArray)===1;
-            $anyInformation = false; // gets true if any information is pre or post
-            $allInformationChosen = true; // gets false if any pre or post information question is not yet answered
             $anyOriginNew = false; // gets true if any origin is answered with 'new'
-            $allOriginChosen = true; // gets false if any origin question is not yet answered
             $this->checkLanding();
             foreach ($windowArray as $studyID => $study) {
                 $this->studyGroupMeasureName[self::studyNode] = $study[self::nameNode]; // is set again in setProjectdetailsVariables, but needed for setStudyGroup
@@ -336,13 +341,9 @@ class CheckDocClass extends ControllerAbstract
                         $this->measure = $measure;
                         $this->IDs[self::measureTimePointNode] = $measureID+1;
                         $this->setProjectdetailsVariables();
-                        $tempVal = $measure[self::dataSourceNode][self::originNode][self::chosen];
-                        $anyOriginNew = $anyOriginNew || $tempVal===self::originNew;
-                        $allOriginChosen = $allOriginChosen && $tempVal!=='';
+                        $anyOriginNew = $anyOriginNew || $measure[self::dataSourceNode][self::originNode][self::chosen]===self::originNew;
                         $this->checkDataSource(); // data source
                         if ($measure[self::groupsNode]!=='') {
-                            $anyInformation = $anyInformation || in_array(0,$this->information);
-                            $allInformationChosen = $allInformationChosen && ($this->isPre || $this->information[1]!==2);
                             $this->checkGroups(); // groups
                             $this->checkInformation(self::informationNode); // information
                             if ($this->isInformationII) {
@@ -365,7 +366,7 @@ class CheckDocClass extends ControllerAbstract
             }
             $this->setProjectdetailsTitle(subPage: self::studyNode);
             // error messages if a task of a contributor is not selected in any measure time point
-            if ($anyOriginNew && $this->isMultiple && in_array($this->reviewProcess,self::reviewDocs,true)) {
+            if ($this->anyOriginNew && $this->isMultiple && in_array($this->reviewProcess,self::reviewDocs,true)) {
                 $this->checkLabel = trim($this->checkLabel)."\n";
                 $contributor = $this->getContributorsArray($this->appArray);
                 $translationPage = self::projectdetailsPrefix.self::contributorNode.'.task';
@@ -390,25 +391,6 @@ class CheckDocClass extends ControllerAbstract
                 }
                 if ($anyError) {
                     $this->anyWindowMissing = true; // need to be set here because the above checks do not call setProjectdetailsTitle()
-                }
-            }
-            // error messages for project title participation and information
-            if ($allOriginChosen) {
-                $this->checkLabel = trim($this->checkLabel)."\n";
-                // check project title participation
-                $tempVal = $this->coreDataArray[self::projectTitleParticipation][self::chosen] ?? '';
-                if ($tempVal===self::projectTitleNotApplicable && $anyInformation) {
-                    $this->addCheckLabelString('checkDoc.projectTitleToInformation');
-                } elseif (!$anyInformation && !in_array($tempVal,['',self::projectTitleNotApplicable])) {
-                    $this->addCheckLabelString('checkDoc.informationToProjectTitle');
-                }
-                // check short docs
-                $tempVal = $this->coreDataArray[self::applicationProcessNode][self::shortDocsNode] ?? '';
-                $tempPrefix = 'checkDoc.appData.'.self::coreDataNode.'.'.self::applicationProcessNode.'.'.self::shortDocsNode.'.';
-                if ($tempVal===self::shortDocsNotApplicable && $anyOriginNew) {
-                    $this->addCheckLabelString($tempPrefix.'notApplicableToOrigin');
-                } elseif (!$anyOriginNew && !in_array($tempVal,['',self::shortDocsNotApplicable])) {
-                    $this->addCheckLabelString($tempPrefix.'originToNotApplicable');
                 }
             }
             $this->setTitle();
@@ -456,8 +438,18 @@ class CheckDocClass extends ControllerAbstract
         $this->checkMissingContent($this->coreDataArray,[self::projectTitle => 'coreData.projectTitle']);
         // project title participation
         if (array_key_exists(self::projectTitleParticipation,$this->coreDataArray) && in_array($this->reviewProcess,self::reviewDocs,true)) {
-            $tempVal = $translationPrefix.self::projectTitleParticipation;
-            $this->checkMissingTextfield($this->coreDataArray[self::projectTitleParticipation],null,self::projectTitleDifferent,$tempVal,self::projectTitleParticipation,$tempVal);
+            $tempPrefix = $translationPrefix.self::projectTitleParticipation.'.';
+            $missing = $tempPrefix.'missing';
+            $tempArray = $this->coreDataArray[self::projectTitleParticipation];
+            $this->checkMissingTextfield($tempArray,null,self::projectTitleDifferent,$missing,self::projectTitleParticipation,$missing);
+            if ($this->allOriginSelected) {
+                $tempVal = $tempArray[self::chosen];
+                if ($tempVal===self::projectTitleNotApplicable && $this->anyInformation) { // at least one combination with information -> project title for participation must not be 'not applicable'
+                    $this->addCheckLabelString($tempPrefix.'projectTitleToInformation');
+                } elseif ($this->allInformationSelected && !$this->anyInformation && !in_array($tempVal,['',self::projectTitleNotApplicable])) { // no combination with information -> project title for participation must be 'not applicable'
+                    $this->addCheckLabelString($tempPrefix.'informationToProjectTitle');
+                }
+            }
         }
         // application type
         $appTypeArray = $this->coreDataArray[self::applicationType];
@@ -472,7 +464,16 @@ class CheckDocClass extends ControllerAbstract
         $tempPrefix = $translationPrefix.self::applicationProcessNode.'.';
         $this->checkMissingChosen($tempArray,$tempPrefix.'missing',null,self::applicationProcessNode,true);
         if (array_key_exists(self::shortDocsNode,$tempArray)) {
-            $this->checkMissingContent($tempArray,[self::shortDocsNode => $tempPrefix.self::shortDocsNode.'.missing']);
+            $tempPrefix .= self::shortDocsNode.'.';
+            $this->checkMissingContent($tempArray,[self::shortDocsNode => $tempPrefix.'missing']);
+            if ($this->allOriginSelected) {
+                $tempVal = $tempArray[self::shortDocsNode];
+                if ($tempVal===self::shortDocsNotApplicable && $this->anyOriginNew) { // any combination with newly collected data -> short docs must not be 'not applicable'
+                    $this->addCheckLabelString($tempPrefix.'notApplicableToOrigin');
+                } elseif (!$this->anyOriginNew && !in_array($tempVal,['',self::shortDocsNotApplicable])) { // no combination with newly collected data -> short docs must be 'not applicable'
+                    $this->addCheckLabelString($tempPrefix.'originToNotApplicable');
+                }
+            }
         }
         // project start and end
         $tempArray = $this->coreDataArray[self::projectStart];
@@ -2165,7 +2166,6 @@ class CheckDocClass extends ControllerAbstract
             // information
             $tempArray = $this->measure[self::informationNode];
             $chosen = $tempArray[self::pre];
-            $this->isPre = $chosen==='0';
             $this->noPre = $chosen==='1';
             $post = $tempArray[self::post][self::chosen] ?? '';
             $this->noPost = $this->noPre && $post==='1';

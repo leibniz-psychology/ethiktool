@@ -47,7 +47,7 @@ multiple:
       text: 'The ethics committee was changed successfully. Please check that all entries are still valid.'
       content: 'The ethics committee was changed successfully. Please check that all entries are still valid.</br></br> The currently selected review process is “short proposal“. In the newly selected ethics committee, the participant documents are not part of the review process for short proposals. However, you can choose to create the participant documents for your own use. Please decide on this before making any further entries. Would you like to switch to the corresponding selection on the “Core data“ page?'
   confirm: 'OK'
-  charCount: 'Number of characters:'
+  charCount: 'Characters:'
   charCountHint: 'The recommended maximum number of characters has been exceeded. It is possible to submit the proposal despite exceeding this number; nevertheless, please check whether you can shorten the description without compromising important information for the ethics review.'
   optional: '(optional)'
   wording: >-
@@ -1382,7 +1382,7 @@ projectdetails:
           spread: 'e.g. newspaper announcements, posters and flyers, mailing lists, social media posts'
           recruitmentPrivate: 'e.g., among family or friends, in a club/association, among the own children''s classmates'
           occupation: 'in case of a dual role as a researcher and a colleague/teacher/therapist, please reflect potential <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#conflict">conflicts of interest</a> and mitigation measures'
-          database: 'e.g., SONA, self-hosted database'
+          database: 'e.g., SONA, self-hosted database/list'
           contributorsOther: 'persons with access to the target group, e.g. through occupation in a school, association, treatment facility, youth welfare institution'
           multiplier: 'e.g., mailing list, social media post, dropping flyers in an institution'
           gatekeeper: 'e.g., handing out a flyer about the study to specific persons'
@@ -1574,7 +1574,7 @@ projectdetails:
         types:
           malaise: 'in case of obvious discomfort or other indication of participant strain or burden'
           regulation: 'in case a participant violates safety measures that were communicated in advance'
-          time: 'in case the planned duration of data collection is considerable exceeded in an individual'
+          time: 'in case the planned duration of data collection is considerably exceeded in an individual'
           attention: 'in case a participant gives wrong answers on several attention-check items'
           criteria: 'in case it becomes obvious during data collection that an inclusion criterion is not fulfilled or that an exclusion criterion applies'
           malfunction: 'in case of technical malfunction of the used equipment'
@@ -1786,7 +1786,7 @@ projectdetails:
         risksCognitive: 'cognitive effects' # from here: risks
         risksEmotional: 'psychological/emotional effects'
         risksPhysical: 'bodily/physical effects'
-        risksFinding: 'identification of incidental findings or suspicions of mental or physical illness'
+        risksFinding: 'uncovering signs of mental or physical illness'
         risksSocial: 'social, economic or political risks arising from knowledge of views, tendencies or behaviours'
         occurrenceBefore: 'measures to reduce the likelihood of occurrence' # from here: risks occurrence
         exclusion: 'specific groups are excluded from participation for safety reasons'
@@ -1875,7 +1875,7 @@ projectdetails:
           risksStimuli: 'overstimulation or impairment of the senses'
           risksPhysicalOther: 'other physical effects'
           risksIncidental: 'incidental findings'
-          risksSuspicion: 'suspicions regarding mental or physical illness '
+          risksSuspicion: 'suspicions'
           risksEmployment: 'negative consequences for an employment or insurance contract'
           risksRelationship: 'negative consequences for social relationships'
           risksLegal: 'negative legal consequences'
@@ -2189,7 +2189,7 @@ projectdetails:
                           burdens {burdens}
                           risks   {risks}
                           other   {burdens and risks}}. The {addressee} must be informed about this. Please use the text box for this purpose. {hasTrigger, select,
-                true  {Selected <a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#risksTrigger" data-base-route-i-ds-param="{routeIDs}">trigger warnings</a> in the burdens/risks section will be transferred automatically and should not be repeated here.}
+                true  {<a class="linkInternal" href="burdensRisks" data-action="base#setDummySubmit" data-base-url-param="app_burdensRisks#risksTrigger" data-base-route-i-ds-param="{routeIDs}">Trigger warnings</a> chosen in the burdens/risks section will be transferred automatically and should not be repeated here.}
                 other {}}
         template:
           useTemplate: 'only trigger warning'
@@ -2920,15 +2920,18 @@ checkDoc:
   appData:
     title: '<a class="linkInternal" href="appData/{page}">{title}</a>'
     coreData:
-      projectTitleParticipation: 'project title for participant documents'
+      projectTitleParticipation:
+        missing: 'project title for participant documents'
+        projectTitleToInformation: 'If at least one <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves prior or after-the-fact information for new data collection, the answer to the question about the project title for the participant documents cannot be “not applicable“.'
+        informationToProjectTitle: 'If no participant documents are created for any <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a>, the answer to the question about the project title for the participant documents must be “not applicable“.'
       appTypeExtended: 'Description of scope of the amendment' # '[] is missing.'
       reference: 'original case number'
       applicationProcess:
         missing: 'type of review process' # 'Answer to question about [] is missing.'
         shortDocs:
           missing: 'Answer to question about generation of participant documents' # '[] is missing.'
-          notApplicableToOrigin: 'If at least one <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves prior or after-the-fact information for new data collection, the answer to the question about <a class="linkInternal" href="coreData#shortDocs" data-action="base#setDummySubmit" data-base-url-param="app_coreData">creating participant documents for own use</a> cannot be “not applicable“.'
-          originToNotApplicable: 'If no <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves collecting new data, the answer to the question about <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#shortDocs">creating participant documents for own use</a> must be “not applicable“.'
+          notApplicableToOrigin: 'If at least one <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves prior or after-the-fact information for new data collection, the answer to the question about creating participant documents for own use cannot be “not applicable“.'
+          originToNotApplicable: 'If no <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves collecting new data, the answer to the question about creating participant documents for own use must be “not applicable“.'
       start:
         past: >-
           {hasBegun, select,
@@ -3750,8 +3753,6 @@ checkDoc:
           The role “{task}“ of the <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors"> {numContributor, plural,
                                         =1    {project contributor</a> }
                                         other {project contributors</a>}} {contributor} was not selected for any data collection time point.
-  projectTitleToInformation: 'If at least one <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a> involves prior or after-the-fact information for new data collection, the answer to the question about the <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for the participant documents</a> cannot be “not applicable“.'
-  informationToProjectTitle: 'If no participant documents are created for any <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">part of the project</a>, the answer to the question about the <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">project title for the participant documents</a> must be “not applicable“.'
 
 completeForm:
   titles:
@@ -3766,17 +3767,12 @@ completeForm:
       I hereby confirm that I have read the application form automatically generated from my entries {anyDoc, select,
                                                                                                       true  {and the participant documents (information and consents forms)}
                                                                                                       other {}} carefully. All information in these documents is complete and accurate and corresponds to the planned procedure in the research project applied for.
-
       {position, select,
-        student {
-        As student applicant, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information related to a student thesis may be considered an attempt to cheat or scientific misconduct.) The responsible supervisor must be involved in the proposal submission and any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence with {committeeDat}). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.
+        student {As student applicant, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information related to a student thesis may be considered an attempt to cheat or scientific misconduct.) The responsible supervisor must be involved in the proposal submission and any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence with {committeeDat}). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.
         }
-        phd     {
-        As doctoral candidate, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information in connection with a doctoral thesis may be regarded as scientific misconduct.) The responsible supervisor must be informed about the proposal submission and about any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.
+        phd     {As doctoral candidate, I further confirm that the to-be-submitted version of the proposal has been checked and approved by my supervisor. (Deliberately false information in connection with a doctoral thesis may be regarded as scientific misconduct.) The responsible supervisor must be informed about the proposal submission and about any correspondence regarding the review process (e.g., by means of CC in case of e-mail correspondence). Herewith, I authorize {committeeAcc} to independently contact the supervisor if necessary.
         }
-        other   {}}
-
-      I further confirm that I am aware of all legal regulations applicable to the research project (including regulations on data protection) in their current versions and that I have respected them to the best of my knowledge in planning the research project and in compiling this application.
+        other   {}} I further confirm that I am aware of all legal regulations applicable to the research project (including regulations on data protection) in their current versions and that I have respected them to the best of my knowledge in planning the research project and in compiling this application.
     confirm: 'I confirm the correctness of the ethics application documents and the compliance with all applicable regulations.'
     hint: 'If a detail in the automatically generated documents is incorrect because a specific aspect of your research project is not covered by the templates, please contact the <a href="mailto:ethiktool@leibniz-psychology.org">Ethiktool support</a>.'
     notes: 'If further notifications to {committeeAcc} are necessary, please enter them here. Please do <span class="font-bold">not</span> write any further accompanying text apart from this application form.'
@@ -3812,7 +3808,7 @@ completeForm:
       access: 'The following members of the ethics committee must not view the application documents (usually if there is a justified concern about information being passed on):'
     hint: 'These persons must not be involved in the decision-making process, but may view the application documents.'
   consentFurther:
-    text: >- # TODO: check PHHD link, add links for BICC, TUD, PHT
+    text: >- # TODO: check PHHD link, add links for TUD, PHT
       The ethics review is based on the regulations and rules of procedure for {committeeAcc} in its current version{committeeType, select,
         TUC   {, available at <a href="https://www.tu-chemnitz.de/tu/ethik/ordnung.php" target="_blank">https://www.tu-chemnitz.de/tu/ethik/ordnung.php</a>}
         EUB   {, available under “Regulations“ and “Rules of procedure“ at the <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">webpage of {committeeGen}</a>}
@@ -3823,7 +3819,7 @@ completeForm:
         UPB   {, available at <a href="https://www.uni-paderborn.de/en/university/ethics-committee/regelungen-interne-links" target="_blank">https://www.uni-paderborn.de/en/university/ethics-committee/regelungen-interne-links</a>}
         PHHD  {, available <a href="https://www.ph-heidelberg.de/fileadmin/user_upload/download-center/Alle-Dokumente_Verwaltung_extern_oeffentlich/02_2026_Geschaeftsordnung_der_gemeinsamen_Ethikkommission_PH_Heidelberg_und_SRH.pdf" target="_blank">here</a>}
         SRH   {, available at <a href="https://www.srh-university.de/en/research/ethics-committee/" target="_blank">https://www.srh-university.de/en/research/ethics-committee/</a>}
-        BICC  {, available at <a href="" target="_blank"></a>}
+        BICC  {, available at <a href="https://biccde.sharepoint.com/sites/biccjanus/SitePages/Ethics-Committee.aspx" target="_blank">in the intranet of the BICC</a>}
         PHT   {. These regulations will be accessible here after the official resolution on the Board's establishment}
         BTU   {, available at <a href="https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf" target="_blank">https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf</a> (internal link)}
         HTW   {, available at <a href="https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission" target="_blank">https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission</a>}

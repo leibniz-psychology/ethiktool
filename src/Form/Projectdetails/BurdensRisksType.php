@@ -19,8 +19,8 @@ class BurdensRisksType extends TypeAbstract
       foreach (self::burdensRisksTypes as $type => $selections) {
         $typePrefix = $translationPrefix.$type.'.';
         $otherTypes = self::burdensRisksOther[$type];
-        if ($type===self::risksOccurrenceNode) {
-            foreach (['occurrenceBeforeOther','occurrenceAfterOther'] as $other) {
+        if (in_array($type,[self::risksOccurrenceNode,self::risksTriggerNode])) {
+            foreach ($type===self::risksOccurrenceNode ? ['occurrenceBeforeOther','occurrenceAfterOther'] : ['triggerOther'] as $other) {
                 unset($otherTypes[array_search($other,$otherTypes)]);
                 $this->addFormElement($builder,$this->appendText($other),'textarea',hint: $placeholder);
             }

@@ -1382,7 +1382,7 @@ projectdetails:
           spread: 'z.B. Zeitungsannoncen, Aushänge und Flyer, Mailinglisten, Social-Media-Post'
           recruitmentPrivate: 'z.B. im Familien-/Freundeskreis, im Verein, in der Schulklasse der eigenen Kinder'
           occupation: 'bei einer Doppelrolle als Forscher*in und Kolleg*in/Lehrkraft/Therapeut*in reflektieren Sie bitte auch, ob es dadurch zu <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#conflict">Interessenkonflikten</a> kommen kann und wie sich diese ggf. verhindern lassen'
-          database: 'z.B. SONA, selbst betriebene Datenbank'
+          database: 'z.B. SONA, selbst geführte Datenbank/Liste'
           contributorsOther: 'Personen mit Zugang zur Zielgruppe, z.B. durch Tätigkeit in Schule, Verein, Behandlungseinrichtung, Jugendhilfeeinrichtung'
           multiplier: 'z.B. Mailingliste, Social-Media-Aufruf, Auslage von Flyern in der Einrichtung'
           gatekeeper: 'z.B. Aushändigung eines Studienflyers an konkrete Personen'
@@ -1786,7 +1786,7 @@ projectdetails:
         risksCognitive: 'kognitive Auswirkungen' # from here: risks
         risksEmotional: 'psychisch-emotionale Auswirkungen'
         risksPhysical: 'körperliche Auswirkungen'
-        risksFinding: 'Aufdeckung von Befunden oder Verdachtsmomenten hinsichtlich psychischer oder körperlicher Erkrankungen'
+        risksFinding: 'Aufdeckung von Anzeichen psychischer oder körperlicher Erkrankungen'
         risksSocial: 'soziale, ökonomische oder politische Risiken bei Kenntnis von Ansichten, Neigungen oder Verhaltensweisen'
         occurrenceBefore: 'Maßnahmen zur Reduktion der Auftretenswahrscheinlichkeit' # from here: risks occurrence
         exclusion: 'bestimmte Gruppen werden aus Sicherheitsgründen von der Teilnahme ausgeschlossen'
@@ -1875,7 +1875,7 @@ projectdetails:
           risksStimuli: 'Überreizung oder Beeinträchtigung der Sinne'
           risksPhysicalOther: 'sonstige körperliche Folgen'
           risksIncidental: 'Zufallsbefunde'
-          risksSuspicion: 'Verdachtsmomente hinsichtlich psychischer oder körperlicher Erkrankungen'
+          risksSuspicion: 'Verdachtsmomente'
           risksEmployment: 'negative Konsequenzen für ein Arbeits- oder Versicherungsverhältnis'
           risksRelationship: 'negative Konsequenzen für soziale Beziehungen'
           risksLegal: 'negative rechtliche Konsequenzen'
@@ -2920,15 +2920,18 @@ checkDoc:
   appData:
     title: '<a class="linkInternal" href="appData/{page}">{title}</a>'
     coreData:
-      projectTitleParticipation: 'Projekttitel für Teilnahmedokumente'
+      projectTitleParticipation:
+        missing: 'Projekttitel für Teilnahmedokumente'
+        projectTitleToInformation: 'Wenn es mindestens einen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit eigener Datenerhebung und Vorab- oder nachträglicher Aufklärung gibt, darf die Frage nach dem Projekttitel für die Teilnahmedokumente nicht mit „nicht zutreffend“ beantwortet werden.'
+        informationToProjectTitle: 'Wenn in keinem <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> Teilnahmedokumente erstellt werden, muss die Frage nach dem Projekttitel für die Teilnahmedokumente mit „nicht zutreffend“ beantwortet werden.'
       appTypeExtended: 'Angabe, worauf sich die Erweiterung/Änderung bezieht,' # '[] fehlt.'
       reference: 'Ursprüngliches Aktenzeichen'
       applicationProcess:
         missing: 'Art des Antragsverfahrens' # 'Antwort auf Frage nach [] fehlt.'
         shortDocs:
           missing: 'Antwort auf Frage nach Erstellung der Teilnahmedokumente' # '[] fehlt.'
-          notApplicableToOrigin: 'Wenn es mindestens einen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit eigener Datenerhebung gibt, darf die Frage nach <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#shortDocs">Erstellung der Teilnahmedokumente</a> nicht mit „nicht zutreffend“ beantwortet werden.'
-          originToNotApplicable: 'Wenn es keinen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit neu erhobenen Daten gibt, muss die Frage nach <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#shortDocs">Erstellung der Teilnahmedokumente</a> mit „nicht zutreffend“ beantwortet werden.'
+          notApplicableToOrigin: 'Wenn es mindestens einen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit eigener Datenerhebung gibt, darf die Frage nach Erstellung der Teilnahmedokumente nicht mit „nicht zutreffend“ beantwortet werden.'
+          originToNotApplicable: 'Wenn es keinen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit neu erhobenen Daten gibt, muss die Frage nach Erstellung der Teilnahmedokumente mit „nicht zutreffend“ beantwortet werden.'
       start:
         past: >-
           {hasBegun, select,
@@ -3750,8 +3753,6 @@ checkDoc:
           Die Funktion „{task}“ der <a class="linkInternal" href="contributors" data-action="base#setDummySubmit" data-base-url-param="app_contributors"> {numContributor, plural,
                                         =1    {projektbeteiligten Person</a> }
                                         other {Projektbeteiligten</a>}} {contributor} wurde bei keinem Erhebungszeitpunkt ausgewählt.
-  projectTitleToInformation: 'Wenn es mindestens einen <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> mit eigener Datenerhebung und Vorab- oder nachträglicher Aufklärung gibt, darf die Frage nach dem <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">Projekttitel für die Teilnahmedokumente</a> nicht mit „nicht zutreffend“ beantwortet werden.'
-  informationToProjectTitle: 'Wenn in keinem <a class="linkInternal" href="landing" data-action="base#setDummySubmit" data-base-url-param="app_landing" data-base-page-param="Projectdetails">Projektteil</a> Teilnahmedokumente erstellt werden, muss die Frage nach dem <a class="linkInternal" href="coreData" data-action="base#setDummySubmit" data-base-url-param="app_coreData#projectTitleParticipation">Projekttitel für die Teilnahmedokumente</a> mit „nicht zutreffend“ beantwortet werden.'
 
 completeForm:
   titles:
@@ -3766,17 +3767,12 @@ completeForm:
       Hiermit versichere ich, dass ich das aus meinen Angaben automatisch erstellte Antragsdokument {anyDoc, select,
                                                                                                       true  {sowie die Teilnahmedokumente (Informations- und Einwilligungstexte)}
                                                                                                       other {}} aufmerksam gelesen habe. Alle Angaben in diesen Dokumenten sind vollständig und wahrheitsgemäß und entsprechen dem geplanten Vorgehen im beantragten Forschungsprojekt.
-
       {position, select,
-        student {
-        Als studentische*r Antragsteller*in bestätige ich ferner, dass die eingereichte Fassung des Antrags von meinem/meiner verantwortlichen Betreuer*in geprüft und gebilligt wurde. (Bewusst falsche Angaben im Zusammenhang mit einer studentischen Arbeit können als Täuschungsversuch und/oder Verstoß gegen die Regeln Guter Wissenschaftliche Praxis gewertet werden.) Der/die verantwortliche Betreuer*in ist durch den/die Antragsteller*in bei der Antragstellung und sämtlicher Korrespondenz im Zusammenhang mit der Begutachtung einzubeziehen (z.B. durch CC bei E-Mail-Korrespondenz mit {committeeDat}). Ich ermächtige {committeeAcc}, bei Bedarf selbstständig mit dem/der Betreuer*in Kontakt aufzunehmen.
+        student {Als studentische*r Antragsteller*in bestätige ich ferner, dass die eingereichte Fassung des Antrags von meinem/meiner verantwortlichen Betreuer*in geprüft und gebilligt wurde. (Bewusst falsche Angaben im Zusammenhang mit einer studentischen Arbeit können als Täuschungsversuch und/oder Verstoß gegen die Regeln Guter Wissenschaftliche Praxis gewertet werden.) Der/die verantwortliche Betreuer*in ist durch den/die Antragsteller*in bei der Antragstellung und sämtlicher Korrespondenz im Zusammenhang mit der Begutachtung einzubeziehen (z.B. durch CC bei E-Mail-Korrespondenz mit {committeeDat}). Ich ermächtige {committeeAcc}, bei Bedarf selbstständig mit dem/der Betreuer*in Kontakt aufzunehmen.
         }
-        phd     {
-        Als Doktorand*in bestätige ich ferner, dass die eingereichte Fassung des Antrags von meinem/meiner verantwortlichen Betreuer*in geprüft und gebilligt wurde. (Bewusst falsche Angaben im Zusammenhang mit einer Promotion können als Verstoß gegen die Regeln Guter Wissenschaftlicher Praxis gewertet werden.) Der/die verantwortliche Betreuer*in ist durch den/die Antragsteller*in bei der Antragstellung und sämtlicher Korrespondenz im Zusammenhang mit der Begutachtung einzubeziehen (z.B. durch CC bei E-Mail-Korrespondenz mit {committeeDat}). Ich ermächtige {committeeAcc}, bei Bedarf selbstständig mit dem/der Betreuer*in Kontakt aufzunehmen.
+        phd     {Als Doktorand*in bestätige ich ferner, dass die eingereichte Fassung des Antrags von meinem/meiner verantwortlichen Betreuer*in geprüft und gebilligt wurde. (Bewusst falsche Angaben im Zusammenhang mit einer Promotion können als Verstoß gegen die Regeln Guter Wissenschaftlicher Praxis gewertet werden.) Der/die verantwortliche Betreuer*in ist durch den/die Antragsteller*in bei der Antragstellung und sämtlicher Korrespondenz im Zusammenhang mit der Begutachtung einzubeziehen (z.B. durch CC bei E-Mail-Korrespondenz mit {committeeDat}). Ich ermächtige {committeeAcc}, bei Bedarf selbstständig mit dem/der Betreuer*in Kontakt aufzunehmen.
         }
-        other   {}}
-
-      Ferner versichere ich, dass ich die für das Forschungsprojekt einschlägigen gesetzlichen Bestimmungen und Richtlinien (einschließlich der Regelungen zum Datenschutz) in den aktuell gültigen Fassungen kenne und bei der Planung sowie der Antragstellung nach bestem Wissen berücksichtigt habe.
+        other   {}} Ferner versichere ich, dass ich die für das Forschungsprojekt einschlägigen gesetzlichen Bestimmungen und Richtlinien (einschließlich der Regelungen zum Datenschutz) in den aktuell gültigen Fassungen kenne und bei der Planung sowie der Antragstellung nach bestem Wissen berücksichtigt habe.
     confirm: 'Ich bestätige die Korrektheit der Ethikantragsdokumente und die Berücksichtigung der einschlägigen Bestimmungen.'
     hint: 'Wenn eine Angabe in den automatisch erstellten Dokumenten fehlerhaft sein sollte, weil sich ein spezieller Umstand Ihres Forschungsprojekts von den Vorlagen nicht abdecken lässt, wenden Sie sich bitte an den <a href="mailto:ethiktool@leibniz-psychology.org">Ethiktool-Support</a>.'
     notes: 'Falls weitere Mitteilungen an {committeeAcc} erforderlich sind, tragen Sie diese bitte hier ein. Bitte schreiben Sie <span class="font-bold">keinen</span> weiteren Begleittext außerhalb dieses Antragsformulars.'
@@ -3812,7 +3808,7 @@ completeForm:
       access: 'Folgende Mitglieder der Ethikkommission dürfen die Antragsdokumente nicht einsehen (i.d.R. bei begründeter Sorge vor Informationsweitergabe):'
     hint: 'Diese Personen dürfen am Entscheidungsprozess ggf. nicht mitwirken, dürfen die Antragsdokumente aber einsehen.'
   consentFurther:
-    text: >- # TODO: check PHHD link, add links for BICC, TUD, PHT
+    text: >- # TODO: check PHHD link, add links for TUD, PHT
       Grundlage für die Begutachtung sind die Regelungen bzw. die Geschäftsordnung für {committeeAcc} in der aktuell gültigen Fassung{committeeType, select,
         TUC   {, abrufbar unter <a href="https://www.tu-chemnitz.de/tu/ethik/ordnung.php" target="_blank">https://www.tu-chemnitz.de/tu/ethik/ordnung.php</a>}
         EUB   {, abrufbar unter "Regelungen" bzw. "Geschäftsordnung" auf der <a href="https://www.uni-bielefeld.de/uni/einrichtungen-organisation/zentrale-organisation/kommissionen/ethik/informationen-und-beratun/index.xml" target="_blank">Webseite {committeeGen}</a>}
@@ -3823,7 +3819,7 @@ completeForm:
         UPB   {, abrufbar unter <a href="https://www.uni-paderborn.de/universitaet/ethik-kommission/regelungen-interne-links" target="_blank">https://www.uni-paderborn.de/universitaet/ethik-kommission/regelungen-interne-links</a>}
         PHHD  {, abrufbar <a href="https://www.ph-heidelberg.de/fileadmin/user_upload/download-center/Alle-Dokumente_Verwaltung_extern_oeffentlich/02_2026_Geschaeftsordnung_der_gemeinsamen_Ethikkommission_PH_Heidelberg_und_SRH.pdf" target="_blank">hier</a>}
         SRH   {, abrufbar unter <a href="https://www.srh-university.de/de/forschung/ethikkommission" target="_blank">https://www.srh-university.de/de/forschung/ethikkommission</a>}
-        BICC  {, abrufbar unter <a href="" target="_blank"></a>}
+        BICC  {, abrufbar unter <a href="https://biccde.sharepoint.com/sites/biccjanus/SitePages/Ethics-Committee.aspx" target="_blank">im Intranet des BICC</a>}
         PHT   {. Diese Regelungen sind mit der offiziellen Beschlussfassung hier abrufbar}
         BTU   {, abrufbar unter <a href="https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf" target="_blank">https://www-docs.b-tu.de/intern/forschung/btuauth/Ethik/SatzungEthikkommissionAMBl-10_2016.pdf</a> (interner Link)}
         HTW  {, abrufbar unter <a href="https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission" target="_blank">https://www.htw-berlin.de/einrichtungen/akademische-selbstverwaltung/akademischer-senat/ethik-kommission</a>}

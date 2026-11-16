@@ -563,7 +563,7 @@ projectdetails:
     terminateCriteria:
       malaise: 'in case of obvious discomfort or other indication of participant strain or burden: {description}'
       regulation: 'in case a participant violates safety measures that were communicated in advance: {description}'
-      time: 'in case the planned duration of data collection is considerable exceeded in an individual'
+      time: 'in case the planned duration of data collection is considerably exceeded in an individual'
       attention: 'in case a participant gives wrong answers on several attention-check items'
       criteria: 'in case it becomes obvious during data collection that an inclusion criterion is not fulfilled or that an exclusion criterion applies'
       malfunction: 'in case of technical malfunction of the used equipment'
@@ -628,7 +628,6 @@ projectdetails:
                                           other   {are not informed of any incidental findings or suspicions. The justification is as follows:
                                                       {description}}}
     risksOccurrence: >-
-      
       According to the applicant''s judgment, {risksAfter, select,
                   o     {a significant likelihood of occurrence and/or a}
                   other {no significant likelihood of occurrence and no}} severity of consequences that goes beyond mere discomfort remains, once all measures have been implemented.

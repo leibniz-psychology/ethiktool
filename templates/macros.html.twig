@@ -2,7 +2,7 @@
     {# Sets the start tag for a form. Input arguments:
        form: Form to be started
     #}
-    {{ form_start(form, {'attr': {'class': 'winWidth grid', 'novalidate': 'novalidate', 'style': 'justify-self: center'}|merge(addTarget('base','form'))}) }}
+    {{ form_start(form, {'attr': {'id': 'form','class': 'winWidth grid', 'novalidate': 'novalidate', 'style': 'justify-self: center'}|merge(addTarget('base','form'))}) }}
 {% endmacro %}
 
 {% macro renderButtons(form, arguments = {}) %}

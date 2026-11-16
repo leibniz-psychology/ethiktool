@@ -107,6 +107,7 @@ function expandCollapse(event) { // only used by addExpandableListener()
     expandable.classList.toggle('dropdownExpanded');
     expandable = element.nextElementSibling;
     expandable.style.display = expandable.style.display==='none' ? 'block' : 'none';
+    setPreviewHeight();
 }
 
 /** Adds the listener that prevents submitting the form if enter is pressed.
@@ -118,6 +119,21 @@ export function addInputListener(element) {
             event.preventDefault();
         }
     })
+}
+
+/** Sets the height of the preview. */
+export function setPreviewHeight() {
+    let checkDoc = document.getElementById('checkDoc');
+    let checkDocHeight = checkDoc!==null ? parseFloat(getComputedStyle(checkDoc).height)+8 : '0'; // +8 for space between checkDoc and preview
+    let maxHeight = Math.max(parseFloat(getComputedStyle(document.getElementById('sidebar')).height),parseFloat(getComputedStyle(document.getElementById('content')).height));
+    let newHeight = Math.min(document.getElementById('form').getBoundingClientRect().bottom,window.innerHeight,maxHeight); // set height either to end of form or browser height
+    let preview = document.getElementById('preview');
+    let parent = preview.parentElement;  // div surrounding checkDoc and preview
+    parent.style.height = newHeight+'px';
+    parent.style.maxHeight = maxHeight+'px';
+    preview.style.height = (newHeight-checkDocHeight)+'px';
+    preview.style.minHeight = (355-checkDocHeight)+'px'; // set minHeight in case total height is greater than browser height
+    preview.style.maxHeight = (maxHeight-checkDocHeight)+'px';
 }
 
 /** Checks if text has more than 300 characters. If so and between 300 and 400 characters, the last 100 characters are hidden and the remaining are visible. If more than 400 characters, the first 300 are visible and the remaining are hidden. The hidden text and can be toggled by clicking on a symbol. Must pass either an element, an event, or a string. If a string is passed, it must be the ID of an element. The entire text must be either in the first child or in the optional second parameter 'text'. Depending on the length of the text, two further children are added (if not already) and the text is split. If the text is shorter than or equal to 300 characters, the additional two children are removed (if still there). If an event is passed, the parent element must have three children. The second child contains the symbol and the last child the remaining text. The visibility and look of the symbol are then toggled.
